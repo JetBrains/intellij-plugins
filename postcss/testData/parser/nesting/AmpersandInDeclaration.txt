@@ -20,15 +20,13 @@ PostCSS File:AmpersandInDeclaration.pcss
                     PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                       PsiElement(CSS_PSEUDO_CLASS)
                         PsiElement(CSS_COLON)(':')
-                        PsiErrorElement:an identifier expected
+                        PsiErrorElement:Identifier expected
                           <empty list>
                   PsiWhiteSpace(' ')
                   PsiElement(CSS_SIMPLE_SELECTOR)
                     PsiElement(CSS_IDENT)('red')
                     PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                       <empty list>
-              PsiErrorElement:'{ expected
-                <empty list>
             PsiElement(CSS_SEMICOLON)(';')
             PsiWhiteSpace('\n')
             PsiElement(CSS_RBRACE)('}')

@@ -14,16 +14,16 @@ public interface Angular2DirectiveSelector {
 
   @NotNull List<@NotNull  SimpleSelectorWithPsi> getSimpleSelectorsWithPsi();
 
-  @NotNull Angular2DirectiveSelectorPsiElement getPsiElementForElement(@NotNull String elementName);
+  @NotNull Angular2DirectiveSelectorSymbol getSymbolForElement(@NotNull String elementName);
 
   interface SimpleSelectorWithPsi {
 
-    @Nullable Angular2DirectiveSelectorPsiElement getElement();
+    @Nullable Angular2DirectiveSelectorSymbol getElement();
 
-    @NotNull List<@NotNull Angular2DirectiveSelectorPsiElement> getAttributes();
+    @NotNull List<@NotNull Angular2DirectiveSelectorSymbol> getAttributes();
 
     @NotNull List<@NotNull SimpleSelectorWithPsi> getNotSelectors();
 
-    @Nullable Angular2DirectiveSelectorPsiElement getElementAt(int offset);
+    @Nullable Angular2DirectiveSelectorSymbol getElementAt(int offset);
   }
 }

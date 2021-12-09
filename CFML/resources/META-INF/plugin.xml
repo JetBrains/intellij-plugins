@@ -18,6 +18,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.idea.ultimate</depends>
+  <!--todo intellij.javaee.web.coverage module dependency-->
 
   <extensions defaultExtensionNs="com.intellij">
     <psi.referenceContributor language="CFML"
@@ -64,7 +65,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
     <lang.documentationProvider language="CFML"
                                 implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlDocumentProvider"/>
     <treeStructureProvider implementation="com.intellij.coldFusion.UI.editorActions.CfmlScriptNodeSuppressor"/>
-    <fileType name="CFML" extensions="cfm;cfml;cfc" fieldName="INSTANCE" language="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlFileType"/>
+    <fileType name="CFML" extensions="cfc;cfm;cfml" fieldName="INSTANCE" language="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlFileType"/>
     <enterHandlerDelegate implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlEnterHandler"/>
     <breadcrumbsInfoProvider implementation="com.intellij.coldFusion.UI.CfmlBreadcrumbsInfoProvider"/>
     <lang.implementationTextSelectioner language="CFML"
@@ -110,9 +111,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
   </extensions>
 
   <actions>
-    <action id="NewCfmlFile" class="com.intellij.coldFusion.UI.CfmlCreateFileAction"
-            text="CFML/CFC File"
-            description="Create new CFML/CFC file">
+    <action id="NewCfmlFile" class="com.intellij.coldFusion.UI.CfmlCreateFileAction">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
   </actions>

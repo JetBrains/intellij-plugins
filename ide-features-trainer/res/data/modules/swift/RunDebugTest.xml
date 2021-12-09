@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Run, Debug, Test" lessonsPath="RunDebugTest/" version="0.3" id="swift.rdt" fileType="PROJECT" description="Learn how to run, debug, and test your application.">
-  <lesson filename="01.Run.xml"/>
-  <lesson filename="02.Debug.xml"/>
-  <lesson filename="03.Test.xml"/>
-</module>

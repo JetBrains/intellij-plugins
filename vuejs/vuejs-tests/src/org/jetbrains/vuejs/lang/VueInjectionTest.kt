@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.openapi.application.PathManager
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
@@ -16,6 +16,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
+import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
 import org.jetbrains.vuejs.context.VueContextProvider
 import org.jetbrains.vuejs.context.isVueContext
@@ -38,7 +39,7 @@ class VueInjectionTest : BasePlatformTestCase() {
     super.tearDown()
   }
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/injection/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/injection/"
 
   fun testSimpleInterpolationInHtml() {
     createPackageJsonWithVueDependency(myFixture)
@@ -254,9 +255,22 @@ Vue.options.delimiters = ['<%', '%>']
     checkParseTree()
   }
 
+  fun testI18nTag() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    checkParseTree()
+  }
+
   fun testStubbedAttribute() {
     myFixture.configureByFile(getTestName(false) + ".vue")
     checkParseTree()
+  }
+
+  fun testTemplateInjectionVueLib() {
+    myFixture.configureByFile(getTestName(false) + ".js")
+    checkParseTree(".off")
+    JSTestUtils.addJsLibrary(project, "vue", myFixture.testRootDisposable, null,
+                             myFixture.tempDirFixture.createFile("foo.js"), null, ScriptingLibraryModel.LibraryLevel.GLOBAL)
+    checkParseTree(".on")
   }
 
   fun testForbiddenVueContext() {
@@ -302,7 +316,7 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   private fun toParseTreeText(file: PsiFile): String {
-    return DebugUtil.psiToString(file, false, false) { psiElement, consumer ->
+    return DebugUtil.psiToString(file, true, false) { psiElement, consumer ->
       InjectedLanguageManager.getInstance(project).enumerate(psiElement) { injectedPsi, _ -> consumer.consume(injectedPsi) }
     }
   }

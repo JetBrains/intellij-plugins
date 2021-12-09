@@ -17,7 +17,7 @@ public class HbFoldingOptionsProvider
   }
 
   public HbFoldingOptionsProvider() {
-    super(new HbCodeFoldingOptionsBean(), "Handlebars/Mustache");
+    super(new HbCodeFoldingOptionsBean(), HbBundle.message("border.title.handlebars.mustache"));
     HbCodeFoldingOptionsBean settings = getInstance();
     checkBox(HbBundle.message("hb.pages.folding.auto.collapse.blocks"), settings::isAutoCollapseBlocks, settings::setAutoCollapseBlocks);
   }

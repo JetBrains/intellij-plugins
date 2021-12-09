@@ -1,9 +1,9 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
-import gnu.trove.THashSet;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -13,9 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
-public class FlexCompilerConfigFileUtilBase {
+public final class FlexCompilerConfigFileUtilBase {
   public static final String FLEX_CONFIG = "flex-config";
   public static final String COMPILER = "compiler";
   public static final String EXTERNAL_LIBRARY_PATH = "external-library-path";
@@ -176,7 +177,7 @@ public class FlexCompilerConfigFileUtilBase {
 
   // required to avoid setting the same option values twice because it may lead to compilation failure (e.g. if the same locale is listed twice)
   private static Collection<Element> findDuplicateElementsRecursively(final Element existingElement, final Element otherElement) {
-    final Collection<Element> result = new THashSet<>();
+    final Collection<Element> result = new HashSet<>();
 
     for (Element potentialChild : otherElement.getChildren()) {
       final List existingChildren = existingElement.getChildren(potentialChild.getName(), existingElement.getNamespace());

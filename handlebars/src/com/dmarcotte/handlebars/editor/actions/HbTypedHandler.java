@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * on Enter.
  */
 public class HbTypedHandler extends TypedHandlerDelegate {
-  private static final Logger LOG = Logger.getInstance("#com.dmarcotte.handlebars.editor.actions.HbTypedHandler");
+  private static final Logger LOG = Logger.getInstance(HbTypedHandler.class);
 
   public static final String OPEN_BRACE = "{";
   public static final String CLOSE_BRACES = "}}";

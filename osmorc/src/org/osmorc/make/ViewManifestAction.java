@@ -30,6 +30,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -46,7 +47,7 @@ import java.util.jar.JarFile;
 public class ViewManifestAction extends AnAction implements DumbAware {
   private final String myJarFilePath;
 
-  public ViewManifestAction(String title, String jarFilePath) {
+  public ViewManifestAction(@NlsSafe String title, String jarFilePath) {
     myJarFilePath = jarFilePath;
     getTemplatePresentation().setText(title);
   }

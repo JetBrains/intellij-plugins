@@ -58,7 +58,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
     DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
 
     assertThat(presentation.getText()).isEqualTo("Run 'index.cfm'");
-    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
+    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext, ActionPlaces.UNKNOWN);
     List<ConfigurationFromContext> configs = new ArrayList<>();
     for (RunConfigurationProducer<?> producer : RunConfigurationProducer.getProducers(project)) {
       ConfigurationFromContext configurationFromContext = producer.createConfigurationFromContext(configurationContext);
@@ -85,7 +85,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
 
   private static CfmlRunConfiguration getContextRunConfiguration(Editor editor){
     DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
-    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
+    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext, ActionPlaces.UNKNOWN);
 
     // this block emulates RunContextAction.perform()
     RunnerAndConfigurationSettings configuration = configurationContext.findExisting();
@@ -121,7 +121,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
 
   public PsiFile createCfmPsiFile(String filename) throws IOException {
     String filePath = getDataPath() + filename;
-    FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+    FileInputStream fileInputStream = new FileInputStream(filePath);
     try {
       String testText = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(fileInputStream));
       return myFixture.addFileToProject(WWWROOT_SRC + filename, testText);

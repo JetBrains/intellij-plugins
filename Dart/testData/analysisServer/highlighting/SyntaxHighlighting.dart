@@ -4,9 +4,9 @@
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:html"
 <info textAttributesKey="DART_KEYWORD">as</info> <info textAttributesKey="DART_IMPORT_PREFIX">html</info>
     <info textAttributesKey="DART_KEYWORD">show</info> <info textAttributesKey="DART_CLASS">HtmlElement</info>,
-    <warning descr="The name document is shown, but not used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></warning>,
-    <warning descr="The name EventListener is shown, but not used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></warning>,
-    <warning descr="'CDataSection' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><warning descr="The name CDataSection is shown, but not used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_CLASS">CDataSection</info></warning></warning>,
+    <warning descr="The name document is shown, but isn’t used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></warning>,
+    <warning descr="The name EventListener is shown, but isn’t used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></warning>,
+    <warning descr="'CDataSection' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><warning descr="The name CDataSection is shown, but isn’t used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_CLASS">CDataSection</info></warning></warning>,
     <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'." textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
@@ -17,7 +17,7 @@
   <info textAttributesKey="DART_TOP_LEVEL_SETTER_REFERENCE">topLevelSetter</info> = true;
 }
 
-<info textAttributesKey="DART_CLASS">Object</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">topLevelVariable</info>;
+<info textAttributesKey="DART_CLASS">Object</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">topLevelVariable</info> = 0;
 
 void <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">topLevelFunction</info>(<info textAttributesKey="DART_DYNAMIC_PARAMETER_DECLARATION">param</info>) {
   <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">topLevelFunction</info>(1);
@@ -51,7 +51,7 @@ class <info textAttributesKey="DART_CLASS">Foo</info> {
   <info textAttributesKey="DART_CLASS">Foo</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">from</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">redirect</info>() : this.<info textAttributesKey="DART_CONSTRUCTOR">from</info>();
-  <weak_warning descr="This function has a return type of 'Foo', but doesn't end with a return statement." textAttributesKey="DART_HINT"><info textAttributesKey="DART_KEYWORD">factory</info> <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">factory</info>() {}</weak_warning>
+<info descr="null" textAttributesKey="DART_KEYWORD">factory</info> <error descr="The body might complete normally, causing 'null' to be returned, but the return type is a potentially non-nullable type." textAttributesKey="DART_ERROR"><info descr="null" textAttributesKey="DART_CLASS">Foo</info>.factory</error>() {}
 }
 
 /// [<info textAttributesKey="DART_CLASS">Foo1</info>] is good []
@@ -99,12 +99,12 @@ class <info textAttributesKey="DART_CLASS">Foo2</info><<info textAttributesKey="
     <info textAttributesKey="DART_INSTANCE_SETTER_REFERENCE">instanceSetter</info> = 1;
     <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">Compare</info>;
     "see $<info textAttributesKey="DART_INSTANCE_GETTER_REFERENCE">mapLiteral</info> as well";
-    "see ${<info textAttributesKey="DART_INSTANCE_GETTER_REFERENCE">mapLiteral</info> <error descr="The operator '+' isn't defined for the class 'Map<Object, Object>'." textAttributesKey="DART_ERROR">+</error> " $this "} as well";
+    "see ${<info textAttributesKey="DART_INSTANCE_GETTER_REFERENCE">mapLiteral</info> <error descr="The operator '+' isn't defined for the type 'Map<Object, Object>'." textAttributesKey="DART_ERROR">+</error> " $this "} as well";
   }
 
   <info textAttributesKey="DART_TYPE_NAME_DYNAMIC">dynamic</info> <info textAttributesKey="DART_INSTANCE_METHOD_DECLARATION">abstractMethod</info>();
 
-  <info textAttributesKey="DART_ANNOTATION">@<error descr="The name 'deprecated' isn't a class." textAttributesKey="DART_ERROR">deprecated</error>(</info>"foo"<info textAttributesKey="DART_ANNOTATION">)</info>
+  <error descr="Annotation must be either a const variable reference or const constructor invocation." textAttributesKey="DART_ERROR"><info descr="null" textAttributesKey="DART_ANNOTATION">@deprecated(</info>"foo")</error>
   var <info textAttributesKey="DART_INSTANCE_FIELD_DECLARATION">listLiteral</info> = [1, "", <info textAttributesKey="DART_CLASS">Object</info>];
 
   var <info textAttributesKey="DART_INSTANCE_FIELD_DECLARATION">mapLiteral</info> = {

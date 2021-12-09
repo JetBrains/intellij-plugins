@@ -31,8 +31,8 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
-import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -375,13 +375,6 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public final void testCompleteWithoutQualifier() {
     defaultTest();
-  }
-
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader})
-  @NeedsJavaModule
-  public void testCompleteStyleNameInString() {
-    doTestForFiles(new String[]{getTestName(false) + ".mxml",
-      getTestName(false) + ".as"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
@@ -1357,7 +1350,6 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     try {
       PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete())
         .setup(() -> getPsiManager().dropPsiCaches())
-        .reattemptUntilJitSettlesDown()
         .assertTiming();
     }
     finally {

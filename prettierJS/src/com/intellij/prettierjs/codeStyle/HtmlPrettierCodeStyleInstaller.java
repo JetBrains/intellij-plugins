@@ -5,6 +5,7 @@ import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.prettierjs.PrettierConfig;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettings.QuoteStyle;
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,12 +20,16 @@ public class HtmlPrettierCodeStyleInstaller implements PrettierCodeStyleInstalle
     HtmlCodeStyleSettings htmlSettings = settings.getCustomSettings(HtmlCodeStyleSettings.class);
     // Default prettier settings
     htmlSettings.HTML_SPACE_INSIDE_EMPTY_TAG = true;
+    htmlSettings.HTML_QUOTE_STYLE = config.singleQuote ? QuoteStyle.Single : QuoteStyle.Double;
+    htmlSettings.HTML_ENFORCE_QUOTES = true;
   }
 
   @Override
   public boolean isInstalled(@NotNull Project project, @NotNull PrettierConfig config, @NotNull CodeStyleSettings settings) {
     HtmlCodeStyleSettings htmlSettings = settings.getCustomSettings(HtmlCodeStyleSettings.class);
     return htmlSettings.HTML_SPACE_INSIDE_EMPTY_TAG
+           && htmlSettings.HTML_QUOTE_STYLE == (config.singleQuote ? QuoteStyle.Single : QuoteStyle.Double)
+           && htmlSettings.HTML_ENFORCE_QUOTES
            && commonPrettierSettingsApplied(config, settings, HTMLLanguage.INSTANCE);
   }
 }

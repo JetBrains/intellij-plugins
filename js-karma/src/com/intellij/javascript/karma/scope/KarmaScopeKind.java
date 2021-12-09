@@ -2,10 +2,14 @@ package com.intellij.javascript.karma.scope;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public enum KarmaScopeKind {
-  ALL(JavaScriptBundle.message("rc.testRunScope.all")) {
+  ALL(JavaScriptBundle.messagePointer("rc.testRunScope.all")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -13,7 +17,7 @@ public enum KarmaScopeKind {
     }
   },
 
-  TEST_FILE(JavaScriptBundle.message("rc.testRunScope.testFile")) {
+  TEST_FILE(JavaScriptBundle.messagePointer("rc.testRunScope.testFile")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -21,7 +25,7 @@ public enum KarmaScopeKind {
     }
   },
 
-  SUITE(JavaScriptBundle.message("rc.testRunScope.suite")) {
+  SUITE(JavaScriptBundle.messagePointer("rc.testRunScope.suite")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -31,7 +35,7 @@ public enum KarmaScopeKind {
     }
   },
 
-  TEST(JavaScriptBundle.message("rc.testRunScope.test")) {
+  TEST(JavaScriptBundle.messagePointer("rc.testRunScope.test")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -41,15 +45,15 @@ public enum KarmaScopeKind {
     }
   };
 
-  private final String myName;
+  private final Supplier<@NotNull @Nls String> myNameSupplier;
 
-  KarmaScopeKind(@NotNull String name) {
-    myName = name;
+  KarmaScopeKind(@NotNull Supplier<@NotNull @NlsSafe String> nameSupplier) {
+    myNameSupplier = nameSupplier;
   }
 
   @NotNull
-  public String getName() {
-    return myName;
+  public @Nls String getName() {
+    return myNameSupplier.get();
   }
 
   @NotNull

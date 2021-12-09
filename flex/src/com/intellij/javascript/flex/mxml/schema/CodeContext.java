@@ -61,6 +61,7 @@ import java.util.Set;
  * @author Maxim.Mossienko
  */
 public class CodeContext {
+  private static final CodeContext EMPTY = new CodeContext(null, null, null);
   private static final String CLASS_FACTORY = "mx.core.ClassFactory";
 
   @NonNls static final String DEFINITION_TAG_NAME = "Definition";
@@ -77,14 +78,16 @@ public class CodeContext {
 
   // Component name to descriptor
   private final Map<String, ClassBackedElementDescriptor> myNameToDescriptorsMap;
-  public final String namespace;
-  public final Module module;
+  final GlobalSearchScope scope;
+  final String namespace;
+  final Module module;
   private final Set<Object> dependencies = new THashSet<>();
 
-  CodeContext(String _namespace, Module _module) {
+  CodeContext(String _namespace, Module _module, GlobalSearchScope scope) {
     myNameToDescriptorsMap = new THashMap<>(100);
     namespace = _namespace;
     module = _module;
+    this.scope = scope;
     if (JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
       addPredefinedTags(this);
 
@@ -135,29 +138,33 @@ public class CodeContext {
   }
 
   public static CodeContext getContext(final String namespace, final Module module) {
+    return getContext(namespace, module, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+  }
+
+  public static CodeContext getContext(String namespace, Module module, @NotNull GlobalSearchScope scope) {
     if (StringUtil.isEmptyOrSpaces(namespace) ||
         module == null || module.isDisposed() || !(ModuleType.get(module) instanceof FlexModuleType)) {
-      return CodeContextHolder.EMPTY;
+      return EMPTY;
     }
 
     final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-    if (bc == null) return CodeContextHolder.EMPTY;
+    if (bc == null) return EMPTY;
 
     CodeContext codeContext;
 
     synchronized (CodeContext.class) {
       if (isStdNamespace(namespace)) {
-        return getStdCodeContext(namespace, module, bc);
+        return getStdCodeContext(namespace, module, scope, bc);
       }
 
       final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
-      codeContext = contextHolder.getCodeContext(namespace, module);
+      codeContext = contextHolder.getCodeContext(namespace, module, scope);
 
       if (codeContext == null) {
-        codeContext = createCodeContext(namespace, module, bc);
+        codeContext = createCodeContext(namespace, module, bc, scope);
         if (codeContext.getAllDescriptorsSize() > 0) {
           // avoid adding of incorrect namespaces that appear during completion like "http://www.adobe.IntellijIdeaRulezzz com/2006/mxml"
-          contextHolder.putCodeContext(namespace, module, codeContext);
+          contextHolder.putCodeContext(namespace, module, scope, codeContext);
         }
       }
     }
@@ -173,15 +180,14 @@ public class CodeContext {
     return namespace.equals("*") || namespace.endsWith(".*");
   }
 
-  private static CodeContext createCodeContext(final String namespace, final Module module, final FlexBuildConfiguration bc) {
+  private static CodeContext createCodeContext(String namespace, Module module, FlexBuildConfiguration bc, GlobalSearchScope scope) {
     if (!isPackageBackedNamespace(namespace)) {
-      return createCodeContextFromLibraries(namespace, module, bc);
+      return createCodeContextFromLibraries(namespace, module, scope, bc);
     }
 
     final Project project = module.getProject();
-    final CodeContext codeContext = new CodeContext(namespace, module);
+    final CodeContext codeContext = new CodeContext(namespace, module, scope);
     final String packageName = namespace.endsWith(".*") ? namespace.substring(0, namespace.length() - 2) : "";
-    final GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
       @Override
@@ -205,12 +211,12 @@ public class CodeContext {
 
         return true;
       }
-    }, searchScope, project);
+    }, scope, project);
 
     return codeContext;
   }
 
-  private static void handleSwcFromSdk(final Module module, @NotNull final FlexBuildConfiguration bc) {
+  private static void handleSwcFromSdk(@NotNull Module module, @NotNull GlobalSearchScope scope, @NotNull FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) return;
 
@@ -223,13 +229,14 @@ public class CodeContext {
     }
     final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
     for (final Map.Entry<String, CodeContext> entry : contextsOfModule.entrySet()) {
-      contextHolder.putCodeContext(entry.getKey(), module, entry.getValue());
+      contextHolder.putCodeContext(entry.getKey(), module, scope, entry.getValue());
     }
   }
 
-  private static CodeContext createCodeContextFromLibraries(final String namespace,
-                                                            final Module module,
-                                                            final FlexBuildConfiguration bc) {
+  private static CodeContext createCodeContextFromLibraries(String namespace,
+                                                            Module module,
+                                                            GlobalSearchScope scope,
+                                                            FlexBuildConfiguration bc) {
     final Map<String, CodeContext> contextsOfModule = new THashMap<>();
     final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
 
@@ -266,12 +273,12 @@ public class CodeContext {
 
     final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
     for (Map.Entry<String, CodeContext> entry : contextsOfModule.entrySet()) {
-      contextHolder.putCodeContext(entry.getKey(), module, entry.getValue());
+      contextHolder.putCodeContext(entry.getKey(), module, scope, entry.getValue());
     }
 
     CodeContext codeContext = contextsOfModule.get(namespace);
     if (codeContext == null) {
-      codeContext = CodeContextHolder.EMPTY;
+      codeContext = EMPTY;
     }
     return codeContext;
   }
@@ -340,14 +347,14 @@ public class CodeContext {
       final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
       codeContext = contextHolder.getStandardContext(uri, module);
       if (codeContext == null) {
-        codeContext = new CodeContext(uri, module);
+        codeContext = new CodeContext(uri, module, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
         contextHolder.putStandardContext(uri, module, codeContext);
       }
     }
     else {
       codeContext = contextsOfModule.get(uri);
       if (codeContext == null) {
-        codeContext = new CodeContext(uri, module);
+        codeContext = new CodeContext(uri, module, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
         contextsOfModule.put(uri, codeContext);
       }
     }
@@ -386,23 +393,23 @@ public class CodeContext {
       JSPackageIndex.buildQualifiedName(packageName, file.getNameWithoutExtension()), codeContext, project, file), true);
   }
 
-  private static CodeContext getStdCodeContext(final String namespace, final Module module, final FlexBuildConfiguration bc) {
+  private static CodeContext getStdCodeContext(final String namespace, final Module module, GlobalSearchScope scope, final FlexBuildConfiguration bc) {
     final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
 
     if (!contextHolder.areSdkComponentsHandledForModule(module)) { // handleAllStandardManifests only once per module
       handleAllStandardManifests(module, bc);
-      handleSwcFromSdk(module, bc); //swc files attached to Flex SDK may contribute to standard context
-      createCodeContextFromLibraries(namespace, module, bc); // other libraries may contribute to standard context
+      handleSwcFromSdk(module, scope, bc); //swc files attached to Flex SDK may contribute to standard context
+      createCodeContextFromLibraries(namespace, module, scope, bc); // other libraries may contribute to standard context
       contextHolder.setSdkComponentsHandledForModule(module);
     }
 
     final CodeContext context = contextHolder.getStandardContext(namespace, module);
-    return context != null ? context : CodeContextHolder.EMPTY;
+    return context != null ? context : EMPTY;
   }
 
   @Nullable
   public XmlElementDescriptor getElementDescriptor(final @NonNls String localName, final @Nullable XmlTag tag) {
-    ClassBackedElementDescriptor descriptor = this == CodeContextHolder.EMPTY ? null : myNameToDescriptorsMap.get(localName);
+    ClassBackedElementDescriptor descriptor = this == EMPTY ? null : myNameToDescriptorsMap.get(localName);
 
     if (tag != null && MxmlJSClass.XML_TAG_NAME.equals(localName)
         && JavaScriptSupportLoader.isLanguageNamespace(tag.getNamespace())) {
@@ -478,7 +485,7 @@ public class CodeContext {
     final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
     CodeContext _context = contextHolder.getStandardContext(namespace, module);
     if (_context == null) {
-      _context = new CodeContext(namespace, module);
+      _context = new CodeContext(namespace, module, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
       contextHolder.putStandardContext(namespace, module, _context);
     }
 

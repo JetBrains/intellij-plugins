@@ -177,6 +177,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private AddItemPopupAction[] myPopupActions;
   private final Disposable myDisposable;
   private final BuildConfigurationNature myNature;
+  private final ProjectStructureConfigurable myProjectStructureConfigurable;
 
   private final FlexProjectConfigurationEditor myConfigEditor;
   private final ProjectSdksModel mySkdsModel;
@@ -650,7 +651,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      final Object tableItem = ((EditableTreeTable)table).getItemAt(row);
+      final Object tableItem = ((EditableTreeTable<?>)table).getItemAt(row);
       if (tableItem instanceof MyTableItem && ((MyTableItem)tableItem).isLinkageEditable()) {
         myComboBoxTableRenderer.setFont(table.getFont());
         return myComboBoxTableRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -698,7 +699,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   };
 
-  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Linkage") {
+  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<>("Linkage") {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
@@ -736,12 +737,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   public DependenciesConfigurable(final ModifiableFlexBuildConfiguration bc,
                                   Project project,
                                   @NotNull FlexProjectConfigurationEditor configEditor,
-                                  final ProjectSdksModel sdksModel) {
+                                  final ProjectSdksModel sdksModel,
+                                  @NotNull ProjectStructureConfigurable projectStructureConfigurable) {
     mySkdsModel = sdksModel;
     myConfigEditor = configEditor;
     myDependencies = bc.getDependencies();
     myProject = project;
     myNature = bc.getNature();
+    myProjectStructureConfigurable = projectStructureConfigurable;
 
     mySdkChangeDispatcher = EventDispatcher.create(ChangeListener.class);
     myDisposable = Disposer.newDisposable();
@@ -821,7 +824,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myTargetPlayerWarning.setIcon(AllIcons.General.BalloonWarning12);
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
 
-    myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
+    myTable = new EditableTreeTable<>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {
         if (item != null) {
@@ -1022,14 +1025,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void editLibrary(final SharedLibraryItem item) {
     final Library liveLibrary = item.findLiveLibrary();
     if (liveLibrary != null) {
+      ProjectStructureConfigurable structureConfigurable = ProjectStructureConfigurable.getInstance(myProject);
       final BaseLibrariesConfigurable librariesConfigurable =
         LibraryTablesRegistrar.APPLICATION_LEVEL.equals(liveLibrary.getTable().getTableLevel())
-        ? GlobalLibrariesConfigurable.getInstance(myProject)
-        : ProjectLibrariesConfigurable.getInstance(myProject);
+        ? structureConfigurable.getGlobalLibrariesConfigurable()
+        : structureConfigurable.getProjectLibrariesConfigurable();
       final Place place = new Place()
         .putPath(ProjectStructureConfigurable.CATEGORY, librariesConfigurable)
         .putPath(MasterDetailsComponent.TREE_OBJECT, liveLibrary);
-      ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
+      structureConfigurable.navigateTo(place, true);
     }
   }
 
@@ -1066,7 +1070,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     LibraryTableModifiableModelProvider provider = () -> myConfigEditor.getLibraryModel(myDependencies);
 
-    StructureConfigurableContext context = ModuleStructureConfigurable.getInstance(myProject).getContext();
+    StructureConfigurableContext context = myProjectStructureConfigurable.getContext();
     EditExistingLibraryDialog dialog =
       EditExistingLibraryDialog.createDialog(myMainPanel, provider, library, myProject, presentation, context);
     dialog.setContextModule(myConfigEditor.getModule(myDependencies));
@@ -1077,7 +1081,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void addItem(AnActionButton button) {
     initPopupActions();
     final JBPopup popup = JBPopupFactory.getInstance().createListPopup(
-      new BaseListPopupStep<AddItemPopupAction>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
+      new BaseListPopupStep<>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
         @Override
         public Icon getIconFor(AddItemPopupAction aValue) {
           return aValue.getIcon();

@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
@@ -7,7 +8,6 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -64,11 +64,11 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     }
     final String customConfigFilePath = state.getCustomConfigFilePath();
     if (!StringUtil.isEmptyOrSpaces(customConfigFilePath)) {
-      root.setAttribute(CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME, FileUtil.toSystemIndependentName(customConfigFilePath));
+      root.setAttribute(CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME, customConfigFilePath);
     }
     final String rulesDirectory = state.getRulesDirectory();
     if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
-      root.setAttribute(RULES, FileUtil.toSystemIndependentName(rulesDirectory));
+      root.setAttribute(RULES, rulesDirectory);
     }
     if (state.isAllowJs()) {
       root.setAttribute(ALLOW_JS, String.valueOf(true));
@@ -83,7 +83,7 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     final TsLintState.Builder builder = new TsLintState.Builder();
     builder.setCustomConfigFileUsed(Boolean.parseBoolean(element.getAttributeValue(IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME)));
     String customConfigFilePath = StringUtil.notNullize(element.getAttributeValue(CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME));
-    builder.setCustomConfigFilePath(FileUtil.toSystemDependentName(customConfigFilePath));
+    builder.setCustomConfigFilePath(customConfigFilePath);
     final String rulesDirectory = element.getAttributeValue(RULES);
     if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
       builder.setRulesDirectory(rulesDirectory);
@@ -95,12 +95,11 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
 
   private void restoreLinterLocalPaths(TsLintState.Builder builder) {
     myPackage.readOrDetect();
-    builder.setNodePath(myPackage.getInterpreter());
     builder.setNodePackageRef(myPackage.getPackage());
   }
 
   private void storeLinterLocalPaths(TsLintState state) {
-    myPackage.force(state.getInterpreterRef(), state.getNodePackageRef());
+    myPackage.force(state.getNodePackageRef());
   }
 
   @NotNull

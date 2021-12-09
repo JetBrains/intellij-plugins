@@ -93,12 +93,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private final AtomicLong lastRequestTime = new AtomicLong(0);
 
   /**
-   * The following is a subset of the list provided in the `allFixes` list,
-   * dart-sdk-dir/analysis_server/lib/src/edit/fix/dartfix_info.dart
-   */
-  public static final String DART_FIX_INFO_NON_NULLABLE = "non-nullable";
-
-  /**
    * The listener that will receive notification when new analysis results become available.
    */
   private final BroadcastAnalysisServerListener listener = new BroadcastAnalysisServerListener();
@@ -323,13 +317,21 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void completion_getSuggestionDetails2(String file, int offset, String completion, String libraryUri, GetSuggestionDetailsConsumer2 consumer) {
+    String requestId = generateUniqueId();
+    sendRequestToServer(requestId, RequestUtilities.generateCompletionGetSuggestionDetails2(requestId, file, offset, completion, libraryUri), consumer);
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
   }
 
   @Override
-  public void completion_listTokenDetails(String file, ListTokenDetailsConsumer consumer) {
+  public void completion_getSuggestions2(String file, int offset, int maxResults, GetSuggestionsConsumer2 consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions2(id, file, offset, maxResults), consumer);
   }
 
   @Override
@@ -353,18 +355,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_dartfix(List<String> included,
-                           List<String> includedFixes,
-                           boolean includePedanticFixes,
-                           boolean includeRequiredFixes,
-                           List<String> excludedFixes,
-                           String outputDir,
-                           DartfixConsumer consumer) {
-    String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities
-                          .generateEditDartfix(id, included, includedFixes, includePedanticFixes, includeRequiredFixes, excludedFixes, outputDir),
-                        consumer);
-  }
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer) {}
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
@@ -382,10 +373,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditGetAvaliableRefactorings(id, file, offset, length), consumer);
-  }
-
-  @Override
-  public void edit_getDartfixInfo(GetDartfixInfoConsumer consumer) {
   }
 
   @Override
@@ -754,6 +741,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof GetSuggestionsConsumer) {
       new CompletionIdProcessor((GetSuggestionsConsumer)consumer).process(resultObject, requestError);
     }
+    else if (consumer instanceof GetSuggestionsConsumer2) {
+      new CompletionIdProcessor2((GetSuggestionsConsumer2)consumer).process(resultObject, requestError);
+    }
     //
     // Search Domain
     //
@@ -775,9 +765,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     // Edit Domain
     //
-    else if (consumer instanceof DartfixConsumer) {
-      new DartfixProcessor((DartfixConsumer)consumer).process(resultObject, requestError);
-    }
     else if (consumer instanceof FormatConsumer) {
       new FormatProcessor((FormatConsumer)consumer).process(resultObject, requestError);
     }

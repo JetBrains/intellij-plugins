@@ -12,7 +12,7 @@ import com.intellij.xml.util.XmlTagUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
-import org.angular2.codeInsight.tags.Angular2TagDescriptor;
+import org.angular2.codeInsight.tags.Angular2ElementDescriptor;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,8 @@ public class AngularUndefinedTagInspection extends AngularHtmlLikeTemplateLocalI
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
     XmlElementDescriptor descriptor = tag.getDescriptor();
-    if (!(descriptor instanceof Angular2TagDescriptor)
-        || ((Angular2TagDescriptor)descriptor).isImplied()) {
+    if (!(descriptor instanceof Angular2ElementDescriptor)
+        || ((Angular2ElementDescriptor)descriptor).isImplied()) {
       return;
     }
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(tag);

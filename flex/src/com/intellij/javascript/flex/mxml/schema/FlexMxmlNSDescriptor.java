@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -30,9 +31,11 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   private XmlFile myFile;
   private String namespace;
   private Module module;
+  private GlobalSearchScope scope;
 
-  public static final Key<String> NS_KEY = Key.create("ns.key");
-  public static final Key<Module> MODULE_KEY = Key.create("module.key");
+  static final Key<String> NS_KEY = Key.create("flex.ns.key");
+  static final Key<Module> MODULE_KEY = Key.create("flex.module.key");
+  static final Key<GlobalSearchScope> SCOPE_KEY = Key.create("flex.scope.key");
   private static boolean reportedAboutStackOverflow;
 
   // TODO seems that need to fix ECMAScript.js2 and E4X.js2
@@ -49,7 +52,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     }
 
     final String namespace = tag.getNamespace();
-    final CodeContext context = CodeContext.getContext(namespace, module);
+    final CodeContext context = getCodeContext(namespace);
     final String localName = tag.getLocalName();
     XmlElementDescriptor descriptor = context.getElementDescriptor(localName, tag);
 
@@ -84,6 +87,10 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     return descriptor;
   }
 
+  private CodeContext getCodeContext(String namespace) {
+    return CodeContext.getContext(namespace, module, scope);
+  }
+
   private static boolean isLegalRootElementDescriptor(final @NotNull XmlElementDescriptor _descriptor) {
     if (_descriptor instanceof ClassBackedElementDescriptor) {
       final ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)_descriptor;
@@ -105,7 +112,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
 
   @Override
   public XmlElementDescriptor @NotNull [] getRootElementsDescriptors(@Nullable final XmlDocument document) {
-    XmlElementDescriptor[] elementDescriptors = CodeContext.getContext(namespace, module).getDescriptorsWithAllowedDeclaration();
+    XmlElementDescriptor[] elementDescriptors = getCodeContext(namespace).getDescriptorsWithAllowedDeclaration();
     ArrayList<XmlElementDescriptor> results = new ArrayList<>(elementDescriptors.length);
 
     final XmlTag rootTag = document == null ? null : document.getRootTag();
@@ -163,21 +170,24 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
     myFile = ((XmlFile)document.getContainingFile());
     namespace = myFile.getUserData(NS_KEY);
     module = myFile.getUserData(MODULE_KEY);
+    scope = myFile.getUserData(SCOPE_KEY);
     assert namespace != null;
+    assert module != null;
+    assert scope != null;
 
-    CodeContextHolder.getInstance(module.getProject()).clearCodeContext(namespace, module);
+    CodeContextHolder.getInstance(module.getProject()).clearCodeContext(namespace, module, scope);
   }
 
   @Override
   public Object @NotNull [] getDependencies() {
-    return CodeContext.getContext(namespace, module).getDependencies();
+    return getCodeContext(namespace).getDependencies();
   }
 
   @Override
   public void validate(@NotNull final XmlDocument context, @NotNull final ValidationHost host) {}
 
   public boolean hasElementDescriptorWithName(String name, String className) {
-    final CodeContext context = CodeContext.getContext(namespace, module);
+    CodeContext context = getCodeContext(namespace);
     XmlElementDescriptor descriptor = context.getElementDescriptor(name, (XmlTag)null);
     if (descriptor instanceof ClassBackedElementDescriptor) {
       return ((ClassBackedElementDescriptor)descriptor).className.equals(className);

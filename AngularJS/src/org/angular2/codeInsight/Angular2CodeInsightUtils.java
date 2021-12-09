@@ -1,10 +1,13 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItem;
+import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItemInsertHandler;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -30,7 +33,61 @@ import static com.intellij.util.containers.ContainerUtil.find;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 
-public class Angular2CodeInsightUtils {
+public final class Angular2CodeInsightUtils {
+
+  @Contract(pure = true)
+  public static @NotNull WebSymbolCodeCompletionItem decorateCodeCompletionItem(@NotNull WebSymbolCodeCompletionItem item,
+                                                                                @NotNull List<? extends Angular2Declaration> declarations,
+                                                                                @NotNull DeclarationProximity proximity,
+                                                                                @NotNull Angular2DeclarationsScope moduleScope) {
+    if (proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE || proximity == DeclarationProximity.IN_SCOPE) {
+      List<Angular2Module> modules = StreamEx.of(declarations)
+        .flatCollection(declaration -> {
+          List<Angular2Module> sources = moduleScope.getPublicModulesExporting(declaration);
+          Angular2Module source = find(sources, module -> module.getDeclarations().contains(declaration));
+          return source != null ? singletonList(source) : sources;
+        })
+        .distinct()
+        .toList();
+      if (modules.size() == 1) {
+        return item.withTailText(" (" + modules.get(0).getName() + ")");
+      }
+    }
+    return item;
+  }
+
+  public static @NotNull WebSymbolCodeCompletionItem wrapWithImportDeclarationModuleHandler(@NotNull WebSymbolCodeCompletionItem item,
+                                                                                            @NotNull Class<? extends PsiElement> elementClass) {
+    return item.withInsertHandlerAdded(new WebSymbolCodeCompletionItemInsertHandler() {
+      @NotNull
+      @Override
+      public WebSymbol.Priority getPriority() {
+        return WebSymbol.Priority.LOWEST;
+      }
+
+      @NotNull
+      @Override
+      public Runnable prepare(@NotNull InsertionContext context, @NotNull LookupElement item) {
+        boolean templateBindings = Angular2TemplateBindings.class == elementClass;
+        PsiElement element = PsiTreeUtil.getParentOfType(context.getFile().findElementAt(context.getStartOffset()),
+                                                         templateBindings ? XmlAttribute.class : elementClass);
+        if (element == null) return () -> {};
+        SmartPsiElementPointer<PsiElement> elementPointer = SmartPointerManager.createPointer(element);
+
+        return () -> {
+          WriteAction.run(() -> PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument()));
+          PsiElement newElement = elementPointer.getElement();
+          if (newElement == null) {
+            return;
+          }
+          if (templateBindings && newElement instanceof XmlAttribute) {
+            newElement = Angular2TemplateBindings.get((XmlAttribute)newElement);
+          }
+          Angular2FixesFactory.ensureDeclarationResolvedAfterCodeCompletion(newElement, context.getEditor());
+        };
+      }
+    });
+  }
 
   @Contract(pure = true)
   public static @NotNull LookupElementBuilder decorateLookupElementWithModuleSource(@NotNull LookupElementBuilder element,
@@ -56,7 +113,7 @@ public class Angular2CodeInsightUtils {
   public static LookupElementBuilder wrapWithImportDeclarationModuleHandler(@NotNull LookupElementBuilder element,
                                                                             @NotNull Class<? extends PsiElement> elementClass) {
     InsertHandler<LookupElement> originalHandler = element.getInsertHandler();
-    return element.withInsertHandler(new InsertHandler<LookupElement>() {
+    return element.withInsertHandler(new InsertHandler<>() {
       @Override
       public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
         boolean templateBindings = Angular2TemplateBindings.class == elementClass;

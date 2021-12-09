@@ -102,3 +102,16 @@ fun12(){
     }
   }
 }
+
+external int i1;
+external final fx;
+external var fx1;
+
+class A {
+  external int i1;
+  external final fx;
+  external var fx1;
+  external covariant var cx;
+  abstract var cx;
+  abstract static var cx;
+}

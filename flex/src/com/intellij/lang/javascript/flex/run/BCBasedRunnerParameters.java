@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -24,26 +25,26 @@ import java.util.Map;
 import java.util.Objects;
 
 public class BCBasedRunnerParameters implements Cloneable {
-  @NotNull private String myModuleName = "";
-  @NotNull private String myBCName = "";
+  private @NotNull @NlsSafe String myModuleName = "";
+  private @NotNull @NlsSafe String myBCName = "";
 
   @Nullable private DeviceInfo myDeviceInfo;
 
   @NotNull
-  public String getModuleName() {
+  public @NlsSafe String getModuleName() {
     return myModuleName;
   }
 
-  public void setModuleName(@NotNull final String moduleName) {
+  public void setModuleName(@NotNull @NlsSafe final String moduleName) {
     myModuleName = moduleName;
   }
 
   @NotNull
-  public String getBCName() {
+  public @NlsSafe String getBCName() {
     return myBCName;
   }
 
-  public void setBCName(@NotNull final String BCName) {
+  public void setBCName(final @NotNull @NlsSafe String BCName) {
     myBCName = BCName;
   }
 
@@ -113,7 +114,7 @@ public class BCBasedRunnerParameters implements Cloneable {
     }
   }
 
-  public void handleModulesRename(List<Module> modules, Function<Module, String> oldNameProvider) {
+  public void handleModulesRename(List<? extends Module> modules, Function<? super Module, String> oldNameProvider) {
     for (Module module : modules) {
       String oldName = oldNameProvider.fun(module);
       if (oldName.equals(myModuleName)) {

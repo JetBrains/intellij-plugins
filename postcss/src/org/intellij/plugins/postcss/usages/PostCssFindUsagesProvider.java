@@ -44,13 +44,13 @@ public class PostCssFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   public String getType(@NotNull PsiElement element) {
     if (element instanceof PostCssCustomSelector) {
-      return PostCssBundle.message("custom.selector");
+      return PostCssBundle.message("find.usages.element.type.custom.selector");
     }
     else if (element instanceof PostCssCustomMedia) {
-      return PostCssBundle.message("custom.media");
+      return PostCssBundle.message("find.usages.element.type.custom.media");
     }
     else if (element instanceof PostCssSimpleVariableDeclaration) {
-      return PostCssBundle.message("simple.var");
+      return PostCssBundle.message("find.usages.element.type.simple.var");
     }
     return "";
   }

@@ -45,6 +45,7 @@ import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
+import static org.osmorc.i18n.OsmorcBundle.message;
 
 /**
  * This class provides a default implementation for a part of the FrameworkRunner interface.
@@ -68,7 +69,9 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     myInstance = myRunConfiguration.getInstanceToUse();
     assert myInstance != null : myRunConfiguration;
     myIntegrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(myInstance);
-    assert myIntegrator != null : myInstance;
+    if (myIntegrator == null) {
+      throw new CantRunException(message("run.configuration.missing.integrator", myInstance));
+    }
     myInstanceManager = myIntegrator.getFrameworkInstanceManager();
     myAdditionalProperties = myRunConfiguration.getAdditionalProperties();
     myBundles = bundles;
@@ -84,7 +87,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       myWorkingDir = new File(myRunConfiguration.getWorkingDir());
     }
     if (!myWorkingDir.isDirectory() && !myWorkingDir.mkdirs()) {
-      throw new CantRunException("Cannot create work directory '" + myWorkingDir.getPath() + "'");
+      throw new CantRunException(message("run.configuration.working.dir.create.failed", myWorkingDir.getPath()));
     }
     params.setWorkingDirectory(myWorkingDir);
 
@@ -96,7 +99,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
 
     Collection<SelectedBundle> systemBundles = myInstanceManager.getFrameworkBundles(myInstance, FrameworkBundleType.SYSTEM);
     if (systemBundles.isEmpty()) {
-      throw new CantRunException("Libraries required to start the framework not found - please check the installation");
+      throw new CantRunException(message("run.configuration.no.system.libs"));
     }
     for (SelectedBundle bundle : systemBundles) {
       String path = bundle.getBundlePath();
@@ -107,7 +110,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
       Collection<SelectedBundle> shellBundles = myInstanceManager.getFrameworkBundles(myInstance, FrameworkBundleType.SHELL);
       if (shellBundles.isEmpty()) {
-        throw new CantRunException("Console requested but no shell bundles can be found - please check the installation");
+        throw new CantRunException(message("run.configuration.no.shell.bundles"));
       }
       List<SelectedBundle> allBundles = new ArrayList<>(shellBundles);
       allBundles.addAll(myBundles);

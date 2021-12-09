@@ -1,31 +1,27 @@
 package com.intellij.tapestry.core;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileBasedUserDataCache;
-import com.intellij.psi.util.CachedValue;
-import gnu.trove.THashMap;
+import com.intellij.psi.util.CachedValuesManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
+import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class MappingDataCache extends FileBasedUserDataCache<Map<String, String>> {
-  private final Key<CachedValue<Map<String, String>>> ourCachedIdsValueKey = Key.create("tapestry.mapping.cached.value");
+@VisibleForTesting
+public final class MappingDataCache {
   private static final String TAPESTRY_MAPPING_FQN = "org.apache.tapestry5.services.LibraryMapping";
   private static final String TAPESTRY_MAPPING_TEST_FQN = "LibraryMapping";
 
-  @Override
-  protected Key<CachedValue<Map<String, String>>> getKey() {
-    return ourCachedIdsValueKey;
+  @NotNull
+  public static Map<String, String> getMappingData(@NotNull PsiFile file) {
+    return CachedValuesManager.getProjectPsiDependentCache(file, MappingDataCache::computeMappingData);
   }
 
-  @Override
-  protected Map<String, String> doCompute(PsiFile file) {
-    final Map<String, String> result = new THashMap<>();
+  private static Map<String, String> computeMappingData(PsiFile file) {
+    final Map<String, String> result = new HashMap<>();
     if (file instanceof PsiCompiledElement) {
       PsiElement element = file.getNavigationElement();
       if (element != file && element instanceof PsiFile) {
@@ -61,7 +57,7 @@ public class MappingDataCache extends FileBasedUserDataCache<Map<String, String>
     return result;
   }
 
-  protected static String calculateExprValue(PsiExpression expression) {
+  private static String calculateExprValue(PsiExpression expression) {
     if (expression instanceof PsiJavaReference) {
       final PsiElement resolve = ((PsiJavaReference)expression).resolve();
       if (resolve instanceof PsiField &&

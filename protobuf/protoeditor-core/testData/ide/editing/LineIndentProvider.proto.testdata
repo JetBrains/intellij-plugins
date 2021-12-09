@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package foo.bar;
+
+// Comment
+// Another comment
+message abcd {
+  // Comment inside
+  // Another comment
+  message blah {
+    optional bool test = 10 [
+      deprecated = true,
+      weak = false
+      ,
+      something_else = 10
+    ];
+  }
+  optional int32 x = 34;
+  /*
+   * Block comment
+   */
+}
+
+message bcd {
+  optional (opt).foo.bar = 5;
+  optional group Abc = 10 {
+    bool group_field = 1;
+  }
+}
+
+option foo =
+    "continuation";
+option bar = "semi on next line"
+;
+
+service Abcd {
+  rpc FooBar (Empty) returns (Empty) {
+    option (google.api.http).get = "foo";
+  }
+  rpc SpaceInParen (
+      Empty) returns (Empty) {
+    option (google.api.http).get = "foo";
+  }
+}

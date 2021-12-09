@@ -62,7 +62,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
       final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
       final ListPopup popupStep =
-        popupFactory.createListPopup(new BaseListPopupStep<CucumberStepDefinitionCreationContext>(
+        popupFactory.createListPopup(new BaseListPopupStep<>(
           CucumberBundle.message("choose.step.definition.file"), new ArrayList<>(pairs)) {
           @Override
           public boolean isSpeedSearchEnabled() {
@@ -131,8 +131,8 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
       final String parentDirPath = model.getStepDefinitionFolderPath();
 
-      WriteCommandAction.runWriteCommandAction(project, "Create Step Definition", null, 
-        () -> CommandProcessor.getInstance().executeCommand(project, () -> {
+      WriteCommandAction.runWriteCommandAction(project, CucumberBundle.message("create.step.definition"), null,
+                                               () -> CommandProcessor.getInstance().executeCommand(project, () -> {
           try {
             VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
             PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);

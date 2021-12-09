@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <labelFor value="d91a1"/>
-          <text value="Web &amp;path:"/>
+          <text resource-bundle="messages/CfmlBundle" key="run.config.editor.form.label.web.path"/>
         </properties>
       </component>
       <vspacer id="b1dfc">
@@ -36,7 +36,7 @@
         </constraints>
         <properties>
           <labelFor value="f7368"/>
-          <text value="&amp;Browser:"/>
+          <text resource-bundle="messages/CfmlBundle" key="run.config.editor.form.label.browser"/>
         </properties>
       </component>
       <hspacer id="b535a">

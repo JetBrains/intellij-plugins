@@ -1,0 +1,9 @@
+#if (${PACKAGE_NAME} && $PACKAGE_NAME != "" )package ${PACKAGE_NAME}
+#end
+
+#parse("File Header.java")
+
+import io.cucumber.groovy.PendingException
+
+import static io.cucumber.groovy.Hooks.*
+import static io.cucumber.groovy.EN.*

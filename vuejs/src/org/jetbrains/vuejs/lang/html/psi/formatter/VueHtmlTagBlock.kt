@@ -9,9 +9,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.formatter.xml.XmlBlock
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy
-import com.intellij.psi.formatter.xml.XmlInjectedLanguageBlockBuilder
 import com.intellij.psi.formatter.xml.XmlTagBlock
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import java.util.*
 
 class VueHtmlTagBlock(node: ASTNode,
@@ -42,4 +42,8 @@ class VueHtmlTagBlock(node: ASTNode,
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {
     return childLanguage === VueLanguage.INSTANCE || super.useMyFormatter(myLanguage, childLanguage, childPsi)
   }
+
+  override fun chooseWrap(child: ASTNode?, tagBeginWrap: Wrap?, attrWrap: Wrap?, textWrap: Wrap?): Wrap? =
+    if (child?.elementType == INTERPOLATION_START) textWrap
+    else super.chooseWrap(child, tagBeginWrap, attrWrap, textWrap)
 }

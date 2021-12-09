@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -53,12 +54,6 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
       @Override
       public String getPresentableText() {
         return getName();
-      }
-
-      @Override
-      @Nullable
-      public String getLocationString() {
-        return null;
       }
 
       @Override

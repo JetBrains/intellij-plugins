@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package foo.bar;
+
+// Comment
+message abcd {
+  message blah {
+
+  }
+  int32 x = 34;
+}
+
+message bcd {
+
+}
+
+option foo = {
+
+  baz <
+    bar: 3
+    sub_message: {
+      // Comment
+      repeated_vals: [
+        1,
+        2,
+        3
+        ,
+        4
+      ]
+      repeated_messages: [
+        {
+          foo: 1
+        },
+        {},
+        {
+        }
+        ,
+        {
+          foo: 3
+        }
+      ]
+    }
+  >
+};
+
+message braceOnNextLine
+{
+  option foo =
+  {
+    bar
+    {
+      baz: 10
+    }
+  };
+}

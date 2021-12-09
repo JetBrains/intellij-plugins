@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.PopupHandler;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyBrowser");
+  private static final Logger LOG = Logger.getInstance(DartCallHierarchyBrowser.class);
 
   public DartCallHierarchyBrowser(Project project, PsiElement method) {
     super(project, method);
@@ -39,15 +40,15 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   }
 
   @Override
-  protected void createTrees(@NotNull Map<String, JTree> type2TreeMap) {
+  protected void createTrees(@NotNull Map<? super @Nls String, ? super JTree> type2TreeMap) {
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP);
     type2TreeMap.put(getCallerType(), createHierarchyTree(group));
     type2TreeMap.put(getCalleeType(), createHierarchyTree(group));
   }
 
   private JTree createHierarchyTree(ActionGroup group) {
-    final JTree tree = createTree(false);
-    PopupHandler.installPopupHandler(tree, group, ActionPlaces.CALL_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
+    JTree tree = createTree(false);
+    PopupHandler.installPopupMenu(tree, group, ActionPlaces.CALL_HIERARCHY_VIEW_POPUP);
     return tree;
   }
 

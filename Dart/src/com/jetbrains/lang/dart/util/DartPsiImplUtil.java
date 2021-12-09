@@ -15,10 +15,13 @@ import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 
-public class DartPsiImplUtil {
+public final class DartPsiImplUtil {
 
   private static final String TRIPLE_APOS = "'''";
   private static final String TRIPLE_QUOTE = "\"\"\"";

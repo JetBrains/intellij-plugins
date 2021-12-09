@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -10,7 +11,7 @@ import java.io.*;
 /**
  * Produced from abcdump.as
  */
-public class FlexImporter {
+public final class FlexImporter {
   private static final int ABC_VER = 46 << 16 | 14;
   private static final int ABC_VER2 = 46 << 16 | 15;
   private static final int ABC_VER3 = 46 << 16 | 16;

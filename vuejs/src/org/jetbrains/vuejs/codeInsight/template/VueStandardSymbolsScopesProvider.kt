@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.template
 
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -11,7 +12,6 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.vuejs.codeInsight.VueJSTypeEvaluator
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import java.util.*
 import java.util.function.Consumer
@@ -21,6 +21,11 @@ class VueStandardSymbolsScopesProvider : VueTemplateScopesProvider() {
   companion object {
     @NonNls
     val EVENT = "\$event"
+
+    private fun resolveEventType(@Suppress("UNUSED_PARAMETER") attribute: XmlAttribute): JSType? {
+      // TODO resolve event type
+      return null
+    }
   }
 
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
@@ -48,7 +53,7 @@ class VueStandardSymbolsScopesProvider : VueTemplateScopesProvider() {
   }
 
   private class VueEventImplicitElement(attribute: XmlAttribute) :
-    JSLocalImplicitElementImpl(EVENT, VueJSTypeEvaluator.resolveEventType(attribute),
+    JSLocalImplicitElementImpl(EVENT, resolveEventType(attribute),
                                attribute, JSImplicitElement.Type.Variable) {
 
     private val myDeclarations: Collection<PsiElement> = attribute.descriptor?.declarations ?: emptyList()

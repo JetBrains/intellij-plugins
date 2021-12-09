@@ -1,0 +1,10 @@
+// Test reserved fields.
+syntax = "proto3";
+
+package foo.bar;
+
+message TestReservedFields {
+  string field1 = 1;
+  reserved 2, 15, 9 to 11;
+  reserved "bar", "baz";
+}

@@ -15,6 +15,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 class HbBlockMismatchFix implements IntentionAction {
@@ -87,6 +88,7 @@ class HbBlockMismatchFix implements IntentionAction {
     return true;
   }
 
+  @Nls
   private String getName() {
     return myUpdateOpenMustache
            ? HbBundle.message("hb.block.mismatch.intention.rename.open", myOriginalName, myCorrectedName)

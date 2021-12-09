@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="training">
+    <ift.language.extension language="Swift" implementationClass="com.jetbrains.swift.ift.SwiftSupport"/>
+    <ift.learning.course language="Swift" implementationClass="com.jetbrains.swift.ift.SwiftLearningCourse"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="ift.show.feedback.link.swift"
+                 description="Whether IFT show feedback link in the modules panel for Swift course."
+                 defaultValue="TRUE"
+                 restartRequired="false"/>
+  </extensions>
+</idea-plugin>

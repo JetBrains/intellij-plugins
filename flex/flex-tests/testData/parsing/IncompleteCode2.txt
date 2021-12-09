@@ -17,5 +17,5 @@ JSFile:IncompleteCode2.js2
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('update')
       PsiElement(JS:LBRACKET)('[')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>

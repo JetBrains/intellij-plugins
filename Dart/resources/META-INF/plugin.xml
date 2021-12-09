@@ -1,7 +1,8 @@
 <idea-plugin>
   <name>Dart</name>
+  <id>Dart</id>
   <description><![CDATA[
-<p>Support for <a href="https://www.dartlang.org/">Dart</a></p>
+<p>Support for <a href="https://dart.dev/">Dart</a></p>
 <p>Features</p>
 <ul>
 <li>Smart coding assistance for Dart that includes code completion, formatting, navigation, intentions, refactorings, and more</li>
@@ -25,6 +26,7 @@
 
   <extensionPoints>
     <extensionPoint name="completionExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionExtension" dynamic="true"/>
+    <extensionPoint name="completionTimerExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionTimerExtension" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -59,7 +61,8 @@
 
     <html.scriptContentProvider language="Dart" implementationClass="com.jetbrains.lang.dart.DartScriptContentProvider"/>
     <nonProjectFileWritingAccessExtension implementation="com.jetbrains.lang.dart.ide.DartWritingAccessProvider"/>
-    <spellchecker.support language="Dart" implementationClass="com.jetbrains.lang.dart.DartSpellcheckingStrategy"/>
+    <spellchecker.support language="Dart" implementationClass="com.jetbrains.lang.dart.ide.spelling.DartSpellcheckingStrategy"/>
+    <spellchecker.bundledDictionaryProvider implementation="com.jetbrains.lang.dart.ide.spelling.DartBundledDictionaryProvider"/>
     <lang.documentationProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.documentation.DartDocumentationProvider"/>
     <lang.implementationTextSelectioner language="Dart"
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
@@ -72,6 +75,7 @@
     <psi.referenceContributor language="XML" implementation="com.jetbrains.lang.dart.psi.DartReferenceContributor"/>
     <xml.elementDescriptorProvider implementation="com.jetbrains.lang.dart.xml.DartHtmlElementDescriptorProvider"/>
     <xml.attributeDescriptorsProvider implementation="com.jetbrains.lang.dart.xml.DartHtmlAttributeDescriptorProvider"/>
+    <xml.xmlTypedHandlersAdditionalSupport implementation="com.jetbrains.lang.dart.xml.DartXmlTypedHandlersAdditionalSupport" />
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
@@ -161,7 +165,6 @@
     <gotoSymbolContributor implementation="com.jetbrains.lang.dart.ide.DartSymbolContributor"/>
 
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
-    <completion.contributor language="HTML" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <gotoDeclarationHandler implementation="com.jetbrains.lang.dart.ide.completion.DartGotoDeclarationHandler"/>
     <lookup.charFilter implementation="com.jetbrains.lang.dart.ide.completion.DartCharFilter"/>
     <lang.smartEnterProcessor language="Dart"
@@ -179,21 +182,21 @@
     <elementDescriptionProvider implementation="com.jetbrains.lang.dart.psi.DartElementDescriptionProvider"/>
 
     <applicationService serviceImplementation="com.jetbrains.lang.dart.assists.DartQuickAssistSet"/>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention0</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention1</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention2</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention3</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention4</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention5</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention6</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention7</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention8</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention9</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention10</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention11</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention12</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention13</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention14</className> <category>Dart</category> </intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention0</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention1</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention2</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention3</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention4</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention5</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention6</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention7</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention8</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention9</className>  <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention10</className> <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention11</className> <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention12</className> <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention13</className> <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention14</className> <bundleName>messages.DartBundle</bundleName> <categoryKey>inspections.group.name</categoryKey> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
 
     <projectService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
@@ -225,7 +228,8 @@
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
     <localInspection bundle="messages.DartBundle" key="outdated.dependencies.inspection.name"
-                     groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
+                     groupBundle="messages.DartBundle" groupKey="inspections.group.name"
+                     enabledByDefault="true" level="WARNING" language="Dart"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
     <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
@@ -233,8 +237,7 @@
     <applicationService serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
     <codeCompletionConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
-    <backgroundPostStartupActivity implementation="com.jetbrains.lang.dart.DartBackgroundStartupActivity"/>
-    <postStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
+    <backgroundPostStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
     <vfs.asyncListener implementation="com.jetbrains.lang.dart.DartFileListener"/>
 
     <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
@@ -242,7 +245,13 @@
 
     <lang.syntaxHighlighter language="Dart in Html" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
     <lang.parserDefinition language="Dart in Html" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
-    <notificationAllowlist groupIds="Dart analysis issue;Dart Support;Dart Analysis;Dart Webdev;Dart Pub Tool;Dart Analysis Server;pubspec.yaml inspection"/>
+    <notificationGroup id="Dart Support" displayType="BALLOON"/>
+    <notificationGroup id="Dart Analysis" displayType="TOOL_WINDOW" toolWindowId="Dart Analysis" isLogByDefault="false"/>
+    <notificationGroup id="Dart Webdev" displayType="TOOL_WINDOW" toolWindowId="Dart Webdev" isLogByDefault="false"/>
+    <notificationGroup id="Dart Analysis Server" displayType="BALLOON"/>
+    <notificationGroup id="Dart Pub Tool" displayType="BALLOON"/>
+    <notificationGroup id="pubspec.yaml inspection" displayType="BALLOON"/>
+    <notificationGroup id="Dart analysis issue" displayType="NONE"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

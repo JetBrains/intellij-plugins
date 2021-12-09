@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
+import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
@@ -47,9 +48,10 @@ abstract class VuexContainerImpl : VuexContainer {
 
 class VuexModuleImpl(override val name: String,
                      private val initializerElement: PsiElement,
-                     nameElement: PsiElement) : VuexContainerImpl(), VuexModule {
+                     nameElement: PsiElement,
+                     private val forceNamespaced: Boolean = false) : VuexContainerImpl(), VuexModule {
 
-  constructor(name: String, element: PsiElement) : this(name, element, element)
+  constructor(name: String, element: PsiElement, forceNamespaced: Boolean = false) : this(name, element, element, forceNamespaced)
 
   override val source = nameElement
 
@@ -59,20 +61,22 @@ class VuexModuleImpl(override val name: String,
   }
 
   override val isNamespaced: Boolean
-    get() = get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)
+    get() = forceNamespaced || get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)
 
-  override val initializer: JSObjectLiteralExpression?
+  override val initializer: JSElement?
     get() {
-      (initializerElement as? JSObjectLiteralExpression)?.let { return it }
       val initializerElement = initializerElement
+      if (initializerElement is JSObjectLiteralExpression) return initializerElement
+      if (initializerElement is JSFile) return initializerElement
       return CachedValuesManager.getCachedValue(initializerElement) {
-        objectLiteralFor(initializerElement)?.let { create(it, initializerElement, it) }
-        ?: create(null as JSObjectLiteralExpression?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)
+        resolveElementTo(initializerElement, JSObjectLiteralExpression::class, JSFile::class)
+          ?.let { create(it, initializerElement, it) }
+        ?: create(null as JSElement?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)
       }
     }
 }
 
-class VuexStoreImpl(override val source: JSNewExpression) : VuexContainerImpl(), VuexStore {
+class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl(), VuexStore {
   override val initializer: JSObjectLiteralExpression?
     get() {
       val storeCreationCall = this.source

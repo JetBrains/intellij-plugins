@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.lang.ognl.spellchecker;
 
 import com.intellij.lang.ognl.OgnlTypes;
@@ -28,11 +27,10 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class OgnlSpellcheckingStrategy extends SpellcheckingStrategy {
-
+final class OgnlSpellcheckingStrategy extends SpellcheckingStrategy {
   @NotNull
   @Override
-  public Tokenizer getTokenizer(final PsiElement element) {
+  public Tokenizer<?> getTokenizer(final PsiElement element) {
     final IElementType elementType = element.getNode().getElementType();
     if (elementType == OgnlTypes.IDENTIFIER ||
         OgnlTokenGroups.TEXT.contains(elementType)) {

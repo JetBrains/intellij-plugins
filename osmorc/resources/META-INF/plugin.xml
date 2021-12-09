@@ -43,21 +43,27 @@
       to the OSGi container and start/stop bundles.
     </p>
   ]]></description>
+
   <category>JVM Frameworks</category>
   <vendor>JetBrains</vendor>
 
-  <depends>com.intellij.javaee</depends>
-  <depends>com.intellij.modules.java</depends>
+  <dependencies>
+    <plugin id="com.intellij.java"/>
+  </dependencies>
+
+  <content>
+    <module name="intellij.osgi/javaee"/>
+  </content>
+
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
 
+  <resource-bundle>messages.OsmorcBundle</resource-bundle>
+
   <extensionPoints>
-    <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
-    <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
+    <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <javaee.legacy.project.wizard/>
-
     <postStartupActivity implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity"/>
     <vfs.asyncListener implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity$FileListener"/>
 
@@ -66,9 +72,8 @@
 
     <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
-    <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
+    <applicationService serviceImplementation="org.jetbrains.osgi.project.BundleManifestCache"/>
 
-    <projectService serviceImplementation="org.jetbrains.osgi.project.BundleManifestCache"/>
     <projectService serviceImplementation="org.osmorc.settings.ProjectSettings"/>
 
     <moduleService serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManager"/>
@@ -100,7 +105,6 @@
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
-
     <localInspection bundle="messages.OsmorcBundle" key="WrongImportPackageInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      language="Manifest" enabledByDefault="true" level="ERROR"
@@ -116,26 +120,25 @@
 
     <standardResourceProvider implementation="org.jetbrains.osgi.xml.OsgiResourceProvider"/>
 
-    <compileServer.plugin classpath="osmorc-jps-plugin.jar;biz.aQute.bndlib-5.0.0.jar;biz.aQute.repository-5.0.0.jar;biz.aQute.resolve-5.0.0.jar;bundlor-all.jar"/>
+    <compileServer.plugin classpath="osgi-jps.jar;biz.aQute.bndlib-5.1.2.jar;biz.aQute.repository-5.1.2.jar;biz.aQute.resolve-5.1.2.jar;bundlor-all.jar"/>
 
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
     <projectConfigurable groupId="language" id="reference.settings.project.osgi.project.settings"
-                         bundle="messages.OsmorcBundle"
-                         key="configurable.ProjectSettingsEditor.display.name"
+                         bundle="messages.OsmorcBundle" key="settings.project"
                          instance="org.osmorc.settings.ProjectSettingsEditor"/>
 
     <applicationConfigurable groupId="language" id="osmorc.ide.settings"
-                             bundle="messages.OsmorcBundle"
-                             key="configurable.ApplicationSettingsEditor.display.name"
+                             bundle="messages.OsmorcBundle" key="settings.application"
                              instance="org.osmorc.settings.ApplicationSettingsEditor">
-
       <configurable id="reference.settings.project.osgi.library.bundling"
-                    bundle="messages.OsmorcBundle"
-                    key="configurable.LibraryBundlingEditor.display.name"
+                    bundle="messages.OsmorcBundle" key="settings.application.bundling"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
-    <notificationAllowlist groupIds="OSGi Bnd Notifications;OSGi;OSGi Important Messages"/>
+
+    <notificationGroup id="OSGi" displayType="BALLOON" bundle="messages.OsmorcBundle" key="notification.group.main"/>
+    <notificationGroup id="OSGi-important" displayType="STICKY_BALLOON" bundle="messages.OsmorcBundle" key="notification.group.important"/>
+    <notificationGroup id="OSGi-bnd" displayType="STICKY_BALLOON" bundle="messages.OsmorcBundle" key="notification.group.bnd" />
   </extensions>
 
   <extensions defaultExtensionNs="Osmorc">
@@ -143,8 +146,6 @@
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishIntegrator"/>
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.felix.FelixIntegrator"/>
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.concierge.ConciergeIntegrator"/>
-
-    <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
   </extensions>
 
   <projectListeners>
@@ -155,27 +156,20 @@
   </projectListeners>
 
   <actions>
-    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reload Projects"
-            description="Reload selected Bnd/Bndtools projects"
-            class="org.jetbrains.osgi.bnd.imp.ReimportProjectsAction">
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-    </action>
-    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reload Workspace"
-            description="Reload entire Bnd/Bndtools workspace"
-            class="org.jetbrains.osgi.bnd.imp.ReimportWorkspaceAction">
+    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" class="org.jetbrains.osgi.bnd.imp.ReimportProjectsAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
 
-    <action id="osgi.bnd.resolve.bndrun" icon="OsmorcIdeaIcons.Bnd" text="Resolve .bndrun"
-            description="Resolves requirements and updates '-runbundles' directive"
-            class="org.jetbrains.osgi.bnd.resolve.ResolveAction">
+    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" class="org.jetbrains.osgi.bnd.imp.ReimportWorkspaceAction">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <action id="osgi.bnd.resolve.bndrun" icon="OsmorcIdeaIcons.Bnd" class="org.jetbrains.osgi.bnd.resolve.ResolveAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
 
-    <group id="osmorc.viewGeneratedManifests" text="View Generated Manifest" popup="true"
-           description="View the manifest of a recently generated OSGi bundle"
-           class="org.osmorc.make.ViewGeneratedManifestGroup">
+    <group id="osmorc.viewGeneratedManifests" popup="true" class="org.osmorc.make.ViewGeneratedManifestGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
   </actions>

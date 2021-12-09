@@ -7,17 +7,13 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.TargetAwareRunProfile;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.cidr.cpp.cmake.CMakeException;
-import com.jetbrains.cidr.cpp.cmake.model.CMakeConfigurator;
-import com.jetbrains.cidr.cpp.cmake.model.CMakeModel;
-import com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData;
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
-import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildConfigurationHelper;
-import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains;
 import com.jetbrains.cidr.execution.CidrCommandLineState;
@@ -34,18 +30,24 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   implements CidrExecutableDataHolder, TargetAwareRunProfile {
 
   private final String myBuildTargetName;
-  private final Supplier<String> mySuggestedName;
+  private final Supplier<@NlsActions.ActionText String> mySuggestedName;
   private final String[] cliParameters;
 
 
   private volatile CPPToolchains.Toolchain myToolchain;
+  private final PlatformioActionBase.FUS_COMMAND command;
 
-  public PlatformioBaseConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String myBuildTargetName, @NotNull Supplier<String> name, String @Nullable [] cliParameters) {
+  public PlatformioBaseConfiguration(@NotNull Project project,
+                                     @NotNull ConfigurationFactory configurationFactory,
+                                     @NotNull String myBuildTargetName,
+                                     @NotNull Supplier<@NlsActions.ActionText String> name,
+                                     String @Nullable [] cliParameters,
+                                     @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(project, configurationFactory, name.get());
     this.myBuildTargetName = myBuildTargetName;
     this.mySuggestedName = name;
     this.cliParameters = cliParameters;
+    this.command = command;
   }
 
   @NotNull
@@ -63,7 +65,7 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   @Override
   public @Nullable
   CidrCommandLineState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    return new CidrCommandLineState(env, new PlatformioLauncher(env, this, cliParameters));
+    return new CidrCommandLineState(env, new PlatformioLauncher(env, this, cliParameters, command));
   }
 
 
@@ -101,7 +103,10 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
 
   @Nullable
   public static String findPlatformio() {
-    String platformioLocation;
+    String platformioLocation = PlatformioConfigurable.getPioLocation();
+    if (!platformioLocation.isEmpty()) {
+      return new File(platformioLocation).canExecute() ? platformioLocation : null;
+    }
     if (SystemInfo.isWindows) {
       platformioLocation = PathEnvironmentVariableUtil.findExecutableInWindowsPath("platformio", null);
     }
@@ -110,31 +115,6 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
       platformioLocation = file == null ? null : file.getAbsolutePath();
     }
     return platformioLocation;
-  }
-
-  //todo use for automatic .svd file opening
-  @Nullable
-  public static CMakeConfigurator findActiveConfigurator(@NotNull Project project) throws CMakeException {
-    CMakeWorkspace workspace = CMakeWorkspace.getInstance(project);
-    if (!workspace.isInitialized()) {
-      return null;
-    }
-    CMakeModel model = workspace.getModel();
-    CMakeBuildProfileExecutionTarget selectedBuildProfile = getSelectedBuildProfile(project);
-    if (model != null && selectedBuildProfile != null) {
-      String profileName = selectedBuildProfile.getProfileName();
-      CMakeModelConfigurationData configurationData = model
-        .getConfigurationData()
-        .stream()
-        .filter(confData -> profileName.equals(confData.getConfigName()))
-        .findAny()
-        .orElse(null);
-
-      if (configurationData != null) {
-        return configurationData.getCacheConfigurator();
-      }
-    }
-    return null;
   }
 
   @NotNull

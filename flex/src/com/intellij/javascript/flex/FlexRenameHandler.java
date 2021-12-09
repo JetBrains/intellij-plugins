@@ -62,7 +62,7 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
       return;
     }
 
-    JSInheritanceUtil.iterateMethodsDown((JSFunction)element, new Processor<JSFunction>() {
+    JSInheritanceUtil.iterateMethodsDown((JSFunction)element, new Processor<>() {
       // synchronized to protect the map
       @Override
       public synchronized boolean process(final JSFunction jsFunction) {

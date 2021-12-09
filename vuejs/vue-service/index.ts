@@ -2,13 +2,24 @@
 import * as ts from "typescript/lib/tsserverlibrary";
 import {VueScriptCache} from "./vueScriptCache"
 
-let patched = false;
+let ts_impl_patched = false;
 
 module.exports = function init(
   {typescript: ts_impl}: { typescript: typeof ts },
 ) {
-  if (!patched) {
-    patched = true
+  const ts_4_3_plus = Number.parseFloat(ts_impl.versionMajorMinor) >= 4.3
+  if (!ts_impl_patched) {
+    ts_impl_patched = true
+
+    // Don't output compilation results of `.vue` files. The DefaultSessionExtension#getFileWrite should actually be patched
+    // to not populate the output list
+    const _writeFile = ts_impl.sys.writeFile
+    ts_impl.sys.writeFile = function writeFilePatched(path: string, data: string, writeByteOrderMark?: boolean) {
+      if (path.endsWith(".vue.d.ts") || path.endsWith(".vue.js") || path.endsWith(".vue.js.map")) {
+        return
+      }
+      _writeFile(path, data, writeByteOrderMark);
+    }
 
     // Detect whether script kind has changed and if so, drop the whole program and patch compiler host
     const _createProgram = ts_impl.createProgram
@@ -20,7 +31,8 @@ module.exports = function init(
         compilerOptions = arguments[1]
         compilerHost = arguments[2]
         oldProgram = arguments[3]
-      } else {
+      }
+      else {
         const options = <ts.CreateProgramOptions>rootNamesOrOptions
         compilerOptions = options.options
         compilerHost = options.host
@@ -28,14 +40,23 @@ module.exports = function init(
       }
       if (compilerHost !== undefined && oldProgram !== undefined) {
         let scriptKindChanged: Set<string> = new Set()
+        let dropOldProgram = false
         for (let sourceFile of oldProgram.getSourceFiles()) {
           if (sourceFile.fileName.endsWith(".vue")) {
             try {
               // Check if we can safely acquire source code
-              compilerHost.getSourceFileByPath(sourceFile.fileName, (<any>sourceFile).resolvedPath, compilerOptions.target,
+              const file = compilerHost.getSourceFileByPath(sourceFile.fileName, (<any>sourceFile).resolvedPath, compilerOptions.target,
                 undefined, false)
-            } catch (e) {
-              // TODO - maybe we could change script kind here to avoid leak below
+              // In TS 4.3+ the above code won't fail
+              // The registry will drop the old version of the file, so we need to alter old sourceFile scriptKind
+              // to avoid one more acquisition, which later blocks file from being disposed
+              if ((<any>sourceFile).scriptKind != (<any>file).scriptKind) {
+                (<any>sourceFile).scriptKind = (<any>file).scriptKind
+                dropOldProgram = true
+              }
+            }
+            catch (e) {
+              // TODO TS <4.3 - maybe we could change script kind here to avoid leak below
               scriptKindChanged.add((<any>sourceFile).resolvedPath)
               scriptKindChanged.add(sourceFile.fileName)
             }
@@ -43,8 +64,8 @@ module.exports = function init(
         }
         // Do not reuse old program structure if any of Vue scripts have changed it's script kind
         if (scriptKindChanged.size > 0) {
-          // TODO - forcing shouldCreateNewSourceFile is causing leaks in the document registry,
-          //        as documents with changed script kind are acquired again
+          // TODO TS <4.3  - forcing shouldCreateNewSourceFile is causing leaks in the document registry,
+          //                 as documents with changed script kind are acquired again
 
           // Patch compiler host to not fall into fail condition
           const _getSourceFileByPath = compilerHost.getSourceFileByPath
@@ -62,11 +83,13 @@ module.exports = function init(
             arguments[3] = arguments[3] || scriptKindChanged.has(fileName)
             return _getSourceFile.apply(compilerHost, arguments)
           }
-
+        }
+        if (scriptKindChanged.size > 0 || dropOldProgram) {
           // Drop old program
           if ((<any>ts_impl).isArray(rootNamesOrOptions)) {
             arguments[3] = undefined
-          } else {
+          }
+          else {
             rootNamesOrOptions.oldProgram = undefined
           }
         }
@@ -87,7 +110,25 @@ module.exports = function init(
       }
       return _updateLanguageServiceSourceFile.apply(undefined, arguments)
     }
+  }
 
+  function myLoadWithLocalCache<T>(names: string[], containingFile: string, redirectedReference: object | undefined, loader: (name: string, containingFile: string, redirectedReference: object | undefined) => T): T[] {
+    if (names.length === 0) {
+      return [];
+    }
+    const resolutions: T[] = [];
+    const cache = new Map<string, T>();
+    for (const name of names) {
+      let result: T;
+      if (cache.has(name)) {
+        result = cache.get(name)!;
+      }
+      else {
+        cache.set(name, result = loader(name, containingFile, redirectedReference));
+      }
+      resolutions.push(result);
+    }
+    return resolutions;
   }
 
   return {
@@ -98,6 +139,7 @@ module.exports = function init(
       const tsLsHost = info.languageServiceHost;
       const project = info.project;
       const compilerHost = <ts.CompilerHost><any>project
+      const getCanonicalFileName = ts_impl.sys.useCaseSensitiveFileNames ? toFileNameLowerCase : identity;
 
       // Allow resolve into Vue files
       const vue_sys = {
@@ -111,7 +153,7 @@ module.exports = function init(
         }
       }
       let moduleResolutionCache = ts_impl.createModuleResolutionCache(project.getCurrentDirectory(),
-        (x: any) => compilerHost.getCanonicalFileName(x), project.getCompilerOptions());
+        (x: any) => (compilerHost.getCanonicalFileName ?? getCanonicalFileName)(x), project.getCompilerOptions());
       const loader = (moduleName: string, containingFile: string, redirectedReference: any) => {
         const tsResolvedModule = ts_impl.resolveModuleName(moduleName, containingFile, project.getCompilerOptions(),
           vue_sys, moduleResolutionCache, redirectedReference).resolvedModule!;
@@ -125,30 +167,52 @@ module.exports = function init(
         return tsResolvedModule
       }
       tsLsHost.resolveModuleNames = (moduleNames: any, containingFile: any, _reusedNames: any, redirectedReference: any) =>
-        (<any>ts_impl).loadWithLocalCache(moduleNames, containingFile, redirectedReference, loader);
+        ((<any>ts_impl).loadWithLocalCache || myLoadWithLocalCache)(moduleNames, containingFile, redirectedReference, loader);
 
-      // Strip non-TS content from the script
-      const _getScriptSnapshot = tsLsHost.getScriptSnapshot;
-      const vueScriptCache = new VueScriptCache(ts_impl,
-        fileName => _getScriptSnapshot.call(tsLsHost, fileName),
-        fileName => tsLsHost.getScriptVersion(fileName))
-      tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot {
-        if (fileName.endsWith(".vue")) {
-          return vueScriptCache.getScriptSnapshot(fileName)
+      // Avoid double-patching
+      if (!(tsLsHost as any)["__getScriptSnapshot__patched"]) {
+        (tsLsHost as any)["__getScriptSnapshot__patched"] = true
+        // Strip non-TS content from the script
+        const _getScriptSnapshot = tsLsHost.getScriptSnapshot;
+        const vueScriptCache = new VueScriptCache(ts_impl,
+          fileName => _getScriptSnapshot.call(tsLsHost, fileName),
+          fileName => tsLsHost.getScriptVersion(fileName))
+        tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot {
+          if (fileName.endsWith(".vue")) {
+            return vueScriptCache.getScriptSnapshot(fileName)
+          }
+          return _getScriptSnapshot.call(this, fileName);
         }
-        return _getScriptSnapshot.call(this, fileName);
-      }
 
-      // Provide script kind based on `lang` attribute
-      const _getScriptKind = tsLsHost.getScriptKind
-      tsLsHost.getScriptKind = function (fileName): ts.ScriptKind {
-        if (fileName.endsWith(".vue")) {
-          return vueScriptCache.getScriptKind(fileName)
+        // Provide script kind based on `lang` attribute
+        const _getScriptKind = tsLsHost.getScriptKind
+        tsLsHost.getScriptKind = function (fileName): ts.ScriptKind {
+          if (fileName.endsWith(".vue")) {
+            return vueScriptCache.getScriptKind(fileName)
+          }
+          return _getScriptKind.call(this, fileName)
         }
-        return _getScriptKind.call(this, fileName)
       }
 
       return tsLs;
     }
   };
 };
+
+/* Copied from TS compiler/core.ts */
+
+function identity<T>(x: T) {
+  return x;
+}
+
+function toLowerCase(x: string) {
+  return x.toLowerCase();
+}
+
+const fileNameLowerCaseRegExp = /[^\u0130\u0131\u00DFa-z0-9\\/:\-_. ]+/g;
+
+function toFileNameLowerCase(x: string) {
+  return fileNameLowerCaseRegExp.test(x) ?
+    x.replace(fileNameLowerCaseRegExp, toLowerCase) :
+    x;
+}

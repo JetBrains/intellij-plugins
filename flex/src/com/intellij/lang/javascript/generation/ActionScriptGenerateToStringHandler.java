@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -9,6 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.JSOverrideHandler;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -23,8 +25,8 @@ import java.util.Set;
 class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
 
   @Override
-  protected String getTitleKey() {
-    return "generate.to.string.chooser.title";
+  protected @NlsContexts.DialogTitle String getTitle() {
+    return JavaScriptBundle.message("generate.to.string.chooser.title");
   }
 
   @Override

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -33,9 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author yole
- */
+
 public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
@@ -46,7 +44,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
 
   @NonNls private static final String BUNDLE_ATTR_NAME = "bundle";
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl> ourPropertyInfoProvider =
-    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<>() {
       @Override
       @Nullable
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
@@ -66,7 +64,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     };
   private static final Key<ActionScriptReferenceSet> METADATA_REFERENCE_KEY = Key.create("com.intellij.lang.javascript.METADATA_REFERENCE_KEY");
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl> ourBundleInfoProvider =
-    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<>() {
       @Override
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
@@ -343,7 +341,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
-      return XmlPsiBundle.message("wrong.value", "attribute");
+      return XmlPsiBundle.message("xml.inspections.wrong.value", "attribute");
     }
   }
 }

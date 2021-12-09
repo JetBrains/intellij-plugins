@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.JSNewExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -15,8 +14,8 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
@@ -29,7 +28,7 @@ object VuexModelManager {
     if (!isVueContext(element)) return null
     var stores = getAllVuexStores(element.project)
     // Introduce extension point if another provider would need to be added
-    NuxtModelManager.getApplication(element)?.getVuexStore()?.let {
+    NuxtModelManager.getApplication(element)?.vuexStore?.let {
       stores = stores + it
     }
     val registeredModules = getRegisteredModules(element.project)
@@ -46,7 +45,7 @@ object VuexModelManager {
                               GlobalSearchScope.projectScope(project),
                               JSImplicitElementProvider::class.java)
           .asSequence()
-          .filterIsInstance<JSNewExpression>()
+          .filterIsInstance<JSCallExpression>()
           .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY } != null }
           .map { VuexStoreImpl(it) }
           .toList(), PsiModificationTracker.MODIFICATION_COUNT)
@@ -70,7 +69,7 @@ object VuexModelManager {
     val implicitElement = call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY }
                           ?: return null
 
-    val arguments = getStubSafeCallArguments(call)
+    val arguments = call.stubSafeCallArguments
     val nameElement = arguments.getOrNull(0)
                       ?: return null
     val path = getTextIfLiteral(nameElement)

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="WebStorm Debugger 101" lessonsPath="Debugger/" version="0.1" id="js.debugger" fileType="PROJECT"
-        description="Learn how to run a program step by step and identify problems in it without leaving the IDE.">
-    <lesson-kt implementationClass="training.learn.lesson.javascript.debugger.BeforeDebugging" lang="JavaScript"/>
-    <lesson-kt implementationClass="training.learn.lesson.javascript.debugger.DebuggingFirstPart" lang="JavaScript"/>
-    <lesson-kt implementationClass="training.learn.lesson.javascript.debugger.DebuggingSecondPart" lang="JavaScript"/>
-</module>

@@ -433,7 +433,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
     Set<JSFile> visitedFiles = new LinkedHashSet<>();
     for (String fileName : myFileNames) {
-      Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, fileName, scope);
+      Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(fileName, scope);
       for (final VirtualFile file : files) {
         PsiFile psiFile = ReadAction.compute(() -> PsiManager.getInstance(project).findFile(file));
         if (psiFile instanceof JSFile) {

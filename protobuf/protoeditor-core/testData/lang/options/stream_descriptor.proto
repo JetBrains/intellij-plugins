@@ -1,0 +1,11 @@
+// A simple fake descriptor to test Stream option references.
+
+syntax = "proto2";
+package proto2;
+
+message StreamOptions {
+  bool deprecated = 1;
+  int32 foobar = 2;
+
+  extensions 1000 to max;
+}

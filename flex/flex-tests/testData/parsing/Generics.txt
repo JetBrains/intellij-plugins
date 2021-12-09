@@ -157,18 +157,18 @@ JSFile:Generics.js2
           PsiElement(JS:FUNCTION_KEYWORD)('function')
           JSParameterList
             PsiElement(JS:LPAR)('(')
-            JSParameter
+            ActionScriptParameter
               PsiElement(JS:IDENTIFIER)('item')
               PsiElement(JS:COLON)(':')
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('String')
             PsiElement(JS:COMMA)(',')
-            JSParameter
+            ActionScriptParameter
               PsiElement(JS:IDENTIFIER)('index')
               PsiElement(JS:COLON)(':')
               PsiElement(JS:INT_KEYWORD)('int')
             PsiElement(JS:COMMA)(',')
-            JSParameter
+            ActionScriptParameter
               PsiElement(JS:IDENTIFIER)('vector')
               PsiElement(JS:COLON)(':')
               JSReferenceExpression

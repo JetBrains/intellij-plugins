@@ -9,7 +9,7 @@ import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class KarmaRunConfigurationRefactoringHandler {
+public final class KarmaRunConfigurationRefactoringHandler {
 
   @Nullable
   public static RefactoringElementListener getRefactoringElementListener(@NotNull KarmaRunConfiguration configuration,

@@ -2,12 +2,11 @@ class Foo {
     function xxx() {
         var x:int = 1;
         var y:int = 1;
-        x = created(x);
+        x = created();
         alert(y);
     }
 
-    public function created(x:int):int {
-        x = 2;
-        return x;
+    public function created():int {
+        return 2;
     }
 }

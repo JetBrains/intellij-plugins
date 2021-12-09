@@ -8,8 +8,8 @@ To use it:
 <ul>
   <li>Add prettier to your project with <em>npm install prettier --save-dev</em> or install it globally</li>
   <li>Select the code or file you want to format using Prettier</li>
-  <li>Use the “Reformat with Prettier” action (Alt-Shift-Cmd-P on macOS or Alt-Shift-Ctrl-P on Windows and Linux) or find it using the “Find
-    Action” popup (Cmd/Ctrl-Shift-A)
+  <li>Use the "Reformat with Prettier" action (Alt-Shift-Cmd-P on macOS or Alt-Shift-Ctrl-P on Windows and Linux) or find it using the "Find
+    Action" popup (Cmd/Ctrl-Shift-A)
   </li>
 </ul>
 <br/>To run Prettier on save, tick the "Run on save for files" option in Preferences/Settings | Languages \& Frameworks | JavaScript | Prettier.
@@ -41,6 +41,12 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
       bundle="messages.PrettierBundle"
       key="configurable.PrettierConfigurable.display.name"
       instance="com.intellij.prettierjs.PrettierConfigurable"/>
+    <actionOnSaveInfoProvider id="PrettierOnSaveInfoProvider"
+                              implementation="com.intellij.prettierjs.PrettierConfigurable$PrettierOnSaveInfoProvider"
+                              order="after FormatOnSaveInfoProvider, after EsLintOnSaveInfoProvider, before BuildOnSaveInfoProvider, before FileWatcherOnSaveInfoProvider, before UploadOnSaveInfoProvider"/>
+    <actionOnSave id="PrettierActionOnSave"
+                  implementation="com.intellij.prettierjs.PrettierActionOnSave"
+                  order="after FormatOnSaveAction, after ESLintActionOnSave"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
@@ -52,6 +58,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
 
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
+    <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">
@@ -72,8 +79,4 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   <extensions defaultExtensionNs="com.intellij.json">
     <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
   </extensions>
-  <extensions defaultExtensionNs="JavaScript">
-    <linterSaveAction implementation="com.intellij.prettierjs.PrettierSaveAction"/>
-  </extensions>
-
 </idea-plugin>

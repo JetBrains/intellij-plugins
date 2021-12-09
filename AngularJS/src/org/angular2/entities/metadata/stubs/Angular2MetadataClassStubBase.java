@@ -1,10 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -33,22 +33,17 @@ import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.metadata.MetadataUtils.getPropertyValue;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
-public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase> extends Angular2MetadataElementStub<Psi> {
-
+public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase<?>> extends Angular2MetadataElementStub<Psi> {
   @NonNls private static final String EXTENDS_MEMBER = "#ext";
 
-  private static final AtomicNotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES =
-    new AtomicNotNullLazyValue<Map<String, EntityFactory>>() {
-      @Override
-      protected @NotNull Map<String, EntityFactory> compute() {
-        return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
-          .put(MODULE_DEC, Angular2MetadataModuleStub::new)
-          .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
-          .put(COMPONENT_DEC, Angular2MetadataComponentStub::new)
-          .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::new)
-          .build();
-      }
-    };
+  private static final NotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES = NotNullLazyValue.lazy(() -> {
+    return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
+      .put(MODULE_DEC, Angular2MetadataModuleStub::new)
+      .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
+      .put(COMPONENT_DEC, Angular2MetadataComponentStub::new)
+      .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::new)
+      .build();
+  });
 
   private static Map<String, EntityFactory> getEntityFactories() {
     return ENTITY_FACTORIES.getValue();
@@ -115,11 +110,10 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   }
 
   public Angular2MetadataReferenceStub getExtendsReference() {
-    return (Angular2MetadataReferenceStub)getChildrenStubs().stream()
-      .filter(child -> child instanceof Angular2MetadataReferenceStub
-                       && EXTENDS_MEMBER.equals(((Angular2MetadataReferenceStub)child).getMemberName()))
-      .findFirst()
-      .orElse(null);
+    return (Angular2MetadataReferenceStub)ContainerUtil.find(
+      getChildrenStubs(),
+      child -> child instanceof Angular2MetadataReferenceStub
+               && EXTENDS_MEMBER.equals(((Angular2MetadataReferenceStub)child).getMemberName()));
   }
 
   public Map<String, String> getInputMappings() {

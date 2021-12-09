@@ -63,11 +63,11 @@ public class FlexBCConfigurator {
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
   // we can have only one Project Structure configuration dialog at a time, so it's OK to hold state for one project
-  private final LazyInitializer<Project> myModifiableModelInitializer = new LazyInitializer<Project>() {
+  private final LazyInitializer<Project> myModifiableModelInitializer = new LazyInitializer<>() {
     @Override
     protected void initialize(final Project project) {
       LOG.assertTrue(myConfigEditor == null);
-      final ModulesConfigurator configurator = ModuleStructureConfigurable.getInstance(project).getContext().getModulesConfigurator();
+      final ModulesConfigurator configurator = ProjectStructureConfigurable.getInstance(project).getContext().getModulesConfigurator();
       myConfigEditor = new FlexProjectConfigurationEditor(project, new FlexProjectConfigurationEditor.ProjectModifiableModelProvider() {
 
         @Override
@@ -131,7 +131,7 @@ public class FlexBCConfigurator {
 
   public void reset(Project project) {
     myModifiableModelInitializer.ensureInitialized(project);
-    ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);
+    ModuleStructureConfigurable moduleStructureConfigurable = ProjectStructureConfigurable.getInstance(project).getModulesConfig();
     for (final CompositeConfigurable configurable : myConfigurablesMap.values()) {
       moduleStructureConfigurable.ensureInitialized(configurable);
     }
@@ -410,7 +410,7 @@ public class FlexBCConfigurator {
     myConfigurablesMap.put(bc, wrapped);
     final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
 
-    final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(module.getProject());
+    final ModuleStructureConfigurable moduleStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject()).getModulesConfig();
     moduleStructureConfigurable.addNode(node, moduleStructureConfigurable.findModuleNode(module));
 
     Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, moduleStructureConfigurable)
@@ -442,7 +442,7 @@ public class FlexBCConfigurator {
 
   public Place getPlaceFor(final Module module, final String bcName) {
     Place p = new Place();
-    p = p.putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myConfigEditor.getProject()));
+    p = p.putPath(ProjectStructureConfigurable.CATEGORY, ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getModulesConfig());
     p = p.putPath(MasterDetailsComponent.TREE_OBJECT, myConfigEditor.findCurrentConfiguration(module, bcName));
     return p;
   }

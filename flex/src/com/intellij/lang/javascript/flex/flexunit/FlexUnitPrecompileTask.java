@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
@@ -30,21 +30,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UIBundle;
 import com.intellij.util.ResourceUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
-public class FlexUnitPrecompileTask implements CompileTask {
-
+public final class FlexUnitPrecompileTask implements CompileTask {
   public static final Key<Collection<String>> FILES_TO_DELETE = Key.create("FlexUnitPrecompileTask.filesToRemove");
 
   private final Project myProject;
@@ -168,7 +162,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
         final Ref<Boolean> isSuite = new Ref<>();
         Set<String> customRunners = ApplicationManager.getApplication().runReadAction((NullableComputable<Set<String>>)() -> {
           if (DumbService.getInstance(myProject).isDumb()) return null;
-          Set<String> result = new THashSet<>();
+          Set<String> result = new HashSet<>();
           final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
           collectCustomRunners(result, clazz, support, null);
           isFlexUnit1Suite.set(support.isFlexUnit1SuiteSubclass(clazz));
@@ -190,7 +184,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
       case Method: {
         Set<String> customRunners = ApplicationManager.getApplication().runReadAction((NullableComputable<Set<String>>)() -> {
           if (DumbService.getInstance(myProject).isDumb()) return null;
-          Set<String> result = new THashSet<>();
+          Set<String> result = new HashSet<>();
           final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
           collectCustomRunners(result, clazz, support, null);
           return result;
@@ -219,7 +213,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
                   if (kind == JSPackageIndexInfo.Kind.CLASS) {
                     PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, moduleScope);
                     if (clazz instanceof JSClass && support.isTestClass((JSClass)clazz, false)) {
-                      Set<String> customRunners = new THashSet<>();
+                      Set<String> customRunners = new HashSet<>();
                       collectCustomRunners(customRunners, (JSClass)clazz, support, null);
                       result.add(Pair.create(((JSClass)clazz).getQualifiedName(), customRunners));
                     }
@@ -329,7 +323,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     final String customRunner = FlexUnitSupport.getCustomRunner(testClass);
     if (!StringUtil.isEmptyOrSpaces(customRunner)) result.add(customRunner);
     if (flexUnitSupport.isSuite(testClass)) {
-      if (seen == null) seen = new THashSet<>();
+      if (seen == null) seen = new HashSet<>();
       seen.add(testClass);
       for (JSClass referencedClass : flexUnitSupport.getSuiteTestClasses(testClass)) {
         collectCustomRunners(result, referencedClass, flexUnitSupport, seen);
@@ -384,7 +378,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     else {
       templateName = "LauncherTemplateMx.mxml";
     }
-    final URL resource = FlexUnitPrecompileTask.class.getResource("/unittestingsupport/" + templateName);
-    return ResourceUtil.loadText(resource);
+    return ResourceUtil.loadText(Objects.requireNonNull(FlexUnitPrecompileTask.class.getClassLoader()
+                                                          .getResourceAsStream("unittestingsupport/" + templateName)));
   }
 }

@@ -10,7 +10,8 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -33,7 +34,7 @@ public class CompletionSuggestion {
 
   public static final CompletionSuggestion[] EMPTY_ARRAY = new CompletionSuggestion[0];
 
-  public static final List<CompletionSuggestion> EMPTY_LIST = new ArrayList<>();
+  public static final List<CompletionSuggestion> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The kind of element being suggested.
@@ -57,6 +58,21 @@ public class CompletionSuggestion {
    * displayed text should be different than the completion. Otherwise it is omitted.
    */
   private final String displayText;
+
+  /**
+   * The offset of the start of the text to be replaced. If supplied, this should be used in
+   * preference to the offset provided on the containing completion results. This value may be
+   * provided independently of replacementLength (for example if only one differs from the completion
+   * result value).
+   */
+  private final Integer replacementOffset;
+
+  /**
+   * The length of the text to be replaced. If supplied, this should be used in preference to the
+   * offset provided on the containing completion results. This value may be provided independently
+   * of replacementOffset (for example if only one differs from the completion result value).
+   */
+  private final Integer replacementLength;
 
   /**
    * The offset, relative to the beginning of the completion, of where the selection should be placed
@@ -160,13 +176,24 @@ public class CompletionSuggestion {
   private final String parameterType;
 
   /**
+   * The index in the list of libraries that could be imported to make this suggestion accessible in
+   * the file where completion was requested. The server provides this list of libraries together
+   * with suggestions, so that information about the library can be shared for multiple suggestions.
+   * This field is omitted if the library is already imported, so that the suggestion can be inserted
+   * as is, or if getSuggestions was used rather than getSuggestions2.
+   */
+  private final Integer libraryUriToImportIndex;
+
+  /**
    * Constructor for {@link CompletionSuggestion}.
    */
-  public CompletionSuggestion(String kind, int relevance, String completion, String displayText, int selectionOffset, int selectionLength, boolean isDeprecated, boolean isPotential, String docSummary, String docComplete, String declaringType, String defaultArgumentListString, int[] defaultArgumentListTextRanges, Element element, String returnType, List<String> parameterNames, List<String> parameterTypes, Integer requiredParameterCount, Boolean hasNamedParameters, String parameterName, String parameterType) {
+  public CompletionSuggestion(String kind, int relevance, String completion, String displayText, Integer replacementOffset, Integer replacementLength, int selectionOffset, int selectionLength, boolean isDeprecated, boolean isPotential, String docSummary, String docComplete, String declaringType, String defaultArgumentListString, int[] defaultArgumentListTextRanges, Element element, String returnType, List<String> parameterNames, List<String> parameterTypes, Integer requiredParameterCount, Boolean hasNamedParameters, String parameterName, String parameterType, Integer libraryUriToImportIndex) {
     this.kind = kind;
     this.relevance = relevance;
     this.completion = completion;
     this.displayText = displayText;
+    this.replacementOffset = replacementOffset;
+    this.replacementLength = replacementLength;
     this.selectionOffset = selectionOffset;
     this.selectionLength = selectionLength;
     this.isDeprecated = isDeprecated;
@@ -184,6 +211,7 @@ public class CompletionSuggestion {
     this.hasNamedParameters = hasNamedParameters;
     this.parameterName = parameterName;
     this.parameterType = parameterType;
+    this.libraryUriToImportIndex = libraryUriToImportIndex;
   }
 
   @Override
@@ -195,6 +223,8 @@ public class CompletionSuggestion {
         other.relevance == relevance &&
         ObjectUtilities.equals(other.completion, completion) &&
         ObjectUtilities.equals(other.displayText, displayText) &&
+        ObjectUtilities.equals(other.replacementOffset, replacementOffset) &&
+        ObjectUtilities.equals(other.replacementLength, replacementLength) &&
         other.selectionOffset == selectionOffset &&
         other.selectionLength == selectionLength &&
         other.isDeprecated == isDeprecated &&
@@ -211,7 +241,8 @@ public class CompletionSuggestion {
         ObjectUtilities.equals(other.requiredParameterCount, requiredParameterCount) &&
         ObjectUtilities.equals(other.hasNamedParameters, hasNamedParameters) &&
         ObjectUtilities.equals(other.parameterName, parameterName) &&
-        ObjectUtilities.equals(other.parameterType, parameterType);
+        ObjectUtilities.equals(other.parameterType, parameterType) &&
+        ObjectUtilities.equals(other.libraryUriToImportIndex, libraryUriToImportIndex);
     }
     return false;
   }
@@ -221,6 +252,8 @@ public class CompletionSuggestion {
     int relevance = jsonObject.get("relevance").getAsInt();
     String completion = jsonObject.get("completion").getAsString();
     String displayText = jsonObject.get("displayText") == null ? null : jsonObject.get("displayText").getAsString();
+    Integer replacementOffset = jsonObject.get("replacementOffset") == null ? null : jsonObject.get("replacementOffset").getAsInt();
+    Integer replacementLength = jsonObject.get("replacementLength") == null ? null : jsonObject.get("replacementLength").getAsInt();
     int selectionOffset = jsonObject.get("selectionOffset").getAsInt();
     int selectionLength = jsonObject.get("selectionLength").getAsInt();
     boolean isDeprecated = jsonObject.get("isDeprecated").getAsBoolean();
@@ -238,7 +271,8 @@ public class CompletionSuggestion {
     Boolean hasNamedParameters = jsonObject.get("hasNamedParameters") == null ? null : jsonObject.get("hasNamedParameters").getAsBoolean();
     String parameterName = jsonObject.get("parameterName") == null ? null : jsonObject.get("parameterName").getAsString();
     String parameterType = jsonObject.get("parameterType") == null ? null : jsonObject.get("parameterType").getAsString();
-    return new CompletionSuggestion(kind, relevance, completion, displayText, selectionOffset, selectionLength, isDeprecated, isPotential, docSummary, docComplete, declaringType, defaultArgumentListString, defaultArgumentListTextRanges, element, returnType, parameterNames, parameterTypes, requiredParameterCount, hasNamedParameters, parameterName, parameterType);
+    Integer libraryUriToImportIndex = jsonObject.get("libraryUriToImportIndex") == null ? null : jsonObject.get("libraryUriToImportIndex").getAsInt();
+    return new CompletionSuggestion(kind, relevance, completion, displayText, replacementOffset, replacementLength, selectionOffset, selectionLength, isDeprecated, isPotential, docSummary, docComplete, declaringType, defaultArgumentListString, defaultArgumentListTextRanges, element, returnType, parameterNames, parameterTypes, requiredParameterCount, hasNamedParameters, parameterName, parameterType, libraryUriToImportIndex);
   }
 
   public static List<CompletionSuggestion> fromJsonArray(JsonArray jsonArray) {
@@ -350,6 +384,17 @@ public class CompletionSuggestion {
   }
 
   /**
+   * The index in the list of libraries that could be imported to make this suggestion accessible in
+   * the file where completion was requested. The server provides this list of libraries together
+   * with suggestions, so that information about the library can be shared for multiple suggestions.
+   * This field is omitted if the library is already imported, so that the suggestion can be inserted
+   * as is, or if getSuggestions was used rather than getSuggestions2.
+   */
+  public Integer getLibraryUriToImportIndex() {
+    return libraryUriToImportIndex;
+  }
+
+  /**
    * The name of the optional parameter being suggested. This field is omitted if the suggestion is
    * not the addition of an optional argument within an argument list.
    */
@@ -386,6 +431,25 @@ public class CompletionSuggestion {
    */
   public int getRelevance() {
     return relevance;
+  }
+
+  /**
+   * The length of the text to be replaced. If supplied, this should be used in preference to the
+   * offset provided on the containing completion results. This value may be provided independently
+   * of replacementOffset (for example if only one differs from the completion result value).
+   */
+  public Integer getReplacementLength() {
+    return replacementLength;
+  }
+
+  /**
+   * The offset of the start of the text to be replaced. If supplied, this should be used in
+   * preference to the offset provided on the containing completion results. This value may be
+   * provided independently of replacementLength (for example if only one differs from the completion
+   * result value).
+   */
+  public Integer getReplacementOffset() {
+    return replacementOffset;
   }
 
   /**
@@ -426,6 +490,8 @@ public class CompletionSuggestion {
     builder.append(relevance);
     builder.append(completion);
     builder.append(displayText);
+    builder.append(replacementOffset);
+    builder.append(replacementLength);
     builder.append(selectionOffset);
     builder.append(selectionLength);
     builder.append(isDeprecated);
@@ -443,6 +509,7 @@ public class CompletionSuggestion {
     builder.append(hasNamedParameters);
     builder.append(parameterName);
     builder.append(parameterType);
+    builder.append(libraryUriToImportIndex);
     return builder.toHashCode();
   }
 
@@ -453,6 +520,12 @@ public class CompletionSuggestion {
     jsonObject.addProperty("completion", completion);
     if (displayText != null) {
       jsonObject.addProperty("displayText", displayText);
+    }
+    if (replacementOffset != null) {
+      jsonObject.addProperty("replacementOffset", replacementOffset);
+    }
+    if (replacementLength != null) {
+      jsonObject.addProperty("replacementLength", replacementLength);
     }
     jsonObject.addProperty("selectionOffset", selectionOffset);
     jsonObject.addProperty("selectionLength", selectionLength);
@@ -509,6 +582,9 @@ public class CompletionSuggestion {
     if (parameterType != null) {
       jsonObject.addProperty("parameterType", parameterType);
     }
+    if (libraryUriToImportIndex != null) {
+      jsonObject.addProperty("libraryUriToImportIndex", libraryUriToImportIndex);
+    }
     return jsonObject;
   }
 
@@ -524,6 +600,10 @@ public class CompletionSuggestion {
     builder.append(completion + ", ");
     builder.append("displayText=");
     builder.append(displayText + ", ");
+    builder.append("replacementOffset=");
+    builder.append(replacementOffset + ", ");
+    builder.append("replacementLength=");
+    builder.append(replacementLength + ", ");
     builder.append("selectionOffset=");
     builder.append(selectionOffset + ", ");
     builder.append("selectionLength=");
@@ -557,7 +637,9 @@ public class CompletionSuggestion {
     builder.append("parameterName=");
     builder.append(parameterName + ", ");
     builder.append("parameterType=");
-    builder.append(parameterType);
+    builder.append(parameterType + ", ");
+    builder.append("libraryUriToImportIndex=");
+    builder.append(libraryUriToImportIndex);
     builder.append("]");
     return builder.toString();
   }

@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Conditions;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -286,4 +287,13 @@ public class FlexMoveTest extends JSMoveTestBase {
   public void testRenameDirWithClasses() {
     doTestDirectoryWithClasses(new String[]{"foo"}, "bar", true);
   }
+
+  public static class BranchTest extends FlexMoveTest {
+    @Override
+    protected void setUp() throws Exception {
+      super.setUp();
+      Registry.get("run.refactorings.in.model.branch").setValue(true, getTestRootDisposable());
+    }
+  }
+
 }

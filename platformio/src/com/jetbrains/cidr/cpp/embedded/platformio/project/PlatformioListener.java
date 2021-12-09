@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class PlatformioListener implements AsyncFileListener, StartupActivity {
 
   @Override
-  public @Nullable ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+  public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     boolean platformioAffected = false;
     for (VFileEvent event : events) {
       String path = event.getPath();

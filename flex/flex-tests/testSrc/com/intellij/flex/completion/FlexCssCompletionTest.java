@@ -1,5 +1,6 @@
 package com.intellij.flex.completion;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
@@ -11,7 +12,6 @@ import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
 import com.intellij.testFramework.LightProjectDescriptor;
 
@@ -21,7 +21,7 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
 
-    CodeStyleSettings globalSettings = CodeStyleSettingsManager.getSettings(getProject());
+    CodeStyleSettings globalSettings = CodeStyle.getSettings(getProject());
     CssCodeStyleSettings settings = globalSettings.getCustomSettings(CssCodeStyleSettings.class);
     settings.SPACE_AFTER_COLON = false;
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());

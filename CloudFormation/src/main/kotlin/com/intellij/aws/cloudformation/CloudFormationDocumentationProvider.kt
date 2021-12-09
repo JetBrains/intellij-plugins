@@ -3,12 +3,14 @@ package com.intellij.aws.cloudformation
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
 import org.jetbrains.yaml.psi.YAMLScalar
 
 class CloudFormationDocumentationProvider : DocumentationProvider {
-  override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
+  override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
     val docElement = getDocElement(originalElement) ?: return null
     val parsed = CloudFormationParser.parse(docElement.containingFile)
 
@@ -60,12 +62,14 @@ class CloudFormationDocumentationProvider : DocumentationProvider {
     return if (originalElement.parent is JsonStringLiteral || originalElement.parent is YAMLScalar) originalElement.parent else originalElement
   }
 
+  @Nls
   private fun createResourceDescription(match: ResourceTypeValueMatch): String? {
     val typeName = match.resource.typeName ?: return null
     val resourceType = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeName] ?: return null
     return resourceType.description
   }
 
+  @NlsSafe
   private fun createPropertyDescription(match: ResourcePropertyNameMatch): String? {
     val typeName = match.resource.typeName ?: return null
 
@@ -76,11 +80,11 @@ class CloudFormationDocumentationProvider : DocumentationProvider {
     val propertyDescription = resourceTypeDescription.properties[match.name.value] ?: return ""
 
     val document =
-        "<h1>${propertyMetadata.name} ($typeName)</h1>" +
-        propertyDescription +
-        "<p><i>Required:</i> " + propertyMetadata.required + "</p>" +
-        propertyMetadata.type +
-        propertyMetadata.updateRequires
+      "<h1>${propertyMetadata.name} ($typeName)</h1>" +
+      propertyDescription +
+      "<p><i>${CloudFormationBundle.message("required.property")}:</i> " + propertyMetadata.required + "</p>" +
+      propertyMetadata.type +
+      propertyMetadata.updateRequires
 
     return document
   }

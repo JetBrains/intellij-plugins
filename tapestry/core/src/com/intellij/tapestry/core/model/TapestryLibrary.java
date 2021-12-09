@@ -1,13 +1,11 @@
 package com.intellij.tapestry.core.model;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import gnu.trove.THashMap;
-import gnu.trove.TObjectHashingStrategy;
+import com.intellij.util.containers.CollectionFactory;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -15,8 +13,7 @@ import java.util.Map;
 /**
  * Represents a Tapestry library.
  */
-public class TapestryLibrary implements Comparable {
-
+public final class TapestryLibrary implements Comparable {
   private final String _id;
   private final String _basePackage;
   private final TapestryProject _project;
@@ -83,11 +80,11 @@ public class TapestryLibrary implements Comparable {
     return findElements(TapestryConstants.MIXINS_PACKAGE, _basePackage);
   }
 
-  /**
-   * Finds the Tapestry IoC module builder of this library.
-   *
-   * @return the Tapestry IoC module builder of this library.
-   */
+  ///**
+  // * Finds the Tapestry IoC module builder of this library.
+  // *
+  // * @return the Tapestry IoC module builder of this library.
+  // */
   /*public ModuleBuilder getModuleBuilder() {
       if (getBasePackage().equals(TapestryConstants.CORE_LIBRARY_PACKAGE)) {
           return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry5.services.TapestryModule", true), _project);
@@ -137,18 +134,7 @@ public class TapestryLibrary implements Comparable {
    * @return all the Tapestry elements implemented under the given package.
    */
   private Map<String, PresentationLibraryElement> findElements(String componentsOrPages, String basePackage) {
-    Map<String, PresentationLibraryElement> components =
-      new THashMap<>(new TObjectHashingStrategy<String>() {
-        @Override
-        public int computeHashCode(String object) {
-          return StringUtil.stringHashCodeInsensitive(object);
-        }
-
-        @Override
-        public boolean equals(String o1, String o2) {
-          return o1.equalsIgnoreCase(o2);
-        }
-      });
+    Map<String, PresentationLibraryElement> components = CollectionFactory.createCaseInsensitiveStringMap();
 
     for (IJavaClassType type : _project.getJavaTypeFinder().findTypesInPackageRecursively(basePackage + "." + componentsOrPages, true)) {
       try {

@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.mxml.FlexXmlBackedMembersIndex;
@@ -11,16 +12,16 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.FileContentImpl;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MxmlTodoIndexer extends XmlTodoIndexer {
   @NotNull
   @Override
   public Map<TodoIndexEntry, Integer> map(@NotNull final FileContent inputData) {
-    final Map<TodoIndexEntry, Integer> map = new THashMap<>(super.map(inputData));
+    final Map<TodoIndexEntry, Integer> map = new HashMap<>(super.map(inputData));
     FlexXmlBackedMembersIndex.visitScriptTagInjectedFilesForIndexing((XmlFile)inputData.getPsiFile(),
                                                                      new JSResolveUtil.JSInjectedFilesVisitor() {
                                                                        @Override
@@ -30,7 +31,8 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
                                                                            PlatformIdTableBuilding.getTodoIndexer(file.getFileType());
                                                                          if (indexer != null) {
                                                                            Map<TodoIndexEntry, Integer> injectedMap = indexer.map(
-                                                                             new FileContentImpl(injectedFile, file.getText(), -1));
+                                                                             FileContentImpl.createByText(injectedFile, file.getText(), inputData.getProject())
+                                                                           );
                                                                            for (Map.Entry<TodoIndexEntry, Integer> e : injectedMap
                                                                              .entrySet()) {
                                                                              Integer integer = map.get(e.getKey());

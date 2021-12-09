@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.metadata.stubs;
 
 import com.intellij.json.psi.*;
@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.lang.javascript.index.flags.FlagsStructureElement;
 import com.intellij.lang.javascript.index.flags.IntFlagsSerializer;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.DataInputOutputUtilRt;
 import com.intellij.psi.stubs.*;
@@ -29,7 +29,6 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public abstract class MetadataElementStub<Psi extends MetadataElement> extends StubBase<Psi> {
-
   @NonNls protected static final String SYMBOL_TYPE = "__symbolic";
   @NonNls protected static final String SYMBOL_REFERENCE = "reference";
   @NonNls protected static final String SYMBOL_PROPERTY = "property";
@@ -64,17 +63,13 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
 
   private final StringRef myMemberName;
   private int myFlags;
-  private final AtomicNotNullLazyValue<Map<String, MetadataElementStub>> membersMap =
-    new AtomicNotNullLazyValue<Map<String, MetadataElementStub>>() {
-      @Override
-      protected @NotNull Map<String, MetadataElementStub> compute() {
-        return getChildrenStubs().stream()
-          .filter(stub -> ((MetadataElementStub)stub).getMemberName() != null)
-          .collect(Collectors.toMap(stub -> ((MetadataElementStub)stub).getMemberName(),
-                                    stub -> (MetadataElementStub)stub,
-                                    (a, b) -> a));
-      }
-    };
+  private final NotNullLazyValue<Map<String, MetadataElementStub>> membersMap = NotNullLazyValue.lazy(() -> {
+    return getChildrenStubs().stream()
+      .filter(stub -> ((MetadataElementStub<?>)stub).getMemberName() != null)
+      .collect(Collectors.toMap(stub -> ((MetadataElementStub<?>)stub).getMemberName(),
+                                stub -> (MetadataElementStub)stub,
+                                (a, b) -> a));
+  });
 
   public MetadataElementStub(@Nullable String memberName, @Nullable StubElement parent, @NotNull MetadataElementType elementType) {
     super(parent, elementType);

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.highlighter.ModuleFileType;
@@ -27,8 +27,6 @@ import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -173,10 +171,9 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     final List<String> dotProjectPaths = getDotProjectPaths(project);
     final List<FlashBuilderProject> flashBuilderProjects = FlashBuilderProjectLoadUtil.loadProjects(dotProjectPaths, isArchive);
 
-    final Map<FlashBuilderProject, ModifiableRootModel> flashBuilderProjectToModifiableModelMap =
-      new THashMap<>();
-    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<>();
-    final Set<String> moduleNames = new THashSet<>(flashBuilderProjects.size());
+    final Map<FlashBuilderProject, ModifiableRootModel> flashBuilderProjectToModifiableModelMap = new HashMap<>();
+    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new HashMap<>();
+    final Set<String> moduleNames = new HashSet<>(flashBuilderProjects.size());
 
     final FlexProjectConfigurationEditor currentFlexEditor =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();

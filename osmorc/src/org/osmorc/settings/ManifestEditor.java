@@ -49,7 +49,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
   }
 
   @Override
-  protected EditorEx createEditor() {
+  protected @NotNull EditorEx createEditor() {
     EditorEx editor = super.createEditor();
     editor.setVerticalScrollbarVisible(true);
     editor.setHorizontalScrollbarVisible(true);

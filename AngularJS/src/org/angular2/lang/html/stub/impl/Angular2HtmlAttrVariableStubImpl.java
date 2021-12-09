@@ -17,7 +17,7 @@ public class Angular2HtmlAttrVariableStubImpl extends JSVariableStubBaseImpl<JSV
   public Angular2HtmlAttrVariableStubImpl(JSVariable clazz,
                                           final StubElement parent,
                                           @NotNull JSStubElementType<?, JSVariable> elementType) {
-    super(clazz, parent, elementType);
+    super(clazz, parent, elementType, 0);
   }
 
   public Angular2HtmlAttrVariableStubImpl(final StubInputStream dataStream,

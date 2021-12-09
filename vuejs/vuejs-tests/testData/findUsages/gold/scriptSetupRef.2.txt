@@ -1,0 +1,2 @@
+<scriptSetupRef.vue.int:(1,11):(6,10)>	$refs.foo2
+<scriptSetupRef.vue:(22,28):(1,5)>	ref='foo2'

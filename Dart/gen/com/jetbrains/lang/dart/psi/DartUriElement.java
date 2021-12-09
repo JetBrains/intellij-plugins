@@ -12,7 +12,6 @@ public interface DartUriElement extends DartPsiCompositeElement {
   @NotNull
   DartStringLiteralExpression getStringLiteralExpression();
 
-  @NotNull
-  Pair<String, TextRange> getUriStringAndItsRange();
+  @NotNull Pair<String, TextRange> getUriStringAndItsRange();
 
 }

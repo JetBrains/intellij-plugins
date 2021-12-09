@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+enum TestEnum {
+  // Enum option
+  option allow<caret>_alias = true;
+}

@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.SmartIndentOptionsEditor;
-import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public class ActionScriptIndentOptionsEditor extends SmartIndentOptionsEditor {
   @Override
   protected void addComponents() {
     super.addComponents();
-    myIndentPackageChildren = new JCheckBox(JavaScriptBundle.message("to.indent.package.statement.children"));
+    myIndentPackageChildren = new JCheckBox(FlexBundle.message("to.indent.package.statement.children"));
     add(myIndentPackageChildren);
   }
 

@@ -1,38 +1,38 @@
 <my-comp
     <weak_warning descr="Property missingAttr is not provided by any applicable directives nor by my-comp element">[missingAttr]</weak_warning>="12"
-    [plainNumber]="<warning descr="Type \"off\" is not assignable to type number">'off'</warning>"
-    [plainBoolean]="<warning descr="Type \"off\" is not assignable to type boolean">'off'</warning>"
+    [plainNumber]="<error descr="Type \"off\" is not assignable to type number">'off'</error>"
+    [plainBoolean]="<error descr="Type \"off\" is not assignable to type boolean">'off'</error>"
     [simpleStringEnum]="'off'"
     [setterSimpleStringEnum]="'off'"
     [dependency]="'off'"
-    [model]="<warning descr="Type \"off\" is not assignable to type NgModel">'off'</warning>"
+    [model]="<error descr="Type \"off\" is not assignable to type NgModel">'off'</error>"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type \"foo\" is not assignable to type number">'foo'</warning>"
-    [plainBoolean]="<warning descr="Type \"foo\" is not assignable to type boolean">'foo'</warning>"
-    [simpleStringEnum]="<warning descr="Type \"foo\" is not assignable to type MyType">'foo'</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type \"foo\" is not assignable to type MyType">'foo'</warning>"
+    [plainNumber]="<error descr="Type \"foo\" is not assignable to type number">'foo'</error>"
+    [plainBoolean]="<error descr="Type \"foo\" is not assignable to type boolean">'foo'</error>"
+    [simpleStringEnum]="<error descr="Type \"foo\" is not assignable to type MyType...  Type \"foo\" is not assignable to type \"off\" | \"polite\" | \"assertive\"">'foo'</error>"
+    [setterSimpleStringEnum]="<error descr="Type \"foo\" is not assignable to type MyType...  Type \"foo\" is not assignable to type \"off\" | \"polite\" | \"assertive\"">'foo'</error>"
     [dependency]="'foo'"
-    [model]="<warning descr="Type \"foo\" is not assignable to type NgModel">'foo'</warning>"
+    [model]="<error descr="Type \"foo\" is not assignable to type NgModel">'foo'</error>"
 ></my-comp>
 
 <my-comp
     [plainNumber]="12"
-    [plainBoolean]="<warning descr="Type 12 is not assignable to type boolean">12</warning>"
-    [simpleStringEnum]="<warning descr="Type 12 is not assignable to type MyType">12</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type 12 is not assignable to type MyType">12</warning>"
-    [dependency]="<warning descr="Type 12 is not assignable to type string">12</warning>"
-    [model]="<warning descr="Type 12 is not assignable to type NgModel">12</warning>"
+    [plainBoolean]="<error descr="Type 12 is not assignable to type boolean">12</error>"
+    [simpleStringEnum]="<error descr="Type 12 is not assignable to type MyType...  Type 12 is not assignable to type \"off\" | \"polite\" | \"assertive\"">12</error>"
+    [setterSimpleStringEnum]="<error descr="Type 12 is not assignable to type MyType...  Type 12 is not assignable to type \"off\" | \"polite\" | \"assertive\"">12</error>"
+    [dependency]="<error descr="Type 12 is not assignable to type string">12</error>"
+    [model]="<error descr="Type 12 is not assignable to type NgModel">12</error>"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type false is not assignable to type number">false</warning>"
+    [plainNumber]="<error descr="Type false is not assignable to type number">false</error>"
     [plainBoolean]="true"
-    [simpleStringEnum]="<warning descr="Type false is not assignable to type MyType">false</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type true is not assignable to type MyType">true</warning>"
-    [dependency]="<warning descr="Type false is not assignable to type string">false</warning>"
-    [model]="<warning descr="Type true is not assignable to type NgModel">true</warning>"
+    [simpleStringEnum]="<error descr="Type false is not assignable to type MyType...  Type false is not assignable to type \"off\" | \"polite\" | \"assertive\"">false</error>"
+    [setterSimpleStringEnum]="<error descr="Type true is not assignable to type MyType...  Type true is not assignable to type \"off\" | \"polite\" | \"assertive\"">true</error>"
+    [dependency]="<error descr="Type false is not assignable to type string">false</error>"
+    [model]="<error descr="Type true is not assignable to type NgModel">true</error>"
 ></my-comp>
 
 <my-comp
@@ -45,21 +45,21 @@
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type NgModel is not assignable to type number">model</warning>"
-    [plainBoolean]="<warning descr="Type NgModel is not assignable to type boolean">model</warning>"
-    [simpleStringEnum]="<warning descr="Type NgModel is not assignable to type MyType">model</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type NgModel is not assignable to type MyType">model</warning>"
-    [dependency]="<warning descr="Type NgModel is not assignable to type string">model</warning>"
+    [plainNumber]="<error descr="Type NgModel is not assignable to type number">model</error>"
+    [plainBoolean]="<error descr="Type NgModel is not assignable to type boolean">model</error>"
+    [simpleStringEnum]="<error descr="Type NgModel is not assignable to type MyType...  Type NgModel is not assignable to type \"off\" | \"polite\" | \"assertive\"">model</error>"
+    [setterSimpleStringEnum]="<error descr="Type NgModel is not assignable to type MyType...  Type NgModel is not assignable to type \"off\" | \"polite\" | \"assertive\"">model</error>"
+    [dependency]="<error descr="Type NgModel is not assignable to type string">model</error>"
     [model]="model"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type string[] is not assignable to type number">model.path</warning>"
-    [plainBoolean]="<warning descr="Type string is not assignable to type boolean">model.toLocaleString()</warning>"
-    [simpleStringEnum]="<warning descr="Type NgModel is not assignable to type MyType">model</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type string is not assignable to type MyType">model.name</warning>"
+    [plainNumber]="<error descr="Type string[] is not assignable to type number">model.path</error>"
+    [plainBoolean]="<error descr="Type string is not assignable to type boolean">model.toLocaleString()</error>"
+    [simpleStringEnum]="<error descr="Type NgModel is not assignable to type MyType...  Type NgModel is not assignable to type \"off\" | \"polite\" | \"assertive\"">model</error>"
+    [setterSimpleStringEnum]="<error descr="Type string is not assignable to type MyType...  Type string is not assignable to type \"off\" | \"polite\" | \"assertive\"">model.name</error>"
     [dependency]="model.toLocaleString()"
-    [model]="<warning descr="Type FormControl is not assignable to type NgModel">model.control</warning>"
+    [model]="<error descr="Type FormControl is not assignable to type NgModel">model.control</error>"
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>

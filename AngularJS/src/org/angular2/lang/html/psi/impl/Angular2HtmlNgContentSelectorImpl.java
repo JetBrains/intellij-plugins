@@ -3,7 +3,6 @@ package org.angular2.lang.html.psi.impl;
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.StubBasedPsiElement;
@@ -39,8 +38,7 @@ public class Angular2HtmlNgContentSelectorImpl extends StubBasedPsiElementBase<A
     else {
       text = getText();
     }
-    return new Angular2DirectiveSelectorImpl(this, text,
-                                             p -> new TextRange(p.second, p.second + p.first.length()));
+    return new Angular2DirectiveSelectorImpl(this, text, 0);
   }
 
   @Override

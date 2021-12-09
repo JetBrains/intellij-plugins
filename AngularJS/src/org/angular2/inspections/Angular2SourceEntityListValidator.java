@@ -16,6 +16,7 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.source.Angular2SourceEntityListProcessor;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,14 +78,14 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
   }
 
   protected void registerProblem(@NotNull E problemType,
-                                 @NotNull String message,
+                                 @NotNull @Nls String message,
                                  LocalQuickFix... quickFixes) {
     myResults.registerProblem(locateProblemElement(), problemType, message,
                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, quickFixes);
   }
 
   protected void registerProblem(@NotNull E problemType,
-                                 @NotNull String message,
+                                 @NotNull @Nls String message,
                                  @NotNull ProblemHighlightType severity,
                                  LocalQuickFix... quickFixes) {
     myResults.registerProblem(locateProblemElement(), problemType, message,
@@ -96,6 +97,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     PsiElement getLocation();
 
     @NotNull
+    @Nls
     String getMessage();
 
     @NotNull
@@ -127,7 +129,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
 
     private void registerProblem(@NotNull PsiElement element,
                                  @NotNull T type,
-                                 @NotNull String message,
+                                 @NotNull @Nls String message,
                                  @NotNull ProblemHighlightType severity,
                                  LocalQuickFix... quickFixes) {
       results.putValue(type, new ValidationProblem() {

@@ -1,18 +1,22 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.google.gson.JsonObject;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
@@ -36,7 +40,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     super(project);
     project.getMessageBus().connect(this).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
-      public void after(@NotNull List<? extends VFileEvent> events) {
+      public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         for (VFileEvent event : events) {
           if (!(event instanceof VFileContentChangeEvent) || PrettierUtil.isConfigFileOrPackageJson(event.getFile())) {
             myFlushConfigCache = true;
@@ -104,6 +108,26 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
 
     @Override
+    protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
+      super.addNodeProcessAdditionalArguments(targetRun);
+      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService").getAbsolutePath());
+    }
+
+    @Override
+    protected String getWorkingDirectory() {
+      Application application = ApplicationManager.getApplication();
+      if (application != null && application.isUnitTestMode()) {
+        // `myProject.getBasePath()` returns a non-existent directory in unit test mode
+        // The problem is that Yarn Pnp can't detect .pnp.cjs when process is started in a non-existent directory.
+        VirtualFile file = ProjectUtil.guessProjectDir(myProject);
+        if (file != null) {
+          return file.getPath();
+        }
+      }
+      return super.getWorkingDirectory();
+    }
+
+    @Override
     protected boolean needReadActionToCreateState() {
       // PrettierPostFormatProcessor runs under write action. Read action here is not needed and it would block the service startup
       return false;
@@ -125,15 +149,6 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     @Override
     public void dispose() {
 
-    }
-
-    @Nullable
-    @Override
-    protected NodeJsInterpreter getInterpreter() {
-      return JSLanguageServiceUtil.getInterpreterIfValid(
-        PrettierConfiguration.getInstance(myProject)
-          .getInterpreterRef()
-          .resolve(myProject));
     }
 
     @NotNull
@@ -209,7 +224,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     @Nullable
     @Override
     public String getPresentableText(@NotNull Project project) {
-      return "reformat";
+      return PrettierBundle.message("progress.title");
     }
   }
 }

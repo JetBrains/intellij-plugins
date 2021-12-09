@@ -76,7 +76,7 @@ public class ActionScriptReferenceExpressionResolver
     SinkResolveProcessor<ResolveResultSink> localProcessor;
     if (myUnqualifiedOrLocalResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(myParent);
-      localProcessor = new SinkResolveProcessor<ResolveResultSink>(myReferencedName, myRef, new ResolveResultSink(myRef, myReferencedName)) {
+      localProcessor = new SinkResolveProcessor<>(myReferencedName, myRef, new ResolveResultSink(myRef, myReferencedName)) {
         @Override
         public boolean needPackages() {
           if (myParent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {
@@ -128,7 +128,7 @@ public class ActionScriptReferenceExpressionResolver
       final QualifiedItemProcessor<ResolveResultSink> processor =
         new QualifiedItemProcessor<>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
-      JSTypeEvaluator.evaluateTypes(myQualifier, myContainingFile, processor);
+      processor.evaluateExpressionOrElementType(myQualifier, myContainingFile);
 
       if (processor.resolved == QualifiedItemProcessor.TypeResolveState.PrefixUnknown) {
         return dummyResult(myRef);

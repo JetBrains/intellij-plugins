@@ -21,6 +21,7 @@ public class DartVarDeclarationListImpl extends DartPsiCompositeElementImpl impl
     visitor.visitVarDeclarationList(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

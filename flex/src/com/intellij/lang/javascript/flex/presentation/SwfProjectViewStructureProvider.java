@@ -163,7 +163,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     }
 
     final VirtualFile vFile = psiFile.getVirtualFile();
-    if (vFile == null || vFile.getFileType() != FlexApplicationComponent.SWF_FILE_TYPE) {
+    if (vFile == null || !FileTypeRegistry.getInstance().isFileOfType(vFile, FlexApplicationComponent.SWF_FILE_TYPE)) {
       return children;
     }
 

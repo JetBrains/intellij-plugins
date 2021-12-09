@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -15,13 +15,13 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.content.Content;
@@ -109,11 +109,6 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
       new Task.Backgroundable(project, tabText, true) {
 
         @Override
-        public boolean shouldStartInBackground() {
-          return true;
-        }
-
-        @Override
         public void run(@NotNull final ProgressIndicator indicator) {
           try {
             String platform = phoneGapRunConfiguration.getPlatform();
@@ -133,7 +128,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               if (outputContains(stdout, stderr, "Platform " + platform + " already exists") ||
                   outputContains(stdout, stderr, "Platform " + platform + " already added")) {
                 ApplicationManager.getApplication().invokeLater(() -> {
-                  final MessageView messageView = ServiceManager.getService(project, MessageView.class);
+                  final MessageView messageView = project.getService(MessageView.class);
                   removeContents(messageView, null, tabText);
                 });
               }
@@ -169,16 +164,16 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
   private static void createViewForOutput(ConsoleViewImpl console,
                                           @NotNull final JComponent component,
                                           @NotNull final Project myProject,
-                                          @NotNull final String tabDisplayName) {
+                                          @NotNull @NlsContexts.TabTitle final String tabDisplayName) {
     CommandProcessor commandProcessor = CommandProcessor.getInstance();
     commandProcessor.executeCommand(myProject, () -> {
-      final MessageView messageView = ServiceManager.getService(myProject, MessageView.class);
+      final MessageView messageView = myProject.getService(MessageView.class);
       final Content content = ContentFactory.SERVICE.getInstance().createContent(component, tabDisplayName, true);
       messageView.getContentManager().addContent(content);
       messageView.getContentManager().setSelectedContent(content);
       Disposer.register(content, console);
       removeContents(messageView, content, tabDisplayName);
-    }, "Open " + tabDisplayName, null);
+    }, PhoneGapBundle.message("command.name.open", tabDisplayName), null);
   }
 
   private static void removeContents(@NotNull MessageView messageView,

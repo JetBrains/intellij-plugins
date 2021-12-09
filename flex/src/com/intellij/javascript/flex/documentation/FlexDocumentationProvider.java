@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
+import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
@@ -37,6 +38,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,7 +104,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   }
 
   @Override
-  public String generateDoc(PsiElement _element, PsiElement originalElement) {
+  public @Nls String generateDoc(PsiElement _element, PsiElement originalElement) {
     String doc = super.generateDoc(_element, originalElement);
     if (doc != null && doc.contains(DocumentationMarkup.CONTENT_START)) {
       return doc;
@@ -189,7 +191,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
       @Override
       protected void doBuildFromStream(String url, Reader reader, StringBuilder result) throws IOException {
-        String input = StreamUtil.readTextFrom(reader);
+        String input = StreamUtil.readText(reader);
 
         Matcher anchorMatcher = ourAnchorSuffix.matcher(url);
 
@@ -426,7 +428,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     boolean isInTag = false;
     boolean isInPre = false;
     if (result) {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       do {
         String s = input.substring(prevpos, m.start());
         isInTag = endIsBetween(s, "<", ">", isInTag);
@@ -747,7 +749,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @Override
   @Nullable
-  public PsiElement getDocumentationElementForLink(final PsiManager psiManager, String link, final PsiElement context) {
+  public PsiElement getDocumentationElementForLink(@NotNull PsiManager psiManager, @NotNull String link, @Nullable PsiElement context) {
     return getDocumentationElementForLinkStatic(psiManager, link, context);
   }
 
@@ -871,22 +873,34 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     return result;
   }
 
-  @Nullable
+
   @Override
-  public String tryGetSeeAlsoLink(final String remainingLineContent, PsiElement element) {
-    if (!remainingLineContent.contains(".") && !remainingLineContent.startsWith("#")) {
+  protected boolean appendSeeAlsoLink(@NotNull String linkPart,
+                                      @NotNull String displayText,
+                                      @NotNull String seeAlsoValue,
+                                      @NotNull PsiElement element,
+                                      @NotNull StringBuilder result) {
+    String seeAlsoLink = tryGetSeeAlsoLink(linkPart, element);
+    if (seeAlsoLink != null) {
+      DocumentationManager.createHyperlink(result, seeAlsoLink, displayText, true);
+    }
+    return seeAlsoLink != null;
+  }
+
+  public String tryGetSeeAlsoLink(@NotNull String linkPart, @NotNull PsiElement element) {
+    if (!linkPart.contains(".") && !linkPart.startsWith("#")) {
       // first try to find class in the same package, then in default one
       JSQualifiedNamedElement qualifiedElement = findParentQualifiedElement(element);
       if (qualifiedElement != null) {
         String qname = qualifiedElement.getQualifiedName();
         String aPackage = qname.contains(".") ? qname.substring(0, qname.lastIndexOf('.') + 1) : "";
-        String resolvedLink = getSeeAlsoLinkResolved(element, aPackage + remainingLineContent);
+        String resolvedLink = getSeeAlsoLinkResolved(element, aPackage + linkPart);
         if (resolvedLink != null) {
           return resolvedLink;
         }
       }
     }
-    return getSeeAlsoLinkResolved(element, remainingLineContent);
+    return getSeeAlsoLinkResolved(element, linkPart);
   }
 
   @NotNull

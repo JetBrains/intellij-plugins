@@ -55,6 +55,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
             PsiElement resolved = node.resolve();
             TypeScriptClass clazz = PsiTreeUtil.getContextOfType(resolved, TypeScriptClass.class);
             if (clazz != null && resolved instanceof JSElement && accept(resolved)) {
+              //noinspection HardCodedStringLiteral
               holder.registerProblem(
                 notNull(node.getReferenceNameElement(), node),
                 capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.template-symbol",
@@ -82,6 +83,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
           }
           retainReferenced(template, candidates);
           for (JSElement member : candidates) {
+            //noinspection HardCodedStringLiteral
             holder.registerProblem(
               notNull(member instanceof PsiNameIdentifierOwner
                       ? ((PsiNameIdentifierOwner)member).getNameIdentifier()

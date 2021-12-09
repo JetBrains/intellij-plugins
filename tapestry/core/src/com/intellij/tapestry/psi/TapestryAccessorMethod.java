@@ -27,7 +27,7 @@ import java.util.Objects;
  * @author Alexey Chmutov
  */
 public class TapestryAccessorMethod extends LightElement implements PsiMethod {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.tapestry.psi.TapestryAccessorMethod");
+  private static final Logger LOG = Logger.getInstance(TapestryAccessorMethod.class);
 
   private final PsiField myProperty;
 

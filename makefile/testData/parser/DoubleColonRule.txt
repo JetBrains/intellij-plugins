@@ -1,0 +1,13 @@
+Makefile
+  MakefileRuleImpl(RULE)
+    MakefileTargetLineImpl(TARGET_LINE)
+      MakefileTargetsImpl(TARGETS)
+        MakefileTargetImpl(TARGET)
+          PsiElement(chars)('a')
+      PsiElement(:)(':')
+      PsiElement(:)(':')
+      PsiWhiteSpace(' ')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          MakefilePrerequisiteImpl(PREREQUISITE)
+            PsiElement(chars)('b')

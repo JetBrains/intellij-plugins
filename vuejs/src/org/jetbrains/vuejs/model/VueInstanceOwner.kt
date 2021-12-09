@@ -1,12 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -15,24 +18,33 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
-import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
-import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
-import org.jetbrains.vuejs.model.source.VueSourceEntity
+import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.types.VueCompleteRecordType
 import org.jetbrains.vuejs.types.VueComponentInstanceType
+import org.jetbrains.vuejs.types.VueRefsType
+import org.jetbrains.vuejs.types.createStrictTypeSource
 import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
   val thisType: JSType
-    get() = if (source != null && this is UserDataHolder) {
-      CachedValuesManager.getManager(source!!.project).getCachedValue(this) {
-        CachedValueProvider.Result.create(buildInstanceType(this), PsiModificationTracker.MODIFICATION_COUNT)
+    get() = source?.let { source ->
+      if (this !is UserDataHolder) return@let null
+      CachedValuesManager.getManager(source.project).getCachedValue(this) {
+        CachedValueProvider.Result.create(RecursionManager.doPreventingRecursion(this.source!!, true) {
+          buildInstanceType(this)
+        }, PsiModificationTracker.MODIFICATION_COUNT)
       }
-    } else null ?: JSAnyType.get(source, false)
+    } ?: JSAnyType.get(source, false)
 }
 
+fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =
+  resolveSymbolFromNodeModule(context, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
+    ?.typeDeclaration?.jsType
+  ?: resolveSymbolFromNodeModule(context, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)?.jsType
+
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(
-  "\$el", "\$options", "\$parent", "\$root", "\$children", "\$refs", "\$slots",
-  "\$scopedSlots", "\$isServer", "\$data", "\$props",
+  "\$el", INSTANCE_OPTIONS_PROP, "\$parent", "\$root", "\$children", INSTANCE_REFS_PROP, "\$slots",
+  "\$scopedSlots", "\$isServer", INSTANCE_DATA_PROP, INSTANCE_PROPS_PROP,
   "\$ssrContext", "\$vnode", "\$attrs", "\$listeners")
 
 private val VUE_INSTANCE_METHODS: List<String> = listOf(
@@ -44,16 +56,14 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val result = mutableMapOf<String, JSRecordType.PropertySignature>()
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
+  replaceStandardProperty(INSTANCE_REFS_PROP, VueRefsType(createStrictTypeSource(source), instance), source, result)
   contributePropertiesFromProviders(instance, result)
   return VueComponentInstanceType(JSTypeSourceFactory.createTypeSource(source, true), instance, result.values.toList())
 }
 
 private fun contributeDefaultInstanceProperties(source: PsiElement,
                                                 result: MutableMap<String, JSRecordType.PropertySignature>): MutableMap<String, JSRecordType.PropertySignature> {
-  val defaultInstanceType =
-    resolveSymbolFromNodeModule(source, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
-      ?.typeDeclaration?.jsType
-    ?: resolveSymbolFromNodeModule(source, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)?.jsType
+  val defaultInstanceType = getDefaultVueComponentInstanceType(source)
   if (defaultInstanceType != null) {
     defaultInstanceType.asRecordType()
       .properties
@@ -124,9 +134,9 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
 
     }, onlyPublic = false)
 
-  replaceStandardProperty("\$props", props.values.toList(), source, result)
-  replaceStandardProperty("\$data", data.values.toList(), source, result)
-  buildOptionsType(instance, result["\$options"]?.jsType)?.let { replaceStandardProperty("\$options", it, source, result) }
+  replaceStandardProperty(INSTANCE_PROPS_PROP, props.values.toList(), source, result)
+  replaceStandardProperty(INSTANCE_DATA_PROP, data.values.toList(), source, result)
+  replaceStandardProperty(INSTANCE_OPTIONS_PROP, buildOptionsType(instance, result[INSTANCE_OPTIONS_PROP]?.jsType), source, result)
 
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
@@ -143,10 +153,10 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   mergePut(result, methods)
 }
 
-private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType? {
+private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType {
   val result = mutableListOf<JSType>()
   originalType?.let(result::add)
-  instance.acceptEntities(object: VueModelVisitor() {
+  instance.acceptEntities(object : VueModelVisitor() {
     override fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean = visitInstanceOwner(mixin)
 
     override fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean = visitInstanceOwner(component)
@@ -154,8 +164,10 @@ private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?):
     override fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean = visitInstanceOwner(application)
 
     fun visitInstanceOwner(instanceOwner: VueInstanceOwner): Boolean {
-      (instanceOwner as? VueSourceEntity)?.initializer?.let {
-        result.add(JSTypeofTypeImpl(it, JSTypeSourceFactory.createTypeSource(it, false)))
+      when (val initializer = (instanceOwner as? VueSourceEntity)?.initializer) {
+        is JSObjectLiteralExpression -> result.add(JSTypeofTypeImpl(
+          initializer, JSTypeSourceFactory.createTypeSource(initializer, false)))
+        is JSFile -> result.add(JSModuleTypeImpl(initializer, false))
       }
       return true
     }
@@ -168,7 +180,7 @@ private fun replaceStandardProperty(propName: String, properties: List<JSRecordT
                                     defaultSource: PsiElement, result: MutableMap<String, JSRecordType.PropertySignature>) {
   val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
   result[propName] = createImplicitPropertySignature(
-    propName, JSSimpleRecordTypeImpl(JSTypeSourceFactory.createTypeSource(propSource, false), properties), propSource)
+    propName, VueCompleteRecordType(propSource, properties), propSource)
 }
 
 private fun replaceStandardProperty(propName: String, type: JSType,

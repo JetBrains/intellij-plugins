@@ -1,23 +1,23 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
-import com.intellij.openapi.application.PathManager
+import com.intellij.javascript.web.findOffsetBySignature
+import com.intellij.javascript.web.renderLookupItems
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
-import org.jetbrains.vuejs.lang.findOffsetBySignature
-import org.jetbrains.vuejs.lang.renderLookupItems
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 import java.io.File
 
 class VuexCompletionTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/completion"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/completion"
 
   fun testBasicGettersCompletion() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
@@ -428,7 +428,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doStoreItemsTest(9, categoryActions, "await dispatch('<caret>tax/calculateTaxes'") // {root:true}
     doStoreItemsTest(10, categoryActions, "await dispatch(<caret>'loadCategoryFilters'", strict = false)
     doStoreItemsTest(11, categoryActions, "await dispatch(<caret>'tax/calculateTaxes'",
-                     additionalContent = "<caret>,{},{root:true})", strict = false) // {root:true}
+                     additionalContent = "<caret>,{},{root:true})(", strict = false) // {root:true}
 
     doStoreItemsTest(8, categoryActions, "await dispatch(<caret>'loadCategoryFilters'",
                      additionalContent = "{type: '<caret>'}")
@@ -446,7 +446,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doStoreItemsTest(9, categoryActions, "context.dispatch('<caret>changeRouterFilterParameters', {}, {root: true})")
     doStoreItemsTest(10, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', currentQuery)", strict = false)
     doStoreItemsTest(11, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', {}, {root: true})",
-                     additionalContent = "<caret>,{},{root:true})", strict = false)
+                     additionalContent = "<caret>,{},{root:true})(", strict = false)
 
     doStoreItemsTest(8, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', currentQuery)",
                      additionalContent = "{type: '<caret>'}")
@@ -545,10 +545,33 @@ class VuexCompletionTest : BasePlatformTestCase() {
   fun testStorefrontThisCompletion() {
     myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureByFile("storefront-mappers-JS.vue")
+    prepareFiles(project)
     checkItems(0, false, true, true, true)
 
     myFixture.configureByFile("storefront-mappers-TS.ts")
+    prepareFiles(project)
     checkItems(1, false, true, true, true)
+  }
+
+  fun testStarImportCompletion() {
+    myFixture.configureStore(VuexTestStore.StarImport)
+    doItemsTest(0, "...mapGetters({foo:'<caret>'", section = "computed", strict = true, renderPriority = true)
+    doItemsTest(1, "...mapState({foo:'<caret>'", section = "computed", strict = true, renderPriority = true)
+    doItemsTest(2, "...mapActions(['<caret>'", section = "methods", strict = true, renderPriority = true)
+  }
+
+  fun testCompositionShoppingCart() {
+    myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
+    val fileName = "test.vue"
+    myFixture.copyFileToProject("composition-shopping-cart.vue", fileName)
+
+    doStoreItemsTest(0, fileName, "store.state.<caret>", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(1, fileName, "store.dispatch('cart/<caret>addProductToCart'", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(2, fileName, "store.dispatch('<caret>products/getAllProducts')", strict = true, renderPriority = true,
+                     renderType = true)
+    doStoreItemsTest(3, fileName, "store.dispatch('products/<caret>getAllProducts')", strict = true, renderPriority = true,
+                     renderType = true)
+    doStoreItemsTest(4, fileName, "store.state.products.<caret>", strict = true, renderPriority = true, renderType = true)
   }
 
   private val namespacedHandlersCode = """
@@ -642,8 +665,11 @@ class VuexCompletionTest : BasePlatformTestCase() {
           myFixture.checkResultByFile(checkFileName, true)
         }
         else {
-          val items = myFixture.configureByFile(checkFileName).text.split('\n').filter { !it.isEmpty() }
-          UsefulTestCase.assertContainsElements(list, items)
+          val expected = myFixture.configureByFile(checkFileName).text.splitToSequence('\n')
+            .filter { it.isNotEmpty() }
+            .toMutableSet()
+          expected.removeAll(list.map { it.replace('\\', '/') })
+          assertEmpty("$expected not found in $list", expected)
         }
       }
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()

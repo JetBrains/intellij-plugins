@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.ColoredTextContainer;
@@ -12,9 +13,11 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import org.dartlang.vm.service.consumer.GetObjectConsumer;
 import org.dartlang.vm.service.element.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,19 +25,19 @@ import java.util.List;
 
 public class DartVmServiceStackFrame extends XStackFrame {
 
-  @NotNull private final DartVmServiceDebugProcess myDebugProcess;
-  @NotNull private final String myIsolateId;
-  @NotNull private final Frame myVmFrame;
-  @Nullable private final InstanceRef myException;
-  @Nullable private final XSourcePosition mySourcePosition;
-  @Nullable private final List<Frame> myVmFrames;
+  private final @NotNull DartVmServiceDebugProcess myDebugProcess;
+  private final @NotNull String myIsolateId;
+  private final @NotNull Frame myVmFrame;
+  private final @Nullable InstanceRef myException;
+  private final @Nullable XSourcePosition mySourcePosition;
+  private final @Nullable List<Frame> myVmFrames;
   private boolean myIsDroppableFrame;
 
-  public DartVmServiceStackFrame(@NotNull final DartVmServiceDebugProcess debugProcess,
-                                 @NotNull final String isolateId,
-                                 @NotNull final Frame vmFrame,
+  public DartVmServiceStackFrame(@NotNull DartVmServiceDebugProcess debugProcess,
+                                 @NotNull String isolateId,
+                                 @NotNull Frame vmFrame,
                                  @Nullable List<Frame> vmFrames,
-                                 @Nullable final InstanceRef exception) {
+                                 @Nullable InstanceRef exception) {
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myVmFrame = vmFrame;
@@ -48,14 +51,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
     }
   }
 
-  @NotNull
-  public String getIsolateId() {
+  public @NotNull String getIsolateId() {
     return myIsolateId;
   }
 
-  @Nullable
   @Override
-  public XSourcePosition getSourcePosition() {
+  public @Nullable XSourcePosition getSourcePosition() {
     return mySourcePosition;
   }
 
@@ -75,12 +76,19 @@ public class DartVmServiceStackFrame extends XStackFrame {
   }
 
   @Override
-  public void customizePresentation(@NotNull final ColoredTextContainer component) {
-    final String unoptimizedPrefix = "[Unoptimized] ";
-
+  public void customizePresentation(@NotNull ColoredTextContainer component) {
     final CodeRef code = myVmFrame.getCode();
-    String name = code == null ? "unnamed" : StringUtil.trimEnd(code.getName(), "="); // trim setter postfix
-    name = StringUtil.trimStart(name, unoptimizedPrefix);
+
+    String name;
+    if (code != null) {
+      // trim specific prefix and setter postfix
+      @NonNls String unoptimizedPrefix = "[Unoptimized] ";
+      @NlsSafe String codeName = code.getName();
+      name = StringUtil.trimStart(StringUtil.trimEnd(codeName, "="), unoptimizedPrefix);
+    }
+    else {
+      name = DartBundle.message("debugger.unnamed.frame");
+    }
 
     final boolean causal = myVmFrame.getKind() == FrameKind.AsyncCausal;
     component.append(name, causal ? SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
@@ -93,16 +101,15 @@ public class DartVmServiceStackFrame extends XStackFrame {
     component.setIcon(AllIcons.Debugger.Frame);
   }
 
-  @Nullable
   @Override
-  public Object getEqualityObject() {
+  public @Nullable Object getEqualityObject() {
     SourceLocation location = myVmFrame.getLocation();
     CodeRef code = myVmFrame.getCode();
     return location != null && code != null ? location.getScript().getId() + ":" + code.getId() : null;
   }
 
   @Override
-  public void computeChildren(@NotNull final XCompositeNode node) {
+  public void computeChildren(@NotNull XCompositeNode node) {
     if (myException != null) {
       final DartVmServiceValue exception = new DartVmServiceValue(myDebugProcess, myIsolateId, "exception", myException, null, null, true);
       node.addChildren(XValueChildrenList.singleton(exception), false);
@@ -127,9 +134,9 @@ public class DartVmServiceStackFrame extends XStackFrame {
     addStaticFieldsIfPresentAndThenAllVars(node, thisVar, vars);
   }
 
-  private void addStaticFieldsIfPresentAndThenAllVars(@NotNull final XCompositeNode node,
-                                                      @Nullable final BoundVariable thisVar,
-                                                      @NotNull final ElementList<BoundVariable> vars) {
+  private void addStaticFieldsIfPresentAndThenAllVars(@NotNull XCompositeNode node,
+                                                      @Nullable BoundVariable thisVar,
+                                                      @NotNull ElementList<BoundVariable> vars) {
     if (thisVar == null) {
       addVars(node, vars);
       return;
@@ -173,7 +180,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
     });
   }
 
-  private void addVars(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundVariable> vars) {
+  private void addVars(@NotNull XCompositeNode node, @NotNull ElementList<BoundVariable> vars) {
     final XValueChildrenList childrenList = new XValueChildrenList(vars.size());
 
     for (BoundVariable var : vars) {
@@ -192,9 +199,8 @@ public class DartVmServiceStackFrame extends XStackFrame {
     node.addChildren(childrenList, true);
   }
 
-  @Nullable
   @Override
-  public XDebuggerEvaluator getEvaluator() {
+  public @Nullable XDebuggerEvaluator getEvaluator() {
     // Enable Expression evaluation for all run configurations except webdev run instances, until supported, progress tracked here:
     // https://github.com/dart-lang/webdev/issues/715
     if (!myDebugProcess.isWebdevDebug()) {

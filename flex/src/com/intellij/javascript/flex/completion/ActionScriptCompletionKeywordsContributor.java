@@ -13,11 +13,13 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.completion.JSCompletionKeyword.*;
+
 /**
  * @author Konstantin.Ulitin
  */
 public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywordsContributor {
-  private static final @NonNls String[] accessModifiers = {"public", "private", "protected", "internal"};
+  private static final @NonNls JSCompletionKeyword[] accessModifiers = {PUBLIC, PRIVATE, PROTECTED, INTERNAL};
 
   @Override
   public boolean process(@NotNull KeywordCompletionConsumer consumer, @NotNull PsiElement context) {
@@ -35,26 +37,27 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
         )
       ) {
       if (!(grandParent instanceof JSImportStatement) &&
-          (grandParent instanceof JSAttributeList || JSResolveUtil.isPlaceWhereNsCanBe(grandParent) ||
+          (grandParent instanceof JSAttributeList || grandParent != null && JSResolveUtil.isPlaceWhereNsCanBe(grandParent) ||
            grandGrandParent instanceof JSFile) &&
           (!(grandParent instanceof JSFunction) || ((JSFunction)grandParent).getReturnTypeElement() != parent)
         ) {
         consumer.consume(JSLookupPriority.SMART_KEYWORDS_PRIORITY, true, accessModifiers);
-        consumer.consume(JSLookupPriority.SMART_KEYWORDS_PRIORITY, true, "class", "function", "interface",
-                         "namespace", "package",
-                         "extends", "implements", "import", "override", "static", "dynamic", "var", "const", "use",
-                         "final");
+        consumer.consume(JSLookupPriority.SMART_KEYWORDS_PRIORITY, true, CLASS, FUNCTION, INTERFACE,
+                         NAMESPACE, PACKAGE,
+                         EXTENDS, IMPLEMENTS, IMPORT, OVERRIDE, STATIC, DYNAMIC, VAR, CONST, USE,
+                         FINAL);
       }
       return false;
     }
-    if (JSResolveUtil.isInPlaceWhereTypeCanBeDuringCompletion(parent) && JSResolveUtil.isPlaceWhereNsCanBe(grandParent)
+    if (parent != null && grandParent != null &&
+        JSResolveUtil.isInPlaceWhereTypeCanBeDuringCompletion(parent) && JSResolveUtil.isPlaceWhereNsCanBe(grandParent)
       ) {
       consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, false, JSKeywordsCompletionProvider.TYPE_LITERAL_VALUES);
-      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, false, "function");
+      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, false, FUNCTION);
       consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, accessModifiers);
-      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, "extends", "implements", "include",
-                       "import", "static",
-                       "override", "namespace", "class", "interface", "var", "const", "use");
+      consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, EXTENDS, IMPLEMENTS, INCLUDE,
+                       IMPORT, STATIC,
+                       OVERRIDE, NAMESPACE, CLASS, INTERFACE, VAR, CONST, USE);
       return false;
     }
     return true;
@@ -65,28 +68,28 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
                                      @NotNull PsiElement context,
                                      PsiElement grandParent) {
     consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, true,
-                     "is",
-                     "as",
-                     "class",
-                     "interface",
-                     "internal",
-                     "public",
-                     "protected",
-                     "native",
-                     "override",
-                     "dynamic",
-                     "extends",
-                     "implements",
-                     "import",
-                     "static",
-                     "namespace",
-                     "use",
-                     "super",
-                     "include",
+                     IS,
+                     AS,
+                     CLASS,
+                     INTERFACE,
+                     INTERNAL,
+                     PUBLIC,
+                     PROTECTED,
+                     NATIVE,
+                     OVERRIDE,
+                     DYNAMIC,
+                     EXTENDS,
+                     IMPLEMENTS,
+                     IMPORT,
+                     STATIC,
+                     NAMESPACE,
+                     USE,
+                     SUPER,
+                     INCLUDE,
                      //"get", // do not add since it will stop the auto completion even iff we have common getXXX()
                      //"set",
-                     "package"
+                     PACKAGE
     );
-    consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, false, "int", "uint");
+    consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, false, INT, UINT);
   }
 }

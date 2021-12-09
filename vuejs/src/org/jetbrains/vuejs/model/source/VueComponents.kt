@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
@@ -13,15 +12,18 @@ import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.psi.util.*
+import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
+import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 /**
  * Basic resolve from index here (when we have the name literal and the descriptor literal/reference)
@@ -33,7 +35,7 @@ class VueComponents {
     }
 
     fun meaningfulExpression(element: PsiElement?): PsiElement? {
-      if (element == null) return element
+      if (element == null) return null
       return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
         .firstOrNull { it !is JSEmbeddedContent }
     }
@@ -47,6 +49,7 @@ class VueComponents {
       getVueIndexData(implicitElement)?.descriptorRef
         ?.takeIf { it.isNotBlank() }
         ?.let { resolveReferenceToVueComponent(implicitElement, it) }
+        ?.castSafelyTo<VueSourceEntityDescriptor>()
         ?.let { return it }
 
       val mixinObj = (implicitElement.parent as? JSProperty)?.parent as? JSObjectLiteralExpression
@@ -61,7 +64,7 @@ class VueComponents {
       return null
     }
 
-    fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueSourceEntityDescriptor? {
+    fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueEntityDescriptor? {
       val scope = createLocalResolveScope(element)
 
       return JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
@@ -74,50 +77,62 @@ class VueComponents {
       PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
       ?: element.containingFile
 
-    private fun getVueComponentFromResolve(result: Collection<PsiElement>): VueSourceEntityDescriptor? {
-      return result.mapNotNull(::getComponentDescriptor).firstOrNull()
-    }
-
-    fun isComponentDecorator(decorator: ES6Decorator): Boolean {
-      return decorator.decoratorName == "Component"
+    private fun getVueComponentFromResolve(result: Collection<PsiElement>): VueEntityDescriptor? {
+      return result.firstNotNullOfOrNull(::getComponentDescriptor)
     }
 
     fun getClassComponentDescriptor(clazz: JSClass): VueSourceEntityDescriptor =
       VueSourceEntityDescriptor(
-      initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) },
-      clazz = clazz)
+        initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) },
+        clazz = clazz)
 
     fun getComponentDecorator(element: JSClass): ES6Decorator? {
       element.attributeList
         ?.decorators
-        ?.find(this::isComponentDecorator)
+        ?.find(::isComponentDecorator)
         ?.let { return it }
       return (element.context as? ES6ExportDefaultAssignment)
         ?.attributeList
         ?.decorators
-        ?.find(this::isComponentDecorator)
+        ?.find(::isComponentDecorator)
     }
 
-    fun getComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? {
-      when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class, JSClass::class)) {
+    fun getComponentDescriptor(element: PsiElement?): VueEntityDescriptor? =
+      VueTypedEntitiesProvider.getComponentDescriptor(element)
+      ?: getSourceComponentDescriptor(element)
+
+    fun getSourceComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? =
+      when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class,
+                                            JSClass::class, JSEmbeddedContent::class, HtmlFileImpl::class)) {
         // {...}
-        is JSObjectLiteralExpression -> return VueSourceEntityDescriptor(resolved)
+        is JSObjectLiteralExpression -> VueSourceEntityDescriptor(resolved)
 
         // Vue.extend({...})
         // defineComponent({...})
         is JSCallExpression ->
-          if (isExtendVueCall(resolved) || isDefineComponentCall(resolved)) {
+          if (isDefineComponentOrVueExtendCall(resolved)) {
             PsiTreeUtil.getStubChildOfType(resolved.argumentList!!, JSObjectLiteralExpression::class.java)
-              ?.let { return VueSourceEntityDescriptor(it) }
+              ?.let { VueSourceEntityDescriptor(it) }
           }
+          else null
 
         // @Component({...}) class MyComponent {...}
-        is JSClassExpression ->
-          return VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
-                                           resolved)
+        is JSClass ->
+          VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
+                                    resolved)
+
+        // <script setup>
+        is JSEmbeddedContent ->
+          VueSourceEntityDescriptor(source = resolved.containingFile)
+
+        // Vue file without script section
+        is HtmlFileImpl ->
+          if (resolved.virtualFile?.fileType == VueFileType.INSTANCE)
+            VueSourceEntityDescriptor(source = resolved)
+          else null
+
+        else -> null
       }
-      return null
-    }
 
     @StubSafe
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
@@ -138,22 +153,26 @@ class VueComponents {
     }
 
     @StubUnsafe
-    private fun isExtendVueCall(callExpression: JSCallExpression): Boolean {
-      return (callExpression.methodExpression as? JSReferenceExpression)?.referenceName == EXTEND_FUN
-    }
-
-    @StubUnsafe
-    private fun isDefineComponentCall(callExpression: JSCallExpression): Boolean {
-      return callExpression.methodExpression
+    fun isDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
+      callExpression.methodExpression
         ?.castSafelyTo<JSReferenceExpression>()
-        ?.takeIf { it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN } != null
-    }
+        ?.let {
+          (it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN)
+          || it.referenceName == EXTEND_FUN
+        } == true
   }
 }
 
-class VueSourceEntityDescriptor(val initializer: JSObjectLiteralExpression? = null,
+interface VueEntityDescriptor {
+  val source: PsiElement
+}
+
+class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
                                 val clazz: JSClass? = null,
-                                val source: PsiElement = clazz ?: initializer!!) {
+                                override val source: PsiElement = clazz ?: initializer!!) : VueEntityDescriptor {
+  init {
+    assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
+  }
 
   fun <T> getCachedValue(provider: (descriptor: VueSourceEntityDescriptor) -> CachedValueProvider.Result<T>): T {
     val providerKey: Key<CachedValue<T>> = CachedValuesManager.getManager(source.project).getKeyForClass(provider::class.java)
@@ -177,6 +196,23 @@ class VueSourceEntityDescriptor(val initializer: JSObjectLiteralExpression? = nu
           provider(VueSourceEntityDescriptor(source = theSource))
         }
       }
+    }
+  }
+
+  fun ensureValid() {
+    sequenceOf(initializer, clazz, source)
+      .forEach { element -> element?.let { PsiUtilCore.ensureValid(it) } }
+  }
+
+  fun createPointer(): Pointer<VueSourceEntityDescriptor> {
+    val initializerPtr = this.initializer?.createSmartPointer()
+    val clazzPtr = this.clazz?.createSmartPointer()
+    val sourcePtr = this.source.createSmartPointer()
+    return Pointer {
+      val initializer = initializerPtr?.let { it.dereference() ?: return@Pointer null }
+      val clazz = clazzPtr?.let { it.dereference() ?: return@Pointer null }
+      val source = sourcePtr.dereference() ?: return@Pointer null
+      VueSourceEntityDescriptor(initializer, clazz, source)
     }
   }
 }

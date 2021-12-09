@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -29,13 +29,13 @@ import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -331,7 +331,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
                                                  @Nullable CfmlComponentReference reference,
                                                  final boolean forceQualify
                                        ) {
-    Collection<Object> variants = new THashSet<>();
+    Collection<Object> variants = new HashSet<>();
 
     String directoryName = "";
     if (text.contains(".")) {
@@ -372,7 +372,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
 
     final String finalDirectoryName = directoryName;
 
-    return ContainerUtil.map2Array(variants, new Function<Object, Object>() {
+    return ContainerUtil.map2Array(variants, new Function<>() {
       class DotInsertHandler implements InsertHandler<LookupElement> {
         @Override
         public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {

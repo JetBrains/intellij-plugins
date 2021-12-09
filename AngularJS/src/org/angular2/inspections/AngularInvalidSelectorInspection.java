@@ -3,6 +3,7 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.html.HtmlCompatibleFile;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
@@ -10,7 +11,6 @@ import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.impl.source.html.HtmlLikeFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
@@ -20,20 +20,20 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.codeInsight.tags.Angular2NgContentDescriptor.ATTR_SELECT;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ATTR_SELECT;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_CONTENT;
 
 public class AngularInvalidSelectorInspection extends LocalInspectionTool {
 
   @Override
   public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    if (holder.getFile() instanceof HtmlLikeFile) {
+    if (holder.getFile() instanceof HtmlCompatibleFile) {
       return new XmlElementVisitor() {
         @Override
         public void visitXmlAttribute(XmlAttribute attribute) {
           XmlAttributeValue value;
           if (attribute.getName().equals(ATTR_SELECT)
-              && attribute.getParent().getName().equals(NG_CONTENT)
+              && attribute.getParent().getName().equals(ELEMENT_NG_CONTENT)
               && (value = attribute.getValueElement()) != null) {
             try {
               Angular2DirectiveSimpleSelector.parse(value.getValue());

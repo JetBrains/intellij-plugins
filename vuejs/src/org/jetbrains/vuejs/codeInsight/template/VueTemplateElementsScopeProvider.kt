@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.template
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -16,12 +16,12 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.notNull
 import com.intellij.util.containers.Stack
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findExpressionInAttributeValue
+import org.jetbrains.vuejs.lang.expr.psi.VueJSScriptSetupExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
-import java.util.*
 import java.util.function.Consumer
 
 class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
@@ -39,7 +39,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
   private class VueTemplateElementScope constructor(root: PsiElement,
                                                     parent: VueTemplateElementScope?) : VueTemplateScope(parent) {
 
-    private val elements = ArrayList<JSPsiElementBase>()
+    private val elements = ArrayList<JSPsiNamedElementBase>()
 
     private val myRange: TextRange = root.textRange
 
@@ -53,7 +53,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
       elements.forEach { el -> consumer.accept(JSResolveResult(el)) }
     }
 
-    fun add(element: JSPsiElementBase) {
+    fun add(element: JSPsiNamedElementBase) {
       elements.add(element)
     }
 
@@ -77,7 +77,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
   }
 
-  private open class VueBaseScopeBuilder internal constructor(private val myTemplateFile: PsiFile) : XmlRecursiveElementVisitor() {
+  private open class VueBaseScopeBuilder constructor(private val myTemplateFile: PsiFile) : XmlRecursiveElementVisitor() {
     private val scopes = Stack<VueTemplateElementScope>()
 
     val topLevelScope: VueTemplateElementScope
@@ -91,30 +91,30 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
       scopes.add(VueTemplateElementScope(myTemplateFile, null))
     }
 
-    internal fun currentScope(): VueTemplateElementScope {
+    fun currentScope(): VueTemplateElementScope {
       return scopes.peek()
     }
 
-    internal fun popScope() {
+    fun popScope() {
       scopes.pop()
     }
 
-    internal fun pushScope(tag: XmlTag) {
+    fun pushScope(tag: XmlTag) {
       scopes.push(VueTemplateElementScope(tag, currentScope()))
     }
 
-    internal fun addElement(element: JSPsiElementBase) {
+    fun addElement(element: JSPsiNamedElementBase) {
       currentScope().add(element)
     }
   }
 
-  private class VueTemplateScopeBuilder internal constructor(templateFile: PsiFile) : VueBaseScopeBuilder(templateFile) {
+  private class VueTemplateScopeBuilder constructor(templateFile: PsiFile) : VueBaseScopeBuilder(templateFile) {
 
     override fun visitXmlTag(tag: XmlTag) {
       val tagHasVariables = tag.attributes
         .any { attribute ->
-          (attribute.descriptor as? VueAttributeDescriptor)
-            ?.getInfo()
+          attribute
+            ?.let { VueAttributeNameParser.parse(it.name, it.parent) }
             ?.let { info ->
               info.kind === VueAttributeKind.SLOT_SCOPE
               || info.kind === VueAttributeKind.SCOPE
@@ -136,12 +136,13 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
 
     override fun visitXmlAttribute(attribute: XmlAttribute?) {
-      (attribute?.descriptor as? VueAttributeDescriptor)
-        ?.getInfo()
+      attribute
+        ?.let { VueAttributeNameParser.parse(it.name, it.parent) }
         ?.let { info ->
           when (info.kind) {
             VueAttributeKind.SLOT_SCOPE -> addSlotProps(attribute)
             VueAttributeKind.SCOPE -> addSlotProps(attribute)
+            VueAttributeKind.SCRIPT_SETUP -> addScriptSetupParams(attribute)
             VueAttributeKind.DIRECTIVE ->
               when ((info as VueDirectiveInfo).directiveKind) {
                 VueDirectiveKind.FOR -> addVForVariables(attribute)
@@ -153,6 +154,13 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
             }
           }
         }
+    }
+
+    private fun addScriptSetupParams(attribute: XmlAttribute) {
+      findExpressionInAttributeValue(attribute, VueJSScriptSetupExpression::class.java)
+        ?.getParameterList()
+        ?.parameterVariables
+        ?.forEach { addElement(it) }
     }
 
     private fun addSlotProps(attribute: XmlAttribute) {

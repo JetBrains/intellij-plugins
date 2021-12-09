@@ -21,7 +21,7 @@ import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import icons.Struts2Icons;
+import com.intellij.struts2.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,34 +1,28 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.Strings;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharSequenceSubSequence;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.index.AngularDirectivesDocIndex;
-import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
-import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.angularjs.codeInsight.attributes.AngularAttributesRegistry.createDescriptor;
+import static org.angularjs.index.AngularJSDirectivesSupport.findAttributeDirectives;
 
 /**
  * @author Dennis.Ushakov
@@ -39,23 +33,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return XmlAttributeDescriptor.EMPTY;
+      if (!AngularIndexUtil.hasAngularJS(project)) return XmlAttributeDescriptor.EMPTY;
 
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
-      final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.KEY, project);
-      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
-      for (String directiveName : docDirectives) {
-        PsiElement declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY);
-        if (isApplicable(declaration)) {
-          addAttributes(project, result, directiveName, declaration);
-        }
-      }
-      for (String directiveName : directives) {
-        if (!docDirectives.contains(directiveName)) {
-          PsiElement declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesIndex.KEY);
-          if (isApplicable(declaration)) {
-            addAttributes(project, result, directiveName, declaration);
-          }
+      for (JSImplicitElement directive : ContainerUtil.concat(findAttributeDirectives(project, null))) {
+        String name = directive.getName();
+        if (name != null && !result.containsKey(name) && isApplicable(project, xmlTag, directive)) {
+          addAttributes(project, result, directive.getName(), directive);
         }
       }
       return result.values().toArray(XmlAttributeDescriptor.EMPTY);
@@ -74,32 +58,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     }
   }
 
-  private static PsiElement applicableDirective(@NotNull Project project,
-                                                @NotNull String directiveName,
-                                                @NotNull XmlTag tag,
-                                                final @NotNull StubIndexKey<String, JSImplicitElementProvider> index) {
-    Ref<PsiElement> result = Ref.create(PsiUtilCore.NULL_PSI_ELEMENT);
-    AngularIndexUtil.multiResolve(project, index, directiveName, (directive) -> {
-      // Ensure this is our element
-      if (directive == null
-          || (!AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING.equals(directive.getUserString())
-              && !AngularJSIndexingHandler.ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING.equals(directive.getUserString()))) {
-        return true;
-      }
-      if (isApplicable(project, tag, directive)) {
-        result.set(directive);
-        return false;
-      }
-      else {
-        result.set(null);
-      }
-      return true;
-    });
-    return result.get();
-  }
-
   private static boolean isApplicable(@NotNull Project project, @NotNull XmlTag tag, @NotNull JSImplicitElement directive) {
-
     final String restrictions = directive.getTypeString();
     if (restrictions != null) {
       int semicolon = restrictions.indexOf(';');
@@ -192,18 +151,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return null;
 
       final String directiveName = DirectiveUtil.normalizeAttributeName(attrName);
-      PsiElement declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY);
-      if (declaration == PsiUtilCore.NULL_PSI_ELEMENT) {
-        declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesIndex.KEY);
-      }
-      if (isApplicable(declaration)) {
-        return createDescriptor(project, attrName, declaration);
+      for (JSImplicitElement directive : findAttributeDirectives(project, directiveName)) {
+        String name = directive.getName();
+        if (name != null && directiveName.equals(name) && isApplicable(project, xmlTag, directive)) {
+          return createDescriptor(project, attrName, directive);
+        }
       }
     }
     return null;
-  }
-
-  private static boolean isApplicable(PsiElement declaration) {
-    return declaration != null && declaration != PsiUtilCore.NULL_PSI_ELEMENT;
   }
 }

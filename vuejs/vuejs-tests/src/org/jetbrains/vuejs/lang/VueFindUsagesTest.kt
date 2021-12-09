@@ -1,12 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.openapi.application.PathManager
+import com.intellij.javascript.web.checkUsages
+import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class VueFindUsagesTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/findUsages"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/findUsages"
 
   fun testPrivateComponentGetter() {
     myFixture.configureByFiles("privateFields.vue")
@@ -26,6 +27,34 @@ class VueFindUsagesTest : BasePlatformTestCase() {
   fun testPrivateConstructorField() {
     myFixture.configureByFiles("privateFields.vue")
     myFixture.checkUsages("private ba<caret>r", getTestName(true))
+  }
+
+  fun testScriptSetupRef() {
+    myFixture.configureByFiles("scriptSetupRef.vue", "scriptSetupRef2.vue")
+    listOf("ref='f<caret>oo2'", "ref='fo<caret>o'",
+           "\$refs.fo<caret>o2 ", "\$refs.fo<caret>o ",
+           "const fo<caret>o2", "const fo<caret>o3")
+      .forEachIndexed { index, signature ->
+        myFixture.checkUsages(signature, getTestName(true) + "." + index)
+      }
+  }
+
+  fun testTypedComponents() {
+    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11)
+    myFixture.configureByFiles("typedComponentsClassic.vue", "typedComponentsScriptSetup.vue")
+
+    myFixture.checkUsages(" Dia<caret>log,", getTestName(true) + ".classic.headlessui")
+    myFixture.checkUsages(" N<caret>Affix,", getTestName(true) + ".classic.naive-ui")
+    myFixture.checkUsages(" Fo<caret>o:", getTestName(true) + ".classic.foo")
+    myFixture.checkUsages(" Ba<caret>r:", getTestName(true) + ".classic.bar")
+
+    myFixture.configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
+    myFixture.checkUsages("export declare let Dia<caret>log:", getTestName(true) + ".headlessui")
+
+    myFixture.configureFromTempProjectFile("node_modules/naive-ui/lib/affix/src/Affix.d.ts")
+    myFixture.checkUsages("declare const _defa<caret>ult:", getTestName(true) + ".naive-ui",
+                          scope = GlobalSearchScopesCore.directoryScope(project, myFixture.tempDirFixture.findOrCreateDir("."),
+                                                                        true))
   }
 
 }

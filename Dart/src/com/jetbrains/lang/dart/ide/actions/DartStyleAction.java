@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -28,11 +28,11 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,21 +55,21 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
 
   @Override
   protected void runOverEditor(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
-    reformatRange(editor, psiFile, TextRange.from(0, psiFile.getTextLength()), true);
+    reformatRange(editor, psiFile, TextRange.from(0, psiFile.getTextLength()), false);
   }
 
-  public static TextRange reformatRange(@NotNull final PsiFile psiFile, @NotNull final TextRange range) {
+  public static TextRange reformatRangeAsPostFormatProcessor(@NotNull final PsiFile psiFile, @NotNull final TextRange range) {
     FileEditor[] fileEditors = FileEditorManager.getInstance(psiFile.getProject()).getEditors(psiFile.getVirtualFile());
     FileEditor fileEditor = fileEditors.length == 1 ? fileEditors[0] : null;
     Editor editor = fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
 
-    return reformatRange(editor, psiFile, range, false);
+    return reformatRange(editor, psiFile, range, true);
   }
 
   private static TextRange reformatRange(@Nullable final Editor editor,
                                          @NotNull final PsiFile psiFile,
                                          @NotNull final TextRange inputRange,
-                                         final boolean showStatusHint) {
+                                         final boolean runningAsPostFormatProcessor) {
     final Project project = psiFile.getProject();
     final VirtualFile file = psiFile.getVirtualFile();
     final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
@@ -91,23 +91,22 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     final DartAnalysisServerService.FormatResult formatResult = das.edit_format(psiFile.getVirtualFile(), caretOffset, 0, lineLength);
 
     if (formatResult == null) {
-      if (editor != null && showStatusHint) {
+      if (editor != null && !runningAsPostFormatProcessor) {
         showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
       }
-      LOG.warn("Unexpected response from edit_format, formatResult is null");
       return inputRange;
     }
 
     final List<SourceEdit> edits = formatResult.getEdits();
     if (edits == null || edits.size() == 0) {
-      if (editor != null && showStatusHint) {
+      if (editor != null && !runningAsPostFormatProcessor) {
         showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);
       }
       return inputRange;
     }
 
     if (edits.size() > 1) {
-      if (editor != null && showStatusHint) {
+      if (editor != null && !runningAsPostFormatProcessor) {
         showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
       }
       LOG.warn("Unexpected response from edit_format, formatResult.getEdits().size() = " + edits.size());
@@ -127,7 +126,16 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
 
     WriteCommandAction
       .runWriteCommandAction(project, DartBundle.message("action.Dart.DartStyle.text"), null,
-                             () -> document.replaceString(inputRange.getStartOffset(), inputRange.getEndOffset(), formattedRange),
+                             () -> {
+                               document.replaceString(inputRange.getStartOffset(), inputRange.getEndOffset(), formattedRange);
+
+                               if (runningAsPostFormatProcessor) {
+                                 // With the 'reformat ony VCS changed text' option (which is always ON in case of reformat before commit),
+                                 // this reformatRange() method is called several times for different ranges. Without committing a document
+                                 // these ranges are incorrect because they are calculated based on an outdated PsiFile.
+                                 PsiDocumentManager.getInstance(project).commitDocument(document);
+                               }
+                             },
                              psiFile);
 
     if (editor != null) {
@@ -136,7 +144,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
                            + inputRange.getStartOffset() - rangeInFormattedText.getStartOffset();
         editor.getCaretModel().moveToOffset(offset);
       }
-      if (showStatusHint) {
+      if (!runningAsPostFormatProcessor) {
         showHintLater(editor, DartBundle.message("dart.style.hint.success"), false);
       }
     }
@@ -163,7 +171,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
 
   // keep public to be accessible in 3rd party plugins
   public static void runDartfmt(@NotNull final Project project, @NotNull final List<? extends VirtualFile> dartFiles) {
-    final Map<VirtualFile, String> fileToNewContentMap = new THashMap<>();
+    final Map<VirtualFile, String> fileToNewContentMap = new HashMap<>();
     final int lineLength = getRightMargin(project);
 
     final Runnable runnable = () -> {
@@ -192,7 +200,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     DartAnalysisServerService.getInstance(project).updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
-      .runProcessWithProgressSynchronously(runnable, DartBundle.message("action.Dart.DartStyle.text"), true, project);
+      .runProcessWithProgressSynchronously(runnable, DartBundle.message("action.Dart.DartStyle.progress.title"), true, project);
 
     if (ok) {
       final Runnable onSuccessRunnable = () -> {
@@ -224,7 +232,8 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
                                                   @NotNull String formattedText) {
     int startOffset = rangeInInputText.getStartOffset();
     int endOffset = rangeInInputText.getEndOffset();
-    assert startOffset >= 0 && endOffset > startOffset && endOffset <= inputText.length() : rangeInInputText;
+    assert startOffset >= 0 && endOffset > startOffset && endOffset <= inputText.length()
+      : startOffset + ", " + endOffset + ", " + inputText.length();
 
     int nonSpaceBeforeStartOffset = countNonSpaceChars(inputText.substring(0, startOffset));
     int nonSpaceWithinRange = countNonSpaceChars(rangeInInputText.substring(inputText));

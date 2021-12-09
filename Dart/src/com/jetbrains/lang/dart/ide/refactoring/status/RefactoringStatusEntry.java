@@ -1,20 +1,7 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring.status;
 
+import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,22 +10,16 @@ import org.jetbrains.annotations.Nullable;
  * status entry consists of a severity, a message and a context object.
  */
 public class RefactoringStatusEntry {
-  /**
-   * The severity level.
-   */
-  @NotNull private final RefactoringStatusSeverity severity;
 
-  /**
-   * The message of the status entry.
-   */
-  @NotNull private final String message;
+  private final @NotNull RefactoringStatusSeverity mySeverity;
+  private final @NotNull @NlsSafe String myMessage;
 
   /**
    * The {@link RefactoringStatusContext} which can be used to show more detailed information
    * regarding this status entry in the UI. May be {@code null} indicating that no context is
    * available.
    */
-  @Nullable private final RefactoringStatusContext context;
+  private final @Nullable RefactoringStatusContext myContext;
 
   public RefactoringStatusEntry(@NotNull RefactoringStatusSeverity severity, @NotNull String message) {
     this(severity, message, null);
@@ -47,9 +28,9 @@ public class RefactoringStatusEntry {
   public RefactoringStatusEntry(@NotNull RefactoringStatusSeverity severity,
                                 @NotNull String message,
                                 @Nullable RefactoringStatusContext ctx) {
-    this.severity = severity;
-    this.message = message;
-    this.context = ctx;
+    this.mySeverity = severity;
+    this.myMessage = message;
+    this.myContext = ctx;
   }
 
   /**
@@ -57,25 +38,22 @@ public class RefactoringStatusEntry {
    * information regarding this status entry in the UI. The method may return {@code null}
    * indicating that no context is available.
    */
-  @Nullable
-  public RefactoringStatusContext getContext() {
-    return context;
+  public @Nullable RefactoringStatusContext getContext() {
+    return myContext;
   }
 
   /**
    * @return the message of the status entry.
    */
-  @NotNull
-  public String getMessage() {
-    return message;
+  public @NotNull @NlsSafe String getMessage() {
+    return myMessage;
   }
 
   /**
    * @return the severity level.
    */
-  @NotNull
-  public RefactoringStatusSeverity getSeverity() {
-    return severity;
+  public @NotNull RefactoringStatusSeverity getSeverity() {
+    return mySeverity;
   }
 
   /**
@@ -84,7 +62,7 @@ public class RefactoringStatusEntry {
    * @return {@code true} if (severity =={@code RefactoringStatusSeverity.ERROR}).
    */
   public boolean isError() {
-    return severity == RefactoringStatusSeverity.ERROR;
+    return mySeverity == RefactoringStatusSeverity.ERROR;
   }
 
   /**
@@ -93,7 +71,7 @@ public class RefactoringStatusEntry {
    * @return {@code true} if (severity =={@code RefactoringStatusSeverity.FATAL})
    */
   public boolean isFatalError() {
-    return severity == RefactoringStatusSeverity.FATAL;
+    return mySeverity == RefactoringStatusSeverity.FATAL;
   }
 
   /**
@@ -102,7 +80,7 @@ public class RefactoringStatusEntry {
    * @return {@code true} if (severity =={@code RefactoringStatusSeverity.INFO}).
    */
   public boolean isInfo() {
-    return severity == RefactoringStatusSeverity.INFO;
+    return mySeverity == RefactoringStatusSeverity.INFO;
   }
 
   /**
@@ -111,16 +89,16 @@ public class RefactoringStatusEntry {
    * @return {@code true} if (severity =={@code RefactoringStatusSeverity.WARNING}).
    */
   public boolean isWarning() {
-    return severity == RefactoringStatusSeverity.WARNING;
+    return mySeverity == RefactoringStatusSeverity.WARNING;
   }
 
   @Override
   public String toString() {
-    if (context != null) {
-      return severity + ": " + message + "; Context: " + context;
+    if (myContext != null) {
+      return mySeverity + ": " + myMessage + "; Context: " + myContext;
     }
     else {
-      return severity + ": " + message;
+      return mySeverity + ": " + myMessage;
     }
   }
 }

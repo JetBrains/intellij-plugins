@@ -17,11 +17,15 @@ package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.FilenameIndex;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+
+import static com.intellij.psi.search.GlobalSearchScope.moduleWithLibrariesScope;
 
 /**
  * Tests for {@link com.intellij.struts2.model.constant.StrutsConstantManager} with custom {@link <constant>} in
@@ -30,14 +34,11 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstantManagerTestCase {
-
-  private static final String SPRING_JAR = "struts2-spring-plugin-" + STRUTS2_VERSION + ".jar";
-
   private static final LightProjectDescriptor SPRING = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()
     .withStrutsFacet()
-    .withLibrary("spring", "spring.jar")
-    .withLibrary("struts2-spring-plugin", SPRING_JAR);
+    .withMavenLibrary("org.apache.struts:struts2-spring-plugin:2.3.1")
+    .withMavenLibrary("org.springframework:spring-beans:3.0.5.RELEASE");
 
   @NotNull
   @Override
@@ -52,12 +53,17 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
   }
 
   public void testSpringPluginXml() {
-    createStrutsFileSet(STRUTS_XML,
-                        "lib/" + SPRING_JAR + "!/struts-plugin.xml");
+    Collection<VirtualFile> configFiles =
+      FilenameIndex.getVirtualFilesByName("struts-plugin.xml", moduleWithLibrariesScope(getModule()));
+    assertSize(1, configFiles);
 
-    final PsiClass springObjectFactoryClass =
+    VirtualFile springStrutsPluginXml = configFiles.iterator().next();
+
+    createStrutsFileSet(STRUTS_XML, springStrutsPluginXml.getUrl());
+
+    PsiClass springObjectFactoryClass =
       myFixture.getJavaFacade().findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
-                                          GlobalSearchScope.moduleWithLibrariesScope(getModule()));
+                                          moduleWithLibrariesScope(getModule()));
     assertNotNull(springObjectFactoryClass);
 
     final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);

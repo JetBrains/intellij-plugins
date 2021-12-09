@@ -3,14 +3,13 @@ package org.jetbrains.vuejs.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.lang.javascript.JSAnalysisHandlersFactory
 import com.intellij.lang.javascript.highlighting.JSFixFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.validation.*
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.ResolveResult
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
@@ -55,7 +54,7 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
         return super.checkParameterLength(node, function, expressions, fixes, minMaxParameters, actualParameterLength)
       }
 
-      override fun registerProblem(callExpression: JSCallExpression, message: String, vararg fixes: LocalQuickFix) {
+      override fun registerProblem(callExpression: JSCallExpression, message: @InspectionMessage String, vararg fixes: LocalQuickFix) {
         val place = (callExpression as? VueJSFilterExpression)
                       ?.filterArgumentsList
                     ?: ValidateTypesUtil.getPlaceForSignatureProblem(callExpression, null)
@@ -64,7 +63,7 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
     }
   }
 
-  override fun getReferenceChecker(reporter: JSReferenceInspectionProblemReporter): JSReferenceChecker {
+  override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker {
     return object : JSReferenceChecker((reporter)) {
       override fun addCreateFromUsageFixes(node: JSReferenceExpression?,
                                            resolveResults: Array<out ResolveResult>?,
@@ -86,9 +85,9 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
       }
 
       override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression,
-                                                        isNewExpression: Boolean): Ref<String> {
+                                                        isNewExpression: Boolean): @InspectionMessage String {
         return if (methodExpression is VueJSFilterReferenceExpression) {
-          Ref.create(VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!))
+          VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!)
         }
         else super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression)
       }

@@ -5,7 +5,6 @@ import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
-import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.JSTestOption;
@@ -23,6 +22,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
+import com.intellij.openapi.graph.services.GraphCanvasLocationService;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
@@ -47,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
@@ -80,11 +81,10 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
 
   @Override
   public Object getData(@NotNull String dataId) {
-    if (dataId.equals(CommonDataKeys.PSI_ELEMENT.getName()) ||
-        dataId.equals(AnActionEvent.injectedId(CommonDataKeys.PSI_ELEMENT.getName()))) {
+    if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
       return TargetElementUtil.findTargetElement(getEditor(), TargetElementUtil.getInstance().getReferenceSearchFlags());
     }
-    if (dataId.equals(CommonDataKeys.PSI_FILE.getName())) {
+    if (CommonDataKeys.PSI_FILE.is(dataId)) {
       return getFile();
     }
     return super.getData(dataId);
@@ -132,7 +132,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
 
       DataContext dataContext = DataManager.getInstance().getDataContext(null);
       AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
-      List<DiagramProvider> providers = ShowDiagramBase.findProviders(event).toList();
+      List<DiagramProvider<?>> providers = ShowDiagramBase.findProviders(event).collect(Collectors.toList());
 
       FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
       assertNotNull("Flash UML provider not found", provider);
@@ -143,8 +143,8 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
       Object actualOrigin = provider.getVfsResolver().resolveElementByFQN(actualOriginFqn, getProject());
       builder = UmlGraphBuilderFactory.create(myProject, provider, actualOrigin, null);
       Disposer.register(getTestRootDisposable(), builder);
-      final DiagramDataModel<Object> model = builder.getDataModel();
-      DiagramConfiguration configuration = DiagramConfiguration.getConfiguration();
+      DiagramDataModel<?> model = builder.getDataModel();
+      DiagramConfiguration configuration = DiagramConfiguration.getInstance();
       String originalCategories = configuration.categories.get(provider.getID());
       if (dependencies != null) {
         model.setShowDependencies(true);
@@ -160,15 +160,15 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
         model.refreshDataModel();
 
         // first limit elements by scope
-        Collection<DiagramNode<Object>> nodesToRemove = new ArrayList<>();
-        for (DiagramNode<Object> node : model.getNodes()) {
+        Collection<DiagramNode<?>> nodesToRemove = new ArrayList<>();
+        for (DiagramNode<?> node : model.getNodes()) {
           if (node.getIdentifyingElement() instanceof JSClass &&
               !scopeProvider.compute().contains(((JSClass)node.getIdentifyingElement()).getContainingFile().getVirtualFile())) {
             nodesToRemove.add(node);
           }
         }
 
-        for (DiagramNode<Object> node : nodesToRemove) {
+        for (DiagramNode node : nodesToRemove) {
           model.removeNode(node);
         }
         builder.updateGraph();
@@ -176,9 +176,10 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
         // then add explicitly required classes
         for (String aClass : additionalClasses) {
           JSClass c = JSTestUtils.findClassByQName(aClass, GlobalSearchScope.allScope(myProject));
-          final DiagramNode node = model.addElement(c);
+          @SuppressWarnings("unchecked")
+          DiagramNode<?> node = ((DiagramDataModel<Object>)model).addElement(c);
           if (node != null) {
-            builder.createDraggedNode(node, node.getTooltip(), DiagramUtils.getBestPositionForNode(builder));
+            builder.createDraggedNode(node, node.getTooltip(), GraphCanvasLocationService.getInstance().getBestPositionForNode(builder.getGraphBuilder()));
             builder.updateGraph();
           }
         }
@@ -186,17 +187,21 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
         assertModel(expectedPrefix, provider, actualOriginFqn, model);
       }
       finally {
-        configuration.categories.put(provider.getID(), originalCategories);
+        if (originalCategories == null) {
+          configuration.categories.remove(provider.getID());
+        }
+        else {
+          configuration.categories.put(provider.getID(), originalCategories);
+        }
       }
     }
-    assert builder != null;
     return builder;
   }
 
-  private void assertModel(final String expectedPrefix,
-                           final DiagramProvider<Object> provider,
-                           final String actualOriginFqn,
-                           final DiagramDataModel<Object> model) throws Exception {
+  private void assertModel(String expectedPrefix,
+                           DiagramProvider<Object> provider,
+                           String actualOriginFqn,
+                           DiagramDataModel<?> model) throws Exception {
     String expectedDataFileName =
       getTestName(false) + (StringUtil.isEmpty(expectedPrefix) ? ".expected.xml" : ".expected." + expectedPrefix + ".xml");
     CharSequence expectedText = LoadTextUtil.loadText(findVirtualFile(BASE_PATH + expectedDataFileName));
@@ -214,7 +219,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
     doTest(getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testMxmlClass() throws Exception {
     doTest(getTestName(false) + ".mxml");
   }

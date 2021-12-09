@@ -14,7 +14,7 @@ PostCSS File:MediaRangeOperatorExpected.pcss
                     PsiElement(CSS_NUMBER_TERM)
                       PsiElement(CSS_NUMBER)('200')
                       PsiElement(CSS_IDENT)('px')
-                    PsiErrorElement:operator sign expected
+                    PsiErrorElement:Operator sign expected
                       <empty list>
                     PsiWhiteSpace(' ')
                     PsiElement(CSS_IDENT)('width')

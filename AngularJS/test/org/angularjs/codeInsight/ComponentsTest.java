@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluatorComplexityTracker;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 

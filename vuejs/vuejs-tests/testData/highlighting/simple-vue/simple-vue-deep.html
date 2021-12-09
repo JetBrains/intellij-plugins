@@ -5,15 +5,15 @@
 <body>
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 
-<div id="app" v-bind:foo="">
-  [[ message<error descr="Expected end of expression"> </error>d ]] {{ message d }}
+<div id="app" v-bind:<warning descr="Unrecognized attribute or property name">foo</warning>="">
+  [[ message<error descr="Expected end of expression"> </error><weak_warning descr="Unresolved variable or type d">d</weak_warning> ]] {{ message d }}
   <<warning descr="Unknown html tag foo">foo</warning>></<warning descr="Unknown html tag foo">foo</warning>>
   <bar v-bind:bar="message"></bar>
   <div v-foo=""></div>
 </div>
-[[ mess d ]] {{ <weak_warning descr="Unresolved variable or type mess">mess</weak_warning><error descr="Expected end of expression"> </error>d}}
+[[ mess d ]] {{ <weak_warning descr="Unresolved variable or type mess">mess</weak_warning><error descr="Expected end of expression"> </error><weak_warning descr="Unresolved variable or type d">d</weak_warning>}}
 <<warning descr="Unknown html tag bar">bar</warning>></<warning descr="Unknown html tag bar">bar</warning>>
-<div <warning descr="Attribute v-foo is not allowed here">v-foo</warning>=""></div>
+<div v-<warning descr="Unrecognized Vue directive">foo</warning>=""></div>
 
 <script>
   const app = new <weak_warning descr="Unresolved type Vue">Vue</weak_warning>({

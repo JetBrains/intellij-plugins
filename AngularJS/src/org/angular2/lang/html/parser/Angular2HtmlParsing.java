@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.NG_NON_BINDABLE_ATTR;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ATTR_NG_NON_BINDABLE;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
@@ -64,7 +64,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         xmlText = startText(xmlText);
         final PsiBuilder.Marker error = mark();
         advance();
-        error.error(XmlPsiBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
+        error.error(XmlPsiBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"));
       }
       else if (tt == XmlTokenType.XML_END_TAG_START) {
         final PsiBuilder.Marker tagEndError = mark();
@@ -179,7 +179,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     PsiBuilder.Marker att = mark();
     String tagName = XmlUtil.findLocalNameByQualifiedName(peekTagName());
     String attributeName = getBuilder().getTokenText();
-    if (NG_NON_BINDABLE_ATTR.equals(attributeName)) {
+    if (ATTR_NG_NON_BINDABLE.equals(attributeName)) {
       if (ngNonBindableTags.isEmpty()
           || ngNonBindableTags.peek() != peekTagMarker()) {
         ngNonBindableTags.push(peekTagMarker());
@@ -236,7 +236,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         if (tt == XmlTokenType.XML_BAD_CHARACTER) {
           final PsiBuilder.Marker error = mark();
           advance();
-          error.error(XmlPsiBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
+          error.error(XmlPsiBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"));
         }
         else if (tt == XmlTokenType.XML_ENTITY_REF_TOKEN) {
           parseReference();

@@ -12,25 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.lang.ognl.psi.resolve.variable;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Yann C&eacute;bron
  */
 public abstract class OgnlVariableReferencesContributor {
-
-  @NonNls
-  public static final ExtensionPointName<OgnlVariableReferencesContributor> EXTENSION_POINT_NAME =
-    ExtensionPointName.create("com.intellij.ognl.variableReferencesContributor");
-
   /**
    * @param element
    * @param containingFile

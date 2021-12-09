@@ -3,7 +3,7 @@ class F {
     function ff3() {}
 
     // inspection 2
-    function ff2() {}
 
     function f<caret>f() {}
+    function ff2() {}
 }

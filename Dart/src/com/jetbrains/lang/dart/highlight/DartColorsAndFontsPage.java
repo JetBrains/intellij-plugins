@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -57,6 +58,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_ANNOTATION", ANNOTATION);
     PREVIEW_TAGS.put("DART_CLASS", CLASS);
     PREVIEW_TAGS.put("DART_CONSTRUCTOR", CONSTRUCTOR);
+    PREVIEW_TAGS.put("DART_CONSTRUCTOR_TEAR_OFF", CONSTRUCTOR_TEAR_OFF);
 
     PREVIEW_TAGS.put("DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION", DYNAMIC_LOCAL_VARIABLE_DECLARATION);
     PREVIEW_TAGS.put("DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE", DYNAMIC_LOCAL_VARIABLE_REFERENCE);
@@ -66,6 +68,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_ENUM", ENUM);
     PREVIEW_TAGS.put("DART_ENUM_CONSTANT", ENUM_CONSTANT);
     PREVIEW_TAGS.put("DART_FUNCTION_TYPE_ALIAS", FUNCTION_TYPE_ALIAS);
+    PREVIEW_TAGS.put("DART_TYPE_ALIAS", TYPE_ALIAS);
 
     PREVIEW_TAGS.put("DART_IDENTIFIER", IDENTIFIER);
     PREVIEW_TAGS.put("DART_INSTANCE_FIELD_DECLARATION", INSTANCE_FIELD_DECLARATION);
@@ -74,6 +77,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_INSTANCE_GETTER_REFERENCE", INSTANCE_GETTER_REFERENCE);
     PREVIEW_TAGS.put("DART_INSTANCE_METHOD_DECLARATION", INSTANCE_METHOD_DECLARATION);
     PREVIEW_TAGS.put("DART_INSTANCE_METHOD_REFERENCE", INSTANCE_METHOD_REFERENCE);
+    PREVIEW_TAGS.put("DART_INSTANCE_METHOD_TEAR_OFF", INSTANCE_METHOD_TEAR_OFF);
     PREVIEW_TAGS.put("DART_INSTANCE_SETTER_DECLARATION", INSTANCE_SETTER_DECLARATION);
     PREVIEW_TAGS.put("DART_INSTANCE_SETTER_REFERENCE", INSTANCE_SETTER_REFERENCE);
 
@@ -84,6 +88,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
 
     PREVIEW_TAGS.put("DART_LOCAL_FUNCTION_DECLARATION", LOCAL_FUNCTION_DECLARATION);
     PREVIEW_TAGS.put("DART_LOCAL_FUNCTION_REFERENCE", LOCAL_FUNCTION_REFERENCE);
+    PREVIEW_TAGS.put("DART_LOCAL_FUNCTION_TEAR_OFF", LOCAL_FUNCTION_TEAR_OFF);
     PREVIEW_TAGS.put("DART_LOCAL_VARIABLE_DECLARATION", LOCAL_VARIABLE_DECLARATION);
     PREVIEW_TAGS.put("DART_LOCAL_VARIABLE_REFERENCE", LOCAL_VARIABLE_REFERENCE);
 
@@ -95,11 +100,13 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_STATIC_GETTER_REFERENCE", STATIC_GETTER_REFERENCE);
     PREVIEW_TAGS.put("DART_STATIC_METHOD_DECLARATION", STATIC_METHOD_DECLARATION);
     PREVIEW_TAGS.put("DART_STATIC_METHOD_REFERENCE", STATIC_METHOD_REFERENCE);
+    PREVIEW_TAGS.put("DART_STATIC_METHOD_TEAR_OFF", STATIC_METHOD_TEAR_OFF);
     PREVIEW_TAGS.put("DART_STATIC_SETTER_DECLARATION", STATIC_SETTER_DECLARATION);
     PREVIEW_TAGS.put("DART_STATIC_SETTER_REFERENCE", STATIC_SETTER_REFERENCE);
 
     PREVIEW_TAGS.put("DART_TOP_LEVEL_FUNCTION_DECLARATION", TOP_LEVEL_FUNCTION_DECLARATION);
     PREVIEW_TAGS.put("DART_TOP_LEVEL_FUNCTION_REFERENCE", TOP_LEVEL_FUNCTION_REFERENCE);
+    PREVIEW_TAGS.put("DART_TOP_LEVEL_FUNCTION_TEAR_OFF", TOP_LEVEL_FUNCTION_TEAR_OFF);
     PREVIEW_TAGS.put("DART_TOP_LEVEL_GETTER_DECLARATION", TOP_LEVEL_GETTER_DECLARATION);
     PREVIEW_TAGS.put("DART_TOP_LEVEL_GETTER_REFERENCE", TOP_LEVEL_GETTER_REFERENCE);
     PREVIEW_TAGS.put("DART_TOP_LEVEL_SETTER_DECLARATION", TOP_LEVEL_SETTER_DECLARATION);
@@ -144,7 +151,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.valid.string.escape"), VALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.invalid.string.escape"), INVALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.operator"), OPERATION_SIGN),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parenths"), PARENTHS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parentheses"), PARENTHS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.brackets"), BRACKETS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.braces"), BRACES),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.comma"), COMMA),
@@ -158,6 +165,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.annotation"), ANNOTATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.class"), CLASS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor"), CONSTRUCTOR),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.tearoff"), CONSTRUCTOR_TEAR_OFF),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.dynamic.local.variable.declaration"),
                                DYNAMIC_LOCAL_VARIABLE_DECLARATION),
@@ -171,6 +179,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum"), ENUM),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum.constant"), ENUM_CONSTANT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.function.type.alias"), FUNCTION_TYPE_ALIAS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.type.alias"), TYPE_ALIAS),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.identifier"), IDENTIFIER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.declaration"),
@@ -182,6 +191,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.method.declaration"),
                                INSTANCE_METHOD_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.method.reference"), INSTANCE_METHOD_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.method.tearoff"), INSTANCE_METHOD_TEAR_OFF),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.setter.declaration"),
                                INSTANCE_SETTER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.setter.reference"), INSTANCE_SETTER_REFERENCE),
@@ -194,6 +204,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.declaration"),
                                LOCAL_FUNCTION_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.reference"), LOCAL_FUNCTION_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function.tearoff"), LOCAL_FUNCTION_TEAR_OFF),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.declaration"),
                                LOCAL_VARIABLE_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.reference"), LOCAL_VARIABLE_REFERENCE),
@@ -206,6 +217,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.getter.reference"), STATIC_GETTER_REFERENCE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.method.declaration"), STATIC_METHOD_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.method.reference"), STATIC_METHOD_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.method.tearoff"), STATIC_METHOD_TEAR_OFF),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.setter.declaration"), STATIC_SETTER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.setter.reference"), STATIC_SETTER_REFERENCE),
 
@@ -213,6 +225,8 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
                                TOP_LEVEL_FUNCTION_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.reference"),
                                TOP_LEVEL_FUNCTION_REFERENCE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.tearoff"),
+                               TOP_LEVEL_FUNCTION_TEAR_OFF),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.declaration"),
                                TOP_LEVEL_GETTER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.reference"),
@@ -232,8 +246,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return DartBundle.message("dart.title");
   }
 
@@ -253,14 +266,12 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new DartSyntaxHighlighter();
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return PREVIEW_TEXT;
   }
 

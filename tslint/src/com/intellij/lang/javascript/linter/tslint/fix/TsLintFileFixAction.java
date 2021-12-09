@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.fix;
 
 
@@ -38,15 +38,14 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   }
 
   @Override
-  protected boolean isFileAccepted(@NotNull VirtualFile file) {
+  protected boolean isFileAccepted(@NotNull Project project, @NotNull VirtualFile file) {
     FileType fileType = file.getFileType();
     return TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(fileType)
            || DialectDetector.JAVASCRIPT_FILE_TYPES.contains(fileType);
   }
 
-  @NotNull
   @Override
-  protected JSLinterConfiguration getConfiguration(Project project) {
+  protected @NotNull JSLinterConfiguration getConfiguration(@NotNull Project project) {
     return TsLintConfiguration.getInstance(project);
   }
 
@@ -63,7 +62,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
       TslintLanguageServiceManager languageServiceManager = TslintLanguageServiceManager.getInstance(project);
       TsLintState state = TsLintConfiguration.getInstance(project).getExtendedState().getState();
       for (VirtualFile file : filesToProcess) {
-        indicator.setText("Processing file " + file.getCanonicalPath());
+        indicator.setText(TsLintBundle.message("tslint.progress.text.processing.file", file.getCanonicalPath()));
         languageServiceManager.useService(file, state.getNodePackageRef(), service -> {
           if (service == null) {
             return null;
@@ -73,7 +72,8 @@ public class TsLintFileFixAction extends JSLinterFixAction {
             JSLanguageServiceUtil.awaitLanguageService(future, service, file);
           }
           catch (ExecutionException e) {
-            JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + e.getMessage(), MessageType.ERROR).notify(project);
+            JSLinterGuesser.NOTIFICATION_GROUP.createNotification(
+              TsLintBundle.message("tslint.notification.content", e.getMessage()), MessageType.ERROR).notify(project);
           }
           return null;
         });
@@ -83,7 +83,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
     };
 
     if (modalProgress) {
-      return new Task.Modal(project, TsLintBundle.message("tslint.action.background.title"), true) {
+      return new Task.Modal(project, TsLintBundle.message("tslint.action.modal.title"), true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) { task.consume(indicator); }
       };

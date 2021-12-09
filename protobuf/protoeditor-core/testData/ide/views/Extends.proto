@@ -1,0 +1,15 @@
+// Test extensions
+syntax = "proto3";
+
+package foo.bar;
+
+message Foo {
+  int32 field1 = 1;
+  int32 field2 = 1;
+  // Comment
+  extensions 100 to 199;
+}
+
+extend Foo {
+  int32 field126 = 126;
+}

@@ -147,7 +147,7 @@ public abstract class CucumberStepIndex extends FileBasedIndexExtension<Boolean,
 
   protected abstract List<Integer> getStepDefinitionOffsets(@NotNull LighterAST lighterAst, @NotNull CharSequence text);
 
-  private static final DataExternalizer<List<Integer>> DATA_EXTERNALIZER = new DataExternalizer<List<Integer>>() {
+  private static final DataExternalizer<List<Integer>> DATA_EXTERNALIZER = new DataExternalizer<>() {
     @Override
     public void save(@NotNull DataOutput out, List<Integer> value) throws IOException {
       DataInputOutputUtilRt.writeSeq(out, value, descriptor -> {

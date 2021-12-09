@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.linter.JSLinterSuppressionUtil;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,7 @@ public final class TsLintSuppressionUtil extends JSLinterSuppressionUtil {
   @NotNull
   @Override
   protected String getToolName() {
-    return "TSLint";
+    return TsLintBundle.message("tslint.framework.title");
   }
 
   @Override

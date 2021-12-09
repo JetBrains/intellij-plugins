@@ -1,0 +1,18 @@
+Makefile
+  MakefileRuleImpl(RULE)
+    MakefileTargetLineImpl(TARGET_LINE)
+      MakefileTargetsImpl(TARGETS)
+        MakefileTargetImpl(TARGET)
+          PsiElement(chars)('rule')
+      PsiElement(:)(':')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          <empty list>
+      PsiElement(EOL)('\n')
+    PsiComment(COMMENT)('# comment\n')
+    MakefileRecipeImpl(RECIPE)
+      MakefileCommandImpl(COMMAND)
+        PsiElement(\t)('\t')
+        PsiElement(chars)('echo')
+        PsiWhiteSpace(' ')
+        PsiElement(chars)('yo')

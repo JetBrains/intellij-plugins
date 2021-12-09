@@ -151,7 +151,7 @@ JSFile:test.js.v-on:foo.expr
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('12')
       PsiElement(JS:SEMICOLON)(';')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LT)('<')
@@ -173,7 +173,7 @@ JSFile:test.js.v-on:foo.expr
       JSAttributeList
         ES6Decorator
           PsiElement(JS:AT)('@')
-      PsiErrorElement:class expected
+      PsiErrorElement:'class' expected
         <empty list>
     PsiElement(JS:SHARP)('#')
 ------
@@ -207,27 +207,27 @@ JSFile:test.js.v-on:foo.expr
 ------
 JSFile:test.js.v-on:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-on:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-on:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')

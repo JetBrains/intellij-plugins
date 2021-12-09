@@ -1,6 +1,9 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
+import com.intellij.diagram.DiagramProvider;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,10 +17,7 @@ import static org.angularjs.AngularJSBundle.message;
 import static org.angularjs.codeInsight.router.Type.state;
 import static org.angularjs.codeInsight.router.Type.template;
 
-/**
- * @author Irina.Chernushina on 3/9/2016.
- */
-public class AngularUiRouterGraphBuilder {
+public final class AngularUiRouterGraphBuilder {
   private final @NotNull Project myProject;
   private final Map<String, UiRouterState> myStatesMap;
   private final Map<VirtualFile, Template> myTemplatesMap;
@@ -39,7 +39,7 @@ public class AngularUiRouterGraphBuilder {
     return myKey;
   }
 
-  public GraphNodesBuilder createDataModel(AngularUiRouterDiagramProvider provider) {
+  public GraphNodesBuilder createDataModel(@NotNull DiagramProvider<DiagramObject> provider) {
     final GraphNodesBuilder nodesBuilder = new GraphNodesBuilder(myStatesMap, myTemplatesMap, myRootTemplate, myKey);
     nodesBuilder.build(provider, myProject);
 
@@ -78,7 +78,7 @@ public class AngularUiRouterGraphBuilder {
       return myKey;
     }
 
-    public void build(final @NotNull AngularUiRouterDiagramProvider provider, final @NotNull Project project) {
+    public void build(final @NotNull DiagramProvider<DiagramObject> provider, final @NotNull Project project) {
       final DiagramObject rootDiagramObject;
       if (myRootTemplate != null) {
         myRootNode = getOrCreateTemplateNode(provider, myKey, normalizeTemplateUrl(myRootTemplate.getRelativeUrl()),
@@ -203,9 +203,9 @@ public class AngularUiRouterGraphBuilder {
       }
     }
 
-    private AngularUiRouterNode createLocalTemplate(PsiElement element, AngularUiRouterDiagramProvider provider) {
+    private AngularUiRouterNode createLocalTemplate(PsiElement element, DiagramProvider<DiagramObject> provider) {
       final String name = element.getContainingFile().getName() + " (" + message("angularjs.ui.router.diagram.node.name.local") + ")";
-      final String key = element.getContainingFile().getVirtualFile().getUrl() + ":" + element.getTextRange().getStartOffset();
+      final @NlsSafe String key = element.getContainingFile().getVirtualFile().getUrl() + ":" + element.getTextRange().getStartOffset();
       final Template template = AngularUiRouterDiagramBuilder.readTemplateFromFile(element.getProject(), name, element);
       if (!templateNodes.containsKey(key)) {
         final DiagramObject templateObject = new DiagramObject(Type.template, name, template.getPointer());
@@ -357,10 +357,10 @@ public class AngularUiRouterGraphBuilder {
       }
     }
 
-    private @NotNull AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider,
+    private @NotNull AngularUiRouterNode getOrCreateTemplateNode(DiagramProvider<DiagramObject> provider,
                                                                  @Nullable VirtualFile templateFile,
                                                                  @NotNull String templateUrl, @Nullable Template template) {
-      final String fullUrl = templateUrl;
+      final @NlsSafe String fullUrl = templateUrl;
       final int idx = fullUrl.lastIndexOf('/');
       templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;
       template = template == null && templateFile != null ? myTemplatesMap.get(templateFile) : template;

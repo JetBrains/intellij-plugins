@@ -17,7 +17,6 @@ import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,6 +28,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.scale.JBUIScale;
+import com.intellij.ui.viewModel.extraction.ToolWindowContentExtractor;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NonNls;
@@ -50,9 +50,8 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
     myServer = server;
   }
 
-  @Nullable
   @Override
-  public ActionGroup getToolbarActions() {
+  public @NotNull ActionGroup getToolbarActions() {
     if (myActionGroup != null) {
       return myActionGroup;
     }
@@ -77,15 +76,13 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getToolbarPlace() {
-    return ActionPlaces.UNKNOWN;
+  public @NonNls @NotNull String getToolbarPlace() {
+    return KARMA_SERVER_CONTENT_ID;
   }
 
-  @Nullable
   @Override
-  public JComponent getToolbarContextComponent() {
+  public @NotNull JComponent getToolbarContextComponent() {
     return myConsole.getComponent();
   }
 
@@ -122,6 +119,7 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
                                              ExecutionUtil.getLiveIndicator(emptyIcon),
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
+    content.putUserData(ToolWindowContentExtractor.SYNC_TAB_TO_GUEST, true);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
     NopProcessHandler wrapperProcessHandler = new NopProcessHandler();
     // we can't attach console to real process handler to not lose any messages
@@ -181,10 +179,7 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
             alarm.addRequest(this, timeoutMillis + 100, ModalityState.any());
           }
           else {
-            myConsole.print(KarmaBundle.message("waiting.for.captured.browser.text") + " ", ConsoleViewContentType.SYSTEM_OUTPUT);
-            String url = myServer.formatUrl("/");
-            myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-            myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+            printCaptureMessage();
             Disposer.dispose(alarm);
           }
         }
@@ -197,6 +192,21 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
       }, alarm);
       myServer.onBrowsersReady(() -> Disposer.dispose(alarm));
     });
+  }
+
+  private void printCaptureMessage() {
+    String url = myServer.formatUrl("/");
+    String text = KarmaBundle.message("waiting.for.captured.browser.text", url);
+    int urlInd = text.indexOf(url);
+    if (urlInd >= 0) {
+      myConsole.print(text.substring(0, urlInd), ConsoleViewContentType.SYSTEM_OUTPUT);
+      myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+      myConsole.print(text.substring(urlInd + url.length()), ConsoleViewContentType.SYSTEM_OUTPUT);
+    }
+    else {
+      myConsole.print(text, ConsoleViewContentType.SYSTEM_OUTPUT);
+    }
+    myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
   }
 
   private static boolean startsWithMessage(@NotNull String line, @NonNls @NotNull String message) {

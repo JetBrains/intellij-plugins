@@ -6,7 +6,6 @@ import com.intellij.coverage.view.CoverageListRootNode;
 import com.intellij.coverage.view.CoverageViewExtension;
 import com.intellij.coverage.view.CoverageViewManager;
 import com.intellij.coverage.view.DirectoryCoverageViewExtension;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.WrappingRunConfiguration;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
@@ -28,6 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.rt.coverage.data.ProjectData;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,22 +42,18 @@ public class KarmaCoverageEngine extends CoverageEngine {
   public static final String ID = "KarmaJavaScriptTestRunnerCoverage";
 
   @Override
-  public boolean isApplicableTo(@Nullable RunConfigurationBase configuration) {
-    RunConfiguration result = configuration;
-    if (configuration instanceof WrappingRunConfiguration) {
-      result = ((WrappingRunConfiguration)configuration).getPeer();
-    }
-    return result instanceof KarmaRunConfiguration;
+  public boolean isApplicableTo(@NotNull RunConfigurationBase configuration) {
+    return WrappingRunConfiguration.unwrapRunProfile(configuration) instanceof KarmaRunConfiguration;
   }
 
   @Override
-  public boolean canHavePerTestCoverage(@Nullable RunConfigurationBase configuration) {
+  public boolean canHavePerTestCoverage(@NotNull RunConfigurationBase configuration) {
     return false;
   }
 
   @NotNull
   @Override
-  public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@Nullable RunConfigurationBase configuration) {
+  public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@NotNull RunConfigurationBase configuration) {
     return new KarmaCoverageEnabledConfiguration(configuration);
   }
 
@@ -176,7 +172,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public String getPresentableText() {
+  public @Nls String getPresentableText() {
     return ID;
   }
 
@@ -214,16 +210,13 @@ public class KarmaCoverageEngine extends CoverageEngine {
       for (CoverageSuite suite : suitesBundle.getSuites()) {
         ProjectData data = suite.getCoverageData(coverageDataManager);
         if (data != null) {
-          for (Object key : data.getClasses().keySet()) {
-            if (key instanceof String) {
-              String path = (String)key;
-              VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
-              if (file != null && file.isValid()) {
-                ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-                VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
-                if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
-                  return contentRoot;
-                }
+          for (String path : data.getClasses().keySet()) {
+            VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
+            if (file != null && file.isValid()) {
+              ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+              VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
+              if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
+                return contentRoot;
               }
             }
           }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramVfsResolver;
@@ -25,13 +25,12 @@ import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
-
+public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   private static final Logger LOG = Logger.getInstance(FlashUmlVfsResolver.class.getName());
   public static final String SEPARATOR = ":";
 
   @Override
-  public String getQualifiedName(Object element) {
+  public String getQualifiedName(@Nullable Object element) {
     return getQualifiedNameStatic(element);
   }
 
@@ -81,7 +80,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   }
 
   @Override
-  public Object resolveElementByFQN(String fqn, Project project) {
+  public Object resolveElementByFQN(@NotNull String fqn, @NotNull Project project) {
     return resolveElementByFqnStatic(fqn, project);
   }
 

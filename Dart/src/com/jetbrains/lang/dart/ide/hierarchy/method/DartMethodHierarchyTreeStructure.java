@@ -43,7 +43,7 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
     final List<TypeHierarchyItem> items = getTypeHierarchyItems(dartClass);
     if (items.isEmpty()) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
-    addAllVisibleSubclasses(new HashSet<TypeHierarchyItem>(), myProject, items, items.get(0), descriptor);
+    addAllVisibleSubclasses(new HashSet<>(), myProject, items, items.get(0), descriptor);
     return descriptor.getCachedChildren();
   }
 

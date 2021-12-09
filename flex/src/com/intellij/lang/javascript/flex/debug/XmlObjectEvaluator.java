@@ -138,9 +138,7 @@ public class XmlObjectEvaluator {
     }
 
     private static void appendIndent(final StringBuilder buffer, final int level) {
-      for (int i = 0; i < level; i++) {
-        buffer.append("    ");
-      }
+      buffer.append("    ".repeat(level));
     }
 
     @Override

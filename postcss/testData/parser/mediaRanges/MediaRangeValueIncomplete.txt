@@ -15,7 +15,7 @@ PostCSS File:MediaRangeValueIncomplete.pcss
                       PsiElement(CSS_NUMBER)('200')
                     PsiWhiteSpace(' ')
                     PsiElement(CSS_EQ)('=')
-                    PsiErrorElement:an identifier expected
+                    PsiErrorElement:Identifier expected
                       <empty list>
                   PsiElement(CSS_RPAREN)(')')
           PsiElement(CSS_DECLARATION_BLOCK)

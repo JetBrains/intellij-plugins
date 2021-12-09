@@ -1,12 +1,13 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
+import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Java8StepDefinition extends AbstractJavaStepDefinition {
-  public Java8StepDefinition(@NotNull PsiElement element) {
-    super(element);
+  public Java8StepDefinition(@NotNull PsiElement element, @NotNull Module module) {
+    super(element, module);
   }
 
   @Nullable

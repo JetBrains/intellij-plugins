@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+// Intentional empty package
+
+message string {}
+
+message Test {
+  string x = 1;       // No reference here
+  .st<caret>ring y = 2; // Should reference the string message defined above
+}

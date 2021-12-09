@@ -1,0 +1,21 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+enum MyEnum {
+  FOO = 100;
+  BAR = 2;
+}
+
+message MyType {
+  MyEnum enum_option = 1;
+}
+
+extend proto2.FileOptions {
+  MyType opt = 2000;
+}
+
+option (opt) = {
+  enum_option: 10<caret>0
+};

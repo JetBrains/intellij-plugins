@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -11,8 +11,6 @@ import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.ide.highlighter.ModuleFileType;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -42,8 +40,8 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
@@ -52,6 +50,7 @@ import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,9 +68,6 @@ public final class BndProjectImporter {
   public static final String BND_FILE = Project.BNDFILE;
   public static final String BND_LIB_PREFIX = "bnd:";
 
-  public static final NotificationGroup NOTIFICATIONS =
-    new NotificationGroup("OSGi Bnd Notifications", NotificationDisplayType.STICKY_BALLOON, true);
-
   private static final Logger LOG = Logger.getInstance(BndProjectImporter.class);
 
   private static final Key<Workspace> BND_WORKSPACE_KEY = Key.create("bnd.workspace.key");
@@ -81,7 +77,7 @@ public final class BndProjectImporter {
   private static final String SRC_ROOT = "OSGI-OPT/src";
   private static final String JDK_DEPENDENCY = "ee.j2se";
 
-  private static final Comparator<OrderEntry> ORDER_ENTRY_COMPARATOR = new Comparator<OrderEntry>() {
+  private static final Comparator<OrderEntry> ORDER_ENTRY_COMPARATOR = new Comparator<>() {
     @Override
     public int compare(OrderEntry o1, OrderEntry o2) {
       return weight(o1) - weight(o2);
@@ -101,7 +97,7 @@ public final class BndProjectImporter {
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
   private final Collection<? extends Project> myProjects;
-  private final Map<String, String> mySourcesMap = new THashMap<>(FileUtil.PATH_HASHING_STRATEGY);
+  private final Map<String, String> mySourcesMap = CollectionFactory.createFilePathMap();
 
   public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
                             @NotNull Workspace workspace,
@@ -364,7 +360,7 @@ public final class BndProjectImporter {
                                Collection<Container> classpath,
                                boolean tests,
                                Set<Container> excluded,
-                               List<String> warnings) throws Exception {
+                               List<String> warnings) {
     DependencyScope scope = tests ? DependencyScope.TEST : DependencyScope.COMPILE;
     for (Container dependency : classpath) {
       if (excluded.contains(dependency)) {
@@ -484,7 +480,7 @@ public final class BndProjectImporter {
       String text;
       LOG.warn(e);
       text = message("bnd.import.resolve.error", project.getName(), e.getMessage());
-      NOTIFICATIONS.createNotification(message("bnd.import.error.title"), text, NotificationType.ERROR, null).notify(myProject);
+      OsmorcBundle.bnd(message("bnd.import.error.title"), text, NotificationType.ERROR).notify(myProject);
     }
     else {
       throw new AssertionError(e);
@@ -497,7 +493,7 @@ public final class BndProjectImporter {
         LOG.warn(warnings.toString());
         String text = message("bnd.import.warn.text", project.getName(), "<br>" + StringUtil.join(warnings, "<br>"));
         NotificationType type = error ? NotificationType.ERROR : NotificationType.WARNING;
-        NOTIFICATIONS.createNotification(message("bnd.import.warn.title"), text, type, null).notify(myProject);
+        OsmorcBundle.bnd(message("bnd.import.warn.title"), text, type).notify(myProject);
       }
       else {
         throw new AssertionError(warnings.toString());
@@ -518,7 +514,7 @@ public final class BndProjectImporter {
   }
 
   @NotNull
-  public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) throws Exception {
+  public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) {
     return ContainerUtil.filter(workspace.getAllProjects(), Conditions.notNull());
   }
 

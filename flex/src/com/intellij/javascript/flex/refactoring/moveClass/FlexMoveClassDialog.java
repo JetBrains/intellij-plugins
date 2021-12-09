@@ -3,7 +3,6 @@ package com.intellij.javascript.flex.refactoring.moveClass;
 
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.presentable.Capitalization;
@@ -56,7 +55,6 @@ public class FlexMoveClassDialog extends RefactoringDialog {
   private JLabel myPackageLabel;
   private JTextField myClassNameField;
   private JLabel myClassNameLabel;
-  private final Project myProject;
   private final Collection<JSQualifiedNamedElement> myElements;
   @Nullable private final PsiElement myTargetContainer;
   @Nullable private final MoveCallback myCallback;
@@ -67,7 +65,6 @@ public class FlexMoveClassDialog extends RefactoringDialog {
                              @Nullable PsiElement targetContainer,
                              @Nullable MoveCallback callback) {
     super(project, true);
-    myProject = project;
     myElements = elements;
     myTargetContainer = targetContainer;
     myCallback = callback;
@@ -153,7 +150,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
     final String packageName = myTargetPackageField.getText();
     for (final String s : StringUtil.split(packageName, ".")) {
       if (!namesValidator.isIdentifier(s, myProject)) {
-        throw new ConfigurationException(JavaScriptBundle.message("invalid.package", packageName));
+        throw new ConfigurationException(FlexBundle.message("invalid.package", packageName));
       }
     }
   }

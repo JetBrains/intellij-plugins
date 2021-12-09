@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import * as prettier from "prettier";
 
 type PrettierApi = typeof prettier & { prettierPath: string, packageJsonPath?: string }
@@ -46,7 +47,9 @@ export class PrettierPlugin implements LanguagePlugin {
     private handleReformatCommand(args: FormatArguments): FormatResponse {
         let prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
 
-        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
+        let config = this.resolveConfig(prettierApi, args)
+        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins};
+
         if (prettierApi.getFileInfo) {
             let fileInfo = prettierApi.getFileInfo.sync(args.path, options)
             if (fileInfo.ignored) {
@@ -56,10 +59,24 @@ export class PrettierPlugin implements LanguagePlugin {
                 return {unsupported: true}
             }
         }
-        return performFormat(prettierApi, args)
+        return performFormat(prettierApi, config, args)
     }
 
-    private requirePrettierApi(prettierPath: string, packageJsonPath?: string): PrettierApi {
+  private resolveConfig(prettierApi: PrettierApi, args: FormatArguments): any {
+      let config = prettierApi.resolveConfig.sync(args.path, {useCache: true, editorconfig: true});
+      if (config == null) {
+        config = {filepath: args.path};
+      }
+      if (config.filepath == null) {
+        config.filepath = args.path
+      }
+
+      config.rangeStart = args.start;
+      config.rangeEnd = args.end;
+      return config
+  }
+
+  private requirePrettierApi(prettierPath: string, packageJsonPath?: string): PrettierApi {
         if (this._prettierApi != null
             && this._prettierApi.prettierPath == prettierPath
             && this._prettierApi.packageJsonPath == packageJsonPath) {
@@ -73,20 +90,10 @@ export class PrettierPlugin implements LanguagePlugin {
     }
 }
 
-function performFormat(api: PrettierApi, args: FormatArguments): { formatted: string} {
+function performFormat(api: PrettierApi, config: any, args: FormatArguments): { formatted: string } {
     if (args.flushConfigCache) {
         api.clearConfigCache()
     }
-    let config = api.resolveConfig.sync(args.path, {useCache: true, editorconfig: true});
-    if (config == null) {
-        config = {filepath: args.path};
-    }
-    if (config.filepath == null) {
-        config.filepath = args.path
-    }
-
-    config.rangeStart = args.start;
-    config.rangeEnd = args.end;
     return {formatted: api.format(args.content, config)};
 }
 

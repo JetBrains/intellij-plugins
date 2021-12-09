@@ -1,9 +1,9 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
@@ -13,9 +13,9 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
-/**
- * @author yole
- */
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
+
+
 public class CucumberStepInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
@@ -38,10 +38,10 @@ public class CucumberStepInspection extends GherkinInspection {
 
         final PsiElement parent = step.getParent();
         if (parent instanceof GherkinStepsHolder) {
-          final PsiReference[] references = step.getReferences();
-          if (references.length != 1 || !(references[0] instanceof CucumberStepReference)) return;
-
-          CucumberStepReference reference = (CucumberStepReference)references[0];
+          CucumberStepReference reference = getCucumberStepReference(step);
+          if (reference == null) {
+            return;
+          }
           final AbstractStepDefinition definition = reference.resolveToDefinition();
           if (definition == null) {
             CucumberCreateStepFix createStepFix = null;
@@ -51,7 +51,7 @@ public class CucumberStepInspection extends GherkinInspection {
               createAllStepsFix = new CucumberCreateAllStepsFix();
             }
             holder.registerProblem(reference.getElement(), reference.getRangeInElement(),
-                                   CucumberBundle.message("cucumber.inspection.undefined.step.msg.name") + " #loc #ref",
+                                   CucumberBundle.message("cucumber.inspection.undefined.step.msg.name"),
                                    createStepFix, createAllStepsFix);
           }
         }

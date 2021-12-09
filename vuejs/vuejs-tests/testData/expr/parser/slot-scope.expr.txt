@@ -91,7 +91,7 @@ JSFile:test.js.slot-scope.expr
   VueJSEmbeddedExpression
     VueJSSlotPropsExpression
       JSParameterList
-        PsiErrorElement:formal parameter name expected
+        PsiErrorElement:Formal parameter name expected
           <empty list>
     JSLiteralExpression
       PsiElement(JS:STRING_LITERAL)('"foo"')

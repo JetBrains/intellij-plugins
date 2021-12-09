@@ -15,7 +15,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 public class HbKeywordCompletionContributor extends CompletionContributor {
   public HbKeywordCompletionContributor() {
     extend(CompletionType.BASIC, psiElement(HbTokenTypes.ID).withSuperParent(2, psiElement(HbTokenTypes.PATH)),
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            @NotNull ProcessingContext context,

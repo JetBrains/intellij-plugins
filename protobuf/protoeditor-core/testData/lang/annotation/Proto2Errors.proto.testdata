@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package foo.bar;
+
+message Test {
+  optional string labeled_field = 1;
+  optional group LabeledGroup = 2 {}
+  <error descr="Fields must have labels in proto2 (optional, required, or repeated)">string unlabeled_field = 3;</error>
+  <error descr="Fields must have labels in proto2 (optional, required, or repeated)">group UnlabeledGroup = 4 {}</error>
+
+  map<string, string> unlabeled_map = 5;
+  <error descr="Map fields cannot have labels">optional</error> map<string, string> labeled_map = 6;
+
+  oneof TestOneof {
+    <error descr="Oneof fields cannot have labels">optional</error> string labeled_oneof_field = 11;
+    <error descr="Oneof fields cannot have labels">optional</error> group LabeledOneofGroup = 12 {}
+    string unlabeled_oneof_field = 13;
+    group UnlabeledOneofGroup = 14 {}
+  }
+}
+
+message GroupNotCapitalLetter {
+  optional group Okay = 1 {}
+  optional group <error descr="Group names must start with capital letter">notOkay</error> = 2 {}
+  optional group <error descr="Group names must start with capital letter">_WithUnderscore</error> = 3 {}
+}

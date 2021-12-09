@@ -33,9 +33,19 @@ public class RequestErrorCode {
   public static final String FILE_NOT_ANALYZED = "FILE_NOT_ANALYZED";
 
   /**
+   * A file was change while widget descriptions were being computed.
+   */
+  public static final String FLUTTER_GET_WIDGET_DESCRIPTION_CONTENT_MODIFIED = "FLUTTER_GET_WIDGET_DESCRIPTION_CONTENT_MODIFIED";
+
+  /**
    * The given location does not have a supported widget.
    */
   public static final String FLUTTER_GET_WIDGET_DESCRIPTION_NO_WIDGET = "FLUTTER_GET_WIDGET_DESCRIPTION_NO_WIDGET";
+
+  /**
+   * The given property expression is invalid, e.g. has a syntax error.
+   */
+  public static final String FLUTTER_SET_WIDGET_PROPERTY_VALUE_INVALID_EXPRESSION = "FLUTTER_SET_WIDGET_PROPERTY_VALUE_INVALID_EXPRESSION";
 
   /**
    * The given property identifier is not valid. It might have never been valid, or a change to code
@@ -65,6 +75,12 @@ public class RequestErrorCode {
    * subject to analysis.
    */
   public static final String GET_ERRORS_INVALID_FILE = "GET_ERRORS_INVALID_FILE";
+
+  /**
+   * An "edit.getFixes" request specified a FilePath which does not match a file currently subject to
+   * analysis.
+   */
+  public static final String GET_FIXES_INVALID_FILE = "GET_FIXES_INVALID_FILE";
 
   /**
    * An "analysis.getImportedElements" request specified a FilePath that does not match a file
@@ -180,12 +196,6 @@ public class RequestErrorCode {
    * An "edit.sortMembers" request specified a Dart file that has scan or parse errors.
    */
   public static final String SORT_MEMBERS_PARSE_ERRORS = "SORT_MEMBERS_PARSE_ERRORS";
-
-  /**
-   * A dartfix request was received containing the name of a fix which does not match the name of any
-   * known fixes.
-   */
-  public static final String UNKNOWN_FIX = "UNKNOWN_FIX";
 
   /**
    * A request was received which the analysis server does not recognize, or cannot handle in its

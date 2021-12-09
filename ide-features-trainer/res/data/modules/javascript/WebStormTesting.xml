@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Getting Started with Testing" lessonsPath="Testing/" version="0.1" id="js.testing" fileType="PROJECT"
-        description="Find out how to streamline unit testing in WebStorm by going through an example using Jest.">
-    <lesson-kt implementationClass="training.learn.lesson.javascript.testing.Jest" lang="JavaScript"/>
-</module>

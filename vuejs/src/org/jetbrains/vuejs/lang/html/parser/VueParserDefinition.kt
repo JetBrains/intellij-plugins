@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.ASTNode
@@ -14,14 +14,15 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.tree.IFileElementType
-import org.jetbrains.vuejs.lang.html.lexer.VueLexer
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 
 class VueParserDefinition : HTMLParserDefinition() {
 
   companion object {
     fun createLexer(project: Project, interpolationConfig: Pair<String, String>?): Lexer {
       val level = JSRootConfiguration.getInstance(project).languageLevel
-      return VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6, interpolationConfig)
+      return VueLexerImpl(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig)
     }
   }
 
@@ -33,7 +34,7 @@ class VueParserDefinition : HTMLParserDefinition() {
     return VueFileElementType.INSTANCE
   }
 
-  override fun createFile(viewProvider: FileViewProvider): PsiFile {
+  override fun createFile(viewProvider: @NotNull FileViewProvider): @NotNull PsiFile {
     return HtmlFileImpl(viewProvider, VueFileElementType.INSTANCE)
   }
 

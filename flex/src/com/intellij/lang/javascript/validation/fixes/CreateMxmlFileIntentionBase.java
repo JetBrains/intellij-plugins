@@ -73,6 +73,11 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   }
 
   @Override
+  public @Nullable PsiElement getElementToMakeWritable(@NotNull PsiFile currentFile) {
+    return currentFile;
+  }
+
+  @Override
   public void invoke(@NotNull final Project project, final @Nullable Editor editor, final PsiFile file) throws IncorrectOperationException {
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module == null) {

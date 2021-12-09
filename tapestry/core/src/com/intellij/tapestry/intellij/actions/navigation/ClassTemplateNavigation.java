@@ -39,7 +39,7 @@ public class ClassTemplateNavigation extends AnAction {
 
     Module module;
     try {
-      module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
+      module = event.getData(PlatformCoreDataKeys.MODULE);
     }
     catch (Throwable ex) {
       presentation.setEnabledAndVisible(false);
@@ -67,10 +67,10 @@ public class ClassTemplateNavigation extends AnAction {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    Project project = (Project)event.getDataContext().getData(CommonDataKeys.PROJECT.getName());
+    Project project = event.getData(CommonDataKeys.PROJECT);
 
     PsiFile psiFile = getEventPsiFile(event);
-    Module module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
     if (psiFile == null || module == null) return;
     String presentationText = event.getPresentation().getText();
     VirtualFile navigationTarget = findNavigationTarget(psiFile, module, presentationText);
@@ -117,7 +117,7 @@ public class ClassTemplateNavigation extends AnAction {
    */
   @Nullable
   public static PsiFile getEventPsiFile(AnActionEvent event) {
-    final Project project = (Project)event.getDataContext().getData(CommonDataKeys.PROJECT.getName());
+    Project project = event.getData(CommonDataKeys.PROJECT);
     if (project == null) return null;
 
     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lexer.Lexer;
@@ -12,9 +13,7 @@ import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
 
-/**
- * @author yole
- */
+
 public class GherkinSyntaxHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 

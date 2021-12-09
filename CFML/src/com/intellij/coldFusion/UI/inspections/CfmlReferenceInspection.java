@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,7 +94,7 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
     }
 
     if (ref.multiResolve(false).length == 0) {
-      final String message = "Can't resolve";
+      final String message = CfmlBundle.message("inspection.message.resolve.problem");
       holder.registerProblem(ref, message, WEAK_WARNING);
     }
   }

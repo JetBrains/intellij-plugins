@@ -1,7 +1,7 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.compiler.CompilerWorkspaceConfiguration;
+import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.flex.FlexCommonBundle;
@@ -600,7 +600,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
   private void suggestParallelCompilationIfNeeded(final Project project,
                                                   final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
     if (myParallelCompilationSuggested) return;
-    if (CompilerWorkspaceConfiguration.getInstance(project).PARALLEL_COMPILATION) return;
+    if (CompilerConfiguration.getInstance(project).isParallelCompilationEnabled()) return;
     if (modulesAndBCsToCompile.size() < 2) return;
     if (!independentBCsExist(modulesAndBCsToCompile)) return;
 
@@ -610,7 +610,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
         notification.expire();
 
         if ("enable".equals(event.getDescription())) {
-          CompilerWorkspaceConfiguration.getInstance(project).PARALLEL_COMPILATION = true;
+          CompilerConfiguration.getInstance(project).setParallelCompilationEnabled(true);
 
           final NotificationListener listener1 = new NotificationListener() {
             @Override
@@ -620,7 +620,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
             }
           };
           new Notification(FLASH_COMPILER_GROUP_ID, FlexBundle.message("parallel.compilation.enabled"),
-                           FlexBundle.message("see.settings.compiler"), NotificationType.INFORMATION, listener1).notify(project);
+                           FlexBundle.message("see.settings.compiler"), NotificationType.INFORMATION).setListener(listener1).notify(project);
         }
         else if ("open".equals(event.getDescription())) {
           ShowSettingsUtil.getInstance().showSettingsDialog(project, JavaCompilerBundle.message("compiler.configurable.display.name"));
@@ -629,7 +629,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     };
 
     new Notification(FLASH_COMPILER_GROUP_ID, FlexBundle.message("parallel.compilation.hint.title"),
-                     FlexBundle.message("parallel.compilation.hint"), NotificationType.INFORMATION, listener).notify(project);
+                     FlexBundle.message("parallel.compilation.hint"), NotificationType.INFORMATION).setListener(listener).notify(project);
 
     myParallelCompilationSuggested = true;
   }

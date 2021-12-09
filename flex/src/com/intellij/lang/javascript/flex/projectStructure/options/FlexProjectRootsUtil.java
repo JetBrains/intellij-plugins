@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -20,7 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlexProjectRootsUtil {
+public final class FlexProjectRootsUtil {
 
   public static boolean dependsOnLibrary(@NotNull FlexBuildConfiguration bc, @NotNull final Library library, final boolean transitive,
                                          final boolean productionOnly) {

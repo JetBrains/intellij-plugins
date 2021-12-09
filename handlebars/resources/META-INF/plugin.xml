@@ -6,7 +6,7 @@
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
-<p>Support for <a href="http://handlebarsjs.com/">Handlebars</a> and <a href="http://mustache.github.io/">Mustache</a> template languages</p>
+<p>Support for <a href="https://handlebarsjs.com/">Handlebars</a> and <a href="https://mustache.github.io/">Mustache</a> template languages</p>
 <p>Features</p>
 <ul>
 <li>Customizable highlighting for the template syntax</li>
@@ -23,6 +23,7 @@
     <fileType name="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbFileType" fieldName="INSTANCE" language="Handlebars" extensions="handlebars;hbs;mustache"/>
     <html.scriptContentProvider language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbScriptContentProvider"/>
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
+    <lang.ast.factory language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbAstFactory"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
     <colorSettingsPage implementation="com.dmarcotte.handlebars.pages.HbColorsPage"/>
     <lang.fileViewProviderFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.file.HbFileViewProviderFactory"/>
@@ -45,7 +46,7 @@
 
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/Handlebars"/>
-    
+
     <lang.syntaxHighlighter language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighter"/>
 
     <localInspection bundle="messages.HbBundle"
@@ -60,5 +61,4 @@
     <fileIndentOptionsProvider implementation="com.dmarcotte.handlebars.format.HbFileIndentOptionsProvider"/>
     <editorHighlighterProvider filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbHighlighterProvider"/>
   </extensions>
-
 </idea-plugin>

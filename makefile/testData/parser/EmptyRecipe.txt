@@ -1,0 +1,16 @@
+Makefile
+  MakefileRuleImpl(RULE)
+    MakefileTargetLineImpl(TARGET_LINE)
+      MakefileTargetsImpl(TARGETS)
+        MakefileTargetImpl(TARGET)
+          PsiElement(chars)('hello')
+      PsiElement(:)(':')
+      PsiWhiteSpace(' ')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          MakefilePrerequisiteImpl(PREREQUISITE)
+            PsiElement(chars)('world')
+      PsiWhiteSpace(' ')
+      PsiElement(;)(';')
+      MakefileInlineCommandImpl(INLINE_COMMAND)
+        <empty list>

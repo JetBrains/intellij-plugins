@@ -117,7 +117,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     DartAnalysisServerService.getInstance(project).updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
-      .runProcessWithProgressSynchronously(runnable, DartBundle.message("action.Dart.DartSortMembers.text"), true, project);
+      .runProcessWithProgressSynchronously(runnable, DartBundle.message("action.Dart.DartSortMembers.progress.title"), true, project);
 
     if (ok) {
       final Runnable onSuccessRunnable = () -> {

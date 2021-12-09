@@ -1,7 +1,7 @@
 package {
   public class <error>Vector$object</error> {
       <info descr="attribute">[Bindable]</info>
-      var <info descr="field">foo</info>;
+      var <info descr="instance field">foo</info>;
   }
 }
 var <info descr="global variable">a</info>:<info descr="class">Vector</info>.<int> = null;

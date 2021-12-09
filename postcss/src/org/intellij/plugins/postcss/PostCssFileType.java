@@ -29,7 +29,7 @@ public final class PostCssFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return PostCssBundle.message("filetype.description.postcss");
+    return PostCssBundle.message("filetype.postcss.description");
   }
 
   @NotNull

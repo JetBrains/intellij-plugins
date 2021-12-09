@@ -13,18 +13,13 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.UserDataCache;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -48,18 +43,6 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return INSTANCE;
   }
 
-  public static final Key<CachedValue<Map<String, JSImportedElementResolveResult>>> ourImportResolveCache = Key.create("js.import.resolve");
-  public static final UserDataCache<CachedValue<Map<String, JSImportedElementResolveResult>>,PsiElement, Object> myImportResolveCache =
-    new UserDataCache<CachedValue<Map<String, JSImportedElementResolveResult>>, PsiElement, Object>() {
-      @Override
-      protected CachedValue<Map<String, JSImportedElementResolveResult>> compute(final PsiElement psiElement, final Object p) {
-        return CachedValuesManager
-          .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<>(
-            new ConcurrentHashMap<String, JSImportedElementResolveResult>(),
-            PsiModificationTracker.MODIFICATION_COUNT), false);
-      }
-    };
-
   @Override
   public @NotNull JSTypeResolveResult resolveName(@NotNull String type, @NotNull PsiElement context) {
     final JSImportedElementResolveResult result = _resolveTypeName(type, context);
@@ -80,7 +63,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     final Ref<JSImportedElementResolveResult> resultRef = new Ref<>();
 
     final String name1 = name;
-    JSResolveUtil.walkOverStructure(context, context1 -> {
+    ActionScriptResolveUtil.walkOverStructure(context, context1 -> {
       JSImportedElementResolveResult resolved = null;
 
       if (context1 instanceof XmlBackedJSClassImpl) { // reference list in mxml
@@ -168,7 +151,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return result;
   }
 
-  private static JSNamedElement resolveTypeNameInTheSamePackage(final @NotNull String str, final PsiElement context) {
+  private static JSNamedElement resolveTypeNameInTheSamePackage(@NotNull String str, @NotNull PsiElement context) {
     JSNamedElement fileLocalElement = JSResolveUtil.findFileLocalElement(str, context);
     if (fileLocalElement != null) return fileLocalElement;
 
@@ -184,8 +167,9 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
     byQName = JSDialectSpecificHandlersFactory.forElement(context).getClassResolver().findClassByQName(str, context);
     if (byQName instanceof JSQualifiedNamedElement &&
-        JSResolveUtil.acceptableSymbol((JSQualifiedNamedElement)byQName, JSResolveUtil.GlobalSymbolsAcceptanceState.WHATEVER, false,
-                                       context)) {
+        ActionScriptResolveUtil
+          .acceptableSymbol((JSQualifiedNamedElement)byQName, ActionScriptResolveUtil.GlobalSymbolsAcceptanceState.WHATEVER, false,
+                            context)) {
       return (JSQualifiedNamedElement)byQName;
     }
 
@@ -203,12 +187,12 @@ public class ActionScriptImportHandler extends JSImportHandler {
   }
 
   private static @Nullable JSImportedElementResolveResult resolveTypeNameUsingImports(final @NotNull String referencedName, PsiNamedElement parent) {
-    final Map<String, JSImportedElementResolveResult> map = myImportResolveCache.get(ourImportResolveCache, parent, null).getValue();
+    Map<String, JSImportedElementResolveResult> map = CachedValuesManager.getProjectPsiDependentCache(parent, __ -> new ConcurrentHashMap<>());
     JSImportedElementResolveResult result = map.get(referencedName);
 
     if (result == null) {
-      SinkResolveProcessor resolveProcessor = new SinkResolveProcessor(referencedName, new ResolveResultSink(null, referencedName));
-      INSTANCE.resolveTypeNameUsingImportsInner(resolveProcessor, parent);
+      SinkResolveProcessor<ResolveResultSink> resolveProcessor = new SinkResolveProcessor<>(referencedName, new ResolveResultSink(null, referencedName));
+      resolveTypeNameUsingImportsInner(resolveProcessor, parent);
       final ResolveResult[] resolveResults = resolveProcessor.getResultsAsResolveResults();
       assert resolveResults.length < 2;
       if (resolveResults.length == 1 && resolveResults[0] instanceof JSResolveResult) {
@@ -223,10 +207,10 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return result != JSImportedElementResolveResult.EMPTY_RESULT ? result:null;
   }
 
-  private boolean resolveTypeNameUsingImportsInner(final ResolveProcessor resolveProcessor, final PsiNamedElement parent) {
+  private static boolean resolveTypeNameUsingImportsInner(final ResolveProcessor resolveProcessor, final PsiNamedElement parent) {
     final PsiElement element = JSResolveUtil.getClassReferenceForXmlFromContext(parent);
 
-    if (!JSImportHandlingUtil.ourPsiScopedImportSet.tryResolveImportedClass(parent, resolveProcessor)) return false;
+    if (!FlexResolveHelper.ourPsiScopedImportSet.tryResolveImportedClass(parent, resolveProcessor)) return false;
 
     if (parent instanceof JSPackageStatement) {
       final JSNamedElement jsClass = resolveTypeNameInTheSamePackage(resolveProcessor.getName(), parent);
@@ -241,14 +225,14 @@ public class ActionScriptImportHandler extends JSImportHandler {
           final JSClass parentClass = (JSClass)element;
           final JSClass[] classes = parentClass.getSuperClasses();
 
-          if (classes != null && classes.length > 0 && resolveProcessor.getName().equals(classes[0].getName())) {
+          if (classes.length > 0 && resolveProcessor.getName().equals(classes[0].getName())) {
             jsClass = classes[0];
           }
         }
 
         if (jsClass != null && !resolveProcessor.execute(jsClass, ResolveState.initial())) return false;
       } else {
-        JSNamedElement jsClass = resolveTypeNameInTheSamePackage(resolveProcessor.getName(), element);
+        JSNamedElement jsClass = element != null ? resolveTypeNameInTheSamePackage(resolveProcessor.getName(), element) : null;
         return jsClass == null || resolveProcessor.execute(jsClass, ResolveState.initial());
       }
     }

@@ -128,7 +128,7 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
                                        final String... keywords) {
     extend(CompletionType.BASIC,
            pattern,
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters completionParameters,
                                            @NotNull final ProcessingContext processingContext,

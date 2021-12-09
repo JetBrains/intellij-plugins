@@ -29,7 +29,7 @@ public class ErrorProneCompilerDownloadingTask implements CompileTask {
     DownloadableFileSetVersions<DownloadableFileSetDescription> versions = service.createFileSetVersions(null, getClass().getResource("/library/error-prone.xml"));
     List<DownloadableFileSetDescription> descriptions = versions.fetchVersions();
     if (descriptions.isEmpty()) {
-      context.addMessage(CompilerMessageCategory.ERROR, "No error-prone compiler versions loaded", null, -1, -1);
+      context.addMessage(CompilerMessageCategory.ERROR, ErrorProneBundle.message("error.text.no.error.prone.compiler.versions.loaded"), null, -1, -1);
       return false;
     }
 
@@ -42,13 +42,14 @@ public class ErrorProneCompilerDownloadingTask implements CompileTask {
     try {
       List<Pair<File, DownloadableFileDescription>> pairs = service.createDownloader(latestVersion).download(cacheDir);
       if (pairs.isEmpty() || ErrorProneClasspathProvider.getJarFiles(cacheDir).length == 0) {
-        context.addMessage(CompilerMessageCategory.ERROR, "No compiler JARs were downloaded", null, -1, -1);
+        context.addMessage(CompilerMessageCategory.ERROR, ErrorProneBundle.message("error.text.no.compiler.jars.were.downloaded"), null, -1, -1);
         return false;
       }
     }
     catch (IOException e) {
       LOG.info(e);
-      context.addMessage(CompilerMessageCategory.ERROR, "Failed to download error-prone compiler JARs: " + e.getMessage(), null, -1, -1);
+      context.addMessage(CompilerMessageCategory.ERROR,
+                         ErrorProneBundle.message("error.text.failed.to.download.error.prone.compiler.jars.0", e.getMessage()), null, -1, -1);
       return false;
     }
     return true;

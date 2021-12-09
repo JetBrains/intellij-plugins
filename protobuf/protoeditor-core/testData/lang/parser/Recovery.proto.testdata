@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package Foo;
+
+// Missing import
+import
+
+message Message1 {
+    // Bogus
+    int = 1 {}
+    // More bogus
+    int = 1 { foo: bar }
+    // More Bogus
+    int = 1 {{{}}}{{}}{}
+    // Missing semicolon
+    bool field2 = 2
+    // Missing equal
+    bool field3 3;
+    // Missing closing option bracket
+    bool field4 = 4 [;
+    // Valid
+    bool field5 = 5;
+    // Missing group body
+    group field6 = 6; // NOLINT
+    // Valid
+    bool field7 = 7;
+}
+
+// No message body
+message Message2
+
+message Message3 {
+
+}

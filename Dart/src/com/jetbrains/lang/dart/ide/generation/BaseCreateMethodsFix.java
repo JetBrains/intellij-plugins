@@ -8,12 +8,14 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.DartNamedElementNode;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
@@ -25,19 +27,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-abstract public class BaseCreateMethodsFix<T extends DartComponent> {
+public abstract class BaseCreateMethodsFix<T extends DartComponent> {
   protected static final String DART_TEMPLATE_GROUP = "Dart";
   private final Set<T> elementsToProcess = new LinkedHashSet<>();
-  @NotNull protected final DartClass myDartClass;
+  protected final @NotNull DartClass myDartClass;
   protected final DartGenericSpecialization specializations;
   protected PsiElement anchor = null;
 
-  public BaseCreateMethodsFix(@NotNull final DartClass dartClass) {
+  public BaseCreateMethodsFix(@NotNull DartClass dartClass) {
     myDartClass = dartClass;
     specializations = DartClassResolveResult.create(dartClass).getSpecialization();
   }
 
-  protected void evalAnchor(@Nullable Editor editor, PsiElement context) {
+  protected void evalAnchor(@Nullable Editor editor) {
     if (editor == null) return;
     final int caretOffset = editor.getCaretModel().getOffset();
     final PsiElement body = DartResolveUtil.getBody(myDartClass);
@@ -70,16 +72,16 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   /**
    * must be called not in write action
    */
-  public void beforeInvoke(@NotNull final Project project, final Editor editor, final PsiElement file) {
+  public void beforeInvoke(@NotNull Project project, Editor editor, PsiElement file) {
   }
 
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiElement context) throws IncorrectOperationException {
+  public void invoke(@NotNull Project project, Editor editor, PsiElement context) throws IncorrectOperationException {
     if (!FileModificationService.getInstance().prepareFileForWrite(context.getContainingFile())) return;
-    evalAnchor(editor, context);
+    evalAnchor(editor);
     processElements(project, editor, getElementsToProcess());
   }
 
-  protected void processElements(@NotNull final Project project, @NotNull final Editor editor, @NotNull final Set<T> elementsToProcess) {
+  protected void processElements(@NotNull Project project, @NotNull Editor editor, @NotNull Set<T> elementsToProcess) {
     if (elementsToProcess.isEmpty()) {
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         HintManager.getInstance().showErrorHint(editor, getNothingFoundMessage());
@@ -92,16 +94,21 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     }
   }
 
-  @NotNull
-  protected abstract String getNothingFoundMessage();
+  /**
+   * Implementations should override this method; it's not abstract ony for compatibility reasons.
+   */
+  protected @NotNull @NlsContexts.Command String getCommandName() {
+    return DartBundle.message("dart.generate.code");
+  }
 
-  @Nullable
-  protected abstract Template buildFunctionsText(TemplateManager templateManager, T e);
+  protected abstract @NotNull @NlsContexts.HintText String getNothingFoundMessage();
 
-  public PsiElement doAddMethodsForOne(@NotNull final Editor editor,
-                                       @NotNull final TemplateManager templateManager,
-                                       @Nullable final Template functionTemplate,
-                                       @NotNull final PsiElement anchor) throws IncorrectOperationException {
+  protected abstract @Nullable Template buildFunctionsText(TemplateManager templateManager, T e);
+
+  public PsiElement doAddMethodsForOne(@NotNull Editor editor,
+                                       @NotNull TemplateManager templateManager,
+                                       @Nullable Template functionTemplate,
+                                       @NotNull PsiElement anchor) throws IncorrectOperationException {
     if (functionTemplate != null) {
       setCaretSafe(editor, anchor.getTextRange().getEndOffset());
       templateManager.startTemplate(editor, functionTemplate);
@@ -112,11 +119,11 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     return anchor;
   }
 
-  public void addElementToProcess(final T function) {
+  public void addElementToProcess(T function) {
     elementsToProcess.add(function);
   }
 
-  public void addElementsToProcessFrom(@Nullable final Collection<DartNamedElementNode> selectedElements) {
+  public void addElementsToProcessFrom(@Nullable Collection<DartNamedElementNode> selectedElements) {
     if (selectedElements == null) {
       return;
     }
@@ -126,9 +133,8 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     }
   }
 
-  @NotNull
-  public Set<T> getElementsToProcess() {
-    //noinspection unchecked,SuspiciousToArrayCall
+  public @NotNull Set<T> getElementsToProcess() {
+    // noinspection unchecked
     final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[0]);
     final Comparator<T> tComparator = Comparator.comparingInt(o -> o.getTextRange().getStartOffset());
 

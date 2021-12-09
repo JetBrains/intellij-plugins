@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -15,6 +16,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.refactoring.GherkinChangeUtil;
@@ -28,9 +30,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author yole
- */
+
 public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinStep, PsiCheckedRenameElement {
 
   private static final TokenSet TEXT_FILTER = TokenSet
@@ -224,7 +224,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @Override
   public void checkSetName(final String name) {
     if (!isRenameAllowed(name)) {
-      throw new IncorrectOperationException(RENAME_BAD_SYMBOLS_MESSAGE);
+      throw new IncorrectOperationException(CucumberBundle.message("cucumber.refactor.rename.bad_symbols"));
     }
   }
 }

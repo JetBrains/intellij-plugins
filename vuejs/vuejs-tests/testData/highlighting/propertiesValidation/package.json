@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "vue": "*",
+    "lib": "*"
+  }
+}

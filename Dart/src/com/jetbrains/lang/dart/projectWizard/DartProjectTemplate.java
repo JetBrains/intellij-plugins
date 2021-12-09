@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
@@ -14,7 +14,12 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationType;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandDescriptor;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -25,31 +30,30 @@ import java.util.List;
 public abstract class DartProjectTemplate {
 
   private static final Stagehand STAGEHAND = new Stagehand();
-  private static List<DartProjectTemplate> ourTemplateCache;
+  private static List<DartProjectTemplate> ourStagehandTemplateCache;
+  private static List<DartProjectTemplate> ourDartCreateTemplateCache;
 
   private static final Logger LOG = Logger.getInstance(DartProjectTemplate.class.getName());
 
-  @NotNull private final String myName;
-  @NotNull private final String myDescription;
+  private final @NotNull @Nls String myName;
+  private final @NotNull @Nls String myDescription;
 
-  public DartProjectTemplate(@NotNull final String name, @NotNull final String description) {
+  public DartProjectTemplate(@NotNull @Nls String name, @NotNull @Nls String description) {
     myName = name;
     myDescription = description;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull @Nls String getName() {
     return myName;
   }
 
-  @NotNull
-  public String getDescription() {
+  public @NotNull @Nls String getDescription() {
     return myDescription;
   }
 
-  public abstract Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
-                                                          @NotNull final Module module,
-                                                          @NotNull final VirtualFile baseDir)
+  public abstract Collection<VirtualFile> generateProject(@NotNull String sdkRoot,
+                                                          @NotNull Module module,
+                                                          @NotNull VirtualFile baseDir)
     throws IOException;
 
 
@@ -75,23 +79,37 @@ public abstract class DartProjectTemplate {
     }
   }
 
-  @NotNull
-  private static List<DartProjectTemplate> getStagehandTemplates(@NotNull final String sdkRoot) {
-    if (ourTemplateCache != null) {
-      return ourTemplateCache;
+  private static @NotNull List<DartProjectTemplate> getStagehandTemplates(@NotNull String sdkRoot) {
+    boolean useDartCreate = Stagehand.isUseDartCreate(sdkRoot);
+
+    if (useDartCreate) {
+      if (ourDartCreateTemplateCache != null) {
+        return ourDartCreateTemplateCache;
+      }
+    }
+    else {
+      if (ourStagehandTemplateCache != null) {
+        return ourStagehandTemplateCache;
+      }
     }
 
     STAGEHAND.install(sdkRoot);
-
     final List<StagehandDescriptor> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
 
-    ourTemplateCache = new ArrayList<>();
-
-    for (StagehandDescriptor template : templates) {
-      ourTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
+    if (useDartCreate) {
+      ourDartCreateTemplateCache = new ArrayList<>();
+      for (StagehandDescriptor template : templates) {
+        ourDartCreateTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
+      }
+      return ourDartCreateTemplateCache;
     }
-
-    return ourTemplateCache;
+    else {
+      ourStagehandTemplateCache = new ArrayList<>();
+      for (StagehandDescriptor template : templates) {
+        ourStagehandTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
+      }
+      return ourStagehandTemplateCache;
+    }
   }
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
@@ -117,6 +135,22 @@ public abstract class DartProjectTemplate {
       runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
       runConfiguration.getRunnerParameters()
         .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(module.getProject(), mainDartFile));
+
+      settings.setName(runConfiguration.suggestedName());
+
+      runManager.addConfiguration(settings);
+      runManager.setSelectedConfiguration(settings);
+    }, module);
+  }
+
+  static void createTestRunConfiguration(@NotNull Module module, @NotNull @NonNls String baseDirPath) {
+    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
+      final RunManager runManager = RunManager.getInstance(module.getProject());
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", DartTestRunConfigurationType.class);
+
+      final DartTestRunConfiguration runConfiguration = (DartTestRunConfiguration)settings.getConfiguration();
+      runConfiguration.getRunnerParameters().setScope(DartTestRunnerParameters.Scope.FOLDER);
+      runConfiguration.getRunnerParameters().setFilePath(baseDirPath);
 
       settings.setName(runConfiguration.suggestedName());
 

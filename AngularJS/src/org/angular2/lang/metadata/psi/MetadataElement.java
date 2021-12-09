@@ -1,7 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.metadata.psi;
 
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -19,14 +19,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class MetadataElement<Stub extends MetadataElementStub<?>> extends FakePsiElement implements StubBasedPsiElement<Stub> {
-
   private final Stub myStub;
-  private final AtomicNotNullLazyValue<PsiElement[]> children = new AtomicNotNullLazyValue<PsiElement[]>() {
-    @Override
-    protected PsiElement @NotNull [] compute() {
-      return ContainerUtil.map2Array(getStub().getChildrenStubs(), PsiElement.class, s -> s.getPsi());
-    }
-  };
+  private final NotNullLazyValue<PsiElement[]> children = NotNullLazyValue.lazy(() -> {
+    return ContainerUtil.map2Array(getStub().getChildrenStubs(), PsiElement.class, s -> s.getPsi());
+  });
 
   public MetadataElement(@NotNull Stub stub) {
     myStub = stub;
@@ -41,10 +37,10 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
     if (stub == null) {
       throw new PsiInvalidElementAccessException(this);
     }
-    PsiFile result = ((PsiFileStubImpl)stub).getPsi();
+    PsiFile result = ((PsiFileStubImpl<?>)stub).getPsi();
     if (result == null) {
       throw new PsiInvalidElementAccessException(
-        this, "Metadata file psi has been cleared: " + ((PsiFileStubImpl)stub).getInvalidationReason());
+        this, "Metadata file psi has been cleared: " + ((PsiFileStubImpl<?>)stub).getInvalidationReason());
     }
     return result;
   }

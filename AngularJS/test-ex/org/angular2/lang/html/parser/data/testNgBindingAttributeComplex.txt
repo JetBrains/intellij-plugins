@@ -1,0 +1,47 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlEvent <lang, REGULAR>
+        XmlToken:XML_NAME('(lang)')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          ASTWrapperPsiElement(NG:ACTION_EXPR)
+            Angular2Action
+              JSExpressionStatement
+                JSObjectLiteralExpression
+                  PsiElement(JS:LBRACE)('{')
+                  JSProperty
+                    PsiElement(JS:STRING_LITERAL)(''current'')
+                    PsiElement(JS:COLON)(':')
+                    JSBinaryExpression
+                      JSReferenceExpression
+                        PsiElement(JS:IDENTIFIER)('i')
+                      PsiWhiteSpace(' ')
+                      PsiElement(JS:EQEQ)('==')
+                      PsiWhiteSpace(' ')
+                      JSParenthesizedExpression
+                        PsiElement(JS:LPAR)('(')
+                        Angular2PipeExpression
+                          Angular2PipeLeftSideArgument
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('wordIndex')
+                            PsiErrorElement:Action expression cannot contain pipes
+                              <empty list>
+                          PsiWhiteSpace(' ')
+                          PsiElement(JS:OR)('|')
+                          PsiWhiteSpace(' ')
+                          Angular2PipeReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('async')
+                        PsiElement(JS:RPAR)(')')
+                  PsiElement(JS:RBRACE)('}')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')

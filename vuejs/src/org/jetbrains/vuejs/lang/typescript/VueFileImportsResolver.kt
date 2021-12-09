@@ -19,14 +19,15 @@ class VueFileImportsResolver(project: Project,
                              nodeProcessor: NodeModuleDirectorySearchProcessor) :
   TypeScriptFileImportsResolverImpl(project, resolveContext, nodeProcessor, defaultExtensionsWithDot, listOf(VueFileType.INSTANCE)) {
 
-  override fun processAllFilesInScope(includeScope: GlobalSearchScope, processor: Processor<VirtualFile>) {
+  override fun processAllFilesInScope(includeScope: GlobalSearchScope, processor: Processor<in VirtualFile>) {
+    if (includeScope == GlobalSearchScope.EMPTY_SCOPE) return
     StubIndex.getInstance().processElements(
       TypeScriptScriptContentIndex.KEY, TypeScriptScriptContentIndex.DEFAULT_INDEX_KEY, project,
       includeScope, null, JSExecutionScope::class.java) {
 
       ProgressManager.checkCanceled()
       val virtualFile = it.containingFile.virtualFile
-      if (virtualFile != null) {
+      if (virtualFile != null && fileTypes.contains(virtualFile.fileType)) {
         if (!processor.process(virtualFile)) return@processElements false
       }
       return@processElements true

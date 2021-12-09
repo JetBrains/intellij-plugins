@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package foo.bar.any;
+
+message AnyMessage {
+  optional string any_field = 1;
+}

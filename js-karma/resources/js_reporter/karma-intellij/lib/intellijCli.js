@@ -11,7 +11,7 @@ var SERVER_PORT_KEY = 'serverPort'
   , URL_ROOT_KEY = 'urlRoot'
   , BROWSERS_KEY = 'browsers'
   , COVERAGE_TEMP_DIR = 'coverageTempDir'
-  , TEST_NAME = 'testName';
+  , TEST_NAME_PATTERN = 'testNamePattern';
 
 function parseArguments() {
   var argv = process.argv
@@ -82,8 +82,8 @@ function isWithCoverage() {
   return options.hasOwnProperty(COVERAGE_TEMP_DIR);
 }
 
-function getTestName() {
-  return options[TEST_NAME];
+function getTestNamePattern() {
+  return options[TEST_NAME_PATTERN];
 }
 
 function isLastTestRunWithTestNameFilter() {
@@ -98,5 +98,5 @@ exports.getUrlRoot = getUrlRoot;
 exports.getBrowsers = getBrowsers;
 exports.getCoverageTempDirPath = getCoverageTempDirPath;
 exports.isWithCoverage = isWithCoverage;
-exports.getTestName = getTestName;
+exports.getTestNamePattern = getTestNamePattern;
 exports.isLastTestRunWithTestNameFilter = isLastTestRunWithTestNameFilter;

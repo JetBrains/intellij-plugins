@@ -21,6 +21,7 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
     visitor.visitArrayAccessExpression(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -30,6 +31,12 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }

@@ -14,8 +14,9 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,7 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
 
   @Override
   public Object getData(@NotNull final String dataId) {
-    return LangDataKeys.MODULE.is(dataId) ? myModule : super.getData(dataId);
+    return PlatformCoreDataKeys.MODULE.is(dataId) ? myModule : super.getData(dataId);
   }
 
   private void defaultTest() throws Exception {
@@ -79,7 +80,7 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
       getEditor().getCaretModel().moveToOffset(marker.getKey());
 
       final ConfigurationFromContext configurationFromContext =
-        new FlexUnitRuntimeConfigurationProducer().createConfigurationFromContext(ConfigurationContext.getFromContext(dataContext));
+        new FlexUnitRuntimeConfigurationProducer().createConfigurationFromContext(ConfigurationContext.getFromContext(dataContext, ActionPlaces.UNKNOWN));
       final RunConfiguration configuration = configurationFromContext == null ? null : configurationFromContext.getConfiguration();
 
       if ("null".equals(marker.getValue())) {

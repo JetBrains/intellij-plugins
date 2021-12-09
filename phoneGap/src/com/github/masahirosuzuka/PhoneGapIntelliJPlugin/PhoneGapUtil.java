@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,6 +23,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.SlowOperations;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class PhoneGapUtil {
+public final class PhoneGapUtil {
 
   public static final String IONIC_CONFIG = "ionic.config.json";
 
@@ -45,7 +47,7 @@ public class PhoneGapUtil {
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-      project, PhoneGapBundle.message("phonegap.conf.executable.name"),
+      project, PhoneGapBundle.message("phonegap.conf.executable.title"),
       FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), () -> getDefaultExecutablePaths());
     String executablePath = PhoneGapSettings.getInstance().getExecutablePath();
     setDefaultValue(field, executablePath);
@@ -56,7 +58,7 @@ public class PhoneGapUtil {
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@Nullable final Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-      project, PhoneGapBundle.message("phonegap.conf.work.dir.name"),
+      project, PhoneGapBundle.message("phonegap.conf.work.dir.title"),
       FileChooserDescriptorFactory.createSingleFolderDescriptor(), () -> getDefaultWorkingDirectory(project));
     setDefaultValue(field, PhoneGapSettings.getInstance().getWorkingDirectory(project));
 
@@ -82,7 +84,7 @@ public class PhoneGapUtil {
   public static List<String> getDefaultWorkingDirectory(@Nullable Project project) {
     List<String> paths = new ArrayList<>();
     if (project == null) return paths;
-    VirtualFile baseDir = project.getBaseDir();
+    VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
     if (baseDir == null) return paths;
 
     if (folderExist(baseDir, FOLDER_PLATFORMS) ||
@@ -92,7 +94,7 @@ public class PhoneGapUtil {
       ContainerUtil.addIfNotNull(paths, project.getBasePath());
     }
     else {
-      addPaths(paths, getFolders(project));
+      addPaths(paths, SlowOperations.allowSlowOperations(() -> getFolders(project)));
     }
 
     return paths;
@@ -121,7 +123,7 @@ public class PhoneGapUtil {
   private static Collection<VirtualFile> getFolders(@NotNull Project project) {
     for (String folder : POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT) {
       Collection<VirtualFile> files =
-        ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project)),
+        ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(folder, GlobalSearchScope.projectScope(project)),
                              file -> file.isDirectory());
       if (!files.isEmpty()) {
         return files;

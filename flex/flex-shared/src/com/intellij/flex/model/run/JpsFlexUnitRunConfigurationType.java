@@ -25,10 +25,6 @@ public final class JpsFlexUnitRunConfigurationType extends JpsElementTypeBase<Jp
                                                        : null;
         return properties != null ? properties : new JpsFlexUnitRunnerParameters();
       }
-
-      @Override
-      public void saveProperties(final JpsFlexUnitRunnerParameters properties, final Element runConfigurationTag) {
-      }
     };
   }
 }

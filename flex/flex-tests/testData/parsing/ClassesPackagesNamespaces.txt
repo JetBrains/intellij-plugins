@@ -291,7 +291,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiElement(JS:IDENTIFIER)('eventsToHandle')
         JSParameterList
           PsiElement(JS:LPAR)('(')
-          JSParameter
+          ActionScriptParameter
             PsiElement(JS:IDENTIFIER)('o')
             PsiElement(JS:COLON)(':')
             JSReferenceExpression
@@ -593,7 +593,7 @@ JSFile:ClassesPackagesNamespaces.js2
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('Bar')
       PsiElement(JS:COMMA)(',')
-      PsiErrorElement:type name expected
+      PsiErrorElement:Type name expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
@@ -618,7 +618,7 @@ JSFile:ClassesPackagesNamespaces.js2
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('Zzz')
       PsiElement(JS:COMMA)(',')
-      PsiErrorElement:type name expected
+      PsiErrorElement:Type name expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
@@ -650,7 +650,7 @@ JSFile:ClassesPackagesNamespaces.js2
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('I1')
       PsiElement(JS:COMMA)(',')
-      PsiErrorElement:type name expected
+      PsiErrorElement:Type name expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
@@ -670,7 +670,7 @@ JSFile:ClassesPackagesNamespaces.js2
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('I1')
       PsiElement(JS:COMMA)(',')
-      PsiErrorElement:type name expected
+      PsiErrorElement:Type name expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')

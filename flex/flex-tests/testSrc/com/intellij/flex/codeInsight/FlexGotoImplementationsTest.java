@@ -124,23 +124,23 @@ public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
       if (sourceRootAdded) {
         sourceRootAdded(toDir);
       }
-
-      PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-        .findClassByQName(classQName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(getModule()));
-      assertTrue("Class " + classQName + " not found", element instanceof JSClass);
-
-      if (methodName != null) {
-        element = ((JSClass)element).findFunctionByName(methodName);
-        assertNotNull("Class " + classQName + " has not have method " + methodName, element);
-      }
-
-      PsiElement navElement = element.getNavigationElement();
-
-      final VirtualFile virtualFile = navElement.getContainingFile().getVirtualFile();
-      setActiveEditor(createEditor(virtualFile));
-      myEditor.getCaretModel().moveToOffset(navElement.getTextOffset());
       return null;
     });
+
+    PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+      .findClassByQName(classQName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(getModule()));
+    assertTrue("Class " + classQName + " not found", element instanceof JSClass);
+
+    if (methodName != null) {
+      element = ((JSClass)element).findFunctionByName(methodName);
+      assertNotNull("Class " + classQName + " has not have method " + methodName, element);
+    }
+
+    PsiElement navElement = element.getNavigationElement();
+
+    final VirtualFile virtualFile = navElement.getContainingFile().getVirtualFile();
+    setActiveEditor(createEditor(virtualFile));
+    myEditor.getCaretModel().moveToOffset(navElement.getTextOffset());
   }
 
   private void invokeAndCheck(String expected) {

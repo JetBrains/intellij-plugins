@@ -6,10 +6,9 @@ import com.intellij.ide.SelectInTarget;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
-import com.intellij.ide.ui.customization.CustomActionsSchema;
+import com.intellij.ide.ui.customization.CustomizationUtil;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.ModuleListener;
@@ -37,7 +36,6 @@ import com.intellij.tapestry.intellij.view.actions.GroupElementFilesToggleAction
 import com.intellij.tapestry.intellij.view.actions.ShowLibrariesTogleAction;
 import com.intellij.tapestry.intellij.view.actions.StartInBasePackageAction;
 import com.intellij.tapestry.intellij.view.nodes.*;
-import com.intellij.ui.PopupHandler;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.treeStructure.SimpleNode;
@@ -377,7 +375,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       return myIdeView;
     }
 
-    if (LangDataKeys.MODULE.is(dataId)) {
+    if (PlatformCoreDataKeys.MODULE.is(dataId)) {
       final NodeDescriptor nodeDescriptor = getSelectedDescriptor();
       if (nodeDescriptor != null) {
         if (nodeDescriptor instanceof TapestryNode) {
@@ -415,7 +413,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
     DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
-    myTree = new ProjectViewTree(myProject, treeModel) {
+    myTree = new ProjectViewTree(treeModel) {
       public String toString() {
         return getTitle() + " " + super.toString();
       }
@@ -448,20 +446,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     myComponent = ScrollPaneFactory.createScrollPane(myTree);
     myComponent.setBorder(BorderFactory.createEmptyBorder());
-    installTreePopupHandler(ActionPlaces.PROJECT_VIEW_POPUP, IdeActions.GROUP_PROJECT_VIEW_POPUP);
-  }
-
-  protected void installTreePopupHandler(final String place, final String groupName) {
-    if (ApplicationManager.getApplication() == null) return;
-    PopupHandler popupHandler = new PopupHandler() {
-      @Override
-      public void invokePopup(java.awt.Component comp, int x, int y) {
-        ActionGroup group = (ActionGroup)CustomActionsSchema.getInstance().getCorrectedAction(groupName);
-        final ActionPopupMenu popupMenu = ActionManager.getInstance().createActionPopupMenu(place, group);
-        popupMenu.getComponent().show(comp, x, y);
-      }
-    };
-    myTree.addMouseListener(popupHandler);
+    CustomizationUtil.installPopupHandler(myTree, IdeActions.GROUP_PROJECT_VIEW_POPUP, "TapestryProjectViewPopup");
   }
 
 
@@ -484,7 +469,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
             }
 
             if (selectedNode instanceof PageNode || selectedNode instanceof ComponentNode || selectedNode instanceof MixinNode) {
-              toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), selectedNode.getElement(),
+              toolWindow.update((Module)getData(PlatformCoreDataKeys.MODULE.getName()), selectedNode.getElement(),
                                 Collections.singletonList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
             }
 
@@ -494,7 +479,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                       .getParent()).getUserObject());
 
               if (parentSelectedNode.getElement() instanceof PresentationLibraryElement) {
-                toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
+                toolWindow.update((Module)getData(PlatformCoreDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
                                   Collections
                                     .singletonList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
               }
@@ -527,7 +512,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                 }
 
                 if (component != null) {
-                  toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), component,
+                  toolWindow.update((Module)getData(PlatformCoreDataKeys.MODULE.getName()), component,
                                     Collections.singletonList(component.getElementClass()));
                 }
               }

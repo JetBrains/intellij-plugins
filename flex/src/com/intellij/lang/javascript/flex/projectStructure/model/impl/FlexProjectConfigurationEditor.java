@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
+import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdkManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
@@ -439,7 +440,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkNames.iterator().next());
       }
       else {
-        sdk = new FlexCompositeSdk(ArrayUtilRt.toStringArray(sdkNames));
+        sdk = FlexCompositeSdkManager.getInstance().getOrCreateSdk(ArrayUtilRt.toStringArray(sdkNames));
       }
       modifiableModel.setSdk(sdk);
 

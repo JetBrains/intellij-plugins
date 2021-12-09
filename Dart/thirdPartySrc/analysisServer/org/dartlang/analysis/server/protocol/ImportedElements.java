@@ -8,8 +8,10 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -32,7 +34,7 @@ public class ImportedElements {
 
   public static final ImportedElements[] EMPTY_ARRAY = new ImportedElements[0];
 
-  public static final List<ImportedElements> EMPTY_LIST = new ArrayList<>();
+  public static final List<ImportedElements> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The absolute and normalized path of the file containing the library.

@@ -12,13 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -30,7 +29,6 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,8 +40,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsCoreConstantContributor extends StrutsConstantContributorBase {
-
+public final class StrutsCoreConstantContributor extends StrutsConstantContributorBase {
   /**
    * {@code struts.action.extension}.
    */
@@ -121,20 +118,13 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
     return CONSTANTS;
   }
 
-
   /**
    * Converter for {@code struts.i18n.encoding}.
    */
-  private static class EncodingConverter extends ResolvingConverter.StringConverter {
-
-    private final AtomicNotNullLazyValue<Set<String>> charSets = new AtomicNotNullLazyValue<Set<String>>() {
-      @NotNull
-      @Override
-      protected Set<String> compute() {
-        return ContainerUtil.map2Set(CharsetToolkit.getAvailableCharsets(),
-                                     charset -> charset.name());
-      }
-    };
+  private static final class EncodingConverter extends ResolvingConverter.StringConverter {
+    private final NotNullLazyValue<Set<String>> charSets = NotNullLazyValue.atomicLazy(() -> {
+      return ContainerUtil.map2Set(CharsetToolkit.getAvailableCharsets(), charset -> charset.name());
+    });
 
     @Override
     public String fromString(final String s, final ConvertContext convertContext) {
@@ -145,9 +135,8 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       return charSets.getValue().contains(s) ? s : null;
     }
 
-    @Nullable
     @Override
-    public LookupElement createLookupElement(String s) {
+    public @NotNull LookupElement createLookupElement(String s) {
       return LookupElementBuilder.create(s).withCaseSensitivity(false);
     }
 

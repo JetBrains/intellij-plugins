@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -161,13 +162,14 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return JSPullUpConflictsUtil.checkConflicts(myMembersToMove, mySourceClass, createFakeClass(), v, JSVisibilityUtil.DEFAULT_OPTIONS);
     }
     else {
-      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
-        @NotNull
-        @Override
-        protected Collection<String> createCollection() {
-          return Collections.synchronizedCollection(super.createCollection());
-        }
-      };
+      MultiMap<PsiElement, String> conflicts =
+        new MultiMap<>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
+          @NotNull
+          @Override
+          protected Collection<String> createCollection() {
+            return Collections.synchronizedCollection(super.createCollection());
+          }
+        };
 
       // we create subclass with the same visibility as the source class, so let's check it accessibility by references that need to be pushed down
       checkIncomingReferencesToSubclass(usageInfos, conflicts, JSVisibilityUtil.DEFAULT_OPTIONS);
@@ -245,7 +247,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     String accessModifier;
     boolean isInterface;
     if (myMode == JSExtractSuperMode.RenameImplementation) {
-      final String namespace = JSResolveUtil.getNamespaceValue(mySourceClass.getAttributeList());
+      final String namespace = ActionScriptPsiImplUtil.getNamespaceValue(mySourceClass.getAttributeList());
       if (namespace != null) {
         accessModifier = namespace;
       }
@@ -279,20 +281,15 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     else {
       if (myMode == JSExtractSuperMode.ExtractSuperTurnRefs) {
         createSuperClassifier(formatters);
-        if (myTargetClass != null) {
-          rebindReferencesToTarget(usages, formatters);
-        }
+      }
+      else if (ActionScriptResolveUtil.isFileLocalSymbol(mySourceClass)) {
+        renameOriginalFileLocalClass(formatters);
       }
       else {
-        if (ActionScriptResolveUtil.isFileLocalSymbol(mySourceClass)) {
-          renameOriginalFileLocalClass(formatters);
-        }
-        else {
-          renameOriginalClass(formatters);
-        }
-        if (myTargetClass != null) {
-          rebindReferencesToTarget(usages, formatters);
-        }
+        renameOriginalClass(formatters);
+      }
+      if (myTargetClass != null) {
+        rebindReferencesToTarget(usages, formatters);
       }
     }
     JSRefactoringUtil.format(formatters);

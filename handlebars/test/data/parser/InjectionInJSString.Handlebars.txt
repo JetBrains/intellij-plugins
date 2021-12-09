@@ -1,0 +1,13 @@
+HbFile:InjectionInJSString.hbs
+  HbStatementsImpl(STATEMENTS)
+    PsiElement([Hb] CONTENT)('<script>\nlet s = "rest/logstats?from=-1d&postFunctionId=')
+    HbSimpleMustacheImpl(MUSTACHE)
+      HbPsiElementImpl([Hb] OPEN)
+        PsiElement([Hb] OPEN)('{{')
+      HbMustacheNameImpl(MUSTACHE_NAME)
+        HbPathImpl(PATH)
+          HbPsiElementImpl([Hb] ID)
+            PsiElement([Hb] ID)('id')
+      HbPsiElementImpl([Hb] CLOSE)
+        PsiElement([Hb] CLOSE)('}}')
+    PsiElement([Hb] CONTENT)('";\n</script>')

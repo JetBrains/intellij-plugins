@@ -1,0 +1,67 @@
+syntax = "proto3";
+import "net/proto2/proto/descriptor.proto";
+
+package foo.bar;
+
+// File option
+option cc_api_version = 2;
+
+extend proto2.OneofOptions {
+  int32 test_oneof_option = 2000;
+}
+
+message MyType {
+  int32 crazy_option_field = 1;
+  extensions 50 to max;
+}
+
+extend proto2.FieldOptions {
+  MyType test_field_option = 2000;
+}
+
+extend MyType {
+  int32 crazy_extended_option_field = 1000;
+}
+
+message TestMessage {
+  // Message option
+  option deprecated = false;
+
+  // Field with option
+  int32 test_field = 1 [weak = true];
+
+  // Field with extension option
+  int32 test_field = 1 [(test_field_option).crazy_option_field = 1];
+
+  // Field with extended extension option
+  int32 test_field = 1 [(test_field_option).(crazy_extended_option_field) = 1];
+
+  oneof TestOneof {
+    // Custom oneof option
+    option (test_oneof_option) = 10;
+    int32 field_in_oneof = 10;
+  }
+}
+
+enum TestEnum {
+  // Enum option
+  option proto1_name = "foo";
+
+  // Enum value with option
+  VALUE1 = 1 [deprecated = true];
+}
+
+service TestService {
+  // Service option
+  option multicast_stub = true;
+
+  rpc TestMethod (TestMessage) returns (TestMessage) {
+    // Method option
+    option deadline = 1.0;
+  }
+
+  stream TestStream (TestMessage,TestMessage) {
+    // Stream option
+    option deadline = 1.0;
+  }
+}

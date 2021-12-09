@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.psi.JSTypeOwner;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
@@ -58,6 +59,14 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(variants, "big", "anchor", "substr");
   }
 
+  public void testGenericClassPipeResultCompletion() {
+    configureLink(myFixture, ANGULAR_COMMON_8_2_14);
+    myFixture.configureByFiles("genericClassPipe.ts");
+    myFixture.completeBasic();
+    final List<String> variants = myFixture.getLookupElementStrings();
+    assertContainsElements(variants, "bark", "eat");
+  }
+
   public void testAsyncPipeResultCompletion() {
     configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
@@ -94,6 +103,13 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("ngIfAsObj.ts");
     assertEquals("{foo: Person}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
+  }
+
+  public void testAsyncNgIfAsObjTypeStrictCheck() {
+    configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    TypeScriptTestUtil.setStrictNullChecks(getProject(), getTestRootDisposable());
+    myFixture.configureByFiles("ngIfAsObj.ts");
+    assertEquals("{foo: Person|null}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
   }
 
   public void testContextAware() {

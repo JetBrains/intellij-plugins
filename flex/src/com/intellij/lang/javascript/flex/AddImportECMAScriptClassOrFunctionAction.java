@@ -34,6 +34,7 @@ import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.util.SmartList;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -200,6 +201,11 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   }
 
   @Override
+  public @Nullable PsiElement getElementToMakeWritable(@NotNull PsiFile currentFile) {
+    return currentFile;
+  }
+
+  @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) {
     final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
 
@@ -212,15 +218,15 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
         candidates.toArray(new JSQualifiedNamedElement[0]),
         new JSQualifiedNamedElementRenderer(),
         JavaScriptBundle.message("choose.class.to.import.title"),
-        new PsiElementProcessor<JSQualifiedNamedElement>() {
+        new PsiElementProcessor<>() {
           @Override
           public boolean execute(@NotNull final JSQualifiedNamedElement element) {
             CommandProcessor.getInstance().executeCommand(
-                project,
-                () -> doImport(element.getQualifiedName()),
-                "Import " + element.getQualifiedName(),
-                this
-             );
+              project,
+              () -> doImport(element.getQualifiedName()),
+              "Import " + element.getQualifiedName(),
+              this
+            );
 
             return false;
           }

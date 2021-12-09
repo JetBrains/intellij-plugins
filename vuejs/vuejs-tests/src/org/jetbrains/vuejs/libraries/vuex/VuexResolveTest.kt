@@ -1,18 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
+import com.intellij.javascript.web.assertUnresolvedReference
+import com.intellij.javascript.web.resolveReference
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.vuejs.lang.assertUnresolvedReference
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
-import org.jetbrains.vuejs.lang.resolveReference
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VuexResolveTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/resolve"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/resolve"
 
   fun testStorefrontComponentStoreAccess() {
     doStorefrontTest(
@@ -397,7 +397,10 @@ class VuexResolveTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTest(false,
            "'change<caret>Data'" to "store/actions.js:19:JSFunctionProperty",
-           "'foo/change<caret>Data'" to "foo/actions.js:19:JSFunctionProperty")
+           "'foo/change<caret>Data'" to "foo/actions.js:19:JSFunctionProperty",
+           "'bar/update<caret>Data'" to "store/bar.js:27:JSFunctionProperty",
+           "'bar/change<caret>Data'" to null,
+           "'ba<caret>r/changeData'" to "store/bar.js:0:JSFile:bar.js",)
     myFixture.configureFromTempProjectFile("store/store/foo/actions.js")
     doTest(false,
            "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:JSFunctionProperty")
@@ -414,6 +417,19 @@ class VuexResolveTest : BasePlatformTestCase() {
     doTest(false,
            "'change<caret>Data'" to null,
            "'foo/change<caret>Data'" to null)
+  }
+
+  fun testCompositionApiResolution() {
+    myFixture.configureStore(VuexTestStore.CompositionCounter)
+    myFixture.configureByFile("composition-counter.vue")
+    doTest(
+      false,
+      "{{ co<caret>unt }}" to "src/composition-counter.vue:466:JSProperty",
+      "store.state.cou<caret>nt" to "store/store.js:127:JSProperty",
+      "store.getters.even<caret>OrOdd" to "store/store.js:1072:JSProperty",
+      "store.dispatch('inc<caret>rement')" to "store/store.js:635:JSProperty",
+      "@click=\"inc<caret>rement\"" to "src/composition-counter.vue:572:JSProperty",
+    )
   }
 
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {

@@ -4,22 +4,29 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.ES6StubElementTypes
 import com.intellij.lang.ecmascript6.psi.*
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.impl.source.xml.stub.XmlTagStub
@@ -27,25 +34,22 @@ import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.XmlDocument
-import com.intellij.psi.xml.XmlFile
-import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.*
 import com.intellij.util.PathUtil
+import com.intellij.util.SmartList
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
+import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
+import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
+import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
-  // 1 here we are just mapping the constants, no lifecycle needed
-  // 2 not lazy structure -> no synchronization needed
-  // what to do, indexing is done on background thread, component initialization on EDT
-  // either we synchronize (but then every access would have penalty)
-  // or we are using the static structure
-  // here there are only 6 indexes...
+
   private val VUE_INDEXES = mapOf(
     record(VueComponentsIndex.KEY),
     record(VueExtendsBindingIndex.KEY),
@@ -67,8 +71,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
 
+    public const val TYPED_COMPONENT_MARKER = "Vue Typed Component"
+
     private const val REQUIRE = "require"
-    private const val VUE_INSTANCE = "CombinedVueInstance"
 
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
                                                 FILTER_FUN, DEFINE_COMPONENT_FUN)
@@ -77,6 +82,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                                   MODEL_PROP)
 
     private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
+
+    private val SCRIPT_SETUP_DEFINE_FUNS = setOf(DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_PROPS_FUN)
+
+    const val METHOD_NAME_USER_STRING = "vmn"
 
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
       obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
@@ -112,10 +121,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
-  override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.index.findModule(result)
+  override fun findModule(result: PsiElement): PsiElement? = findModule(result, true) ?: findModule(result, false)
+
+  override fun getMarkers(elementToIndex: PsiElement): List<String> =
+    if (elementToIndex is TypeScriptVariable
+        && TypeScriptUtil.isDefinitionFile(elementToIndex.containingFile)
+        && VueTypedEntitiesProvider.isComponentDefinition(elementToIndex))
+      listOf(TYPED_COMPONENT_MARKER)
+    else
+      emptyList()
 
   override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
-
   override fun processProperty(name: String?, property: JSProperty, out: JSElementIndexingData): Boolean {
     if (MIXINS_PROP == name && property.value is JSArrayLiteralExpression) {
       (property.value as JSArrayLiteralExpression).expressions
@@ -188,8 +204,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val firstProperty = obj?.firstProperty ?: return outData
     if (firstProperty == property) {
       val parent = obj.parent
-      if (parent is JSExportAssignment ||
-          (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))) {
+      if (parent is JSExportAssignment
+          || (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))
+          || parent.castSafelyTo<JSArgumentList>()?.parent
+            ?.castSafelyTo<JSCallExpression>()?.let { isDefineComponentOrVueExtendCall(it) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
           out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
@@ -221,10 +239,25 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
     return VueStaticMethod.matchesAny(reference)
+           || isScriptSetupDefineCall(node, reference)
   }
+
+  override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean =
+    node.treeParent.takeIf { it.elementType == JSElementTypes.ARGUMENT_LIST }
+      ?.treeParent?.takeIf {
+        val reference = (it.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression
+        reference != null && isScriptSetupDefineCall(it, reference)
+      } != null
 
   override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
     val reference = callExpression?.methodExpression as? JSReferenceExpression ?: return
+    if (isScriptSetupDefineCall(callExpression.node, reference)) {
+      outData.addImplicitElement(JSImplicitElementImpl.Builder(reference.referenceName!!, callExpression)
+                                   .setUserString(this, METHOD_NAME_USER_STRING)
+                                   .toImplicitElement())
+      return
+    }
+
     val arguments = callExpression.arguments
     if (arguments.isEmpty()) return
 
@@ -278,7 +311,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                 ?.castSafelyTo<ES6ImportedBinding>()
                 ?.context?.castSafelyTo<ES6ImportExportDeclaration>()
                 ?.fromClause
-                ?.referenceText == "\"vue-typed-mixins\"") {
+                ?.referenceText
+                ?.let { es6Unquote(it) } == "vue-typed-mixins") {
             for (arg in qualifier.arguments) {
               arg.castSafelyTo<JSReferenceExpression>()
                 ?.takeIf { !it.hasQualifier() }
@@ -330,6 +364,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean =
+    VueCompositionPropsTypeProvider.addTypeFromResolveResult(evaluator, result)
+
+  override fun useOnlyCompleteMatch(type: JSType, evaluateContext: JSEvaluateContext): Boolean =
+    VueCompositionPropsTypeProvider.useOnlyCompleteMatch(type)
+
   override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
     if (node?.psi is JSLiteralExpression) {
       return hasSignificantValue(node.psi as JSLiteralExpression)
@@ -373,10 +413,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return index == VueUrlIndex.KEY
   }
 
-  fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
-                            nameType: String? = null,
-                            descriptor: PsiElement? = null,
-                            isGlobal: Boolean = false): JSImplicitElementImpl {
+  private fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
+                                    nameType: String? = null,
+                                    descriptor: PsiElement? = null,
+                                    isGlobal: Boolean = false): JSImplicitElementImpl {
     val normalized = normalizeNameForIndex(name)
     val nameTypeRecord = nameType ?: ""
     val asIndexed = descriptor as? JSIndexedPropertyAccessExpression
@@ -388,10 +428,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       .toImplicitElement()
   }
 
-  override fun computeJSImplicitElementUserStringKeys(): Set<String> {
-    return setOf(VueUrlIndex.JS_KEY, VueOptionsIndex.JS_KEY, VueMixinBindingIndex.JS_KEY, VueComponentsIndex.JS_KEY,
-                 VueGlobalDirectivesIndex.JS_KEY, VueExtendsBindingIndex.JS_KEY, VueGlobalFiltersIndex.JS_KEY, VueIdIndex.JS_KEY)
-  }
+  override fun computeJSImplicitElementUserStringKeys(): Set<String> =
+    setOf(VueUrlIndex.JS_KEY, VueOptionsIndex.JS_KEY, VueMixinBindingIndex.JS_KEY, VueComponentsIndex.JS_KEY,
+          VueGlobalDirectivesIndex.JS_KEY, VueExtendsBindingIndex.JS_KEY, VueGlobalFiltersIndex.JS_KEY, VueIdIndex.JS_KEY,
+          METHOD_NAME_USER_STRING)
+
+  private fun isScriptSetupDefineCall(callNode: ASTNode?,
+                                      reference: JSReferenceExpression) =
+    reference.referenceName in SCRIPT_SETUP_DEFINE_FUNS
+    && TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
+      ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
+      .let { it?.psi?.castSafelyTo<HtmlTag>()?.name == SCRIPT_TAG_NAME }
 }
 
 fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {
@@ -401,23 +448,43 @@ fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {
   else emptyList()
 }
 
-fun findModule(element: PsiElement?): JSEmbeddedContent? {
-  val file = element as? XmlFile ?: element?.containingFile as? XmlFile
-  if (file != null && file.fileType == VueFileType.INSTANCE) {
-    val script = findScriptTag(file)
-    if (script != null) {
-      return PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
-    }
-  }
-  return null
-}
-
-fun findScriptTag(xmlFile: XmlFile): XmlTag? {
-  return findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME)
+@StubSafe
+fun processScriptSetupTopLevelDeclarations(context: PsiElement, consumer: (JSPsiNamedElementBase) -> Boolean) {
+  val module = findModule(context, true) ?: return
+  JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
+    val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
+    val name = resolved?.name
+    if (name != null) {
+      consumer(resolved)
+    } else true
+  }, false)
 }
 
 @StubSafe
-fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
+fun findModule(element: PsiElement?, setup: Boolean): JSEmbeddedContent? =
+  element
+    ?.let { InjectedLanguageManager.getInstance(element.project) }
+    ?.getTopLevelFile(element)
+    ?.castSafelyTo<XmlFile>()
+    ?.let { findScriptTag(it, setup) }
+    ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
+
+@StubSafe
+fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =
+  findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME) {
+    setup xor (it.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) == null)
+  }
+
+@StubSafe
+fun findAttribute(tag: XmlTag, attributeName: String): XmlAttribute? =
+  PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java).firstOrNull { it.name == attributeName }
+
+@StubSafe
+fun hasAttribute(tag: XmlTag, attributeName: String): Boolean =
+  PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java).any { it.name == attributeName }
+
+@StubSafe
+fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> Boolean)? = null): XmlTag? {
   if (xmlFile.fileType == VueFileType.INSTANCE) {
     var result: XmlTag? = null
     if (xmlFile is PsiFileImpl) {
@@ -433,7 +500,8 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
       override fun visitXmlTag(tag: XmlTag?) {
         if (result == null
             && tag != null
-            && tag.localName.equals(tagName, ignoreCase = true)) {
+            && tag.localName.equals(tagName, ignoreCase = true)
+            && accept?.invoke(tag) != false) {
           result = tag
         }
       }
@@ -441,6 +509,31 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
     return result
   }
   return null
+}
+
+fun findTopLevelVueTags(xmlFile: XmlFile, tagName: String): List<XmlTag> {
+  if (xmlFile.fileType == VueFileType.INSTANCE) {
+    if (xmlFile is PsiFileImpl) {
+      xmlFile.stub?.let { stub ->
+        return stub.childrenStubs
+          .asSequence()
+          .mapNotNull { (it as? XmlTagStub<*>)?.psi }
+          .filter { it.localName.equals(tagName, ignoreCase = true) }
+          .toList()
+      }
+    }
+    val result = SmartList<XmlTag>()
+    xmlFile.accept(object : VueFileVisitor() {
+      override fun visitXmlTag(tag: XmlTag?) {
+        if (tag != null
+            && tag.localName.equals(tagName, ignoreCase = true)) {
+          result.add(tag)
+        }
+      }
+    })
+    return result
+  }
+  return emptyList()
 }
 
 private enum class VueStaticMethod(val methodName: String) {

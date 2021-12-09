@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.bc;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -33,7 +33,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -318,7 +317,7 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
   }
 
   private static Map<String, String> createMap(String... keysAndValues) {
-    final Map<String, String> result = new THashMap<>();
+    final Map<String, String> result = new HashMap<>();
     for (int i = 0; i < keysAndValues.length; i++) {
       //noinspection AssignmentToForLoopParameter
       result.put(keysAndValues[i], keysAndValues[++i]);

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package foo.bar;
+
+import "<error descr="Cannot resolve import 'missing_file.proto'" type="WRONG_REF">missing_file.proto</error>";
+
+import "<error descr="Backslashes, consecutive slashes, ., and .. are not allowed in the virtual path" type="WRONG_REF">foo/../missing_file.proto</error>";

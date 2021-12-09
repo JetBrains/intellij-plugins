@@ -24,6 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -33,7 +34,6 @@ import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ConstantFunction;
 import com.intellij.util.containers.ContainerUtil;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,8 +46,7 @@ import java.util.Objects;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
-
+final class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
   @Override
   protected PsiReference[] createReferences(@NotNull final PsiElement psiElement,
                                             final int offset,

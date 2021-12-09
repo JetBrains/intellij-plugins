@@ -17,7 +17,7 @@ HtmlFile:test.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSObjectLiteralExpression
                   PsiElement(JS:LBRACE)('{')

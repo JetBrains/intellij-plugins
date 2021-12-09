@@ -18,7 +18,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +58,7 @@ public class FlexSdkStep extends ModuleWizardStep {
 
     final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     if (currentEditor != null) {
-      final Module[] modules = ModuleStructureConfigurable.getInstance(project).getModules();
+      final Module[] modules = ProjectStructureConfigurable.getInstance(project).getModulesConfig().getModules();
       for (Module module : modules) {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;

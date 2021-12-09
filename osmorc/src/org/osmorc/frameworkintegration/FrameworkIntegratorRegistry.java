@@ -24,7 +24,7 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class FrameworkIntegratorRegistry {
   public static FrameworkIntegratorRegistry getInstance() {
-    return ServiceManager.getService(FrameworkIntegratorRegistry.class);
+    return ApplicationManager.getApplication().getService(FrameworkIntegratorRegistry.class);
   }
 
   @NotNull

@@ -3,11 +3,13 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -134,7 +136,7 @@ public class ActiveBuildConfigurationWidget {
 
       myPanel.setOpaque(false);
       myPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      myPanel.setBorder(WidgetBorder.INSTANCE);
+      myPanel.setBorder(JBUI.CurrentTheme.StatusBar.Widget.border());
       GridBagConstraints c =
         new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.emptyInsets(), 0, 0);
       myPanel.add(myEnabledLabel, c);
@@ -150,7 +152,8 @@ public class ActiveBuildConfigurationWidget {
         public boolean onClick(@NotNull MouseEvent e, int clickCount) {
           Module module = findCurrentFlexModule();
           if (module != null) {
-            ListPopup popup = ChooseActiveBuildConfigurationAction.createPopup(module);
+            DataContext dataContext = DataManager.getInstance().getDataContext(e.getComponent());
+            ListPopup popup = ChooseActiveBuildConfigurationAction.createPopup(module, dataContext);
             final Dimension dimension = popup.getContent().getPreferredSize();
             final Point at = new Point(0, -dimension.height);
             popup.show(new RelativePoint(e.getComponent(), at));

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.PropertyKey;
 import java.util.function.Supplier;
 
 public final class TapestryBundle extends DynamicBundle {
-  protected static final String BUNDLE = "messages.TapestryBundle";
+  private static final String BUNDLE = "messages.TapestryBundle";
   private static final TapestryBundle INSTANCE = new TapestryBundle();
 
   private TapestryBundle() { super(BUNDLE); }

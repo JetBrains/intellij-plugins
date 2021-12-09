@@ -2,7 +2,7 @@
 package com.jetbrains.lang.dart.assists;
 
 import com.google.dart.server.utilities.general.ObjectUtilities;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
@@ -21,7 +21,7 @@ public class DartQuickAssistSet {
   private int lastLength;
 
   static @NotNull DartQuickAssistSet getInstance() {
-    return ServiceManager.getService(DartQuickAssistSet.class);
+    return ApplicationManager.getApplication().getService(DartQuickAssistSet.class);
   }
 
   public synchronized List<SourceChange> getQuickAssists(@NotNull final Editor editor, @NotNull final PsiFile psiFile) {

@@ -3,7 +3,7 @@ package com.intellij.tapestry.intellij.actions.navigation;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -36,9 +36,9 @@ public class TagDocumentationNavigation extends AnAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
 
-    Project project = (Project)event.getDataContext().getData(CommonDataKeys.PROJECT.getName());
+    Project project = event.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
-    Module module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
 
     TapestryComponent component = getTapestryComponent(event);
     if (component == null) return;
@@ -55,8 +55,8 @@ public class TagDocumentationNavigation extends AnAction {
 
   @Nullable
   private static TapestryComponent getTapestryComponent(AnActionEvent event) {
-    Editor editor = (Editor)event.getDataContext().getData(CommonDataKeys.EDITOR.getName());
-    PsiFile psiFile = ((PsiFile)event.getDataContext().getData(CommonDataKeys.PSI_FILE.getName()));
+    Editor editor = event.getData(CommonDataKeys.EDITOR);
+    PsiFile psiFile = event.getData(CommonDataKeys.PSI_FILE);
 
     if (editor == null || psiFile == null) return null;
 

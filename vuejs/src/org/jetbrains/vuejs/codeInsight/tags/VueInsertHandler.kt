@@ -6,6 +6,8 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItem
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
@@ -15,6 +17,7 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ImportExportType
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
@@ -32,7 +35,6 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VUE_CLASS_COMPONENT_MODULE
@@ -64,16 +66,17 @@ class VueInsertHandler : XmlTagInsertHandler() {
       return element == null || element.language.isKindOf(XMLLanguage.INSTANCE)
     }
 
-    private fun isSkippedModule(nodeModule: VirtualFile?) = "vue" == nodeModule?.name || "vue-router" == nodeModule?.name
+    private fun isSkippedModule(nodeModule: VirtualFile?) =
+      nodeModule != null
+      && nodeModule.parent?.name == JSLibraryUtil.NODE_MODULES
+      && ("vue" == nodeModule.name || "vue-router" == nodeModule.name)
   }
 
   override fun handleInsert(context: InsertionContext, item: LookupElement) {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val element = item.`object`.castSafelyTo<Pair<*, *>>()
-                    ?.second?.castSafelyTo<SmartPsiElementPointer<*>>()
-                    ?.element
+    val element = WebSymbolCodeCompletionItem.getPsiElement(item)
                   ?: return
     val importedFile = element.containingFile
     if (importedFile == context.file) return
@@ -82,8 +85,12 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
     context.commitDocument()
     val isClass = element.context is JSClassExpression || element.context is ES6Decorator
+    val elementToImport = if (importedFile is XmlFile
+                              || ES6PsiUtil.findDefaultExports(importedFile).any { PsiTreeUtil.isContextAncestor(it, element, false) })
+      importedFile
+    else element
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
-      InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
+      InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, elementToImport, context.editor, isClass)
     }
   }
 
@@ -92,39 +99,56 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
     fun insertComponentImport(context: PsiFile,
                               name: String,
-                              importedFile: PsiFile,
+                              elementToImport: PsiElement,
                               editor: Editor?,
                               isClass: Boolean = false) {
       val file: XmlFile = context as? XmlFile ?: context.containingFile as? XmlFile ?: return
+      val decapitalized = toAsset(name).decapitalize()
+      val capitalizedName = decapitalized.capitalize()
+
+      val info = if (elementToImport is PsiFile) {
+        ES6ImportPsiUtil.CreateImportExportInfo(capitalizedName, capitalizedName, ImportExportType.DEFAULT,
+                                                ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT)
+      }
+      else {
+        ES6ImportPsiUtil.CreateImportExportInfo(null, capitalizedName, ImportExportType.SPECIFIER,
+                                                ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT)
+      }
+
+      val scriptSetup = findScriptTag(file, true)?.children?.find { it is JSEmbeddedContent }
+      if (scriptSetup != null) {
+        ES6ImportPsiUtil.insertJSImport(scriptSetup, info, elementToImport, editor)
+        return
+      }
+
       val defaultExport = findOrCreateDefaultExport(file, isClass)
       val defaultExportElement = defaultExport.stubSafeElement
-      var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
+      var obj = VueComponents.getSourceComponentDescriptor(defaultExportElement)?.initializer
 
-      if (obj == null) {
+      if (obj !is JSObjectLiteralExpression) {
         if (defaultExportElement !is JSClass) return
         val decorator = VueComponents.getComponentDecorator(defaultExportElement) ?: return
         val newClass = JSPsiElementFactory.createJSClass("@Component({}) class A {}", decorator)
         val newDecorator = VueComponents.getComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
-        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer ?: return
+        obj = VueComponents.getSourceComponentDescriptor(defaultExportElement)?.initializer
       }
 
-      val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return
-      val decapitalized = toAsset(name).decapitalize()
-      val capitalizedName = decapitalized.capitalize()
+      val components = componentProperty(obj as? JSObjectLiteralExpression ?: return).value as? JSObjectLiteralExpression ?: return
+
       if (components.findProperty(decapitalized) != null || components.findProperty(capitalizedName) != null) return
       val newProperty = JSPsiElementFactory.createJSExpression("{ $capitalizedName }", obj,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
       forReformat(addProperty(newProperty, components, false))
-      ES6ImportPsiUtil.insertJSImport(defaultExport.parent, capitalizedName, ImportExportType.DEFAULT, importedFile, editor)
+      ES6ImportPsiUtil.insertJSImport(defaultExport.parent, info, elementToImport, editor)
       if (toReformat != null) {
         reformatElement(toReformat)
       }
     }
 
     private fun findOrCreateDefaultExport(file: XmlFile, isClass: Boolean): JSExportAssignment {
-      val scriptTag = findScriptTag(file)
+      val scriptTag = findScriptTag(file, false)
       val fileName = FileUtil.getNameWithoutExtension(file.name)
       if (scriptTag == null) {
         val dummyScript = createDummyScript(file.project, null, isClass, fileName)

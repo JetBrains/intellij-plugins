@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
@@ -22,24 +23,19 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Processor;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
 
 public class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
   private static final String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
 
-  private final Map<VirtualFile, Long> configFileToTimestamp = new THashMap<>();
-  private final Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions =
-    new THashMap<>();
+  private final Map<VirtualFile, Long> configFileToTimestamp = new HashMap<>();
+  private final Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions = new HashMap<>();
 
   @Override
   public boolean containsConstant(final Module module, final String namespace, final String constantName) {

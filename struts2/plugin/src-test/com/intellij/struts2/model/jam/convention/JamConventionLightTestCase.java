@@ -36,7 +36,7 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   private static final LightProjectDescriptor CONVENTION = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()
     .withStrutsFacet()
-    .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar");
+    .withStrutsConvention();
 
   @Override
   @NotNull

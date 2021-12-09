@@ -17,25 +17,33 @@ public class DartIsExpressionImpl extends DartExpressionImpl implements DartIsEx
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitIsExpression(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+    return findChildByClass(DartExpression.class);
   }
 
   @Override
   @NotNull
   public DartType getType() {
     return findNotNullChildByClass(DartType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }

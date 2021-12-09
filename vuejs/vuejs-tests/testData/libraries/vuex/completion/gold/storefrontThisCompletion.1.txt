@@ -24,7 +24,7 @@
 !getfoo2% (storefront-mappers-TS.ts)#null#99
 !isMicrocartOpen% (cart/index.ts)#false#99
 !isVirtualCart% (cart/getters.ts)#any#99
-!loadCategoryProducts%({ route, category, pageSize = 50 }?: {route: any, category: any, pageSize?: any}) (category/actions.ts)#null#99
+!loadCategoryProducts%({ route, category, pageSize = 50 }?: {route: any, category: any, pageSize?: any}) (category/actions.ts)#Promise<any>#99
 !micro% (cart/index.ts)#false#99
 !micro2% (cart/index.ts)#false#99
 !micro4% (storefront-mappers-TS.ts)#false#99

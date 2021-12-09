@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package foo.bar;
+
+enum TestEnum {
+  FOO = 0;
+}
+
+message TestMessage {
+  // Not a valid type name (com is a package)
+  optional .foo.<error descr="Message, enum, or built-in type expected">bar</error> var6 = 6;
+}
+
+// Only message types can be extended
+extend <error descr="Message type expected">TestEnum</error> {
+  optional bool ext = 1000;
+}
+
+service TestService {
+  // Method request and response types must be messages.
+  rpc MyMethod (<error descr="Message type expected">bool</error>) returns (<error descr="Message type expected">TestEnum</error>);
+}
+
+message MapMessage {
+  map<<error descr="Map key cannot be float, double, bytes, message, or enum types">TestMessage</error>, TestMessage> map1 = 1;
+  map<<error descr="Map key cannot be float, double, bytes, message, or enum types">TestEnum</error>, TestEnum> map2 = 2;
+  map<<error descr="Map key cannot be float, double, bytes, message, or enum types">float</error>, float> map3 = 3;
+  map<<error descr="Map key cannot be float, double, bytes, message, or enum types">double</error>, double> map4 = 4;
+  map<<error descr="Map key cannot be float, double, bytes, message, or enum types">bytes</error>, bytes> map5 = 5;
+}
+
+message MapWithEnum {
+  enum GoodEnum {
+    FOO = 0;
+  }
+  enum BadEnum {
+    BAR = 1;
+  }
+  map<string, GoodEnum> valid_map = 1;
+  map<string, <error descr="First enum value must be 0 when used as map value type">BadEnum</error>> invalid_map = 2;
+}

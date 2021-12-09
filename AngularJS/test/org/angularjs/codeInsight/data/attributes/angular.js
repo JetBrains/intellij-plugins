@@ -21,6 +21,8 @@
 /**
  * @ngdoc directive
  * @name ng.directive:ngBind
+ * @element ANY
+ * @param {expression} ngBind {@link guide/expression Expression} to evaluate.
  */
 
 /**
@@ -59,6 +61,22 @@
  * @name ng.directive:ngDisabled
  * @element input
  */
+
+/**
+ * @ngdoc directive
+ * @name ngOptions
+ * @restrict A
+ *
+ * @param {string} ngModel Assignable AngularJS expression to data-bind to.
+ * @param {comprehension_expression} ngOptions in one of the following forms:
+ * @param {string=} name Property name of the form under which the control is published.
+ * @param {string=} required The control is considered valid only if value is entered.
+ * @param {string=} ngRequired Adds `required` attribute and `required` validation constraint to
+ *    the element when the ngRequired expression evaluates to true. Use `ngRequired` instead of
+ *    `required` when you want to data-bind to the `required` attribute.
+ * @param {string=} ngAttrSize sets the size of the select element dynamically. Uses the
+ */
+
 /**
  * @ngdoc directive
  * @name ng.directive:ngCopy

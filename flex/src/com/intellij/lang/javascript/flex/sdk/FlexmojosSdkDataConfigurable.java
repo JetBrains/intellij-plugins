@@ -92,7 +92,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
       };
 
       myAdlComponent.getComponent()
-        .addBrowseFolderListener("Select ADL executable file", null, null, descriptor, new TextComponentAccessor<JTextField>() {
+        .addBrowseFolderListener("Select ADL executable file", null, null, descriptor, new TextComponentAccessor<>() {
           @Override
           public void setText(final JTextField component, @NotNull final String text) {
             component.setText(text);

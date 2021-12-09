@@ -26,12 +26,6 @@ public final class JpsFlexModuleType extends JpsElementTypeBase<JpsFlexBuildConf
         manager.loadState(XmlSerializer.deserialize(componentElement, JpsFlexBuildConfigurationManagerImpl.State.class));
         return manager;
       }
-
-      @Override
-      public void saveProperties(@NotNull final JpsFlexBuildConfigurationManager manager, @NotNull final Element componentElement) {
-        final JpsFlexBuildConfigurationManagerImpl.State state = ((JpsFlexBuildConfigurationManagerImpl)manager).getState();
-        XmlSerializer.serializeInto(state, componentElement);
-      }
     };
   }
 }

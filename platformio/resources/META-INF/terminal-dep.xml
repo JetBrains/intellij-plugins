@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.jetbrains.plugins.terminal">
+    <localTerminalCustomizer implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioLocalTerminalCustomizer"/>
+  </extensions>
+</idea-plugin>

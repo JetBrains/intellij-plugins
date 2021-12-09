@@ -24,9 +24,12 @@
  */
 package org.osmorc.frameworkintegration;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -37,7 +40,7 @@ public class FrameworkInstanceDefinition extends UserDataHolderBase {
   private String myVersion;
   private String myBaseFolder;
 
-  public String getFrameworkIntegratorName() {
+  public @NlsSafe String getFrameworkIntegratorName() {
     return myFrameworkIntegratorName;
   }
 
@@ -45,7 +48,7 @@ public class FrameworkInstanceDefinition extends UserDataHolderBase {
     myFrameworkIntegratorName = frameworkIntegratorName;
   }
 
-  public String getName() {
+  public @NlsSafe String getName() {
     return myName;
   }
 
@@ -53,7 +56,7 @@ public class FrameworkInstanceDefinition extends UserDataHolderBase {
     myName = name;
   }
 
-  public String getVersion() {
+  public @NlsSafe String getVersion() {
     return myVersion;
   }
 
@@ -61,7 +64,7 @@ public class FrameworkInstanceDefinition extends UserDataHolderBase {
     myVersion = version;
   }
 
-  public String getBaseFolder() {
+  public @NlsSafe String getBaseFolder() {
     return myBaseFolder;
   }
 
@@ -73,21 +76,16 @@ public class FrameworkInstanceDefinition extends UserDataHolderBase {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
-    FrameworkInstanceDefinition that = (FrameworkInstanceDefinition)o;
-
-    if (myName != null ? !myName.equals(that.myName) : that.myName != null) return false;
-
-    return true;
+    return Objects.equals(myName, ((FrameworkInstanceDefinition)o).myName);
   }
 
   @Override
   public int hashCode() {
-    return myName != null ? myName.hashCode() : 0;
+    return Objects.hashCode(myName);
   }
 
   @Override
-  public String toString() {
+  public @NlsSafe String toString() {
     String description = myName != null ? myName : "undefined";
     String frameworkIntegrator = myFrameworkIntegratorName != null ? myFrameworkIntegratorName : "undefined";
     String version = !StringUtil.isEmptyOrSpaces(myVersion) ? " [" + myVersion + "]" : " [latest]";

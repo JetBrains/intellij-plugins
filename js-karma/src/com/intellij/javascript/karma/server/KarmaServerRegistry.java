@@ -1,9 +1,9 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
 import com.intellij.concurrency.JobScheduler;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.CatchingConsumer;
@@ -29,7 +29,7 @@ public class KarmaServerRegistry {
 
   @NotNull
   public static KarmaServerRegistry getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, KarmaServerRegistry.class);
+    return project.getService(KarmaServerRegistry.class);
   }
 
   @Nullable

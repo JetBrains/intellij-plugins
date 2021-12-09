@@ -1,1 +1,13 @@
-This inspection warns about incorrect usage of nesting selectors and nesting at-rules.
+<html>
+<body>
+Reports a nested style rule whose syntax doesn't comply with the <a href="https://github.com/postcss/postcss-nested">PostCSS Nested</a>
+or the <a href="https://github.com/csstools/postcss-nesting">PostCSS Nesting</a> specification.
+<!-- tooltip end -->
+<p>Example:</p>
+<pre>
+.phone {
+  &_title {}
+}
+</pre>
+</body>
+</html>

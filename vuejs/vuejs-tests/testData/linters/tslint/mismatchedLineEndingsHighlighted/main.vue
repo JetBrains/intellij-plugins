@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script lang="ts">
-<warning>    console.log('hello')</warning>
-<warning>    console.log('world')</warning>
+<script lang="ts"><EOLWarning descr="tslint: Expected linebreak to be 'CRLF' (linebreak-style)"></EOLWarning>
+<warning descr="tslint: Expected linebreak to be 'CRLF' (linebreak-style)">    console.log('hello')</warning>
+<warning descr="tslint: Expected linebreak to be 'CRLF' (linebreak-style)">    console.log('world')</warning>
 </script>

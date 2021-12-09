@@ -1,7 +1,7 @@
 class F {
+    // inspection 3
     function f<caret>f() {}
 
-    // inspection 3
     function ff3() {}
 
     // inspection 2

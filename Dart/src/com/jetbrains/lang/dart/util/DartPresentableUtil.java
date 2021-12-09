@@ -1,5 +1,7 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ui.UIUtil;
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartPresentableUtil {
+public final class DartPresentableUtil {
 
   @NonNls public static final String RIGHT_ARROW = UIUtil.rightArrow();
   @NonNls private static final String SPACE = " ";
@@ -30,12 +32,11 @@ public class DartPresentableUtil {
     return getPresentableParameterList(element, specialization, false, false, false);
   }
 
-  @NotNull
-  public static String getPresentableParameterList(DartComponent element,
-                                                   DartGenericSpecialization specialization,
-                                                   final boolean functionalStyleSignatures,
-                                                   final boolean displayDefaultValues,
-                                                   final boolean displayFinalKeyword) {
+  public static @NotNull @NlsSafe String getPresentableParameterList(DartComponent element,
+                                                                     DartGenericSpecialization specialization,
+                                                                     boolean functionalStyleSignatures,
+                                                                     boolean displayDefaultValues,
+                                                                     boolean displayFinalKeyword) {
     final StringBuilder result = new StringBuilder();
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
@@ -169,17 +170,15 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
-  @NotNull
-  public static String buildTypeText(final @Nullable DartComponent element,
-                                     final @NotNull DartReturnType returnType,
-                                     final @Nullable DartGenericSpecialization specializations) {
+  public static @NotNull @NlsSafe String buildTypeText(@Nullable DartComponent element,
+                                                       @NotNull DartReturnType returnType,
+                                                       @Nullable DartGenericSpecialization specializations) {
     return returnType.getType() == null ? "void" : buildTypeText(element, returnType.getType(), specializations);
   }
 
-  @NotNull
-  public static String buildTypeText(final @Nullable DartComponent element,
-                                     final @Nullable DartType type,
-                                     final @Nullable DartGenericSpecialization specializations) {
+  public static @NotNull @NlsSafe String buildTypeText(@Nullable DartComponent element,
+                                                       @Nullable DartType type,
+                                                       @Nullable DartGenericSpecialization specializations) {
     if (type == null) {
       return "";
     }
@@ -216,28 +215,4 @@ public class DartPresentableUtil {
 
     return result.toString();
   }
-
-  public static String buildClassText(@NotNull DartClass dartClass, DartGenericSpecialization specialization) {
-    StringBuilder result = new StringBuilder();
-    result.append(dartClass.getName());
-    DartTypeParameters typeParameters = PsiTreeUtil.getChildOfType(dartClass, DartTypeParameters.class);
-    if (typeParameters != null) {
-      result.append("<");
-      for (DartTypeParameter typeParameter : typeParameters.getTypeParameterList()) {
-        DartComponentName componentName = typeParameter.getComponentName();
-        String typeParamName = componentName.getText();
-        DartClassResolveResult resolveResult = specialization.get(dartClass, typeParamName);
-        DartClass paramDartClass = resolveResult == null ? null : resolveResult.getDartClass();
-        if (paramDartClass == null) {
-          result.append(typeParamName);
-        }
-        else {
-          result.append(buildClassText(paramDartClass, resolveResult.getSpecialization()));
-        }
-      }
-      result.append(">");
-    }
-    return result.toString();
-  }
-
 }

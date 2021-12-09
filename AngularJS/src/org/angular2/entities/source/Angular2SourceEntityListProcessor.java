@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFunctionCachingVisitor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFunctionBaseImpl;
-import com.intellij.lang.javascript.psi.impl.JSFunctionCachedData;
+import com.intellij.lang.javascript.psi.impl.JSFunctionCachedDataBuilder;
 import com.intellij.lang.javascript.psi.impl.JSFunctionNodesVisitor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -305,7 +305,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
         && (function = tryCast(functionTypeSource.getSourceElement().getContext(), JSFunctionBaseImpl.class)) != null) {
 
       JSType evaluatedReturnType = CachedValuesManager.getCachedValue(function, () -> {
-        final JSFunctionCachedData cachedData = new JSFunctionCachedData();
+        final JSFunctionCachedDataBuilder cachedData = new JSFunctionCachedDataBuilder();
         final List<JSFunction> nestedFuns = new SmartList<>();
         final JSFunctionNodesVisitor cachedDataEvaluator =
           new TypeScriptFunctionCachingVisitor(function,

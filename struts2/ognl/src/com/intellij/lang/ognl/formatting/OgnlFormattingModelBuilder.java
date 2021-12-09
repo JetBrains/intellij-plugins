@@ -15,14 +15,10 @@
 
 package com.intellij.lang.ognl.formatting;
 
-import com.intellij.formatting.FormattingModel;
-import com.intellij.formatting.FormattingModelBuilder;
-import com.intellij.formatting.FormattingModelProvider;
-import com.intellij.formatting.SpacingBuilder;
+import com.intellij.formatting.*;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.psi.OgnlTokenGroups;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -32,19 +28,16 @@ import static com.intellij.lang.ognl.OgnlTypes.*;
 
 /**
  * Provides basic (whitespace only) formatting for OGNL using (Java) default settings.
- *
- * @author Yann C&eacute;bron
  */
 public class OgnlFormattingModelBuilder implements FormattingModelBuilder {
 
-  @NotNull
   @Override
-  public FormattingModel createModel(final PsiElement element, final CodeStyleSettings settings) {
-
+  public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
+    CodeStyleSettings settings = formattingContext.getCodeStyleSettings();
     final SpacingBuilder spacingBuilder = createSpacingBuilder(settings);
 
-    final PsiFile containingFile = element.getContainingFile();
-    final OgnlBlock ognlBlock = new OgnlBlock(element.getNode(), spacingBuilder);
+    final PsiFile containingFile = formattingContext.getContainingFile();
+    final OgnlBlock ognlBlock = new OgnlBlock(formattingContext.getNode(), spacingBuilder);
 
     return FormattingModelProvider.createFormattingModelForPsiFile(containingFile, ognlBlock, settings);
   }

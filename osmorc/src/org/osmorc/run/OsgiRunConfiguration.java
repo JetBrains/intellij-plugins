@@ -29,7 +29,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.util.JavaParametersUtil;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -61,7 +61,7 @@ import java.util.*;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsgiRunConfiguration extends RunConfigurationBase<Element> implements ModuleRunConfiguration {
-  private static final Logger LOG = Logger.getInstance("#org.osmorc.run.OsgiRunConfiguration");
+  private static final Logger LOG = Logger.getInstance(OsgiRunConfiguration.class);
 
   private static final String BUNDLE_ELEMENT = "bundle";
   private static final String NAME_ATTRIBUTE = "name";
@@ -183,7 +183,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     if (framework != null) {
       String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
       if (name != null) {
-        ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
+        ApplicationSettings settings = ApplicationManager.getApplication().getService(ApplicationSettings.class);
         instanceToUse = settings.getFrameworkInstance(name);
       }
     }

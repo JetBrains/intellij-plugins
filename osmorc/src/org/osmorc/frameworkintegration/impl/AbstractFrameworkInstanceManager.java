@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.frameworkintegration.impl;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
@@ -26,8 +27,7 @@ import java.util.regex.Pattern;
  * Base class for all {@link FrameworkInstanceManager}s.
  */
 public abstract class AbstractFrameworkInstanceManager implements FrameworkInstanceManager {
-  @Nullable
-  public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
+  public @Nullable @NlsSafe String getVersion(@NotNull FrameworkInstanceDefinition instance) {
     Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
     if (bundles.size() == 1) {
       String path = bundles.iterator().next().getBundlePath();
@@ -38,9 +38,8 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
     return null;
   }
 
-  @Nullable
   @Override
-  public String checkValidity(@NotNull FrameworkInstanceDefinition instance) {
+  public @Nullable String checkValidity(@NotNull FrameworkInstanceDefinition instance) {
     String basePath = instance.getBaseFolder();
     if (basePath == null || !new File(basePath).isDirectory()) {
       return OsmorcBundle.message("framework.directory.missing", (basePath != null ? basePath : ""), instance.getFrameworkIntegratorName());

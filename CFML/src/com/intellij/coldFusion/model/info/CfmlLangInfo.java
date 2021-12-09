@@ -1,9 +1,8 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.info;
 
 import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.coldFusion.model.CfmlLanguage;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,13 +28,13 @@ public class CfmlLangInfo {
   private Reference<CfmlLangDictionary> myCFDictionary;
   private String myCFDictionaryLevel;
 
-  private static class InstanceWithoutApplication {
+  private static final class InstanceWithoutApplication {
     static CfmlLangInfo instanceWithoutApplication = new CfmlLangInfo(null);
   }
 
   public static CfmlLangInfo getInstance(@Nullable Project project) {
     if (project != null) {
-      return ServiceManager.getService(project, CfmlLangInfo.class);
+      return project.getService(CfmlLangInfo.class);
     }
     else {
       return InstanceWithoutApplication.instanceWithoutApplication;

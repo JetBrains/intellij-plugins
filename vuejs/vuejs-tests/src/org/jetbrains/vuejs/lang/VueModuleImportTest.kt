@@ -1,8 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.JSTestOption
 import com.intellij.lang.javascript.JSTestOptions
-import com.intellij.lang.javascript.JavaScriptFormatterTest
+import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
@@ -46,8 +47,8 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportFromVueWithJs() {
-    JavaScriptFormatterTest.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
-      it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.BooleanWithGlobalOption.TRUE
+    JavaScriptFormatterTestBase.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
+      it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.TRUE
     })
 
     doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null, null)
@@ -71,5 +72,14 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   fun testEnumImport() {
     doTestWithCopyDirectory(1, true, extension)
     checkAfterFile(extension)
+  }
+
+  fun testReExportWIthJs() {
+    doTestWithCopyDirectory(1, true, "ts")
+  }
+  
+  @JSTestOptions(JSTestOption.WithSymbolNames)
+  fun testCustomComponentHighlighting() {
+    doTestWithCopyDirectory()
   }
 }

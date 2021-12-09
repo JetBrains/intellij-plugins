@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.actions.createnew;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -15,8 +15,6 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.util.Validators;
 import com.intellij.tapestry.intellij.view.nodes.MixinsNode;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /**
  * Action that creates a new mixin.
@@ -37,19 +35,18 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    final Module module = getModule(event);
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
     if (module == null) return;
 
     String defaultMixinPath = getDefaultElementPath(event, module);
     if (defaultMixinPath == null) return;
 
     final AddNewMixinDialog addNewMixinDialog =
-        new AddNewMixinDialog((Module)event.getDataContext().getData(LangDataKeys.MODULE.getName()), defaultMixinPath);
+        new AddNewMixinDialog(module, defaultMixinPath);
 
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewMixinDialog.getContentPane());
     builder.setTitle("New Tapestry Mixin");
-    builder.setButtonsAlignment(SwingConstants.CENTER);
     builder.setPreferredFocusComponent(addNewMixinDialog.getNameComponent());
 
     builder.setOkOperation(() -> {

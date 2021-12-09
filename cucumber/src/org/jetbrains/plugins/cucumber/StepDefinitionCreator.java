@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +44,7 @@ public interface StepDefinitionCreator {
   /**
    * @return step definition file path relative to step definition folder
    */
+  @NlsSafe
   @NotNull
   String getStepDefinitionFilePath(@NotNull final PsiFile file);
 

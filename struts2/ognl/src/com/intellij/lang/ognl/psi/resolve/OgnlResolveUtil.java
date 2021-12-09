@@ -12,23 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.lang.ognl.psi.resolve;
 
 import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReference;
 import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReferencesContributor;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlResolveUtil {
+public final class OgnlResolveUtil {
+  @NonNls
+  private static final ExtensionPointName<OgnlVariableReferencesContributor> EXTENSION_POINT_NAME =
+    new ExtensionPointName<>("com.intellij.ognl.variableReferencesContributor");
 
   public static void processVariables(PsiElement element, Processor<OgnlVariableReference> processor) {
     PsiFile ognlFile = element.getContainingFile();
-    for (OgnlVariableReferencesContributor provider : OgnlVariableReferencesContributor.EXTENSION_POINT_NAME.getExtensionList()) {
+    for (OgnlVariableReferencesContributor provider : EXTENSION_POINT_NAME.getExtensionList()) {
       if (!provider.process(element, ognlFile, processor)) {
         return;
       }

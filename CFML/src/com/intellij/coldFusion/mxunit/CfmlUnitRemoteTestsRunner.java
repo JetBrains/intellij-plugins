@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.coldFusion.UI.editorActions.CfmlScriptNodeSuppressor;
@@ -18,13 +18,15 @@ import com.intellij.util.io.HttpRequests;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
-public class CfmlUnitRemoteTestsRunner {
+public final class CfmlUnitRemoteTestsRunner {
   private static final Logger LOG = Logger.getInstance(CfmlUnitRemoteTestsRunner.class.getName());
 
   public static String getLauncherText(String resourcePath) {
     try {
-      return ResourceUtil.loadText(CfmlUnitRunConfiguration.class.getResource(resourcePath))
+      return ResourceUtil.loadText(Objects.requireNonNull(CfmlUnitRunConfiguration.class.getClassLoader()
+                                                            .getResourceAsStream(StringUtil.trimStart(resourcePath, "/"))))
         .replaceFirst("\\Q/*system_delimiter*/\\E", (String.valueOf(File.separatorChar)).replace("\\", "\\\\\\\\"));
     }
     catch (IOException e) {
@@ -64,7 +66,6 @@ public class CfmlUnitRemoteTestsRunner {
     throws ExecutionException {
     LOG.assertTrue(directory != null);
     final Ref<IOException> error = new Ref<>();
-    final Ref<VirtualFile> launcherFile = new Ref<>();
 
     final Runnable runnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
@@ -74,7 +75,6 @@ public class CfmlUnitRemoteTestsRunner {
         }
         CfmlScriptNodeSuppressor.suppress(file);
         VfsUtil.saveText(file, fileText);
-        launcherFile.set(file);
       }
       catch (IOException e) {
         error.set(e);
@@ -101,7 +101,7 @@ public class CfmlUnitRemoteTestsRunner {
         final VirtualFile componentFile =
           LocalFileSystem.getInstance().refreshAndFindFileByPath(params.getPath());
         if (componentFile == null) {
-          throw new ExecutionException("File " + params.getPath() + " not found");
+          throw new ExecutionException("File " + params.getPath() + " not found"); //NON-NLS
         }
 
         // creating script files

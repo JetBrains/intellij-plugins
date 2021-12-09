@@ -1,13 +1,14 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.util.io.FileUtil;
-import gnu.trove.THashMap;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-public class AirDescriptorOptions {
+public final class AirDescriptorOptions {
   public static final int ANDROID_PERMISSION_INTERNET = 1;
   public static final int ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
   public static final int ANDROID_PERMISSION_ACCESS_FINE_LOCATION = 4;
@@ -78,7 +79,7 @@ public class AirDescriptorOptions {
   }
 
   private String replaceMacros(final String descriptorText) {
-    final Map<String, String> replacementMap = new THashMap<>();
+    final Map<String, String> replacementMap = new HashMap<>();
 
     replacementMap.put("${air_version}", AIR_VERSION);
     replacementMap.put("${app_id}", APP_ID);

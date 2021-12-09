@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
+import com.intellij.CommonBundle
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
@@ -28,6 +29,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.ui.popup.mock.MockConfirmation
+import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
 import java.util.*
@@ -39,6 +41,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                                     private val validator: (String) -> String?,
                                     private val startMarkAction: StartMarkAction) :
   InplaceRefactoring(editor, elementToRename, elementToRename.project) {
+  @Nls
   private val commandName = VueBundle.message("vue.template.intention.extract.component")
   private val containingFile = myElementToRename.containingFile
   private val oldCaret = editor.caretModel.currentCaret.offset
@@ -48,11 +51,9 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     const val GROUP_ID: String = "VueExtractComponent"
   }
 
-  override fun collectAdditionalElementsToRename(stringUsages: MutableList<Pair<PsiElement, TextRange>>) {
-  }
-
   override fun shouldSelectAll(): Boolean = false
 
+  @Nls
   override fun getCommandName(): String {
     return commandName
   }
@@ -155,7 +156,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     CommandProcessor.getInstance().executeCommand(myProject, { performCleanup() }, commandName, getGroupId())
   }
 
-  private fun askAndRestartRename(error: String, commandProcessor: CommandProcessor, tag: XmlTag) {
+  private fun askAndRestartRename(@Nls error: String, commandProcessor: CommandProcessor, tag: XmlTag) {
     askConfirmation(error,
                     onYes = {
                       hijackCommand()
@@ -188,9 +189,9 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     }
   }
 
-  private fun askConfirmation(title: String, onYes: () -> Unit, onNo: () -> Unit) {
-    val yesText = "Continue editing"
-    val step = object : BaseListPopupStep<String>(title, yesText, "Cancel") {
+  private fun askConfirmation(@Nls title: String, onYes: () -> Unit, onNo: () -> Unit) {
+    val yesText = VueBundle.message("vue.template.intention.extract.component.continue")
+    val step = object : BaseListPopupStep<String>(title, yesText, CommonBundle.getCancelButtonText()) {
       private var yesChosen = false
 
       override fun onChosen(selectedValue: String, finalChoice: Boolean): PopupStep<*>? {

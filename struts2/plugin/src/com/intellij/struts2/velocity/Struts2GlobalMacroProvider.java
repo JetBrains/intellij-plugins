@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.velocity;
 
 import com.intellij.openapi.module.Module;
@@ -34,8 +33,7 @@ import java.util.Collections;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2GlobalMacroProvider extends VtlGlobalMacroProvider {
-
+final class Struts2GlobalMacroProvider extends VtlGlobalMacroProvider {
   @NonNls
   private static final String STRUTS_MACROS_FILENAME = "struts.vm";
 
@@ -59,5 +57,4 @@ public class Struts2GlobalMacroProvider extends VtlGlobalMacroProvider {
 
     return Collections.emptySet();
   }
-
 }

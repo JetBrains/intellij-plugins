@@ -19,7 +19,7 @@
               trace(outerDocument);
             }
 
-            public function <warning descr="Method can be static">bar2</warning>():void {
+            public function <warning descr="Method can be made 'static'">bar2</warning>():void {
               trace("");
             }
             ]]></fx:Script>
@@ -33,7 +33,7 @@
       trace(hostComponent);
     }
 
-    public function <warning descr="Method can be static">foo2</warning>():void {
+    public function <warning descr="Method can be made 'static'">foo2</warning>():void {
       trace("");
     }
     ]]></fx:Script>

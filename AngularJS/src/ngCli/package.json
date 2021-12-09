@@ -2,11 +2,13 @@
   "name": "ng-cli",
   "version": "1.0.0",
   "dependencies": {
-    "@angular/cli": "9.0.0-next.19",
+    "@angular-devkit/core": "11.2.4",
+    "@angular/cli": "11.2.4",
     "@types/node": "~12.12.5",
-    "typescript": "~3.6.4"
+    "rxjs": "6.6.3",
+    "typescript": "4.2.3"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && cp ./commands/generate.json ../../gen/ngCli/commands/generate.json"
   }
 }

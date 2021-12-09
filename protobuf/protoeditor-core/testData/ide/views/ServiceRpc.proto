@@ -1,0 +1,15 @@
+// Test service declarations
+syntax = "proto3";
+
+package foo.bar;
+
+message FooRequest  {}
+message FooResponse {}
+
+service TestService {
+  rpc Foo(FooRequest) returns (FooResponse);
+  rpc Bar(BarRequest) returns (BarResponse);
+}
+
+message BarRequest  {}
+message BarResponse {}

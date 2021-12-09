@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.thoughtworks.gauge">
+    <moduleImporter implementation="com.thoughtworks.gauge.wizard.maven.GaugeMavenImporter"/>
+  </extensions>
+</idea-plugin>

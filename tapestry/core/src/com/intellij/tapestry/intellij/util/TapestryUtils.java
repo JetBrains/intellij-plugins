@@ -9,14 +9,15 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
@@ -36,7 +37,7 @@ import java.util.List;
 /**
  * Utility methods related to Tapestry.
  */
-public class TapestryUtils {
+public final class TapestryUtils {
 
   private static final Logger _logger = Logger.getInstance(TapestryUtils.class.getName());
 
@@ -290,18 +291,11 @@ public class TapestryUtils {
    */
   @Nullable
   public static TapestryComponent getTypeOfTag(XmlTag tag) {
-    return outTagToComponentMap.get(tag);
+    return CachedValuesManager.getProjectPsiDependentCache(tag, t -> {
+      Module module = ModuleUtilCore.findModuleForPsiElement(tag);
+      return module == null ? null : getTypeOfTag(module, tag);
+    });
   }
-
-  private static final PsiElementBasedCachedUserDataCache<TapestryComponent, XmlTag> outTagToComponentMap =
-    new PsiElementBasedCachedUserDataCache<TapestryComponent, XmlTag>("TapestryTagToComponentMap") {
-      @Override
-      @Nullable
-      protected TapestryComponent computeValue(XmlTag tag) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(tag);
-        return module == null ? null : getTypeOfTag(module, tag);
-      }
-    };
 
   /**
    * Builds the component object that corresponds to a HTML tag.
@@ -336,7 +330,7 @@ public class TapestryUtils {
       return null;
     }
     final String tagLocalName = StringUtil.toLowerCase(tag.getLocalName()).replace('.', '/');
-    // element names are delimited by slashes but tag names may not contain slashes 
+    // element names are delimited by slashes but tag names may not contain slashes
     return tapestryProject.findComponent(tagLocalName);
   }
 

@@ -153,10 +153,10 @@ public class IntellijResourceFinder implements IResourceFinder {
         return resources;
     }
 
-    /**
-     * //@TODO in IDEA 7.0 should be able to use PsiManager.findPackage("META-INF")
-     * {@inheritDoc}
-     */
+    ///**
+    // * //@TODO in IDEA 7.0 should be able to use PsiManager.findPackage("META-INF")
+    // * {@inheritDoc}
+    // */
     /*public Collection<IResource> findManifestResources() {
         Collection<IResource> manifests = new ArrayList<IResource>();
 

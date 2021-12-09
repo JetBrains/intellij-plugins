@@ -36,8 +36,8 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
 
   private static final LightProjectDescriptor SPRING = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary().withStrutsFacet()
-    .withLibrary("spring", "spring.jar")
-    .withLibrary("struts2-spring-plugin", "struts2-spring-plugin-" + STRUTS2_VERSION + ".jar");
+    .withMavenLibrary("org.apache.struts:struts2-spring-plugin:2.3.1")
+    .withMavenLibrary("org.springframework:spring-beans:3.0.5.RELEASE");
 
   @NonNls
   private static final String SPRING_XML = "spring.xml";

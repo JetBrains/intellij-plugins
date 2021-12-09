@@ -71,7 +71,7 @@ public class LocalesDialog extends DialogWrapper {
   }
 
   private void createUIComponents() {
-    myCheckBoxList = new CheckBoxList<String>() {
+    myCheckBoxList = new CheckBoxList<>() {
       @Override
       protected JComponent adjustRendering(JComponent rootComponent,
                                            final JCheckBox checkBox,

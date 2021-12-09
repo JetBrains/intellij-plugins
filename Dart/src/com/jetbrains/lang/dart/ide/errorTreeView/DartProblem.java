@@ -1,21 +1,27 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.HtmlBuilder;
+import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.xml.util.XmlStringUtil;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.DiagnosticMessage;
+import org.dartlang.analysis.server.protocol.Location;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,27 +45,27 @@ public class DartProblem {
     myAnalysisError = error;
   }
 
-  public @NotNull String getErrorMessage() {
+  public @NotNull @NlsSafe String getErrorMessage() {
     return myAnalysisError.getMessage();
   }
 
-  public @Nullable String getCorrectionMessage() {
+  public @Nullable @NlsSafe String getCorrectionMessage() {
     return StringUtil.notNullize(myAnalysisError.getCorrection());
   }
 
-  public @Nullable String getUrl() {
+  public @Nullable @NonNls String getUrl() {
     return myAnalysisError.getUrl();
   }
 
-  @Nullable List<DiagnosticMessage> getDiagnosticMessages() {
+  public @Nullable List<DiagnosticMessage> getContextMessages() {
     return myAnalysisError.getContextMessages();
   }
 
-  public @NotNull String getCode() {
+  public @NotNull @NonNls String getCode() {
     return StringUtil.notNullize(myAnalysisError.getCode());
   }
 
-  public String getSeverity() {
+  public @NotNull @NonNls String getSeverity() {
     return myAnalysisError.getSeverity();
   }
 
@@ -162,17 +168,37 @@ public class DartProblem {
     return myContentRoot;
   }
 
-  public static @NotNull String generateTooltipText(@NotNull String message, @Nullable String correction, @Nullable String url) {
-    StringBuilder tooltip = new StringBuilder("<html>").append(XmlStringUtil.escapeString(message));
-    if (StringUtil.isNotEmpty(correction)) {
-      tooltip.append("<br/><br/>").append(XmlStringUtil.escapeString(correction));
-    }
+  public static @NotNull @Nls String generateTooltipText(@NotNull @Nls String message,
+                                                         @Nullable List<DiagnosticMessage> contextMessages,
+                                                         @Nullable @Nls String correction,
+                                                         @Nullable @NonNls String url) {
+    // First include the error message.
+    HtmlBuilder htmlBuilder = new HtmlBuilder().append(message);
+
+    // Include the URL link to documentation.
     if (StringUtil.isNotEmpty(url)) {
-      tooltip.append("<br/><a href='").append(url).append("'>")
-        .append(DartBundle.message("action.DartProblemsViewPanel.open.documentation.text"))
-        .append("</a>");
+      htmlBuilder.append(" (").appendLink(url, DartBundle.message("error.doc.link")).append(")");
     }
-    tooltip.append("</html>");
-    return tooltip.toString();
+
+    htmlBuilder.append(HtmlChunk.br());
+
+    // For each context message, include the message and location.
+    if (contextMessages != null && !contextMessages.isEmpty()) {
+      HtmlBuilder listBuilder = new HtmlBuilder();
+      for (DiagnosticMessage contextMessage : contextMessages) {
+        Location location = contextMessage.getLocation();
+        @NlsSafe String msg = StringUtil.trimEnd(contextMessage.getMessage(), '.');
+        String locationText = PathUtil.getFileName(location.getFile()) + ":" + location.getStartLine();
+        listBuilder.append(HtmlChunk.li().addText(msg + " (" + locationText + ")."));
+      }
+      htmlBuilder.append(listBuilder.wrapWith("ul"));
+    }
+
+    // Include the correction text, if included.
+    if (StringUtil.isNotEmpty(correction)) {
+      htmlBuilder.append(HtmlChunk.br()).append(correction);
+    }
+
+    return htmlBuilder.wrapWith("html").toString();
   }
 }

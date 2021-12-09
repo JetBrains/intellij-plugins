@@ -40,7 +40,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  *
  * @author Yann C&eacute;bron
  */
-public class FreeMarkerOgnlInjector implements MultiHostInjector {
+final class FreeMarkerOgnlInjector implements MultiHostInjector {
   private final PsiElementPattern.Capture<FtlStringLiteral> myOgnlElementPattern =
     createPattern(s -> s.contains(OgnlLanguage.EXPRESSION_PREFIX));
 
@@ -49,13 +49,13 @@ public class FreeMarkerOgnlInjector implements MultiHostInjector {
 
   private static PsiElementPattern.Capture<FtlStringLiteral> createPattern(final Condition<String> valueTextCondition) {
     return psiElement(FtlStringLiteral.class)
-        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 OGNL") {
+        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<>("S2 OGNL") {
           @Override
           public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair,
                                  final ProcessingContext processingContext) {
             final PsiElement valueElement = ftlNameValuePair.getValueElement();
             return valueElement != null &&
-                valueTextCondition.value(StringUtil.unquoteString(valueElement.getText()));
+                   valueTextCondition.value(StringUtil.unquoteString(valueElement.getText()));
           }
         }))
         .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));

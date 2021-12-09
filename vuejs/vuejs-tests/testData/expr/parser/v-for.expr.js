@@ -14,6 +14,7 @@ a; of; foo;
 a of ; boo
 (a +12, c) in foo
 (a, f #$) of @
+(a, f ^$) of @
 a b of foo
 a b c d
 {a,b} in foo

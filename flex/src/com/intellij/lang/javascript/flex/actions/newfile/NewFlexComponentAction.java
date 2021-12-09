@@ -13,6 +13,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
@@ -55,18 +56,21 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
     Module module = ModuleUtilCore.findModuleForPsiElement(tag);
     boolean isFlex4Template = ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, tag.knownNamespaces());
 
+    GlobalSearchScope resolveScope = tag.getResolveScope();
+
     CodeContextHolder holder = CodeContextHolder.getInstance(module.getProject());
     // ensure namespace is loaded into code context (including all the namespaces from all the libraries)
-    CodeContext.getContext(MxmlJSClass.MXML_URI4, module);
-    Collection<String> namespaces = holder.getNamespaces(module);
+    CodeContext.getContext(MxmlJSClass.MXML_URI4, module, resolveScope);
+    Collection<String> namespaces = holder.getNamespaces(module, resolveScope);
     String[] illegalNamespaces =
       isFlex4Template ? new String[]{JavaScriptSupportLoader.MXML_URI} : MxmlJSClass.FLEX_4_NAMESPACES;
     for (String namespace : namespaces) {
       if (ArrayUtil.contains(namespace, illegalNamespaces) || CodeContext.isPackageBackedNamespace(namespace)) {
         continue;
       }
-      CodeContext codeContext =
-        CodeContext.isStdNamespace(namespace) ? holder.getStandardContext(namespace, module) : holder.getCodeContext(namespace, module);
+      CodeContext codeContext = CodeContext.isStdNamespace(namespace)
+        ? holder.getStandardContext(namespace, module)
+        : holder.getCodeContext(namespace, module, resolveScope);
       if (codeContext == null) {
         continue;
       }

@@ -1,0 +1,22 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/index.js:193:JSNewExpression> {
+      modules: [
+        VuexModuleImpl dc [namespaced] <store/index.js:172:ES6Property> {
+          actions: {
+            callBatman: <modules/dc-store.js:235:JSFunctionProperty>,
+            callSuperman: <modules/dc-store.js:131:JSFunctionProperty>,
+            callSupermanFromDc: <modules/dc-store.js:335:JSFunctionProperty>,
+            save: <modules/dc-store.js:111:JSFunctionProperty>,
+          }
+        }
+        VuexModuleImpl marvel [namespaced] <store/index.js:162:ES6Property> {
+          actions: {
+            callSupermanFromMarvel: <modules/marvel-store.js:135:JSFunctionProperty>,
+            save: <modules/marvel-store.js:113:JSFunctionProperty>,
+          }
+        }
+      ]
+    }
+  ],
+}

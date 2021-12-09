@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -53,28 +53,28 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
     assertOrderedEquals(intentions,
                         "Surround with block",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'if'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'while'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'for-in'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'for'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'do-while'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'try-catch'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Surround with 'try-finally'",
                         "Edit intention settings",
-                        "Disable 'Quick assist powered by the Dart Analysis Server'",
+                        "Disable 'Quick assists powered by the Dart Analysis Server'",
                         "Adjust code style settings");
   }
 }

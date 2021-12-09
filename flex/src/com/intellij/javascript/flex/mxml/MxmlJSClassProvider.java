@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -7,11 +7,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassProvider;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataCache;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.xml.XmlFile;
@@ -24,44 +21,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * @author yole
- */
+
 public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   @NonNls public static final String SCRIPT_TAG_NAME = "Script";
 
-  private static final Key<CachedValue<XmlTag[]>> CHILD_INLINE_COMPONENTS_TAGS_KEY = Key.create("child.inline.components.tags");
-  private static final UserDataCache<CachedValue<XmlTag[]>, XmlTag, Object> ourChildComponentsTagsCache =
-    new UserDataCache<CachedValue<XmlTag[]>, XmlTag, Object>() {
-      @Override
-      protected CachedValue<XmlTag[]> compute(final XmlTag tag, final Object p) {
-        return CachedValuesManager.getManager(tag.getProject()).createCachedValue(new CachedValueProvider<XmlTag[]>() {
-          @Override
-          public Result<XmlTag[]> compute() {
-            final Collection<XmlTag> result = new ArrayList<>();
-            tag.processElements(new PsiElementProcessor() {
-              @Override
-              public boolean execute(@NotNull PsiElement element) {
-                if (element instanceof XmlTag) {
-                  XmlTag tag = (XmlTag)element;
-                  if (XmlBackedJSClassImpl.isComponentTag(tag)) {
-                    final XmlTag[] subtags = tag.getSubTags();
-                    if (subtags.length > 0) {
-                      result.add(subtags[0]);
-                    }
-                  }
-                  else {
-                    tag.processElements(this, null);
-                  }
-                }
-                return true;
+  private static XmlTag[] getChildComponentTags(XmlTag tag) {
+    return CachedValuesManager.getCachedValue(tag, () -> {
+      final Collection<XmlTag> result = new ArrayList<>();
+      tag.processElements(new PsiElementProcessor<>() {
+        @Override
+        public boolean execute(@NotNull PsiElement element) {
+          if (element instanceof XmlTag) {
+            XmlTag tag = (XmlTag)element;
+            if (XmlBackedJSClassImpl.isComponentTag(tag)) {
+              final XmlTag[] subtags = tag.getSubTags();
+              if (subtags.length > 0) {
+                result.add(subtags[0]);
               }
-            }, null);
-            return new Result<>(result.toArray(XmlTag.EMPTY), tag);
+            }
+            else {
+              tag.processElements(this, null);
+            }
           }
-        }, false);
-      }
-    };
+          return true;
+        }
+      }, null);
+      return new CachedValueProvider.Result<>(result.toArray(XmlTag.EMPTY), tag);
+    });
+  }
 
   public static MxmlJSClassProvider getInstance() {
     for (XmlBackedJSClassProvider provider : EP_NAME.getExtensionList()) {
@@ -121,12 +108,12 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   private static void collectComponentsTagRecursively(XmlTag[] parents, Collection<XmlTag> result) {
     ContainerUtil.addAll(result, parents);
     for (XmlTag parent : parents) {
-      collectComponentsTagRecursively(ourChildComponentsTagsCache.get(CHILD_INLINE_COMPONENTS_TAGS_KEY, parent, null).getValue(), result);
+      collectComponentsTagRecursively(getChildComponentTags(parent), result);
     }
   }
 
   public static Collection<XmlBackedJSClass> getChildInlineComponents(XmlTag rootTag, final boolean recursive) {
-    final XmlTag[] directChildren = ourChildComponentsTagsCache.get(CHILD_INLINE_COMPONENTS_TAGS_KEY, rootTag, null).getValue();
+    final XmlTag[] directChildren = getChildComponentTags(rootTag);
     Collection<XmlTag> allChildren;
     if (recursive) {
       allChildren = new ArrayList<>();

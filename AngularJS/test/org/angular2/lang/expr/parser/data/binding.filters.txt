@@ -91,7 +91,7 @@ JSFile:test.filters.binding
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
       PsiElement(JS:COLON)(':')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
 ------
 JSFile:test.filters.binding

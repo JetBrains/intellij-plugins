@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Code Completion" lessonsPath="Completions/" version="0.3" id="completions" fileType="SCRATCH" sdkType="JAVA" description="Basic, statement, smart type and other completion types">
-  <lesson-kt implementationClass="training.learn.lesson.java.completion.BasicCompletionLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.completion.SmartTypeCompletionLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.completion.PostfixCompletionLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.completion.StatementCompletionLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.completion.JavaCompletionWithTabLesson"/>
-</module>
-

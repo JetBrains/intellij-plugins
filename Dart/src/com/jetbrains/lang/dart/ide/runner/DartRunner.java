@@ -20,6 +20,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
@@ -119,7 +120,7 @@ public class DartRunner extends GenericProgramRunner {
       final String path = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getDartProjectPath();
       contextFileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
       if (contextFileOrDir == null) {
-        throw new RuntimeConfigurationError("Folder not found: " + FileUtil.toSystemDependentName(path));
+        throw new RuntimeConfigurationError(DartBundle.message("dialog.message.folder.not.found", FileUtil.toSystemDependentName(path)));
       }
 
       currentWorkingDirectory = contextFileOrDir;

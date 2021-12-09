@@ -17,6 +17,7 @@ package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public class CfmlRunnerParameters implements Cloneable {
   private String myCustomBrowserId = "";
 
   @Attribute("web_path")
-  public String getUrl() {
+  public @NlsSafe String getUrl() {
     return myUrl;
   }
 

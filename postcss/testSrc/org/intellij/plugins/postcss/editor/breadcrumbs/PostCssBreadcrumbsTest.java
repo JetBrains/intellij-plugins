@@ -30,7 +30,7 @@ public class PostCssBreadcrumbsTest extends PostCssFixtureTestCase {
   }
 
   public void testApplyAtRule() {
-    doTest("apply --my-custom-property-set");
+    doTest("apply");
   }
 
   public void testApplyAtRuleEmpty() {

@@ -6,8 +6,9 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -51,6 +52,7 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     String parameters = runConfiguration.getProgramParameters();
     assertNotNull(parameters);
     assertTrue(parameters.contains("--plugin pretty"));
+    assertFalse(parameters.contains("org.jetbrains.plugins.cucumber.java.run.CucumberJvm"));
   }
 
   @Override
@@ -95,7 +97,7 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
   @NotNull
   private ConfigurationContext getConfigurationContext() {
     DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
-    return ConfigurationContext.getFromContext(dataContext);
+    return ConfigurationContext.getFromContext(dataContext, ActionPlaces.UNKNOWN);
   }
 
   @Override
@@ -105,7 +107,7 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     TestApplicationManager.getInstance().setDataProvider(new TestDataProvider(getProject()) {
       @Override
       public Object getData(@NotNull @NonNls String dataId) {
-        if (LangDataKeys.MODULE.is(dataId)) {
+        if (PlatformCoreDataKeys.MODULE.is(dataId)) {
           return myFixture.getModule();
         }
         return super.getData(dataId);

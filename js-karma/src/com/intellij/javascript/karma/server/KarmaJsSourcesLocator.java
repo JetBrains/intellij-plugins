@@ -3,6 +3,7 @@
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +77,7 @@ public final class KarmaJsSourcesLocator {
       return getAppFile("intellijRunner.js");
     }
     catch (IOException e) {
-      throw new ExecutionException("Cannot locate intellijRunner.js", e);
+      throw new ExecutionException(KarmaBundle.message("execution.cannot_find_intellijRunner.dialog.message"), e);
     }
   }
 

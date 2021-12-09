@@ -21,6 +21,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.inspections.JSInspection;
@@ -79,7 +80,7 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
     JSAttributeList.AccessType accessType = attributeList != null ? attributeList.getAccessType():null;
     if (accessType == JSAttributeList.AccessType.PACKAGE_LOCAL &&
         attributeList.findAccessTypeElement() == null &&
-        attributeList.getNamespaceElement() ==   null &&
+        ActionScriptPsiImplUtil.getNamespaceElement(attributeList) == null &&
         !JSResolveUtil.isConstructorFunction(node)) {
       holder.registerProblem(
         nameIdentifier.getPsi(),

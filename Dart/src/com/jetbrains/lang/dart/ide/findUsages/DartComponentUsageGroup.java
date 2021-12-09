@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.google.dart.server.utilities.general.ObjectUtilities;
@@ -20,6 +6,7 @@ import com.intellij.navigation.NavigationItemFileStatus;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,7 +26,7 @@ import javax.swing.*;
 class DartComponentUsageGroup implements UsageGroup, DataProvider {
   private final VirtualFile myFile;
   private final SmartPsiElementPointer<DartComponent> myElementPointer;
-  private final String myText;
+  private final @NlsSafe String myText;
   private final Icon myIcon;
 
   DartComponentUsageGroup(@NotNull DartComponent element) {
@@ -61,7 +48,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   @Override
   public int compareTo(@NotNull UsageGroup usageGroup) {
-    return getText(null).compareToIgnoreCase(usageGroup.getText(null));
+    return getPresentableGroupText().compareToIgnoreCase(usageGroup.getPresentableGroupText());
   }
 
   public boolean equals(Object object) {
@@ -96,13 +83,13 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
   }
 
   @Override
-  public Icon getIcon(boolean isOpen) {
+  public Icon getIcon() {
     return myIcon;
   }
 
   @Override
   @NotNull
-  public String getText(UsageView view) {
+  public String getPresentableGroupText() {
     return myText;
   }
 
@@ -122,10 +109,6 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
     if (nameElement != null && nameElement.isValid()) {
       nameElement.navigate(focus);
     }
-  }
-
-  @Override
-  public void update() {
   }
 
   private DartComponent getComponentElement() {

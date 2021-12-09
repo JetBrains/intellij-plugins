@@ -1,21 +1,21 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
 class VuexTestStructure : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/structure"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/structure"
 
   fun testNuxtJs() {
     myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
-    doTestStructure()
+    doTestStructure(false)
   }
 
   fun testNuxtJs2() {
@@ -26,35 +26,48 @@ class VuexTestStructure : BasePlatformTestCase() {
 
   fun testStorefront() {
     myFixture.configureStore(VuexTestStore.Storefront)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testShoppingCart() {
     myFixture.configureStore(VuexTestStore.ShoppingCart)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testCounterHot() {
     myFixture.configureStore(VuexTestStore.CounterHot)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testSimpleStore() {
     myFixture.configureStore(VuexTestStore.SimpleStore)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testFunctionInit() {
     myFixture.configureStore(VuexTestStore.FunctionInit)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
-  private fun doTestStructure() {
+  fun testComics() {
+    myFixture.configureStore(VuexTestStore.Comics)
+    doTestStructure()
+  }
+
+  fun testCompositionCounter() {
+    myFixture.configureStore(VuexTestStore.CompositionCounter)
+    doTestStructure()
+  }
+
+  fun testCompositionShoppingCart() {
+    myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
+    doTestStructure()
+  }
+
+  private fun doTestStructure(createFile: Boolean = true) {
+    if (createFile) {
+      myFixture.configureByText("foo.vue", "<script>export default{}</script>")
+    }
     val context = VuexModelManager.getVuexStoreContext(myFixture.file)!!
     myFixture.configureByText("check.txt", printContext(context))
     myFixture.checkResultByFile(getTestName(false) + ".txt")
@@ -143,7 +156,7 @@ class VuexTestStructure : BasePlatformTestCase() {
         .append(":")
 
     result
-      .append(element)
+      .append(element.toString().replace('\\', '/'))
       .append(">")
   }
 

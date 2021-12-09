@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+message TestMessage {
+  // Message option
+  option dep<caret>recated = false;
+}

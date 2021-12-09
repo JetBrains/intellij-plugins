@@ -8,9 +8,9 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.ui.SimpleListCellRenderer;
 import org.jetbrains.annotations.Nls;
@@ -27,9 +27,9 @@ public class HbConfigurationPage implements SearchableConfigurable {
   private JComboBox<Language> myCommenterLanguage;
   private JCheckBox myAutocompleteMustaches;
   private JCheckBox htmlAsHb;
-  private final Project myProject;
+  private final @NotNull Project myProject;
 
-  public HbConfigurationPage(Project project) {
+  public HbConfigurationPage(@NotNull Project project) {
     myProject = project;
   }
 
@@ -75,14 +75,15 @@ public class HbConfigurationPage implements SearchableConfigurable {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     HbConfig.setAutoGenerateCloseTagEnabled(myAutoGenerateClosingTagCheckBox.isSelected());
     HbConfig.setAutocompleteMustachesEnabled(myAutocompleteMustaches.isSelected());
     HbConfig.setFormattingEnabled(myFormattingCheckBox.isSelected());
     HbConfig.setCommenterLanguage((Language)myCommenterLanguage.getSelectedItem());
 
     if (HbConfig.setShouldOpenHtmlAsHandlebars(htmlAsHb.isSelected(), myProject)) {
-      ApplicationManager.getApplication().runWriteAction(() -> FileTypeManagerEx.getInstanceEx().fireFileTypesChanged());
+      ApplicationManager.getApplication().runWriteAction(() -> FileTypeManagerEx.getInstanceEx().makeFileTypesChange("hb config updated",
+                                                                                                                     EmptyRunnable.getInstance()));
     }
   }
 

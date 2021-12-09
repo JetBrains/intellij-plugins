@@ -12,7 +12,6 @@ import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -570,7 +569,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final PsiElement parent = context instanceof XmlAttributeValue ? context.getParent() : null;
     if (parent instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)parent).getName())) {
       return LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, value, context.getProject()) ? null // ok
-                                                                                                                : JavaScriptBundle
+                                                                                                                : FlexBundle
                .message("invalid.identifier.value");
     }
 
@@ -839,7 +838,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         FlexStateElementNames.STATES.equals(((XmlTag)context).getLocalName()) &&
         FlexUtils.isMxmlNs(((XmlTag)context).getNamespace())) {
       XmlTag[] tags = ((XmlTag)context).findSubTags("State", ((XmlTag)context).getNamespace());
-      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<XmlTag>() {
+      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<>() {
         @Override
         public String getName(@NotNull XmlTag xmlTag) {
           return xmlTag.getAttributeValue(FlexStateElementNames.NAME);

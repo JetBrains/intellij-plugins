@@ -1,13 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types;
 
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.JSFunctionType;
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlTag;
@@ -20,17 +18,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.intellij.lang.javascript.psi.JSTypeUtils.processExpandedType;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.notNull;
 
-public class Angular2TypeUtils {
+public final class Angular2TypeUtils {
 
-  @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
-  @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";
   @NonNls private static final String HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME = "HTMLElementEventMap";
 
   public static @Nullable JSType extractEventVariableType(@Nullable JSType type) {
@@ -79,21 +74,12 @@ public class Angular2TypeUtils {
     return JSTypeSourceFactory.createTypeSource(notNull(Angular2ComponentLocator.findComponentClass(context), context), true);
   }
 
-  @NonNls
-  public static @Nullable JSType getHtmlElementClassType(@NotNull JSTypeSource typeSource, @NotNull @NonNls String tagName) {
-    return Optional
-      .ofNullable(JSTypeUtils.createType(HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME, typeSource))
-      .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(StringUtil.toLowerCase(tagName)))
-      .map(JSRecordType.PropertySignature::getJSType)
-      .orElseGet(() -> JSTypeUtils.createType(HTML_ELEMENT_CLASS_NAME, typeSource));
-  }
-
   public static @Nullable JSType getElementEventMap(@NotNull JSTypeSource typeSource) {
     // A generic parameter type should be extracted from addListener method of tag element interface, which looks like:
     // addEventListener<K extends keyof HTMLElementEventMap>(...): void;
     // However, all additional properties are anyway covered by `on*` methods,
     // so we can default to HTMLElementEventMapInterface, for events like `focusin`, which is not
     // covered by an `on*` method
-    return JSTypeUtils.createType(HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME, typeSource);
+    return JSNamedTypeFactory.createType(HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME, typeSource, JSContext.INSTANCE);
   }
 }

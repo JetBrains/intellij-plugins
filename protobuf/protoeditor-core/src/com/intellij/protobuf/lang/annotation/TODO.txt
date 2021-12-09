@@ -1,0 +1,25 @@
+### Options ###
+* Option name cannot be "uninterpreted_option"
+* map_entry option should not be set explicitly (use map<key,value> instead)
+* [lazy = true] can only be specified for submessage fields
+* [packed = true] can only be specified for repeated primitive fields
+* [weak = true] can only be specified for optional submessage fields
+* [weak = true] in a proto2 API message can only be specified on proto2 message field types
+* [weak = true] fields need to work with weak dependencies.
+* [deprecated_raw_message=true] can only be specified for bytes fields with [ctype=CORD].
+* Files with optimize_for = LITE_RUNTIME cannot define services unless you set both options cc_generic_services and java_generic_sevices to false.
+
+### Extensions ###
+* Message extensions cannot have required fields
+* Reused extension number
+* Extension number must be declared in extendee
+* FieldDescriptorProto.oneof_index range bounds
+* Extensions to non-lite types can only be declared in non-lite files
+* 'json_name' option not allowed on extension fields
+
+### Other stuff ###
+* syntax must be "proto2" or "proto3", and is required
+* Recursive import
+* Import listed twice
+* jstype validation
+* Non-"lite" files cannot be imported by "lite" files (LITE_RUNTIME)

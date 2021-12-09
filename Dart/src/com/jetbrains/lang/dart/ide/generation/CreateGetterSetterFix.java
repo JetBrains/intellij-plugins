@@ -1,7 +1,9 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -10,13 +12,15 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartReturnType;
 import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   public enum Strategy {
-    GETTER(DartBundle.message("dart.fix.getter.none.found")) {
+    GETTER(DartBundle.messagePointer("dart.fix.getter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
         return name.startsWith("_") &&
@@ -26,7 +30,7 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
       }
     },
 
-    SETTER(DartBundle.message("dart.fix.setter.none.found")) {
+    SETTER(DartBundle.messagePointer("dart.fix.setter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
         return name.startsWith("_") &&
@@ -36,7 +40,7 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
       }
     },
 
-    GETTERSETTER(DartBundle.message("dart.fix.gettersetter.none.found")) {
+    GETTER_SETTER(DartBundle.messagePointer("dart.fix.getter.setter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
         return name.startsWith("_") &&
@@ -46,10 +50,10 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
       }
     };
 
-    private final String myNothingFoundMessage;
+    private final Supplier<@Nls String> myNothingFoundMessageSupplier;
 
-    Strategy(final String nothingFoundMessage) {
-      myNothingFoundMessage = nothingFoundMessage;
+    Strategy(Supplier<@Nls String> nothingFoundMessageSupplier) {
+      myNothingFoundMessageSupplier = nothingFoundMessageSupplier;
     }
 
     abstract boolean accept(String name, List<DartComponent> componentList);
@@ -57,15 +61,29 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
 
   private final @NotNull Strategy myStrategy;
 
-  public CreateGetterSetterFix(@NotNull final DartClass dartClass, @NotNull Strategy strategy) {
+  public CreateGetterSetterFix(@NotNull DartClass dartClass, @NotNull Strategy strategy) {
     super(dartClass);
     myStrategy = strategy;
   }
 
   @Override
+  protected @NotNull @NlsContexts.Command String getCommandName() {
+    switch (myStrategy) {
+      case GETTER:
+        return DartBundle.message("command.generate.getters");
+      case SETTER:
+        return DartBundle.message("command.generate.setters");
+      case GETTER_SETTER:
+        return DartBundle.message("command.generate.getters.and.setters");
+      default:
+        return "";
+    }
+  }
+
+  @Override
   @NotNull
   protected String getNothingFoundMessage() {
-    return myStrategy.myNothingFoundMessage;
+    return myStrategy.myNothingFoundMessageSupplier.get();
   }
 
   @Override
@@ -77,10 +95,10 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
                             : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
-    if (myStrategy == Strategy.GETTER || myStrategy == Strategy.GETTERSETTER) {
+    if (myStrategy == Strategy.GETTER || myStrategy == Strategy.GETTER_SETTER) {
       buildGetter(template, namedComponent.getName(), typeText, namedComponent.isStatic());
     }
-    if (myStrategy == Strategy.SETTER || myStrategy == Strategy.GETTERSETTER) {
+    if (myStrategy == Strategy.SETTER || myStrategy == Strategy.GETTER_SETTER) {
       buildSetter(template, namedComponent.getName(), typeText, namedComponent.isStatic());
     }
     return template;

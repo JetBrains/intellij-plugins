@@ -1,0 +1,34 @@
+Foo#null
+count#UnwrapRef<Ref<UnwrapRef<number>>>
+foo#null
+foos#null
+inc#UnwrapRef<function(): void>
+props#null
+ref#<T extends object>(value: T) => ToRef<T>
+vClickOutside#null
+$#ComponentInternalInstance
+$attrs#null
+$data#null
+$el#any
+$emit#null
+$forceUpdate#void
+$nextTick#Promise<void>
+$options#null
+$parent#null
+$props#null
+$refs#null
+$root#null
+$slots#null
+$watch#() => void
+false#null
+function#null
+function#null
+new#null
+null#null
+this#null
+true#null
+typeof#null
+async#null
+delete#null
+undefined#null
+void#null

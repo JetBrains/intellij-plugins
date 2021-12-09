@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -33,16 +19,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlPsiUtil {
+public final class CfmlPsiUtil {
   @NotNull
   public static Collection<String> findBetween(@NotNull String source, @NotNull String startMarker, @NotNull String endMarker) {
     int fromIndex = 0;
@@ -312,18 +295,14 @@ public class CfmlPsiUtil {
     return null;
   }
 
-  public interface Getter<T, V> {
-    T get(V v);
-  }
-
   private static <Result extends PsiNamedElement> Result[] componentHierarchyGatherer(CfmlComponent component,
-                                                                                      Getter<Result[], ? super CfmlComponent> gatherer,
+                                                                                      Function<? super CfmlComponent, Result[]> gatherer,
                                                                                       Result[] EMPTY_ARRAY, boolean isSuperPriority) {
     CfmlComponent currentComponent = isSuperPriority ? component.getSuper() : component;
     Set<String> names = new HashSet<>();
     List<Result> result = new LinkedList<>();
     while (currentComponent != null) {
-      for (Result candidate : gatherer.get(currentComponent)) {
+      for (Result candidate : gatherer.apply(currentComponent)) {
         if (names.add(candidate.getName())) {
           result.add(candidate);
         }
@@ -332,7 +311,7 @@ public class CfmlPsiUtil {
     }
     if (isSuperPriority) {
       currentComponent = component;
-      for (Result candidate : gatherer.get(currentComponent)) {
+      for (Result candidate : gatherer.apply(currentComponent)) {
         if (names.add(candidate.getName())) {
           result.add(candidate);
         }
@@ -342,21 +321,11 @@ public class CfmlPsiUtil {
   }
 
   public static CfmlFunction @NotNull [] getFunctionsWithSupers(CfmlComponent component, boolean isSuperPriority) {
-    return componentHierarchyGatherer(component, new Getter<CfmlFunction[], CfmlComponent>() {
-      @Override
-      public CfmlFunction[] get(CfmlComponent component) {
-        return component.getFunctions();
-      }
-    }, CfmlFunction.EMPTY_ARRAY, isSuperPriority);
+    return componentHierarchyGatherer(component, component1 -> component1.getFunctions(), CfmlFunction.EMPTY_ARRAY, isSuperPriority);
   }
 
   public static CfmlProperty @NotNull [] getPropertiesWithSupers(CfmlComponent component, boolean isSuperPriority) {
-    return componentHierarchyGatherer(component, new Getter<CfmlProperty[], CfmlComponent>() {
-      @Override
-      public CfmlProperty[] get(CfmlComponent component) {
-        return component.getProperties();
-      }
-    }, CfmlProperty.EMPTY_ARRAY, isSuperPriority);
+    return componentHierarchyGatherer(component, component1 -> component1.getProperties(), CfmlProperty.EMPTY_ARRAY, isSuperPriority);
   }
 
   public static boolean processGlobalVariablesForComponent(CfmlComponent component,

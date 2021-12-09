@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.JsonObject;
@@ -13,8 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity> extends Angular2MetadataClassStubBase<Psi> {
-
+public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity<?>> extends Angular2MetadataClassStubBase<Psi> {
   @NonNls protected static final String NAME = "name";
   @NonNls private static final String DECORATOR_FIELD_PREFIX = "___dec.";
 

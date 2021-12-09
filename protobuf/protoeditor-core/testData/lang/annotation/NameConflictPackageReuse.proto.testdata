@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+// This is the same package as defined in conflictimport1.proto. No error since they're both
+// packages.
+package test.conflict;
+
+import "lang/annotation/conflictimport1.proto";
+
+message Something {}

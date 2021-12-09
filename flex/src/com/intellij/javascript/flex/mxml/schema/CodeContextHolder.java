@@ -1,9 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.search.GlobalSearchScope;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,8 +14,7 @@ import java.util.*;
 public class CodeContextHolder {
   private final Set<Module> myModulesWithSdkComponentsHandled = new HashSet<>();
   private final Map<String, Map<Module, CodeContext>> myStandardContexts = new HashMap<>();
-  private final Map<String, Map<Module, CodeContext>> myNSToCodeContextMap = new THashMap<>();
-  static final CodeContext EMPTY = new CodeContext(null, null);
+  private final Map<String, Map<Pair<Module, GlobalSearchScope>, CodeContext>> myNSToCodeContextMap = new THashMap<>();
 
   synchronized void clear() {
     myNSToCodeContextMap.clear();
@@ -23,30 +23,29 @@ public class CodeContextHolder {
   }
 
   @Nullable
-  public synchronized CodeContext getCodeContext(@NotNull final String namespace, @NotNull final Module module) {
-    final Map<Module, CodeContext> map = myNSToCodeContextMap.get(namespace);
-    if (map != null) return map.get(module);
-    return null;
+  public synchronized CodeContext getCodeContext(@NotNull String namespace, @NotNull Module module, @NotNull GlobalSearchScope scope) {
+    Map<Pair<Module, GlobalSearchScope>, CodeContext> map = myNSToCodeContextMap.get(namespace);
+    return map != null ? map.get(Pair.create(module, scope)) : null;
   }
 
-  public synchronized void putCodeContext(@NotNull final String namespace, @NotNull final Module module, @NotNull final CodeContext codeContext) {
-    Map<Module, CodeContext> map = myNSToCodeContextMap.get(namespace);
+  synchronized void putCodeContext(@NotNull String namespace, @NotNull Module module, @NotNull GlobalSearchScope scope, @NotNull CodeContext codeContext) {
+    var map = myNSToCodeContextMap.get(namespace);
     if (map == null) {
       map = new THashMap<>();
       myNSToCodeContextMap.put(namespace, map);
     }
-    map.put(module, codeContext);
+    map.put(Pair.create(module, scope), codeContext);
   }
 
-  public synchronized void clearCodeContext(@NotNull final String namespace, @NotNull final Module module) {
-    Map<Module, CodeContext> map = myNSToCodeContextMap.get(namespace);
+  synchronized void clearCodeContext(@NotNull String namespace, @NotNull Module module, @NotNull GlobalSearchScope scope) {
+    var map = myNSToCodeContextMap.get(namespace);
     if (map != null) {
-      map.remove(module);
+      map.remove(Pair.create(module, scope));
     }
   }
 
   public static CodeContextHolder getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, CodeContextHolder.class);
+    return project.getService(CodeContextHolder.class);
   }
 
   @Nullable
@@ -55,15 +54,15 @@ public class CodeContextHolder {
     return map == null ? null : map.get(module);
   }
 
-  public synchronized Collection<String> getNamespaces(final Module module) {
+  public synchronized Collection<String> getNamespaces(Module module, GlobalSearchScope scope) {
     final List<String> result = new ArrayList<>();
     for (final Map.Entry<String, Map<Module, CodeContext>> entry : myStandardContexts.entrySet()) {
       if (entry.getValue().containsKey(module)) {
         result.add(entry.getKey());
       }
     }
-    for (final Map.Entry<String, Map<Module, CodeContext>> entry : myNSToCodeContextMap.entrySet()) {
-      if (entry.getValue().containsKey(module)) {
+    for (var entry : myNSToCodeContextMap.entrySet()) {
+      if (entry.getValue().containsKey(Pair.create(module, scope))) {
         result.add(entry.getKey());
       }
     }

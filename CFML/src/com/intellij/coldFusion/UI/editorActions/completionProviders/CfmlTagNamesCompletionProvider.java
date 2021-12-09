@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -16,12 +16,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
-class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
+final class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
   @Override
   public void addCompletions(@NotNull final CompletionParameters parameters,
                              @NotNull final ProcessingContext context,
@@ -46,11 +46,11 @@ class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParame
     }
   }
 
-  private void addCompletionsFromDirectory(CompletionResultSet result, CompletionParameters parameters, String libtag, String prefix) {
+  private static void addCompletionsFromDirectory(CompletionResultSet result, CompletionParameters parameters, String libtag, String prefix) {
     final PsiFile originalFile = parameters.getOriginalFile();
     final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
     if (folder != null && folder.isDirectory()) {
-      final Set<String> names = new THashSet<>(CfmlIndex.getInstance(originalFile.getProject()).getAllComponentsNames());
+      final Set<String> names = new HashSet<>(CfmlIndex.getInstance(originalFile.getProject()).getAllComponentsNames());
       names.retainAll(ContainerUtil.map(folder.getChildren(),
                                         virtualFile -> StringUtil.toLowerCase(FileUtilRt.getNameWithoutExtension(virtualFile.getName()))));
       for (String componentName : names) {

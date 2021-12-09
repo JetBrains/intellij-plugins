@@ -26,7 +26,7 @@ JSFile:XmlDef.js2
       PsiElement(JS:IDENTIFIER)('ignoreComments')
       JSParameterList
         PsiElement(JS:LPAR)('(')
-        JSParameter
+        ActionScriptParameter
           PsiElement(JS:IDENTIFIER)('value')
           PsiElement(JS:COLON)(':')
           JSReferenceExpression
@@ -77,7 +77,7 @@ JSFile:XmlDef.js2
       PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
       JSParameterList
         PsiElement(JS:LPAR)('(')
-        JSParameter
+        ActionScriptParameter
           PsiElement(JS:IDENTIFIER)('prefix')
           PsiElement(JS:COLON)(':')
           JSReferenceExpression
@@ -148,7 +148,7 @@ JSFile:XmlDef.js2
             PsiElement(JS:FUNCTION_KEYWORD)('function')
             JSParameterList
               PsiElement(JS:LPAR)('(')
-              JSParameter
+              ActionScriptParameter
                 PsiElement(JS:EACH_KEYWORD)('each')
               PsiElement(JS:RPAR)(')')
             PsiWhiteSpace(' ')

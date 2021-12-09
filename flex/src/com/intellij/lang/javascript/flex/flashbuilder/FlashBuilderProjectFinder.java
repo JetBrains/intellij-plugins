@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.CommonBundle;
@@ -7,7 +7,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class FlashBuilderProjectFinder {
+public final class FlashBuilderProjectFinder {
 
   public static final String PROJECT_PREFS_RELATIVE_PATH =
     "/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.adobe.flexbuilder.project.prefs";
@@ -78,8 +78,7 @@ public class FlashBuilderProjectFinder {
     final File projectsCacheDir = new File(workspacePath, PROJECTS_CACHE_RELATIVE_PATH);
     if (!projectsCacheDir.isDirectory()) return;
 
-    final File[] subdirs = projectsCacheDir.listFiles(FileUtilRt.ALL_DIRECTORIES);
-
+    final File[] subdirs = projectsCacheDir.listFiles(FileFilters.DIRECTORIES);
     for (File dir : subdirs) {
       final String dotProjectFileLocation = getDotProjectFileLocation(workspacePath, dir);
       if (dotProjectFileLocation != null) {
@@ -150,7 +149,7 @@ public class FlashBuilderProjectFinder {
     }
     else {
       final File root = new File(dirPath);
-      final File[] subdirs = root.listFiles(FileUtilRt.ALL_DIRECTORIES);
+      final File[] subdirs = root.listFiles(FileFilters.DIRECTORIES);
       for (final File subdir : subdirs) {
         collectProjectPathsInDirectory(projectPaths, subdir.getPath());
       }

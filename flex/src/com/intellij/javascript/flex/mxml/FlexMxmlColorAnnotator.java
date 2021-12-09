@@ -25,9 +25,9 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.ui.ColorChooser;
 import com.intellij.ui.ColorLineMarkerProvider;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.NotNull;
@@ -130,9 +130,9 @@ public class FlexMxmlColorAnnotator implements Annotator {
     public Icon getIcon() {
       Color color = getColor(myColorValue);
       if (color != null) {
-        return JBUI.scale(new ColorIcon(ICON_SIZE, color));
+        return JBUIScale.scaleIcon(new ColorIcon(ICON_SIZE, color));
       }
-      return JBUI.scale(EmptyIcon.create(ICON_SIZE));
+      return JBUIScale.scaleIcon(EmptyIcon.create(ICON_SIZE));
     }
 
     @Override

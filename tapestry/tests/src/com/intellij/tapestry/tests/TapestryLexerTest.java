@@ -4,7 +4,10 @@ import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.tapestry.psi.TmlHighlightingLexer;
 import com.intellij.tapestry.psi.TmlLexer;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
+import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 
 /**
  * @author Alexey Chmutov
@@ -82,5 +85,30 @@ public class TapestryLexerTest extends UsefulTestCase {
     return Util.getCommonTestDataPath() + "lexer/";
   }
 
+
+  private IdeaProjectTestFixture myFixture;
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    // needed for various XML extension points registration
+    myFixture = IdeaTestFixtureFactory.getFixtureFactory()
+      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR, getTestName(false)).getFixture();
+    myFixture.setUp();
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    try {
+      myFixture.tearDown();
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
+    }
+  }
 }
 

@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.sm.runner.SMRunnerConsolePropertiesProvider;
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
@@ -194,13 +195,13 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
                                    @Nullable String path,
                                    boolean fileExpected) throws RuntimeConfigurationException {
     if (StringUtil.isEmptyOrSpaces(path)) {
-      throw new RuntimeConfigurationError("Unspecified " + pathLabelName);
+      throw new RuntimeConfigurationError(KarmaBundle.message("run_configuration.unspecified_field.dialog.message", pathLabelName));
     }
     File file = new File(path);
     if (!file.isAbsolute() ||
         (fileExpected && !file.isFile()) ||
         (!fileExpected && !file.isDirectory())) {
-      throw new RuntimeConfigurationError("No such " + pathLabelName);
+      throw new RuntimeConfigurationError(KarmaBundle.message("run_configuration.no_such_file.dialog.message", pathLabelName));
     }
   }
 

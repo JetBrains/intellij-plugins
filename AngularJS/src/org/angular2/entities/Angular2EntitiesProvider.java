@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
@@ -9,6 +9,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -28,6 +30,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
 import org.angular2.entities.source.*;
 import org.angular2.index.*;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.util.ObjectUtils.tryCast;
@@ -46,9 +50,9 @@ import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
 import static org.angular2.index.Angular2IndexingHandler.*;
 import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
-public class Angular2EntitiesProvider {
+public final class Angular2EntitiesProvider {
 
-  static final String TRANSFORM_METHOD = "transform";
+  public static final String TRANSFORM_METHOD = "transform";
 
   public static Angular2Entity getEntity(@Nullable PsiElement element) {
     if (element == null) {
@@ -121,7 +125,7 @@ public class Angular2EntitiesProvider {
     return result;
   }
 
-  public static @NotNull List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @NotNull List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorSymbol selector) {
     if (selector.isElementSelector()) {
       return findElementDirectivesCandidates(selector.getProject(), selector.getName());
     }
@@ -131,21 +135,28 @@ public class Angular2EntitiesProvider {
     return Collections.emptyList();
   }
 
-  public static @Nullable Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @Nullable Angular2Component findComponent(@NotNull Angular2DirectiveSelectorSymbol selector) {
     return (Angular2Component)ContainerUtil.find(findDirectives(selector), Angular2Directive::isComponent);
   }
 
   public static @NotNull Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
-      StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
-        .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
-        .append(AngularIndexUtil.getAllKeys(Angular2IvyDirectiveIndex.KEY, project))
-        .map(name -> isElementDirectiveIndexName(name) ? getElementName(name) : null)
-        .nonNull()
-        .distinct()
-        .collect(toMap(Function.identity(),
-                       name -> findDirectivesCandidates(
-                         project, getElementDirectiveIndexName(name)))),
+      StreamEx.of(findDirectivesCandidates(project, getAnyElementDirectiveIndexName()))
+        .flatCollection(directive -> {
+          List<Pair<String, Angular2Directive>> result = new SmartList<>();
+          Consumer<Angular2DirectiveSimpleSelector> selectorProcessor = sel -> {
+            String elementName = sel.getElementName();
+            if (!StringUtil.isEmpty(elementName) && !"*".equals(elementName)) {
+              result.add(Pair.pair(elementName, directive));
+            }
+          };
+          for (Angular2DirectiveSimpleSelector sel : directive.getSelector().getSimpleSelectors()) {
+            selectorProcessor.accept(sel);
+            sel.getNotSelectors().forEach(selectorProcessor);
+          }
+          return result;
+        })
+        .groupingBy(p -> p.first, Collectors.mapping(p -> p.second, Collectors.toList())),
       PsiModificationTracker.MODIFICATION_COUNT)
     );
   }
@@ -292,7 +303,7 @@ public class Angular2EntitiesProvider {
                                                                                     @NotNull String name,
                                                                                     @NotNull Class<T> entityClass,
                                                                                     @NotNull StubIndexKey<String, T> key,
-                                                                                    @NotNull Consumer<T> consumer) {
+                                                                                    @NotNull Consumer<? super T> consumer) {
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
       if (el.isValid() && !hasIvyMetadata(el)) {
         consumer.accept(el);
@@ -305,7 +316,7 @@ public class Angular2EntitiesProvider {
                                                                     @NotNull String name,
                                                                     @NotNull StubIndexKey<String, TypeScriptClass> key,
                                                                     @NotNull Class<T> entityClass,
-                                                                    @NotNull Consumer<T> consumer) {
+                                                                    @NotNull Consumer<? super T> consumer) {
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), TypeScriptClass.class, el -> {
       if (el.isValid()) {
         T entity = tryCast(getIvyEntity(el), entityClass);

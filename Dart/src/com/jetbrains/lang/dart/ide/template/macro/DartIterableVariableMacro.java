@@ -13,11 +13,6 @@ public class DartIterableVariableMacro extends DartFilterByClassMacro {
   }
 
   @Override
-  public String getPresentableName() {
-    return "dartIterableVariable()";
-  }
-
-  @Override
   protected boolean filter(@NotNull DartClass dartClass) {
     return dartClass.findMemberByName("iterator") != null;
   }

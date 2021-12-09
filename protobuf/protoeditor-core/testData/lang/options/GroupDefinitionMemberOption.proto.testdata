@@ -1,0 +1,15 @@
+syntax = "proto2";
+import "descriptor.proto";
+
+package foo.bar;
+
+extend proto2.MessageOptions {
+  optional group MyGroupOption = 10000 {
+    optional int32 zz = 5;
+  }
+}
+
+message TestMessage {
+  // Message option
+  option (mygroupoption).z<caret>z = 50;
+}

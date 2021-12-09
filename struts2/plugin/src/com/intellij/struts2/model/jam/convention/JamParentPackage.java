@@ -57,11 +57,11 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
 
   private static final JamConverter<StrutsPackage> STRUTS_PACKAGE_JAM_CONVERTER =
 
-    new JamSimpleReferenceConverter<StrutsPackage>() {
+    new JamSimpleReferenceConverter<>() {
 
       private final Condition<StrutsPackage> EXTENDABLE_STRUTS_PACKAGE_CONDITION =
         strutsPackage -> StringUtil.isNotEmpty(strutsPackage.getName().getStringValue()) &&
-                       StringUtil.isNotEmpty(strutsPackage.getNamespace().getStringValue());
+                         StringUtil.isNotEmpty(strutsPackage.getNamespace().getStringValue());
 
       @Override
       public StrutsPackage fromString(@Nullable final String s, final JamStringAttributeElement<StrutsPackage> context) {

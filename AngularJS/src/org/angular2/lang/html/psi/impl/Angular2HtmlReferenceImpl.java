@@ -23,15 +23,6 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
   }
 
   @Override
-  public int getChildRole(@NotNull ASTNode child) {
-    IElementType i = child.getElementType();
-    if (i == Angular2HtmlVarAttrTokenType.REFERENCE) {
-      return XmlChildRole.XML_NAME;
-    }
-    return super.getChildRole(child);
-  }
-
-  @Override
   public XmlElement getNameElement() {
     XmlElement res = super.getNameElement();
     if (res == null &&

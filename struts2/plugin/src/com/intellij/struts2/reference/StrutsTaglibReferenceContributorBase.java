@@ -44,7 +44,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  * @author Yann C&eacute;bron
  */
 public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceContributor {
-  static class Holder {
+  static final class Holder {
     static final PsiReferenceProvider CSS_CLASS_PROVIDER = new CssInHtmlClassOrIdReferenceProvider();
 
     private static final PsiReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =

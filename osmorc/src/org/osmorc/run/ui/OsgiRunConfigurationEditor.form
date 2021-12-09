@@ -10,7 +10,7 @@
       <grid id="27dc6" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <tabbedpane title="Framework &amp; Bundles"/>
+          <tabbedpane title-resource-bundle="messages/OsmorcBundle" title-key="run.configuration.form.tab.main"/>
         </constraints>
         <properties>
           <minimumSize width="500" height="200"/>
@@ -33,7 +33,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="5929d"/>
-                  <text value="&amp;OSGi framework:"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.framework"/>
                 </properties>
               </component>
               <component id="5929d" class="javax.swing.JComboBox" binding="myFrameworkInstances">
@@ -50,7 +50,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="fc18c"/>
-                  <text value="Framework start level:"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.start.framework"/>
                 </properties>
               </component>
               <component id="fc18c" class="javax.swing.JSpinner" binding="myFrameworkStartLevel">
@@ -65,7 +65,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="fe15a"/>
-                  <text value="Default start level:"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.start.default"/>
                 </properties>
               </component>
               <component id="fe15a" class="javax.swing.JSpinner" binding="myDefaultStartLevel">
@@ -99,7 +99,7 @@
       <grid id="815fd" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <tabbedpane title="Parameters"/>
+          <tabbedpane title-resource-bundle="messages/OsmorcBundle" title-key="run.configuration.form.tab.parameters"/>
         </constraints>
         <properties/>
         <border type="none">
@@ -111,7 +111,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="VM options:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.vm"/>
             </properties>
           </component>
           <component id="fc70c" class="com.intellij.ui.RawCommandLineEditor" binding="myVmOptions">
@@ -119,7 +119,7 @@
               <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <dialogCaption value="VM Parameters"/>
+              <dialogCaption resource-bundle="messages/OsmorcBundle" key="run.configuration.form.vm.title"/>
             </properties>
           </component>
           <component id="3b870" class="com.intellij.ui.components.JBLabel">
@@ -127,7 +127,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Program parameters:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.parameters"/>
             </properties>
           </component>
           <component id="d9d6d" class="com.intellij.ui.RawCommandLineEditor" binding="myProgramParameters">
@@ -135,7 +135,7 @@
               <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <dialogCaption value="Program Parameters"/>
+              <dialogCaption resource-bundle="messages/OsmorcBundle" key="run.configuration.form.parameters.title"/>
             </properties>
           </component>
           <component id="71274" class="com.intellij.ui.components.JBLabel">
@@ -143,7 +143,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Runtime directory:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.directory"/>
             </properties>
           </component>
           <component id="a6290" class="javax.swing.JRadioButton" binding="myOsmorcControlledDir">
@@ -151,7 +151,7 @@
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Recreate each time "/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.directory.recreate"/>
             </properties>
           </component>
           <component id="cb2f0" class="javax.swing.JRadioButton" binding="myUserDefinedDir">
@@ -159,7 +159,7 @@
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Use this directory:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.directory.path"/>
             </properties>
           </component>
           <component id="f0304" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myWorkingDirField">
@@ -178,7 +178,7 @@
               <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Include all bundles in class path"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.classpath"/>
             </properties>
           </component>
           <vspacer id="9fcf">
@@ -190,7 +190,7 @@
       </grid>
       <grid id="6267" binding="myAdditionalPropertiesPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <tabbedpane title="Additional Framework Properties"/>
+          <tabbedpane title-resource-bundle="messages/OsmorcBundle" title-key="run.configuration.form.tab.special"/>
         </constraints>
         <properties/>
         <border type="none">

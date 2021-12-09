@@ -1,0 +1,2 @@
+test:
+<caret>FORCE: test

@@ -15,13 +15,17 @@ interface NuxtApplication {
 
   val configFile: VirtualFile
 
+  val config: NuxtConfig
+
   val packageJson: VirtualFile?
+
+  val sourceDir: VirtualFile?
 
   val nuxtVersion: SemVer?
 
-  fun getVuexStore(): VuexStore?
+  val vuexStore: VuexStore?
 
-  fun getStaticResourcesDir(): PsiDirectory?
+  val staticResourcesDir: PsiDirectory?
 
   fun getNuxtConfigType(context: PsiElement): JSType?
 

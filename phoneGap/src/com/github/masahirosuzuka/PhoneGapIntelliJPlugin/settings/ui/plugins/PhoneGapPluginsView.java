@@ -7,6 +7,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.IdeBorderFactory;
@@ -14,6 +15,7 @@ import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.packaging.PackagesNotificationPanel;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,7 @@ public class PhoneGapPluginsView {
   }
 
   public interface VersionCallback {
-    void forVersion(String version);
+    void forVersion(@Nls String version);
   }
 
   public synchronized void setupService(@Nullable final String path,
@@ -62,9 +64,9 @@ public class PhoneGapPluginsView {
                                  PhoneGapConfigurable.RepositoryStore repositoryStore,
                                  final VersionCallback callback) {
     final Ref<PhoneGapPackageManagementService> service = new Ref<>();
-    final Ref<String> error = new Ref<>();
-    final Ref<String> warning = new Ref<>();
-    final Ref<String> version = new Ref<>();
+    final Ref<@Nls String> error = new Ref<>();
+    final Ref<@Nls String> warning = new Ref<>();
+    final Ref<@Nls String> version = new Ref<>();
     try {
       PhoneGapCommandLine commandLine = checkParams(error, warning, version, path, workDir);
 
@@ -92,7 +94,7 @@ public class PhoneGapPluginsView {
 
   private PhoneGapCommandLine checkParams(Ref<String> error,
                                           Ref<String> warning,
-                                          Ref<String> version,
+                                          Ref<@NlsSafe String> version,
                                           String path,
                                           String workDir) throws ExecutionException {
 

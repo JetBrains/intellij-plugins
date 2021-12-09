@@ -44,7 +44,7 @@ export default {
   setup(props) {
     const state = reactive({
       sortKey: "",
-      sortOrders: props.columns.<weak_warning descr="Instance member is not accessible">reduce</weak_warning>((o, key) => ((o[key] = 1), o), {})
+      sortOrders: props.columns.reduce((o, key) => ((o[key] = 1), o), {})
     });
 
     const filteredData = computed(() => {

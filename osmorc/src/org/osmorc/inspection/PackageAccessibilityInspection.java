@@ -27,6 +27,7 @@ package org.osmorc.inspection;
 import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
@@ -92,20 +93,20 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
 
   private static final class Problem {
     final ProblemHighlightType type;
-    final String message;
+    final @InspectionMessage String message;
     final LocalQuickFix[] fixes;
 
-    private Problem(ProblemHighlightType type, String message, LocalQuickFix... fixes) {
+    Problem(ProblemHighlightType type, @InspectionMessage String message, LocalQuickFix... fixes) {
       this.type = type;
       this.message = message;
       this.fixes = fixes.length > 0 ? fixes : null;
     }
 
-    static Problem weak(String message, LocalQuickFix... fixes) {
+    static Problem weak(@InspectionMessage String message, LocalQuickFix... fixes) {
       return new Problem(ProblemHighlightType.WEAK_WARNING, message, fixes);
     }
 
-    static Problem error(String message, LocalQuickFix... fixes) {
+    static Problem error(@InspectionMessage String message, LocalQuickFix... fixes) {
       return new Problem(ProblemHighlightType.GENERIC_ERROR_OR_WARNING, message, fixes);
     }
   }
@@ -139,13 +140,13 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
       return null;
     }
 
-    BundleManifest importer = BundleManifestCache.getInstance(targetClass.getProject()).getManifest(requestorModule);
+    BundleManifest importer = BundleManifestCache.getInstance().getManifest(requestorModule);
     if (importer != null && (importer.isPrivatePackage(packageName) || importer.getExportedPackage(packageName) != null)) {
       return null;
     }
 
     // rejects non-exported classes (manifest missing, or a package isn't listed as exported)
-    BundleManifest exporter = BundleManifestCache.getInstance(targetClass.getProject()).getManifest(targetClass);
+    BundleManifest exporter = BundleManifestCache.getInstance().getManifest(targetClass);
     if (exporter == null || exporter.getBundleSymbolicName() == null) {
       return Problem.weak(message("PackageAccessibilityInspection.non.osgi", packageName));
     }

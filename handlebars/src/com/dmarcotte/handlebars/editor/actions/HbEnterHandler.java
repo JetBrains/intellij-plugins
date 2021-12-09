@@ -7,7 +7,6 @@ import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.util.Ref;
@@ -28,7 +27,7 @@ public class HbEnterHandler extends EnterHandlerDelegateAdapter {
                                 @NotNull final Ref<Integer> caretAdvance,
                                 @NotNull final DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
-    /**
+    /*
      * if we are between open and close tags, we ensure the caret ends up in the "logical" place on Enter.
      * i.e. "{{#foo}}<caret>{{/foo}}" becomes the following on Enter:
      *
@@ -56,7 +55,7 @@ public class HbEnterHandler extends EnterHandlerDelegateAdapter {
     CharSequence chars = editor.getDocument().getCharsSequence();
     if (chars.charAt(offset - 1) != '}') return false;
 
-    EditorHighlighter highlighter = ((EditorEx)editor).getHighlighter();
+    EditorHighlighter highlighter = editor.getHighlighter();
     HighlighterIterator iterator = highlighter.createIterator(offset - 1);
 
     PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());

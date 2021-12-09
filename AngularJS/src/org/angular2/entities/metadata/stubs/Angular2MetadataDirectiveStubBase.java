@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.*;
@@ -35,8 +35,7 @@ import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.metadata.MetadataUtils.getPropertyValue;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
-public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2MetadataDirectiveBase> extends Angular2MetadataEntityStub<Psi> {
-
+public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2MetadataDirectiveBase<?>> extends Angular2MetadataEntityStub<Psi> {
   private static final BooleanStructureElement HAS_EXPORT_AS = new BooleanStructureElement();
   private static final BooleanStructureElement HAS_ATTRIBUTES = new BooleanStructureElement();
 

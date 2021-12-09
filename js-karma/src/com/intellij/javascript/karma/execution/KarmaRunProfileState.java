@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.coverage.CoverageExecutor;
@@ -10,15 +11,17 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.CatchingConsumer;
+import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,14 +79,14 @@ public class KarmaRunProfileState implements RunProfileState {
       server = null;
     }
     if (server == null) {
-      JSLocationResolver locationResolver = ServiceManager.getService(JSLocationResolver.class);
+      JSLocationResolver locationResolver = ApplicationManager.getApplication().getService(JSLocationResolver.class);
       if (locationResolver != null) {
         // dependency is optional
         locationResolver.dropCache(myRunConfiguration);
       }
       registry.startServer(
         serverSettings,
-        new CatchingConsumer<KarmaServer, Exception>() {
+        new CatchingConsumer<>() {
           @Override
           public void consume(KarmaServer server) {
             RunnerAndConfigurationSettings configuration = myEnvironment.getRunnerAndConfigurationSettings();
@@ -136,22 +139,10 @@ public class KarmaRunProfileState implements RunProfileState {
     return KarmaExecutionType.RUN;
   }
 
-  private void showServerStartupError(@NotNull final Exception serverException) {
-    StringBuilder errorMessage = new StringBuilder("Karma server launching failed");
-    Throwable e = serverException;
-    String prevMessage = null;
-    while (e != null) {
-      String message = e.getMessage();
-      if (message != null && !message.equals(prevMessage)) {
-        errorMessage.append("\n\nCaused by:\n");
-        errorMessage.append(message);
-        prevMessage = message;
-      }
-      e = e.getCause();
-    }
+  private void showServerStartupError(@NotNull Exception serverException) {
     Messages.showErrorDialog(myProject,
-                             errorMessage.toString(),
-                             "Karma Server");
+                             KarmaBundle.message("karma.server.launching.failed", ExceptionUtil.getMessage(serverException)),
+                             KarmaBundle.message("karma.server.tab.title"));
   }
 
 }

@@ -8,9 +8,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.ide.util.projectWizard.CustomStepProjectGenerator;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -22,6 +20,7 @@ import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -49,6 +48,7 @@ import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData;
 import com.jetbrains.cidr.execution.BuildTargetData;
 import com.jetbrains.cidr.execution.ExecutableData;
 import icons.ClionEmbeddedPlatformioIcons;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +56,9 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND.CREATE_PROJECT;
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.fusLog;
+import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME;
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
 
 public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardInfo>>
@@ -77,6 +80,18 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
   @Override
   public String getGroupName() {
     return EMBEDDED_PROJECTS_GROUP_NAME;
+  }
+
+  @Override
+  public int getGroupOrder() {
+    return GroupOrders.EMBEDDED.order + 1;
+  }
+
+  @Nls
+  @NotNull
+  @Override
+  public String getGroupDisplayName() {
+    return EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME.get();
   }
 
   @NotNull
@@ -101,6 +116,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
                               @NotNull VirtualFile baseDir,
                               @NotNull Ref<@NotNull BoardInfo> settings,
                               @NotNull Module module) {
+    super.generateProject(project, baseDir, settings, module);
     StringBuilder pioCmdLineTail = new StringBuilder();
     for (String s : settings.get().getParameters()) {
       pioCmdLineTail.append(' ').append(s);
@@ -123,6 +139,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
       PlatformioService.notifyPlatformioNotFound(project);
       return;
     }
+    fusLog(null, CREATE_PROJECT);
     CustomTool initTool = new CustomTool(ClionEmbeddedPlatformioBundle.message("platformio.init.title"));
     initTool.setProgram(myPioUtility);
     initTool.setWorkingDirectory(baseDir.getCanonicalPath());
@@ -248,10 +265,9 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
     }
   }
 
-  private static void showError(@NotNull String message) {
-    Notification notification = PlatformioService.NOTIFICATION_GROUP.createNotification(
-      ClionEmbeddedPlatformioBundle.message("project.init.failed"), null,
-      message, NotificationType.WARNING);
-    Notifications.Bus.notify(notification);
+  private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
+    PlatformioService.NOTIFICATION_GROUP
+      .createNotification(ClionEmbeddedPlatformioBundle.message("project.init.failed"), message, NotificationType.WARNING)
+      .notify(null);
   }
 }

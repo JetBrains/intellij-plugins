@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.metadata;
 
 import com.intellij.json.psi.JsonObject;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.tryCast;
 
-public class MetadataUtils {
+public final class MetadataUtils {
 
   public static @NotNull Stream<JsonProperty> streamObjectProperty(@Nullable JsonProperty property) {
     if (property == null || !(property.getValue() instanceof JsonObject)) {

@@ -24,7 +24,7 @@ public class ActionScriptMethodsCompletionContributor extends CompletionContribu
   public ActionScriptMethodsCompletionContributor() {
     extend(null, PlatformPatterns.psiElement(JSTokenTypes.IDENTIFIER)
              .withParent(JSQualifiedNamedElement.class),
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            @NotNull ProcessingContext context,

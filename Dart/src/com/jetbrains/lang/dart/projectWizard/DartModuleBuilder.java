@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
@@ -31,6 +31,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import icons.DartIcons;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +43,11 @@ public class DartModuleBuilder extends ModuleBuilder {
   private static final Key<Boolean> PUB_GET_SCHEDULED_KEY = Key.create("PUB_GET_SCHEDULED_KEY");
 
   private DartProjectWizardData myWizardData;
+
+  @Override
+  public @Nullable @NonNls String getBuilderId() {
+    return "DartModuleBuilder";
+  }
 
   @Override
   public String getName() {
@@ -64,7 +70,7 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public ModuleType getModuleType() {
+  public ModuleType<?> getModuleType() {
     return WebModuleTypeBase.getInstance();
   }
 

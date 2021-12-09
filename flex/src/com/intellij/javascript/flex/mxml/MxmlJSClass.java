@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -7,21 +8,17 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSFieldImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
@@ -29,6 +26,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,9 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author yole
- */
+
 public class MxmlJSClass extends XmlBackedJSClassImpl {
   @NonNls public static final String XML_TAG_NAME = "XML";
   @NonNls public static final String XMLLIST_TAG_NAME = "XMLList";
@@ -60,49 +56,37 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   private static final Logger LOG = Logger.getInstance(MxmlJSClass.class);
 
-  private static final Key<CachedValue<List<JSField>>> ourSkinComponentPredefinedFieldsKey = Key.create("ourskinComponentPredefinedVarsKey");
-  private static final MxmlResolveUtil.ImplicitFieldProvider skinComponentPredefinedFields = new MxmlResolveUtil.ImplicitFieldProvider() {
-    @Override
-    protected void doComputeVars(final List<JSField> vars, final XmlFile xmlFile) {
-      for (XmlTag t : xmlFile.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
-        JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
-          @Override
-          protected void process(JSFile file) {
-            for (PsiElement elt : file.getChildren()) {
-              if (elt instanceof JSAttributeList) {
-                JSAttribute[] hostAnnotation = ((JSAttributeList)elt).getAttributesByName("HostComponent");
+  @NotNull
+  private static List<JSField> computeSkinComponentPredefinedFields(XmlFile file) {
+    List<JSField> vars = new SmartList<>();
+    for (XmlTag t : file.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
+      JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
+        @Override
+        protected void process(JSFile file) {
+          for (PsiElement elt : file.getChildren()) {
+            if (elt instanceof JSAttributeList) {
+              JSAttribute[] hostAnnotation = ((JSAttributeList)elt).getAttributesByName("HostComponent");
 
-                if (hostAnnotation.length == 1 && vars.isEmpty()) {
-                  JSAttributeNameValuePair valuePair = hostAnnotation[0].getValueByName(null);
+              if (hostAnnotation.length == 1 && vars.isEmpty()) {
+                JSAttributeNameValuePair valuePair = hostAnnotation[0].getValueByName(null);
 
-                  vars.add(
-                    new ImplicitJSFieldImpl(
-                      "hostComponent",
-                      valuePair != null ? valuePair.getSimpleValue() : JSCommonTypeNames.OBJECT_CLASS_NAME,
-                      JSAttributeList.AccessType.PUBLIC,
-                      xmlFile
-                    )
-                  );
-                  return;
-                }
+                vars.add(
+                  new ImplicitJSFieldImpl(
+                    "hostComponent",
+                    valuePair != null ? valuePair.getSimpleValue() : JSCommonTypeNames.OBJECT_CLASS_NAME,
+                    JSAttributeList.AccessType.PUBLIC,
+                    file
+                  )
+                );
+                return;
               }
             }
           }
-        });
-      }
+        }
+      });
     }
-  };
-
-  private static final MxmlResolveUtil.ImplicitFieldProvider inlineComponentRenderPredefinedVars = new MxmlResolveUtil.ImplicitFieldProvider() {
-    @Override
-    protected void doComputeVars(List<JSField> vars, XmlFile xmlFile) {
-      JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(xmlFile);
-      final JSType type = JSNamedType.createType(cls.getQualifiedName(), JSTypeSourceFactory.createTypeSource(cls, true), JSContext.INSTANCE);
-      vars.add(new ImplicitJSFieldImpl("outerDocument", type, xmlFile));
-    }
-  };
-
-  private static final Key<CachedValue<List<JSField>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
+    return vars;
+  }
 
   private volatile JSReferenceList myImplementsList;
   private final boolean isFxgBackedClass;
@@ -227,14 +211,21 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   @Override
   protected void processImplicitMembers(PsiScopeProcessor processor) {
-    MxmlResolveUtil.processImplicitFields(processor, getContainingFile(), skinComponentPredefinedFields,
-                                          ourSkinComponentPredefinedFieldsKey);
+    XmlFile file = (XmlFile)getContainingFile();
+    List<JSField> fields = CachedValuesManager.getProjectPsiDependentCache(file, MxmlJSClass::computeSkinComponentPredefinedFields);
+    for (JSField var: fields) {
+      if (!processor.execute(var, ResolveState.initial())) return;
+    }
   }
 
   @Override
   public boolean processOuterDeclarations(PsiScopeProcessor processor) {
-    return MxmlResolveUtil.processImplicitFields(processor, getContainingFile(), inlineComponentRenderPredefinedVars,
-                                                 ourInlineComponentRenderPredefinedVarsKey);
+    XmlFile file = (XmlFile)getContainingFile();
+    ImplicitJSFieldImpl field = CachedValuesManager.getProjectPsiDependentCache(file, __ -> {
+      JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(file);
+      return new ImplicitJSFieldImpl("outerDocument", cls.getQualifiedName(), JSAttributeList.AccessType.PRIVATE, file);
+    });
+    return processor.execute(field, ResolveState.initial());
   }
 
   public static boolean isFxLibraryTag(final XmlTag tag) {

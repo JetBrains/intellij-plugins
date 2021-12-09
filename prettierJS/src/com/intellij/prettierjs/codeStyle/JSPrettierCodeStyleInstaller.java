@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.prettierjs.PrettierConfig;
-import com.intellij.prettierjs.PrettierUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +65,7 @@ public class JSPrettierCodeStyleInstaller implements PrettierCodeStyleInstaller 
   }
 
   @NotNull
-  private static JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierUtil.TrailingCommaOption option) {
+  private static JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierConfig.TrailingCommaOption option) {
     switch (option) {
       case none:
         return JSCodeStyleSettings.TrailingCommaOption.Remove;

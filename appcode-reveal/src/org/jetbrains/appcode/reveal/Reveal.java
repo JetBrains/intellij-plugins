@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.script.IdeScriptException;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -20,16 +21,20 @@ import com.jetbrains.cidr.AppleScript;
 import com.jetbrains.cidr.OCPathManager;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.frameworks.XCFramework;
+import com.jetbrains.cidr.xcode.model.XCBuildSettings;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
-public class Reveal {
+public final class Reveal {
   public static final Logger LOG = Logger.getInstance("#" + Reveal.class.getPackage().getName());
 
   private static final List<String> APPLICATION_BUNDLE_IDENTIFIERS =
@@ -57,13 +62,22 @@ public class Reveal {
   }
 
   @Contract("_, null -> null")
-  public static File getRevealLib(@NotNull File bundle, @Nullable AppleSdk sdk) {
+  public static File getRevealLib(@NotNull File bundle, @Nullable XCBuildSettings buildSettings) {
+    if (buildSettings == null) return null;
+
+    AppleSdk sdk = buildSettings.getBaseSdk();
     if (sdk == null) return null;
 
     ApplePlatform platform = sdk.getPlatform();
     File result;
 
-    if (isCompatibleWithReveal23OrHigher(bundle)) {
+    if (isCompatibleWithReveal27OrHigher(bundle)) {
+      Path xcFrameworkIoFile = OCPathManager.getUserApplicationSupportSubFile("Reveal/RevealServer/RevealServer.xcframework").toPath();
+      Path frameworkRoot = ReadAction.compute(() -> new XCFramework(xcFrameworkIoFile).resolveFrameworkRoot(buildSettings));
+      if (frameworkRoot == null) return null;
+      result = new File(frameworkRoot.toFile(), "RevealServer");
+    }
+    else if (isCompatibleWithReveal23OrHigher(bundle)) {
       String libraryPath = "Reveal/RevealServer/";
       if (platform.isIOS()) {
         libraryPath += "iOS/";
@@ -120,6 +134,11 @@ public class Reveal {
     return version != null && version.isOrGreaterThan(12724);
   }
 
+  public static boolean isCompatibleWithReveal27OrHigher(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
+    return version != null && version.isOrGreaterThan(13901);
+  }
+
   @Nullable
   public static Version getRevealVersion(@NotNull File bundle) {
     Plist plist = PlistDriver.readAnyFormatSafe(new File(bundle, "Contents/Info.plist"));
@@ -137,7 +156,7 @@ public class Reveal {
   }
 
   public static void refreshReveal(@NotNull Project project, @NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
-    RevealUsageTriggerCollector.Companion.trigger(project, "showInReveal");
+    RevealUsageTriggerCollector.trigger(project, "showInReveal");
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
       refreshRevealPostOnePointSix(revealBundle, bundleID, deviceName);
@@ -150,7 +169,7 @@ public class Reveal {
     // Reveal 1.6 and later bundle the refresh script with the application - execute it using osascript
     File inspectionScript = getRevealInspectionScript(revealBundle);
     if (inspectionScript == null) {
-      throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.refresh.reveal.inspection.script.could.not.be.found"));
     }
 
     try {
@@ -171,13 +190,13 @@ public class Reveal {
       handler.startNotify();
     }
     catch (Exception e) {
-      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.refresh.reveal", e.getMessage()), e);
     }
   }
 
   private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     // Pre Reveal 1.6, the refresh script was not bundled with the application
-    String script = "activate\n" +
+    @NonNls String script = "activate\n" +
             "repeat with doc in documents\n" +
             " refresh doc " +
             "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"";
@@ -198,7 +217,7 @@ public class Reveal {
     }
     catch (IdeScriptException e) {
       LOG.info("Reveal script failed:\n" + script);
-      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.refresh.reveal", e.getMessage()), e);
     }
   }
 }

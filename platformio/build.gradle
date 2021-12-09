@@ -5,9 +5,6 @@ buildscript {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
-        maven {
-            url 'https://dl.bintray.com/jetbrains/intellij-plugin-service'
-        }
     }
 }
 plugins {
@@ -27,9 +24,9 @@ version '1.1'
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-  version 'CL-2020.1.1'
+  version 'CL-LATEST-EAP-SNAPSHOT'
   downloadSources false
-  plugins = ['clion-embedded']
+  plugins = ['clion-embedded', 'terminal']
 }
 
 sourceSets {
@@ -42,6 +39,7 @@ sourceSets {
 patchPluginXml {
   changeNotes """
 <ul>
+ <li>Custom PlatformIO utility location supported via Settings</li>
  <li>platformio.ini highlighting</li>
  <li>All strings are externalized</li>
  <li>Profiles and run configurations are created automatically when a new project is created</li>

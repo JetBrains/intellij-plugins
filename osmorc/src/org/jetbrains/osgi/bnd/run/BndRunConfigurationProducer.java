@@ -6,7 +6,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.LazyRunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,8 @@ abstract class BndRunConfigurationProducer extends LazyRunConfigurationProducer<
       Location location = context.getLocation();
       if (location != null) {
         VirtualFile file = location.getVirtualFile();
-        return file != null && !file.isDirectory() && FileUtil.pathsEqual(file.getPath(), configuration.getOptions().getBndRunFile());
+        return file != null && !file.isDirectory() && configuration.getOptions().getBndRunFile() != null && VfsUtilCore
+          .pathEqualsTo(file, configuration.getOptions().getBndRunFile());
       }
     }
 

@@ -1,19 +1,18 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
-import gnu.trove.THashMap;
 import org.dartlang.vm.service.element.Isolate;
 import org.dartlang.vm.service.element.IsolateRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class IsolatesInfo {
-
+public final class IsolatesInfo {
   public static final class IsolateInfo {
     private final String myIsolateId;
     private final String myIsolateName;
@@ -51,7 +50,7 @@ public class IsolatesInfo {
     }
   }
 
-  private final Map<String, IsolateInfo> myIsolateIdToInfoMap = new THashMap<>();
+  private final Map<String, IsolateInfo> myIsolateIdToInfoMap = new HashMap<>();
 
   public synchronized boolean addIsolate(@NotNull final IsolateRef isolateRef) {
     if (myIsolateIdToInfoMap.containsKey(isolateRef.getId())) {

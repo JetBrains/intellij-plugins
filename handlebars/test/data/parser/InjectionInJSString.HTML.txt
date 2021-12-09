@@ -1,0 +1,33 @@
+HtmlFile:InjectionInJSString.hbs
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent
+        PsiWhiteSpace('\n')
+        JSVarStatement
+          JSAttributeList
+            <empty list>
+          PsiElement(JS:LET_KEYWORD)('let')
+          PsiWhiteSpace(' ')
+          JSVariable
+            PsiElement(JS:IDENTIFIER)('s')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"rest/logstats?from=-1d&postFunctionId=')
+          PsiErrorElement:Expecting newline or semicolon
+            <empty list>
+        JSExpressionStatement
+          JSLiteralExpression
+            PsiElement([Hb] HB_FRAGMENT)('{{id}}')
+            PsiElement(JS:STRING_LITERAL)('"')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')

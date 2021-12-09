@@ -17,13 +17,8 @@ public class PlatformioFileType extends LanguageFileType {
   public static final PlatformioFileType INSTANCE = new PlatformioFileType();
   public static final String FILE_NAME = "platformio.ini";
 
-  public PlatformioFileType() {
+  private PlatformioFileType() {
     super(findLanguage());
-  }
-
-  @Override
-  public boolean isReadOnly() {
-    return false;
   }
 
   @Override
@@ -35,7 +30,7 @@ public class PlatformioFileType extends LanguageFileType {
   @Override
   public @NotNull
   String getDescription() {
-    return ClionEmbeddedPlatformioBundle.message("platformio.file.type");
+    return ClionEmbeddedPlatformioBundle.message("filetype.platformio.description");
   }
 
   @Override
@@ -53,12 +48,6 @@ public class PlatformioFileType extends LanguageFileType {
   private static Language findLanguage() {
     Language language = Language.findLanguageByID("Ini");
     return language == null ? PlainTextLanguage.INSTANCE : language;
-  }
-
-  @Override
-  @Nullable
-  public String getCharset(@NotNull VirtualFile virtualFile, byte @NotNull [] bytes) {
-    return null;
   }
 
   @Contract("null->false")

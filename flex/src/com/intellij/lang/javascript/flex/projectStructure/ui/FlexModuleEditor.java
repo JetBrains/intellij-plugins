@@ -23,7 +23,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
   private final CommonContentEntriesEditor myEntriesEditor;
 
   public FlexModuleEditor(ModuleConfigurationState state) {
-    Module module = state.getRootModel().getModule();
+    Module module = state.getCurrentRootModel().getModule();
     myEntriesEditor = new CommonContentEntriesEditor(module.getName(), state, JavaSourceRootType.SOURCE, JavaSourceRootType.TEST_SOURCE) {
       @Override
       protected List<ContentEntry> addContentEntries(VirtualFile[] files) {

@@ -40,7 +40,7 @@ public class Angular2EventType extends Angular2BaseType<XmlAttribute> {
     XmlAttribute attribute = getSourceElement();
     Angular2AttributeDescriptor descriptor = tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
     if (descriptor != null && isEmpty(descriptor.getSourceDirectives())) {
-      return descriptor.getEventVariableType();
+      return descriptor.getSymbol().getJsType();
     }
     return BindingsTypeResolver.resolve(attribute,
                                         Angular2EventType::isEventAttribute,

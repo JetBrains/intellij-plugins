@@ -3,6 +3,8 @@ package org.jetbrains.plugins.cucumber.java;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,7 +28,8 @@ public class CucumberJavaInjector implements MultiHostInjector {
         if (annotation != null &&
             (CucumberJavaUtil.isCucumberStepAnnotation(annotation) || CucumberJavaUtil.isCucumberHookAnnotation(annotation))) {
           final TextRange range = new TextRange(1, element.getTextLength() - 1);
-          if (!CucumberJavaVersionUtil.isCucumber3OrMore(element)) {
+          Module module = ModuleUtilCore.findModuleForPsiElement(element);
+          if (module != null && !CucumberJavaVersionUtil.isCucumber3OrMore(module)) {
             registrar.startInjecting(regexpLanguage).addPlace(null, null, (PsiLanguageInjectionHost)element, range).doneInjecting();
           } 
         }

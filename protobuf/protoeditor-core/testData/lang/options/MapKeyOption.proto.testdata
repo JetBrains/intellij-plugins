@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+message TestMessage {
+  map<string, int32> some_map = 1;
+
+  // This won't actually compile because generated map entries aren't allowed to be specified in
+  // proto source. However, it exercises our resolve logic.
+  extend proto2.FieldOptions {
+    SomeMapEntry map_entry_option = 2000;
+  }
+
+  string test_field = 10 [ (map_entry_option).k<caret>ey = "foo" ];
+}

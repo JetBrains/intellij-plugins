@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.CantRunException;
@@ -10,6 +10,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.IdeCoreBundle;
 import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -70,7 +71,6 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.frame.XValueMarkerProvider;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,7 +137,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private String myFdbLaunchCommand;
 
-  private final LinkedList<DebuggerCommand> commandsToWrite = new LinkedList<DebuggerCommand>() {
+  private final LinkedList<DebuggerCommand> commandsToWrite = new LinkedList<>() {
     @Override
     public synchronized DebuggerCommand removeFirst() {
       waitForData();
@@ -478,7 +478,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return new FlexDebuggerEditorsProvider();
   }
 
-  private static final Set<String> ourAlreadyMadeExecutable = new THashSet<>();
+  private static final Set<String> ourAlreadyMadeExecutable = new HashSet<>();
 
   private static synchronized void ensureExecutable(String path) {
     if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
@@ -816,7 +816,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
     // [3]
     final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
-    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new THashSet<>());
+    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new HashSet<>());
 
     Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
 
@@ -884,7 +884,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
-    return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
+    return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(fileName, scope));
   }
 
   @Nullable
@@ -908,7 +908,7 @@ public class FlexDebugProcess extends XDebugProcess {
                                                                final Collection<FlexBuildConfiguration> processedConfigurations) {
     if (!processedConfigurations.add(bc)) return scope;
 
-    final Collection<VirtualFile> libSourceRoots = new THashSet<>();
+    final Collection<VirtualFile> libSourceRoots = new HashSet<>();
 
     final Sdk sdk = bc.getSdk();
     if (sdk != null) {
@@ -1298,7 +1298,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   @Override
   public XValueMarkerProvider<FlexValue, String> createValueMarkerProvider() {
-    return new XValueMarkerProvider<FlexValue, String>(FlexValue.class) {
+    return new XValueMarkerProvider<>(FlexValue.class) {
       @Override
       public boolean canMark(@NotNull final FlexValue value) {
         return getObjectId(value) != null;
@@ -1398,7 +1398,7 @@ public class FlexDebugProcess extends XDebugProcess {
           adlProcess.destroy();
           try {
             int exitCode = adlProcess.exitValue();
-            myConsoleView.print(ADL_PREFIX + IdeBundle.message("finished.with.exit.code.text.message", exitCode) + "\n",
+            myConsoleView.print(ADL_PREFIX + IdeCoreBundle.message("finished.with.exit.code.text.message", exitCode) + "\n",
                                 exitCode == 0 ? ConsoleViewContentType.SYSTEM_OUTPUT : ConsoleViewContentType.ERROR_OUTPUT);
           }
           catch (IllegalThreadStateException ignore) {

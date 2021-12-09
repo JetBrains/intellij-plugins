@@ -54,9 +54,6 @@ public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtensi
       if (settings == null) settings = new OsmorcProjectExtensionProperties();
       project.getContainer().setChild(JpsOsmorcProjectExtension.ROLE, new JpsOsmorcProjectExtensionImpl(settings));
     }
-
-    @Override
-    public void saveExtension(@NotNull JpsProject project, @NotNull Element componentTag) { }
   }
 
   private static final class JpsOsmorcModuleExtensionSerializer extends JpsFacetConfigurationSerializer<JpsOsmorcModuleExtension> {
@@ -67,12 +64,6 @@ public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtensi
     @Override
     protected JpsOsmorcModuleExtension loadExtension(@NotNull Element element, String name, JpsElement parent, JpsModule module) {
       return new JpsOsmorcModuleExtensionImpl(XmlSerializer.deserialize(element, OsmorcModuleExtensionProperties.class));
-    }
-
-    @Override
-    protected void saveExtension(JpsOsmorcModuleExtension extension, Element element, JpsModule module) {
-      OsmorcModuleExtensionProperties properties = ((JpsOsmorcModuleExtensionImpl)extension).getProperties();
-      XmlSerializer.serializeInto(properties, element);
     }
   }
 }

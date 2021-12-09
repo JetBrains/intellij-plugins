@@ -25,7 +25,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
   : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
 
-  override fun resolvedHashCodeImpl(): Int {
+  override fun hashCodeImpl(): Int {
     return Objects.hash(element, baseNamespace)
   }
 
@@ -37,7 +37,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
 
   abstract val kind: String
 
-  private val resolvedNamespace: String by lazy {
+  private val resolvedNamespace: String by lazy(LazyThreadSafetyMode.NONE) {
     baseNamespace.get(element)
   }
 
@@ -63,7 +63,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
         val useTypeScriptRecordTypeFormat = format == JSType.TypeTextFormat.CODE && isTypeScript
         val prefix = "    "
         val nextPrefix = if (useTypeScriptRecordTypeFormat) ";\n" else ",\n"
-        val separator = typeSeparator
+        val separator = getTypeSeparator(format)
         val quote = JSSymbolPresentationProvider.getDefaultQuote(source.sourceElement)[0]
 
         el.properties
@@ -75,9 +75,9 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
             when (val jsType = property.jsType) {
               is VuexContainerPropertyTypeBase -> {
                 if (property.isConst) builder.append("readonly ")
-                val fixedName = JSSymbolUtil.handleSpecialPropertyNames(property.memberName, quote)
+                val fixedName = JSSymbolUtil.quoteIfSpecialPropertyName(property.memberName, property.isPrivateName, quote)
                 builder.append(fixedName)
-                builder.append(typeSeparator)
+                builder.append(separator)
                 builder.append("object ")
                 jsType.appendPseudoType(builder, false)
               }

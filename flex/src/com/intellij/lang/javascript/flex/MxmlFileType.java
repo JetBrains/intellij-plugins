@@ -10,7 +10,7 @@ import javax.swing.*;
 public class MxmlFileType extends XmlLikeFileType {
   public static final LanguageFileType MXML = new MxmlFileType();
 
-  public MxmlFileType() {
+  private MxmlFileType() {
     super(MxmlLanguage.INSTANCE);
   }
 

@@ -10,11 +10,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlElement;
-import org.angularjs.index.AngularDirectivesDocIndex;
-import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSIndexingHandler;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.angularjs.index.AngularJSDirectivesSupport.findDirective;
 
 /**
  * @author Dennis.Ushakov
@@ -22,7 +23,10 @@ import java.util.List;
 public class AngularJSDocumentationProvider implements DocumentationProvider {
 
   private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
-    return AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.KEY, directiveName);
+    JSImplicitElement directive = findDirective(project, directiveName);
+    return directive != null
+           && AngularJSIndexingHandler.ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING.equals(directive.getUserString())
+           ? directive : null;
   }
 
   @Override
@@ -49,7 +53,7 @@ public class AngularJSDocumentationProvider implements DocumentationProvider {
         final JSDocTagValue nameValue = nameTag.getValue();
         String name = nameValue != null ? nameValue.getText() : null;
         if (name != null) name = name.substring(name.indexOf(':') + 1);
-        if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.KEY, name) != null) {
+        if (name != null && getElementForDocumentation(element.getProject(), name) != null) {
           return Collections.singletonList("https://docs.angularjs.org/api/ng/directive/" + name);
         }
       }

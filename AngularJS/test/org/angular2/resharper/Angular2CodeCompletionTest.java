@@ -4,23 +4,23 @@ package org.angular2.resharper;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.javascript.web.symbols.WebSymbol;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.angular2.modules.Angular2TestModule.*;
-import static org.angular2.modules.Angular2TestModule.configureLink;
 
 @TestDataPath("$R#_COMPLETION_TEST_ROOT/Angular2")
 public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestBase {
 
   private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
-    "test004" // improve ngFor completions
+    "test004", // improve ngFor completions
+    "external/test004"
   );
 
   private static final Set<String> HIGH_PRIORITY_ONLY = ContainerUtil.newHashSet(
@@ -29,6 +29,7 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
 
   private static final Set<String> CAMEL_CASE_MATCH_ONLY = ContainerUtil.newHashSet(
     "external/test002",
+    "external/test004",
     "external/test006"
   );
 
@@ -39,7 +40,7 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
     }
     if (HIGH_PRIORITY_ONLY.contains(getName())) {
       return !(element instanceof PrioritizedLookupElement)
-             || ((PrioritizedLookupElement)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
+             || ((PrioritizedLookupElement<?>)element).getPriority() < WebSymbol.Priority.HIGH.getValue();
     }
     if (CAMEL_CASE_MATCH_ONLY.contains(getName())) {
       PsiElement el = myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1);

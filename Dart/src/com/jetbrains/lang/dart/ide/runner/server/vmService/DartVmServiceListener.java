@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -145,10 +145,10 @@ public class DartVmServiceListener implements VmServiceListener {
 
     if (vmBreakpoints == null || vmBreakpoints.isEmpty()) {
       final StepOption latestStep = myDebugProcess.getVmServiceWrapper().getLatestStep();
-
+      final StepOption nextStep = atAsyncSuspension ? StepOption.OverAsyncSuspension : latestStep;
       if (latestStep == StepOption.Over && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {
         // continue stepping to change current line
-        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), latestStep);
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), nextStep);
       }
       else if (exception != null) {
         final XBreakpoint<DartExceptionBreakpointProperties> breakpoint =

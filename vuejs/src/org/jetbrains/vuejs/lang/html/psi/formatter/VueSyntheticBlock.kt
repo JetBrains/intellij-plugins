@@ -11,6 +11,8 @@ import com.intellij.psi.formatter.xml.AnotherLanguageBlockWrapper
 import com.intellij.psi.formatter.xml.SyntheticBlock
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 class VueSyntheticBlock(subBlocks: List<Block>,
                         parent: Block,
@@ -53,6 +55,14 @@ class VueSyntheticBlock(subBlocks: List<Block>,
     else {
       super.getSpacing(child1, child2)
     }
+
+  override fun startsWithText(): Boolean =
+    super.startsWithText()
+    || myStartTreeNode.elementType == INTERPOLATION_START
+
+  override fun endsWithText(): Boolean =
+    super.endsWithText()
+    || myEndTreeNode.elementType == INTERPOLATION_END
 
   private fun findSibling(block: Block, relativeIndex: Int): Block? {
     val subBlocks = subBlocks

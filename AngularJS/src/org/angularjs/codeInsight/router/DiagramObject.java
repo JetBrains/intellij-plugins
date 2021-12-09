@@ -1,23 +1,20 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
-public class DiagramObject {
+public final class DiagramObject {
   private @NotNull Type myType;
-  private final @NotNull String myName;
-  private @Nullable String myTooltip;
-  private final @Nullable SmartPsiElementPointer myNavigationTarget;
+  private final @NotNull @NlsSafe String myName;
+  private @Nullable @Nls String myTooltip;
+  private final @Nullable SmartPsiElementPointer<?> myNavigationTarget;
   private boolean myIsValid = true;  //invalid = created by reference from other place, but not defined
   private final @NotNull List<String> myNotes;
   private final @NotNull List<String> myWarnings;
@@ -27,7 +24,7 @@ public class DiagramObject {
   private AngularUiRouterNode myContainer;
   private String myParentName;
 
-  public DiagramObject(@NotNull Type type, @NotNull String name, @Nullable SmartPsiElementPointer navigationTarget) {
+  public DiagramObject(@NotNull Type type, @NotNull String name, @Nullable SmartPsiElementPointer<?> navigationTarget) {
     myType = type;
     myName = name;
     myNavigationTarget = navigationTarget;
@@ -60,11 +57,11 @@ public class DiagramObject {
     return myType;
   }
 
-  public @NotNull String getName() {
+  public @NotNull @NlsSafe String getName() {
     return myName;
   }
 
-  public @Nullable SmartPsiElementPointer getNavigationTarget() {
+  public @Nullable SmartPsiElementPointer<?> getNavigationTarget() {
     return myNavigationTarget;
   }
 
@@ -98,15 +95,15 @@ public class DiagramObject {
     return myNotes;
   }
 
-  public @Nullable String getTooltip() {
+  public @NotNull @Nls String getTooltip() {
     return myTooltip == null ? myName : myTooltip;
   }
 
-  public void setTooltip(@Nullable String tooltip) {
+  public void setTooltip(@Nls @Nullable String tooltip) {
     myTooltip = tooltip;
   }
 
-  public void setType(Type type) {
+  public void setType(@NotNull Type type) {
     myType = type;
   }
 
@@ -127,11 +124,11 @@ public class DiagramObject {
 
     if (myType != object.myType) return false;
     if (!myName.equals(object.myName)) return false;
-    if (myTooltip != null ? !myTooltip.equals(object.myTooltip) : object.myTooltip != null) return false;
-    if (myNavigationTarget != null ? !myNavigationTarget.equals(object.myNavigationTarget) : object.myNavigationTarget != null) {
+    if (!Objects.equals(myTooltip, object.myTooltip)) return false;
+    if (!Objects.equals(myNavigationTarget, object.myNavigationTarget)) {
       return false;
     }
-    if (myContainer != null ? !myContainer.equals(object.myContainer) : object.myContainer != null) return false;
+    if (!Objects.equals(myContainer, object.myContainer)) return false;
 
     return true;
   }

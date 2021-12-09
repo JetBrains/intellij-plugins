@@ -20,9 +20,20 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="maven-model" level="project" />
-    <orderEntry type="library" exported="" name="Velocity" level="project" />
-    <orderEntry type="library" exported="" name="CGLIB" level="project" />
+    <orderEntry type="module-library">
+      <library name="maven-model" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.apache.maven:maven-model:3.6.3" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.6.3/maven-model-3.6.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.6.3/maven-model-3.6.3-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Velocity" level="project" />
+    <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
     <orderEntry type="module" module-name="intellij.java" exported="" />
@@ -33,11 +44,12 @@
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
-    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" />
     <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="module" module-name="intellij.css.psi" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
-    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="library" scope="RUNTIME" name="plexus-utils" level="project" />
   </component>
 </module>

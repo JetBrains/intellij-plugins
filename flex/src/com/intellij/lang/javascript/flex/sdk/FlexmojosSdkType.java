@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.FlexIcons;
@@ -33,7 +34,7 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  public boolean isValidSdkHome(final String _path) {
+  public boolean isValidSdkHome(final @NotNull String _path) {
     final String path = FileUtil.toSystemIndependentName(_path);
     return path.matches(COMPILER_POM_PATTERN_1) || path.matches(COMPILER_POM_PATTERN_2);
   }
@@ -53,7 +54,7 @@ public class FlexmojosSdkType extends SdkType {
 
   @NotNull
   @Override
-  public String suggestSdkName(@Nullable final String currentSdkName, final String sdkHome) {
+  public String suggestSdkName(@Nullable final String currentSdkName, final @NotNull String sdkHome) {
     return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 
@@ -82,7 +83,7 @@ public class FlexmojosSdkType extends SdkType {
 
   @Override
   @NotNull
-  public String getHomeFieldLabel() {
+  public @NlsContexts.Label String getHomeFieldLabel() {
     return "Flex Compiler POM:";
   }
 
@@ -100,12 +101,6 @@ public class FlexmojosSdkType extends SdkType {
   @Override
   public String getHelpTopic() {
     return "reference.project.structure.sdk.flexmojos";
-  }
-
-  @Override
-  @NotNull
-  public Icon getIconForAddAction() {
-    return getIcon();
   }
 
   @Override

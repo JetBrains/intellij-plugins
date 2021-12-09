@@ -1,0 +1,112 @@
+syntax = "proto2";
+
+// Our package name conflicts with a non-package symbol in another file.
+package test.conflict.<error descr="'test.conflict.pkg' is already defined in file 'lang/annotation/conflictimport1.proto'">pkg</error>;
+
+import "lang/annotation/conflictimport1.proto";
+import "lang/annotation/conflictimport2.proto";
+
+message AlreadyDefined {}
+
+message SimpleFieldConflicts {
+  message msg {}
+  optional int32 foo = 10;
+  optional int32 <error descr="'foo' is already defined in scope 'test.conflict.pkg.SimpleFieldConflicts'">foo</error> = 11;
+  optional int32 <error descr="'msg' is already defined in scope 'test.conflict.pkg.SimpleFieldConflicts'">msg</error> = 12;
+}
+
+message GroupFieldConflicts {
+  message msg {}
+  optional int32 foo = 10;
+  optional group <error descr="'foo' is already defined in scope 'test.conflict.pkg.GroupFieldConflicts'">Foo</error> = 11 {}
+  optional group <error descr="'msg' is already defined in scope 'test.conflict.pkg.GroupFieldConflicts'">Msg</error> = 12 {}
+
+  optional group Baz = 13 {}
+  optional group <error descr="'Baz' is already defined in scope 'test.conflict.pkg.GroupFieldConflicts'">Baz</error> = 14 {}
+  optional int32 <error descr="'baz' is already defined in scope 'test.conflict.pkg.GroupFieldConflicts'">baz</error> = 15;
+}
+
+message MapFieldConflicts {
+  map<string, string> my_map = 1;
+  message <error descr="'MyMapEntry' is already defined in scope 'test.conflict.pkg.MapFieldConflicts'">MyMapEntry</error> {}
+
+  message ConflictorEntry {}
+  map<string, string> <error descr="'ConflictorEntry' is already defined in scope 'test.conflict.pkg.MapFieldConflicts'">conflictor</error> = 2;
+
+  optional bool my_conflict_map = 3;
+  map<string, string> <error descr="'my_conflict_map' is already defined in scope 'test.conflict.pkg.MapFieldConflicts'">my_conflict_map</error> = 4;
+}
+
+message MessageConflicts {
+  message Foo {}
+  message <error descr="'Foo' is already defined in scope 'test.conflict.pkg.MessageConflicts'">Foo</error> {}
+}
+
+message EnumConflicts {
+  message ExistingName {}
+  enum Foo1 {
+    FOO = 1;
+    <error descr="'ExistingName' is already defined in scope 'test.conflict.pkg.EnumConflicts'">ExistingName</error> = 2;
+  }
+  enum <error descr="'ExistingName' is already defined in scope 'test.conflict.pkg.EnumConflicts'">ExistingName</error> {
+    BOGUS = 1;
+  }
+
+  // Another 'FOO' enum value should conflict with the one in Foo1 since enums don't define scopes.
+  enum Foo2 {
+    <error descr="'FOO' is already defined in scope 'test.conflict.pkg.EnumConflicts'">FOO</error> = 10;
+  }
+
+  // Other symbols should also conflict with existing enum values.
+  optional int32 <error descr="'FOO' is already defined in scope 'test.conflict.pkg.EnumConflicts'">FOO</error> = 50;
+
+  // An enum value can conflict with its parent since enums don't define scopes.
+  enum BadIdea {
+    <error descr="'BadIdea' is already defined in scope 'test.conflict.pkg.EnumConflicts'">BadIdea</error> = 1;
+  }
+}
+
+message OneofConflicts {
+  message ExistingName {}
+  oneof Foo1 {
+    int32 field1 = 1;
+    int32 field2 = 2;
+    int32 <error descr="'ExistingName' is already defined in scope 'test.conflict.pkg.OneofConflicts'">ExistingName</error> = 3;
+  }
+
+  oneof <error descr="'ExistingName' is already defined in scope 'test.conflict.pkg.OneofConflicts'">ExistingName</error> {
+    int32 bogus = 4;
+  }
+
+  // Another 'field1' field should conflict with the one in Foo1 since oneofs don't define scopes.
+  oneof Foo2 {
+    int32 <error descr="'field1' is already defined in scope 'test.conflict.pkg.OneofConflicts'">field1</error> = 10;
+  }
+
+  // Other symbols should also conflict with existing oneof fields.
+  message <error descr="'field1' is already defined in scope 'test.conflict.pkg.OneofConflicts'">field1</error> {}
+
+  // A oneof field can conflict with its parent since oneofs don't define scopes.
+  oneof BadIdea {
+    int32 <error descr="'BadIdea' is already defined in scope 'test.conflict.pkg.OneofConflicts'">BadIdea</error> = 20;
+  }
+}
+
+message Type {}
+
+service ServiceConflicts {
+  rpc foo (Type) returns (Type);
+  rpc <error descr="'foo' is already defined in scope 'test.conflict.pkg.ServiceConflicts'">foo</error> (Type) returns (Type);
+  stream <error descr="'foo' is already defined in scope 'test.conflict.pkg.ServiceConflicts'">foo</error> (Type, Type);
+
+  stream bar (Type, Type);
+  rpc <error descr="'bar' is already defined in scope 'test.conflict.pkg.ServiceConflicts'">bar</error> (Type) returns (Type);
+  stream <error descr="'bar' is already defined in scope 'test.conflict.pkg.ServiceConflicts'">bar</error> (Type, Type);
+}
+
+// Service names also conflict.
+service <error descr="'AlreadyDefined' is already defined in scope 'test.conflict.pkg'">AlreadyDefined</error> {
+}
+
+// Conflict from another file.
+message <error descr="'test.conflict.pkg.FromAnotherFile' is already defined in file 'lang/annotation/conflictimport2.proto'">FromAnotherFile</error> {}

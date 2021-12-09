@@ -13,11 +13,11 @@
  */
 package com.google.dart.server;
 
-import org.dartlang.analysis.server.protocol.GetCompletionDetailsResult;
 import org.dartlang.analysis.server.protocol.RequestError;
+import org.dartlang.analysis.server.protocol.SourceChange;
 
 public interface GetSuggestionDetailsConsumer extends Consumer {
-  public void computedDetails(GetCompletionDetailsResult result);
+  public void computedDetails(String completion, SourceChange change);
 
   public void onError(RequestError requestError);
 }

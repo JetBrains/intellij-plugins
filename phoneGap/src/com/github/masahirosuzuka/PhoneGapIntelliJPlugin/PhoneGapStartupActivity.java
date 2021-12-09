@@ -4,6 +4,8 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -20,23 +22,27 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateExcludedFolders;
 
-public class PhoneGapStartupActivity implements StartupActivity {
+public class PhoneGapStartupActivity implements StartupActivity.Background {
   
   public static final String EXCLUDED_WWW_DIRECTORY = "excluded.www.directory";
 
   @Override
   public void runActivity(@NotNull Project project) {
-    if (isPhoneGapProject(project)) {
-      if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
-        excludeWorkingDirectories(project);
+    ReadAction.run(() -> {
+      if (isPhoneGapProject(project)) {
+        if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+          ApplicationManager.getApplication().invokeLater(() -> excludeWorkingDirectories(project), project.getDisposed());
+        }
+        PhoneGapExecutableChecker.check(project);
       }
-      PhoneGapExecutableChecker.check(project);
-    }
+    });
   }
 
   public static boolean shouldExcludeDirectory(@NotNull VFileEvent event) {
@@ -101,16 +107,14 @@ public class PhoneGapStartupActivity implements StartupActivity {
   }
 
   private static void excludeWorkingDirectories(@NotNull Project project) {
-    final Collection<VirtualFile> platformsDirectories = FilenameIndex.getVirtualFilesByName(project,
-                                                                                             FOLDER_PLATFORMS,
+    final Collection<VirtualFile> platformsDirectories = FilenameIndex.getVirtualFilesByName(FOLDER_PLATFORMS,
                                                                                              GlobalSearchScope.projectScope(project));
 
     for (VirtualFile directory : platformsDirectories) {
       excludeFolder(project, directory);
     }
 
-    final Collection<VirtualFile> wwwDirectories = FilenameIndex.getVirtualFilesByName(project,
-                                                                                       FOLDER_WWW,
+    final Collection<VirtualFile> wwwDirectories = FilenameIndex.getVirtualFilesByName(FOLDER_WWW,
                                                                                        GlobalSearchScope.projectScope(project));
 
     for (VirtualFile directory : wwwDirectories) {

@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class Angular2HtmlVariableElementType extends JSVariableElementType {
-
+public final class Angular2HtmlVariableElementType extends JSVariableElementType {
   private final Angular2HtmlAttrVariable.Kind myKind;
 
   public Angular2HtmlVariableElementType(Angular2HtmlAttrVariable.Kind kind) {

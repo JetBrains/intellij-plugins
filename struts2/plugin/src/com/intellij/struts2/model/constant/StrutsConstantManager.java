@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.model.constant;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -40,7 +39,7 @@ public abstract class StrutsConstantManager {
     new ExtensionPointName<>("com.intellij.struts2.constantContributor");
 
   public static StrutsConstantManager getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, StrutsConstantManager.class);
+    return project.getService(StrutsConstantManager.class);
   }
 
   /**

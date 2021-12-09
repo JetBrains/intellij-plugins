@@ -1,10 +1,9 @@
 package org.jetbrains.vuejs.lang
 
+import com.intellij.javascript.web.checkDocumentationAtCaret
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
-import com.intellij.openapi.application.PathManager
-import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import one.util.streamex.StreamEx
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,13 +12,11 @@ import java.io.File
 import java.util.*
 
 @RunWith(com.intellij.testFramework.Parameterized::class)
-class VueWebTypesDocumentationTest : JSAbstractDocumentationTest() {
+class VueWebTypesDocumentationTest : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = TEST_DATA_PATH
 
   override fun getBasePath(): String = "/"
-
-  override fun getExtension(): String = "vue"
 
   @Before
   fun before() {
@@ -31,18 +28,19 @@ class VueWebTypesDocumentationTest : JSAbstractDocumentationTest() {
   @JvmField
   var myFileName: String? = null
 
-  override fun getTestName(lowercaseFirstLetter: Boolean): String {
-    return myFileName!!
-  }
-
   @Test
   fun testTypes() {
     defaultTest()
   }
 
+  private fun defaultTest() {
+    myFixture.configureByFile("${myFileName!!}.vue")
+    myFixture.checkDocumentationAtCaret()
+  }
+
   companion object {
     @JvmStatic
-    val TEST_DATA_PATH = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/documentation/web-types"
+    val TEST_DATA_PATH = getVueTestDataPath() + "/documentation/web-types"
 
     @JvmStatic
     @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")

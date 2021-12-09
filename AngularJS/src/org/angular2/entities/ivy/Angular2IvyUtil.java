@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.openapi.util.Ref;
@@ -14,31 +15,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.processUpPackageJsonFilesInAllScope;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static org.angular2.entities.Angular2EntitiesProvider.isDeclaredClass;
 
-public class Angular2IvyUtil {
+public final class Angular2IvyUtil {
+  public static final String IVY_BACKUP_SUFFIX = "__ivy_ngcc_bak";
 
   public static boolean hasIvyMetadata(@NotNull PsiElement el) {
     return Optional.ofNullable(PsiUtilCore.getVirtualFile(el))
       .map(VirtualFile::getParent)
       .map(el.getManager()::findDirectory)
-      .map(dir -> CachedValuesManager.getCachedValue(dir, () -> {
-        VirtualFile f = dir.getVirtualFile();
-        Ref<Boolean> result = new Ref<>(false);
-        Ref<Integer> level = new Ref<>(0);
-        processUpPackageJsonFilesInAllScope(f, packageJson -> {
-          if (packageJson.getParent().findChild("__ivy_ngcc__") != null) { //NON-NLS
+      .map(dir -> {
+        return CachedValuesManager.getCachedValue(dir, () -> {
+          Ref<Boolean> result = new Ref<>(false);
+          var packageJson = PackageJsonUtil.findUpPackageJson(dir.getVirtualFile());
+          if (packageJson != null && PackageJsonUtil.isPackageJsonWithTopLevelProperty(packageJson, "__processed_by_ivy_ngcc__")) {
             result.set(true);
-            return false;
           }
-          level.set(level.get() + 1);
-          //we need to check only 2 package.jsons
-          return level.get() < 2;
+          return create(result.get(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
         });
-        return create(result.get(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
-      }))
+      })
       .orElse(false);
   }
 

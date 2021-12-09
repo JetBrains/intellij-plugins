@@ -14,40 +14,43 @@
     <orderEntry type="module" module-name="intellij.maven.jps" />
     <orderEntry type="module-library" exported="">
       <library name="bndlib" type="repository">
-        <properties maven-id="biz.aQute.bnd:biz.aQute.bndlib:5.0.0">
+        <properties maven-id="biz.aQute.bnd:biz.aQute.bndlib:5.1.2">
           <exclude>
             <dependency maven-id="org.slf4j:slf4j-api" />
           </exclude>
         </properties>
+        <ANNOTATIONS>
+          <root url="file://$MODULE_DIR$/../lib" />
+        </ANNOTATIONS>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.0.0/biz.aQute.bndlib-5.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.1.2/biz.aQute.bndlib-5.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.0.0/biz.aQute.bndlib-5.0.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.1.2/biz.aQute.bndlib-5.1.2-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="bndlib-repository" type="repository">
-        <properties maven-id="biz.aQute.bnd:biz.aQute.repository:5.0.0">
+        <properties maven-id="biz.aQute.bnd:biz.aQute.repository:5.1.2">
           <exclude>
             <dependency maven-id="biz.aQute.bnd:biz.aQute.bndlib" />
             <dependency maven-id="org.slf4j:slf4j-api" />
           </exclude>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.0.0/biz.aQute.repository-5.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.1.2/biz.aQute.repository-5.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.0.0/biz.aQute.repository-5.0.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.1.2/biz.aQute.repository-5.1.2-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library name="bndlib-resolve" type="repository">
-        <properties maven-id="biz.aQute.bnd:biz.aQute.resolve:5.0.0">
+        <properties maven-id="biz.aQute.bnd:biz.aQute.resolve:5.1.2">
           <exclude>
             <dependency maven-id="biz.aQute.bnd:biz.aQute.bndlib" />
             <dependency maven-id="biz.aQute.bnd:biz.aQute.repository" />
@@ -55,11 +58,11 @@
           </exclude>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.0.0/biz.aQute.resolve-5.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.1.2/biz.aQute.resolve-5.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.0.0/biz.aQute.resolve-5.0.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.1.2/biz.aQute.resolve-5.1.2-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

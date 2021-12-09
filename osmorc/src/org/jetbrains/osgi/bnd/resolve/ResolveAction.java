@@ -60,7 +60,7 @@ public class ResolveAction extends DumbAwareAction {
         File file = new File(virtualFile.getPath());
         try (Workspace workspace = Workspace.findWorkspace(file);
              Run run = Run.createRun(workspace, file);
-             ProjectResolver projectResolver = new ProjectResolver(run)) {
+             @SuppressWarnings("deprecation") ProjectResolver projectResolver = new ProjectResolver(run)) {
           resolveResult = projectResolver.resolve();
 
           List<VersionedClause> versionedClauses = resolveResult.keySet().stream()
@@ -86,7 +86,7 @@ public class ResolveAction extends DumbAwareAction {
         if (new ResolutionSucceedDialog(project, resolveResult).showAndGet() &&
             FileModificationService.getInstance().prepareVirtualFilesForWrite(project, Collections.singleton(virtualFile))) {
           writeCommandAction(project)
-            .withName("Bndrun Resolve")
+            .withName(message("bnd.resolve.command"))
             .run(() -> document.setText(updatedText));
         }
       }
@@ -99,7 +99,7 @@ public class ResolveAction extends DumbAwareAction {
           new ResolutionFailedDialog(project, (ResolutionException)cause).show();
         }
         else {
-          OsmorcBundle.notification(message("bnd.resolve.failed.title"), cause.getMessage(), NotificationType.ERROR).notify(project);
+          OsmorcBundle.notification(message("bnd.resolve.failed.notification"), cause.getMessage(), NotificationType.ERROR).notify(project);
         }
       }
     }.queue();

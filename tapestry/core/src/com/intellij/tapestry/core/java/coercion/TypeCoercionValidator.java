@@ -16,7 +16,7 @@ import java.util.HashMap;
 /**
  * Tries to validate if a type coercion is a valid one.
  */
-public class TypeCoercionValidator {
+public final class TypeCoercionValidator {
 
     private static final Logger _logger = Logger.getInstance(TypeCoercionValidator.class);
 

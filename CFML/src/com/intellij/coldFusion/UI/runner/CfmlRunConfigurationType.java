@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.model.files.CfmlFileType;
@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CfmlRunConfigurationType extends SimpleConfigurationType {
   public CfmlRunConfigurationType() {
-    super("Cold Fusion runner description" /* yes, backward compatibility, so strange id */, "Cold Fusion", "Cold Fusion runner description",
-          NotNullLazyValue.createValue(() -> CFMLIcons.Cfml));
+    super("Cold Fusion runner description" /* yes, backward compatibility, so strange id */, "Cold Fusion", "Cold Fusion runner description", //NON-NLS
+          NotNullLazyValue.lazy(() -> CFMLIcons.Cfml));
   }
 
   @Override
@@ -28,7 +28,7 @@ public final class CfmlRunConfigurationType extends SimpleConfigurationType {
   public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
     return new CfmlRunConfiguration(project, this, "Cold Fusion");
   }
-  
+
   @Override
   public String getHelpTopic() {
     return "reference.dialogs.rundebug.Cold Fusion runner description";

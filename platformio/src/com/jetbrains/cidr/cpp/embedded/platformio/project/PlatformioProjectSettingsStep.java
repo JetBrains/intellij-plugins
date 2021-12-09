@@ -7,12 +7,11 @@ import com.intellij.execution.process.CapturingProcessRunner;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.ide.util.projectWizard.ProjectSettingsStepBase;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.platform.DirectoryProjectGenerator;
@@ -100,8 +99,11 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
             setErrorText(platformioIsNotFound);
             myTree.getEmptyText().setText(platformioIsNotFound);
             myTree.getEmptyText()
-              .appendSecondaryText(ClionEmbeddedPlatformioBundle.message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
-                                   e -> PlatformioService.openInstallGuide());
+              .appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
+                          e -> PlatformioService.openSettings(getProject()))
+              .appendLine(ClionEmbeddedPlatformioBundle.message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
+                          e -> PlatformioService.openInstallGuide());
+
             return;
           }
           GeneralCommandLine commandLine = new GeneralCommandLine()
@@ -135,14 +137,13 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
       }.queue();
     }
     catch (Throwable e) {
-      String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
+      @NlsSafe String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
       setErrorText(errorMessage);
-      Notification notification =
-        PlatformioService.NOTIFICATION_GROUP.createNotification(
-          ClionEmbeddedPlatformioBundle.message("platformio.utility.failed"),
-          e.getClass().getSimpleName(),
-          errorMessage, NotificationType.WARNING);
-      Notifications.Bus.notify(notification);
+      @NlsSafe String className = e.getClass().getSimpleName();
+      PlatformioService.NOTIFICATION_GROUP
+        .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.failed"), errorMessage, NotificationType.WARNING)
+        .setSubtitle(className)
+        .notify(null);
     }
     checkValid();
     return panel;

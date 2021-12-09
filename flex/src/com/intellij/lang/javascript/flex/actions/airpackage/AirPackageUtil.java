@@ -509,10 +509,10 @@ public final class AirPackageUtil {
             break;
         }
 
-        if (!adtOptions.isEmpty() && (adtOptions.equals("-sampler") ||
-                                      adtOptions.startsWith("-sampler ") ||
-                                      adtOptions.endsWith(" -sampler") ||
-                                      adtOptions.contains(" -sampler "))) {
+        if (adtOptions.equals("-sampler") ||
+            adtOptions.startsWith("-sampler ") ||
+            adtOptions.endsWith(" -sampler") ||
+            adtOptions.contains(" -sampler ")) {
           command.add("-sampler");
         }
 

@@ -11,6 +11,11 @@ public class CucumberJava5_5ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("step {col<caret>or}", "color");
   }
 
+  public void testOptionalsWithCyrillic() {
+    //noinspection NonAsciiCharacters
+    doTest("optionalsWithCyrillic", "суфф<caret>икс", "cucumberExpressionWithOptional");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberProjectDescriptor("5.5");

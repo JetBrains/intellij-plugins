@@ -27,10 +27,10 @@ import static org.angularjs.AngularJSBundle.message;
 /**
  * @author Irina.Chernushina on 12/7/2015.
  */
-public class AngularMessageFormatCompletion {
+public final class AngularMessageFormatCompletion {
   public static final Comparator<AngularJSPluralCategories> PLURAL_CATEGORIES_COMPARATOR =
     Comparator.comparingInt(AngularJSPluralCategories::getCompletionOrder);
-  public static final InsertHandler<LookupElement> MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER = new InsertHandler<LookupElement>() {
+  public static final InsertHandler<LookupElement> MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER = new InsertHandler<>() {
     @Override
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
       context.setAddCompletionChar(false);

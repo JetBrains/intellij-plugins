@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package foo.bar;
+
+// A comment.
+import "lang/resolve/Sibl<caret>ing.proto";
+
+message Baz {
+  Foo a_foo;
+};

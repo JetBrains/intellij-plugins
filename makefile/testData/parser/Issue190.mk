@@ -1,0 +1,1 @@
+clean: clean-glob(.env)

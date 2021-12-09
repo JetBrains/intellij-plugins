@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -28,7 +28,7 @@ interface VuexContainer {
   val modules: Map<String, VuexModule>
 
   val source: PsiElement
-  val initializer: JSObjectLiteralExpression?
+  val initializer: JSElement? /* JSObjectLiteralExpression or JSFile */
 }
 
 interface VuexStore : VuexContainer {

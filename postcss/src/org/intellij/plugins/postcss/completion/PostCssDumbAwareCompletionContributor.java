@@ -66,12 +66,6 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
       if (PostCssPsiUtil.isInsidePostCss(position) && position.getNode().getElementType() == CssElementTypes.CSS_ATKEYWORD) {
         resultSet.addElement(CssCompletionUtil.lookupForKeyword("@custom-selector", ONE_LINE_STATEMENT_HANDLER));
         resultSet.addElement(CssCompletionUtil.lookupForKeyword("@custom-media", ONE_LINE_STATEMENT_HANDLER));
-        resultSet.addElement(CssCompletionUtil.lookupForKeyword("@apply", ONE_LINE_STATEMENT_HANDLER));
-        addNest(position, resultSet);
-
-        result.runRemainingContributors(parameters, r -> {
-          if (!r.getLookupElement().getLookupString().equals("@apply")) resultSet.passResult(r);
-        });
       }
     }
   }
@@ -86,20 +80,5 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
 
   private static PsiElementPattern.Capture<PsiElement> spaceElement() {
     return psiElement().withText(" ");
-  }
-
-  private static void addNest(@NotNull PsiElement position, @NotNull CompletionResultSet result) {
-    PsiElement parent = position.getParent();
-    if (parent instanceof PsiErrorElement) {
-      parent = parent.getParent();
-    }
-    if (parent == null || parent.getNode().getElementType() != CssElementTypes.CSS_BAD_AT_RULE) return;
-
-    PsiElement prev = parent.getPrevSibling();
-    boolean insideBlock = parent.getParent() instanceof CssBlock && (!(prev instanceof PsiErrorElement));
-    boolean insideNestedRule = PsiTreeUtil.getParentOfType(parent, CssRuleset.class) != null;
-    if (insideBlock && insideNestedRule) {
-      result.addElement(CssCompletionUtil.lookupForKeyword("@nest", new CssAddSpaceWithBracesInsertHandler(false), LookupElementInteractivity.ALWAYS));
-    }
   }
 }

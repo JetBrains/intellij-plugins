@@ -40,7 +40,7 @@ import java.util.List;
 
 public class TapestryReferenceContributor extends PsiReferenceContributor {
   private static class Holder {
-    private static final PatternCondition<XmlElement> tapestryFileCondition = new PatternCondition<XmlElement>("tapestryFileCondition") {
+    private static final PatternCondition<XmlElement> tapestryFileCondition = new PatternCondition<>("tapestryFileCondition") {
       @Override
       public boolean accepts(@NotNull XmlElement element, final ProcessingContext context) {
         return element.getContainingFile() instanceof TmlFile;
@@ -122,7 +122,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   }
 
   private static void registerAttrValueReferenceProvider(PsiReferenceRegistrar registrar) {
-    final PatternCondition<XmlTag> tapestryTagCondition = new PatternCondition<XmlTag>("tapestryTagCondition") {
+    final PatternCondition<XmlTag> tapestryTagCondition = new PatternCondition<>("tapestryTagCondition") {
       @Override
       public boolean accepts(@NotNull XmlTag tag, final ProcessingContext context) {
         return tag.getContainingFile() instanceof TmlFile && TapestryUtils.getTypeOfTag(tag) != null;

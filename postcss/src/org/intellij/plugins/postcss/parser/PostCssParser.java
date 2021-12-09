@@ -5,8 +5,6 @@ import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssMathParser;
 import com.intellij.psi.css.impl.parsing.CssParser2;
-import com.intellij.psi.css.impl.stubs.CssStylesheetStubElementType;
-import com.intellij.psi.css.impl.util.CssStylesheetLazyElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ArrayUtil;
@@ -29,12 +27,12 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
-  protected CssStylesheetLazyElementType getStylesheetLazyElementType() {
+  protected IElementType getStylesheetLazyElementType() {
     return PostCssElementTypes.POST_CSS_LAZY_STYLESHEET;
   }
 
   @Override
-  protected CssStylesheetStubElementType getStylesheetElementType() {
+  protected IElementType getStylesheetElementType() {
     return PostCssElementTypes.POST_CSS_STYLESHEET;
   }
 
@@ -153,7 +151,7 @@ public class PostCssParser extends CssParser2 {
         parseCustomSelectorAtRule() ||
         parseCustomMediaAtRule() ||
         parseAtRuleNesting() ||
-        parseBadAtRule(false) ||
+        parseGenericAtRule(false) ||
         tryToParseRuleset()) {
       myRulesetSeen = true;
       return true;
@@ -173,7 +171,7 @@ public class PostCssParser extends CssParser2 {
       customMedia.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA);
     }
     else {
-      createErrorElement(CssBundle.message("expected", CssBundle.message("an.identifier")));
+      createErrorElement(CssBundle.message("parsing.error.identifier.expected"));
     }
     parseMediumList();
     if (getTokenType() != CssElementTypes.CSS_RBRACE) {
@@ -212,7 +210,7 @@ public class PostCssParser extends CssParser2 {
       addSingleToken();
     }
     else {
-      createErrorElement(CssBundle.message("expected", PostCssBundle.message("postcss.operator.sign")));
+      createErrorElement(PostCssBundle.message("parsing.error.operator.sign.expected"));
     }
   }
 
@@ -223,7 +221,7 @@ public class PostCssParser extends CssParser2 {
 
   private void parseNumberTerm() {
     if (!isNumberTermStart()) {
-      createErrorElement(CssBundle.message("a.term.expected"));
+      createErrorElement(CssBundle.message("parsing.error.term.expected"));
       return;
     }
     PsiBuilder.Marker numberTerm = createCompositeElement();
@@ -273,7 +271,9 @@ public class PostCssParser extends CssParser2 {
     parseSelectorList();
 
     if (!parseDeclarationBlock()) {
-      expect(CssElementTypes.CSS_LBRACE, "'{");
+      if (getTokenType() != CssElementTypes.CSS_LBRACE) {
+        createErrorElement(CssBundle.message("parsing.error.opening.brace.expected"));
+      }
     }
     nest.done(PostCssElementTypes.POST_CSS_NEST);
     return true;
@@ -364,20 +364,6 @@ public class PostCssParser extends CssParser2 {
     }
     position.rollbackTo();
     return false;
-  }
-
-  @Override
-  protected boolean parseRuleset() {
-    if (!isRulesetStart()) {
-      return false;
-    }
-    PsiBuilder.Marker ruleset = createCompositeElement();
-    parseSelectorList();
-    if (!parseDeclarationBlock()) {
-      expect(CssElementTypes.CSS_LBRACE, "'{");
-    }
-    ruleset.done(CssElementTypes.CSS_RULESET);
-    return true;
   }
 
   @Override
@@ -493,7 +479,7 @@ public class PostCssParser extends CssParser2 {
       }
       else if (!parseAttribute() && !parsePseudo() && !parseClass()) {
         if (tokenType != null) {
-          createErrorElement(CssBundle.message("unexpected.token"));
+          createErrorElement(CssBundle.message("parsing.error.unexpected.token"));
           addToken();
         }
       }

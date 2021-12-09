@@ -40,6 +40,8 @@
 
     <xml.elementDescriptorProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryTagDescriptorProvider"/>
 
+    <html.embeddedContentSupport implementation="com.intellij.tapestry.psi.TmlEmbeddedContentSupport"/>
+
     <lang.formatter language="TML" implementationClass="com.intellij.lang.xhtml.XhtmlFormattingModelBuilder"/>
 
     <completion.contributor language="TML" implementationClass="com.intellij.tapestry.intellij.lang.completion.TemplateCompletionContributor"/>
@@ -96,7 +98,7 @@
       <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
     </group>
 
-    <group id="GoToTapestryClass" text="GoToClass">
+    <group id="GoToTapestryClass">
       <separator/>
       <action id="GoToClass"
               class="com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation"

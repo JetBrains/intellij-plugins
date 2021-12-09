@@ -1,7 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags;
 
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.MultiMap;
@@ -17,10 +17,10 @@ import static com.intellij.util.containers.ContainerUtil.filterIsInstance;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
 
-public class Angular2XmlElementSourcesResolver {
+public final class Angular2XmlElementSourcesResolver {
   private final XmlTag myScope;
   private final Collection<?> mySources;
-  private final AtomicNotNullLazyValue<Collection<PsiElement>> myDeclarations;
+  private final NotNullLazyValue<Collection<PsiElement>> myDeclarations;
 
   public Angular2XmlElementSourcesResolver(@NotNull XmlTag scope,
                                            @NotNull Collection<?> sources,
@@ -28,7 +28,7 @@ public class Angular2XmlElementSourcesResolver {
                                            @NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getSelectors) {
     myScope = scope;
     mySources = new ArrayList<>(sources);
-    myDeclarations = AtomicNotNullLazyValue.createValue(() -> buildDeclarations(getProperties, getSelectors));
+    myDeclarations = NotNullLazyValue.lazy(() -> buildDeclarations(getProperties, getSelectors));
   }
 
   public @NotNull XmlTag getScope() {

@@ -1,9 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.*
+import com.intellij.lang.javascript.completion.JSCompletionContributor
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSThisExpression
@@ -30,6 +29,9 @@ class VueThisInstanceCompletionProvider : CompletionProvider<CompletionParameter
       ?.mapNotNull {
         JSLookupUtilImpl.createPrioritizedLookupItem(it.memberSource.singleElement, it.memberName, JSLookupPriority.NESTING_LEVEL_1)
       }
-      ?.forEach(result::addElement)
+      ?.forEach(result.withRelevanceSorter(JSCompletionContributor.createOwnSorter(parameters))::addElement)
+      ?.also {
+        VueJSCompletionProvider.filterOutGenericJSResults(result, parameters)
+      }
   }
 }

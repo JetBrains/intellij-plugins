@@ -1,0 +1,5 @@
+<root>
+  <item name='aQute.bnd.osgi.Processor java.lang.String formatArrays(java.lang.String, java.lang.Object...)'>
+    <annotation name='org.jetbrains.annotations.Nls'/>
+  </item>
+</root>

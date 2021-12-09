@@ -3,6 +3,9 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.internal.statistic.eventLog.EventLogGroup;
+import com.intellij.internal.statistic.eventLog.events.EventFields;
+import com.intellij.internal.statistic.eventLog.events.EventId1;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -19,11 +22,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class PlatformioActionBase extends DumbAwareAction {
+
+  public static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 1);
+  private static final EventId1<String> COMMAND_EVENT_ID = EVENT_LOG_GROUP.registerEvent(
+    "command", EventFields.String("name", FUS_COMMAND.valuesList())
+  );
+
+  public static void fusLog(Project project, FUS_COMMAND fusCommand) {
+    COMMAND_EVENT_ID.log(project, fusCommand.name());
+  }
+
   private final long myExecutionId;
   @NotNull
   private final Supplier<String> myDynamicText;
@@ -33,6 +49,8 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
     this.myExecutionId = ExecutionEnvironment.getNextUnusedExecutionId();
     this.myDynamicText = dynamicText;
   }
+
+  public abstract @NotNull FUS_COMMAND getFusCommand();
 
   protected void actionPerformed(@NotNull AnActionEvent e,
                                  @NotNull String arguments,
@@ -54,7 +72,29 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
         }
       };
     }
+    COMMAND_EVENT_ID.log(project, getFusCommand().name());
     tool.executeIfPossible(e, e.getDataContext(), myExecutionId, processListener);
+  }
+
+  public enum FUS_COMMAND {
+    BUILD,
+    BUILD_PRODUCTION,
+    CHECK,
+    CLEAN,
+    CREATE_PROJECT,
+    DEBUG,
+    HOME,
+    INIT,
+    MONITOR,
+    PROGRAM,
+    TEST,
+    UPDATE_ALL,
+    UPLOAD,
+    UPLOADFS;
+
+    public static List<String> valuesList() {
+      return Stream.of(values()).map(Enum::name).collect(Collectors.toUnmodifiableList());
+    }
   }
 
   @Nullable

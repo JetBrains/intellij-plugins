@@ -70,11 +70,6 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
       }
-
-      @Override
-      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        JpsFlexCompilerProjectExtension.saveExtension(project, componentTag);
-      }
     };
   }
 
@@ -87,23 +82,11 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
       }
-
-      @Override
-      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        JpsFlexCompilerProjectExtension.saveExtension(project, componentTag);
-      }
     };
   }
 
   private static void loadExtension(final JpsProject project, final Element componentTag) {
     final JpsFlexCompilerProjectExtension deserialized = XmlSerializer.deserialize(componentTag, JpsFlexCompilerProjectExtension.class);
     project.getContainer().setChild(ROLE, deserialized);
-  }
-
-  private static void saveExtension(final JpsProject project, final Element componentTag) {
-    final JpsFlexCompilerProjectExtension extension = project.getContainer().getChild(ROLE);
-    if (extension != null) {
-      XmlSerializer.serializeInto(extension, componentTag);
-    }
   }
 }

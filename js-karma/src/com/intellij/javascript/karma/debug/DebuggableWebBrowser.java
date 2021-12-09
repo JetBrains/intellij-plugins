@@ -4,7 +4,7 @@ package com.intellij.javascript.karma.debug;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.JavaScriptDebugEngine;
 import com.intellij.javascript.debugger.execution.ILiveEditOptions;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +29,7 @@ public final class DebuggableWebBrowser {
 
   @Nullable
   public static DebuggableWebBrowser create(@NotNull WebBrowser browser) {
-    ILiveEditOptions liveEditOptions = ServiceManager.getService(ILiveEditOptions.class);
+    ILiveEditOptions liveEditOptions = ApplicationManager.getApplication().getService(ILiveEditOptions.class);
     boolean useExtension = liveEditOptions != null && liveEditOptions.isUseJBChromeExtension();
     JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.Companion.findByBrowser(browser, useExtension);
     return debugEngine != null ? new DebuggableWebBrowser(debugEngine, browser) : null;

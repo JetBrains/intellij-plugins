@@ -7,30 +7,19 @@
   'use strict';
 
   /**
-   * Extract grep option from karma config
-   * @param {[Array|string]} clientArguments The karma client arguments
-   * @return {string} The value of grep option by default empty string
+   * Extract test name pattern from karma config.
+   * @param {object} karmaConfig The karma config object
+   * @return {string} test name pattern string, or undefined if unspecified
    */
-  var getGrepOption = function (clientArguments) {
-    var grepRegex = /^--grep=(.*)$/;
-
+  var getTestNamePatternString = function (karmaConfig) {
+    var clientArguments = (karmaConfig || {}).args;
     if (Object.prototype.toString.call(clientArguments) === '[object Array]') {
-      var indexOfGrep = indexOf(clientArguments, '--grep');
-
-      if (indexOfGrep !== -1) {
-        return clientArguments[indexOfGrep + 1]
-      }
-
+      var grepRegex = /^--testNamePattern_intellij=(.*)$/;
       return map(filter(clientArguments, function (arg) {
-        return grepRegex.test(arg)
+        return grepRegex.test(arg);
       }), function (arg) {
-        return arg.replace(grepRegex, '$1')
-      })[0] || ''
-    }
-    else if (typeof clientArguments === 'string') {
-      var match = /--grep=([^=]+)/.exec(clientArguments);
-
-      return match ? match[1] : ''
+        return arg.replace(grepRegex, '$1');
+      })[0];
     }
   };
 
@@ -39,10 +28,14 @@
    * @param {Object} jasmineEnv jasmine environment object
    */
   var setJasmineSpecFilter = function (config, jasmineEnv) {
-    var grepOption = getGrepOption((config || {}).args);
-    var filterPattern = grepOption ? createRegExp(grepOption) : null;
+    var testNamePatternString = getTestNamePatternString(config);
+    if (testNamePatternString) {
+      // Configure --grep for karma-jasmine, otherwise it will reset specFilter before executing tests.
+      config.args.push("--grep=/" + testNamePatternString + "/");
+    }
+    var testNamePattern = testNamePatternString ? createRegExp(testNamePatternString) : null;
     var specFilter = function (spec) {
-      return filterPattern == null || filterPattern.test(spec.getFullName());
+      return testNamePattern == null || testNamePattern.test(spec.getFullName());
     };
     if (typeof jasmineEnv.configuration === 'function') {
       var configuration = jasmineEnv.configuration() || {};
@@ -59,45 +52,18 @@
    * @param {Object} mocha mocha global object
    */
   function setMochaSpecFilter(config, mocha) {
-    var grepOption = getGrepOption((config || {}).args);
+    var grepOption = getTestNamePatternString(config);
     if (grepOption) {
       mocha.grep(createRegExp(grepOption));
     }
   }
 
-  function createRegExp(filter) {
-    filter = filter || ''
-    if (filter === '') {
-      return new RegExp() // to match all
+  function createRegExp(testNamePatternString) {
+    testNamePatternString = testNamePatternString || ''
+    if (testNamePatternString === '') {
+      return new RegExp(".*") // to match all
     }
-    var regExp = /^[/](.*)[/]$/ // pattern to check whether the string is RegExp pattern
-    var parts = regExp.exec(filter)
-    if (parts === null) {
-      return new RegExp(filter)
-    }
-    return new RegExp(parts[1])
-  }
-
-  function indexOf(collection, find, i /* opt*/) {
-    if (collection.indexOf) {
-      return collection.indexOf(find, i)
-    }
-
-    if (i === undefined) {
-      i = 0
-    }
-    if (i < 0) {
-      i += collection.length
-    }
-    if (i < 0) {
-      i = 0
-    }
-    for (var n = collection.length; i < n; i++) {
-      if (i in collection && collection[i] === find) {
-        return i
-      }
-    }
-    return -1
+    return new RegExp(testNamePatternString)
   }
 
   function filter(collection, filter, that /* opt*/) {

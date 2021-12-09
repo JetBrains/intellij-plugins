@@ -85,7 +85,7 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
   @NotNull
   @Override
   public String getElementTypeName() {
-    return PostCssBundle.message("custom.selector");
+    return PostCssBundle.message("custom.selector.label");
   }
 
   @Nullable

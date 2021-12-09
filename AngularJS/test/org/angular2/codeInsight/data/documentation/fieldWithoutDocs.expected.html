@@ -1,0 +1,19 @@
+<div class='definition'><pre>export class NgPlural</pre></div><div class='content'><p><pre>&lt;some-element [ngPlural]="value"&gt;
+  &lt;ng-template ngPluralCase="=0"&gt;there is nothing&lt;/ng-template&gt;
+  &lt;ng-template ngPluralCase="=1"&gt;there is one&lt;/ng-template&gt;
+  &lt;ng-template ngPluralCase="few"&gt;there are a few&lt;/ng-template&gt;
+&lt;/some-element&gt;
+</pre>
+<p>Adds / removes DOM sub-trees based on a numeric value. Tailored for pluralization.
+<p>Displays DOM sub-trees that match the switch expression value, or failing that, DOM sub-trees
+that match the switch expression's pluralization category.
+<p>To use this directive you must provide a container element that sets the <code>[ngPlural]</code> attribute
+to a switch expression. Inner elements with a <code>[ngPluralCase]</code> will display based on their
+expression:
+<ul>
+<li>if <code>[ngPluralCase]</code> is set to a value starting with <code>=</code>, it will only display if the value
+matches the switch expression exactly,</li>
+<li>otherwise, the view will be treated as a &ldquo;category match&rdquo;, and will only display if exact
+value matches aren't found and the value maps to its category for the defined locale.</li>
+</ul>
+<p>See http://cldr.unicode.org/index/cldr-spec/plural-rules</div><table class='sections'><tr><td valign='top' class='section'><p>NgModule:</td><td valign='top'><p>CommonModule</td><tr><td valign='top' class='section'><p>@description</td><td valign='top'><p></td><tr><td valign='top' class='section'><p>@usageNotes</td><td valign='top'><p></td><tr><td valign='top' class='section'><p>@publicApi</td><td valign='top'><p></td><tr><td valign='top' colspan='2'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_plural.ts</td></table>

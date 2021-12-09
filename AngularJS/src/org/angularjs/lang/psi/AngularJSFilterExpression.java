@@ -5,14 +5,10 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
-import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * @author Dennis.Ushakov
@@ -28,11 +24,6 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
 
   public JSReferenceExpression getFilterName() {
     return (JSReferenceExpression)getFirstChild();
-  }
-
-  @Override
-  public @NotNull List<JSType> getArgumentTypes(boolean contextual) {
-    return JSPsiBasedTypeOfType.mapAsArguments(getArguments(), contextual);
   }
 
   @Override

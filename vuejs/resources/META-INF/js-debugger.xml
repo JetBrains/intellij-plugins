@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="org.jetbrains.vuejs.run">
   <extensions defaultExtensionNs="com.jetbrains">
     <javaScriptDebugAware implementation="org.jetbrains.vuejs.run.VueDebugAware"/>
   </extensions>

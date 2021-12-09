@@ -1,0 +1,10 @@
+syntax = "proto3";
+package com.foo;
+
+message Bar {
+  int32 abc = 1;
+}
+
+message Baz {
+  int32 abc = 1;
+}

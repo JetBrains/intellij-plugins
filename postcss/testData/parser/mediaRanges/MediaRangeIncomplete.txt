@@ -14,7 +14,7 @@ PostCSS File:MediaRangeIncomplete.pcss
                     PsiElement(CSS_IDENT)('width')
                     PsiWhiteSpace(' ')
                     PsiElement(POST_CSS_GE)('>=')
-                    PsiErrorElement:a term expected
+                    PsiErrorElement:Term expected
                       <empty list>
                   PsiElement(CSS_RPAREN)(')')
           PsiElement(CSS_DECLARATION_BLOCK)

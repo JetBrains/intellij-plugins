@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.actionscript.highlighting.ActionScriptSemanticHighlightingUtil;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -26,6 +27,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
@@ -51,6 +53,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -92,9 +95,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
       for (int i = 0; i < parameters.length; ++i) {
-        if (!compatibleType(overrideParameters[i].getTypeString(), parameters[i].getTypeString(), overrideParameterList,
+        JSParameter overrideParameter = overrideParameters[i];
+        JSParameter parameter = parameters[i];
+        JSType overrideType = overrideParameter.getJSType();
+        JSType type = parameter.getJSType();
+        if (!compatibleType(overrideType == null ? null : type.getTypeText(), type == null ? null : type.getTypeText(),
+                            overrideParameterList,
                             nodeParameterList) ||
-            overrideParameters[i].hasInitializer() != parameters[i].hasInitializer()
+            overrideParameter.hasInitializer() != parameter.hasInitializer()
           ) {
           result = SignatureMatchResult.PARAMETERS_DIFFERS;
           break;
@@ -103,7 +111,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
     if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
-      if (!compatibleType(override.getReturnTypeString(), fun.getReturnTypeString(), override, fun)) {
+      JSType lType = override.getReturnType();
+      JSType rType = fun.getReturnType();
+      if (!compatibleType(lType == null ? null : lType.getTypeText(),
+                          rType == null ? null : rType.getTypeText(), override, fun)) {
         result = SignatureMatchResult.RETURN_TYPE_DIFFERS;
       }
     }
@@ -119,6 +130,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
    * #areTypesCompatible(com.intellij.lang.javascript.psi.JSType, com.intellij.lang.javascript.psi.JSType)} instead.
    */
   @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.3")
   protected static boolean compatibleType(String overrideParameterType,
                                           String parameterType,
                                           PsiElement overrideContext,
@@ -172,7 +184,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     final VirtualFile rootForFile = ProjectRootManager.getInstance(containingFile.getProject()).getFileIndex().getSourceRootForFile(file);
 
     if (rootForFile == null) {
-      client.reportError(nameIdentifier.getNode(), JavaScriptBundle.message("javascript.validation.message.file.should.be.under.source.root"),
+      client.reportError(nameIdentifier.getNode(), FlexBundle.message("javascript.validation.message.file.should.be.under.source.root"),
                          ErrorReportingClient.ProblemKind.WARNING);
     }
 
@@ -187,7 +199,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         if (child != null && name.equals(child.getName())) { // check for case-insensitive filesystems
           if (found) {
             client.reportError(nameIdentifier.getNode(),
-                               JavaScriptBundle.message("javascript.validation.message.more.than.one.named.object.in.package"),
+                               FlexBundle.message("javascript.validation.message.more.than.one.named.object.in.package"),
                                ErrorReportingClient.ProblemKind.ERROR);
             break;
           }
@@ -393,7 +405,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           !isNative(node) &&
           JavaScriptSupportLoader.isFlexMxmFile(parent.getContainingFile())) {
         myHolder.newAnnotation(HighlightSeverity.ERROR,
-                               JavaScriptBundle.message("javascript.validation.message.constructor.in.mxml.is.not.allowed")
+                               FlexBundle.message("javascript.validation.message.constructor.in.mxml.is.not.allowed")
         ).range(nameIdentifier)
         .withFix(new RemoveASTNodeFix("javascript.fix.remove.constructor", node)).create();
       }
@@ -475,8 +487,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           String overrideNs = null;
 
           if (attributeList.getAccessType() != overrideAttrList.getAccessType() ||
-              (overrideNs = JSResolveUtil.getNamespaceValue(overrideAttrList)) != null &&
-              !overrideNs.equals(JSResolveUtil.getNamespaceValue(attributeList))) {
+              (overrideNs = ActionScriptPsiImplUtil.getNamespaceValue(overrideAttrList)) != null &&
+              !overrideNs.equals(ActionScriptPsiImplUtil.getNamespaceValue(attributeList))) {
             String newVisibility;
             IntentionAction fix;
             if (overrideNs != null) {
@@ -573,9 +585,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.NATIVE);
   }
 
-  private void reportStaticMethodProblem(JSAttributeList attributeList, String key) {
+  private void reportStaticMethodProblem(JSAttributeList attributeList, @PropertyKey(resourceBundle = "messages.FlexBundle") String key) {
     final ASTNode astNode = attributeList.getNode().findChildByType(JSTokenTypes.STATIC_KEYWORD);
-    myHolder.newAnnotation(HighlightSeverity.ERROR, JavaScriptBundle.message(key)).range(astNode)
+    myHolder.newAnnotation(HighlightSeverity.ERROR, FlexBundle.message(key)).range(astNode)
     .withFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", astNode.getPsi())).create();
   }
 
@@ -623,14 +635,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     final PsiElement context = jsFile == null ? null : jsFile.getContext();
     boolean injected = context instanceof XmlAttributeValue || context instanceof XmlText;
     if (injected) {
-      myHolder.newAnnotation(HighlightSeverity.ERROR, JavaScriptBundle
+      myHolder.newAnnotation(HighlightSeverity.ERROR, FlexBundle
         .message("javascript.validation.message.nested.packages.are.not.allowed")).range(packageStatement.getFirstChild()).create();
       return;
     }
 
     for (PsiElement el = packageStatement.getPrevSibling(); el != null; el = el.getPrevSibling()) {
       if (!(el instanceof PsiWhiteSpace) && !(el instanceof PsiComment)) {
-        myHolder.newAnnotation(HighlightSeverity.ERROR, JavaScriptBundle
+        myHolder.newAnnotation(HighlightSeverity.ERROR, FlexBundle
           .message("javascript.validation.message.package.shouldbe.first.statement")).range(packageStatement.getFirstChild()).create();
         break;
       }
@@ -648,7 +660,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     if (expected != null && (s == null && expected.length() != 0 || s != null && !expected.equals(s))) {
       final ASTNode nameIdentifier = packageStatement.findNameIdentifier();
       myHolder.newAnnotation(HighlightSeverity.ERROR,
-                             JavaScriptBundle.message(
+                             FlexBundle.message(
           "javascript.validation.message.incorrect.package.name", s, expected
         )
       ).range(nameIdentifier != null ? nameIdentifier : packageStatement.getFirstChild().getNode())
@@ -656,7 +668,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         @Override
         @NotNull
         public String getText() {
-          return JavaScriptBundle.message("javascript.fix.package.name", expected);
+          return FlexBundle.message("javascript.fix.package.name", expected);
         }
 
         @Override
@@ -709,10 +721,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (hasOtherElement) {
       JSAttributeList attributeList = ((JSAttributeListOwner)el).getAttributeList();
-      if (attributeList != null && attributeList.getConditionalCompileVariableReference() != null) return;
+      if (attributeList != null && ActionScriptPsiImplUtil.getConditionalCompileVariableReference(attributeList) != null) return;
       final ASTNode nameIdentifier = el.findNameIdentifier();
       myHolder.newAnnotation(HighlightSeverity.ERROR,
-                             JavaScriptBundle.message("javascript.validation.message.more.than.one.externally.visible.symbol"))
+                             FlexBundle.message("javascript.validation.message.more.than.one.externally.visible.symbol"))
         .range(nameIdentifier != null ? nameIdentifier : el.getFirstChild().getNode())
         .withFix(new RemoveASTNodeFix("javascript.fix.remove.externally.visible.symbol", el))
         .create();
@@ -731,11 +743,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       String nodeText = node.getText();
       if (!(parent instanceof JSCallExpression) && JSResolveUtil.isExprInStrictTypeContext(node) &&
           JSCommonTypeNames.VECTOR_CLASS_NAME.equals(nodeText)) {
-        myHolder.newAnnotation(HighlightSeverity.WARNING, JavaScriptBundle.message("javascript.validation.message.vector.without.parameters")).create();
+        myHolder.newAnnotation(HighlightSeverity.WARNING, FlexBundle.message("javascript.validation.message.vector.without.parameters")).create();
       }
       else if (parent instanceof JSNewExpression &&
                JSCommonTypeNames.VECTOR_CLASS_NAME.equals(nodeText)) {
-        myHolder.newAnnotation(HighlightSeverity.WARNING, JavaScriptBundle
+        myHolder.newAnnotation(HighlightSeverity.WARNING, FlexBundle
           .message("javascript.validation.message.vector.without.parameters2")).create();
       }
     }
@@ -812,7 +824,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   public void visitJSAttributeList(JSAttributeList attributeList) {
-    PsiElement namespaceElement = attributeList.getNamespaceElement();
+    PsiElement namespaceElement = ActionScriptPsiImplUtil.getNamespaceElement(attributeList);
     PsiElement accessTypeElement = attributeList.findAccessTypeElement();
     PsiElement namespaceOrAccessModifierElement = namespaceElement;
 
@@ -859,7 +871,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           boolean nsRef = namespaceOrAccessModifierElement instanceof JSReferenceExpression;
 
           String message =
-            JavaScriptBundle.message(
+            FlexBundle.message(
               nodeUnderPackage ?
               "javascript.validation.message.access.modifier.allowed.only.for.package.members"
                                : nsRef ?
@@ -1053,7 +1065,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           if (!(type instanceof JSStringType) &&
               !(type instanceof JSTypeImpl && "Class".equals(type.getTypeText(JSType.TypeTextFormat.SIMPLE)))) {
             myHolder.newAnnotation(HighlightSeverity.ERROR,
-                                   JavaScriptBundle.message("javascript.validation.message.embed.annotation.used.with.var.of.wrong.type")).create();
+                                   FlexBundle.message("javascript.validation.message.embed.annotation.used.with.var.of.wrong.type")).create();
           }
         }
       }
@@ -1078,13 +1090,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           initializer instanceof JSReferenceExpression &&
           ((resolve = ((JSReferenceExpression)initializer).resolve()) instanceof JSNamespaceDeclaration ||
            resolve instanceof JSVariable &&
-           "Namespace".equals(((JSVariable)resolve).getTypeString())
+           JSNamedType.isNamedTypeWithName(((JSVariable)resolve).getJSType(), "Namespace")
           )
         ) {
         // ok
       }
       else {
-        myHolder.newAnnotation(HighlightSeverity.ERROR, JavaScriptBundle
+        myHolder.newAnnotation(HighlightSeverity.ERROR, FlexBundle
           .message("javascript.namespace.initializer.should.be.string.or.another.namespace.reference")).range(initializer)
         .highlightType(ProblemHighlightType.ERROR).create();
       }
@@ -1105,7 +1117,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (node != null) {
         final String name = aClass.getName();
         String nameWithExtension = name + "." + file.getExtension();
-        final String message = JavaScriptBundle.message(aClass instanceof JSClass
+        final String message = FlexBundle.message(aClass instanceof JSClass
                                                 ? "javascript.validation.message.class.should.be.in.file" :
                                                 aClass instanceof JSNamespaceDeclaration
                                                 ? "javascript.validation.message.namespace.should.be.in.file" :

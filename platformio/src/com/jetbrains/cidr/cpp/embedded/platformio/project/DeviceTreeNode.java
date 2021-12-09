@@ -1,6 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,7 @@ public class DeviceTreeNode implements TreeNode {
   }
 
   @NotNull
+  @NlsSafe
   public String getName() {
     return myName;
   }

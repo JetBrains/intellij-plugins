@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
@@ -22,7 +22,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
-import com.intellij.util.LineSeparator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -35,6 +34,8 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+
+import static com.intellij.prettierjs.PrettierConfig.createFromMap;
 
 public final class PrettierUtil {
 
@@ -57,17 +58,6 @@ public final class PrettierUtil {
 
   public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
-
-  private static final String BRACKET_SPACING = "bracketSpacing";
-  private static final String PRINT_WIDTH = "printWidth";
-  private static final String SEMI = "semi";
-  private static final String SINGLE_QUOTE = "singleQuote";
-  private static final String TAB_WIDTH = "tabWidth";
-  private static final String TRAILING_COMMA = "trailingComma";
-  private static final String USE_TABS = "useTabs";
-  private static final String END_OF_LINE = "endOfLine";
-  private static final String JSX_BRACKET_SAME_LINE = "jsxBracketSameLine";
-  private static final String VUE_INDENT_SCRIPT_AND_STYLE = "vueIndentScriptAndStyle";
 
   private static final Gson OUR_GSON_SERIALIZER = new GsonBuilder().create();
   private static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
@@ -158,7 +148,8 @@ public final class PrettierUtil {
   public static VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
     return JSLinterConfigFileUtil.findDistinctConfigInContentRoots(project, CONFIG_FILE_NAMES_WITH_PACKAGE_JSON, file -> {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
-        return PackageJsonUtil.getOrCreateData(file).getTopLevelProperties().contains(CONFIG_SECTION_NAME);
+        PackageJsonData data = PackageJsonData.getOrCreate(file);
+        return data.isDependencyOfAnyType(PACKAGE_NAME) || data.getTopLevelProperties().contains(CONFIG_SECTION_NAME);
       }
       return true;
     });
@@ -196,20 +187,20 @@ public final class PrettierUtil {
   private static PrettierConfig parseConfigInternal(@NotNull VirtualFile virtualFile, @NotNull PsiFile file) {
     try {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
-        PackageJsonData packageJsonData = PackageJsonUtil.getOrCreateData(virtualFile);
+        PackageJsonData packageJsonData = PackageJsonData.getOrCreate(virtualFile);
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }
         Object prettierProperty = ObjectUtils.coalesce(OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class),
                                                        Collections.emptyMap()).get(PACKAGE_NAME);
         //noinspection unchecked
-        return prettierProperty instanceof Map ? parseConfigFromMap(((Map)prettierProperty)) : null;
+        return prettierProperty instanceof Map ? createFromMap(((Map)prettierProperty)) : null;
       }
       if (file instanceof JsonFile) {
         return parseConfigFromJsonText(file.getText());
       }
       if (JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE.equals(file.getLanguage())) {
-        return parseConfigFromMap(new Yaml().load(file.getText()));
+        return createFromMap(new Yaml().load(file.getText()));
       }
     }
     catch (Exception e) {
@@ -224,65 +215,11 @@ public final class PrettierUtil {
       if (reader.peek() == JsonToken.STRING) {
         return null;
       }
-      return parseConfigFromMap(OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
+      return createFromMap(OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
     }
     catch (IOException e) {
       LOG.info("Could not parse config from text", e);
       return null;
     }
-  }
-
-  @NotNull
-  private static PrettierConfig parseConfigFromMap(@Nullable Map<String, Object> map) {
-    if (map == null) {
-      return PrettierConfig.DEFAULT;
-    }
-    return new PrettierConfig(
-      getBooleanValue(map, JSX_BRACKET_SAME_LINE),
-      getBooleanValue(map, BRACKET_SPACING),
-      getIntValue(map, PRINT_WIDTH),
-      getBooleanValue(map, SEMI),
-      getBooleanValue(map, SINGLE_QUOTE),
-      getIntValue(map, TAB_WIDTH),
-      parseTrailingCommaValue(ObjectUtils.tryCast(map.get(TRAILING_COMMA), String.class)),
-      getBooleanValue(map, USE_TABS),
-      parseLineSeparatorValue(ObjectUtils.tryCast(map.get(END_OF_LINE), String.class)),
-      getBooleanValue(map, VUE_INDENT_SCRIPT_AND_STYLE)
-    );
-  }
-
-  private static Boolean getBooleanValue(@NotNull Map<String, Object> map, String key) {
-    Boolean value = ObjectUtils.tryCast(map.get(key), Boolean.class);
-    return value == null ? null : value.booleanValue();
-  }
-
-  private static Integer getIntValue(@NotNull Map<String, Object> map, String key) {
-    Number value = ObjectUtils.tryCast(map.get(key), Number.class);
-    return value == null ? null : value.intValue();
-  }
-
-  @Nullable
-  public static String parseLineSeparatorValue(@Nullable String string) {
-    LineSeparator separator = parseLineSeparator(string);
-    return separator != null ? separator.getSeparatorString() : null;
-  }
-
-  @Nullable
-  public static LineSeparator parseLineSeparator(@Nullable String string) {
-    if (string == null) {
-      return null;
-    }
-    return StringUtil.parseEnum(StringUtil.toUpperCase(string), null, LineSeparator.class);
-  }
-
-  @Nullable
-  private static TrailingCommaOption parseTrailingCommaValue(@Nullable String string) {
-    return string == null ? null : StringUtil.parseEnum(string, null, TrailingCommaOption.class);
-  }
-
-  public enum TrailingCommaOption {
-    none,
-    all,
-    es5
   }
 }

@@ -2,8 +2,8 @@ package {
 public interface HangingCommaInRefList {}
 }
 
-class Foo implements HangingCommaInRefList ,<error descr="type name expected"> </error>{}
+class Foo implements HangingCommaInRefList ,<error descr="Type name expected"> </error>{}
 interface I extends HangingCommaInRefList {}
-class Bar extends Foo ,<error descr="type name expected"> </error>{}
-class Bar2 extends Foo ,<error descr="type name expected"> </error>implements HangingCommaInRefList {}
-class Bar3 extends Foo ,<error descr="type name expected"> </error>implements HangingCommaInRefList, I {}
+class Bar extends Foo ,<error descr="Type name expected"> </error>{}
+class Bar2 extends Foo ,<error descr="Type name expected"> </error>implements HangingCommaInRefList {}
+class Bar3 extends Foo ,<error descr="Type name expected"> </error>implements HangingCommaInRefList, I {}

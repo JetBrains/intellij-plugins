@@ -155,7 +155,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    final CfmlVariantsProcessor<ResolveResult> processor = new CfmlVariantsProcessor<ResolveResult>(this, getParent(), referenceName) {
+    final CfmlVariantsProcessor<ResolveResult> processor = new CfmlVariantsProcessor<>(this, getParent(), referenceName) {
       //Map<String, PsiNamedElement> myVariables = new HashMap<String, PsiNamedElement>();
 
       @Override
@@ -265,7 +265,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
 
   @Override
   public Object @NotNull [] getVariants() {
-    final CfmlVariantsProcessor<PsiNamedElement> processor = new CfmlVariantsProcessor<PsiNamedElement>(this, getParent(), null) {
+    final CfmlVariantsProcessor<PsiNamedElement> processor = new CfmlVariantsProcessor<>(this, getParent(), null) {
       Set<String> myVariablesNames = new HashSet<>();
 
       @Override

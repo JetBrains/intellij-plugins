@@ -1,0 +1,6 @@
+syntax = "proto2";
+
+// A message named "string" with no package so that ".string" in the test file
+// resolves correctly.
+message string {
+}

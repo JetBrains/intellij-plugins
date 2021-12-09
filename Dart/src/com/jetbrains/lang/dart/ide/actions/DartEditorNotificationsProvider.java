@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -80,31 +81,21 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       if (sdk == null) {
         final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
         if (DartSdkUtil.isDartSdkHome(sdkPath)) {
-          return createNotificationToEnableDartSupport(module);
+          return createNotificationToEnableDartSupport(fileEditor, module);
         }
-
-        final String message = DartBundle.message("dart.sdk.is.not.configured");
-        final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
-
-        final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
-        panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
-        return panel;
+        else {
+          return createNoDartSdkPanel(fileEditor, project, DartBundle.message("dart.sdk.is.not.configured"));
+        }
       }
 
       // SDK not enabled for this module
       if (!DartSdkLibUtil.isDartSdkEnabled(module)) {
-        return createNotificationToEnableDartSupport(module);
+        return createNotificationToEnableDartSupport(fileEditor, module);
       }
 
       if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
-        final String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
-        final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
-
-        final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
-        panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
-        return panel;
+        String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
+        return createNoDartSdkPanel(fileEditor, project, message);
       }
     }
 
@@ -112,11 +103,21 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   }
 
   @NotNull
-  private static EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull final Module module) {
+  public EditorNotificationPanel createNoDartSdkPanel(@NotNull FileEditor fileEditor, @NotNull Project project, @NlsContexts.Label String message) {
+    final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
+
+    final EditorNotificationPanel panel = new EditorNotificationPanel(fileEditor).icon(DartIcons.Dart_16).text(message);
+    panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
+    panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
+    return panel;
+  }
+
+  @NotNull
+  private static EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull FileEditor fileEditor, @NotNull final Module module) {
     final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                            ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                            : DartBundle.message("dart.support.is.not.enabled.for.project");
-    final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
+    final EditorNotificationPanel panel = new EditorNotificationPanel(fileEditor).icon(DartIcons.Dart_16).text(message);
     panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module));
     panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(module.getProject()));
     return panel;
@@ -178,7 +179,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
           }
         };
 
-        NOTIFICATION_GROUP.createNotification(title, message, NotificationType.INFORMATION, listener).notify(project);
+        NOTIFICATION_GROUP.createNotification(title, message, NotificationType.INFORMATION).setListener(listener).notify(project);
       }
     }
   }

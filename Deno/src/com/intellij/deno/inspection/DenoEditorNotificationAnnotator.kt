@@ -10,6 +10,8 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.dialects.JSLanguageFeature
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.frameworks.amd.JSModuleReference
 import com.intellij.lang.javascript.psi.JSFile
@@ -29,6 +31,7 @@ class DenoEditorNotificationAnnotator : Annotator {
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element !is JSFile ||
+        !DialectDetector.hasFeature(element, JSLanguageFeature.IMPORT_DECLARATIONS) ||
         DenoSettings.getService(element.project).isUseDeno() ||
         PropertiesComponent.getInstance(element.project).getBoolean(DISABLE_KEY, false)) return
 

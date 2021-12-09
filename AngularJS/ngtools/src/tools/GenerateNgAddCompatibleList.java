@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  * The result has to be manually merged into {@code resources/org/angularjs/cli/ng-packages.json}.
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace"})
-public class GenerateNgAddCompatibleList {
+public final class GenerateNgAddCompatibleList {
 
   public static void main(String[] args) {
     try {

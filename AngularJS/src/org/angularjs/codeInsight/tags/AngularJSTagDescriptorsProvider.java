@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static org.angularjs.index.AngularJSDirectivesSupport.findTagDirectives;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -35,14 +37,15 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
 
     final Project project = xmlTag.getProject();
     Language language = xmlTag.getContainingFile().getLanguage();
-    DirectiveUtil.processTagDirectives(project, directive -> {
+    findTagDirectives(project, null).forEach(directive -> {
       addLookupItem(language, elements, directive);
-      return true;
     });
   }
 
   private static void addLookupItem(Language language, List<LookupElement> elements, JSImplicitElement directive) {
-    LookupElementBuilder element = LookupElementBuilder.create(directive, DirectiveUtil.getAttributeName(directive.getName()))
+    String name = directive.getName();
+    if (name == null) return;
+    LookupElementBuilder element = LookupElementBuilder.create(directive, DirectiveUtil.getAttributeName(name))
       .withIcon(AngularJSIcons.Angular2);
     if (language.isKindOf(XMLLanguage.INSTANCE)) {
       element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
@@ -63,10 +66,6 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
 
     JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
-    if (DirectiveUtil.isAngular2Directive(directive)) {
-      // we've found a directive for Angular 2+
-      directive = null;
-    }
     return directive != null ? new AngularJSTagDescriptor(tagName, directive) : null;
   }
 }

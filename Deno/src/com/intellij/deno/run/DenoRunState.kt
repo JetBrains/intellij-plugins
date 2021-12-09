@@ -14,12 +14,13 @@ import com.intellij.javascript.debugger.CommandLineDebugConfigurator
 import com.intellij.javascript.debugger.execution.DebuggableProcessState
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.debug.NodeDebugCommandLineConfigurator
-import com.intellij.javascript.nodejs.debug.NodeLocalDebuggableRunProfileState
+import com.intellij.javascript.nodejs.debug.NodeDebuggableRunProfileState
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.terminal.TerminalExecutionConsole
 import org.jetbrains.concurrency.Promise
 
 class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunConfiguration) :
-  NodeLocalDebuggableRunProfileState,
+  NodeDebuggableRunProfileState,
   DebuggableProcessState<DenoRunConfiguration>(runConfiguration, environment) {
 
   override fun execute(configurator: CommandLineDebugConfigurator?): Promise<ExecutionResult> =
@@ -58,12 +59,20 @@ class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunC
       commandLine.addParameters(appFilePath)
     }
 
+    val applicationArguments = configuration.applicationArguments ?: ""
+    if (applicationArguments.isNotEmpty()) {
+      commandLine.addParameters(ProgramParametersConfigurator.expandMacrosAndParseParameters(applicationArguments))
+    }
+
     return super.startProcess(commandLine, configurator)
   }
 
   private fun createConsole(processHandler: ProcessHandler): ConsoleView {
     val consoleBuilder = object : TextConsoleBuilderImpl(environment.project) {
       override fun createConsole(): ConsoleView {
+        if (NodeCommandLineUtil.shouldUseTerminalConsole(processHandler)) {
+          return TerminalExecutionConsole(project, processHandler)
+        }
         return object : ConsoleViewImpl(environment.project, scope, isViewer, true) {
           override fun getData(dataId: String): Any? {
             return super.getData(dataId) ?: if (LangDataKeys.RUN_PROFILE.`is`(dataId)) environment.runProfile else null

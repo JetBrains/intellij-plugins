@@ -35,6 +35,6 @@ public class CfmlCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
   @Override
   public String getConfigurableDisplayName() {
-    return "CFML";
+    return "CFML"; //NON-NLS
   }
 }

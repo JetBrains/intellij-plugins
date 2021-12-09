@@ -6,12 +6,14 @@ import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunctionItem
-import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
@@ -21,6 +23,7 @@ import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
@@ -33,7 +36,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
       val container = VueModelManager.findEnclosingContainer(expression)
       val filters = mutableListOf<VueFilter>()
       val referenceName = expression.referenceName
-      container?.acceptEntities(object : VueModelProximityVisitor() {
+      container.acceptEntities(object : VueModelProximityVisitor() {
         override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
           return acceptSameProximity(proximity, name == referenceName) {
             filters.add(filter)
@@ -44,16 +47,21 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     }
   }
 
-  override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
-    if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY
-    if (myRef is VueJSFilterReferenceExpression) {
-      return resolveFilterNameReference(myRef, incompleteCode)
+  override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> =
+    when {
+      myReferencedName == null -> ResolveResult.EMPTY_ARRAY
+      myRef is VueJSFilterReferenceExpression -> resolveFilterNameReference(myRef, incompleteCode)
+      myQualifier is JSThisExpression -> resolveTemplateVariable(expression)
+      myQualifier == null -> resolveTemplateVariable(expression)
+        .ifEmpty { super.resolve(expression, incompleteCode) }
+      else -> super.resolve(expression, incompleteCode)
     }
-    if (myQualifier == null || myQualifier is JSThisExpression) {
-      resolveTemplateVariable(expression).let { if (it.isNotEmpty()) return it }
-    }
-    return super.resolve(expression, incompleteCode)
-  }
+
+  override fun resolveFromIndices(localProcessor: SinkResolveProcessor<ResolveResultSink>,
+                                  excludeGlobalTypeScript: Boolean,
+                                  includeTypeOnlyContextSymbols: Boolean): Array<ResolveResult> =
+    if (myQualifier == null) ResolveResult.EMPTY_ARRAY
+    else super.resolveFromIndices(localProcessor, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
 
   private fun resolveFilterNameReference(expression: VueJSFilterReferenceExpression, incompleteCode: Boolean): Array<ResolveResult> {
     if (!incompleteCode) {
@@ -82,7 +90,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     val results = SmartList<ResolveResult>()
     val name = StringUtils.uncapitalize(myReferencedName)
     VueTemplateScopesResolver.resolve(myRef, Processor { resolveResult ->
-      val element = resolveResult.element as? JSPsiElementBase
+      val element = resolveResult.element as? JSPsiNamedElementBase
       if (element != null && name == StringUtils.uncapitalize(element.name)) {
         remapSetterGetterIfNeeded(results, resolveResult, access)
         return@Processor false
@@ -95,9 +103,13 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
   private fun remapSetterGetterIfNeeded(results: MutableList<ResolveResult>,
                                         resolveResult: ResolveResult,
                                         access: ReadWriteAccessDetector.Access) {
-    when (val element = resolveResult.element) {
+    val resolvedElement = resolveResult.element
+    when (val element = if (resolvedElement is VueImplicitElement) resolvedElement.context else resolvedElement) {
       is JSFunctionItem -> {
-        val add: (JSFunctionItem) -> Unit = { it -> results.add(JSResolveResult(it)) }
+        val add: (JSFunctionItem) -> Unit = if (resolvedElement is VueImplicitElement)
+          { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it))) }
+        else
+          { it -> results.add(JSResolveResult(it)) }
         when {
           element.isGetProperty && access == ReadWriteAccessDetector.Access.Write ->
             findPropertyAccessor(element, true, add)

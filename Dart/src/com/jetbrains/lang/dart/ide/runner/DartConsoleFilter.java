@@ -71,7 +71,7 @@ public class DartConsoleFilter implements Filter {
         }
         else {
           if (myAllPubspecYamlFiles == null) {
-            myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
+            myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
           }
 
           VirtualFile inPackage = null;
@@ -124,7 +124,7 @@ public class DartConsoleFilter implements Filter {
     }
 
     @Override
-    public void navigate(final Project project) {
+    public void navigate(@NotNull Project project) {
       OpenDartObservatoryUrlAction.openUrlInChromeFamilyBrowser(myUrl);
     }
   }

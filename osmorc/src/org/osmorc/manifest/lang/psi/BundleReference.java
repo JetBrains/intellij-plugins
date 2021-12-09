@@ -54,31 +54,29 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
     super(element);
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, false, false);
   }
 
-  @NotNull
   @Override
-  public String getUnresolvedMessagePattern() {
+  public @NotNull String getUnresolvedMessagePattern() {
     return OsmorcBundle.message("cannot.resolve.bundle", getCanonicalText());
   }
 
   private static final ResolveCache.AbstractResolver<BundleReference, PsiElement> RESOLVER =
-    new ResolveCache.AbstractResolver<BundleReference, PsiElement>() {
+    new ResolveCache.AbstractResolver<>() {
       @Override
       public PsiElement resolve(@NotNull BundleReference reference, boolean incompleteCode) {
-        final String text = reference.getCanonicalText();
-        final HeaderValuePart refElement = reference.getElement();
+        String text = reference.getCanonicalText();
+        HeaderValuePart refElement = reference.getElement();
 
         if (!StringUtil.isEmptyOrSpaces(text) && refElement.isValid()) {
           Module module = ModuleUtilCore.findModuleForPsiElement(refElement);
           if (module != null) {
-            final Ref<PsiElement> result = Ref.create();
-            final String refText = text.replaceAll("\\s", "");
-            final BundleManifestCache cache = BundleManifestCache.getInstance(module.getProject());
+            Ref<PsiElement> result = Ref.create();
+            String refText = text.replaceAll("\\s", "");
+            BundleManifestCache cache = BundleManifestCache.getInstance();
             ModuleRootManager manager = ModuleRootManager.getInstance(module);
 
             manager.orderEntries().forEachModule(module1 -> {
@@ -93,7 +91,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
 
             manager.orderEntries().forEachLibrary(library -> {
               for (VirtualFile libRoot : library.getFiles(OrderRootType.CLASSES)) {
-                BundleManifest manifest = cache.getManifest(libRoot);
+                BundleManifest manifest = cache.getManifest(libRoot, refElement.getManager());
                 if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
                   result.set(getTarget(manifest));
                   return false;

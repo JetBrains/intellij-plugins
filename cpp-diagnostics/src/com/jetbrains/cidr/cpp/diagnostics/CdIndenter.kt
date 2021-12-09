@@ -1,12 +1,12 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
-class CdIndenter {
+class CdIndenter(private val indentSize: Int = 2) {
   private val builder = StringBuilder()
   private var indent = 0
 
   fun put(vararg lineParts: Any?): CdIndenter {
     for (i in 0 until indent) {
-      builder.append(' ')
+      builder.append(" ".repeat(indentSize))
     }
     for (part in lineParts) {
       builder.append(part)

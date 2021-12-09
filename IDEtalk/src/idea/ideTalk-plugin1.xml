@@ -1,4 +1,0 @@
-<container>
-  <component key="jetbrains.communicator.ide.IDEFacade"
-    class="jetbrains.communicator.idea.IDEAFacade"/>
-</container>

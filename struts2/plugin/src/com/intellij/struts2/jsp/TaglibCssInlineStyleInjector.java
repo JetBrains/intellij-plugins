@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.jsp;
 
 import com.intellij.lang.injection.MultiHostInjector;
@@ -40,7 +39,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  *
  * @author Yann C&eacute;bron
  */
-public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAware {
+final class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAware {
   private static class Holder {
     private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
       xmlAttributeValue()

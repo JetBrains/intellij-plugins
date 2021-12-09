@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.linters.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
@@ -39,7 +39,7 @@ public class TslintAngularHighlightingTest extends LinterHighlightingTest {
   }
 
   @Override
-  protected Map<String, String> getPackageVersionsToInstall() {
+  protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
     HashMap<String, String> map = new HashMap<>();
     map.put("tslint", null);
     map.put("typescript", null);

@@ -14,7 +14,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
 
-import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.EVENT_ATTR_PREFIX;
 
 public class AngularInsecureBindingToEventInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 

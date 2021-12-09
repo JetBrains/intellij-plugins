@@ -1,0 +1,11 @@
+
+# Print given value three times
+def print_three_times(value)
+  (1..3).each { |i|
+    print value
+  }
+end
+
+<caret>print_three_times(123)
+print_three_times(1)
+print_three_times("Hello!")

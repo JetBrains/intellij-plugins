@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
@@ -663,7 +663,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void showMakeBeforeRunTurnedOffWarning(final Project project, final RunnerAndConfigurationSettings configuration) {
     final String message = FlexBundle.message("run.when.compile.before.run.turned.off");
-    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
+    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -682,7 +682,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void showBCCompilationSkippedWarning(final Module module, final FlexBuildConfiguration bc) {
     final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
-    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
+    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

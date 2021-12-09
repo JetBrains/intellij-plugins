@@ -48,12 +48,12 @@ public class OgnlParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiParser createParser(final Project project) {
+  public @NotNull PsiParser createParser(final Project project) {
     return new OgnlParser();
   }
 
   @Override
-  public IFileElementType getFileNodeType() {
+  public @NotNull IFileElementType getFileNodeType() {
     return OGNL_FILE;
   }
 
@@ -82,12 +82,12 @@ public class OgnlParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiFile createFile(final FileViewProvider fileViewProvider) {
+  public @NotNull PsiFile createFile(final @NotNull FileViewProvider fileViewProvider) {
     return new OgnlFile(fileViewProvider);
   }
 
   @Override
-  public SpaceRequirements spaceExistenceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
+  public @NotNull SpaceRequirements spaceExistenceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
     final Lexer lexer = createLexer(left.getPsi().getProject());
     return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -24,9 +24,12 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
@@ -98,7 +101,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     Project project = getEnvironment().getProject();
 
     DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null) throw new ExecutionException("Dart SDK cannot be found"); // can't happen, already checked
+    if (sdk == null) throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured")); // can't happen, already checked
 
     DartTestRunnerParameters params = getParameters();
 
@@ -141,7 +144,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
         final String regex = StringUtil.notNullize(params.getTestName());
         // may be empty only in case of Rerun Failed Tests when there are no failed ones yet
         if (regex.isEmpty()) {
-          throw new ExecutionException("No tests to run");
+          throw new ExecutionException(DartBundle.message("dialog.message.no.tests.to.run"));
         }
         builder.append(" -n \"").append(regex).append("\"");
       }
@@ -155,10 +158,15 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     return super.startProcess();
   }
 
-  @NotNull
   @Override
-  protected String getExePath(@NotNull final DartSdk sdk) {
-    return DartSdkUtil.getPubPath(sdk);
+  protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
+    boolean useDartTest = DartPubActionBase.isUseDartRunTestInsteadOfPubRunTest(sdk);
+    if (useDartTest) {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
+    }
+    else {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
+    }
   }
 
   @Override
@@ -167,7 +175,14 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   }
 
   @Override
-  protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+  protected void addVmOption(@NotNull DartSdk sdk, @NotNull GeneralCommandLine commandLine, @NotNull String option) {
+    boolean useDartTest = DartPubActionBase.isUseDartRunTestInsteadOfPubRunTest(sdk);
+    if (useDartTest) {
+      super.addVmOption(sdk, commandLine, option);
+      return;
+    }
+
+    // SDK 2.9 and older
     final String arguments = StringUtil.notNullize(myRunnerParameters.getArguments());
     if (DefaultRunExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId()) &&
         option.startsWith("--enable-vm-service:") &&

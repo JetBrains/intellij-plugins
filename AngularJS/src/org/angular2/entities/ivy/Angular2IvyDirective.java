@@ -8,9 +8,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
+import com.intellij.model.Pointer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -29,6 +29,8 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
 import static org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity;
 import static org.angular2.entities.source.Angular2SourceDirective.getDirectiveKindNoCache;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_OUTPUTS;
 
 public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymbolDef.Directive> implements Angular2Directive {
 
@@ -37,6 +39,15 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
 
   public Angular2IvyDirective(@NotNull Angular2IvySymbolDef.Directive entityDef) {
     super(entityDef);
+  }
+
+  @Override
+  public @NotNull Pointer<? extends Angular2Directive> createPointer() {
+    var entityDef = myEntityDef.createPointer();
+    return () -> {
+      var newEntityDef = entityDef.dereference();
+      return newEntityDef != null ? new Angular2IvyDirective(newEntityDef) : null;
+    };
   }
 
   @Override
@@ -121,7 +132,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
   }
 
   protected Angular2DirectiveSelector createSelectorFromStringLiteralType(TypeScriptStringLiteralType type) {
-    return new Angular2DirectiveSelectorImpl(type, type.getInnerText(), p -> new TextRange(1 + p.second, 1 + p.second + p.first.length()));
+    return new Angular2DirectiveSelectorImpl(type, type.getInnerText(), 1);
   }
 
   @Override
@@ -157,17 +168,17 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
       .getProperties()
       .forEach(prop -> {
         if (prop.getMemberSource().getSingleElement() != null) {
-          processProperty(prop, inputMap, inputs);
-          processProperty(prop, outputMap, outputs);
+          processProperty(clazz, prop, inputMap, KIND_NG_DIRECTIVE_INPUTS, inputs);
+          processProperty(clazz, prop, outputMap, KIND_NG_DIRECTIVE_OUTPUTS, outputs);
         }
       });
 
     hackIonicComponentOutputs(this, outputMap);
 
     inputMap.values().forEach(
-      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input)));
+      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS)));
     outputMap.values().forEach(
-      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
+      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)));
 
     return new Angular2DirectiveProperties(inputs.values(), outputs.values());
   }
@@ -176,12 +187,14 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
     directiveDef.readPropertyMappings(field).forEach((key, value) -> target.putIfAbsent(key, value));
   }
 
-  private static void processProperty(@NotNull JSRecordType.PropertySignature property,
+  private static void processProperty(@NotNull TypeScriptClass clazz,
+                                      @NotNull JSRecordType.PropertySignature property,
                                       @NotNull Map<String, String> mappings,
+                                      @NotNull String kind,
                                       @NotNull Map<String, Angular2DirectiveProperty> result) {
     String bindingName = mappings.remove(property.getMemberName());
     if (bindingName != null) {
-      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(property, bindingName));
+      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(clazz, property, kind, bindingName));
     }
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -126,8 +126,8 @@ public class DartCommandLineRunningState extends CommandLineState {
     try {
       final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
-      final String message = ("<a href='" + DartProblemsView.OPEN_DART_ANALYSIS_LINK + "'>Analysis issues</a> may affect " +
-                              "the execution of '" + dartRunConfiguration.getName() + "'.");
+      final String message = DartBundle.message("analysis.issues.may.affect.the.execution",
+                                                DartProblemsView.OPEN_DART_ANALYSIS_LINK, dartRunConfiguration.getName());
       DartExecutionHelper.displayIssues(project, launchFile, message, dartRunConfiguration.getIcon());
     }
     catch (RuntimeConfigurationError error) {
@@ -147,7 +147,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine()
       .withWorkDirectory(myRunnerParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
     commandLine.setCharset(StandardCharsets.UTF_8);
-    commandLine.setExePath(FileUtil.toSystemDependentName(getExePath(sdk)));
+    setupExePath(commandLine, sdk);
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
@@ -156,9 +156,8 @@ public class DartCommandLineRunningState extends CommandLineState {
     return commandLine;
   }
 
-  @NotNull
-  protected String getExePath(@NotNull final DartSdk sdk) {
-    return DartSdkUtil.getDartExePath(sdk);
+  protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
+    commandLine.setExePath(DartSdkUtil.getDartExePath(sdk));
   }
 
   private void setupParameters(@NotNull final DartSdk sdk,
@@ -170,11 +169,11 @@ public class DartCommandLineRunningState extends CommandLineState {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
         final String vmOption = vmOptionsTokenizer.nextToken();
-        addVmOption(commandLine, vmOption);
+        addVmOption(sdk, commandLine, vmOption);
 
         try {
           if (vmOption.equals("--enable-vm-service") || vmOption.equals("--observe")) {
-            customObservatoryPort = 8181; // default port, see https://www.dartlang.org/tools/dart-vm/
+            customObservatoryPort = 8181; // default port, see https://dart.dev/tools/dart-devtools#3-start-the-target-app
           }
           else if (vmOption.startsWith("--enable-vm-service:")) {
             customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--enable-vm-service:".length()));
@@ -189,27 +188,27 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     if (myRunnerParameters.isCheckedModeOrEnableAsserts()) {
       if (StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-        addVmOption(commandLine, "--checked");
+        addVmOption(sdk, commandLine, "--checked");
       }
       else {
-        addVmOption(commandLine, "--enable-asserts");
+        addVmOption(sdk, commandLine, "--enable-asserts");
       }
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
-      addVmOption(commandLine, "--pause_isolates_on_start");
+      addVmOption(sdk, commandLine, "--pause_isolates_on_start");
     }
 
-    if (customObservatoryPort <= 0) {
+    if (customObservatoryPort <= 0 && DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
       try {
-        addVmOption(commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
+        addVmOption(sdk, commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
       }
       catch (IOException e) {
         throw new ExecutionException(e);
       }
 
       if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
-        addVmOption(commandLine, "--pause-isolates-on-exit");
+        addVmOption(sdk, commandLine, "--pause-isolates-on-exit");
       }
     }
 
@@ -236,7 +235,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.addParameter(FileUtil.toSystemDependentName(dartFile.getPath()));
   }
 
-  protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+  protected void addVmOption(@NotNull DartSdk sdk, @NotNull GeneralCommandLine commandLine, @NotNull String option) {
     commandLine.addParameter(option);
   }
 

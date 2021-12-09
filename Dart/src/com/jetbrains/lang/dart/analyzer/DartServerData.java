@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
@@ -8,25 +8,20 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
-import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
-import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 
-public class DartServerData {
-
+public final class DartServerData {
   public interface OutlineListener extends EventListener {
     void outlineUpdated(@NotNull final String filePath);
   }
@@ -35,15 +30,15 @@ public class DartServerData {
 
   private final EventDispatcher<OutlineListener> myEventDispatcher = EventDispatcher.create(OutlineListener.class);
 
-  private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartNavigationRegion>> myNavigationData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartOverrideMember>> myOverrideData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, Map<String, Map<String, Set<String>>>> myExistingImports = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartNavigationRegion>> myNavigationData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartOverrideMember>> myOverrideData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, Map<String, Map<String, Set<String>>>> myExistingImports = Collections.synchronizedMap(new HashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -526,44 +521,48 @@ public class DartServerData {
   }
 
   public static final class DartError extends DartRegion {
-    @NotNull private final String mySeverity;
-    @Nullable private final String myCode;
-    @NotNull private final String myMessage;
-    @Nullable private final String myCorrection;
-    @Nullable private final String myUrl;
+    private final @NotNull @NonNls String mySeverity;
+    private final @Nullable @NonNls String myCode;
+    private final @NotNull @NlsSafe String myMessage;
+    private final @Nullable @NlsSafe String myCorrection;
+    private final @Nullable List<DiagnosticMessage> myContextMessages;
+    private final @Nullable @NonNls String myUrl;
 
     @Contract(pure = true)
-    @NotNull
-    public DartError asEofError(int fileLength) {
-      return new DartError(fileLength > 0 ? fileLength - 1 : 0, fileLength > 0 ? 1 : 0, mySeverity, myCode, myMessage, myCorrection, myUrl);
+    public @NotNull DartError asEofError(int fileLength) {
+      return new DartError(fileLength > 0 ? fileLength - 1 : 0,
+                           fileLength > 0 ? 1 : 0,
+                           mySeverity, myCode, myMessage, myContextMessages, myCorrection, myUrl);
     }
 
-    private DartError(@NotNull final AnalysisError error, final int correctedOffset, final int correctedLength) {
+    private DartError(@NotNull AnalysisError error, int correctedOffset, int correctedLength) {
       super(correctedOffset, correctedLength);
       mySeverity = error.getSeverity().intern();
       myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
+      myContextMessages = error.getContextMessages();
       myCorrection = error.getCorrection();
       myUrl = error.getUrl();
     }
 
     private DartError(int offset,
                       int length,
-                      @NotNull String severity,
-                      @Nullable String code,
-                      @NotNull String message,
-                      @Nullable String correction,
-                      @Nullable String url) {
+                      @NotNull @NonNls String severity,
+                      @Nullable @NonNls String code,
+                      @NotNull @Nls String message,
+                      @Nullable List<DiagnosticMessage> contextMessages,
+                      @Nullable @Nls String correction,
+                      @Nullable @NonNls String url) {
       super(offset, length);
       mySeverity = severity;
       myCode = code;
       myMessage = message;
+      myContextMessages = contextMessages;
       myCorrection = correction;
       myUrl = url;
     }
 
-    @NotNull
-    public String getSeverity() {
+    public @NotNull @NonNls String getSeverity() {
       return mySeverity;
     }
 
@@ -571,23 +570,23 @@ public class DartServerData {
       return mySeverity.equals(AnalysisErrorSeverity.ERROR);
     }
 
-    @Nullable
-    public String getCode() {
+    public @Nullable @NonNls String getCode() {
       return myCode;
     }
 
-    @NotNull
-    public String getMessage() {
+    public @NotNull @NlsSafe String getMessage() {
       return myMessage;
     }
 
-    @Nullable
-    public String getCorrection() {
+    public @Nullable @NlsSafe String getCorrection() {
       return myCorrection;
     }
 
-    @Nullable
-    public String getUrl() {
+    public @Nullable List<DiagnosticMessage> getContextMessages() {
+      return myContextMessages;
+    }
+
+    public @Nullable @NonNls String getUrl() {
       return myUrl;
     }
   }

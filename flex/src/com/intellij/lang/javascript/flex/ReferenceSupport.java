@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author Maxim.Mossienko
  */
-public class ReferenceSupport {
+public final class ReferenceSupport {
 
   enum RelativeToWhat {
     Absolute, CurrentFile, ProjectRoot, SourceRoot, Other
@@ -49,7 +49,7 @@ public class ReferenceSupport {
     final RelativeToWhat relativeToWhat = relativeToWhat(str, elt, lookupOptions);
     final boolean startsWithSlash = str.startsWith("/");
 
-    final FileReferenceSet base = new FileReferenceSet(str, elt, offset, null, SystemInfo.isFileSystemCaseSensitive) {
+    final FileReferenceSet base = new FileReferenceSet(str, elt, offset, null, elt.getContainingFile().getViewProvider().getVirtualFile().isCaseSensitive()) {
       @Override
       public boolean isAbsolutePathReference() {
         return relativeToWhat == RelativeToWhat.Absolute;

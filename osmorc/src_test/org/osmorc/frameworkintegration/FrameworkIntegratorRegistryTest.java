@@ -24,7 +24,7 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import org.osmorc.LightOsgiFixtureTestCase;
 
 /**
@@ -32,7 +32,7 @@ import org.osmorc.LightOsgiFixtureTestCase;
  */
 public class FrameworkIntegratorRegistryTest extends LightOsgiFixtureTestCase {
   public void testRegistry() {
-    FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+    FrameworkIntegratorRegistry registry = ApplicationManager.getApplication().getService(FrameworkIntegratorRegistry.class);
 
     for (FrameworkIntegrator integrator : registry.getFrameworkIntegrators()) {
       assertSame(integrator, registry.findIntegratorByName(integrator.getDisplayName()));

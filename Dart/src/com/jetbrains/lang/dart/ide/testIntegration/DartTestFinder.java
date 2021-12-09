@@ -41,7 +41,7 @@ public class DartTestFinder implements TestFinder {
 
     GlobalSearchScope testScope = getDirScope(project, vFile, "test");
     String testFileName = vFile.getNameWithoutExtension() + TEST_DART_SUFFIX;
-    Collection<VirtualFile> testFiles = FilenameIndex.getVirtualFilesByName(project, testFileName, testScope);
+    Collection<VirtualFile> testFiles = FilenameIndex.getVirtualFilesByName(testFileName, testScope);
     return ContainerUtil.mapNotNull(testFiles, file -> element.getManager().findFile(file));
   }
 
@@ -54,7 +54,7 @@ public class DartTestFinder implements TestFinder {
     // https://dart.dev/tools/pub/package-layout
     GlobalSearchScope subjectScope = getDirScope(element.getProject(), vFile, "benchmark", "bin", "lib", "tool", "web");
     String subjectFileName = StringUtil.trimEnd(vFile.getName(), TEST_DART_SUFFIX) + ".dart";
-    Collection<VirtualFile> subjectFiles = FilenameIndex.getVirtualFilesByName(element.getProject(), subjectFileName, subjectScope);
+    Collection<VirtualFile> subjectFiles = FilenameIndex.getVirtualFilesByName(subjectFileName, subjectScope);
     return ContainerUtil.mapNotNull(subjectFiles, file -> element.getManager().findFile(file));
   }
 

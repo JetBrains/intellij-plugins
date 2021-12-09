@@ -1,6 +1,8 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
+import com.intellij.lang.javascript.index.JSLocalNamespaceEvaluator;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
@@ -8,14 +10,13 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,9 +38,9 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
 
       // TODO: e.g. protected is also ns
       if (namespace != null) {
-        String ns = skipNsResolving ? namespace.getText() : JSPsiImplUtils.calcNamespaceReference(place);
+        String ns = skipNsResolving ? namespace.getText() : ActionScriptPsiImplUtil.calcNamespaceReference(place);
         if (ns != null) {
-          openedNses = new THashMap<>(1);
+          openedNses = new HashMap<>(1);
           openedNses.put(ns, null);
           defaultNsIsNotAllowed = true;
         }
@@ -102,8 +103,8 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
         if (place instanceof JSReferenceExpression) {
           JSExpression qualifier = ((JSReferenceExpression)place).getQualifier();
           if (qualifier instanceof JSReferenceExpression) {
-            JSElement expression = JSSymbolUtil.calcRefExprValue((JSReferenceExpression)qualifier);
-            if (expression instanceof JSReferenceExpression) {
+            JSElement expression = JSLocalNamespaceEvaluator.calcRefExprValue((JSReferenceExpression)qualifier);
+            if (expression instanceof JSReferenceExpression && expression != qualifier) {
               for (ResolveResult r : ((JSReferenceExpression)expression).multiResolve(false)) {
                 PsiElement rElement = r.getElement();
                 if (rElement instanceof JSClass) {
@@ -130,26 +131,21 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
                                                             @Nullable JSAttributeList attributeList) {
     if (!resolveProcessor.getResultSink().isActionScript()) return false;
 
-    String attributeNs = attributeList != null ? attributeList.getNamespace() : null;
+    String attributeNs = ActionScriptPsiImplUtil.getNamespace(attributeList);
     if (attributeNs != null) {
-      if (!resolveProcessor.isProcessingFromIndices()) {
-        String resolvedNs = attributeList.resolveNamespaceValue();
-        if (resolvedNs == null && !resolveProcessor.getResultSink().isActionScript()) {
-          resolvedNs = attributeNs; // AS3
-        }
-        attributeNs = resolvedNs;
+      String resolvedNs = ActionScriptPsiImplUtil.resolveNamespaceValue(attributeList);
+      if (resolvedNs == null && !resolveProcessor.getResultSink().isActionScript()) {
+        resolvedNs = attributeNs; // AS3
       }
-      else {
-        attributeNs = null; // do not care about namespaces during indices built because it needs interfile resolve
-      }
-    }
+      attributeNs = resolvedNs;
+  }
 
     if (openedNses == null && attributeNs != null) {
       if (!anyNsAllowed &&
           place instanceof JSReferenceExpression &&
           !JSResolveUtil.isExprInTypeContext((JSReferenceExpression)place)
         ) {
-        openedNses = JSResolveUtil.calculateOpenNses(place);
+        openedNses = ActionScriptResolveUtil.calculateOpenNses(place);
       }
     }
 

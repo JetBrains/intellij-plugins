@@ -2,8 +2,8 @@
  -a
   -nest &:--any-link, :--button &
    -& p
-    apply --my3
+    apply
  -div
-  apply --my2
+  apply
  -[media all]
-  apply --my
+  apply

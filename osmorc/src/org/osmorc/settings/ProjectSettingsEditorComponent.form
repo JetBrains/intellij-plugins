@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <labelFor value="5728f"/>
-          <text value="OSGi &amp;framework:"/>
+          <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.framework"/>
         </properties>
       </component>
       <component id="5728f" class="javax.swing.JComboBox" binding="myFrameworkInstance">
@@ -37,7 +37,7 @@
             </constraints>
             <properties>
               <labelFor value="6ad11"/>
-              <text value="&amp;Default manifest:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.manifest"/>
             </properties>
           </component>
           <component id="6ad11" class="com.intellij.openapi.ui.ComboBox" binding="myDefaultManifestFileLocation">
@@ -53,7 +53,7 @@
             <properties>
               <componentStyle value="SMALL"/>
               <fontColor value="BRIGHTER"/>
-              <text value="Default manifest file location (relative to a module's content root)"/>
+              <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.manifest.path"/>
             </properties>
           </component>
         </children>
@@ -71,7 +71,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Output path:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.output"/>
             </properties>
           </component>
           <component id="39bc0" class="com.intellij.ui.components.JBLabel">
@@ -81,7 +81,7 @@
             <properties>
               <componentStyle value="SMALL"/>
               <fontColor value="BRIGHTER"/>
-              <text value="Common output path for all compiled bundles"/>
+              <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.output.common"/>
             </properties>
           </component>
           <grid id="d21e0" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -103,8 +103,8 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Apply  to all facets"/>
-                  <toolTipText value="Modifies all OSGi facets and sets their output path settings so they use the common output path specified above."/>
+                  <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.apply.to.all"/>
+                  <toolTipText resource-bundle="messages/OsmorcBundle" key="settings.project.form.apply.to.all.tt"/>
                 </properties>
               </component>
             </children>
@@ -116,8 +116,8 @@
           <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Import Bnd/Bndtools projects automatically"/>
-          <toolTipText value="Update IDEA project model each time bnd.bnd or build.bnd file is changed "/>
+          <text resource-bundle="messages/OsmorcBundle" key="settings.project.form.auto.import"/>
+          <toolTipText resource-bundle="messages/OsmorcBundle" key="settings.project.form.auto.import.tt"/>
         </properties>
       </component>
       <vspacer id="7bee">

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -24,10 +24,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.types.TypeFromUsageDetector;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -54,9 +51,7 @@ import java.util.*;
 import static com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.processWithStatic;
 import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 
-/**
- * @author yole
- */
+
 public class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
   @Nullable
   @Override
@@ -223,7 +218,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
     for (JSClass result : all) {
       if (ActionScriptResolveUtil.hasExcludeClassMetadata(result)) continue;
-      if (!JSResolveUtil.isAccessibleFromCurrentActionScriptPackage(result, packageName, place)) continue;
+      if (!ActionScriptResolveUtil.isAccessibleFromCurrentActionScriptPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
       variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY));
     }
@@ -387,7 +382,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         if (attributeList != null &&
             attributeList.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
             attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) &&
-            "String".equals(variable.getTypeString())
+            JSNamedType.isNamedTypeWithName(variable.getJSType(), JSCommonTypeNames.STRING_CLASS_NAME)
           ) {
           final String s = variable.getLiteralOrReferenceInitializerText();
           if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s, "\"")) {

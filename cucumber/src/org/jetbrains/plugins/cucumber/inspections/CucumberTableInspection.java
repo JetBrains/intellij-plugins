@@ -1,10 +1,11 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -14,9 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author yole
- */
+
 public final class CucumberTableInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
@@ -52,7 +51,7 @@ public final class CucumberTableInspection extends GherkinInspection {
       return;
     }
     final List<GherkinTableCell> cells = row.getPsiCells();
-    IntArrayList unusedIndices = new IntArrayList();
+    IntList unusedIndices = new IntArrayList();
 
     for (int i = 0, cellsSize = cells.size(); i < cellsSize; i++) {
       String columnName = cells.get(i).getText().trim();
@@ -69,7 +68,7 @@ public final class CucumberTableInspection extends GherkinInspection {
     }
   }
 
-  private static void highlightUnusedColumns(GherkinTableRow row, IntArrayList unusedIndices, ProblemsHolder holder) {
+  private static void highlightUnusedColumns(GherkinTableRow row, IntList unusedIndices, ProblemsHolder holder) {
     final List<GherkinTableCell> cells = row.getPsiCells();
     final int cellsCount = cells.size();
 

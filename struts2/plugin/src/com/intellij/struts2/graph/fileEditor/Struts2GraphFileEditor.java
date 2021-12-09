@@ -17,10 +17,11 @@ package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.graph.builder.components.GraphStructureViewBuilderSetup;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
@@ -39,6 +40,9 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
 
   private Struts2GraphComponent myComponent;
   private final XmlFile myXmlFile;
+
+  private final @NotNull NotNullLazyValue<StructureViewBuilder> myStructureViewBuilder =
+    NotNullLazyValue.atomicLazy(() -> GraphStructureViewBuilderSetup.setupFor(getStruts2GraphComponent().getBuilder(), null));
 
   public Struts2GraphFileEditor(final Project project, final VirtualFile file) {
     super(project, file);
@@ -91,7 +95,7 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
 
   @Override
   public StructureViewBuilder getStructureViewBuilder() {
-    return GraphViewUtil.createStructureViewBuilder(getStruts2GraphComponent().getOverview());
+    return myStructureViewBuilder.getValue();
   }
 
   private Struts2GraphComponent getStruts2GraphComponent() {

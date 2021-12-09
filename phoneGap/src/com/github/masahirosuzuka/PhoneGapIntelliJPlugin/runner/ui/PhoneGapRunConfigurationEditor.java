@@ -13,6 +13,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
@@ -57,7 +58,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
   private TextFieldWithHistoryWithBrowseButton myWorkDirField;
   private ComboBoxWithMoreOption myPlatformField;
-  private ComboBox myCommand;
+  private ComboBox<String> myCommand;
   private final Project myProject;
   private JBCheckBox myHasTarget;
   private PhoneGapTargetsPanel myTarget;
@@ -76,10 +77,10 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
                                                          !StringUtil.isEmpty(executable)
                                                          ? executable
                                                          : PhoneGapSettings.getInstance().getExecutablePath());
-    String item = s.getPlatform();
+    String item = s.getNormalizedPlatform();
     if (item != null) {
       //call to lower for back compatibility (old settings store 'iOS' and 'Android')
-      myPlatformField.setSelectedWithExtend(StringUtil.toLowerCase(item));
+      myPlatformField.setSelectedWithExtend(item);
     }
     String command = s.getCommand();
     if (command != null) {
@@ -154,7 +155,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myCommand.setMinimumAndPreferredWidth(200);
     myPlatformField.setMinimumAndPreferredWidth(200);
     myTarget.getTargetsField().setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
-    myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<String>() {
+    myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<>() {
 
       @NotNull
       @Override
@@ -203,8 +204,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePathField)
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkDirField)
       .addLabeledComponent(ExecutionBundle.message("environment.variables.component.title"), myEnvComponent)
-      .addLabeledComponent("Command:", myCommand)
-      .addLabeledComponent("Platform:", myPlatformField)
+      .addLabeledComponent(PhoneGapBundle.message("phonegap.run.label.command"), myCommand)
+      .addLabeledComponent(PhoneGapBundle.message("phonegap.run.label.platform"), myPlatformField)
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.extra.args.name"), myExtraArgsTextField)
       .addLabeledComponent(myHasTarget, myTarget.getMainPanel())
       .getPanel();
@@ -258,9 +259,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
 
-  @SuppressWarnings("unchecked")
-  private static void addItems(ComboBox box, List<String> list) {
-    for (String s : list) {
+  private static void addItems(@NotNull ComboBox<String> box, @NotNull List<@NlsSafe String> list) {
+    for (@NlsSafe String s : list) {
       box.addItem(s);
     }
 
@@ -278,7 +278,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     }
   }
 
-  private void replaceCommandList(String selectedItem, List<String> commandList) {
+  private void replaceCommandList(@NlsSafe String selectedItem, List<@NlsSafe String> commandList) {
     if (myCommand.getItemCount() == commandList.size()) return;
 
     myCommand.removeAllItems();

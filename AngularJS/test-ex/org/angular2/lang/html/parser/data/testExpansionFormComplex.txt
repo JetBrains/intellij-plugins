@@ -1,0 +1,104 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('Text')
+      PsiElement(NG:EXPANSION_FORM)
+        PsiElement(NG:EXPANSION_FORM_START)('{')
+        PsiWhiteSpace(' ')
+        ASTWrapperPsiElement(NG:BINDING_EXPR)
+          Angular2Binding
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('form')
+        XmlToken:XML_COMMA(',')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('open')
+        XmlToken:XML_COMMA(',')
+        PsiWhiteSpace(' ')
+        PsiElement(NG:EXPANSION_FORM_CASE)
+          XmlToken:XML_DATA_CHARACTERS('=23')
+          PsiWhiteSpace(' ')
+          PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
+          XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
+            PsiElement(NG:INTERPOLATION_START)('{{')
+            ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+              Angular2Interpolation
+                JSObjectLiteralExpression
+                  PsiElement(JS:LBRACE)('{')
+                  JSProperty
+                    PsiElement(JS:IDENTIFIER)('foo')
+                    PsiElement(JS:COLON)(':')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('12')
+                  PsiElement(JS:RBRACE)('}')
+              PsiWhiteSpace(' ')
+            PsiElement(NG:INTERPOLATION_END)('}}')
+            XmlText
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('is')
+              PsiWhiteSpace(' ')
+            PsiElement(NG:EXPANSION_FORM)
+              PsiElement(NG:EXPANSION_FORM_START)('{')
+              ASTWrapperPsiElement(NG:BINDING_EXPR)
+                Angular2Binding
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('inner')
+              XmlToken:XML_COMMA(',')
+              PsiWhiteSpace(' ')
+              XmlToken:XML_DATA_CHARACTERS('open')
+              XmlToken:XML_COMMA(',')
+              PsiWhiteSpace(' ')
+              PsiElement(NG:EXPANSION_FORM_CASE)
+                XmlToken:XML_DATA_CHARACTERS('=34')
+                PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
+                XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
+                  PsiElement(NG:INTERPOLATION_START)('{{')
+                  ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+                    Angular2Interpolation
+                      JSLiteralExpression
+                        PsiElement(JS:STRING_LITERAL)('"test"')
+                  PsiElement(NG:INTERPOLATION_END)('}}')
+                  XmlText
+                    PsiWhiteSpace(' ')
+                    XmlToken:XML_DATA_CHARACTERS('cool')
+                    PsiWhiteSpace(' ')
+                PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
+              PsiWhiteSpace(' ')
+              PsiElement(NG:EXPANSION_FORM_CASE)
+                XmlToken:XML_DATA_CHARACTERS('=12')
+                PsiElement(NG:EXPANSION_FORM_CASE_START)('{')
+                XmlASTWrapperPsiElement(NG:EXPANSION_FORM_CASE_CONTENT_TOKEN)
+                  HtmlTag:tag
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('tag')
+                    PsiWhiteSpace(' ')
+                    PsiElement(XML_ATTRIBUTE)
+                      XmlToken:XML_NAME('test')
+                      XmlToken:XML_EQ('=')
+                      PsiElement(XML_ATTRIBUTE_VALUE)
+                        XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+                        XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('12')
+                        XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+                    XmlToken:XML_TAG_END('>')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('tag')
+                    XmlToken:XML_TAG_END('>')
+                PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
+              PsiElement(NG:EXPANSION_FORM_END)('}')
+          PsiElement(NG:EXPANSION_FORM_CASE_END)('}')
+        PsiElement(NG:EXPANSION_FORM_END)('}')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('}}')
+        PsiWhiteSpace(' ')
+      PsiErrorElement:Unterminated expansion form. If you have unescaped '{', use '{{ "{" }}' to escape it.
+        PsiElement(NG:EXPANSION_FORM_START)('{')
+      XmlText
+        PsiElement(NG:EXPANSION_FORM_END)('}')
+      PsiErrorElement:Element div is not closed
+        <empty list>

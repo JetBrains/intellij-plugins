@@ -50,7 +50,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   @Override
-  public boolean isValidSdkHome(final String path) {
+  public boolean isValidSdkHome(final @NotNull String path) {
     if (path == null) {
       return false;
     }
@@ -65,7 +65,7 @@ public class FlexSdkType2 extends SdkType {
 
   @NotNull
   @Override
-  public String suggestSdkName(@Nullable final String currentSdkName, final String sdkHome) {
+  public String suggestSdkName(@Nullable final String currentSdkName, final @NotNull String sdkHome) {
     return PathUtil.getFileName(sdkHome);
   }
 
@@ -83,12 +83,6 @@ public class FlexSdkType2 extends SdkType {
   @NotNull
   public String getPresentableName() {
     return FlexBundle.message("flex.sdk.presentable.name");
-  }
-
-  @Override
-  @NotNull
-  public Icon getIconForAddAction() {
-    return getIcon();
   }
 
   @NotNull

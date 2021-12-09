@@ -1,10 +1,6 @@
 package com.intellij.tapestry.intellij.core.java;
 
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataCache;
 import com.intellij.psi.*;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import org.jetbrains.annotations.Nullable;
@@ -14,15 +10,6 @@ import java.util.Map;
 
 public class IntellijJavaAnnotation implements IJavaAnnotation {
     private final PsiAnnotation _psiAnnotation;
-
-    private static final Key<CachedValue<Map<String, String[]>>> ourParametersMapKey = Key.create("parameters.map");
-    private static final UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object> ourParametersMapCache = new UserDataCache<CachedValue<Map<String, String[]>>,PsiAnnotation, Object>() {
-        @Override
-        protected final CachedValue<Map<String, String[]>> compute(final PsiAnnotation owner, Object o) {
-            return CachedValuesManager.getManager(owner.getProject()).createCachedValue(
-              () -> new CachedValueProvider.Result<>(doCalcParameters(owner), owner), false);
-        }
-    };
 
     public IntellijJavaAnnotation(PsiAnnotation psiAnnotation) {
         _psiAnnotation = psiAnnotation;
@@ -41,7 +28,7 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
      */
     @Override
     public Map<String, String[]> getParameters() {
-        return ourParametersMapCache.get(ourParametersMapKey, _psiAnnotation, null).getValue();
+        return CachedValuesManager.getProjectPsiDependentCache(_psiAnnotation, IntellijJavaAnnotation::doCalcParameters);
     }
 
     public PsiAnnotation getPsiAnnotation() {

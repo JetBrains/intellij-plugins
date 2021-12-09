@@ -3,9 +3,11 @@ package org.angular2.codeInsight.template;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -34,6 +36,11 @@ public final class Angular2TemplateScopesResolver {
     StreamEx.of(Angular2TemplateScopesProvider.EP_NAME.getExtensionList())
       .flatCollection(provider -> provider.getScopes(element, hostElement))
       .findFirst(s -> s.resolveAllScopesInHierarchy(processor));
+  }
+
+  public static boolean isImplicitReferenceExpression(JSReferenceExpression expression) {
+    return ContainerUtil
+      .or(Angular2TemplateScopesProvider.EP_NAME.getExtensionList(), provider -> provider.isImplicitReferenceExpression(expression));
   }
 
   private static boolean checkLanguage(@NotNull PsiElement element) {

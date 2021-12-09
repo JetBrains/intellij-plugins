@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -14,7 +14,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
+import com.intellij.ide.IdeCoreBundle;
 import com.intellij.ide.actions.CloseActiveTabAction;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -30,8 +30,10 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -53,6 +55,7 @@ import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,13 +64,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-abstract public class DartPubActionBase extends AnAction implements DumbAware {
+public abstract class DartPubActionBase extends AnAction implements DumbAware {
   public static final String PUB_ENV_VAR_NAME = "PUB_ENVIRONMENT";
 
-  private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
+  private static final @NonNls String GROUP_DISPLAY_ID = "Dart Pub Tool";
   private static final Key<PubToolWindowContentInfo> PUB_TOOL_WINDOW_CONTENT_INFO_KEY = Key.create("PUB_TOOL_WINDOW_CONTENT_INFO_KEY");
 
+  private static final String DART_PUB_MIN_SDK_VERSION = "2.10";
+  private static final String DART_RUN_TEST_MIN_SDK_VERSION = "2.11";
+
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
+
+  public static boolean isUseDartRunTestInsteadOfPubRunTest(@NotNull DartSdk dartSdk) {
+    return StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_RUN_TEST_MIN_SDK_VERSION) >= 0;
+  }
+
+  public static void setupPubExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk dartSdk) {
+    boolean useDartPub = StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
+    if (useDartPub) {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(dartSdk)));
+      commandLine.addParameter("pub");
+    }
+    else {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
+    }
+  }
 
   public static String getPubEnvValue() {
     String existingVar = System.getenv(PUB_ENV_VAR_NAME);
@@ -89,7 +110,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @Override
-  public void update(@NotNull final AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     final Pair<Module, VirtualFile> moduleAndPubspec = getModuleAndPubspecYamlFile(e);
     // Defer to the Flutter plugin if appropriate.
     final boolean visible = moduleAndPubspec != null &&
@@ -98,9 +119,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     e.getPresentation().setEnabled(visible && !isInProgress());
   }
 
-  @Nullable
-  private static Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
-    final Module module = e.getData(LangDataKeys.MODULE);
+  private static @Nullable Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
+    final Module module = e.getData(PlatformCoreDataKeys.MODULE);
     final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
 
     if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase(PUBSPEC_YAML)) {
@@ -110,13 +130,13 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     return null;
   }
 
-  @NotNull
-  protected abstract String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
+  protected abstract @NotNull @NlsContexts.DialogTitle String getTitle(final @NotNull Project project,
+                                                                       final @NotNull VirtualFile pubspecYamlFile);
 
-  protected abstract String @Nullable [] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
+  protected abstract String @Nullable [] calculatePubParameters(final @NotNull Project project, final @NotNull VirtualFile pubspecYamlFile);
 
   @Override
-  public void actionPerformed(@NotNull final AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     final Pair<Module, VirtualFile> moduleAndPubspecYamlFile = getModuleAndPubspecYamlFile(e);
     if (moduleAndPubspecYamlFile == null) return;
 
@@ -144,26 +164,25 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     if (sdk == null) return;
 
-    File pubFile = new File(DartSdkUtil.getPubPath(sdk));
-    if (!pubFile.isFile() && allowModalDialogs) {
-      final int answer =
-        Messages.showDialog(module.getProject(),
-                            DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
-                            getTitle(module.getProject(), pubspecYamlFile),
-                            new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
-                            Messages.OK,
-                            Messages.getErrorIcon());
-      if (answer != Messages.OK) return;
+    boolean useDartPub = StringUtil.compareVersionNumbers(sdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
+    File exeFile = useDartPub ? new File(DartSdkUtil.getDartExePath(sdk))
+                              : new File(DartSdkUtil.getPubPath(sdk));
+    if (!exeFile.isFile()) {
+      if (allowModalDialogs) {
+        final int answer =
+          Messages.showDialog(module.getProject(),
+                              DartBundle.message("dart.sdk.bad.dartpub.path", exeFile.getPath()),
+                              getTitle(module.getProject(), pubspecYamlFile),
+                              new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
+                              Messages.OK,
+                              Messages.getErrorIcon());
+        if (answer == Messages.OK) {
+          DartConfigurable.openDartSettings(module.getProject());
+        }
+      }
 
-      DartConfigurable.openDartSettings(module.getProject());
-
-      sdk = DartSdk.getDartSdk(module.getProject());
-      if (sdk == null) return;
-
-      pubFile = new File(DartSdkUtil.getPubPath(sdk));
+      return;
     }
-
-    if (!pubFile.isFile()) return;
 
     final String[] pubParameters = calculatePubParameters(module.getProject(), pubspecYamlFile);
 
@@ -177,17 +196,17 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
         }
       }
 
-      command.setExePath(pubFile.getPath());
+      setupPubExePath(command, sdk);
       command.addParameters(pubParameters);
 
       doPerformPubAction(module, pubspecYamlFile, command, getTitle(module.getProject(), pubspecYamlFile));
     }
   }
 
-  private static void doPerformPubAction(@NotNull final Module module,
-                                         @NotNull final VirtualFile pubspecYamlFile,
-                                         @NotNull final GeneralCommandLine command,
-                                         @NotNull final String actionTitle) {
+  private static void doPerformPubAction(final @NotNull Module module,
+                                         final @NotNull VirtualFile pubspecYamlFile,
+                                         final @NotNull GeneralCommandLine command,
+                                         final @NotNull @NlsContexts.NotificationTitle String actionTitle) {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     try {
@@ -198,12 +217,12 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
         processHandler.addProcessListener(new ProcessAdapter() {
           @Override
-          public void processTerminated(@NotNull final ProcessEvent event) {
+          public void processTerminated(final @NotNull ProcessEvent event) {
             ourInProgress.set(false);
 
             ApplicationManager.getApplication().invokeLater(() -> {
               if (!module.isDisposed()) {
-                DartStartupActivity.excludeBuildAndPackagesFolders(module, pubspecYamlFile);
+                DartStartupActivity.excludeBuildAndToolCacheFolders(module, pubspecYamlFile);
                 // refresh later than exclude, otherwise IDE may start indexing excluded folders
                 VfsUtil.markDirtyAndRefresh(true, true, true, pubspecYamlFile.getParent());
 
@@ -227,11 +246,11 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     }
   }
 
-  private static void showPubOutputConsole(@NotNull final Module module,
-                                           @NotNull final GeneralCommandLine command,
-                                           @NotNull final OSProcessHandler processHandler,
-                                           @NotNull final VirtualFile pubspecYamlFile,
-                                           @NotNull final String actionTitle) {
+  private static void showPubOutputConsole(@NotNull Module module,
+                                           @NotNull GeneralCommandLine command,
+                                           @NotNull OSProcessHandler processHandler,
+                                           @NotNull VirtualFile pubspecYamlFile,
+                                           @NotNull @NlsContexts.NotificationTitle String actionTitle) {
     final ConsoleView console;
     PubToolWindowContentInfo info = findExistingInfoForCommand(module.getProject(), command);
 
@@ -268,8 +287,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(@NotNull final ProcessEvent event) {
-        console.print(IdeBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
+      public void processTerminated(final @NotNull ProcessEvent event) {
+        console.print(IdeCoreBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
       }
     });
 
@@ -279,8 +298,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     processHandler.startNotify();
   }
 
-  @Nullable
-  private static PubToolWindowContentInfo findExistingInfoForCommand(final Project project, @NotNull final GeneralCommandLine command) {
+  private static @Nullable PubToolWindowContentInfo findExistingInfoForCommand(final Project project,
+                                                                               final @NotNull GeneralCommandLine command) {
     for (Content content : MessageView.SERVICE.getInstance(project).getContentManager().getContents()) {
       final PubToolWindowContentInfo info = content.getUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY);
       if (info != null && info.command == command) {
@@ -290,8 +309,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     return null;
   }
 
-  @NotNull
-  private static ConsoleView createConsole(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
+  private static @NotNull ConsoleView createConsole(final @NotNull Project project, final @NotNull VirtualFile pubspecYamlFile) {
     final TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
     consoleBuilder.setViewer(true);
     consoleBuilder.addFilter(new DartConsoleFilter(project, pubspecYamlFile));
@@ -300,8 +318,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     return consoleBuilder.getConsole();
   }
 
-  @NotNull
-  private static ActionToolbar createToolWindowActionsBar(@NotNull final PubToolWindowContentInfo info) {
+  private static @NotNull ActionToolbar createToolWindowActionsBar(final @NotNull PubToolWindowContentInfo info) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
 
     final RerunPubCommandAction rerunPubCommandAction = new RerunPubCommandAction(info);
@@ -325,7 +342,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     return toolbar;
   }
 
-  private static void removeOldTabs(@NotNull final ContentManager contentManager) {
+  private static void removeOldTabs(final @NotNull ContentManager contentManager) {
     for (Content content : contentManager.getContents()) {
       if (!content.isPinned() && content.isCloseable() && content.getUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY) != null) {
         contentManager.removeContent(content, false);
@@ -334,19 +351,19 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   private static class PubToolWindowContentInfo {
-    private @NotNull final Module module;
-    private @NotNull final VirtualFile pubspecYamlFile;
-    private @NotNull final GeneralCommandLine command;
-    private @NotNull final String actionTitle;
-    private @NotNull final ConsoleView console;
+    private final @NotNull Module module;
+    private final @NotNull VirtualFile pubspecYamlFile;
+    private final @NotNull GeneralCommandLine command;
+    private final @NotNull @NlsContexts.NotificationTitle String actionTitle;
+    private final @NotNull ConsoleView console;
     private RerunPubCommandAction rerunPubCommandAction;
     private StopProcessAction stopProcessAction;
 
-    PubToolWindowContentInfo(@NotNull final Module module,
-                             @NotNull final VirtualFile pubspecYamlFile,
-                             @NotNull final GeneralCommandLine command,
-                             @NotNull final String actionTitle,
-                             @NotNull final ConsoleView console) {
+    PubToolWindowContentInfo(@NotNull Module module,
+                             @NotNull VirtualFile pubspecYamlFile,
+                             @NotNull GeneralCommandLine command,
+                             @NotNull @NlsContexts.NotificationTitle String actionTitle,
+                             @NotNull ConsoleView console) {
       this.module = module;
       this.pubspecYamlFile = pubspecYamlFile;
       this.command = command;
@@ -366,10 +383,10 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   private static class RerunPubCommandAction extends DumbAwareAction {
-    @NotNull private final PubToolWindowContentInfo myInfo;
+    private final @NotNull PubToolWindowContentInfo myInfo;
     private OSProcessHandler myProcessHandler;
 
-    RerunPubCommandAction(@NotNull final PubToolWindowContentInfo info) {
+    RerunPubCommandAction(final @NotNull PubToolWindowContentInfo info) {
       super(DartBundle.message("rerun.pub.command.action.name"),
             DartBundle.message("rerun.pub.command.action.description"),
             AllIcons.Actions.Execute);
@@ -378,17 +395,17 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       registerCustomShortcutSet(CommonShortcuts.getRerun(), info.console.getComponent());
     }
 
-    public void setProcessHandler(@NotNull final OSProcessHandler processHandler) {
+    public void setProcessHandler(final @NotNull OSProcessHandler processHandler) {
       myProcessHandler = processHandler;
     }
 
     @Override
-    public void update(@NotNull final AnActionEvent e) {
+    public void update(final @NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(!isInProgress() && myProcessHandler != null && myProcessHandler.isProcessTerminated());
     }
 
     @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
+    public void actionPerformed(final @NotNull AnActionEvent e) {
       doPerformPubAction(myInfo.module, myInfo.pubspecYamlFile, myInfo.command, myInfo.actionTitle);
     }
   }

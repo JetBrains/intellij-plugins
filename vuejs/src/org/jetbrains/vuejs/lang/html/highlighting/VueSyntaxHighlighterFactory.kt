@@ -12,7 +12,8 @@ import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
 class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     return VueFileHighlighter(
-      project?.let { JSRootConfiguration.getInstance(it).languageLevel } ?: JSLanguageLevel.JSX,
+      project?.let { JSRootConfiguration.getInstance(it).languageLevel } ?: JSLanguageLevel.getLevelForJSX(),
+      project,
       VueFileElementType.readDelimiters(virtualFile?.name))
   }
 }

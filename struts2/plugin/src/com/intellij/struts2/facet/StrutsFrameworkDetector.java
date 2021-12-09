@@ -18,9 +18,9 @@ import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.FacetType;
 import com.intellij.framework.detection.FacetBasedFrameworkDetector;
 import com.intellij.framework.detection.FileContentPattern;
-import com.intellij.j2ee.web.WebUtilImpl;
+import com.intellij.ide.highlighter.XmlFileType;
+import com.intellij.javaee.web.WebUtilImpl;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.struts2.StrutsConstants;
@@ -48,7 +48,7 @@ public class StrutsFrameworkDetector extends FacetBasedFrameworkDetector<StrutsF
   @NotNull
   @Override
   public FileType getFileType() {
-    return StdFileTypes.XML;
+    return XmlFileType.INSTANCE;
   }
 
   @NotNull
@@ -62,7 +62,7 @@ public class StrutsFrameworkDetector extends FacetBasedFrameworkDetector<StrutsF
   @Override
   public boolean isSuitableUnderlyingFacetConfiguration(final FacetConfiguration underlying,
                                                         final StrutsFacetConfiguration configuration,
-                                                        final Set<VirtualFile> files) {
+                                                        final Set<? extends VirtualFile> files) {
     return WebUtilImpl.isWebFacetConfigurationContainingFiles(underlying, files);
   }
 }

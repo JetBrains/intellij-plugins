@@ -1,27 +1,23 @@
 package com.intellij.tapestry.psi;
 
 import com.intellij.lexer.XHtmlHighlightingLexer;
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
  */
 public class TmlHighlightingLexer extends XHtmlHighlightingLexer {
 
+  private static final TokenSet CUSTOM_ATTRIBUTE_TOKENS = TokenSet.create(TelTokenTypes.TAP5_EL_CONTENT);
+
   public TmlHighlightingLexer() {
     super(TmlLexer.createElAwareXmlLexer());
-    registerHandler(TelTokenTypes.TAP5_EL_CONTENT, new ElEmbeddmentHandler());
   }
 
   @Override
-  protected boolean isValidAttributeValueTokenType(final IElementType tokenType) {
-    return super.isValidAttributeValueTokenType(tokenType) ||tokenType == TelTokenTypes.TAP5_EL_CONTENT;
-  }
-
-  @Override
-  protected Lexer createELLexer(Lexer newLexer) {
-    return getTokenType() == TelTokenTypes.TAP5_EL_CONTENT ? new TelLexer() : newLexer;
+  protected @NotNull TokenSet createAttributeEmbedmentTokenSet() {
+    return TokenSet.orSet(super.createAttributeEmbedmentTokenSet(), CUSTOM_ATTRIBUTE_TOKENS);
   }
 }
 

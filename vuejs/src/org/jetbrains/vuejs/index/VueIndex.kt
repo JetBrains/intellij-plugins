@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.index
 
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -21,6 +22,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE_MODULE: String = "vue"
+const val VUE_CLI_SERVICE_MODULE: String = "@vue/cli-service"
 const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
@@ -63,9 +65,9 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
 fun hasVueClassComponentLibrary(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
   return CachedValuesManager.getManager(project).getCachedValue(project) {
-    val packageJsonFiles = FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
+    val packageJsonFiles = FilenameIndex.getVirtualFilesByName(PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
 
-    var recordedDependency = packageJsonFiles.any { PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
+    var recordedDependency = packageJsonFiles.any { PackageJsonData.getOrCreate(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
     if (!recordedDependency) {
       val psiManager = PsiManager.getInstance(project)
       recordedDependency = packageJsonFiles.any {

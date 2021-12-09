@@ -3,6 +3,7 @@ package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.json.psi.impl.JsonFileImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -24,12 +25,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import static com.intellij.javascript.web.WebTestUtil.webSymbolAtCaret;
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.*;
 
 public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
+
+  @NotNull
+  private PsiElement resolveToWebSymbolSourceContext(@NotNull String signature) {
+    return WebTestUtil.resolveWebSymbolReference(myFixture, signature).getPsiContext();
+  }
 
   @Override
   protected String getTestDataPath() {
@@ -131,7 +138,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     VirtualFile vFile = myFixture.getTempDirFixture().getFile("export.test.metadata.json");
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
+    String result = DebugUtil.psiToString(file, true, false);
     UsefulTestCase
       .assertSameLinesWithFile(new File(getTestDataPath(), "node_modules/export-aliases/export.test.metadata.json.txt").toString(), result);
   }
@@ -145,7 +152,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     moveToOffsetBySignature("mat-form<caret>-field", myFixture);
     assertEquals("form-field.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 webSymbolAtCaret(myFixture).getPsiContext().getContainingFile().getName());
   }
 
   public void testMaterialMetadataStubGeneration() {
@@ -159,7 +166,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
         if (file.getName().endsWith(".metadata.json")) {
           String relativeFile = FileUtil.getRelativePath(pathPrefix, file.getVirtualFile().getPath(), '/');
           assert file instanceof MetadataFileImpl : relativeFile;
-          String result = DebugUtil.psiToString(file, false, false);
+          String result = DebugUtil.psiToString(file, true, false);
           UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "material-stubs/" + relativeFile + ".txt").toString(), result);
         }
       }
@@ -187,7 +194,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture);
     assertEquals("proxies.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 webSymbolAtCaret(myFixture).getPsiContext().getContainingFile().getName());
   }
 
   public void testFunctionPropertyMetadata() {
@@ -196,7 +203,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureFromTempProjectFile("template.html");
     myFixture.checkHighlighting();
     assertEquals("my-lib.component.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 WebTestUtil.webSymbolSourceAtCaret(myFixture).getContainingFile().getName());
   }
 
   public void testMultipleNodeModulesResolution() {
@@ -235,7 +242,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   public void testTemplate20Metadata() {
     configureWithMetadataFiles("template");
     myFixture.configureByFiles("template.html");
-    PsiElement resolve = resolveReference("*myHover<caret>List", myFixture);
+    PsiElement resolve = resolveToWebSymbolSourceContext("*myHover<caret>List");
     assertEquals("template.metadata.json", resolve.getContainingFile().getName());
     assertUnresolvedReference("myHover<caret>List", myFixture);
   }
@@ -243,21 +250,21 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   public void testNoTemplate20Metadata() {
     configureWithMetadataFiles("noTemplate");
     myFixture.configureByFiles("noTemplate.html");
-    PsiElement resolve = resolveReference("myHover<caret>List", myFixture);
+    PsiElement resolve = resolveToWebSymbolSourceContext("myHover<caret>List");
     assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName());
     assertUnresolvedReference("*myHover<caret>List", myFixture);
   }
 
   public void testTemplate20NoMetadata() {
     myFixture.configureByFiles("template.html", "package.json", "template.ts");
-    PsiElement resolve = resolveReference("*myHover<caret>List", myFixture);
+    PsiElement resolve = resolveToWebSymbolSourceContext("*myHover<caret>List");
     assertEquals("template.ts", resolve.getContainingFile().getName());
     assertUnresolvedReference("myHover<caret>List", myFixture);
   }
 
   public void testNoTemplate20NoMetadata() {
     myFixture.configureByFiles("noTemplate.html", "package.json", "noTemplate.ts");
-    PsiElement resolve = resolveReference("myHover<caret>List", myFixture);
+    PsiElement resolve = resolveToWebSymbolSourceContext("myHover<caret>List");
     assertEquals("noTemplate.ts", resolve.getContainingFile().getName());
     assertUnresolvedReference("*myHover<caret>List", myFixture);
   }
@@ -299,7 +306,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     VirtualFile vFile = myFixture.copyFileToProject(metadataJson);
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
+    String result = DebugUtil.psiToString(file, true, false);
     UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), psiOutput).toString(), result);
   }
 

@@ -10,7 +10,7 @@ JSFile:test.object.action
     JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
-        Angular2Property
+        JSProperty
           PsiElement(JS:IDENTIFIER)('a')
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
@@ -22,7 +22,7 @@ JSFile:test.object.action
     JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
-        Angular2Property
+        JSProperty
           PsiElement(JS:STRING_LITERAL)(''a'')
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
@@ -34,7 +34,7 @@ JSFile:test.object.action
     JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
-        Angular2Property
+        JSProperty
           PsiElement(JS:STRING_LITERAL)('"a"')
           PsiElement(JS:COLON)(':')
           JSLiteralExpression
@@ -47,14 +47,14 @@ JSFile:test.object.action
       JSIndexedPropertyAccessExpression
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          Angular2Property
+          JSProperty
             PsiElement(JS:IDENTIFIER)('false')
             PsiElement(JS:COLON)(':')
             JSLiteralExpression
               PsiElement(JS:STRING_LITERAL)(''WC'')
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          Angular2Property
+          JSProperty
             PsiElement(JS:IDENTIFIER)('true')
             PsiElement(JS:COLON)(':')
             JSLiteralExpression
@@ -82,7 +82,7 @@ JSFile:test.object.action
         PsiElement(JS:LBRACKET)('[')
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          Angular2Property
+          JSProperty
             PsiElement(JS:IDENTIFIER)('a')
             PsiElement(JS:COLON)(':')
             JSArrayLiteralExpression
@@ -93,7 +93,7 @@ JSFile:test.object.action
         PsiWhiteSpace(' ')
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          Angular2Property
+          JSProperty
             PsiElement(JS:IDENTIFIER)('b')
             PsiElement(JS:COLON)(':')
             JSLiteralExpression
@@ -133,10 +133,9 @@ JSFile:test.object.action
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace(' ')
-        Angular2Property
-          PsiElement(JS:IDENTIFIER)('a')
-          PsiErrorElement:: expected
-            <empty list>
+        ES6Property
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(JS:RBRACE)('}')
 ------
@@ -146,13 +145,25 @@ JSFile:test.object.action
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace(' ')
-        Angular2Property
+        ES6Property
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('break')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:RBRACE)('}')
+------
+JSFile:test.object.action
+  Angular2Action
+    JSExpressionStatement
+      JSObjectLiteralExpression
+        PsiElement(JS:LBRACE)('{')
+        PsiWhiteSpace(' ')
+        JSProperty
           PsiElement(JS:STRING_LITERAL)('"a"')
           PsiErrorElement:: expected
             <empty list>
           PsiWhiteSpace(' ')
           JSAssignmentExpression
-            PsiErrorElement:expression expected
+            PsiErrorElement:Expression expected
               <empty list>
             PsiElement(JS:EQ)('=')
             PsiWhiteSpace(' ')

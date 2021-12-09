@@ -1,0 +1,23 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "descriptor.proto";
+
+message OptionType {
+  optional SubType foo = 10;
+}
+
+message SubType {
+  extensions 1 to max;
+}
+
+extend google.protobuf.FileOptions {
+  optional OptionType opt = 10003;
+}
+
+extend SubType {
+  optional int32 ext = 20;
+}
+
+option (o<caret>pt).foo.(ext) = 20;

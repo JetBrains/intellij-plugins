@@ -74,7 +74,7 @@ public class AdditionalJARContentsTableModelTest {
     assertEquals("test3", testObject.getValueAt(0, 0));
     assertEquals("test4", testObject.getValueAt(0, 1));
 
-    testObject.changeAdditionalJARConent(0, "test5", "test6");
+    testObject.changeAdditionalJARContent(0, "test5", "test6");
     assertEquals("test5", testObject.getValueAt(0, 0));
     assertEquals("test6", testObject.getValueAt(0, 1));
   }

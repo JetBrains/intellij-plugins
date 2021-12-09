@@ -2,29 +2,13 @@ package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramEdgeBase;
 import com.intellij.diagram.DiagramNode;
-import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramRelationshipInfoAdapter;
 import com.intellij.diagram.presentation.DiagramLineType;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
-public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
-  private static final DiagramRelationshipInfo DEPENDS = new DiagramRelationshipInfoAdapter("DEPENDS", DiagramLineType.SOLID) {
-    @Override
-    public Shape getStartArrow() {
-      return NONE;
-    }
-
-    @Override
-    public Shape getEndArrow() {
-      return STANDARD;
-    }
-  };
-
+public final class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
   private final String myLabel;
   private final Type myType;
   private @Nullable String mySourceName;

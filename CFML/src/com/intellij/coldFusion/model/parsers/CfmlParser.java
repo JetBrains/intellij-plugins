@@ -7,7 +7,6 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
@@ -20,7 +19,6 @@ import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.*;
  * Created by Lera Nikolaenko
  */
 public class CfmlParser implements PsiParser {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.model.parsers.CfmlParser");
 
   private static class Tag {
     public String myTagName;
@@ -209,13 +207,6 @@ public class CfmlParser implements PsiParser {
         PsiBuilder.Marker attrMarker = builder.mark();
         // PsiBuilder.Marker attrNameMarker = myBuilder.mark();
         builder.advanceLexer();
-        /*
-        if (!CfmlUtil.isAttribute(tagName, attributeName)) {
-            attrNameMarker.error(CfmlBundle.message("cfml.parsing.no.such.attribute", tagName));
-        } else {
-            attrNameMarker.drop();
-        }
-        */
         if (builder.getTokenType() != ASSIGN) {
           attrMarker.done(CfmlElementTypes.ATTRIBUTE);
           builder.error(CfmlBundle.message("cfml.parsing.no.value"));
@@ -243,11 +234,7 @@ public class CfmlParser implements PsiParser {
           readValue(builder, CfmlElementTypes.ATTRIBUTE_VALUE);
           attrMarker.done(CfmlElementTypes.ATTRIBUTE);
         }
-      } /*else if (myBuilder.getTokenType() == IDENTIFIER && hasAttrs) {
-                PsiBuilder.Marker attrMarker = myBuilder.mark();
-                advance();
-                attrMarker.error(CfmlBundle.message("cfml.parsing.no.such.attribute", tagName));
-            } */
+      }
       else {
         if (strict) {
           return;

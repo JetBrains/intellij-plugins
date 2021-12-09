@@ -1,0 +1,15 @@
+// Tests when the proto file name clashes with a field name
+// (after converting foo_bar -> FooBar). This isn't really a clash (no suffix).
+
+// Disable lint to test this weird corner case.
+// LINT: LEGACY_NAMES
+syntax = "proto3";
+package idea.plugin.protoeditor.java.test;
+option java_package = "idea.plugin.protoeditor.java.test";
+
+message NothingHere {
+}
+
+message Foo {
+  int32 NotClashingField = 1;
+}

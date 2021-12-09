@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttr
 import org.jetbrains.vuejs.model.getAvailableSlots
 import java.util.*
 
+// TODO move to web-types
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {
   private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")
   private val VUE_STYLE_LANGUAGE = vueStyleLanguages()
@@ -45,7 +46,7 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
     result.add("css")
     CSSLanguage.INSTANCE.dialects.forEach {
       if (it.displayName != "JQuery-CSS") {
-        result.add(it.displayName.toLowerCase(Locale.US))
+        result.add(it.displayName.lowercase(Locale.US))
       }
     }
     return result.toSet()

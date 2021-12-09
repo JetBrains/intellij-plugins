@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -28,7 +28,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
@@ -44,7 +43,6 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
@@ -268,7 +266,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private void initRLMControls() {
     myRLMTextWithBrowse.getTextField().setEditable(false);
-    myRLMTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myRLMTextWithBrowse.setButtonIcon(AllIcons.Actions.ShowViewer);
     myRLMTextWithBrowse.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
@@ -283,7 +281,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   private void initCSSControls() {
     myCssFilesTextWithBrowse.getTextField().setEditable(false);
-    myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myCssFilesTextWithBrowse.setButtonIcon(AllIcons.Actions.ShowViewer);
     myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
@@ -342,7 +340,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       myIOSPackagingConfigurable.disposeUIResources();
     }
 
-    myDependenciesConfigurable = new DependenciesConfigurable(myConfiguration, myModule.getProject(), myConfigEditor, mySdksModel);
+    myDependenciesConfigurable = new DependenciesConfigurable(myConfiguration, myModule.getProject(), myConfigEditor, mySdksModel, getModulesConfigurator().getProjectStructureConfigurable());
     myDependenciesConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
 
     myCompilerOptionsConfigurable =
@@ -496,7 +494,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   private ModulesConfigurator getModulesConfigurator() {
-    return ModuleStructureConfigurable.getInstance(myModule.getProject()).getContext().getModulesConfigurator();
+    return myContext.getModulesConfigurator();
   }
 
   public Icon getIcon() {

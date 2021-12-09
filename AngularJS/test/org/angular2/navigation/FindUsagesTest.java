@@ -2,21 +2,14 @@
 package org.angular2.navigation;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2;
-import com.intellij.injected.editor.EditorWindow;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.javascript.web.WebTestUtil;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
 
 public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -28,100 +21,78 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
   public void testPrivateComponentField() {
     myFixture.configureByFiles("private.ts", "private.html", "package.json");
     checkUsages("f<caret>oo",
-                "foo <private.html:(3,6):(0,3)>",
-                "foo <private.html:(69,72):(0,3)>",
-                "this.foo <private.ts:(350,358):(5,8)>");
+                "<private.html:(3,6):(0,3)>\tfoo",
+                "<private.html:(69,72):(0,3)>\tfoo",
+                "<private.ts:(350,358):(5,8)>\tthis.foo");
+  }
+
+  public void testPrivateComponentFieldLocalHighlighting() {
+    RangeHighlighter[] highlighters = myFixture.testHighlightUsages("private_highlighting.ts", "private.html", "package.json");
+    String fileText = myFixture.getFile().getText();
+    String[] actualHighlightWords = Arrays.stream(highlighters).map(highlighter -> {
+      RangeHighlighterEx highlighterEx = (RangeHighlighterEx)highlighter;
+      return fileText.substring(highlighterEx.getAffectedAreaStartOffset(), highlighterEx.getAffectedAreaEndOffset());
+    }).toArray(String[]::new);
+    assertSameElements(actualHighlightWords, "foo");
   }
 
   public void testPrivateComponentMethod() {
     myFixture.configureByFiles("private.ts", "private.html", "package.json");
     checkUsages("b<caret>ar",
-                "bar() <private.html:(13,16):(0,3)>",
-                "bar() <private.html:(49,52):(0,3)>",
-                "this.bar() <private.ts:(369,377):(5,8)>");
+                "<private.html:(13,16):(0,3)>\tbar()",
+                "<private.html:(49,52):(0,3)>\tbar()",
+                "<private.ts:(369,377):(5,8)>\tthis.bar()");
   }
 
   public void testPrivateConstructorField() {
     myFixture.configureByFiles("private.ts", "private.html", "package.json");
     checkUsages("fooB<caret>ar",
-                "foo + fooBar <private.html:(120,126):(0,6)>",
-                "fooBar <private.html:(25,31):(0,6)>",
-                "this.fooBar <private.ts:(385,396):(5,11)>");
+                "<private.html:(120,126):(0,6)>\tfoo + fooBar",
+                "<private.html:(25,31):(0,6)>\tfooBar",
+                "<private.ts:(385,396):(5,11)>\tthis.fooBar");
   }
 
   public void testComponentCustomElementSelector() {
     myFixture.configureByFiles("slots.component.ts", "slots.test.component.html", "slots.test.component.ts", "package.json");
+
     checkUsages("slots-<caret>component",
-                "slots-component <slots.test.component.html:(0,142):(1,16)>",
-                "slots-component <slots.test.component.html:(0,142):(126,141)>");
+                "<slots.test.component.html:(0,187):(1,16)>\tslots-component",
+                "<slots.test.component.html:(0,187):(126,141)>\tslots-component");
   }
 
   public void testComponentStandardElementSelector() {
     myFixture.configureByFiles("standardSelectors.ts", "package.json");
     AngularTestUtil.moveToOffsetBySignature("\"di<caret>v,", myFixture);
     // Cannot find usages of standard tags and attributes, just check outcome
-    checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
   }
 
   public void testComponentStandardAttributeSelector() {
     myFixture.configureByFiles("standardSelectors.ts", "package.json");
     AngularTestUtil.moveToOffsetBySignature(",[cl<caret>ass]", myFixture);
     // Cannot find usages of standard tags and attributes, just check outcome
-    checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
   }
 
   public void testSlotComponentElementSelector() {
     myFixture.configureByFiles("slots.component.ts", "slots.test.component.html", "slots.test.component.ts", "package.json");
+
     checkUsages("tag<caret>-slot",
-                "tag-slot <slots.test.component.html:(20,70):(1,9)>",
-                "tag-slot <slots.test.component.html:(20,70):(41,49)>");
+                "<slots.test.component.html:(0,187):(21,29)>\ttag-slot",
+                "<slots.test.component.html:(0,187):(61,69)>\ttag-slot");
   }
 
   public void testSlotComponentAttributeSelector() {
     myFixture.configureByFiles("slots.component.ts", "slots.test.component.html", "slots.test.component.ts", "package.json");
+
     checkUsages("attr<caret>-slot",
-                "attr-slot <slots.test.component.html:(78,87):(0,9)>");
+                "<slots.test.component.html:(0,187):(78,87)>\tattr-slot");
   }
 
   private void checkUsages(@NotNull String signature,
                            String @NotNull ... usages) {
-    AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-    checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.SU);
-    assertEquals(Stream.of(usages)
-                   .sorted()
-                   .collect(Collectors.toList()),
-                 myFixture.findUsages(myFixture.getElementAtCaret())
-                   .stream()
-                   .map(usage -> getElementText(usage.getElement()) +
-                                 " <" + usage.getFile().getName() +
-                                 ":" + usage.getElement().getTextRange() +
-                                 ":" + usage.getRangeInElement() +
-                                 ">")
-                   .sorted()
-                   .collect(Collectors.toList())
-    );
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.SU, signature);
+    assertEquals(Arrays.asList(usages), WebTestUtil.usagesAtCaret(myFixture) );
   }
 
-  private void checkGTDUOutcome(@Nullable GotoDeclarationOrUsageHandler2.GTDUOutcome gtduOutcome) {
-    PsiFile file = myFixture.getFile();
-    int offset = myFixture.getCaretOffset();
-    @SuppressWarnings("deprecation")
-    Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.getEditor(), file);
-    if (editor instanceof EditorWindow) {
-      file = ((EditorWindow)editor).getInjectedFile();
-      offset -= InjectedLanguageManager.getInstance(myFixture.getProject()).injectedToHost(file, 0);
-    }
-    assertEquals(gtduOutcome,
-                 GotoDeclarationOrUsageHandler2.testGTDUOutcome(editor, file, offset));
-  }
-
-  private static String getElementText(PsiElement element) {
-    if (element instanceof XmlTag) {
-      return ((XmlTag)element).getName();
-    }
-    else if (element instanceof XmlAttribute) {
-      return element.getText();
-    }
-    return element.getParent().getText();
-  }
 }

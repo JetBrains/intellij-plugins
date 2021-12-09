@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.cli
 
 import com.intellij.execution.filters.Filter
@@ -11,8 +11,6 @@ import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
@@ -21,8 +19,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.PathUtil
-import icons.VuejsIcons
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.VuejsIcons
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets

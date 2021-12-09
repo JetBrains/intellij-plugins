@@ -88,16 +88,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
   }
 
   public void testTmlMapping() {
-    final MappingDataCache cache = new MappingDataCache();
     final PsiFile psiFile = myFixture.configureByFile("TmlMapping.java");
-    final Map<String,String> compute = cache.compute(psiFile);
+    final Map<String,String> compute = MappingDataCache.getMappingData(psiFile);
     assertTrue(compute.containsKey("foo"));
   }
 
   public void testTmlMapping2() {
-    final MappingDataCache cache = new MappingDataCache();
     final PsiFile psiFile = myFixture.configureByFile("TmlMapping2.java");
-    final Map<String,String> compute = cache.compute(psiFile);
+    final Map<String,String> compute = MappingDataCache.getMappingData(psiFile);
     assertTrue(compute.containsKey("foo"));
   }
 

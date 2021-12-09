@@ -8,7 +8,7 @@ import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 /**
  * Utility methods related to Tapestry components.
  */  // todo remove it
-public class ComponentUtils {
+public final class ComponentUtils {
 
   /**
    * Checks if a tag in a HTML document is a component tag.

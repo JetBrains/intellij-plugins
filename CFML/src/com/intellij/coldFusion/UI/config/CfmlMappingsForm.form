@@ -24,7 +24,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Reopen editor for changes to take effect"/>
+          <text resource-bundle="messages/CfmlBundle" key="mappings.form.info.confirmation"/>
         </properties>
       </component>
       <grid id="856ab" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -48,7 +48,7 @@
             <properties>
               <enabled value="true"/>
               <labelFor value="2452e"/>
-              <text value="&amp;Language version:"/>
+              <text resource-bundle="messages/CfmlBundle" key="mappings.form.lang.version"/>
             </properties>
           </component>
         </children>

@@ -1,8 +1,7 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
@@ -17,7 +16,6 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -36,6 +34,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -43,7 +42,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.ui.GuiUtils;
 import com.intellij.util.Consumer;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
@@ -54,15 +52,15 @@ import com.jetbrains.lang.dart.assists.DartQuickAssistIntentionListener;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixListener;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
+import com.jetbrains.lang.dart.ide.completion.DartCompletionTimerExtension;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-import gnu.trove.TObjectIntHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -73,8 +71,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.dart.server.internal.remote.RemoteAnalysisServerImpl.DART_FIX_INFO_NON_NULLABLE;
 
 public final class DartAnalysisServerService implements Disposable {
   public static final String MIN_SDK_VERSION = "1.12";
@@ -90,7 +86,6 @@ public final class DartAnalysisServerService implements Disposable {
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-  private static final long EDIT_DARTFIX_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -132,9 +127,9 @@ public final class DartAnalysisServerService implements Disposable {
   @Nullable private String mySdkHome;
 
   private final DartServerRootsHandler myRootsHandler;
-  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new HashMap<>();
   private final List<String> myVisibleFiles = new ArrayList<>();
-  private final Set<Document> myChangedDocuments = new THashSet<>();
+  private final Set<Document> myChangedDocuments = new HashSet<>();
   private final Alarm myUpdateFilesAlarm;
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
@@ -153,11 +148,11 @@ public final class DartAnalysisServerService implements Disposable {
   private boolean mySentAnalysisBusy;
 
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
-  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
+  @NotNull private final Set<String> myFilePathsWithErrors = new HashSet<>();
   // how many files with errors are in this folder (recursively)
-  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
+  @NotNull private final Object2IntMap<String> myFolderPathsWithErrors = new Object2IntOpenHashMap<>();
   // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
-  @NotNull private final TObjectIntHashMap<String> myFilePathToErrorsHash = new TObjectIntHashMap<>();
+  @NotNull private final Object2IntMap<String> myFilePathToErrorsHash = new Object2IntOpenHashMap<>();
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
@@ -215,7 +210,7 @@ public final class DartAnalysisServerService implements Disposable {
       final int oldHash;
       synchronized (myFilePathsWithErrors) {
         // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
-        oldHash = myFilePathToErrorsHash.get(filePathSI);
+        oldHash = myFilePathToErrorsHash.getInt(filePathSI);
       }
 
       final int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
@@ -478,6 +473,10 @@ public final class DartAnalysisServerService implements Disposable {
           for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
             libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags, completionInfo.myLibraryFilePathSD);
           }
+
+          for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+            extension.dartCompletionEnd();
+          }
           return;
         }
 
@@ -724,12 +723,17 @@ public final class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public static DartAnalysisServerService getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, DartAnalysisServerService.class);
+    return project.getService(DartAnalysisServerService.class);
   }
 
   @NotNull
   public String getSdkVersion() {
     return mySdkVersion;
+  }
+
+  @NotNull
+  public String getServerVersion() {
+    return myServerVersion;
   }
 
   @NotNull
@@ -803,9 +807,9 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   void updateCurrentFile() {
-    GuiUtils.invokeLaterIfNeeded(() -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile()),
-                                 ModalityState.NON_MODAL,
-                                 myDisposedCondition);
+    ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myDisposedCondition,
+                                       () -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile())
+    );
   }
 
   public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
@@ -863,6 +867,7 @@ public final class DartAnalysisServerService implements Disposable {
            fileName.equals(".analysis_options") ||
            fileName.equals("analysis_options.yaml") ||
            fileName.equals("pubspec.yaml") ||
+           fileName.equals("fix_data.yaml") ||
            fileName.equals("androidmanifest.xml");
   }
 
@@ -882,16 +887,16 @@ public final class DartAnalysisServerService implements Disposable {
 
     myUpdateFilesAlarm.cancelAllRequests();
 
-    final Map<String, Object> filesToUpdate = new THashMap<>();
+    final Map<String, Object> filesToUpdate = new HashMap<>();
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      final Set<String> oldTrackedFiles = new THashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
+      final Set<String> oldTrackedFiles = new HashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
 
       // some documents in myChangedDocuments may be updated by external change, such as switch branch, that's why we track them,
-      // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
-      final Set<Document> documents = new THashSet<>(myChangedDocuments);
+      // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for myChangedDocuments as well (to trigger DAS notifications)
+      final Set<Document> documents = new HashSet<>(myChangedDocuments);
       myChangedDocuments.clear();
       ContainerUtil.addAll(documents, fileDocumentManager.getUnsavedDocuments());
 
@@ -908,7 +913,7 @@ public final class DartAnalysisServerService implements Disposable {
         }
       }
 
-      // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() any more
+      // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() anymore
       for (String oldPath : oldTrackedFiles) {
         final Long removed = myFilePathWithOverlaidContentToTimestamp.remove(oldPath);
         LOG.assertTrue(removed != null, oldPath);
@@ -916,7 +921,7 @@ public final class DartAnalysisServerService implements Disposable {
       }
 
       if (LOG.isDebugEnabled()) {
-        final Set<String> overlaid = new THashSet<>(filesToUpdate.keySet());
+        final Set<String> overlaid = new HashSet<>(filesToUpdate.keySet());
         for (String removeOverlaid : oldTrackedFiles) {
           overlaid.remove(FileUtil.toSystemDependentName(removeOverlaid));
         }
@@ -966,7 +971,7 @@ public final class DartAnalysisServerService implements Disposable {
     synchronized (myFilePathsWithErrors) {
       if (errorsHash == 0) {
         // no errors
-        myFilePathToErrorsHash.remove(filePath);
+        myFilePathToErrorsHash.removeInt(filePath);
       }
       else {
         myFilePathToErrorsHash.put(filePath, errorsHash);
@@ -976,7 +981,7 @@ public final class DartAnalysisServerService implements Disposable {
         if (myFilePathsWithErrors.add(filePath)) {
           String parentPath = PathUtil.getParentPath(filePath);
           while (!parentPath.isEmpty()) {
-            final int count = myFolderPathsWithErrors.get(parentPath); // returns zero if there were no path in the map
+            final int count = myFolderPathsWithErrors.getInt(parentPath); // returns zero if there were no path in the map
             myFolderPathsWithErrors.put(parentPath, count + 1);
             parentPath = PathUtil.getParentPath(parentPath);
           }
@@ -986,7 +991,7 @@ public final class DartAnalysisServerService implements Disposable {
         if (myFilePathsWithErrors.remove(filePath)) {
           String parentPath = PathUtil.getParentPath(filePath);
           while (!parentPath.isEmpty()) {
-            final int count = myFolderPathsWithErrors.remove(parentPath); // returns zero if there was no path in the map
+            final int count = myFolderPathsWithErrors.removeInt(parentPath); // returns zero if there was no path in the map
             if (count > 1) {
               myFolderPathsWithErrors.put(parentPath, count - 1);
             }
@@ -1157,21 +1162,21 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  public PostfixCompletionTemplate @Nullable [] edit_listPostfixCompletionTemplates() {
+  public PostfixTemplateDescriptor @Nullable [] edit_listPostfixCompletionTemplates() {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
     if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
-      return PostfixCompletionTemplate.EMPTY_ARRAY;
+      return PostfixTemplateDescriptor.EMPTY_ARRAY;
     }
 
-    final Ref<PostfixCompletionTemplate[]> resultRef = Ref.create();
+    final Ref<PostfixTemplateDescriptor[]> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_listPostfixCompletionTemplates(new ListPostfixCompletionTemplatesConsumer() {
       @Override
-      public void postfixCompletionTemplates(PostfixCompletionTemplate[] templates) {
+      public void postfixCompletionTemplates(PostfixTemplateDescriptor[] templates) {
         resultRef.set(templates);
         latch.countDown();
       }
@@ -1273,7 +1278,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   /**
    * If server responds in less than {@code GET_FIXES_TIMEOUT_EDT} / {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
-   * {@code consumer} is already notified. Otherwise this method is async.
+   * {@code consumer} is already notified. Otherwise, this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
                                                       final int _offset,
@@ -1405,23 +1410,23 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public GetCompletionDetailsResult completion_getSuggestionDetails(@NotNull final VirtualFile file,
-                                                                    final int id,
-                                                                    final String label,
-                                                                    final int _offset) {
+  public Pair<String, SourceChange> completion_getSuggestionDetails(@NotNull VirtualFile file,
+                                                                    int id,
+                                                                    String label,
+                                                                    int _offset) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<GetCompletionDetailsResult> resultRef = new Ref<>();
+    final Ref<Pair<String, SourceChange>> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestionDetails(filePath, id, label, offset, new GetSuggestionDetailsConsumer() {
       @Override
-      public void computedDetails(GetCompletionDetailsResult result) {
-        resultRef.set(result);
+      public void computedDetails(String completion, SourceChange change) {
+        resultRef.set(new Pair<>(completion, change));
         latch.countDown();
       }
 
@@ -1446,6 +1451,10 @@ public final class DartAnalysisServerService implements Disposable {
       return null;
     }
 
+    for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+      extension.dartCompletionStart();
+    }
+
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<String> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1459,7 +1468,11 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(@NotNull final RequestError error) {
-        // Not a problem. Happens if a file is outside of the project, or server is just not ready yet.
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
+                                        StringUtil.notNullize(error.getStackTrace()));
+        }
+        // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
         latch.countDown();
       }
     });
@@ -1474,46 +1487,56 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public List<SourceFileEdit> edit_dartfixNNBD(final @NotNull List<? extends VirtualFile> files) {
-    return edit_dartfix(files, Collections.singletonList(DART_FIX_INFO_NON_NULLABLE));
-  }
-
-  @Nullable
-  private List<SourceFileEdit> edit_dartfix(final @NotNull List<? extends VirtualFile> files, @NotNull final List<String> includedFixes) {
+  public CompletionInfo2 completion_getSuggestions2(@NotNull final VirtualFile file, final int _offset, final int maxResults) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
-    final ArrayList<String> filePaths = new ArrayList<>(files.size());
-    for (VirtualFile file : files) {
-      filePaths.add(FileUtil.toSystemDependentName(file.getPath()));
+    for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+      extension.dartCompletionStart();
     }
 
-    final Ref<List<SourceFileEdit>> resultRef = new Ref<>();
-
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<CompletionInfo2> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
-    server.edit_dartfix(filePaths, includedFixes, false, false, Collections.emptyList(), null, new DartfixConsumer() {
+    final int offset = getOriginalOffset(file, _offset);
+
+    server.completion_getSuggestions2(filePath, offset, maxResults, new GetSuggestionsConsumer2() {
       @Override
-      public void computedDartfix(List<DartFixSuggestion> suggestions,
-                                  List<DartFixSuggestion> otherSuggestions,
-                                  boolean hasErrors,
-                                  List<SourceFileEdit> edits) {
-        resultRef.set(edits);
+      public void computedSuggestions(int replacementOffset,
+                                      int replacementLength,
+                                      List<CompletionSuggestion> suggestions,
+                                      List<String> libraryUrisToImport,
+                                      boolean isIncomplete) {
+        resultRef.set(new CompletionInfo2(replacementOffset, replacementLength, suggestions, libraryUrisToImport, isIncomplete));
         latch.countDown();
+
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionEnd();
+        }
       }
 
       @Override
-      public void onError(RequestError error) {
-        logError("edit_dartfix()", StringUtil.join(filePaths, ", "), error);
+      public void onError(@NotNull final RequestError error) {
+        // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
         latch.countDown();
+
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
+                                        StringUtil.notNullize(error.getStackTrace()));
+        }
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, EDIT_DARTFIX_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      logTookTooLongMessage("edit_dartfix", EDIT_DARTFIX_TIMEOUT, StringUtil.join(filePaths, ", "));
+      logTookTooLongMessage("completion_getSuggestions2", GET_SUGGESTIONS_TIMEOUT, filePath);
+
+      for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+        extension.dartCompletionEnd();
+      }
     }
 
     return resultRef.get();
@@ -1681,8 +1704,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(final RequestError error) {
-        if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode()) ||
-            RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
+        if (RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
           LOG.info(getShortErrorMessage("edit_organizeDirectives()", filePath, error));
         }
         else {
@@ -1770,7 +1792,7 @@ public final class DartAnalysisServerService implements Disposable {
     synchronized (myLock) {
       if (myServer == null) return;
 
-      final Map<String, List<String>> subscriptions = new THashMap<>();
+      final Map<String, List<String>> subscriptions = new HashMap<>();
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
@@ -1831,28 +1853,28 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public RuntimeCompletionResult execution_getSuggestions(@NotNull final String code,
-                                                          final int offset,
-                                                          @NotNull final VirtualFile contextFile,
-                                                          final int contextOffset,
-                                                          @NotNull final List<RuntimeCompletionVariable> variables,
-                                                          @NotNull final List<RuntimeCompletionExpression> expressions) {
+  public Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>> execution_getSuggestions(@NotNull String code,
+                                                                                                      int offset,
+                                                                                                      @NotNull VirtualFile contextFile,
+                                                                                                      int contextOffset,
+                                                                                                      @NotNull List<RuntimeCompletionVariable> variables,
+                                                                                                      @NotNull List<RuntimeCompletionExpression> expressions) {
     final AnalysisServer server = myServer;
     if (server == null) {
-      return new RuntimeCompletionResult(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
+      return new Pair<>(new ArrayList<>(), new ArrayList<>());
     }
 
     final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
-    final Ref<RuntimeCompletionResult> refResult = Ref.create();
+    final Ref<Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>>> refResult = Ref.create();
     server.execution_getSuggestions(
       code, offset,
       contextFilePath, contextOffset,
       variables, expressions,
       new GetRuntimeCompletionConsumer() {
         @Override
-        public void computedResult(RuntimeCompletionResult result) {
-          refResult.set(result);
+        public void computedResult(List<CompletionSuggestion> suggestions, List<RuntimeCompletionExpression> expressions) {
+          refResult.set(new Pair<>(suggestions, expressions));
           latch.countDown();
         }
 
@@ -1906,8 +1928,6 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(final RequestError error) {
-        LOG.warn(
-          "execution_mapUri(" + _id + ", " + filePath + ", " + _uri + ") returned error " + error.getCode() + ": " + error.getMessage());
         latch.countDown();
       }
     });
@@ -1934,9 +1954,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       final String runtimePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk));
 
-      //noinspection HardCodedStringLiteral
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
-      //noinspection HardCodedStringLiteral
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
       String dasStartupErrorMessage = "";
@@ -1984,8 +2002,9 @@ public final class DartAnalysisServerService implements Disposable {
       }
 
       @NonNls String serverArgsRaw = "";
+      // Note that as of Dart 2.12.0 the '--useAnalysisHighlight2' flag is ignored (and is the
+      // default highlighting mode). We still want to pass it in for earlier SDKs.
       serverArgsRaw += " --useAnalysisHighlight2";
-      //serverArgsRaw += " --file-read-mode=normalize-eol-always";
       try {
         serverArgsRaw += " " + Registry.stringValue("dart.server.additional.arguments");
       }
@@ -2009,7 +2028,7 @@ public final class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         server_setSubscriptions(startedServer);
-        startedServer.completion_setSubscriptions(ImmutableList.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
+        startedServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
 
         if (!myInitializationOnServerStartupDone) {
           myInitializationOnServerStartupDone = true;
@@ -2150,6 +2169,8 @@ public final class DartAnalysisServerService implements Disposable {
       myServerSocket = null;
       myServer = null;
       mySdkHome = null;
+      mySdkVersion = "";
+      myServerVersion = "";
       myFilePathWithOverlaidContentToTimestamp.clear();
       myVisibleFiles.clear();
       myChangedDocuments.clear();
@@ -2208,7 +2229,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {
     synchronized (myFilePathsWithErrors) {
-      return file.isDirectory() ? myFolderPathsWithErrors.get(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
+      return file.isDirectory() ? myFolderPathsWithErrors.getInt(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
     }
   }
 
@@ -2219,6 +2240,11 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   private void logError(@NonNls @NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
+    if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode())) {
+      LOG.info(getShortErrorMessage(methodName, filePath, error));
+      return;
+    }
+
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
     final String message = getShortErrorMessage(methodName, filePath, error) + "\n" + partialTrace + "...";
@@ -2316,6 +2342,26 @@ public final class DartAnalysisServerService implements Disposable {
       this.myIncludedSuggestionRelevanceTags = includedSuggestionRelevanceTags;
       this.isLast = isLast;
       this.myLibraryFilePathSD = libraryFilePathSD;
+    }
+  }
+
+  public static class CompletionInfo2 {
+    public final int myReplacementOffset;
+    public final int myReplacementLength;
+    public final @NotNull List<CompletionSuggestion> mySuggestions;
+    public final @NotNull List<String> myLibraryUrisToImport;
+    public final boolean myIsIncomplete;
+
+    CompletionInfo2(int replacementOffset,
+                    int replacementLength,
+                    @NotNull List<CompletionSuggestion> suggestions,
+                    @NotNull List<String> libraryUrisToImport,
+                    boolean isIncomplete) {
+      myReplacementOffset = replacementOffset;
+      myReplacementLength = replacementLength;
+      mySuggestions = suggestions;
+      myLibraryUrisToImport = libraryUrisToImport;
+      myIsIncomplete = isIncomplete;
     }
   }
 

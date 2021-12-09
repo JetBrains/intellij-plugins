@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.coldFusion.model.files.CfmlFile;
@@ -21,8 +21,8 @@ import static com.intellij.patterns.StandardPatterns.string;
 /**
  * @author vnikolaenko
  */
-public class CfmlReferenceContributor extends PsiReferenceContributor {
-  private static class Holder {
+public final class CfmlReferenceContributor extends PsiReferenceContributor {
+  private static final class Holder {
     public static final PsiElementPattern.Capture<PsiComment> CFMLVARIABLE_COMMENT =
       psiElement(PsiComment.class).inFile(psiElement(CfmlFile.class)).withText(string().contains(CfmlFile.CFMLVARIABLE_MARKER));
 
@@ -45,7 +45,7 @@ public class CfmlReferenceContributor extends PsiReferenceContributor {
       }
 
       PsiReferenceBase<PsiComment> ref =
-        new PsiReferenceBase<PsiComment>((PsiComment)element, TextRange.from(range.getStartOffset(), name.length())) {
+        new PsiReferenceBase<>((PsiComment)element, TextRange.from(range.getStartOffset(), name.length())) {
           @Override
           public PsiElement resolve() {
             return variable;

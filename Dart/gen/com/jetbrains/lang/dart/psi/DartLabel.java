@@ -10,7 +10,6 @@ public interface DartLabel extends DartComponent {
   @NotNull
   DartComponentName getComponentName();
 
-  @NotNull
-  List<DartMetadata> getMetadataList();
+  @NotNull List<DartMetadata> getMetadataList();
 
 }

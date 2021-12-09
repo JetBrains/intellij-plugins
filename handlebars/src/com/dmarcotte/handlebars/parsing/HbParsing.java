@@ -129,7 +129,7 @@ public class HbParsing {
   private boolean parseStatement(PsiBuilder builder) {
     IElementType tokenType = builder.getTokenType();
 
-    /**
+    /*
      * block
      * : openBlock program inverseChain? closeBlock
      * | openInverse program inverseAndProgram? closeBlock
@@ -181,7 +181,7 @@ public class HbParsing {
       }
     }
 
-    /**
+    /*
      * mustache
      * : OPEN sexpr CLOSE
      * | OPEN_UNESCAPED sexpr CLOSE_UNESCAPED
@@ -205,7 +205,7 @@ public class HbParsing {
       }
     }
 
-    /**
+    /*
      * rawBlock
      * : openRawBlock CONTENT endRawBlock
      */
@@ -230,7 +230,7 @@ public class HbParsing {
       return true;
     }
 
-    /**
+    /*
      * partialBlock
      +  : openPartialBlock program closeBlock
      */

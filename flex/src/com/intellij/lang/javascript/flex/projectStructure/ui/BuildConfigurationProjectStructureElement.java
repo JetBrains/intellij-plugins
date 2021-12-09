@@ -83,28 +83,6 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     final FlexProjectConfigurationEditor editor = configurator.getConfigEditor();
     assert editor != null;
 
-    /*
-    final SdkEntry sdkEntry = myBc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
-      Pair<String, Object> location =
-        Pair.<String, Object>create(FlexBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
-
-      PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
-      problemsHolder.registerProblem(FlexBundle.message("bc.problem.no.sdk"), null, ProjectStructureProblemType.error("sdk"),
-                                     place, null);
-    }
-    else {
-      if (FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName()) == null) {
-        Pair<String, Object> location =
-          Pair.<String, Object>create(FlexBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
-
-        PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
-        problemsHolder.registerProblem(FlexBundle.message("bc.problem.sdk.not.found", sdkEntry.getName()), null,
-                                       ProjectStructureProblemType.error("flex-bc-sdk"), place, null);
-      }
-    }
-    */
-
     checkDependencies(problemsHolder, editor);
 
     checkSameOutputPaths(problemsHolder, configurator, editor);

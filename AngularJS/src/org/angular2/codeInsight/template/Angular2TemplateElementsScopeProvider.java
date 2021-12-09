@@ -20,7 +20,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.Stack;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
-import org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -36,6 +35,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static com.intellij.util.ObjectUtils.notNull;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE;
 
 public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScopesProvider {
 
@@ -46,7 +46,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
   }
 
   public static boolean isTemplateTag(@Nullable String tagName) {
-    return Angular2TagDescriptorsProvider.NG_TEMPLATE.equalsIgnoreCase(tagName)
+    return ELEMENT_NG_TEMPLATE.equalsIgnoreCase(tagName)
            || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
   }
 

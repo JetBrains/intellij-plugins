@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartWebdevConfigurationEditorForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,7 @@ public class DartWebdevConfiguration extends LocatableConfigurationBase<DartWebd
       return htmlFilePathRelativeFromWorkingDir;
     }
 
-    return StringUtil.isEmpty(htmlFilePath) ? "Dart web app" : PathUtil.getFileName(htmlFilePath);
+    return StringUtil.isEmpty(htmlFilePath) ? DartBundle.message("runner.web.app.configuration.name") : PathUtil.getFileName(htmlFilePath);
   }
 
   @Override

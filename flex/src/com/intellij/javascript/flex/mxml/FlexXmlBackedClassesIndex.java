@@ -30,7 +30,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   @Override
   @NotNull
   public DataIndexer<String, Void, FileContent> getIndexer() {
-    return new DataIndexer<String, Void, FileContent>() {
+    return new DataIndexer<>() {
 
       @Override
       @NotNull

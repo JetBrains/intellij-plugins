@@ -21,7 +21,8 @@ public class GrCucumberStepIndex extends CucumberStepIndex {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("groovy.cucumber.step");
   private static final String CUCUMBER_GROOVY_PACKAGE = "cucumber.api.groovy.";
   private static final String CUCUMBER_GROOVY_1_0_PACKAGE = "cucumber.runtime.groovy.";
-  private static final String[] PACKAGES_TO_SCAN = new String[]{CUCUMBER_GROOVY_PACKAGE, CUCUMBER_GROOVY_1_0_PACKAGE};
+  private static final String CUCUMBER_GROOVY_4_5_PACKAGE = "io.cucumber.groovy.";
+  private static final String[] PACKAGES_TO_SCAN = new String[]{CUCUMBER_GROOVY_PACKAGE, CUCUMBER_GROOVY_1_0_PACKAGE, CUCUMBER_GROOVY_4_5_PACKAGE};
 
   @NotNull
   @Override

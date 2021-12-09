@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -24,7 +23,6 @@ import com.intellij.ui.navigation.Place;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -32,11 +30,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
 
-public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
-
+public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static final Icon ICON_ACTIVE = PlatformIcons.CHECK_ICON;
   private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
-  private static final Icon ICON_EMPTY = EmptyIcon.create(ICON_ACTIVE);
+  private static final Icon ICON_EMPTY = IconManager.getInstance().createEmptyIcon(ICON_ACTIVE);
 
   @Override
   public void update(@NotNull final AnActionEvent e) {
@@ -52,19 +49,19 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   }
 
   private static boolean isEnabled(final DataContext dataContext) {
-    Module module = LangDataKeys.MODULE.getData(dataContext);
+    Module module = PlatformCoreDataKeys.MODULE.getData(dataContext);
     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    Module module = e.getData(LangDataKeys.MODULE);
+    Module module = e.getData(PlatformCoreDataKeys.MODULE);
     if (module != null) {
-      createPopup(module).showInBestPositionFor(e.getDataContext());
+      createPopup(module, e.getDataContext()).showInBestPositionFor(e.getDataContext());
     }
   }
 
-  public static ListPopup createPopup(@NotNull Module module) {
+  public static ListPopup createPopup(@NotNull Module module, @NotNull DataContext dataContext) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     final FlexBuildConfiguration activeBc = manager.getActiveConfiguration();
@@ -76,7 +73,6 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     actionGroup.addSeparator();
     actionGroup.add(new EditBcsAction(module));
 
-    final DataContext dataContext = SimpleDataContext.getProjectContext(module.getProject());
     return new PopupFactoryImpl.ActionGroupPopup(FlexBundle.message("choose.build.configuration.popup.title", module.getName()),
                                                  actionGroup, dataContext, false, false, false, true, null, -1,
                                                  anAction -> anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc, null) {

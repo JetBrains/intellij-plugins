@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -24,7 +25,7 @@ public final class ActionScriptTypeHelper extends JSTypeHelper {
   private static final Key<PsiElement> ourResolvedTypeKey = Key.create("resolved.type");
   private static final JSTypeHelper ourTypeHelper = new ActionScriptTypeHelper();
 
-  protected ActionScriptTypeHelper() {
+  private ActionScriptTypeHelper() {
   }
 
   public static JSTypeHelper getInstance() {
@@ -34,15 +35,18 @@ public final class ActionScriptTypeHelper extends JSTypeHelper {
   @Override
   public boolean isAssignableToNamedType(@NotNull JSTypeImpl lOpType, @NotNull JSType rOpType, @NotNull ProcessingContext processingContext) {
     //noinspection unchecked
-    Map<Key, Object> cachesMap = (Map<Key, Object>)processingContext.get(this);
+    Map<Key, PsiElement> cachesMap = (Map<Key, PsiElement>)processingContext.get(this);
 
-    PsiElement type = ourResolvedTypeKey.get(cachesMap);
+    PsiElement type = cachesMap == null ? null : cachesMap.get(ourResolvedTypeKey);
     JSClass clazz = null;
 
     if (type == null) {
       type = lOpType.resolveClass();
-      ourResolvedTypeKey.set(cachesMap, type != null ? type: PsiUtilCore.NULL_PSI_ELEMENT);
-    } else if (type == PsiUtilCore.NULL_PSI_ELEMENT) {
+      if (cachesMap != null) {
+        cachesMap.put(ourResolvedTypeKey, type != null ? type : PsiUtilCore.NULL_PSI_ELEMENT);
+      }
+    }
+    else if (type == PsiUtilCore.NULL_PSI_ELEMENT) {
       type = null;
     }
 

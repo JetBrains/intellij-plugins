@@ -8,17 +8,22 @@
       "properties": {
         "arrowParens": {
           "description": "Include parentheses around a sole arrow function parameter.",
-          "default": "avoid",
+          "default": "always",
           "oneOf": [
-            {
-              "enum": ["avoid"],
-              "description": "Omit parens when possible. Example: `x => x`"
-            },
             {
               "enum": ["always"],
               "description": "Always include parens. Example: `(x) => x`"
+            },
+            {
+              "enum": ["avoid"],
+              "description": "Omit parens when possible. Example: `x => x`"
             }
           ]
+        },
+        "bracketSameLine": {
+          "description": "Put > of opening tags on the last line instead of on a new line.",
+          "default": false,
+          "type": "boolean"
         },
         "bracketSpacing": {
           "description": "Print spaces between brackets.",
@@ -30,14 +35,24 @@
           "default": -1,
           "type": "integer"
         },
-        "endOfLine": {
-          "description": "Which end of line characters to apply.",
+        "embeddedLanguageFormatting": {
+          "description": "Control how Prettier formats quoted code embedded in the file.",
           "default": "auto",
           "oneOf": [
             {
               "enum": ["auto"],
-              "description": "Maintain existing\n(mixed values within one file are normalised by looking at what's used after the first line)"
+              "description": "Format embedded code if Prettier can automatically identify it."
             },
+            {
+              "enum": ["off"],
+              "description": "Never automatically format embedded code."
+            }
+          ]
+        },
+        "endOfLine": {
+          "description": "Which end of line characters to apply.",
+          "default": "lf",
+          "oneOf": [
             {
               "enum": ["lf"],
               "description": "Line Feed only (\\n), common on Linux and macOS as well as inside git repos"
@@ -49,6 +64,10 @@
             {
               "enum": ["cr"],
               "description": "Carriage Return character only (\\r), used very rarely"
+            },
+            {
+              "enum": ["auto"],
+              "description": "Maintain existing\n(mixed values within one file are normalised by looking at what's used after the first line)"
             }
           ]
         },
@@ -79,11 +98,6 @@
           "default": false,
           "type": "boolean"
         },
-        "jsxBracketSameLine": {
-          "description": "Put > on the last line instead of at a new line.",
-          "default": false,
-          "type": "boolean"
-        },
         "jsxSingleQuote": {
           "description": "Use single quotes in JSX.",
           "default": false,
@@ -91,11 +105,14 @@
         },
         "parser": {
           "description": "Which parser to use.",
-          "oneOf": [
+          "anyOf": [
             { "enum": ["flow"], "description": "Flow" },
             { "enum": ["babel"], "description": "JavaScript" },
             { "enum": ["babel-flow"], "description": "Flow" },
+            { "enum": ["babel-ts"], "description": "TypeScript" },
             { "enum": ["typescript"], "description": "TypeScript" },
+            { "enum": ["espree"], "description": "JavaScript" },
+            { "enum": ["meriyah"], "description": "JavaScript" },
             { "enum": ["css"], "description": "CSS" },
             { "enum": ["less"], "description": "Less" },
             { "enum": ["scss"], "description": "SCSS" },
@@ -107,9 +124,11 @@
             { "enum": ["mdx"], "description": "MDX" },
             { "enum": ["vue"], "description": "Vue" },
             { "enum": ["yaml"], "description": "YAML" },
+            { "enum": ["glimmer"], "description": "Ember / Handlebars" },
             { "enum": ["html"], "description": "HTML" },
             { "enum": ["angular"], "description": "Angular" },
-            { "enum": ["lwc"], "description": "Lightning Web Components" }
+            { "enum": ["lwc"], "description": "Lightning Web Components" },
+            { "type": "string", "description": "Custom parser" }
           ]
         },
         "pluginSearchDirs": {
@@ -191,13 +210,13 @@
         },
         "trailingComma": {
           "description": "Print trailing commas wherever possible when multi-line.",
-          "default": "none",
+          "default": "es5",
           "oneOf": [
-            { "enum": ["none"], "description": "No trailing commas." },
             {
               "enum": ["es5"],
               "description": "Trailing commas where valid in ES5 (objects, arrays, etc.)"
             },
+            { "enum": ["none"], "description": "No trailing commas." },
             {
               "enum": ["all"],
               "description": "Trailing commas wherever possible (including function arguments)."
@@ -260,8 +279,6 @@
         { "$ref": "#/definitions/overridesDefinition" }
       ]
     },
-    {
-      "type": "string"
-    }
+    { "type": "string" }
   ]
 }

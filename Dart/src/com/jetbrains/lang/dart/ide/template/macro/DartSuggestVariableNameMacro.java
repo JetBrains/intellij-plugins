@@ -15,11 +15,6 @@ public class DartSuggestVariableNameMacro extends Macro {
     return "dartSuggestVariableName";
   }
 
-  @Override
-  public String getPresentableName() {
-    return "dartSuggestVariableName()";
-  }
-
   @NotNull
   @Override
   public String getDefaultValue() {

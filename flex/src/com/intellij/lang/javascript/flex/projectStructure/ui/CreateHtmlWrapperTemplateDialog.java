@@ -162,7 +162,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                                              getTitleText(), options, 0, Messages.getWarningIcon());
       switch (choice) {
         case 0:
-          final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
+          final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<>() {
             @Override
             public IOException compute() {
               try {
@@ -218,7 +218,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
 
     final boolean swfObjectWrapper = "swfobject".equals(sdkTemplateFolder.getName());
 
-    final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
+    final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<>() {
       @Override
       public IOException compute() {
         try {

@@ -4,10 +4,13 @@ package com.dmarcotte.handlebars.parsing;
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.PropertiesComponentImpl;
+import com.intellij.lang.ParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateDataLanguagePatterns;
 import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ParsingTestCase test are created by placing a MyTestName.hbs file in the test/data/parsing directory with the syntax
@@ -25,8 +28,8 @@ import com.intellij.testFramework.ParsingTestCase;
  * the .txt represents the desired Psi structure, then call it a day.
  */
 public abstract class HbParserTest extends ParsingTestCase {
-  public HbParserTest() {
-    super("parser", "hbs", new HbParseDefinition());
+  public HbParserTest(ParserDefinition @NotNull ... additionalDefinitions) {
+    super("parser", "hbs", ArrayUtil.prepend(new HbParseDefinition(), additionalDefinitions));
   }
 
   @Override

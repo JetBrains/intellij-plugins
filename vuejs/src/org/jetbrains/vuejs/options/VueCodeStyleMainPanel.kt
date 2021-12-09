@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.options
 
 import com.intellij.application.options.TabbedLanguageCodeStylePanel
+import com.intellij.application.options.codeStyle.arrangement.ArrangementSettingsPanel
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -16,6 +17,7 @@ class VueCodeStyleMainPanel(currentSettings: CodeStyleSettings?, settings: CodeS
     addIndentOptionsTab(settings)
     addSpacesTab(settings)
     addWrappingAndBracesTab(settings)
+    addTab(ArrangementSettingsPanel(settings, VueLanguage.INSTANCE))
   }
 
   override fun addSpacesTab(settings: CodeStyleSettings?) {

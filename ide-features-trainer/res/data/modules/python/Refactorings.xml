@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="python.refactoring" fileType="SCRATCH" description="Rename, extract, and other refactorings">
-  <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonRefactorMenuLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonRenameLesson"/>
-  <lesson-kt sample="ExtractVariable.py.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson" lang="Python"/>
-  <lesson-kt sample="ExtractMethod.py.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson" lang="Python"/>
-  <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonQuickFixesRefactoringLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonInPlaceRefactoringLesson"/>
-</module>

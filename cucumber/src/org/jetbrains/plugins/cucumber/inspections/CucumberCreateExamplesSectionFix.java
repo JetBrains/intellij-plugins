@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
@@ -18,15 +19,11 @@ import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Roman.Chernyatchik
- */
 public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
 
   @Override
-  @NotNull
-  public String getFamilyName() {
-    return "Create Examples Section";
+  public @NotNull String getFamilyName() {
+    return CucumberBundle.message("intention.family.name.create.examples.section");
   }
 
   @Override

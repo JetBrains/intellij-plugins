@@ -1,8 +1,9 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -36,7 +37,6 @@ import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +59,7 @@ public class DartFileListener implements AsyncFileListener {
 
   @Nullable
   @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+  public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     SmartList<VFileEvent> dotPackageEvents = new SmartList<>();
     SmartList<VFileEvent> moveOrRenameAnalyzableFileEvents = new SmartList<>();
 
@@ -119,38 +119,28 @@ public class DartFileListener implements AsyncFileListener {
 
     setDartPackageRootUpdateScheduledOrInProgress(project, Boolean.TRUE);
 
-    final Runnable runnable = () -> {
-      try {
-        final Library library = actualizePackagesLibrary(project);
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      DartLibInfo libInfo = ReadAction.compute(() -> collectPackagesLibraryRoots(project));
 
-        if (library == null) {
-          removeDartPackagesLibraryAndDependencies(project);
-        }
-        else {
-          final Condition<Module> moduleFilter = DartSdkLibUtil::isDartSdkEnabled;
+      ApplicationManager.getApplication()
+        .invokeLater(() -> {
+                       try {
+                         if (libInfo.getLibRootUrls().isEmpty()) {
+                           removeDartPackagesLibraryAndDependencies(project);
+                           return;
+                         }
 
-          updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
-        }
-      }
-      finally {
-        setDartPackageRootUpdateScheduledOrInProgress(project, false);
-      }
-    };
-
-    ApplicationManager.getApplication()
-      .invokeLater(runnable, ModalityState.NON_MODAL, DartAnalysisServerService.getInstance(project).getDisposedCondition());
-  }
-
-  @Nullable
-  private static Library actualizePackagesLibrary(@NotNull final Project project) {
-    final DartLibInfo libInfo = collectPackagesLibraryRoots(project);
-
-    if (libInfo.getLibRootUrls().isEmpty()) {
-      return null;
-    }
-    else {
-      return updatePackagesLibraryRoots(project, libInfo);
-    }
+                         Library library = updatePackagesLibraryRoots(project, libInfo);
+                         Condition<Module> moduleFilter = DartSdkLibUtil::isDartSdkEnabled;
+                         updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
+                       }
+                       finally {
+                         setDartPackageRootUpdateScheduledOrInProgress(project, false);
+                       }
+                     },
+                     ModalityState.NON_MODAL,
+                     DartAnalysisServerService.getInstance(project).getDisposedCondition());
+    });
   }
 
   @NotNull
@@ -158,7 +148,7 @@ public class DartFileListener implements AsyncFileListener {
     final DartLibInfo libInfo = new DartLibInfo();
 
     final Collection<VirtualFile> pubspecYamlFiles =
-      FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
+      FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
     for (VirtualFile pubspecFile : pubspecYamlFiles) {
@@ -381,8 +371,8 @@ public class DartFileListener implements AsyncFileListener {
 
     @Override
     public void afterVfsChange() {
-      Set<Project> projectsToUpdate = new THashSet<>();
-      Set<Project> projectsToUpdateVisibleFiles = new THashSet<>();
+      Set<Project> projectsToUpdate = new HashSet<>();
+      Set<Project> projectsToUpdateVisibleFiles = new HashSet<>();
 
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         if (DartSdk.getDartSdk(project) == null) continue;
@@ -400,7 +390,7 @@ public class DartFileListener implements AsyncFileListener {
 
             final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
             if (module != null) {
-              DartStartupActivity.excludeBuildAndPackagesFolders(module, pubspec);
+              DartStartupActivity.excludeBuildAndToolCacheFolders(module, pubspec);
             }
           }
         }

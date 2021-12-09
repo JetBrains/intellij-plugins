@@ -12,10 +12,12 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", EverywhereContextType::class.java) {
+class VueBaseLiveTemplateContextType : TemplateContextType("Vue", VueBundle.message("vue.documentation.vue"),
+                                                           EverywhereContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return VueFileType.INSTANCE == file.fileType
   }

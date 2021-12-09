@@ -25,10 +25,6 @@ public final class JpsFlashRunConfigurationType extends JpsElementTypeBase<JpsFl
                                                     : null;
         return properties != null ? properties : new JpsFlashRunnerParameters();
       }
-
-      @Override
-      public void saveProperties(final JpsFlashRunnerParameters properties, final Element runConfigurationTag) {
-      }
     };
   }
 }

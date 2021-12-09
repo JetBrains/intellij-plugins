@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.RunConfigurationExtension;
@@ -15,17 +15,18 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.junit4.JUnitTestTreeNodeManager.JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT;
 
-public class CucumberJUnitRunConfigurationExtension extends RunConfigurationExtension {
+final class CucumberJUnitRunConfigurationExtension extends RunConfigurationExtension {
   private static final String CUCUMBER_JUNIT_RUNNER_CLASS_MARKER = "Cucumber.class";
   private static final String JUNIT_RUN_WITH_ANNOTATION_CLASS = "org.junit.runner.RunWith";
 
   @Override
-  public <T extends RunConfigurationBase> void updateJavaParameters(@NotNull T configuration,
+  public <T extends RunConfigurationBase<?>> void updateJavaParameters(@NotNull T configuration,
                                                                     @NotNull JavaParameters params,
                                                                     RunnerSettings runnerSettings) {
     if (!(configuration instanceof JUnitConfiguration)) {
       return;
     }
+
     Module module = ((JUnitConfiguration)configuration).getConfigurationModule().getModule();
     GlobalSearchScope scope;
     if (module == null) {

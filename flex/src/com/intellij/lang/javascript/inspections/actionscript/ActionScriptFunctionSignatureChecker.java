@@ -2,7 +2,9 @@ package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -34,7 +36,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   @Override
-  protected void registerProblem(JSCallExpression callExpression, String message, LocalQuickFix... fixes) {
+  protected void registerProblem(JSCallExpression callExpression, @NotNull @InspectionMessage String message, LocalQuickFix... fixes) {
     PsiElement place = ValidateTypesUtil.getPlaceForSignatureProblem(callExpression, callExpression.getArgumentList());
     myTypeChecker.registerProblem(place, message, ProblemHighlightType.GENERIC_ERROR, fixes);
   }
@@ -112,7 +114,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
       ) {
       myTypeChecker.registerProblem(
         node.getMethodExpression(),
-        JavaScriptBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
+        FlexBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
         ProblemHighlightType.GENERIC_ERROR
       );
       return;

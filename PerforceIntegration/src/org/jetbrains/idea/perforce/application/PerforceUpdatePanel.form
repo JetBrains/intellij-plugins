@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.idea.perforce.application.PerforceUpdatePanel">
+  <grid id="e1929" binding="myPanel" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="12" y="5" width="443" height="150"/>
+      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <hspacer id="72b83">
+        <constraints>
+          <xy x="421" y="36" width="20" height="11"/>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0"/>
+        </constraints>
+      </hspacer>
+      <vspacer id="6abce">
+        <constraints>
+          <xy x="206" y="82" width="11" height="66"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0"/>
+        </constraints>
+      </vspacer>
+      <grid id="322ff" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <xy x="2" y="2" width="419" height="80"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="17999" class="javax.swing.JCheckBox" binding="myRevertUnchanged">
+            <constraints>
+              <xy x="2" y="2" width="415" height="22"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/PerforceBundle" key="checkbox.update.options.revert.unchanged.files.before.sync"/>
+            </properties>
+          </component>
+          <component id="cd25b" class="javax.swing.JCheckBox" binding="myForceSync">
+            <constraints>
+              <xy x="2" y="29" width="97" height="22"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/PerforceBundle" key="checkbox.do.force.sync"/>
+            </properties>
+          </component>
+          <component id="3a10" class="javax.swing.JCheckBox" binding="myAutomaticallyResolve">
+            <constraints>
+              <xy x="2" y="56" width="302" height="22"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/PerforceBundle" key="checkbox.run.resolve.after.sync"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

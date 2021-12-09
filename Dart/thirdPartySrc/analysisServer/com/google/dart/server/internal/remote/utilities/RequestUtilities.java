@@ -42,7 +42,7 @@ public class RequestUtilities {
   private static final String INCLUDED = "included";
   private static final String INCLUDED_FIXES = "includedFixes";
   private static final String INCLUDED_PEDANTIC_FIXES = "includePedanticFixes";
-  private static final String INCLUDED_REQUIRED_FIXES = "includeRequiredFixes";
+  private static final String PORT = "port";
   private static final String LABEL = "label";
   private static final String LENGTH = "length";
   private static final String LINE_LENGTH = "lineLength";
@@ -90,7 +90,6 @@ public class RequestUtilities {
   private static final String METHOD_ANALYTICS_SEND_TIMING = "analytics.sendTiming";
 
   // Edit domain
-  private static final String METHOD_EDIT_DARTFIX = "edit.dartfix";
   private static final String METHOD_EDIT_FORMAT = "edit.format";
   private static final String METHOD_EDIT_GET_ASSISTS = "edit.getAssists";
   private static final String METHOD_EDIT_GET_AVAILABLE_REFACTORING = "edit.getAvailableRefactorings";
@@ -105,8 +104,13 @@ public class RequestUtilities {
   private static final String METHOD_LIST_POSTFIX_COMPLETION_TEMPLATES = "edit.listPostfixCompletionTemplates";
 
   // Code Completion domain
+  private static final String COMPLETION = "completion";
+  private static final String MAX_RESULTS = "maxResults";
+  private static final String LIBRARY_URI = "libraryUri";
   private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS = "completion.getSuggestionDetails";
+  private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS2 = "completion.getSuggestionDetails2";
   private static final String METHOD_COMPLETION_GET_SUGGESTIONS = "completion.getSuggestions";
+  private static final String METHOD_COMPLETION_GET_SUGGESTIONS2 = "completion.getSuggestions2";
   private static final String METHOD_COMPLETION_SET_SUBSCRIPTIONS = "completion.setSubscriptions";
 
   // Search domain
@@ -435,6 +439,7 @@ public class RequestUtilities {
    *     "file": FilePath
    *     "id": int
    *     "label": String
+   *     "offset": int
    *   }
    * }
    * </pre>
@@ -446,6 +451,35 @@ public class RequestUtilities {
     params.addProperty(LABEL, label);
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTION_DETAILS, params);
+  }
+
+  /**
+   * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTION_DETAILS2} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "completion.getSuggestionDetails2"
+   *   "params": {
+   *     "file": FilePath
+   *     "offset": int
+   *     "completion": String
+   *     "libraryUri": String
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateCompletionGetSuggestionDetails2(String idValue,
+                                                                   String file,
+                                                                   int offset,
+                                                                   String completion,
+                                                                   String libraryUri) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(COMPLETION, completion);
+    params.addProperty(LIBRARY_URI, libraryUri);
+    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTION_DETAILS2, params);
   }
 
   /**
@@ -470,6 +504,29 @@ public class RequestUtilities {
   }
 
   /**
+   * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTIONS2} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "completion.getSuggestions2"
+   *   "params": {
+   *     "file": FilePath
+   *     "offset": int
+   *     "maxResults": int
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateCompletionGetSuggestions2(String idValue, String file, int offset, int maxResults) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(MAX_RESULTS, maxResults);
+    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTIONS2, params);
+  }
+
+  /**
    * Generate and return a {@value #METHOD_COMPLETION_SET_SUBSCRIPTIONS} request.
    * <p>
    * <pre>
@@ -487,47 +544,6 @@ public class RequestUtilities {
     JsonObject params = new JsonObject();
     params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_SET_SUBSCRIPTIONS, params);
-  }
-
-  /**
-   * Generate and return a {@value #METHOD_EDIT_DARTFIX} request.
-   * <p>
-   * <pre>
-   * request: {
-   *   "id": String
-   *   "method": "edit.dartfix"
-   *   "params": {
-   *     "included": List&lt;FilePath&gt;
-   *     "includedFixes": optional List&lt;String&gt;
-   *     "includePedanticFixes": optional boolean
-   *     "includeRequiredFixes": optional boolean
-   *     "excludedFixes": optional List&lt;FilePath&gt;
-   *     "outputDir": optional String
-   *   }
-   * }
-   * </pre>
-   */
-  public static JsonObject generateEditDartfix(String idValue,
-                                               List<String> included,
-                                               List<String> includedFixes,
-                                               boolean includePedanticFixes,
-                                               boolean includeRequiredFixes,
-                                               List<String> excludedFixes,
-                                               String outputDir) {
-    JsonObject params = new JsonObject();
-    params.add(INCLUDED, buildJsonElement(included));
-    if (includedFixes != null) {
-      params.add(INCLUDED_FIXES, buildJsonElement(includedFixes));
-    }
-    params.addProperty(INCLUDED_PEDANTIC_FIXES, includePedanticFixes);
-    params.addProperty(INCLUDED_REQUIRED_FIXES, includeRequiredFixes);
-    if (excludedFixes != null) {
-      params.add(EXCLUDED_FIXES, buildJsonElement(excludedFixes));
-    }
-    if (outputDir != null) {
-      params.addProperty(OUTPUT_DIR, outputDir);
-    }
-    return buildJsonObjectRequest(idValue, METHOD_EDIT_DARTFIX, params);
   }
 
   /**

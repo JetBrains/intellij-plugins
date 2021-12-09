@@ -8,7 +8,7 @@ JSFile:NoTypeRefInExtends.js2
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:EXTENDS_KEYWORD)('extends')
-      PsiErrorElement:type name expected
+      PsiErrorElement:Type name expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
@@ -23,7 +23,7 @@ JSFile:NoTypeRefInExtends.js2
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')
-      PsiErrorElement:type name expected
+      PsiErrorElement:Type name expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')

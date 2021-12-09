@@ -3,6 +3,7 @@ package com.intellij.lang.javascript;
 
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.liveTemplates.JSLikeTemplateContextType;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
@@ -13,7 +14,7 @@ public class ActionScriptCodeContextType extends TemplateContextType implements 
   @NonNls private static final String ACTION_SCRIPT = "ACTION_SCRIPT";
 
   public ActionScriptCodeContextType() {
-    super(ACTION_SCRIPT, JavaScriptBundle.message("actionscript.template.context.type"));
+    super(ACTION_SCRIPT, FlexBundle.message("actionscript.template.context.type"));
   }
 
   @Override

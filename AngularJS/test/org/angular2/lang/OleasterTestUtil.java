@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -8,8 +8,7 @@ import com.intellij.testFramework.LightPlatformTestCase;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.after;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.before;
 
-public class OleasterTestUtil {
-
+public final class OleasterTestUtil {
   public static void bootstrapLightPlatform() {
     Ref<OleasterLightPlatformTestCase> testCase = new Ref<>();
     before(() -> testCase.set(new OleasterLightPlatformTestCase()));
@@ -18,9 +17,8 @@ public class OleasterTestUtil {
 
   @SuppressWarnings({"JUnitTestCaseWithNoTests", "NewClassNamingConvention"})
   private static class OleasterLightPlatformTestCase extends LightPlatformTestCase {
-
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    public OleasterLightPlatformTestCase() throws Exception {
+    private OleasterLightPlatformTestCase() throws Exception {
       setUp();
     }
 

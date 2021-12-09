@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiParser
+import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
@@ -26,7 +27,8 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
     const val INTERPOLATION: String = "int"
 
     fun createLexer(project: Project?): Lexer {
-      return JSFlexAdapter(JSRootConfiguration.getInstance(project).languageLevel.dialect.optionHolder)
+      val configured = JSRootConfiguration.getInstance(project).languageLevel.dialect.optionHolder
+      return JSFlexAdapter(if (configured.isECMA6) DialectOptionHolder.JS_WITHOUT_JSX else configured)
     }
 
   }

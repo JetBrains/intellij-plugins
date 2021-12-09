@@ -48,13 +48,13 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   @Override
   public @NotNull ElementPattern<FileContent> createSuitableFilePattern() {
     return FileContentPattern.fileContent().withName(
-      StandardPatterns.string().with(new PatternCondition<String>("cli-json-name") {
+      StandardPatterns.string().with(new PatternCondition<>("cli-json-name") {
         @Override
         public boolean accepts(@NotNull String s, ProcessingContext context) {
           return AngularCliUtil.isAngularJsonFile(s);
         }
       })
-    ).with(new PatternCondition<FileContent>("notLibrary") {
+    ).with(new PatternCondition<>("notLibrary") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
         return !JSLibraryUtil.isProbableLibraryFile(content.getFile());
@@ -63,7 +63,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   }
 
   @Override
-  public List<? extends DetectedFrameworkDescription> detect(@NotNull Collection<VirtualFile> newFiles,
+  public List<? extends DetectedFrameworkDescription> detect(@NotNull Collection<? extends VirtualFile> newFiles,
                                                              @NotNull FrameworkDetectionContext context) {
     if (newFiles.size() > 0 && !isConfigured(newFiles, context.getProject())) {
       return Collections.singletonList(new AngularCLIFrameworkDescription(newFiles));

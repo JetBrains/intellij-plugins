@@ -5,13 +5,13 @@ import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -40,7 +40,7 @@ class CppDiagnosticsAction : DumbAwareAction() {
     val task = object : Task.Modal(project, CppDiagnosticsBundle.message("cpp.diagnostics.progress.title"), true) {
       override fun run(indicator: ProgressIndicator) {
         val toolchains = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.toolchains")) {
-          collectToolchains()
+          collectToolchains(project)
         }
 
         val cidrWorkspaces = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.workspace")) {
@@ -127,7 +127,7 @@ class CppDiagnosticsAction : DumbAwareAction() {
     }
 
 
-    private fun <R> readActionWithText(indicator: ProgressIndicator, text: String, block: () -> R): R {
+    private fun <R> readActionWithText(indicator: ProgressIndicator, @NlsContexts.ProgressText text : String, block: () -> R): R {
       val oldText = indicator.text
       indicator.text = text
       try {

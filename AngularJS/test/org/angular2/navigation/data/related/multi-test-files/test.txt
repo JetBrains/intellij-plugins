@@ -4,10 +4,10 @@ app.component.ts#tit{caret}le =
  -1. Tests 2 (app.component_spec.ts) <app.component_spec.ts, /src>
 app.component.ts#imp{caret}ort
 app.component.spec.ts
- 1. Component Class (app.component.ts) <AppComponent, (app.component.ts)>
+ 1. Component class (app.component.ts) <AppComponent, (app.component.ts)>
  2. Template <inline> <app.component.ts, null>
  -1. Tests 2 (app.component_spec.ts) <app.component_spec.ts, /src>
 app.component_spec.ts
- 1. Component Class (app.component.ts) <AppComponent, (app.component.ts)>
+ 1. Component class (app.component.ts) <AppComponent, (app.component.ts)>
  2. Template <inline> <app.component.ts, null>
  3. Tests 1 (app.component.spec.ts) <app.component.spec.ts, /src>

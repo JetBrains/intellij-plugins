@@ -103,15 +103,15 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
 
   @Override
   public void readExternal(final Element element) throws InvalidDataException {
-    for (final Object setElement : element.getChildren(FILESET)) {
-      final String setName = ((Element) setElement).getAttributeValue(SET_NAME);
-      final String setId = ((Element) setElement).getAttributeValue(SET_ID);
-      final String removed = ((Element) setElement).getAttributeValue(SET_REMOVED);
+    for (final Element setElement : element.getChildren(FILESET)) {
+      final String setName = setElement.getAttributeValue(SET_NAME);
+      final String setId = setElement.getAttributeValue(SET_ID);
+      final String removed = setElement.getAttributeValue(SET_REMOVED);
       if (setName != null && setId != null) {
         final StrutsFileSet fileSet = new StrutsFileSet(setId, setName, this);
-        final List files = ((Element) setElement).getChildren(FILE);
-        for (final Object fileElement : files) {
-          final String text = ((Element) fileElement).getText();
+        final List<Element> files = setElement.getChildren(FILE);
+        for (final Element fileElement : files) {
+          final String text = fileElement.getText();
           fileSet.addFile(text);
         }
         fileSet.setRemoved(Boolean.valueOf(removed));

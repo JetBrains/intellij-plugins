@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import org.dartlang.vm.service.consumer.*;
@@ -7,7 +7,7 @@ import org.dartlang.vm.service.element.RPCError;
 import org.dartlang.vm.service.element.Sentinel;
 import org.dartlang.vm.service.element.Success;
 
-public class VmServiceConsumers {
+public final class VmServiceConsumers {
 
   public static final SuccessConsumer EMPTY_SUCCESS_CONSUMER = new SuccessConsumer() {
     @Override

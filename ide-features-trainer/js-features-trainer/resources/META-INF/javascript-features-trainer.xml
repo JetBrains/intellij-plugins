@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="training">
+    <ift.language.extension language="JavaScript" implementationClass="com.intellij.javascript.ift.JavaScriptLangSupport"/>
+    <ift.learning.course language="JavaScript" implementationClass="com.intellij.javascript.ift.JavaScriptMainLearningCourse"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="ift.show.feedback.link.javascript"
+                 description="Whether IFT show feedback link in the modules panel for JavaScript course."
+                 defaultValue="TRUE"
+                 restartRequired="false"/>
+  </extensions>
+</idea-plugin>

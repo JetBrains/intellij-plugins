@@ -1,0 +1,10 @@
+!newAppVersion#null#103
+!nonceOutdated#boolean#103
+!replenish#null#103
+!replenish/index#number#103
+!replenish/loading#boolean#103
+!replenish/replenish#[]#103
+!showNewVersion#boolean#103
+!sour#null#103
+!sour/loading#boolean#103
+!sour/tasks#[]#103

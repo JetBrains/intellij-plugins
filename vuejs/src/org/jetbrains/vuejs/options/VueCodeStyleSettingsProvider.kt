@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.*
-import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
@@ -46,16 +45,9 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     </style>
   """.trimIndent()
 
-  override fun createFileFromText(project: Project, text: String): PsiFile? {
-    val first = PsiFileFactory.getInstance(project).createFileFromText(
-      "a.vue", VueLanguage.INSTANCE, text, false, true
-    )
-    // Trick injection manager into providing injections - if original file is present
-    // the manager will allow for injections
-    val result = PsiFileFactory.getInstance(project).createFileFromText(text, first)
-    (result as PsiFileImpl).originalFile = first
-    return result
-  }
+  override fun createFileFromText(project: Project, text: String): PsiFile? =
+    PsiFileFactory.getInstance(project).createFileFromText(
+      "a.{{.}}.#@injected@#.html", VueLanguage.INSTANCE, text, false, true)
 
   override fun getIndentOptionsEditor(): IndentOptionsEditor? {
     return VueIndentOptionsEditor()
@@ -96,7 +88,8 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
                                   "INTERPOLATION_WRAP",
                                   VueBundle.message("vue.formatting.wrapping.interpolations"),
                                   null,
-                                  CodeStyleSettingsCustomizable.WRAP_OPTIONS, CodeStyleSettingsCustomizable.WRAP_VALUES)
+                                  CodeStyleSettingsCustomizableOptions.getInstance().WRAP_OPTIONS,
+                                  CodeStyleSettingsCustomizable.WRAP_VALUES)
         consumer.showCustomOption(VueCodeStyleSettings::class.java,
                                   "INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
                                   VueBundle.message("vue.formatting.wrapping.new-line-after-start-delimiter"),

@@ -38,15 +38,6 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
   }
 
   public AngularJSMessageFormatParser.ExtensionType getExtensionType() {
-    final Ref<PsiElement> ref = new Ref<>();
-    PsiTreeUtil.processElements(this, new PsiElementProcessor() {
-      @Override
-      public boolean execute(@NotNull PsiElement element) {
-        final boolean isExpressionName = element.getNode().getElementType() == AngularJSElementTypes.MESSAGE_FORMAT_EXPRESSION_NAME;
-        ref.set(element);
-        return !isExpressionName;
-      }
-    });
     final PsiElement typeElement = getExtensionTypeElement();
     if (typeElement == null) return null;
     try {
@@ -59,7 +50,7 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
 
   public PsiElement getExtensionTypeElement() {
     final Ref<PsiElement> ref = new Ref<>();
-    PsiTreeUtil.processElements(this, new PsiElementProcessor() {
+    PsiTreeUtil.processElements(this, new PsiElementProcessor<>() {
       @Override
       public boolean execute(@NotNull PsiElement element) {
         final boolean isExpressionName = element.getNode().getElementType() == AngularJSElementTypes.MESSAGE_FORMAT_EXPRESSION_NAME;

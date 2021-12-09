@@ -31,7 +31,7 @@ public class PostCssIncrementalParserTest extends PostCssFixtureTestCase {
     type(text);
     PsiFile psiFile = myFixture.getFile();
     ParsingTestCase.ensureParsed(psiFile);
-    String actual = DebugUtil.psiToString(psiFile, false, false);
+    String actual = DebugUtil.psiToString(psiFile, true, false);
     UsefulTestCase.assertSameLinesWithFile(getTestDataPath() + File.separatorChar + getTestName(true) + ".txt", actual);
   }
 

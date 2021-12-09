@@ -21,6 +21,7 @@ public class DartCascadeReferenceExpressionImpl extends DartReferenceImpl implem
     visitor.visitCascadeReferenceExpression(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -30,6 +31,12 @@ public class DartCascadeReferenceExpressionImpl extends DartReferenceImpl implem
   @Nullable
   public DartExpression getExpression() {
     return findChildByClass(DartExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }

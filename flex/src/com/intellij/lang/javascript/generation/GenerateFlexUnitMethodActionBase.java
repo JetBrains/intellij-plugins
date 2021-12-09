@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -22,8 +23,9 @@ public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJ
   @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new BaseJSGenerateHandler() {
+
       @Override
-      protected String getTitleKey() {
+      protected @NlsContexts.DialogTitle String getTitle() {
         return null;
       }
 

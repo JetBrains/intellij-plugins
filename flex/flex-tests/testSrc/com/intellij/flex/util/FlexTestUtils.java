@@ -71,7 +71,7 @@ import java.util.Map;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-public class FlexTestUtils {
+public final class FlexTestUtils {
 
   @NotNull
   public static String getTestDataPath(@NotNull final String relativePath) {
@@ -185,6 +185,14 @@ public class FlexTestUtils {
                               @Nullable String sdkVersion,
                               final boolean removeExisting,
                               @NotNull Disposable parent) {
+    return createSdk(flexSdkRootPath, sdkVersion, removeExisting, true, parent);
+  }
+
+  public static Sdk createSdk(final String flexSdkRootPath,
+                              @Nullable String sdkVersion,
+                              boolean removeExisting,
+                              boolean registerSdk,
+                              @NotNull Disposable parent) {
     Sdk sdk = WriteCommandAction.runWriteCommandAction(null, (Computable<Sdk>)() -> {
       final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
       if (removeExisting) {
@@ -198,7 +206,9 @@ public class FlexTestUtils {
       final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
       final Sdk sdk1 = new ProjectJdkImpl(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType, flexSdkRootPath, "");
       sdkType.setupSdkPaths(sdk1);
-      projectJdkTable.addJdk(sdk1, parent);
+      if (registerSdk) {
+        projectJdkTable.addJdk(sdk1, parent);
+      }
       return sdk1;
     });
 

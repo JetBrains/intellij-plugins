@@ -1,0 +1,53 @@
+plugins {
+  id 'org.jetbrains.intellij' version '1.1.2'
+  id 'java'
+}
+
+group 'org.jetbrains'
+version '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'com.thoughtworks.gauge:gauge-java:0.7.3'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+def properties = new Properties()
+def file = rootProject.file('local.properties')
+
+if (file.exists()) {
+  properties.load(file.newDataInputStream())
+}
+
+def ideaPath = properties.getProperty('idea.path')
+
+intellij {
+  if (ideaPath == null) {
+    version = '2021.2'
+  } else {
+    localPath = ideaPath
+  }
+
+  plugins = ['java', 'properties', 'maven', 'gradle']
+}
+patchPluginXml {
+}
+test {
+  useJUnitPlatform()
+}
+
+sourceSets {
+  main {
+    java.srcDirs = ['src', 'gen']
+    resources.srcDirs = ['resources']
+  }
+  test {
+    java.srcDirs = ['test']
+    resources.srcDirs = []
+  }
+}

@@ -134,24 +134,24 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
 
   public void testTypeScriptSpecifyTypeNoFix() {
     doTestNoFix("no-specify-type-variable.html",
-                TypeScriptExplicitMemberTypeInspection.class, 
+                TypeScriptExplicitMemberTypeInspection.class,
                 JavaScriptBundle.message("typescript.specify.type.explicitly"));
-  }  
-  
+  }
+
   public void testTypeScriptSpecifyTypeNoFixNgFor() {
-    doTestNoFix("no-specify-type-variable-ng-for.html", 
+    doTestNoFix("no-specify-type-variable-ng-for.html",
                 TypeScriptExplicitMemberTypeInspection.class,
                 JavaScriptBundle.message("typescript.specify.type.explicitly"));
   }
 
   public void testTypeScriptNoIntroduceVariable() {
-    doTestNoFix("no-introduce-variable.html", 
+    doTestNoFix("no-introduce-variable.html",
                 null,
                 JavaScriptBundle.message("javascript.introduce.variable.title.local"));
   }
-  
-  private void doTestNoFix(@NotNull String location, 
-                           @Nullable Class<? extends LocalInspectionTool> inspection, 
+
+  private void doTestNoFix(@NotNull String location,
+                           @Nullable Class<? extends LocalInspectionTool> inspection,
                            @NotNull String quickFixName) {
     if (inspection != null) {
       myFixture.enableInspections(inspection);

@@ -256,9 +256,8 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     for (int i = 0; i < CORE_5_1_0_5_ELEMENT_NAMES.length; i++) {
       CORE_5_1_0_5_TAG_NAMES[i] = "t:" + CORE_5_1_0_5_ELEMENT_NAMES[i];
     }
-    for (int i = CORE_5_1_0_5_ELEMENT_NAMES.length; i < CORE_5_1_0_5_TAG_NAMES.length; i++) {
-      CORE_5_1_0_5_TAG_NAMES[i] = CORE_5_1_0_5_SCHEMA_NAMES[i - CORE_5_1_0_5_ELEMENT_NAMES.length];
-    }
+    System.arraycopy(CORE_5_1_0_5_SCHEMA_NAMES, 0, CORE_5_1_0_5_TAG_NAMES,
+                 CORE_5_1_0_5_ELEMENT_NAMES.length, CORE_5_1_0_5_SCHEMA_NAMES.length);
   }
 
   static final String[] HTML_TAG_NAMES =

@@ -90,7 +90,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:IDENTIFIER)('uppercase')
         JSArgumentList
           PsiElement(JS:COLON)(':')
-          PsiErrorElement:expression expected
+          PsiErrorElement:Expression expected
             <empty list>
 ------
 ASTWrapperPsiElement(FILE)

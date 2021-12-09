@@ -8,15 +8,20 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Information about an element (something that can be declared in code).
@@ -28,7 +33,7 @@ public class Element {
 
   public static final Element[] EMPTY_ARRAY = new Element[0];
 
-  public static final List<Element> EMPTY_LIST = new ArrayList<>();
+  public static final List<Element> EMPTY_LIST = Lists.newArrayList();
 
   private static final int ABSTRACT = 0x01;
 
@@ -90,9 +95,15 @@ public class Element {
   private final String typeParameters;
 
   /**
+   * If the element is a type alias, this field is the aliased type. Otherwise this field will not be
+   * defined.
+   */
+  private final String aliasedType;
+
+  /**
    * Constructor for {@link Element}.
    */
-  public Element(String kind, String name, Location location, int flags, String parameters, String returnType, String typeParameters) {
+  public Element(String kind, String name, Location location, int flags, String parameters, String returnType, String typeParameters, String aliasedType) {
     this.kind = kind;
     this.name = name;
     this.location = location;
@@ -100,6 +111,7 @@ public class Element {
     this.parameters = parameters;
     this.returnType = returnType;
     this.typeParameters = typeParameters;
+    this.aliasedType = aliasedType;
   }
 
   @Override
@@ -113,7 +125,8 @@ public class Element {
         other.flags == flags &&
         ObjectUtilities.equals(other.parameters, parameters) &&
         ObjectUtilities.equals(other.returnType, returnType) &&
-        ObjectUtilities.equals(other.typeParameters, typeParameters);
+        ObjectUtilities.equals(other.typeParameters, typeParameters) &&
+        ObjectUtilities.equals(other.aliasedType, aliasedType);
     }
     return false;
   }
@@ -126,7 +139,8 @@ public class Element {
     String parameters = jsonObject.get("parameters") == null ? null : jsonObject.get("parameters").getAsString();
     String returnType = jsonObject.get("returnType") == null ? null : jsonObject.get("returnType").getAsString();
     String typeParameters = jsonObject.get("typeParameters") == null ? null : jsonObject.get("typeParameters").getAsString();
-    return new Element(kind, name, location, flags, parameters, returnType, typeParameters);
+    String aliasedType = jsonObject.get("aliasedType") == null ? null : jsonObject.get("aliasedType").getAsString();
+    return new Element(kind, name, location, flags, parameters, returnType, typeParameters, aliasedType);
   }
 
   public static List<Element> fromJsonArray(JsonArray jsonArray) {
@@ -139,6 +153,14 @@ public class Element {
       list.add(fromJson(iterator.next().getAsJsonObject()));
     }
     return list;
+  }
+
+  /**
+   * If the element is a type alias, this field is the aliased type. Otherwise this field will not be
+   * defined.
+   */
+  public String getAliasedType() {
+    return aliasedType;
   }
 
   /**
@@ -212,6 +234,7 @@ public class Element {
     builder.append(parameters);
     builder.append(returnType);
     builder.append(typeParameters);
+    builder.append(aliasedType);
     return builder.toHashCode();
   }
 
@@ -256,6 +279,9 @@ public class Element {
     if (typeParameters != null) {
       jsonObject.addProperty("typeParameters", typeParameters);
     }
+    if (aliasedType != null) {
+      jsonObject.addProperty("aliasedType", aliasedType);
+    }
     return jsonObject;
   }
 
@@ -276,7 +302,9 @@ public class Element {
     builder.append("returnType=");
     builder.append(returnType + ", ");
     builder.append("typeParameters=");
-    builder.append(typeParameters);
+    builder.append(typeParameters + ", ");
+    builder.append("aliasedType=");
+    builder.append(aliasedType);
     builder.append("]");
     return builder.toString();
   }

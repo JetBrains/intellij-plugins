@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.jsp;
 
 import com.intellij.lang.injection.MultiHostInjector;
@@ -43,7 +42,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  *
  * @author Yann C&eacute;bron
  */
-public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
+final class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
   private static class Holder {
     private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
       .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,

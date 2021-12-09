@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+package foo.bar;
+
+message OptionType {
+  repeated string str = 1;
+}
+
+extend google.protobuf.FileOptions {
+  OptionType opt = 5000;
+}
+
+option (opt) = {
+  str: <EOLError descr="Unterminated string literal">"123</EOLError>
+  str: "12<error descr="Illegal escape sequence in string literal">\z</error>3"
+};

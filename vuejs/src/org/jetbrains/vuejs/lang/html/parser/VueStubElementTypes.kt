@@ -5,16 +5,27 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.impl.source.html.HtmlStubBasedTagElementType
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStubImpl
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
+import com.intellij.psi.impl.source.xml.stub.XmlStubBasedElementType
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.tree.ICompositeElementType
+import com.intellij.psi.xml.IXmlAttributeElementType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import org.jetbrains.vuejs.index.VueIdIndex
 import org.jetbrains.vuejs.index.VueUrlIndex
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl
+import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
+import java.io.IOException
 
 object VueStubElementTypes {
+
+  const val VERSION = 5
 
   val STUBBED_TAG = object : HtmlStubBasedTagElementType("STUBBED_TAG", VueLanguage.INSTANCE) {
     override fun shouldCreateStub(node: ASTNode?): Boolean {
@@ -51,7 +62,36 @@ object VueStubElementTypes {
     }
   }
 
-  val SLOT_TAG_ATTRIBUTE = object : XmlStubBasedAttributeElementType("SLOT_TAG_ATTRIBUTE", VueLanguage.INSTANCE) {
+  val VUE_STUBBED_ATTRIBUTE = object : XmlStubBasedAttributeElementType("VUE_STUBBED_ATTRIBUTE", VueLanguage.INSTANCE) {
   }
+
+  val REF_ATTRIBUTE: XmlStubBasedElementType<VueRefAttributeStubImpl, VueRefAttributeImpl> =
+    object : XmlStubBasedElementType<VueRefAttributeStubImpl, VueRefAttributeImpl>("REF_ATTRIBUTE", VueLanguage.INSTANCE),
+             ICompositeElementType, IXmlAttributeElementType {
+
+      @Throws(IOException::class)
+      override fun serialize(stub: VueRefAttributeStubImpl, dataStream: StubOutputStream) {
+        stub.serialize(dataStream)
+      }
+
+      @Throws(IOException::class)
+      override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): VueRefAttributeStubImpl {
+        return VueRefAttributeStubImpl(parentStub, dataStream, this)
+      }
+
+      override fun createPsi(stub: VueRefAttributeStubImpl): VueRefAttributeImpl {
+        return VueRefAttributeImpl(stub, this)
+      }
+
+      override fun createPsi(node: ASTNode): VueRefAttributeImpl {
+        return VueRefAttributeImpl(node)
+      }
+
+      override fun createStub(psi: VueRefAttributeImpl, parentStub: StubElement<*>): VueRefAttributeStubImpl {
+        return VueRefAttributeStubImpl(psi, parentStub, this)
+      }
+
+    }
+
 
 }

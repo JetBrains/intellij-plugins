@@ -10,10 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.css.CssRulesetList;
-import com.intellij.psi.css.CssStylesheet;
-import com.intellij.psi.css.CssTermList;
-import com.intellij.psi.css.StylesheetFile;
+import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.css.reference.CssReference;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
@@ -68,7 +65,7 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
   @NotNull
   @Override
   public String getUnresolvedMessagePattern() {
-    return "Cannot find variable " + getCanonicalText();
+    return CssBundle.message("inspections.unresolved.variable", getCanonicalText());
   }
 
   @Nullable

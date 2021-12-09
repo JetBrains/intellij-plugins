@@ -16,12 +16,10 @@ package com.intellij.struts2.graph;
 
 import com.intellij.openapi.graph.builder.components.BasicGraphPresentationModel;
 import com.intellij.openapi.graph.builder.renderer.BasicGraphNodeRenderer;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
-import com.intellij.openapi.graph.view.EditMode;
-import com.intellij.openapi.graph.view.Graph2D;
-import com.intellij.openapi.graph.view.Graph2DView;
-import com.intellij.openapi.graph.view.NodeRealizer;
+import com.intellij.openapi.graph.services.GraphNodeRealizerService;
+import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiClass;
@@ -48,13 +46,13 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
 
   public StrutsPresentationModel(final Graph2D graph) {
     super(graph);
-    setShowEdgeLabels(true);
+    getSettings().setShowEdgeLabels(true);
   }
 
   @Override
   @NotNull
-  public NodeRealizer getNodeRealizer(final BasicStrutsNode node) {
-    return GraphViewUtil.createNodeRealizer("Struts2NodeRenderer", getRenderer());
+  public NodeRealizer getNodeRealizer(final @Nullable BasicStrutsNode node) {
+    return GraphNodeRealizerService.getInstance().createGenericNodeRealizer("Struts2NodeRenderer", getRenderer());
   }
 
   private BasicGraphNodeRenderer getRenderer() {
@@ -65,7 +63,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   }
 
   @Override
-  public boolean editNode(final BasicStrutsNode node) {
+  public boolean editNode(final @Nullable BasicStrutsNode node) {
     if (node == null) { // TODO should not happen
       return false;
     }
@@ -79,7 +77,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   }
 
   @Override
-  public boolean editEdge(final BasicStrutsEdge edge) {
+  public boolean editEdge(final @Nullable BasicStrutsEdge edge) {
     if (edge == null) {
       return false; // TODO should not happen
     }
@@ -93,7 +91,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   }
 
   @Override
-  public String getNodeTooltip(@Nullable final BasicStrutsNode node) {
+  public @Nullable String getNodeTooltip(@Nullable final BasicStrutsNode node) {
     if (node == null) {
       return null;
     }
@@ -131,12 +129,12 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   }
 
   @Override
-  public void customizeSettings(final Graph2DView view, final EditMode editMode) {
+  public void customizeSettings(final @NotNull Graph2DView view, final @NotNull EditMode editMode) {
     editMode.allowBendCreation(false);
     editMode.allowEdgeCreation(false);
 
     view.setFitContentOnResize(false);
-    view.setAntialiasedPainting(false);
+    view.setAntialiasedPainting(Registry.is(BasicGraphPresentationModel.USE_ANTIALIAING_REGKEY));
     view.setGridVisible(false);
     view.fitContent();
   }

@@ -22,9 +22,9 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.ui;
 
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.util.ClassFilter;
@@ -34,7 +34,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -44,8 +43,6 @@ import org.osmorc.util.OsgiPsiUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the generation of the manifest file by
@@ -72,32 +69,21 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     myEditorPanel.add(myAdditionalPropertiesEditor, BorderLayout.CENTER);
 
     UserActivityWatcher watcher = new UserActivityWatcher();
-    watcher.addUserActivityListener(new UserActivityListener() {
-      @Override
-      public void stateChanged() {
-        myModified = true;
-      }
-    });
+    watcher.addUserActivityListener(() -> myModified = true);
     watcher.register(myRootPanel);
 
-    myBundleActivator.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        onBundleActivatorSelect();
-      }
-    });
+    myBundleActivator.addActionListener(e -> onBundleActivatorSelect());
   }
 
   private void updateGui() {
     boolean isManuallyEdited = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY) == Boolean.TRUE;
-    boolean isBnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY) == Boolean.TRUE;
-    boolean isBundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY) == Boolean.TRUE;
-    boolean isUiEnabled = !(isManuallyEdited || isBnd || isBundlor);
+    boolean isToolGenerated = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.EXT_TOOL_MANIFEST_CREATION_KEY) == Boolean.TRUE;
+    boolean enabled = !(isManuallyEdited || isToolGenerated);
 
-    myBundleSymbolicName.setEnabled(isUiEnabled);
-    myBundleActivator.setEnabled(isUiEnabled);
-    myBundleVersion.setEnabled(isUiEnabled);
-    myAdditionalPropertiesEditor.getComponent().setEnabled(isUiEnabled);
+    myBundleSymbolicName.setEnabled(enabled);
+    myBundleActivator.setEnabled(enabled);
+    myBundleVersion.setEnabled(enabled);
+    myAdditionalPropertiesEditor.getComponent().setEnabled(enabled);
   }
 
   private void onBundleActivatorSelect() {
@@ -115,12 +101,11 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
 
   @Override
   public String getDisplayName() {
-    return OsmorcBundle.message("configurable.OsmorcFacetManifestGenerationEditorTab.display.name");
+    return OsmorcBundle.message("facet.tab.manifest");
   }
 
-  @NotNull
   @Override
-  public JComponent createComponent() {
+  public @NotNull JComponent createComponent() {
     return myRootPanel;
   }
 
@@ -136,6 +121,11 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     configuration.setBundleSymbolicName(myBundleSymbolicName.getText());
     configuration.setBundleVersion(myBundleVersion.getText());
     configuration.setAdditionalProperties(myAdditionalPropertiesEditor.getText());
+
+    if (myModified) {
+      BuildManager.getInstance().clearState(myEditorContext.getProject());
+    }
+    myModified = false;
   }
 
   @Override
@@ -146,6 +136,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     myBundleVersion.setText(configuration.getBundleVersion());
     myAdditionalPropertiesEditor.setText(configuration.getAdditionalProperties());
     updateGui();
+    myModified = false;
   }
 
   @Override

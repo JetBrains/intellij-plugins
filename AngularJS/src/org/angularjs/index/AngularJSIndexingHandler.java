@@ -39,7 +39,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
-import gnu.trove.THashSet;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -53,10 +52,12 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
+import static org.angularjs.index.AngularJSDirectivesSupport.getDirectiveIndexKeys;
+
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
+public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXERS =
     new HashMap<>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<>();
@@ -116,7 +117,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXERS.put(FILTER, AngularFilterIndex.KEY);
     INDEXERS.put(STATE, AngularUiRouterStatesIndex.KEY);
 
-    final THashSet<String> allInterestingMethods = new THashSet<>(INTERESTING_METHODS);
+    final Set<String> allInterestingMethods = new HashSet<>(INTERESTING_METHODS);
     allInterestingMethods.addAll(INJECTABLE_METHODS);
     allInterestingMethods.addAll(INDEXERS.keySet());
     allInterestingMethods.add(START_SYMBOL);
@@ -379,12 +380,17 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
     final String userID = element.getUserString();
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEXES.get(userID) : null;
-    if (index != null) {
-      if (sink != null) {
-        sink.occurrence(index, element.getName());
-        if (index != AngularSymbolIndex.KEY) {
-          sink.occurrence(AngularSymbolIndex.KEY, element.getName());
+    if (index != null && sink != null) {
+      if (index == AngularDirectivesIndex.KEY
+          || index == AngularDirectivesDocIndex.KEY) {
+        for (String indexKey: getDirectiveIndexKeys(element)) {
+          sink.occurrence(index, indexKey);
         }
+      }  else {
+        sink.occurrence(index, element.getName());
+      }
+      if (index != AngularSymbolIndex.KEY) {
+        sink.occurrence(AngularSymbolIndex.KEY, element.getName());
       }
     }
     return false;
@@ -417,7 +423,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final boolean directive = ngdocValue.contains(DIRECTIVE);
         final boolean component = ngdocValue.contains(COMPONENT);
         if (directive || component) {
-          final List<Pair<String, String>> restrictions = calculateRestrictions(commentLines, name, directive ? DEFAULT_RESTRICTIONS : "E");
+          final List<Pair<String, String>> restrictions =
+            calculateRestrictions(comment, commentLines, name, directive ? DEFAULT_RESTRICTIONS : "E");
           if (outData == null) outData = new JSElementIndexingDataImpl();
           for (Pair<String, String> p : restrictions) {
             addImplicitElements(comment, directive ? DIRECTIVE : COMPONENT, AngularDirectivesDocIndex.KEY, p.first, p.second, outData);
@@ -432,7 +439,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static List<Pair<String, String>> calculateRestrictions(final String[] commentLines,
+  private static List<Pair<String, String>> calculateRestrictions(@NotNull PsiElement context, 
+                                                                  final String[] commentLines,
                                                                   String directiveName,
                                                                   String defaultRestrictions) {
     String restrict = defaultRestrictions;
@@ -443,7 +451,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       tag = getParamValue(tag, line, ELEMENT);
       final int start = line.indexOf(PARAM);
       if (start >= 0) {
-        final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
+        final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(context, line.substring(start));
         if (docTag != null && docTag.matchName != null) {
           for (String paramName : StringUtil.split(docTag.matchName, "|")) {
             if (restrict.equals(DEFAULT_RESTRICTIONS) || restrict.contains("A")) {
@@ -553,7 +561,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final Ref<String> restrict = Ref.create(defaultRestrictions);
     final PsiElement function = findFunction(element);
     if (function != null) {
-      function.accept(new JSRecursiveElementVisitor() {
+      function.accept(new JSRecursiveWalkingElementVisitor() {
         @Override
         public void visitJSProperty(JSProperty node) {
           final String name = node.getName();
@@ -617,7 +625,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
       if (qualifier == null) return null;
 
-      final String command = callee.getReferencedName();
+      final String command = callee.getReferenceName();
 
       if (INJECTABLE_METHODS.contains(command)) {
         JSExpression[] arguments = call.getArguments();
@@ -663,7 +671,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final String name = resolveParent.getFirstChild().getText();
         final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
         final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
-        evaluator.addType(type, resolveResult);
+        evaluator.addType(type);
         return true;
       }
     }
@@ -675,11 +683,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
-    if (resolveResult instanceof JSParameter && evaluator.isFromCurrentFile(resolveResult) && isInjectable(resolveResult)) {
+    if (resolveResult instanceof JSParameter && context.isFromCurrentFile(resolveResult) && isInjectable(resolveResult)) {
       final String name = ((JSParameter)resolveResult).getName();
       final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
       final JSType type = JSNamedType.createType(name, source, JSContext.UNKNOWN);
-      evaluator.addType(type, resolveResult);
+      evaluator.addType(type);
     }
     return false;
   }
@@ -698,7 +706,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private PairProcessor<JSProperty, JSElementIndexingData> createRouterParametersProcessor() {
-    return new PairProcessor<JSProperty, JSElementIndexingData>() {
+    return new PairProcessor<>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
         if (!(property.getValue() instanceof JSLiteralExpression)) return true;

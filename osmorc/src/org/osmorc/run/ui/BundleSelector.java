@@ -190,7 +190,7 @@ public class BundleSelector extends DialogWrapper {
         }
       }
 
-      append(value.toString());
+      append(value.toString()); //NON-NLS
     }
   }
 }

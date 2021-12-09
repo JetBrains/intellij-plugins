@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -27,7 +27,6 @@ import com.jetbrains.lang.dart.ide.errorTreeView.DartProblem;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.Contract;
@@ -36,12 +35,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class DartAnnotator implements Annotator {
-
+public final class DartAnnotator implements Annotator {
   private static final Key<List<DartServerData.DartError>> DART_ERRORS = Key.create("DART_ERRORS");
   private static final Key<List<DartServerData.DartHighlightRegion>> DART_HIGHLIGHTING = Key.create("DART_HIGHLIGHTING");
 
-  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<>();
+  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new HashMap<>();
 
   static {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);
@@ -53,6 +51,7 @@ public class DartAnnotator implements Annotator {
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_DOC_COMMENT);
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_LINE_COMMENT);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CONSTRUCTOR, DartSyntaxHighlighterColors.DART_CONSTRUCTOR);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CONSTRUCTOR_TEAR_OFF, DartSyntaxHighlighterColors.DART_CONSTRUCTOR_TEAR_OFF);
     // No need in special highlighting of the whole region. Individual child regions are highlighted.
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DIRECTIVE, DartSyntaxHighlighterColors.);
     // HighlightRegionType.DYNAMIC_TYPE - Only for version 1 of highlight.
@@ -82,6 +81,7 @@ public class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_METHOD_DECLARATION,
                               DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_METHOD_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_METHOD_TEAR_OFF, DartSyntaxHighlighterColors.DART_INSTANCE_METHOD_TEAR_OFF);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_DECLARATION,
                               DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE);
@@ -101,6 +101,7 @@ public class DartAnnotator implements Annotator {
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_STRING, DartSyntaxHighlighterColors.DART_STRING);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_DECLARATION, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_REFERENCE, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_TEAR_OFF, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_TEAR_OFF);
     // HighlightRegionType.LOCAL_VARIABLE - Only for version 1 of highlight.
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_VARIABLE_DECLARATION, DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_VARIABLE_REFERENCE, DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_REFERENCE);
@@ -118,12 +119,15 @@ public class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_GETTER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_METHOD_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_METHOD_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_TEAR_OFF, DartSyntaxHighlighterColors.DART_STATIC_METHOD_TEAR_OFF);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_SETTER_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_SETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_SETTER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_DECLARATION,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_REFERENCE,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_TEAR_OFF,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_TEAR_OFF);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_GETTER_DECLARATION,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_REFERENCE);
@@ -132,6 +136,8 @@ public class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_VARIABLE_DECLARATION,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_ALIAS,
+                              DartSyntaxHighlighterColors.DART_TYPE_ALIAS);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_NAME_DYNAMIC, DartSyntaxHighlighterColors.DART_TYPE_NAME_DYNAMIC);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_PARAMETER, DartSyntaxHighlighterColors.DART_TYPE_PARAMETER);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE,
@@ -188,8 +194,7 @@ public class DartAnnotator implements Annotator {
 
     processDartRegionsInRange(notYetAppliedErrors, element.getTextRange(), err -> {
       VirtualFile vFile = element.getContainingFile().getVirtualFile();
-      DartQuickFixSet quickFixSet = new DartQuickFixSet(element.getManager(), vFile, err.getOffset(), err.getCode(), err.getSeverity());
-      createAnnotation(holder, err, quickFixSet.getQuickFixes());
+      createAnnotation(holder, err, new DartQuickFixSet(element.getManager(), vFile, err.getOffset(), err.getCode()));
     });
 
     processDartRegionsInRange(notYetAppliedHighlighting, element.getTextRange(), region -> {
@@ -247,9 +252,9 @@ public class DartAnnotator implements Annotator {
     }
   }
 
-  private static <T extends DartServerData.DartRegion> void processDartRegionsInRange(@NotNull List<T> regions,
+  private static <T extends DartServerData.DartRegion> void processDartRegionsInRange(@NotNull List<? extends T> regions,
                                                                                       @NotNull TextRange psiElementRange,
-                                                                                      @NotNull Consumer<T> processor) {
+                                                                                      @NotNull Consumer<? super T> processor) {
     if (regions.isEmpty()) return;
 
     int i = ObjectUtils.binarySearch(0, regions.size(),
@@ -270,14 +275,15 @@ public class DartAnnotator implements Annotator {
     }
   }
 
-  private static void createAnnotation(@NotNull final AnnotationHolder holder,
-                                       @NotNull final DartServerData.DartError error,
-                                       @NotNull List<DartQuickFix> fixes) {
+  private static void createAnnotation(@NotNull AnnotationHolder holder,
+                                       @NotNull DartServerData.DartError error,
+                                       @NotNull DartQuickFixSet quickFixSet) {
     final TextRange textRange = new TextRange(error.getOffset(), error.getOffset() + error.getLength());
     final String severity = error.getSeverity();
     final String message = error.getMessage();
     final ProblemHighlightType specialHighlightType = getSpecialHighlightType(error);
-    final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
+    final String tooltip =
+      DartProblem.generateTooltipText(error.getMessage(), error.getContextMessages(), error.getCorrection(), error.getUrl());
     final HighlightSeverity annotationSeverity;
     TextAttributesKey textAttributesKey;
 
@@ -305,9 +311,9 @@ public class DartAnnotator implements Annotator {
       builder = builder.textAttributes(textAttributesKey);
     }
     if (error.getCode() != null) {
-      builder = builder.problemGroup(new DartProblemGroup(error.getCode(), error.getSeverity()));
+      builder = builder.problemGroup(quickFixSet.getProblemGroup());
     }
-    for (DartQuickFix fix : fixes) {
+    for (DartQuickFix fix : quickFixSet.getQuickFixes()) {
       builder = builder.withFix(fix);
     }
     builder.create();
@@ -359,7 +365,7 @@ public class DartAnnotator implements Annotator {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(range).textAttributes(attribute).create();
       }
       else {
-        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
+        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("error.label.invalid.string.escape"))
           .range(range)
           .textAttributes(attribute)
           .create();

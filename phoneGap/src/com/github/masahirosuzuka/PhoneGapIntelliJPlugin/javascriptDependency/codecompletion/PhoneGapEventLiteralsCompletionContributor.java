@@ -22,7 +22,7 @@ public class PhoneGapEventLiteralsCompletionContributor extends CompletionContri
   }
 
   private static CompletionProvider<CompletionParameters> getProvider() {
-    return new CompletionProvider<CompletionParameters>() {
+    return new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters completionParameters,
                                     @NotNull ProcessingContext processingContext,

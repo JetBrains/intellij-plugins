@@ -215,16 +215,11 @@ public interface AnalysisServer {
    * @param excluded A list of the files and directories within the included directories that should
    *         not be analyzed.
    * @param packageRoots A mapping from source directories to package roots that should override the
-   *         normal package: URI resolution mechanism. If a package root is a directory, then the
-   *         analyzer will behave as though the associated source directory in the map contains a
-   *         special pubspec.yaml file which resolves any package: URI to the corresponding path
-   *         within that package root directory. The effect is the same as specifying the package
-   *         root directory as a "--package_root" parameter to the Dart VM when executing any Dart
-   *         file inside the source directory. If a package root is a file, then the analyzer will
-   *         behave as though that file is a ".packages" file in the source directory. The effect is
-   *         the same as specifying the file as a "--packages" parameter to the Dart VM when
-   *         executing any Dart file inside the source directory. Files in any directories that are
-   *         not overridden by this mapping have their package: URI's resolved using the normal
+   *         normal package: URI resolution mechanism. If a package root is a file, then the analyzer
+   *         will behave as though that file is a ".packages" file in the source directory. The
+   *         effect is the same as specifying the file as a "--packages" parameter to the Dart VM
+   *         when executing any Dart file inside the source directory. Files in any directories that
+   *         are not overridden by this mapping have their package: URI's resolved using the normal
    *         pubspec.yaml mechanism. If this field is absent, or the empty map is specified, that
    *         indicates that the normal pubspec.yaml mechanism should always be used.
    */
@@ -407,6 +402,26 @@ public interface AnalysisServer {
   public void completion_getSuggestionDetails(String file, int id, String label, int offset, GetSuggestionDetailsConsumer consumer);
 
   /**
+   * {@code completion.getSuggestionDetails2}
+   *
+   * Clients must make this request when the user has selected a completion suggestion with the
+   * libraryUriToImportIndex field set. The server will respond with the text to insert, as well as
+   * any SourceChange that needs to be applied in case the completion requires an additional import
+   * to be added. The text to insert might be different from the original suggestion to include an
+   * import prefix if the library will be imported with a prefix to avoid shadowing conflicts in the
+   * file.
+   *
+   * @param file The path of the file into which this completion is being inserted.
+   * @param offset The offset in the file where the completion will be inserted.
+   * @param completion The completion from the selected CompletionSuggestion. It could be a name of a
+   *         class, or a name of a constructor in form "typeName.constructorName()", or an
+   *         enumeration constant in form "enumName.constantName", etc.
+   * @param libraryUri The URI of the library to import, so that the element referenced in the
+   *         completion becomes accessible.
+   */
+  public void completion_getSuggestionDetails2(String file, int offset, String completion, String libraryUri, GetSuggestionDetailsConsumer2 consumer);
+
+  /**
    * {@code completion.getSuggestions}
    *
    * Request that completion suggestions for the given offset in the given file be returned.
@@ -417,14 +432,17 @@ public interface AnalysisServer {
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer);
 
   /**
-   * {@code completion.listTokenDetails}
+   * {@code completion.getSuggestions2}
    *
-   * Inspect analysis server's knowledge about all of a file's tokens including their lexeme, type,
-   * and what element kinds would have been appropriate for the token's program location.
+   * Request that completion suggestions for the given offset in the given file be returned. The
+   * suggestions will be filtered using fuzzy matching with the already existing prefix.
    *
-   * @param file The path to the file from which tokens should be returned.
+   * @param file The file containing the point at which suggestions are to be made.
+   * @param offset The offset within the file at which suggestions are to be made.
+   * @param maxResults The maximum number of suggestions to return. If the number of suggestions
+   *         after filtering is greater than the maxResults, then isIncomplete is set to true.
    */
-  public void completion_listTokenDetails(String file, ListTokenDetailsConsumer consumer);
+  public void completion_getSuggestions2(String file, int offset, int maxResults, GetSuggestionsConsumer2 consumer);
 
   /**
    * {@code completion.registerLibraryPaths}
@@ -439,6 +457,8 @@ public interface AnalysisServer {
    *         the client is interested in receiving completion suggestions. If one configured path is
    *         beneath another, the descendent will override the ancestors' configured libraries of
    *         interest.
+   *
+   * @deprecated
    */
   public void completion_registerLibraryPaths(List<LibraryPathSet> paths);
 
@@ -472,17 +492,11 @@ public interface AnalysisServer {
   public void diagnostic_getServerPort(GetServerPortConsumer consumer);
 
   /**
-   * {@code edit.dartfix}
+   * {@code edit.bulkFixes}
    *
-   * Analyze the specified sources for recommended changes and return a set of suggested edits for
-   * those sources. These edits may include changes to sources outside the set of specified sources
-   * if a change in a specified source requires it.
-   *
-   * If includedFixes is specified, then those fixes will be applied. If includeRequiredFixes is
-   * specified, then "required" fixes will be applied in addition to whatever fixes are specified in
-   * includedFixes if any. If neither includedFixes nor includeRequiredFixes is specified, then all
-   * fixes will be applied. If excludedFixes is specified, then those fixes will not be applied
-   * regardless of whether they are "required" or specified in includedFixes.
+   * Analyze the specified sources for fixes that can be applied in bulk and return a set of
+   * suggested edits for those sources. These edits may include changes to sources outside the set of
+   * specified sources if a change in a specified source requires it.
    *
    * @param included A list of the files and directories for which edits should be suggested. If a
    *         request is made with a path that is invalid, e.g. is not absolute and normalized, an
@@ -490,26 +504,12 @@ public interface AnalysisServer {
    *         file which does not exist, or which is not currently subject to analysis (e.g. because
    *         it is not associated with any analysis root specified to analysis.setAnalysisRoots), an
    *         error of type FILE_NOT_ANALYZED will be generated.
-   * @param includedFixes A list of names indicating which fixes should be applied. If a name is
-   *         specified that does not match the name of a known fix, an error of type UNKNOWN_FIX will
-   *         be generated.
-   * @param includePedanticFixes A flag indicating that "pedantic" fixes should be applied.
-   * @param includeRequiredFixes A flag indicating that "required" fixes should be applied.
-   * @param excludedFixes A list of names indicating which fixes should not be applied. If a name is
-   *         specified that does not match the name of a known fix, an error of type UNKNOWN_FIX will
-   *         be generated.
-   * @param outputDir The absolute and normalized path to a directory to which non-nullability
-   *         migration output will be written. The output is only produced if the non-nullable fix is
-   *         included. Files in the directory might be overwritten, but no previously existing files
-   *         will be deleted.
+   * @param inTestMode A flag indicating whether the bulk fixes are being run in test mode. The only
+   *         difference is that in test mode the fix processor will look for a configuration file
+   *         that can modify the content of the data file used to compute the fixes when data-driven
+   *         fixes are being considered. If this field is omitted the flag defaults to false.
    */
-  public void edit_dartfix(List<String> included,
-                           List<String> includedFixes,
-                           boolean includePedanticFixes,
-                           boolean includeRequiredFixes,
-                           List<String> excludedFixes,
-                           String outputDir,
-                           DartfixConsumer consumer);
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer);
 
   /**
    * {@code edit.format}
@@ -558,17 +558,13 @@ public interface AnalysisServer {
   public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer);
 
   /**
-   * {@code edit.getDartfixInfo}
-   *
-   * Request information about edit.dartfix such as the list of known fixes that can be specified in
-   * an edit.dartfix request.
-   */
-  public void edit_getDartfixInfo(GetDartfixInfoConsumer consumer);
-
-  /**
    * {@code edit.getFixes}
    *
    * Return the set of fixes that are available for the errors at a given offset in a given file.
+   *
+   * If a request is made for a file which does not exist, or which is not currently subject to
+   * analysis (e.g. because it is not associated with any analysis root specified to
+   * analysis.setAnalysisRoots), an error of type GET_FIXES_INVALID_FILE will be generated.
    *
    * @param file The file containing the errors for which fixes are being requested.
    * @param offset The offset used to select the errors for which fixes will be returned.
@@ -607,13 +603,7 @@ public interface AnalysisServer {
    *         omitted if the refactoring does not require any options or if the values of those
    *         options are not known.
    */
-  public void edit_getRefactoring(String kind,
-                                  String file,
-                                  int offset,
-                                  int length,
-                                  boolean validateOnly,
-                                  RefactoringOptions options,
-                                  GetRefactoringConsumer consumer);
+  public void edit_getRefactoring(String kind, String file, int offset, int length, boolean validateOnly, RefactoringOptions options, GetRefactoringConsumer consumer);
 
   /**
    * {@code edit.getStatementCompletion}
@@ -750,13 +740,7 @@ public interface AnalysisServer {
    *         interesting sub-expressions in the given code. The client may provide an empty list, in
    *         this case the server will return completion suggestions.
    */
-  public void execution_getSuggestions(String code,
-                                       int offset,
-                                       String contextFile,
-                                       int contextOffset,
-                                       List<RuntimeCompletionVariable> variables,
-                                       List<RuntimeCompletionExpression> expressions,
-                                       GetRuntimeCompletionConsumer consumer);
+  public void execution_getSuggestions(String code, int offset, String contextFile, int contextOffset, List<RuntimeCompletionVariable> variables, List<RuntimeCompletionExpression> expressions, GetRuntimeCompletionConsumer consumer);
 
   /**
    * {@code execution.mapUri}
@@ -809,6 +793,9 @@ public interface AnalysisServer {
    * If the location does not have a support widget, an error of type
    * FLUTTER_GET_WIDGET_DESCRIPTION_NO_WIDGET will be generated.
    *
+   * If a change to a file happens while widget descriptions are computed, an error of type
+   * FLUTTER_GET_WIDGET_DESCRIPTION_CONTENT_MODIFIED will be generated.
+   *
    * @param file The file where the widget instance is created.
    * @param offset The offset in the file where the widget instance is created.
    */
@@ -859,7 +846,9 @@ public interface AnalysisServer {
    * @param value The new value to set for the property. If absent, indicates that the property
    *         should be removed. If the property corresponds to an optional parameter, the
    *         corresponding named argument is removed. If the property isRequired is true,
-   *         FLUTTER_SET_WIDGET_PROPERTY_VALUE_IS_REQUIRED error is generated.
+   *         FLUTTER_SET_WIDGET_PROPERTY_VALUE_IS_REQUIRED error is generated. If the expression is
+   *         not a syntactically valid Dart code, then
+   *         FLUTTER_SET_WIDGET_PROPERTY_VALUE_INVALID_EXPRESSION is reported.
    */
   public void flutter_setWidgetPropertyValue(int id, FlutterWidgetPropertyValue value, SetWidgetPropertyValueConsumer consumer);
 

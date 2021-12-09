@@ -1,8 +1,10 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.util.InspectionMessage;
+import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -25,17 +27,20 @@ import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
-import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
-public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
-  private final Set<String> myIgnoredPubspecPaths = new THashSet<>(); // remember for the current session only, do not serialize
+public final class DartOutdatedDependenciesInspection extends LocalInspectionTool {
+  private final Set<String> myIgnoredPubspecPaths = new HashSet<>(); // remember for the current session only, do not serialize
 
   @Override
-  public ProblemDescriptor @Nullable [] checkFile(@NotNull final PsiFile psiFile, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull final PsiFile psiFile,
+                                                  @NotNull final InspectionManager manager,
+                                                  final boolean isOnTheFly) {
     if (!isOnTheFly) return null;
 
     if (!(psiFile instanceof DartFile)) return null;
@@ -53,13 +58,14 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null || sdk == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return null;
-    if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isFlutterModule(module)) return null;
 
     final VirtualFile pubspecFile = PubspecYamlUtil.findPubspecYamlFile(project, file);
     if (pubspecFile == null || myIgnoredPubspecPaths.contains(pubspecFile.getPath())) return null;
 
     final String projectName = PubspecYamlUtil.getDartProjectName(pubspecFile);
     if (projectName == null || !StringUtil.isJavaIdentifier(projectName)) return null; // 'pub get' will fail anyway
+
+    if (FlutterUtil.isPubspecDeclaringFlutter(pubspecFile)) return null; // 'pub get' will fail anyway
 
     final VirtualFile dotPackagesFile = pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
@@ -74,10 +80,10 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     return null;
   }
 
-  private ProblemDescriptor @NotNull [] createProblemDescriptors(@NotNull final InspectionManager manager,
-                                                                 @NotNull final PsiFile psiFile,
-                                                                 @NotNull final VirtualFile pubspecFile,
-                                                                 @NotNull final String errorMessage) {
+  private ProblemDescriptor @NotNull [] createProblemDescriptors(@NotNull InspectionManager manager,
+                                                                 @NotNull PsiFile psiFile,
+                                                                 @NotNull VirtualFile pubspecFile,
+                                                                 @NotNull @InspectionMessage String errorMessage) {
     final LocalQuickFix[] fixes = new LocalQuickFix[]{
       new RunPubFix(DartBundle.message("pub.get"), "Dart.pub.get"),
       new RunPubFix(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade"),
@@ -89,10 +95,10 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
   }
 
   private static final class RunPubFix extends IntentionAndQuickFixAction {
-    private final String myFixName;
+    private final @IntentionName String myFixName;
     private final String myActionId;
 
-    private RunPubFix(@NotNull final String fixName, @NotNull final String actionId) {
+    private RunPubFix(@NotNull @IntentionName String fixName, @NotNull @NonNls String actionId) {
       myFixName = fixName;
       myActionId = actionId;
     }

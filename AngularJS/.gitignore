@@ -1,7 +1,11 @@
-/.gradle
-/.idea
-/gradle
-/gradlew
-/gradlew.bat
+*~
+.DS_Store
+.idea/vcs.xml
+.idea/dataSources
+.idea/dataSources.*
+.idea/gradle_extensions.xml
+.idea/libraries/Gradle__*.xml
+.idea/shelf
+.idea/workspace.xml
 /build
 /out

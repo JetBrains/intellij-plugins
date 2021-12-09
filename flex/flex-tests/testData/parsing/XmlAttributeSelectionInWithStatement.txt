@@ -70,7 +70,7 @@ JSFile:XmlAttributeSelectionInWithStatement.js2
             JSReferenceExpression
               PsiElement(JS:AT)('@')
               PsiElement(JS:LBRACKET)('[')
-              PsiErrorElement:expression expected
+              PsiErrorElement:Expression expected
                 <empty list>
               PsiElement(JS:RBRACKET)(']')
             PsiElement(JS:RPAR)(')')

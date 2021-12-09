@@ -145,6 +145,23 @@ public class Angular2ParserSpecTest {
             expectActionError("{(:0}", "Expected identifier, keyword, or string");
             expectActionError("{1234:0}", "Expected identifier, keyword, or string");
           });
+
+          it("should parse property shorthand declarations", () -> {
+            checkAction("{a, b, c}", "{a: a, b: b, c: c}");
+            checkAction("{a: 1, b}", "{a: 1, b: b}");
+            checkAction("{a, b: 1}", "{a: a, b: 1}");
+            checkAction("{a: 1, b, c: 2}", "{a: 1, b: b, c: 2}");
+          });
+
+          it("should not allow property shorthand declaration on quoted properties", () -> {
+            expectActionError("{\"a-b\"}", ": expected");
+          });
+
+          it("should not infer invalid identifiers as shorthand property declarations", () -> {
+            expectActionError("{a.b}", ": expected");
+            expectActionError("{a[\"b\"]}", ": expected");
+            expectActionError("{1234}", "Expected identifier, keyword, or string");
+          });
         });
 
         describe("member access", () -> {
@@ -156,9 +173,9 @@ public class Angular2ParserSpecTest {
           });
 
           it("should only allow identifier or keyword as member names", () -> {
-            expectActionError("x.(", "name expected");
-            expectActionError("x. 1234", "name expected");
-            expectActionError("x.\"foo\"", "name expected");
+            expectActionError("x.(", "Name expected");
+            expectActionError("x. 1234", "Name expected");
+            expectActionError("x.\"foo\"", "Name expected");
           });
 
           it("should parse safe field access", () -> {
@@ -179,6 +196,36 @@ public class Angular2ParserSpecTest {
         describe("functional calls", () -> {
           it("should parse function calls", () -> {
             checkAction("fn()(1, 2)");
+          });
+        });
+
+        describe("keyed read", () -> {
+          it("should parse keyed reads", () -> {
+            checkBinding("a[\"a\"]");
+            checkBinding("this.a[\"a\"]");
+            checkBinding("a.a[\"a\"]");
+          });
+
+          it("should parse safe keyed reads", () -> {
+            checkBinding("a?.[\"a\"]");
+            // checkBinding("this.a?.[\"a\"]");
+            // checkBinding("a.a?.[\"a\"]");
+            // checkBinding("a.a?.[\"a\" | foo]", "a.a?.[(\"a\" | foo)]");
+          });
+
+          describe("malformed keyed reads", () -> {
+            it("should recover on missing keys", () -> {
+              checkActionWithError("a[]", "a[]", "Expression expected"); // different error than Angular
+            });
+            it("should recover on incomplete expression keys", () -> {
+              checkActionWithError("a[1 + ]", "a[1 + /*error*/]", "Expression expected"); // different error than Angular
+            });
+            it("should recover on unterminated keys", () -> {
+              checkActionWithError("a[1 + 2", "a[1 + 2]", "] expected"); // different error than Angular
+            });
+            it("should recover on incomplete and unterminated keys", () -> {
+              checkActionWithError("a[1 + ", "a[1 + /*error*/]", "Expression expected"); // different error than Angular
+            });
           });
         });
 
@@ -237,7 +284,7 @@ public class Angular2ParserSpecTest {
 
         it("should report reasonable error for unconsumed tokens",
            () -> {
-             expectActionError(")", "expression expected");
+             expectActionError(")", "Expression expected");
            });
 
         it("should report a missing expected token", () -> {
@@ -310,6 +357,10 @@ public class Angular2ParserSpecTest {
 
         it("should parse conditional expression", () -> {
           checkBinding("a < b ? a : b");
+        });
+
+        it("should parse nullish coalescing expression", () -> {
+          checkBinding("a ?? b");
         });
 
         it("should ignore comments in bindings", () -> {
@@ -508,6 +559,11 @@ public class Angular2ParserSpecTest {
     expectError(parseAction(text), error);
   }
 
+  private static void checkActionWithError(String text, String expected, String error) {
+    checkAction(text, expected);
+    expectActionError(text, error);
+  }
+
   private static ASTNode parseAction(String text) {
     return parse(text, Angular2PsiParser.ACTION);
   }
@@ -648,6 +704,7 @@ public class Angular2ParserSpecTest {
       pair(GE, ">="),
       pair(ANDAND, "&&"),
       pair(OROR, "||"),
+      pair(QUEST_QUEST, "??"),
       pair(AND, "&"),
       pair(OR, "|"),
       pair(EXCL, "!")
@@ -769,9 +826,14 @@ public class Angular2ParserSpecTest {
 
     @Override
     public void visitJSIndexedPropertyAccessExpression(JSIndexedPropertyAccessExpression node) {
-      node.getQualifier().accept(this);
+      JSExpression qualifier = node.getQualifier();
+      qualifier.accept(this);
+      if (node.isElvis()) {
+        result.append("?.");
+      }
       result.append("[");
-      node.getIndexExpression().accept(this);
+      JSExpression indexExpression = node.getIndexExpression();
+      if (indexExpression != null) indexExpression.accept(this);
       result.append("]");
     }
 
@@ -912,7 +974,7 @@ public class Angular2ParserSpecTest {
 
     private void printElement(PsiElement expr) {
       if (expr == null) {
-        result.append("<err>");
+        result.append("/*error*/");
       }
       else {
         expr.accept(this);

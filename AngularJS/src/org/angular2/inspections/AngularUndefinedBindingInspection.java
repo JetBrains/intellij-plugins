@@ -21,6 +21,8 @@ import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
+import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -49,13 +51,16 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
       visitTemplateBindings(holder, attribute, Angular2TemplateBindings.get(attribute));
       return;
     }
-    else if (info.type == REFERENCE || info.type == LET) {
+    else if (info.type == REFERENCE || info.type == LET || info.type == I18N
+             || (info.type == PROPERTY_BINDING && ((PropertyBindingInfo)info).bindingType != PropertyBindingType.PROPERTY)) {
       return;
     }
-    List<Angular2Directive> sourceDirectives = descriptor.getSourceDirectives();
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
     DeclarationProximity proximity;
-    if (descriptor.isImplied()) {
+    if (descriptor.hasErrorSymbols()) {
+      proximity = NOT_REACHABLE;
+    }
+    else if (descriptor.hasNonDirectiveSymbols()) {
       if (templateTag) {
         proximity = NOT_REACHABLE;
       }
@@ -66,7 +71,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
     else {
       Set<Angular2Directive> matchedDirectives = new HashSet<>(new Angular2ApplicableDirectivesProvider(
         attribute.getParent()).getMatched());
-      proximity = scope.getDeclarationsProximity(ContainerUtil.findAll(sourceDirectives, matchedDirectives::contains));
+      proximity = scope.getDeclarationsProximity(ContainerUtil.findAll(descriptor.getSourceDirectives(), matchedDirectives::contains));
     }
     if (proximity == IN_SCOPE) {
       return;
@@ -114,6 +119,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
       default:
         return;
     }
+    // TODO register error on the symbols themselves
     holder.registerProblem(attribute.getNameElement(),
                            Angular2Bundle.message(messageKey, info.name, attribute.getParent().getName()),
                            severity,

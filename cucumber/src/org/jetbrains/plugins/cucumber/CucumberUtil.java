@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
@@ -25,7 +27,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CucumberUtil {
+public final class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
 
   public static final String[][] ARR = {
@@ -280,7 +282,7 @@ public class CucumberUtil {
    */
   public static String replaceNotNecessaryTextTemplateByRegexp(@NotNull String cucumberExpression) {
     Matcher matcher = OPTIONAL_PATTERN.matcher(cucumberExpression);
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
 
     while(matcher.find()) {
       String parameterPart = matcher.group(2);
@@ -480,5 +482,23 @@ public class CucumberUtil {
       return null;
     }
     return document.getLineNumber(textOffset) + 1;
+  }
+
+  public static CucumberStepReference getCucumberStepReference(@Nullable PsiElement element) {
+    if (element == null) {
+      return null;
+    }
+    for (PsiReference ref : element.getReferences()) {
+      if (ref instanceof CucumberStepReference) {
+        return (CucumberStepReference) ref;
+      }
+    }
+    return null;
+  }
+
+  @NotNull
+  public static List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework, @Nullable PsiFile featureFile, @NotNull Module module) {
+    List<AbstractStepDefinition> result = framework.loadStepsFor(featureFile, module);
+    return result != null ? result : Collections.emptyList();
   }
 }

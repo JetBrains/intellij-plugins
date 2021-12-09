@@ -15,5 +15,7 @@
     <orderEntry type="library" name="commons-io" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" scope="TEST" />
   </component>
 </module>

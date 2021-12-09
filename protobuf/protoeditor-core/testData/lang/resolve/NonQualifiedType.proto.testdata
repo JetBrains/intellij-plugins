@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package foo.bar;
+
+message Foo {
+}
+
+message Bar {
+  F<caret>oo x = 1;
+}

@@ -1,0 +1,183 @@
+syntax = "proto2";
+
+package scopingtest.inner;
+
+import "google/protobuf/descriptor.proto";
+import "lang/annotation/scopingouter.proto";
+
+/*
+ * File scope
+ */
+extend google.protobuf.FileOptions {
+  optional int32 resolvable_file_option1 = 55555;
+}
+extend google.protobuf.MessageOptions {
+  // Not a file option, but overrides the one with the same name defined in scopingouter.proto
+  optional int32 shadowed_file_option = 66668;
+}
+option (resolvable_file_option1) = 10;
+option (resolvable_file_option2) = 10;  // in scopingouter.proto
+option (<error descr="Field 'shadowed_file_option' does not extend type 'google.protobuf.FileOptions'">shadowed_file_option</error>) = 10;
+
+/*
+ * Message scope
+ */
+extend google.protobuf.MessageOptions {
+  optional int32 message_option = 55555;
+}
+message TestMessage {
+  option (message_option) = 10;
+
+  // this shouldn't cause any problems for TestMessage, but will for InnerMessage.
+  optional int32 message_option = 1;
+
+  message InnerMessage {
+    option (<error descr="Field 'message_option' does not extend type 'google.protobuf.MessageOptions'">message_option</error>) = 10;
+  }
+
+  extend google.protobuf.MessageOptions {
+    optional int32 unresolvable_message_option = 55556;
+  }
+  option (<error descr="Cannot resolve symbol 'unresolvable_message_option'" type="WRONG_REF">unresolvable_message_option</error>) = 10;
+}
+
+/*
+ * Field scope
+ */
+extend google.protobuf.FieldOptions {
+  optional int32 resolvable_field_option1 = 55555;
+  optional int32 shadowed_field_option = 55556;
+}
+message FieldMessage {
+  optional int32 field1 = 1 [(resolvable_field_option1) = 10];
+
+  // Field options are resolvable starting from the field's containing scope.
+  extend google.protobuf.FieldOptions {
+    optional int32 resolvable_field_option2 = 55557;
+  }
+  optional int32 field2 = 2 [(resolvable_field_option2) = 10];
+
+  // The below field shadows the actual option.
+  optional int32 shadowed_field_option = 100;
+  optional int32 field3 = 3 [(<error descr="Field 'shadowed_field_option' does not extend type 'google.protobuf.FieldOptions'">shadowed_field_option</error>) = 10];
+}
+
+/*
+ * Oneof scope
+ */
+extend google.protobuf.OneofOptions {
+  optional int32 resolvable_oneof_option1 = 55555;
+  optional int32 shadowed_oneof_option = 55556;
+}
+message OneofMessage {
+  extend google.protobuf.OneofOptions {
+    optional int32 resolvable_oneof_option2 = 55557;
+  }
+  oneof TestOneof {
+    option (resolvable_oneof_option1) = 10;
+    option (resolvable_oneof_option2) = 10;
+    option (<error descr="Field 'shadowed_oneof_option' does not extend type 'google.protobuf.OneofOptions'">shadowed_oneof_option</error>) = 10;
+    int32 oneof_field = 10;
+  }
+  optional int32 shadowed_oneof_option = 11;
+}
+
+/*
+ * Enum scope
+ */
+extend google.protobuf.EnumOptions {
+  optional int32 resolvable_enum_option1 = 55555;
+  optional int32 shadowed_enum_option = 55556;
+}
+message EnumMessage {
+  extend google.protobuf.EnumOptions {
+    optional int32 resolvable_enum_option2 = 55557;
+  }
+  enum TestEnum {
+    option (resolvable_enum_option1) = 10;
+    option (resolvable_enum_option2) = 10;
+    option (<error descr="Field 'shadowed_enum_option' does not extend type 'google.protobuf.EnumOptions'">shadowed_enum_option</error>) = 10;
+    FOO = 0;
+  }
+  optional int32 shadowed_enum_option = 10;
+}
+
+/*
+ * Enum value scope
+ */
+extend google.protobuf.EnumValueOptions {
+  optional int32 resolvable_enum_value_option1 = 55555;
+  optional int32 shadowed_enum_value_option = 55556;
+}
+message EnumValueMessage {
+  enum TestEnum {
+    FOO1 = 1 [(resolvable_enum_value_option1) = 10];
+    FOO2 = 2 [(resolvable_enum_value_option2) = 10];
+    FOO3 = 3 [(<error descr="Field 'shadowed_enum_value_option' does not extend type 'google.protobuf.EnumValueOptions'">shadowed_enum_value_option</error>) = 10];
+  }
+
+  // Enum value options are resolvable starting from the value's containing scope.
+  extend google.protobuf.EnumValueOptions {
+    optional int32 resolvable_enum_value_option2 = 55567;
+  }
+
+  // The below field shadows the actual option.
+  optional int32 shadowed_enum_value_option = 100;
+}
+
+/*
+ * Service scope
+ */
+extend google.protobuf.ServiceOptions {
+  optional int32 resolvable_service_option1 = 55555;
+}
+extend google.protobuf.MessageOptions {
+  // Not a service option, but overrides the one with the same name defined in scopingouter.proto
+  optional int32 shadowed_service_option = 77777;
+}
+service TestService {
+  option (resolvable_service_option1) = 10;
+  option (resolvable_service_option2) = 10;  // in scopingouter.proto
+  option (<error descr="Field 'shadowed_service_option' does not extend type 'google.protobuf.ServiceOptions'">shadowed_service_option</error>) = 10;
+}
+
+/*
+ * Method scope
+ */
+extend google.protobuf.MethodOptions {
+  optional int32 resolvable_method_option1 = 55555;
+}
+extend google.protobuf.MessageOptions {
+  // Not a method option, but overrides the one with the same name defined in scopingouter.proto
+  optional int32 shadowed_method_option = 77778;
+}
+message Value {}
+service MethodService {
+  rpc method1 (Value) returns (Value) {
+    option (resolvable_method_option1) = 10;
+    option (resolvable_method_option2) = 10;  // in scopingouter.proto
+    option (<error descr="Field 'shadowed_method_option' does not extend type 'google.protobuf.MethodOptions'">shadowed_method_option</error>) = 10;
+  }
+}
+
+/*
+ * Extension range scope
+ */
+extend google.protobuf.ExtensionRangeOptions {
+  optional int32 extension_range_option = 55555;
+}
+message ExtensionRangeMessage {
+  extensions 10, 20 [(extension_range_option) = 10];
+
+  // this shouldn't cause any problems for ExtensionRangeMessage, but will for InnerMessage.
+  optional int32 extension_range_option = 1;
+
+  message InnerMessage {
+    extensions 10, 20 [(<error descr="Field 'extension_range_option' does not extend type 'google.protobuf.ExtensionRangeOptions'">extension_range_option</error>) = 10];
+  }
+
+  extend google.protobuf.MessageOptions {
+    optional int32 unresolvable_message_option = 55566;
+  }
+  extensions 30, 40 [(<error descr="Cannot resolve symbol 'unresolvable_extension_range_option'" type="WRONG_REF">unresolvable_extension_range_option</error>) = 10];
+}

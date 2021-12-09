@@ -18,5 +18,5 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>

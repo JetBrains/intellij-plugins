@@ -1,0 +1,123 @@
+syntax = "proto2";
+package com.foo;
+
+<error descr="Enum must contain at least one value">enum OptionButNoValues</error> {
+  option deprecated = true;
+}
+
+<error descr="Enum must contain at least one value">enum CompletelyEmpty</error> {
+}
+
+enum NonPositveNumbersAreValid {
+  reserved -10 to -5, -4;
+  ZERO = 0;
+  ONE = 1;
+  NEGATIVE = -1;
+}
+
+enum DuplicateNumbers {
+  ENUM1 = 17;
+  ENUM2 = 1;
+  ENUM3 = 2;
+  ENUM4 = 3;
+  ENUM5 = <error descr="Enum value number 17 has already been used by value 'ENUM1'">17</error>;
+}
+
+enum DuplicateNames {
+  FOO = 1;
+  A = 2;
+  B = 3;
+  C = 4;
+  <error descr="'FOO' is already defined in scope 'com.foo'">FOO</error> = 5;
+}
+
+enum ValueUsesReservedNumber {
+  OKAY = 1;
+  BEGINNING = <error descr="Enum value 'BEGINNING' uses reserved number 123">123</error>;
+  MIDDLE = <error descr="Enum value 'MIDDLE' uses reserved number 126">126</error>;
+  END = <error descr="Enum value 'END' uses reserved number 130">130</error>;
+  NOT_OVERLAP = 131;
+  RESERVED_AGAIN = <error descr="Enum value 'RESERVED_AGAIN' uses reserved number 132">132</error>;
+
+  reserved 123 to 130, 132;
+}
+
+enum ReservedToMax {
+  MAX_RESERVED = <error descr="Enum value 'MAX_RESERVED' uses reserved number 536,870,911">536870911</error>;
+  reserved 10 to max;
+}
+
+enum ValueNumberMax {
+  MAX_NUMBER = 2147483647;
+  PAST_MAX_NUMBER = <error descr="Integer value out of range">2147483648</error>;
+  NOT_INT32 = <error descr="Integer value out of range">5368709111111</error>;
+}
+
+enum ReservedRangeOverlaps {
+  reserved 10;
+  reserved <error descr="Reserved range 2 to 10 overlaps with already-defined range 10 to 10">2 to 10</error>;
+  reserved -3;
+  reserved <error descr="Reserved range -5 to 1 overlaps with already-defined range -3 to -3">-5 to 1</error>;
+  reserved 20 to 22;
+  reserved <error descr="Reserved range 11 to 20 overlaps with already-defined range 20 to 22">11 to 20</error>;
+  reserved 26 to 30;
+  reserved <error descr="Reserved range 24 to 32 overlaps with already-defined range 26 to 30">24 to 32</error>;
+  reserved <error descr="Reserved range 28 to 28 overlaps with already-defined range 26 to 30">28</error>;
+
+  REQUIRED1 = 1000;  // A value is required.
+}
+
+enum ReservedNameTwice {
+  reserved "FOO";
+  reserved <error descr="Enum value name 'FOO' is reserved multiple times">"FOO"</error>;
+
+  REQUIRED2 = 1000;  // A value is required.
+}
+
+enum ValueUsesReservedName {
+  BAR = 1;
+  <error descr="Enum value name 'FOO_RESERVED' is reserved">FOO_RESERVED</error> = 2;
+  BAZ = 3;
+
+  reserved "FOO_RESERVED";
+}
+
+enum CanonicalNameConflict {
+  CANONICAL_NAME_CONFLICT_FOO_BAR = 0;
+  <error descr="Enum value name 'FOO_BAR' conflicts with already-defined name 'CANONICAL_NAME_CONFLICT_FOO_BAR' when the enum prefix is removed and the name is pascal-cased ('FooBar')">FOO_BAR</error> = 1;
+
+  CANONICAL_NAME_CONFLICTNO_GAP = 2;
+  <error descr="Enum value name 'NO_GAP' conflicts with already-defined name 'CANONICAL_NAME_CONFLICTNO_GAP' when the enum prefix is removed and the name is pascal-cased ('NoGap')">NO_GAP</error> = 3;
+
+  CANONICAL_NAME_CONFLICT___BIG_GAP = 4;
+  <error descr="Enum value name 'BIG_GAP' conflicts with already-defined name 'CANONICAL_NAME_CONFLICT___BIG_GAP' when the enum prefix is removed and the name is pascal-cased ('BigGap')">BIG_GAP</error> = 5;
+
+  CANONICAL_NAME_CONFLICT_different_case = 6;
+  <error descr="Enum value name 'DIffEREnt_cAsE' conflicts with already-defined name 'CANONICAL_NAME_CONFLICT_different_case' when the enum prefix is removed and the name is pascal-cased ('DifferentCase')">DIffEREnt_cAsE</error> = 7;
+
+  NO_PREFIX = 8;
+  <error descr="Enum value name 'no_prefix' conflicts with already-defined name 'NO_PREFIX' when the enum prefix is removed and the name is pascal-cased ('NoPrefix')">no_prefix</error> = 9;
+
+  CANONICAL_NAME_CONFLICT_OK_AY = 10;
+  CANONICAL_NAME_CONFLICT_OKAY = 11;
+}
+
+enum Aliases {
+  option allow_alias = true;
+  ALIAS_FOO = 1;
+  alias_Foo = 1;  // No error here since the fields are aliases.
+  <error descr="Enum value name 'alias_foo' conflicts with already-defined name 'ALIAS_FOO' when the enum prefix is removed and the name is pascal-cased ('AliasFoo')">alias_foo</error> = 2;
+  ALIAS_BAR = 3;
+  ALIAS_BAZ = 3;
+}
+
+enum UnnecessaryAllowAliases {
+  option <error descr="'allow_alias' option is unnecessary for enum with no aliases">allow_alias = true</error>;
+  UNNECESSARY_ALIAS_FOO = 1;
+  UNNECESSARY_ALIAS_BAR = 2;
+}
+
+enum UnnecessaryAllowAliasesFalse {
+  option <error descr="Setting 'allow_alias' to false has no effect">allow_alias = false</error>;
+  UNNECESSARY_ALIAS_BAZ = 1;
+}

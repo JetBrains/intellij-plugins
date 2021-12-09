@@ -33,7 +33,7 @@ public class PrettierImportCodeStyleAction extends AnAction {
       return true;
     }
     if (PackageJsonUtil.isPackageJsonFile(virtualFile)) {
-      PackageJsonData data = PackageJsonUtil.getOrCreateData(virtualFile);
+      PackageJsonData data = PackageJsonData.getOrCreate(virtualFile);
       if (data.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)
           || data.getTopLevelProperties().contains(PrettierUtil.PACKAGE_NAME)) {
         return true;

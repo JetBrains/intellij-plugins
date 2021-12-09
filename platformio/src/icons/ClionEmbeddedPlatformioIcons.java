@@ -10,9 +10,8 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class ClionEmbeddedPlatformioIcons {
-  private static @NotNull Icon load(@NotNull String path) {
-    return IconManager.getInstance().getIcon(path, ClionEmbeddedPlatformioIcons.class);
+  private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
+    return IconManager.getInstance().loadRasterizedIcon(path, ClionEmbeddedPlatformioIcons.class.getClassLoader(), cacheKey, flags);
   }
-
-  /** 16x16 */ public static final @NotNull Icon Platformio = load("/icons/platformio.svg");
+  /** 16x16 */ public static final @NotNull Icon Platformio = load("icons/platformio.svg", -1428369369, 0);
 }

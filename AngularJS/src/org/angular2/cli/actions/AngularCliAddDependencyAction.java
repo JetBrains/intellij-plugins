@@ -13,6 +13,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
@@ -133,14 +134,14 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       return;
     }
 
-    Set<String> existingPackages = PackageJsonUtil.getOrCreateData(packageJson).getAllDependencies();
+    Set<String> existingPackages = PackageJsonData.getOrCreate(packageJson).getAllDependencies();
 
     SortedListModel<NodePackageBasicInfo> model = new SortedListModel<>(
       Comparator.comparing((NodePackageBasicInfo p) -> p == OTHER ? 1 : 0)
         .thenComparing(NodePackageBasicInfo::getName)
     );
     JBList<NodePackageBasicInfo> list = new JBList<>(model);
-    list.setCellRenderer(new ColoredListCellRenderer<NodePackageBasicInfo>() {
+    list.setCellRenderer(new ColoredListCellRenderer<>() {
       @Override
       protected void customizeCellRenderer(@NotNull JList<? extends NodePackageBasicInfo> list,
                                            NodePackageBasicInfo value,
@@ -150,7 +151,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
         if (!selected && index % 2 == 0) {
           setBackground(UIUtil.getDecoratedRowColor());
         }
-        setIcon(JBUI.scale(EmptyIcon.create(5)));
+        setIcon(JBUIScale.scaleIcon(EmptyIcon.create(5)));
         append(value.getName(), value != OTHER ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.LINK_ATTRIBUTES, true);
         if (value.getDescription() != null) {
           append(" - " + value.getDescription(), SimpleTextAttributes.GRAY_ATTRIBUTES, false);
@@ -236,7 +237,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       List<CompletionModuleInfo> modules = new ArrayList<>();
       NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
-        throw new ExecutionException("Angular CLI package is not installed.");
+        throw new ExecutionException(Angular2Bundle.message("angular.action.ng-add.pacakge-not-installed"));
       }
       CompletionModuleInfo module = modules.get(0);
       ProcessHandler handler = NpmPackageProjectGenerator.generate(

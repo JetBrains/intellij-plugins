@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -13,9 +14,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 
-/**
- * @author yole
- */
+
 public class CucumberMissedExamplesInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {

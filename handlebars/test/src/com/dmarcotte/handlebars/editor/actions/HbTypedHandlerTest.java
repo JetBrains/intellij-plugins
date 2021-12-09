@@ -3,7 +3,7 @@ package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.format.FormatterTestSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.application.options.CodeStyle;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 /**
@@ -21,7 +21,7 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     myPrevAutoCloseSetting = HbConfig.isAutoGenerateCloseTagEnabled();
     HbConfig.setAutoGenerateCloseTagEnabled(true);
 
-    formatterTestSettings = new FormatterTestSettings(CodeStyleSettingsManager.getSettings(getProject()));
+    formatterTestSettings = new FormatterTestSettings(CodeStyle.getSettings(getProject()));
     formatterTestSettings.setUp();
   }
 

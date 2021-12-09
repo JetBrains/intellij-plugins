@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramDataModel;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -14,9 +13,11 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.IncorrectOperationException;
-import java.util.HashMap;
 import icons.JavaScriptPsiIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 
 public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
 
@@ -26,7 +27,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
   }
 
   @Override
-  public String getActionName() {
+  public @NotNull String getActionName() {
     return FlexBundle.message("new.flex.component.command.name");
   }
 
@@ -55,7 +56,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
       catch (Exception e) {
         throw new IncorrectOperationException(e);
       }
-    }, JavaScriptBundle.message(FlexBundle.message("new.flex.component.command.name")), null);
+    }, FlexBundle.message("new.flex.component.command.name"), null);
     return clazz.get();
   }
 }

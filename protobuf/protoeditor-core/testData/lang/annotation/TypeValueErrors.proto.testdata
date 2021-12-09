@@ -1,0 +1,55 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+
+message OptionHolder {
+  message MessageType {
+    optional int32 foobar = 1;
+  }
+  enum EnumType {
+    ASDF = 1;
+  }
+  optional MessageType msg = 10;
+  optional EnumType enum = 20;
+}
+
+extend google.protobuf.FieldOptions {
+  optional OptionHolder opt = 5020;
+}
+
+// Message option errors
+message OtherMessage {
+  message TestMessage {
+    optional int32 x = 3;
+  }
+  optional TestMessage foo = 10 [<error descr="Message field cannot have default value">default = "charlie"</error>];
+  optional int32 x = 5 [(opt).msg = <error descr="Aggregate value expected">"foobar"</error>];
+}
+
+// Enum option errors
+message EnumContainer {
+  enum MyEnum {
+    CAT = 1;
+    MOUSE = 2;
+  }
+  optional MyEnum foo = 10 [default = <error descr="Cannot resolve enum value 'DOG'" type="WRONG_REF">DOG</error>];
+  optional int32 x = 5 [(opt).enum = <error descr="Cannot resolve enum value 'RABBIT'" type="WRONG_REF">RABBIT</error>];
+  optional MyEnum foo2 = 11 [default = <error descr="Enum value expected">"foobar"</error>];
+  optional MyEnum foo3 = 12 [default = <error descr="Enum value expected">-inf</error>];
+}
+
+// Valid enum using keywords from other places
+message KeywordContainer {
+  enum KeywordEnum {
+    inf = 1;
+    nan = 2;
+    true = 3;
+    false = 4;
+  }
+  optional KeywordEnum foo1 = 1 [default = inf];
+  optional KeywordEnum foo2 = 2 [default = nan];
+  optional KeywordEnum foo3 = 3 [default = true];
+  optional KeywordEnum foo4 = 4 [default = false];
+}

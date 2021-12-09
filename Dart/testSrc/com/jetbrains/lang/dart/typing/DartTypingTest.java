@@ -1,13 +1,13 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.typing;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.impl.TrailingSpacesStripper;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
@@ -488,7 +488,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testAutoWrapString() {
-    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    CommonCodeStyleSettings settings = CodeStyle.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
     settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
     settings.RIGHT_MARGIN = 42;
     doTypingTest('3',
@@ -498,7 +498,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testAutoWrapCascade() {
-    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    CommonCodeStyleSettings settings = CodeStyle.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
     settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
     settings.RIGHT_MARGIN = 42;
     doTypingTest('3',
@@ -508,7 +508,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testAutoWrapStringEscape() {
-    CommonCodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
+    CommonCodeStyleSettings settings = CodeStyle.getSettings(getProject()).getCommonSettings(DartLanguage.INSTANCE);
     settings.WRAP_ON_TYPING = CommonCodeStyleSettings.WrapOnTyping.WRAP.intValue;
     settings.RIGHT_MARGIN = 42;
     doTypingTest('3',
@@ -733,5 +733,11 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                           "  ${''' \n" +
                           "     '''\n" +
                           "}\"\"\";\n", false);
+  }
+
+  public void testLineCommentIndent() {
+    myFixture.configureByText("foo.dart", "main() {\n  foo();<caret>\n}");
+    myFixture.performEditorAction(IdeActions.ACTION_COMMENT_LINE);
+    myFixture.checkResult("main() {\n  // foo();\n}");
   }
 }

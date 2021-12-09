@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -27,13 +27,14 @@ import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
 
-public class Angular2EntityUtils {
+public final class Angular2EntityUtils {
 
   @NonNls public static final String ELEMENT_REF = "ElementRef";
   @NonNls public static final String TEMPLATE_REF = "TemplateRef";
   @NonNls public static final String VIEW_CONTAINER_REF = "ViewContainerRef";
 
   private static final String INDEX_ELEMENT_NAME_PREFIX = ">";
+  private static final String INDEX_ANY_ELEMENT_NAME = "E";
   private static final String INDEX_ATTRIBUTE_NAME_PREFIX = "=";
 
   public static @NotNull Collection<? extends TypeScriptFunction> getPipeTransformMethods(@NotNull TypeScriptClass cls) {
@@ -63,6 +64,10 @@ public class Angular2EntityUtils {
 
   public static @NotNull String getElementDirectiveIndexName(@NotNull String elementName) {
     return INDEX_ELEMENT_NAME_PREFIX + elementName;
+  }
+
+  public static @NotNull String getAnyElementDirectiveIndexName() {
+    return INDEX_ANY_ELEMENT_NAME;
   }
 
   public static boolean isElementDirectiveIndexName(@NotNull String elementName) {
@@ -111,6 +116,7 @@ public class Angular2EntityUtils {
       }
       else {
         result.add(INDEX_ELEMENT_NAME_PREFIX + elementName);
+        result.add(INDEX_ANY_ELEMENT_NAME);
       }
       for (String attrName : sel.getAttrNames()) {
         result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attrName);

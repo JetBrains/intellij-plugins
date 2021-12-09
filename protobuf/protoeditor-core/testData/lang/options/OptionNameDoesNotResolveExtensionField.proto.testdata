@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+message MyType {
+  MyEnum enum_option = 1;
+  extend proto2.FieldOptions {
+    int32 abc = 2005;
+  }
+}
+
+extend proto2.FieldOptions {
+  MyType test_field_option = 2000;
+}
+
+message TestMessage {
+  int32 xyz = 1 [(test_field_option).a<caret>bc = 10];
+}

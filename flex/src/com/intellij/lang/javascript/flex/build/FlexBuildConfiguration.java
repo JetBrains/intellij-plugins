@@ -27,7 +27,7 @@ public class FlexBuildConfiguration {
   public static final @NonNls String APPLICATION = "Application";
   public static final @NonNls String LIBRARY = "Library";
 
-  private final Type myType = Type.Default;
+  private static final Type myType = Type.Default;
   public boolean DO_BUILD;
   public String OUTPUT_TYPE = APPLICATION;
   public boolean USE_DEFAULT_SDK_CONFIG_FILE = true;
@@ -35,8 +35,6 @@ public class FlexBuildConfiguration {
   public String CUSTOM_CONFIG_FILE = "";
   public boolean USE_CUSTOM_CONFIG_FILE_FOR_TESTS = false;
   public String CUSTOM_CONFIG_FILE_FOR_TESTS = "";
-  /** @deprecated */
-  @Deprecated public String APPLICATION_ENTRY_POINT = "";
   public String MAIN_CLASS = "";
   public String OUTPUT_FILE_NAME = "";
   public boolean USE_FACET_COMPILE_OUTPUT_PATH = false;

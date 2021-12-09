@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -15,6 +16,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,7 @@ public final class DartExecutionHelper {
 
   public static void displayIssues(@NotNull final Project project,
                                    @NotNull VirtualFile launchFile,
-                                   @NotNull String message,
+                                   @NotNull @Nls String message,
                                    @Nullable Icon icon) {
     clearIssueNotifications(project);
 
@@ -50,7 +52,7 @@ public final class DartExecutionHelper {
   @Nullable
   @VisibleForTesting
   public static GlobalSearchScope getScopeOfFilesThatMayAffectExecution(@NotNull Project project, @NotNull VirtualFile file) {
-    if (file.getFileType() != DartFileType.INSTANCE) return null;
+    if (!FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return null;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     if (!fileIndex.isInContent(file)) return null;

@@ -38,7 +38,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     @Override
     public void deleteElement(@NotNull DataContext dataContext) {
         SafeDeleteRefactoring safeDeleteRefactoring;
-        final Project project = (Project) dataContext.getData(CommonDataKeys.PROJECT.getName());
+        Project project = dataContext.getData(CommonDataKeys.PROJECT);
         int numberChildren;
 
         List<PsiElement> totalElementsToDelete = new ArrayList<>();
@@ -110,7 +110,7 @@ public class SafeDeleteProvider implements DeleteProvider {
      */
     @Override
     public boolean canDeleteElement(@NotNull DataContext dataContext) {
-        final Project project = (Project) dataContext.getData(CommonDataKeys.PROJECT.getName());
+        Project project = dataContext.getData(CommonDataKeys.PROJECT);
 
         if (project == null || TapestryProjectViewPane.getInstance(project).getSelectionPaths() == null) {
             return false;

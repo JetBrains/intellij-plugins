@@ -8,7 +8,7 @@ PostCSS File:PartOfNestKeywordInsidePageAtRule.pcss
           PsiElement(CSS_PAGE_BLOCK)
             PsiElement(CSS_LBRACE)('{')
             PsiWhiteSpace('\n  ')
-            PsiElement(CSS_BAD_AT_RULE)
+            PsiElement(CSS_GENERIC_AT_RULE)
               PsiErrorElement:Unknown page margin keyword
                 PsiElement(CSS_ATKEYWORD)('@n')
             PsiWhiteSpace('\n')

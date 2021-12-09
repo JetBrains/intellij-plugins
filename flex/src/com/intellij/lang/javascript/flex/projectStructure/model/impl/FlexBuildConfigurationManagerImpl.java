@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.ProjectTopics;
@@ -24,7 +25,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 @State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME)
-public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
+public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
   implements PersistentStateComponent<FlexBuildConfigurationManagerImpl.State> {
 
   private static final Logger LOG = Logger.getInstance(FlexBuildConfigurationManagerImpl.class.getName());
@@ -107,7 +108,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   @Override
   public FlexBuildConfiguration[] getBuildConfigurations() {
-    return Arrays.copyOf(myConfigurations, myConfigurations.length);
+    return myConfigurations.clone();
   }
 
   FlexBuildConfigurationImpl[] doGetBuildConfigurations() {

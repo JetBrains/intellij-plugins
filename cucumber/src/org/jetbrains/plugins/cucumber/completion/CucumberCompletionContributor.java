@@ -1,4 +1,4 @@
-  // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+  // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.TailType;
@@ -36,9 +36,7 @@ import java.util.regex.Pattern;
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * @author yole
- */
+
 public class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
   private static final Map<String, String> PARAMETERS_MAP = new HashMap<>();
@@ -74,7 +72,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     PsiElementPattern.Capture<PsiElement> inStep =
       psiElement().inside(psiElement().withElementType(GherkinElementTypes.STEP)).andNot(inTable);
 
-    extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)).andNot(inTable), new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)).andNot(inTable), new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
@@ -91,10 +89,12 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
           // if element isn't under feature declaration - suggest feature in autocompletion
           // but don't suggest scenario keywords inside steps
-          final PsiElement coveringElement = PsiTreeUtil.getParentOfType(position, GherkinStep.class, GherkinFeature.class, PsiFileSystemItem.class);
+          final PsiElement coveringElement =
+            PsiTreeUtil.getParentOfType(position, GherkinStep.class, GherkinFeature.class, PsiFileSystemItem.class);
           if (coveringElement instanceof PsiFileSystemItem) {
             addFeatureKeywords(result, gherkinKeywordTable);
-          } else if (coveringElement instanceof GherkinFeature) {
+          }
+          else if (coveringElement instanceof GherkinFeature) {
             if (gherkin6Enabled) {
               addRuleKeyword(result, gherkinKeywordTable);
             }
@@ -107,7 +107,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
     });
 
-    extend(CompletionType.BASIC, inScenario.andNot(inStep), new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, inScenario.andNot(inStep), new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
@@ -116,7 +116,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
     });
 
-    extend(CompletionType.BASIC, inStep, new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, inStep, new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
@@ -318,7 +318,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
       combinations.add(combination);
       for (int j = 0; j < combinationCount; j++) {
-        int[] currentCombination = Arrays.copyOf(combination, combination.length);
+        int[] currentCombination = combination.clone();
         for (int i = sampleCounts.length - 1; i >= 0; i--) {
           if (currentCombination[i] != sampleCounts[i]) {
             currentCombination[i]++;

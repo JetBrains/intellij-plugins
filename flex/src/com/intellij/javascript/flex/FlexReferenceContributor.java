@@ -1,31 +1,27 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.BasicAttributeValueReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileBasedUserDataCache;
-import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.util.XmlTagUtil;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 // this class is not a reference contributor any more, it is kept for MXML Design Preview plugin compatibility
-public class FlexReferenceContributor {
+public final class FlexReferenceContributor {
   static final String TRANSITION_TAG_NAME = "Transition";
   public static final String SOURCE_ATTR_NAME = "source";
   public static final String DESTINATION_ATTR_NAME = "destination";
@@ -39,50 +35,40 @@ public class FlexReferenceContributor {
   public static class StateReference extends BasicAttributeValueReference implements EmptyResolveMessageProvider, PsiPolyVariantReference {
     private static final String DUMMY_STATE_GROUP_TAG = "DummyStateGroupTag";
 
-    private static final FileBasedUserDataCache<Map<String, XmlTag>> statesCache = new FileBasedUserDataCache<Map<String, XmlTag>>() {
-      public Key<CachedValue<Map<String, XmlTag>>> ourDataKey = Key.create("mx.states");
+    @NotNull
+    private static Map<String, XmlTag> calcStates(PsiFile file) {
+      final Map<String, XmlTag> tags = new HashMap<>();
 
-      @Override
-      protected Map<String, XmlTag> doCompute(PsiFile file) {
-        final Map<String, XmlTag> tags = new THashMap<>();
+      file.accept(new XmlRecursiveElementVisitor() {
+        @Override
+        public void visitXmlTag(XmlTag tag) {
+          super.visitXmlTag(tag);
 
-        file.getOriginalFile().accept(new XmlRecursiveElementVisitor() {
-          @Override
-          public void visitXmlTag(XmlTag tag) {
-            super.visitXmlTag(tag);
+          if ("State".equals(tag.getLocalName())) {
+            String name = tag.getAttributeValue(FlexStateElementNames.NAME);
+            if (name != null) tags.put(name, tag);
+            String groups = tag.getAttributeValue(FlexStateElementNames.STATE_GROUPS);
 
-            if ("State".equals(tag.getLocalName())) {
-              String name = tag.getAttributeValue(FlexStateElementNames.NAME);
-              if (name != null) tags.put(name, tag);
-              String groups = tag.getAttributeValue(FlexStateElementNames.STATE_GROUPS);
+            if (groups != null) {
+              StringTokenizer tokenizer = new StringTokenizer(groups, DELIMS);
+              while (tokenizer.hasMoreElements()) {
+                String s = tokenizer.nextElement();
 
-              if (groups != null) {
-                StringTokenizer tokenizer = new StringTokenizer(groups, DELIMS);
-                while (tokenizer.hasMoreElements()) {
-                  String s = tokenizer.nextElement();
-
-                  XmlTag cachedTag = tags.get(s);
-                  if (cachedTag == null) {
-                    PsiFile fromText = PsiFileFactory.getInstance(tag.getProject())
-                      .createFileFromText("dummy.mxml", FlexApplicationComponent.MXML,
-                                          "<" + DUMMY_STATE_GROUP_TAG + " name=\"" + s + "\" />");
-                    cachedTag = ((XmlFile)fromText).getDocument().getRootTag();
-                    tags.put(s, cachedTag);
-                  }
+                XmlTag cachedTag = tags.get(s);
+                if (cachedTag == null) {
+                  PsiFile fromText = PsiFileFactory.getInstance(tag.getProject())
+                    .createFileFromText("dummy.mxml", FlexApplicationComponent.MXML,
+                                        "<" + DUMMY_STATE_GROUP_TAG + " name=\"" + s + "\" />");
+                  cachedTag = ((XmlFile)fromText).getDocument().getRootTag();
+                  tags.put(s, cachedTag);
                 }
               }
             }
           }
-        });
-        return tags;
-      }
-
-      @Override
-      protected Key<CachedValue<Map<String, XmlTag>>> getKey() {
-        return ourDataKey;
-      }
-    };
-
+        }
+      });
+      return tags;
+    }
 
     private final boolean myStateGroupsOnly;
 
@@ -179,7 +165,8 @@ public class FlexReferenceContributor {
     private boolean process(StateProcessor processor) {
       String s = processor.getHint();
 
-      Map<String, XmlTag> map = statesCache.compute(getElement().getContainingFile());
+      PsiFile file = getElement().getContainingFile().getOriginalFile();
+      Map<String, XmlTag> map = CachedValuesManager.getCachedValue(file, () -> CachedValueProvider.Result.create(calcStates(file), file));
       if (s == null) {
         for (Map.Entry<String, XmlTag> t : map.entrySet()) {
           XmlTag tag = t.getValue();

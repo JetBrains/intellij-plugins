@@ -1,8 +1,11 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
+import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptParameterStubImpl;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImpl;
 import com.intellij.lang.javascript.JSStubElementTypes;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
@@ -20,8 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-class AS3InterfaceStubDumper extends AS3InterfaceDumper {
-  final LinkedList<StubElement> parents;
+@SuppressWarnings("deprecation")
+final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
+  private final LinkedList<StubElement> parents;
   private static final JSAttributeList.AccessType[] ourAccessTypes = JSAttributeList.AccessType.values();
   private static final JSAttributeList.ModifierType[] ourModifierTypes = JSAttributeList.ModifierType.values();
 
@@ -39,7 +43,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   public void addMetaDataValue(String s, String s1) {
-    new JSAttributeNameValuePairStubImpl(s, StringUtil.stripQuotesAroundValue(s1), parents.getLast());
+    new JSAttributeNameValuePairStubImpl(s, StringUtil.unquoteString(s1), parents.getLast());
   }
 
   @Override
@@ -55,10 +59,10 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
                                String parentName,
                                @Nullable Multiname value,
                                boolean rest) {
-    new JSParameterStubImpl(
+    new ActionScriptParameterStubImpl(
       name,
       rest,
-      getTypeRef(type, parentName),
+      rest ? serializeQName(JSCommonTypeNames.ARRAY_CLASS_NAME) : getTypeRef(type, parentName, true),
       getValueRepr(value),
       parents.getLast()
     );
@@ -77,7 +81,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
         methodInfo.parentTraits != null && methodInfo.parentTraits.name == methodInfo.name ? JSFunction.FunctionKind.CONSTRUCTOR :
         JSFunction.FunctionKind.SIMPLE,
         getMultinameAsPackageName(methodInfo.name,methodInfo.parentTraits != null ? methodInfo.parentTraits.getClassName():null),
-        getTypeRef(methodInfo.returnType, methodInfo.getParentName()),
+        getTypeRef(methodInfo.returnType, methodInfo.getParentName(), true),
         "static ".equals(attr) ? JSContext.STATIC : JSContext.INSTANCE,
         getAccessType(methodInfo),
         parents.getLast()
@@ -96,7 +100,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     new ActionScriptVariableStubImpl(
       qName.substring(qName.lastIndexOf('.') + 1),
       info.isConst(),
-      getTypeRef(info.type, parentName),
+      getTypeRef(info.type, parentName, true),
       getValueRepr(info.value),
       qName,
       "static ".equals(attr) ? JSContext.STATIC : JSContext.INSTANCE,
@@ -122,7 +126,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   }
 
   @NotNull
-  private JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
+  private static JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
     final String nsName = memberInfo.name.getNsName(memberInfo);
     JSAttributeList.AccessType accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
     if ("public".equals(nsName)) accessType = JSAttributeList.AccessType.PUBLIC;
@@ -183,7 +187,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   protected void dumpExtendsList(Traits it) {
     if (!it.base.isStarReference()) {
-      String ref = getTypeRef(it.base, null);
+      String ref = getTypeRef(it.base, null, false);
       JSReferenceListStub<JSReferenceList> parent =
         JSStubElementTypes.DEFAULT_EXTENDS_LIST.createStub(parents.getLast());
 
@@ -199,7 +203,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
                                                                                     : JSStubElementTypes.IMPLEMENTS_LIST);
 
       for (Multiname name : it.interfaces) {
-         new JSReferenceListMemberStubImpl(parent, getTypeRef(name, null));
+         new JSReferenceListMemberStubImpl(parent, getTypeRef(name, null, false));
       }
     }
   }

@@ -1,0 +1,84 @@
+<idea-plugin>
+  <id>name.kropp.intellij.makefile</id>
+  <name>Makefile Language</name>
+  <vendor>JetBrains</vendor>
+  <category>Languages</category>
+
+  <description><![CDATA[
+This plugin provides GNU Make language support:
+<ul>
+    <li>Syntax highlighting.</li>
+    <li>Keyword and target name completion.</li>
+    <li>Quick-doc for ## comments on a target line.</li>
+    <li>Find Usages and Go to Symbol navigation for targets.</li>
+    <li>Prerequisites resolution.</li>
+    <li>Rules, variables, and conditionals folding.</li>
+    <li>Quick-fixes to create new rules from unresolved prerequisites and remove empty rules.</li>
+</ul>
+
+In addition, the plugin provides support for running Make targets using:
+<ul>
+    <li>Make tool window</li>
+    <li>Makefile run configurations</li>
+    <li>Gutter icons</li>
+    <li>Context actions</li>
+</ul>
+
+Plugin source code was previously located at <a href="https://github.com/kropp/intellij-makefile/">https://github.com/kropp/intellij-makefile/</a>
+    ]]></description>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="terminal-config.xml">org.jetbrains.plugins.terminal</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="Makefile" language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile"/>
+    <lang.parserDefinition language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileSyntaxHighlighterFactory"/>
+    <lang.foldingBuilder language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFoldingBuilder"/>
+    <annotator language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileAnnotator"/>
+    <lang.psiStructureViewFactory language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileStructureViewFactory"/>
+    <lang.commenter language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCommenter"/>
+    <lang.findUsagesProvider language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFindUsagesProvider"/>
+    <lang.braceMatcher language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileBraceMatcherProvider" />
+    <gotoSymbolContributor implementation="com.jetbrains.lang.makefile.MakefileChooseByNameContributor"/>
+    <colorSettingsPage implementation="com.jetbrains.lang.makefile.MakefileColorSettingsPage"/>
+    <completion.contributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCompletionContributor"/>
+    <configurationType implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationType"/>
+    <projectService serviceImplementation="com.jetbrains.lang.makefile.MakefileProjectSettings"/>
+    <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"
+                         instance="com.jetbrains.lang.makefile.MakeConfigurable"/>
+    <runLineMarkerContributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileTargetRunLineMarkerContributor"/>
+    <runConfigurationProducer implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationProducer"/>
+    <codeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileLangCodeStyleSettingsProvider"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileFunctionManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.MakefileFunction"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefilePrerequisiteManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.MakefilePrerequisite"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileRecipeManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.MakefileRecipe"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileSubstitutionManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.MakefileSubstitution"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileVariableUsageManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.MakefileVariableUsage"/>
+    <documentationProvider implementation="com.jetbrains.lang.makefile.MakefileDocumentationProvider"/>
+    <spellchecker.support language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileSpellcheckingStrategy" />
+    <multiHostInjector implementation="com.jetbrains.lang.makefile.MakefileShellLanguageInjector"/>
+
+    <stubElementTypeHolder class="com.jetbrains.lang.makefile.psi.MakefileTypes" />
+    <stubIndex implementation="com.jetbrains.lang.makefile.MakefileTargetIndex" />
+
+    <postStartupActivity implementation="com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowRegistrar"/>
+
+    <internalFileTemplate name="Makefile" />
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.makefile.toolWindowStripeController"
+                    interface="com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowStripeController" dynamic="true"/>
+  </extensionPoints>
+
+  <actions>
+  </actions>
+
+</idea-plugin>

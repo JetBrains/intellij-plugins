@@ -176,7 +176,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable<M
   public ProjectStructureElement getProjectStructureElement() {
     NamedConfigurable mainChild = getMainChild();
     if (mainChild instanceof ProjectStructureElementConfigurable) {
-      return ((ProjectStructureElementConfigurable)mainChild).getProjectStructureElement();
+      return ((ProjectStructureElementConfigurable<?>)mainChild).getProjectStructureElement();
     }
     return null;
   }

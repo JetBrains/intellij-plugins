@@ -1,0 +1,1 @@
+all: ${simple $(HOME) var}

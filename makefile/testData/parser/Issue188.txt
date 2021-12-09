@@ -1,0 +1,14 @@
+Makefile
+  MakefileRuleImpl(RULE)
+    MakefileTargetLineImpl(TARGET_LINE)
+      MakefileTargetsImpl(TARGETS)
+        MakefileTargetImpl(TARGET)
+          PsiElement(include)('include')
+      PsiElement(:)(':')
+      PsiWhiteSpace(' ')
+      MakefilePrerequisitesImpl(PREREQUISITES)
+        MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
+          <empty list>
+      PsiElement(;)(';')
+      MakefileInlineCommandImpl(INLINE_COMMAND)
+        <empty list>

@@ -178,6 +178,20 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                                   "CommonModuleMetadataTest");
   }
 
+  public void testCommonNg12() {
+    doResolutionTest("ng12-common",
+                     "mainModule.ts",
+                     "export class App<caret>Module {",
+                     "check.txt");
+  }
+
+  public void testCommonNg13() {
+    doResolutionTest("ng13-common",
+                     "app.module.ts",
+                     "export class App<caret>Module {",
+                     "check.txt");
+  }
+
   public void testPrivateModuleExportMetadata() {
     doResolutionTest("private-module-export-metadata",
                      "module.ts",

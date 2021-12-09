@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
@@ -26,6 +25,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -37,7 +37,6 @@ import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,10 +51,9 @@ import java.util.*;
  *
  * @author Yann C&eacute;bron
  */
-abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
-
-  private static final DomElementListCellRenderer ACTION_RENDERER =
-      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.no.name")) {
+public abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
+  private static final DomElementListCellRenderer<Action> ACTION_RENDERER =
+      new DomElementListCellRenderer<>(StrutsBundle.message("annotators.action.no.name")) {
         @Override
         @NotNull
         @NonNls
@@ -178,14 +176,11 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
       final Set<PathReference> pathReferences = new HashSet<>();
       final List<Result> results = action.getResults();
-      for (final Result result : results) {
-        final PathReference pathReference = result.getValue();
-        ContainerUtil.addIfNotNull(pathReferences, pathReference);
+      for (Result result : results) {
+        ContainerUtil.addIfNotNull(pathReferences, result.getValue());
       }
 
-      final Set<PathReference> toStore = ContainerUtil.getOrCreate(pathReferenceMap,
-                                                                   method,
-                                                                   new HashSet<>());
+      Set<PathReference> toStore = pathReferenceMap.computeIfAbsent(method, __ -> new HashSet<>());
       toStore.addAll(pathReferences);
       pathReferenceMap.put(method, toStore);
     }

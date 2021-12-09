@@ -49,8 +49,7 @@ public class GetRuntimeCompletionProcessor extends ResultProcessor {
           expressions = RuntimeCompletionExpression.fromJsonArray(expressionsJson.getAsJsonArray());
         }
 
-        final RuntimeCompletionResult result = new RuntimeCompletionResult(suggestions, expressions);
-        consumer.computedResult(result);
+        consumer.computedResult(suggestions, expressions);
       } catch (Exception exception) {
         // catch any exceptions in the formatting of this response
         requestError = generateRequestError(exception);

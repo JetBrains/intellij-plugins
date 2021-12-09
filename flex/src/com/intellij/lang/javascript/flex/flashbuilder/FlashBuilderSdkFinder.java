@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -17,7 +17,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashSet;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -69,7 +68,7 @@ public class FlashBuilderSdkFinder {
 
   @Nullable
   private String findWorkspacePath() {
-    final Collection<VirtualFile> checked = new THashSet<>();
+    final Collection<VirtualFile> checked = new HashSet<>();
     String wsPath = guessWorkspacePath(myInitiallySelectedPath, checked);
     if (wsPath == null) {
       for (FlashBuilderProject fbProject : myAllProjects) {

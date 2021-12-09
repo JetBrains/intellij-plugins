@@ -8,8 +8,10 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -32,7 +34,7 @@ public class LibraryPathSet {
 
   public static final LibraryPathSet[] EMPTY_ARRAY = new LibraryPathSet[0];
 
-  public static final List<LibraryPathSet> EMPTY_LIST = new ArrayList<>();
+  public static final List<LibraryPathSet> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The filepath for which this request's libraries should be active in completion suggestions. This

@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -25,6 +26,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.*;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -211,7 +213,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   @NotNull
   @Override
   public String getName() {
-    return JavaScriptBundle.message("actionscript.create.constructor.intention.name", myName);
+    return FlexBundle.message("actionscript.create.constructor.intention.name", myName);
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
@@ -240,7 +242,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   }
 
   private class MyCallerChooser extends JSCallerChooser {
-    MyCallerChooser(JSFunction method, String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
+    MyCallerChooser(JSFunction method, @NlsContexts.DialogTitle String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
       super(method, method.getProject(), title, treeToReuse, callback);
     }
 

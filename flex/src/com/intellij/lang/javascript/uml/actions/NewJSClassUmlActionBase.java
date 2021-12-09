@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.graph.base.Node;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAction<Object, CreateClassParameters> {
-  protected NewJSClassUmlActionBase(@NotNull Supplier<String> name, @NotNull Supplier<String> description, Icon icon) {
+  protected NewJSClassUmlActionBase(@NotNull Supplier<@Nls String> name, @NotNull Supplier<@Nls String> description, Icon icon) {
     super(name, description, icon);
   }
 
@@ -56,7 +57,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   }
 
   @Override
-  public boolean isEnabled(@NotNull AnActionEvent e, DiagramBuilder b) {
+  public boolean isEnabled(@NotNull AnActionEvent e, @NotNull DiagramBuilder b) {
     return b != null && b.getDataModel() instanceof FlashUmlDataModel;
   }
 
@@ -94,7 +95,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
 
     String aPackage = null;
     PsiDirectory directory = null;
-    final List<Node> nodes = GraphViewUtil.getSelectedNodes(builder.getGraph());
+    final List<Node> nodes = GraphSelectionService.getInstance().getSelectedNodes(builder.getGraph());
     if (nodes.size() == 1) {
       DiagramNode node = builder.getNodeObject(nodes.get(0));
       if (node != null) {

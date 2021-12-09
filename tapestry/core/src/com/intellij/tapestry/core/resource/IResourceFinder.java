@@ -46,10 +46,10 @@ public interface IResourceFinder {
     @NotNull
     Collection<IResource> findLocalizedContextResource(String path);
 
-    /**
-     * Finds all MANIFEST.MF files in the project dependencies.
-     *
-     * @return all MANIFEST.MF files in the project dependencies, not including the file in the current project source code.
-     */
+    ///**
+    // * Finds all MANIFEST.MF files in the project dependencies.
+    // *
+    // * @return all MANIFEST.MF files in the project dependencies, not including the file in the current project source code.
+    // */
     /*Collection<IResource> findManifestResources();*/
 }

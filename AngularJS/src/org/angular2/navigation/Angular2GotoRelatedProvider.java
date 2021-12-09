@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.navigation.GotoRelatedProvider;
+import com.intellij.openapi.util.NlsContexts.ListItem;
+import com.intellij.openapi.util.NlsContexts.Separator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -21,6 +23,7 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,19 +121,19 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
     return result;
   }
 
-  private static String getGroupName() {
+  private static @Separator String getGroupName() {
     return Angular2Bundle.message("angular.action.goto-related.group-name");
   }
 
   private static final class Angular2GoToRelatedItem extends GotoRelatedItem {
 
-    private final String myContainerName;
-    private final String myName;
+    private final @Nls String myContainerName;
+    private final @ListItem String myName;
 
     private Angular2GoToRelatedItem(@NotNull PsiElement element,
                                     int mnemonic,
                                     boolean inlineable,
-                                    @Nullable String name) {
+                                    @Nullable @ListItem String name) {
       super(element, getGroupName(), mnemonic > 9 ? -1 : mnemonic);
       myContainerName = inlineable && InjectedLanguageManager.getInstance(element.getProject())
                                         .getTopLevelFile(element) != element.getContainingFile()

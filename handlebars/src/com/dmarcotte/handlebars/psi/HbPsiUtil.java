@@ -1,9 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 
-public class HbPsiUtil {
+public final class HbPsiUtil {
 
   /**
    * Used to determine if an element is part of an "open tag" (i.e. "{{#open}}" or "{{^openInverse}}")

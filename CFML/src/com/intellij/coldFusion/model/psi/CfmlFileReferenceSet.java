@@ -5,7 +5,6 @@ package com.intellij.coldFusion.model.psi;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.coldFusion.UI.config.CfmlMappingsConfig;
 import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -29,7 +28,7 @@ public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIc
     @Override
     protected void innerResolveInContext(@NotNull final String text,
                                          @NotNull final PsiFileSystemItem context,
-                                         final Collection<ResolveResult> result,
+                                         final @NotNull Collection<ResolveResult> result,
                                          final boolean caseSensitive) {
 
       CfmlProjectConfiguration.State state = CfmlProjectConfiguration.getInstance(getElement().getProject()).getState();
@@ -99,7 +98,7 @@ public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIc
 
   public CfmlFileReferenceSet(CfmlCompositeElement element, int shift) {
     super(stripText(element.getText()), element,
-          shift, null, SystemInfo.isFileSystemCaseSensitive);
+          shift, null, element.getContainingFile().getViewProvider().getVirtualFile().isCaseSensitive());
   }
 
   private static String stripText(String text) {

@@ -76,11 +76,6 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
   }
 
   @Override
-  protected int getIconFlags() {
-    return 0;
-  }
-
-  @Override
   protected Icon getIcon(final PsiElement element) {
     final DomElement domElement = getDomElement((XmlTag) element);
     if (domElement != null) {

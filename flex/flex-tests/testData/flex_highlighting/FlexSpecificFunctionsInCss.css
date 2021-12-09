@@ -1,5 +1,5 @@
 Button {
-    skin: ClassReference("<error descr="Unresolved variable or type 'model'">model</error>.<error descr="Unresolved variable or type 'DuckChangeEvent'">DuckChangeEvent</error>");
+    skin: ClassReference("<error descr="Cannot resolve package 'model'">model</error>.<error descr="Cannot resolve class 'DuckChangeEvent'">DuckChangeEvent</error>");
     fontSize: PropertyReference("skin");
     color: PropertyReference("model.DuckChangeEvent");
     icon: Embed("default.css");

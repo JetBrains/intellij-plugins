@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
+import com.intellij.model.Pointer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
@@ -41,6 +42,11 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
 
   public Angular2SourceComponent(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
     super(decorator, implicitElement);
+  }
+
+  @Override
+  public @NotNull Pointer<? extends Angular2Component> createPointer() {
+    return createPointer(Angular2SourceComponent::new);
   }
 
   @Override

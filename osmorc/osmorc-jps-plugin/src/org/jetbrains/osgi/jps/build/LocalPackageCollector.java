@@ -35,7 +35,7 @@ import java.util.Map;
  * Helper class which collects local packages from the output path. This is copied code from the
  * felix bnd maven plugin.
  */
-public class LocalPackageCollector {
+public final class LocalPackageCollector {
   private static final String LOCAL_PACKAGES = "{local-packages}";
 
   /**
@@ -70,9 +70,7 @@ public class LocalPackageCollector {
 
     boolean noPrivatePackages = "!*".equals(analyzer.getProperty(Constants.PRIVATE_PACKAGE));
 
-    for (Object aPackage : packages) {
-      String pkg = (String)aPackage;
-
+    for (String pkg : packages) {
       // mark all source packages as private by default (can be overridden by export list)
       if (privatePackages.length() > 0) {
         privatePackages.append(';');

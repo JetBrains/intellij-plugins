@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND.CLEAN;
+
 public class PlatformioCleanAction extends PlatformioAction {
 
   private static final String ARGUMENTS = "-c clion run --target clean";
@@ -18,6 +20,11 @@ public class PlatformioCleanAction extends PlatformioAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     actionPerformed(e, ARGUMENTS, false, true);
+  }
+
+  @Override
+  public @NotNull FUS_COMMAND getFusCommand() {
+    return CLEAN;
   }
 
   public static Tool createPlatformioTool(Project project) {

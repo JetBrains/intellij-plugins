@@ -1,0 +1,36 @@
+syntax = "proto2";
+import "google/protobuf/descriptor.proto";
+
+package foo.bar.message.<TYPO descr="Typo: In word 'fsafsa'">fsafsa</TYPO>;
+
+message my_type {}
+
+enum TestEnum {
+  <TYPO descr="Typo: In word 'FOOZFS'">FOOZFS</TYPO> = 0;
+  COOL = 1;
+}
+
+// <TYPO descr="Typo: In word 'Typoz'">Typoz</TYPO> in line <TYPO descr="Typo: In word 'commnt'">commnt</TYPO>
+/*
+ * <TYPO descr="Typo: In word 'Typoz'">Typoz</TYPO> in block <TYPO descr="Typo: In word 'commnt'">commnt</TYPO>
+ */
+
+message Poorly<TYPO descr="Typo: In word 'Spelld'">Spelld</TYPO> {
+  reserved "asfdsgdsgds"; // No typo should be found here.
+}
+
+message ValueType {
+  repeated TestEnum my_enum = 20;
+  repeated string my_string = 30;
+}
+
+extend google.protobuf.FileOptions {
+  optional ValueType opt = 5000;
+}
+
+option (opt) = {
+  my_string: '<TYPO descr="Typo: In word 'fdsfdsgds'">fdsfdsgds</TYPO>'
+};
+option (opt).my_enum = FOOZFS; // Usage of the typo word should not be highlighted.
+option (opt).my_string = 'My<TYPO descr="Typo: In word 'Sdaf'">Sdaf</TYPO>FD<TYPO descr="Typo: In word 'Sgdf'">Sgdf</TYPO>';
+option (opt).my_string = 'My<TYPO descr="Typo: In word 'Sdaf'">Sdaf</TYPO>\n\x52FD<TYPO descr="Typo: In word 'Sgdf'">Sgdf</TYPO>';

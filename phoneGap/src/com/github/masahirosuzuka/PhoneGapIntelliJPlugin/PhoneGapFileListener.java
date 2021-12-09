@@ -27,7 +27,7 @@ public class PhoneGapFileListener implements AsyncFileListener {
 
   @Nullable
   @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+  public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     List<Pair<VFileEvent, VirtualFile>> acceptableEvents = null;
     
     for (VFileEvent event : events) {

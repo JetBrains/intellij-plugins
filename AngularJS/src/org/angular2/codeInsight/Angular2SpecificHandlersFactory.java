@@ -41,8 +41,8 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
   }
 
   @Override
-  public @NotNull JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
-    return new Angular2TypeEvaluator(context, processor);
+  public @NotNull JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context) {
+    return new Angular2TypeEvaluator(context);
   }
 
   @Override
@@ -56,8 +56,8 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
   }
 
   @Override
-  public JSTypeEvaluationHelper getTypeEvaluationHelper() {
-    return Angular2TypeEvaluationHelper.INSTANCE;
+  public @NotNull JSTypeGuardEvaluator getTypeGuardEvaluator() {
+    return Angular2TypeGuardEvaluator.INSTANCE;
   }
 
   @Override

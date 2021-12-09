@@ -13,7 +13,7 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.tools.Tool;
-import com.intellij.ui.GuiUtils;
+import com.intellij.util.ModalityUiUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction;
 import com.jetbrains.cidr.execution.build.CidrBuild;
@@ -46,7 +46,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
   @Nullable
   @Override
   public BeforeRunTask<?> createTask(@NotNull RunConfiguration runConfiguration) {
-    return new BeforeRunTask<BeforeRunTask<?>>(ID) {
+    return new BeforeRunTask<>(ID) {
     };
   }
 
@@ -59,7 +59,6 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
     Ref<Boolean> success = new Ref<>(false);
     Semaphore actionFinished = new Semaphore();
     if (tool != null) {
-
       ProcessAdapter successListener = new ProcessAdapter() {
         @Override
         public void processTerminated(@NotNull ProcessEvent event) {
@@ -79,10 +78,10 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
     }
 
     if (!success.get()) {
-      GuiUtils.invokeLaterIfNeeded(
-        () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
-                                              ClionEmbeddedPlatformioBundle.message("platformio.clean.failed")),
-        ModalityState.NON_MODAL);
+      ModalityUiUtil.invokeLaterIfNeeded(
+        ModalityState.NON_MODAL, () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
+                                                                       ClionEmbeddedPlatformioBundle.message("platformio.clean.failed"))
+      );
     }
     return success.get();
   }

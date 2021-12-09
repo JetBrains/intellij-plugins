@@ -1,0 +1,43 @@
+syntax = "proto3";
+package test;
+
+message Foo {
+
+}
+
+<caret>
+message Message1 {
+  <caret>
+  int32 <caret>field1 = 1;
+  message SubMessage {
+    message SubSubMessage {
+      <caret>
+      bool x = 1;
+    }
+  }
+
+  map<int32,string> <caret>map_field = 2;
+
+  enum Enum1 {
+    <caret>
+    FOO =<caret> 0;
+  }
+
+  group GroupField = 10 {
+    int32 x = 1;
+    <caret>
+  }
+
+  oneof Oneof1 {
+    <caret>
+    group GroupInOneof = 1 {
+      <caret>
+      bool x = 10;
+    }
+  }
+}
+
+service Service1 {
+  <caret>
+  rpc Foo (FooType) <caret>returns (FooType);
+}

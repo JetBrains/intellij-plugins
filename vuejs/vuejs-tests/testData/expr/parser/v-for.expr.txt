@@ -48,7 +48,7 @@ JSFile:test.js.v-for.expr
 JSFile:test.js.v-for.expr
   VueJSEmbeddedExpression
     VueJSVForExpression
-      PsiErrorElement:identifier expected
+      PsiErrorElement:Identifier expected
         <empty list>
       PsiErrorElement:'in' or 'of' expected
         <empty list>
@@ -70,7 +70,7 @@ JSFile:test.js.v-for.expr
           PsiElement(JS:IDENTIFIER)('a')
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
 ------
 JSFile:test.js.v-for.expr
@@ -159,7 +159,7 @@ JSFile:test.js.v-for.expr
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
 ------
 JSFile:test.js.v-for.expr
@@ -222,7 +222,7 @@ JSFile:test.js.v-for.expr
           PsiElement(JS:IDENTIFIER)('a')
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiErrorElement:Statements are not allowed in Vue expressions
@@ -269,7 +269,33 @@ JSFile:test.js.v-for.expr
           PsiErrorElement:) expected
             <empty list>
           PsiWhiteSpace(' ')
-          PsiElement(JS:SHARP)('#')
+          PsiElement(JS:PRIVATE_IDENTIFIER)('#$')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSAttributeList
+        ES6Decorator
+          PsiElement(JS:AT)('@')
+      PsiErrorElement:'class' expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('f')
+          PsiErrorElement:) expected
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(JS:XOR)('^')
           PsiElement(JS:IDENTIFIER)('$')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
@@ -278,7 +304,7 @@ JSFile:test.js.v-for.expr
       JSAttributeList
         ES6Decorator
           PsiElement(JS:AT)('@')
-      PsiErrorElement:class expected
+      PsiErrorElement:'class' expected
         <empty list>
 ------
 JSFile:test.js.v-for.expr

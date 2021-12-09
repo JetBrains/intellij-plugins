@@ -59,7 +59,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element,
                                                          @NotNull final ProcessingContext context) {
-    return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
+    return new PsiReference[]{new PsiReferenceBase<>((XmlAttributeValue)element) {
       @Override
       public PsiElement resolve() {
         final String myValue = myElement.getValue();

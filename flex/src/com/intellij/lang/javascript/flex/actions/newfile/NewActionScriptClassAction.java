@@ -2,7 +2,7 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.IdeView;
-import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.*;
@@ -71,7 +71,7 @@ public class NewActionScriptClassAction extends AnAction {
   }
 
   protected String getCommandName() {
-    return JavaScriptBundle.message("new.actionscript.class.command.name");
+    return FlexBundle.message("new.actionscript.class.command.name");
   }
 
   protected ActionScriptCreateClassOrInterfaceFix createAction(final PsiDirectory dir) {

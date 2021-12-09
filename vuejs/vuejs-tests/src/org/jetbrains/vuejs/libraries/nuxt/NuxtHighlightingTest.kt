@@ -2,12 +2,13 @@
 package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
-import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.jetbrains.vuejs.lang.VueInspectionsProvider
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class NuxtHighlightingTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/nuxt/highlighting"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/nuxt/highlighting"
 
   fun testRefToStatic() {
     myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
@@ -17,4 +18,13 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("b/page/test.vue")
     myFixture.checkHighlighting(true, false, true)
   }
+
+  fun testSrcDir() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
+    myFixture.copyDirectoryToProject("srcDir", ".")
+    myFixture.configureFromTempProjectFile("client/page/test.vue")
+    myFixture.checkHighlighting(true, false, true)
+  }
+
 }

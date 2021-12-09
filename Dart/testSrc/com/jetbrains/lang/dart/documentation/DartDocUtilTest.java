@@ -425,7 +425,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMarkdownUtil_testRemoveImages() {
     doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
-           "<p>, \n" +
+           "<p><img src=\"http://localhost/logo.png\" alt=\"logo\" />, \n" +
            "Hello, <a href=\"http://www.google.com\">Google</a></p>",
            "/// ![logo](http://localhost/logo.png), \n" +
            "/// Hello, [Google](http://www.google.com)\n" +

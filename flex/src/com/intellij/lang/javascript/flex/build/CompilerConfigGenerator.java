@@ -794,7 +794,7 @@ public final class CompilerConfigGenerator {
     final Runnable runnable = new Runnable() {
       @Override
       public void run() {
-        fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<>() {
           @Override
           public VirtualFile compute() {
             try {

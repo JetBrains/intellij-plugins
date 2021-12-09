@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -19,6 +19,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.css.FlexCSSDialect;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -44,7 +45,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSUseNamespaceDirective;
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.properties.PropertiesBundle;
@@ -73,12 +73,10 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssBundle;
-import com.intellij.psi.css.inspections.CssInvalidElementInspection;
 import com.intellij.psi.css.inspections.CssNegativeValueInspection;
 import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
 import com.intellij.psi.css.inspections.bugs.CssNoGenericFontNameInspection;
-import com.intellij.psi.css.inspections.bugs.CssUnitlessNumberInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPropertyValueInspection;
@@ -104,7 +102,6 @@ import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.dtd.XmlNSDescriptorImpl;
 import com.intellij.xml.util.CheckXmlFileWithXercesValidatorInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -205,7 +202,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexSpecificFunctionsInCss() {
-    enableInspectionTool(new CssInvalidElementInspection());
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssInvalidFunctionInspection());
     doTestFor(true, getTestName(false) + ".css");
@@ -229,7 +225,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithCss3() throws Exception {
-    enableInspectionTool(new CssUnitlessNumberInspection());
     enableInspectionTool(new CssNegativeValueInspection());
     enableInspectionTool(new CssNoGenericFontNameInspection());
     enableInspectionTool((LocalInspectionTool)Class.forName("org.jetbrains.w3validators.css.W3CssValidatorInspection").newInstance());
@@ -388,17 +383,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doHighlighting();
   }
 
-  /*@JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testHtmlCssFile() throws Exception {
-    enableInspectionTool(new FlexCssStrayBraceInspection());
-    enableInspectionTool((LocalInspectionTool)Class.forName("com.intellij.psi.css.inspections.CssInvalidElementInspection").newInstance());
-    enableInspectionTool((LocalInspectionTool)Class.forName("com.intellij.psi.css.inspections.CssUnknownPropertyInspection").newInstance());
-    enableInspectionTool(
-      (LocalInspectionTool)Class.forName("com.intellij.psi.css.inspections.CssInvalidHtmlTagReferenceInspection").newInstance());
-
-    doTestFor(true, getTestName(false) + ".css", "HtmlFileReferringToCss.html");
-  }*/
-
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testHtmlCssFile1() {
     registerCommonCssInspections();
@@ -456,7 +440,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithMockFlex() throws Exception {
-    enableInspectionTool(new CssInvalidElementInspection());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Add override modifier", "mxml", testName + ".mxml", testName + "_2.as");
   }
@@ -800,7 +783,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, testName + ".as", testName + ".swc");
     checkNavigatableSymbols("layoutObject");
 
-    final Set<String> resolvedNses = new THashSet<>();
+    final Set<String> resolvedNses = new HashSet<>();
     final Ref<String> foundConst = new Ref<>();
     final Ref<String> foundConst2 = new Ref<>();
 
@@ -811,14 +794,14 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
         final PsiElement resolve = node.resolve();
 
         if (node.getParent() instanceof JSUseNamespaceDirective) {
-          foundConst2.set(JSPsiImplUtils.calcNamespaceReference(node.getParent()));
+          foundConst2.set(ActionScriptPsiImplUtil.calcNamespaceReference(node.getParent()));
         }
         else if (resolve instanceof JSVariable && ((JSVariable)resolve).isConst()) {
           foundConst.set(StringUtil.stripQuotesAroundValue(((JSVariable)resolve).getInitializer().getText()));
         }
         if (resolve instanceof JSAttributeListOwner) {
           final JSAttributeList attributeList = ((JSAttributeListOwner)resolve).getAttributeList();
-          final String ns = attributeList != null ? attributeList.resolveNamespaceValue() : null;
+          final String ns = ActionScriptPsiImplUtil.resolveNamespaceValue(attributeList);
           if (ns != null) resolvedNses.add(ns);
         }
       }
@@ -1824,11 +1807,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     invokeNamedActionWithExpectedFileCheck(testName + "_2", "OverrideMethods", "as");
   }
 
-  /*@JSTestOptions({JSTestOption.WithoutWarnings, JSTestOption.WithFlexSdk})
-  public void testSqlInjection() throws Exception {
-    doTestFor(false, getTestName(false) + ".mxml");
-  }*/
-
   @JSTestOptions({JSTestOption.WithoutWarnings, JSTestOption.WithFlexSdk})
   public void testSqlInjection1() {
     doTestFor(false, getTestName(false) + ".as");
@@ -2231,7 +2209,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testUnresolvedClassReference() throws Throwable {
-    enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
@@ -2250,7 +2227,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testUnresolvedClassReference2() throws Throwable {
-    enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Create MXML Component 'Missing'", "mxml");

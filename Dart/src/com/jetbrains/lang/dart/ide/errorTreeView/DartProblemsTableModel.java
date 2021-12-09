@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -10,8 +10,10 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
+import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +36,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       setText(problem.getErrorMessage().replaceAll("(\n)+", " "));
 
       // Pass null to the url, mouse movement to the hover makes the tooltip go away, see https://youtrack.jetbrains.com/issue/WEB-39449
-      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(), problem.getCorrectionMessage(), null));
+      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(),
+                                                     problem.getContextMessages(),
+                                                     problem.getCorrectionMessage(),
+                                                     null));
 
       String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
@@ -84,7 +89,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   private @NotNull ColumnInfo<DartProblem, DartProblem> createDescriptionColumn() {
-    return new ColumnInfo<DartProblem, DartProblem>("Description") {
+    return new ColumnInfo<>(DartBundle.message("dart.problems.view.column.name.description")) {
       @Override
       public @Nullable Comparator<DartProblem> getComparator() {
         return myDescriptionComparator;
@@ -103,7 +108,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   private @NotNull ColumnInfo<DartProblem, String> createLocationColumn() {
-    return new ColumnInfo<DartProblem, String>("Location") {
+    return new ColumnInfo<>(DartBundle.message("dart.problems.view.column.name.location")) {
       @Override
       public @Nullable Comparator<DartProblem> getComparator() {
         return myLocationComparator;
@@ -332,40 +337,41 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     return myWarningCount > 0;
   }
 
-  @NotNull
-  String getStatusText() {
-    List<String> summary = new ArrayList<>();
+  @NotNull @Nls
+  String getTabTitleText() {
+    List<String> statusParts = new ArrayList<>();
 
     if (myPresentationHelper.isShowErrors() && myErrorCountAfterFilter > 0) {
-      summary.add(myErrorCountAfterFilter + " " + StringUtil.pluralize("error", myErrorCountAfterFilter));
+      statusParts.add(DartBundle.message("dart.problems.view.0.errors", myErrorCountAfterFilter));
     }
     if (myPresentationHelper.isShowWarnings() && myWarningCountAfterFilter > 0) {
-      summary.add(myWarningCountAfterFilter + " " + StringUtil.pluralize("warning", myWarningCountAfterFilter));
+      statusParts.add(DartBundle.message("dart.problems.view.0.warnings", myWarningCountAfterFilter));
     }
     if (myPresentationHelper.isShowHints() && myHintCountAfterFilter > 0) {
-      summary.add(myHintCountAfterFilter + " " + StringUtil.pluralize("hint", myHintCountAfterFilter));
+      statusParts.add(DartBundle.message("dart.problems.view.0.hints", myHintCountAfterFilter));
     }
 
-
-    if (summary.isEmpty()) {
+    if (statusParts.isEmpty()) {
       return myPresentationHelper.areFiltersApplied() ? myPresentationHelper.getFilterTypeText() : "";
     }
 
-    final StringBuilder b = new StringBuilder();
-    if (summary.size() == 2) {
-      b.append(StringUtil.join(summary, " and "));
+    @Nls String statusText;
+    if (statusParts.size() == 1) {
+      statusText = statusParts.get(0);
+    }
+    else if (statusParts.size() == 2) {
+      statusText = DartBundle.message("dart.problems.view.status.0.and.1", statusParts.get(0), statusParts.get(1));
     }
     else {
-      b.append(StringUtil.join(summary, ", "));
+      statusText = DartBundle.message("dart.problems.view.status.0.and.1.and.2",
+                                      statusParts.get(0), statusParts.get(1), statusParts.get(2));
     }
 
     if (myPresentationHelper.areFiltersApplied()) {
-      b.append(" (");
-      b.append(myPresentationHelper.getFilterTypeText());
-      b.append(")");
+      return DartBundle.message("dart.problems.view.status.0.and.filters.1", statusText, myPresentationHelper.getFilterTypeText());
     }
 
-    return b.toString();
+    return statusText;
   }
 
   private class DartProblemsComparator implements Comparator<DartProblem> {

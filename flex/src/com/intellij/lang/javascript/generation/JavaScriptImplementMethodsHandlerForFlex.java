@@ -3,6 +3,7 @@
  */
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.featureStatistics.ProductivityFeatureNames;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JavaScriptBundle;
@@ -11,7 +12,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMembersFix;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -27,12 +31,12 @@ public class JavaScriptImplementMethodsHandlerForFlex extends BaseJSGenerateHand
   }
 
   @Override
-  protected String getTitleKey() {
-    return "methods.to.implement.chooser.title";
+  protected @NlsContexts.DialogTitle @Nullable String getTitle() {
+    return CodeInsightBundle.message("methods.to.implement.chooser.title");
   }
 
   @Override
-  protected String getNoCandidatesMessage() {
+  protected @NotNull String getNoCandidatesMessage() {
     return JavaScriptBundle.message("no.methods.to.implement");
   }
 

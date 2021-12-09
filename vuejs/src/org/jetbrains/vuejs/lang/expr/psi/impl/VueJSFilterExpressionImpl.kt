@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.expr.psi.impl
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
-import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes
@@ -35,10 +34,6 @@ class VueJSFilterExpressionImpl(elementType: IElementType)
   override fun getIndexingData(): JSElementIndexingData? = null
 
   override fun getName(): String? = nameReference?.referenceName
-
-  override fun getArgumentTypes(contextual: Boolean): List<JSType> {
-    return JSPsiBasedTypeOfType.mapAsArguments(arguments, contextual)
-  }
 
   override fun getMethodExpression(): JSExpression? = nameReference
 

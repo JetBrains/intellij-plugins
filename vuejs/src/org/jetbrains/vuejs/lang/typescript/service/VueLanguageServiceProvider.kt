@@ -17,12 +17,10 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
 
   override fun getAllServices(): List<JSLanguageService> = listOf(languageService.service)
 
-  override fun getService(file: VirtualFile): JSLanguageService? {
-    val value = languageService.service
-    return if (value.isAcceptable(file)) value else null
-  }
+  override fun getService(file: VirtualFile): JSLanguageService? =
+    languageService.service.takeIf { it.isAcceptable(file) }
 
-  override fun isCandidate(file: VirtualFile): Boolean {
+  override fun isHighlightingCandidate(file: VirtualFile): Boolean {
     val type = file.fileType
     return TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(type) || type == VueFileType.INSTANCE
   }

@@ -21,6 +21,7 @@ public class DartMetadataImpl extends DartPsiCompositeElementImpl implements Dar
     visitor.visitMetadata(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -30,6 +31,12 @@ public class DartMetadataImpl extends DartPsiCompositeElementImpl implements Dar
   @NotNull
   public DartReferenceExpression getReferenceExpression() {
     return findNotNullChildByClass(DartReferenceExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }

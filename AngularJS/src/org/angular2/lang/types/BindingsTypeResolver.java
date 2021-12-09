@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSGenericMappings;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
+import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -66,10 +67,11 @@ final class BindingsTypeResolver {
                                          @NotNull BiFunction<BindingsTypeResolver, String, JSType> resolveMethod) {
     Angular2AttributeDescriptor descriptor = ObjectUtils.tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
     XmlTag tag = attribute.getParent();
-    if (descriptor == null || tag == null || !infoValidation.test(descriptor.getInfo())) {
+    var info = Angular2AttributeNameParser.parse(attribute.getName(), attribute.getParent());
+    if (descriptor == null || tag == null || !infoValidation.test(info)) {
       return null;
     }
-    return resolveMethod.apply(get(tag), descriptor.getInfo().name);
+    return resolveMethod.apply(get(tag), info.name);
   }
 
   public @Nullable JSType resolveDirectiveEventType(@NotNull String name) {
@@ -78,8 +80,7 @@ final class BindingsTypeResolver {
       Angular2DirectiveProperty property;
       if (myScope.contains(directive)
           && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
-        types.add(Angular2LibrariesHacks.hackNgModelChangeType(
-          extractEventVariableType(property.getType()), name));
+        types.add(Angular2LibrariesHacks.hackNgModelChangeType(property.getJsType(), name));
       }
     }
     return processAndMerge(types);
@@ -91,7 +92,7 @@ final class BindingsTypeResolver {
       Angular2DirectiveProperty property;
       if (myScope.contains(directive)
           && (property = find(directive.getInputs(), input -> input.getName().equals(key))) != null) {
-        types.add(property.getType());
+        types.add(property.getJsType());
       }
     }
     return processAndMerge(types);
@@ -184,11 +185,11 @@ final class BindingsTypeResolver {
         templateContextTypes.add(templateContextType);
       }
       final ProcessingContext processingContext =
-        JSTypeComparingContextService.getProcessingContextWithCache(clazz);
+        JSTypeComparingContextService.createProcessingContextWithCache(clazz);
       directive.getInputs().forEach(property -> {
         JSExpression inputExpression = inputsMap.get(property.getName());
         JSType propertyType;
-        if (inputExpression != null && (propertyType = property.getType()) != null) {
+        if (inputExpression != null && (propertyType = property.getJsType()) != null) {
           JSPsiBasedTypeOfType inputType = new JSPsiBasedTypeOfType(inputExpression, true);
           if (isAnyType(getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType)))) {
             // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
@@ -207,9 +208,10 @@ final class BindingsTypeResolver {
             });
           }
           else {
-            JSGenericTypesEvaluatorBase.matchGenericTypes(new JSGenericMappings(genericArguments), processingContext,
-                                                          inputType, propertyType);
-            JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null);
+            JSGenericTypesEvaluatorBase
+              .matchGenericTypes(new JSGenericMappings(genericArguments), processingContext, inputType, propertyType, x -> true);
+            JSGenericTypesEvaluatorBase
+              .widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null, processingContext);
           }
         }
       });
@@ -222,7 +224,7 @@ final class BindingsTypeResolver {
 
   private static @NotNull JSTypeSubstitutor intersectGenerics(@NotNull MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> arguments,
                                                               @NotNull JSTypeSource source) {
-    JSTypeSubstitutor result = new JSTypeSubstitutor();
+    JSTypeSubstitutorImpl result = new JSTypeSubstitutorImpl();
     for (Map.Entry<JSTypeSubstitutor.JSTypeGenericId, Collection<JSType>> entry : arguments.entrySet()) {
       result.put(entry.getKey(), merge(source, filter(entry.getValue(), Objects::nonNull), false));
     }

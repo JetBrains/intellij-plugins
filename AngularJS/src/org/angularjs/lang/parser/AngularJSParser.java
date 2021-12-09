@@ -17,9 +17,9 @@ public class AngularJSParser
   public AngularJSParser(PsiBuilder builder) {
     super(DialectOptionHolder.JS_1_5, builder);
     myExpressionParser = new AngularJSExpressionParser();
-    myStatementParser = new StatementParser<AngularJSParser>(this) {
+    myStatementParser = new StatementParser<>(this) {
       @Override
-      protected void doParseStatement(boolean canHaveClasses) {
+      protected void doParseStatement() {
         final IElementType firstToken = builder.getTokenType();
         if (firstToken == JSTokenTypes.LBRACE) {
           parseExpressionStatement();
@@ -49,7 +49,7 @@ public class AngularJSParser
             return;
           }
         }
-        super.doParseStatement(canHaveClasses);
+        super.doParseStatement();
       }
 
       private void parseNgForStatement() {

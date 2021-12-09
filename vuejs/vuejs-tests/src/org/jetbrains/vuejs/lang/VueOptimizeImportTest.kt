@@ -2,19 +2,20 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
+import com.intellij.lang.javascript.JavaScriptFormatterTestBase
+import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.refactoring.JSOptimizeImportTestBase
-import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.util.Consumer
 
 class VueOptimizeImportTest : JSOptimizeImportTestBase() {
   override fun getDefaultExtension(): String = "vue"
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/optimize_import/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/optimize_import/"
 
 
   fun testVueSimpleOptimize() {
-    TypeScriptFormatterTest.setTempSettings(project, Consumer { settings ->
+    JavaScriptFormatterTestBase.setTempSettings(project, JavaScriptSupportLoader.TYPESCRIPT, Consumer<JSCodeStyleSettings> { settings ->
       settings.FORCE_QUOTE_STYlE = true
       settings.USE_DOUBLE_QUOTES = true
     })

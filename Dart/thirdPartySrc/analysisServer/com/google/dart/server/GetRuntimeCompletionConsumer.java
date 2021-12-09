@@ -13,11 +13,14 @@
  */
 package com.google.dart.server;
 
+import org.dartlang.analysis.server.protocol.CompletionSuggestion;
 import org.dartlang.analysis.server.protocol.RequestError;
-import org.dartlang.analysis.server.protocol.RuntimeCompletionResult;
+import org.dartlang.analysis.server.protocol.RuntimeCompletionExpression;
+
+import java.util.List;
 
 public interface GetRuntimeCompletionConsumer extends Consumer {
-  public void computedResult(RuntimeCompletionResult result);
+  public void computedResult(List<CompletionSuggestion> suggestions, List<RuntimeCompletionExpression> expressions);
 
   public void onError(RequestError requestError);
 }

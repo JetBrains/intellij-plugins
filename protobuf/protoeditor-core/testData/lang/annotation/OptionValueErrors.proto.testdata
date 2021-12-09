@@ -1,0 +1,363 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  optional OptionHolder opt = 5020;
+}
+
+message OptionHolder {
+  optional string string = 1;
+  optional bytes bytes = 2;
+  optional bool bool = 3;
+  optional double double = 4;
+  optional float float = 5;
+  optional uint32 uint32 = 6;
+  optional uint64 uint64 = 7;
+  optional fixed32 fixed32 = 8;
+  optional fixed64 fixed64 = 9;
+  optional int32 int32 = 10;
+  optional int64 int64 = 11;
+  optional sint32 sint32 = 12;
+  optional sint64 sint64 = 13;
+  optional sfixed32 sfixed32 = 14;
+  optional sfixed64 sfixed64 = 15;
+}
+
+message JsonNameTest {
+  optional string name_test = 1 [json_name="foobar"];
+  optional string name_invalid_bool = 2 [json_name=<error descr="String value expected">true</error>];
+  optional string name_invalid_int = 3 [json_name=<error descr="String value expected">3</error>];
+  optional string name_invalid_agg = 4 [json_name=<error descr="String value expected">{}</error>];
+}
+
+message DefaultsTest {
+  optional string string_valid = 100 [default="foobar"];
+  optional string string_number = 101 [default=<error descr="String value expected">10</error>];
+  optional string string_bool = 102 [default=<error descr="String value expected">true</error>];
+  optional string string_aggregate = 103 [default=<error descr="String value expected">{}</error>];
+
+  optional bytes bytes_valid = 200 [default="\x01\x02\x03\x04"];
+  optional bytes bytes_number = 201 [default=<error descr="String value expected">10</error>];
+  optional bytes bytes_bool = 202 [default=<error descr="String value expected">true</error>];
+  optional bytes bytes_aggregate = 203 [default=<error descr="String value expected">{}</error>];
+
+  optional bool bool_true = 300 [default=true];
+  optional bool bool_false = 301 [default=false];
+  optional bool bool_number = 302 [default=<error descr="Boolean value expected">10</error>];
+  optional bool bool_string = 303 [default=<error descr="Boolean value expected">"foobar"</error>];
+  optional bool bool_aggregate = 304 [default=<error descr="Boolean value expected">{}</error>];
+
+  optional double double_valid1 = 400 [default=1.0];
+  optional double double_valid2 = 401 [default=-1.0];
+  optional double double_valid3 = 402 [default=0];
+  optional double double_valid4 = 403 [default=10];
+  optional double double_valid5 = 404 [default=-10];
+  optional double double_valid6 = 405 [default=0xFFFFFFFFFFFFFFFF];
+  optional double double_valid7 = 406 [default=-0xFFFFFFFFFFFFFFFF]; // double defaults can be set to this 65-bit value
+  optional double double_valid8 = 407 [default=inf];
+  optional double double_valid9 = 408 [default=-inf];
+  optional double double_valid10 = 409 [default=nan];
+  optional double double_valid11 = 410 [default=-nan];
+  optional double double_range1 = 411 [default=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional double double_range2 = 412 [default=<error descr="Integer value out of range">-0x10000000000000000</error>];
+  optional double double_bool = 420 [default=<error descr="Floating point value expected">true</error>];
+  optional double double_string = 421 [default=<error descr="Floating point value expected">"foobar"</error>];
+  optional double double_aggregate = 422 [default=<error descr="Floating point value expected">{}</error>];
+
+  optional float float_valid1 = 500 [default=1.0];
+  optional float float_valid2 = 501 [default=-1.0];
+  optional float float_valid3 = 502 [default=0];
+  optional float float_valid4 = 503 [default=10];
+  optional float float_valid5 = 504 [default=-10];
+  optional float float_valid6 = 505 [default=0xFFFFFFFFFFFFFFFF];
+  optional float float_valid7 = 506 [default=-0xFFFFFFFFFFFFFFFF]; // float defaults can be set to this 65-bit value
+  optional float float_valid8 = 507 [default=inf];
+  optional float float_valid9 = 508 [default=-inf];
+  optional float float_valid10 = 509 [default=nan];
+  optional float float_valid11 = 510 [default=-nan];
+  optional float float_range1 = 511 [default=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional float float_range2 = 512 [default=<error descr="Integer value out of range">-0x10000000000000000</error>];
+  optional float float_bool = 520 [default=<error descr="Floating point value expected">true</error>];
+  optional float float_string = 521 [default=<error descr="Floating point value expected">"foobar"</error>];
+  optional float float_aggregate = 522 [default=<error descr="Floating point value expected">{}</error>];
+
+  optional uint32 uint32_valid1 = 600 [default=20];
+  optional uint32 uint32_valid2 = 601 [default=020]; // octal
+  optional uint32 uint32_valid3 = 602 [default=0];
+  optional uint32 uint32_valid4 = 603 [default=0xFFFFFFFF];
+  optional uint32 uint32_negative = 604 [default=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional uint32 uint32_range = 605 [default=<error descr="Integer value out of range">0x100000000</error>];
+  optional uint32 uint32_bool = 620 [default=<error descr="Integer value expected">true</error>];
+  optional uint32 uint32_string = 621 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional uint32 uint32_aggregate = 622 [default=<error descr="Integer value expected">{}</error>];
+
+  optional uint64 uint64_valid1 = 700 [default=20];
+  optional uint64 uint64_valid2 = 701 [default=020]; // octal
+  optional uint64 uint64_valid3 = 702 [default=0];
+  optional uint64 uint64_valid4 = 703 [default=0xFFFFFFFFFFFFFFFF];
+  optional uint64 uint64_negative = 704 [default=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional uint64 uint64_range = 705 [default=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional uint64 uint64_bool = 720 [default=<error descr="Integer value expected">true</error>];
+  optional uint64 uint64_string = 721 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional uint64 uint64_aggregate = 722 [default=<error descr="Integer value expected">{}</error>];
+
+  optional fixed32 fixed32_valid1 = 800 [default=20];
+  optional fixed32 fixed32_valid2 = 801 [default=020]; // octal
+  optional fixed32 fixed32_valid3 = 802 [default=0];
+  optional fixed32 fixed32_valid4 = 803 [default=0xFFFFFFFF];
+  optional fixed32 fixed32_negative = 804 [default=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional fixed32 fixed32_range = 805 [default=<error descr="Integer value out of range">0x100000000</error>];
+  optional fixed32 fixed32_bool = 820 [default=<error descr="Integer value expected">true</error>];
+  optional fixed32 fixed32_string = 821 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional fixed32 fixed32_aggregate = 822 [default=<error descr="Integer value expected">{}</error>];
+
+  optional fixed64 fixed64_valid1 = 900 [default=20];
+  optional fixed64 fixed64_valid2 = 901 [default=020]; // octal
+  optional fixed64 fixed64_valid3 = 902 [default=0];
+  optional fixed64 fixed64_valid4 = 903 [default=0xFFFFFFFFFFFFFFFF];
+  optional fixed64 fixed64_negative = 904 [default=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional fixed64 fixed64_range = 905 [default=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional fixed64 fixed64_bool = 920 [default=<error descr="Integer value expected">true</error>];
+  optional fixed64 fixed64_string = 921 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional fixed64 fixed64_aggregate = 922 [default=<error descr="Integer value expected">{}</error>];
+
+  optional int32 int32_valid1 = 1000 [default=20];
+  optional int32 int32_valid2 = 1001 [default=-20];
+  optional int32 int32_valid3 = 1002 [default=020]; // octal
+  optional int32 int32_valid4 = 1003 [default=0];
+  optional int32 int32_valid5 = 1004 [default=0x7FFFFFFF];
+  optional int32 int32_valid6 = 1005 [default=-0x80000000];
+  optional int32 int32_range1 = 1006 [default=<error descr="Integer value out of range">0x80000000</error>];
+  optional int32 int32_range2 = 1007 [default=<error descr="Integer value out of range">-0x80000001</error>];
+  optional int32 int32_bool = 1020 [default=<error descr="Integer value expected">true</error>];
+  optional int32 int32_string = 1021 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional int32 int32_aggregate = 1022 [default=<error descr="Integer value expected">{}</error>];
+
+  optional int64 int64_valid1 = 1100 [default=20];
+  optional int64 int64_valid2 = 1101 [default=-20];
+  optional int64 int64_valid3 = 1102 [default=020]; // octal
+  optional int64 int64_valid4 = 1103 [default=0];
+  optional int64 int64_valid5 = 1104 [default=0x7FFFFFFFFFFFFFFF];
+  optional int64 int64_valid6 = 1105 [default=-0x8000000000000000];
+  optional int64 int64_range1 = 1106 [default=<error descr="Integer value out of range">0x8000000000000000</error>];
+  optional int64 int64_range2 = 1107 [default=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional int64 int64_bool = 1120 [default=<error descr="Integer value expected">true</error>];
+  optional int64 int64_string = 1121 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional int64 int64_aggregate = 1122 [default=<error descr="Integer value expected">{}</error>];
+
+  optional sint32 sint32_valid1 = 1200 [default=20];
+  optional sint32 sint32_valid2 = 1201 [default=-20];
+  optional sint32 sint32_valid3 = 1202 [default=020]; // octal
+  optional sint32 sint32_valid4 = 1203 [default=0];
+  optional sint32 sint32_valid5 = 1204 [default=0x7FFFFFFF];
+  optional sint32 sint32_valid6 = 1205 [default=-0x80000000];
+  optional sint32 sint32_range1 = 1206 [default=<error descr="Integer value out of range">0x80000000</error>];
+  optional sint32 sint32_range2 = 1207 [default=<error descr="Integer value out of range">-0x80000001</error>];
+  optional sint32 sint32_bool = 1220 [default=<error descr="Integer value expected">true</error>];
+  optional sint32 sint32_string = 1221 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional sint32 sint32_aggregate = 1222 [default=<error descr="Integer value expected">{}</error>];
+
+  optional sint64 sint64_valid1 = 1300 [default=20];
+  optional sint64 sint64_valid2 = 1301 [default=-20];
+  optional sint64 sint64_valid3 = 1302 [default=020]; // octal
+  optional sint64 sint64_valid4 = 1303 [default=0];
+  optional sint64 sint64_valid5 = 1304 [default=0x7FFFFFFFFFFFFFFF];
+  optional sint64 sint64_valid6 = 1305 [default=-0x8000000000000000];
+  optional sint64 sint64_range1 = 1306 [default=<error descr="Integer value out of range">0x8000000000000000</error>];
+  optional sint64 sint64_range2 = 1307 [default=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional sint64 sint64_bool = 1320 [default=<error descr="Integer value expected">true</error>];
+  optional sint64 sint64_string = 1321 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional sint64 sint64_aggregate = 1322 [default=<error descr="Integer value expected">{}</error>];
+
+  optional sfixed32 sfixed32_valid1 = 1400 [default=20];
+  optional sfixed32 sfixed32_valid2 = 1401 [default=-20];
+  optional sfixed32 sfixed32_valid3 = 1402 [default=020]; // octal
+  optional sfixed32 sfixed32_valid4 = 1403 [default=0];
+  optional sfixed32 sfixed32_valid5 = 1404 [default=0x7FFFFFFF];
+  optional sfixed32 sfixed32_valid6 = 1405 [default=-0x80000000];
+  optional sfixed32 sfixed32_range1 = 1406 [default=<error descr="Integer value out of range">0x80000000</error>];
+  optional sfixed32 sfixed32_range2 = 1407 [default=<error descr="Integer value out of range">-0x80000001</error>];
+  optional sfixed32 sfixed32_bool = 1420 [default=<error descr="Integer value expected">true</error>];
+  optional sfixed32 sfixed32_string = 1421 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional sfixed32 sfixed32_aggregate = 1422 [default=<error descr="Integer value expected">{}</error>];
+
+  optional sfixed64 sfixed64_valid1 = 1500 [default=20];
+  optional sfixed64 sfixed64_valid2 = 1501 [default=-20];
+  optional sfixed64 sfixed64_valid3 = 1502 [default=020]; // octal
+  optional sfixed64 sfixed64_valid4 = 1503 [default=0];
+  optional sfixed64 sfixed64_valid5 = 1504 [default=0x7FFFFFFFFFFFFFFF];
+  optional sfixed64 sfixed64_valid6 = 1505 [default=-0x8000000000000000];
+  optional sfixed64 sfixed64_range1 = 1506 [default=<error descr="Integer value out of range">0x8000000000000000</error>];
+  optional sfixed64 sfixed64_range2 = 1507 [default=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional sfixed64 sfixed64_bool = 1520 [default=<error descr="Integer value expected">true</error>];
+  optional sfixed64 sfixed64_string = 1521 [default=<error descr="Integer value expected">"foobar"</error>];
+  optional sfixed64 sfixed64_aggregate = 1522 [default=<error descr="Integer value expected">{}</error>];
+}
+
+message OptionsTest {
+  optional string string_valid = 100 [(opt).string="foobar"];
+  optional string string_number = 101 [(opt).string=<error descr="String value expected">10</error>];
+  optional string string_bool = 102 [(opt).string=<error descr="String value expected">true</error>];
+  optional string string_aggregate = 103 [(opt).string=<error descr="String value expected">{}</error>];
+
+  optional bytes bytes_valid = 200 [(opt).bytes="\x01\x02\x03\x04"];
+  optional bytes bytes_number = 201 [(opt).bytes=<error descr="String value expected">10</error>];
+  optional bytes bytes_bool = 202 [(opt).bytes=<error descr="String value expected">true</error>];
+  optional bytes bytes_aggregate = 203 [(opt).bytes=<error descr="String value expected">{}</error>];
+
+  optional bool bool_true = 300 [(opt).bool=true];
+  optional bool bool_false = 301 [(opt).bool=false];
+  optional bool bool_number = 302 [(opt).bool=<error descr="Boolean value expected">10</error>];
+  optional bool bool_string = 303 [(opt).bool=<error descr="Boolean value expected">"foobar"</error>];
+  optional bool bool_aggregate = 304 [(opt).bool=<error descr="Boolean value expected">{}</error>];
+
+  optional double double_valid1 = 400 [(opt).double=1.0];
+  optional double double_valid2 = 401 [(opt).double=-1.0];
+  optional double double_valid3 = 402 [(opt).double=0];
+  optional double double_valid4 = 403 [(opt).double=10];
+  optional double double_valid5 = 404 [(opt).double=-10];
+  optional double double_valid6 = 405 [(opt).double=0xFFFFFFFFFFFFFFFF];
+  optional double double_valid7 = 406 [(opt).double=-0x8000000000000000];
+  optional double double_inf1 = 407 [(opt).double=<error descr="'inf' not allowed as option value">inf</error>];
+  optional double double_inf2 = 408 [(opt).double=<error descr="'inf' not allowed as option value">-inf</error>];
+  optional double double_nan1 = 409 [(opt).double=<error descr="'nan' not allowed as option value">nan</error>];
+  optional double double_nan2 = 410 [(opt).double=<error descr="'nan' not allowed as option value">-nan</error>];
+  optional double double_range1 = 411 [(opt).double=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional double double_range2 = 412 [(opt).double=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional double double_bool = 420 [(opt).double=<error descr="Floating point value expected">true</error>];
+  optional double double_string = 421 [(opt).double=<error descr="Floating point value expected">"foobar"</error>];
+  optional double double_aggregate = 422 [(opt).double=<error descr="Floating point value expected">{}</error>];
+
+  optional float float_valid1 = 500 [(opt).float=1.0];
+  optional float float_valid2 = 501 [(opt).float=-1.0];
+  optional float float_valid3 = 502 [(opt).float=0];
+  optional float float_valid4 = 503 [(opt).float=10];
+  optional float float_valid5 = 504 [(opt).float=-10];
+  optional float float_valid6 = 505 [(opt).float=0xFFFFFFFFFFFFFFFF];
+  optional float float_valid7 = 506 [(opt).float=-0x8000000000000000];
+  optional float float_inf1 = 507 [(opt).float=<error descr="'inf' not allowed as option value">inf</error>];
+  optional float float_inf2 = 508 [(opt).float=<error descr="'inf' not allowed as option value">-inf</error>];
+  optional float float_nan1 = 509 [(opt).float=<error descr="'nan' not allowed as option value">nan</error>];
+  optional float float_nan2 = 510 [(opt).float=<error descr="'nan' not allowed as option value">-nan</error>];
+  optional float float_range1 = 511 [(opt).float=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional float float_range2 = 512 [(opt).float=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional float float_bool = 520 [(opt).float=<error descr="Floating point value expected">true</error>];
+  optional float float_string = 521 [(opt).float=<error descr="Floating point value expected">"foobar"</error>];
+  optional float float_aggregate = 522 [(opt).float=<error descr="Floating point value expected">{}</error>];
+
+  optional uint32 uint32_valid1 = 600 [(opt).uint32=20];
+  optional uint32 uint32_valid2 = 601 [(opt).uint32=020]; // octal
+  optional uint32 uint32_valid3 = 602 [(opt).uint32=0];
+  optional uint32 uint32_valid4 = 603 [(opt).uint32=0xFFFFFFFF];
+  optional uint32 uint32_negative = 604 [(opt).uint32=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional uint32 uint32_range = 605 [(opt).uint32=<error descr="Integer value out of range">0x100000000</error>];
+  optional uint32 uint32_bool = 620 [(opt).uint32=<error descr="Integer value expected">true</error>];
+  optional uint32 uint32_string = 621 [(opt).uint32=<error descr="Integer value expected">"foobar"</error>];
+  optional uint32 uint32_aggregate = 622 [(opt).uint32=<error descr="Integer value expected">{}</error>];
+
+  optional uint64 uint64_valid1 = 700 [(opt).uint64=20];
+  optional uint64 uint64_valid2 = 701 [(opt).uint64=020]; // octal
+  optional uint64 uint64_valid3 = 702 [(opt).uint64=0];
+  optional uint64 uint64_valid4 = 703 [(opt).uint64=0xFFFFFFFFFFFFFFFF];
+  optional uint64 uint64_negative = 704 [(opt).uint64=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional uint64 uint64_range = 705 [(opt).uint64=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional uint64 uint64_bool = 720 [(opt).uint64=<error descr="Integer value expected">true</error>];
+  optional uint64 uint64_string = 721 [(opt).uint64=<error descr="Integer value expected">"foobar"</error>];
+  optional uint64 uint64_aggregate = 722 [(opt).uint64=<error descr="Integer value expected">{}</error>];
+
+  optional fixed32 fixed32_valid1 = 800 [(opt).fixed32=20];
+  optional fixed32 fixed32_valid2 = 801 [(opt).fixed32=020]; // octal
+  optional fixed32 fixed32_valid3 = 802 [(opt).fixed32=0];
+  optional fixed32 fixed32_valid4 = 803 [(opt).fixed32=0xFFFFFFFF];
+  optional fixed32 fixed32_negative = 804 [(opt).fixed32=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional fixed32 fixed32_range = 805 [(opt).fixed32=<error descr="Integer value out of range">0x100000000</error>];
+  optional fixed32 fixed32_bool = 820 [(opt).fixed32=<error descr="Integer value expected">true</error>];
+  optional fixed32 fixed32_string = 821 [(opt).fixed32=<error descr="Integer value expected">"foobar"</error>];
+  optional fixed32 fixed32_aggregate = 822 [(opt).fixed32=<error descr="Integer value expected">{}</error>];
+
+  optional fixed64 fixed64_valid1 = 900 [(opt).fixed64=20];
+  optional fixed64 fixed64_valid2 = 901 [(opt).fixed64=020]; // octal
+  optional fixed64 fixed64_valid3 = 902 [(opt).fixed64=0];
+  optional fixed64 fixed64_valid4 = 903 [(opt).fixed64=0xFFFFFFFFFFFFFFFF];
+  optional fixed64 fixed64_negative = 904 [(opt).fixed64=<error descr="Unsigned value cannot be negative">-1</error>];
+  optional fixed64 fixed64_range = 905 [(opt).fixed64=<error descr="Integer value out of range">0x10000000000000000</error>];
+  optional fixed64 fixed64_bool = 920 [(opt).fixed64=<error descr="Integer value expected">true</error>];
+  optional fixed64 fixed64_string = 921 [(opt).fixed64=<error descr="Integer value expected">"foobar"</error>];
+  optional fixed64 fixed64_aggregate = 922 [(opt).fixed64=<error descr="Integer value expected">{}</error>];
+
+  optional int32 int32_valid1 = 1000 [(opt).int32=20];
+  optional int32 int32_valid2 = 1001 [(opt).int32=-20];
+  optional int32 int32_valid3 = 1002 [(opt).int32=020]; // octal
+  optional int32 int32_valid4 = 1003 [(opt).int32=0];
+  optional int32 int32_valid5 = 1004 [(opt).int32=0x7FFFFFFF];
+  optional int32 int32_valid6 = 1005 [(opt).int32=-0x80000000];
+  optional int32 int32_range1 = 1006 [(opt).int32=<error descr="Integer value out of range">0x80000000</error>];
+  optional int32 int32_range2 = 1007 [(opt).int32=<error descr="Integer value out of range">-0x80000001</error>];
+  optional int32 int32_bool = 1020 [(opt).int32=<error descr="Integer value expected">true</error>];
+  optional int32 int32_string = 1021 [(opt).int32=<error descr="Integer value expected">"foobar"</error>];
+  optional int32 int32_aggregate = 1022 [(opt).int32=<error descr="Integer value expected">{}</error>];
+
+  optional int64 int64_valid1 = 1100 [(opt).int64=20];
+  optional int64 int64_valid2 = 1101 [(opt).int64=-20];
+  optional int64 int64_valid3 = 1102 [(opt).int64=020]; // octal
+  optional int64 int64_valid4 = 1103 [(opt).int64=0];
+  optional int64 int64_valid5 = 1104 [(opt).int64=0x7FFFFFFFFFFFFFFF];
+  optional int64 int64_valid6 = 1105 [(opt).int64=-0x8000000000000000];
+  optional int64 int64_range1 = 1106 [(opt).int64=<error descr="Integer value out of range">0x8000000000000000</error>];
+  optional int64 int64_range2 = 1107 [(opt).int64=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional int64 int64_bool = 1120 [(opt).int64=<error descr="Integer value expected">true</error>];
+  optional int64 int64_string = 1121 [(opt).int64=<error descr="Integer value expected">"foobar"</error>];
+  optional int64 int64_aggregate = 1122 [(opt).int64=<error descr="Integer value expected">{}</error>];
+
+  optional sint32 sint32_valid1 = 1200 [(opt).sint32=20];
+  optional sint32 sint32_valid2 = 1201 [(opt).sint32=-20];
+  optional sint32 sint32_valid3 = 1202 [(opt).sint32=020]; // octal
+  optional sint32 sint32_valid4 = 1203 [(opt).sint32=0];
+  optional sint32 sint32_valid5 = 1204 [(opt).sint32=0x7FFFFFFF];
+  optional sint32 sint32_valid6 = 1205 [(opt).sint32=-0x80000000];
+  optional sint32 sint32_range1 = 1206 [(opt).sint32=<error descr="Integer value out of range">0x80000000</error>];
+  optional sint32 sint32_range2 = 1207 [(opt).sint32=<error descr="Integer value out of range">-0x80000001</error>];
+  optional sint32 sint32_bool = 1220 [(opt).sint32=<error descr="Integer value expected">true</error>];
+  optional sint32 sint32_string = 1221 [(opt).sint32=<error descr="Integer value expected">"foobar"</error>];
+  optional sint32 sint32_aggregate = 1222 [(opt).sint32=<error descr="Integer value expected">{}</error>];
+
+  optional sint64 sint64_valid1 = 1300 [(opt).sint64=20];
+  optional sint64 sint64_valid2 = 1301 [(opt).sint64=-20];
+  optional sint64 sint64_valid3 = 1302 [(opt).sint64=020]; // octal
+  optional sint64 sint64_valid4 = 1303 [(opt).sint64=0];
+  optional sint64 sint64_valid5 = 1304 [(opt).sint64=0x7FFFFFFFFFFFFFFF];
+  optional sint64 sint64_valid6 = 1305 [(opt).sint64=-0x8000000000000000];
+  optional sint64 sint64_range1 = 1306 [(opt).sint64=<error descr="Integer value out of range">0x8000000000000000</error>];
+  optional sint64 sint64_range2 = 1307 [(opt).sint64=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional sint64 sint64_bool = 1320 [(opt).sint64=<error descr="Integer value expected">true</error>];
+  optional sint64 sint64_string = 1321 [(opt).sint64=<error descr="Integer value expected">"foobar"</error>];
+  optional sint64 sint64_aggregate = 1322 [(opt).sint64=<error descr="Integer value expected">{}</error>];
+
+  optional sfixed32 sfixed32_valid1 = 1400 [(opt).sfixed32=20];
+  optional sfixed32 sfixed32_valid2 = 1401 [(opt).sfixed32=-20];
+  optional sfixed32 sfixed32_valid3 = 1402 [(opt).sfixed32=020]; // octal
+  optional sfixed32 sfixed32_valid4 = 1403 [(opt).sfixed32=0];
+  optional sfixed32 sfixed32_valid5 = 1404 [(opt).sfixed32=0x7FFFFFFF];
+  optional sfixed32 sfixed32_valid6 = 1405 [(opt).sfixed32=-0x80000000];
+  optional sfixed32 sfixed32_range1 = 1406 [(opt).sfixed32=<error descr="Integer value out of range">0x80000000</error>];
+  optional sfixed32 sfixed32_range2 = 1407 [(opt).sfixed32=<error descr="Integer value out of range">-0x80000001</error>];
+  optional sfixed32 sfixed32_bool = 1420 [(opt).sfixed32=<error descr="Integer value expected">true</error>];
+  optional sfixed32 sfixed32_string = 1421 [(opt).sfixed32=<error descr="Integer value expected">"foobar"</error>];
+  optional sfixed32 sfixed32_aggregate = 1422 [(opt).sfixed32=<error descr="Integer value expected">{}</error>];
+
+  optional sfixed64 sfixed64_valid1 = 1500 [(opt).sfixed64=20];
+  optional sfixed64 sfixed64_valid2 = 1501 [(opt).sfixed64=-20];
+  optional sfixed64 sfixed64_valid3 = 1502 [(opt).sfixed64=020]; // octal
+  optional sfixed64 sfixed64_valid4 = 1503 [(opt).sfixed64=0];
+  optional sfixed64 sfixed64_valid5 = 1504 [(opt).sfixed64=0x7FFFFFFFFFFFFFFF];
+  optional sfixed64 sfixed64_valid6 = 1505 [(opt).sfixed64=-0x8000000000000000];
+  optional sfixed64 sfixed64_range1 = 1506 [(opt).sfixed64=<error descr="Integer value out of range">0x8000000000000000</error>];
+  optional sfixed64 sfixed64_range2 = 1507 [(opt).sfixed64=<error descr="Integer value out of range">-0x8000000000000001</error>];
+  optional sfixed64 sfixed64_bool = 1520 [(opt).sfixed64=<error descr="Integer value expected">true</error>];
+  optional sfixed64 sfixed64_string = 1521 [(opt).sfixed64=<error descr="Integer value expected">"foobar"</error>];
+  optional sfixed64 sfixed64_aggregate = 1522 [(opt).sfixed64=<error descr="Integer value expected">{}</error>];
+}
+

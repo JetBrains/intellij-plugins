@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -24,7 +24,7 @@ import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.CUCUMBER_1_0_
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.CUCUMBER_1_1_MAIN_CLASS;
 
 
-public class CucumberJavaVersionUtil {
+public final class CucumberJavaVersionUtil {
   public static final String CUCUMBER_CORE_VERSION_5 = "5";
   public static final String CUCUMBER_CORE_VERSION_4_5 = "4.5";
   public static final String CUCUMBER_CORE_VERSION_4 = "4";
@@ -51,8 +51,8 @@ public class CucumberJavaVersionUtil {
 
   /**
    * Computes and caches version of attached Cucumber Java library.
-   * If {@code module} is not null module's scope with libraries used to look for Cucumber-Core library, 
-   * {@code project}'s scope used otherwise. 
+   * If {@code module} is not null module's scope with libraries used to look for Cucumber-Core library,
+   * {@code project}'s scope used otherwise.
    */
   @NotNull
   public static String getCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
@@ -67,21 +67,20 @@ public class CucumberJavaVersionUtil {
 
     return result.getValue();
   }
-  
+
   public static boolean isCucumber2OrMore(@NotNull Module module) {
     return VersionComparatorUtil.compare(getCucumberCoreVersion(module, module.getProject()), CUCUMBER_CORE_VERSION_2) >= 0;
   }
 
-  public static boolean isCucumber3OrMore(@NotNull PsiElement context) {
-    Module module = ModuleUtilCore.findModuleForPsiElement(context);
-    return VersionComparatorUtil.compare(getCucumberCoreVersion(module, context.getProject()), CUCUMBER_CORE_VERSION_3) >= 0;
+  public static boolean isCucumber3OrMore(@NotNull Module module) {
+    return VersionComparatorUtil.compare(getCucumberCoreVersion(module, module.getProject()), CUCUMBER_CORE_VERSION_3) >= 0;
   }
 
   @NotNull
   private static String computeCucumberCoreVersion(@Nullable Module module, @NotNull Project project) {
     GlobalSearchScope scope =
       module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, true) : GlobalSearchScope.projectScope(project);
-    
+
     JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
     for (Pair<String, String> marker : VERSION_CLASS_MARKERS) {
       if (facade.findClass(marker.first, scope) != null) {

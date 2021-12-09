@@ -30,11 +30,11 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import icons.OsmorcIdeaIcons;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.highlighting.ManifestColorsAndFonts;
 import org.jetbrains.lang.manifest.highlighting.ManifestSyntaxHighlighterFactory;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -45,17 +45,17 @@ import java.util.Map;
  */
 public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = {
-    new AttributesDescriptor("Header name", ManifestColorsAndFonts.HEADER_NAME_KEY),
-    new AttributesDescriptor("Header assignment", ManifestColorsAndFonts.HEADER_ASSIGNMENT_KEY),
-    new AttributesDescriptor("Header value", ManifestColorsAndFonts.HEADER_VALUE_KEY),
-    new AttributesDescriptor("Attribute name", OsgiManifestColorsAndFonts.ATTRIBUTE_NAME_KEY),
-    new AttributesDescriptor("Attribute assignment", OsgiManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY),
-    new AttributesDescriptor("Attribute value", OsgiManifestColorsAndFonts.ATTRIBUTE_VALUE_KEY),
-    new AttributesDescriptor("Directive name", OsgiManifestColorsAndFonts.DIRECTIVE_NAME_KEY),
-    new AttributesDescriptor("Directive assignment", OsgiManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY),
-    new AttributesDescriptor("Directive value", OsgiManifestColorsAndFonts.DIRECTIVE_VALUE_KEY),
-    new AttributesDescriptor("Clause separator", OsgiManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY),
-    new AttributesDescriptor("Parameter separator", OsgiManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY)
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.header.name"), ManifestColorsAndFonts.HEADER_NAME_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.header.assignment"), ManifestColorsAndFonts.HEADER_ASSIGNMENT_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.header.value"), ManifestColorsAndFonts.HEADER_VALUE_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.attribute.name"), OsgiManifestColorsAndFonts.ATTRIBUTE_NAME_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.attribute.assignment"), OsgiManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.attribute.value"), OsgiManifestColorsAndFonts.ATTRIBUTE_VALUE_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.directive.name"), OsgiManifestColorsAndFonts.DIRECTIVE_NAME_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.directive.assignment"), OsgiManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.directive.value"), OsgiManifestColorsAndFonts.DIRECTIVE_VALUE_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.clause.separator"), OsgiManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY),
+    new AttributesDescriptor(OsmorcBundle.message("settings.colors.parameter.separator"), OsgiManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY)
   };
 
   private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHTING;
@@ -74,7 +74,7 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "OSGi Manifest";
+    return OsmorcBundle.message("settings.colors.title");
   }
 
   @Nullable
@@ -105,7 +105,6 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
     return ManifestSyntaxHighlighterFactory.HIGHLIGHTER;
   }
 
-  @NonNls
   @NotNull
   @Override
   public String getDemoText() {

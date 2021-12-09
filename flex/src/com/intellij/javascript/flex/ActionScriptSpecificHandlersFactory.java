@@ -25,13 +25,13 @@ import org.jetbrains.annotations.Nullable;
 public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
   @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
-    return new ActionScriptTypeEvaluator(context, processor);
+  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context) {
+    return new ActionScriptTypeEvaluator(context);
   }
 
   @Override
-  public JSTypeEvaluationHelper getTypeEvaluationHelper() {
-    return ActionScriptTypeEvaluationHelper.INSTANCE;
+  public @NotNull JSTypeGuardEvaluator getTypeGuardEvaluator() {
+    return ActionScriptTypeGuardEvaluator.INSTANCE;
   }
 
   @NotNull
@@ -94,5 +94,10 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
     return new QualifiedItemProcessor<>(sink, place.getContainingFile());
+  }
+
+  @Override
+  public @NotNull JSGenericTypesEvaluator getGenericTypeEvaluator() {
+    return JSGenericTypesEvaluator.NO_OP;
   }
 }

@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.actions.createnew;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -15,8 +15,6 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.util.Validators;
 import com.intellij.tapestry.intellij.view.nodes.ComponentsNode;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /**
  * Action that creates a new component.
@@ -36,19 +34,18 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    final Module module = getModule(event);
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
     if (module == null) return;
 
     String defaultComponentPath = getDefaultElementPath(event, module);
     if (defaultComponentPath == null) return;
 
     final AddNewComponentDialog addNewComponentDialog =
-        new AddNewComponentDialog((Module)event.getDataContext().getData(LangDataKeys.MODULE.getName()), defaultComponentPath, false);
+        new AddNewComponentDialog(module, defaultComponentPath, false);
 
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewComponentDialog.getContentPane());
     builder.setTitle("New Tapestry Component");
-    builder.setButtonsAlignment(SwingConstants.CENTER);
     builder.setPreferredFocusComponent(addNewComponentDialog.getNameComponent());
 
     builder.setOkOperation(() -> {

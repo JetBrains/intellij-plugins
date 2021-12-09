@@ -16,11 +16,6 @@ public class DartSuggestIndexNameMacro extends Macro {
     return "dartSuggestIndexName";
   }
 
-  @Override
-  public String getPresentableName() {
-    return "dartSuggestIndexName()";
-  }
-
   @NotNull
   @Override
   public String getDefaultValue() {

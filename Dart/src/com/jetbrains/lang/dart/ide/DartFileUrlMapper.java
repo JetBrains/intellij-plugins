@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.ide;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -48,7 +49,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
   @NotNull
   @Override
   public List<Url> getUrls(@NotNull final VirtualFile file, @NotNull final Project project, @Nullable final String currentAuthority) {
-    if (currentAuthority == null || file.getFileType() != DartFileType.INSTANCE) return Collections.emptyList();
+    if (currentAuthority == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return Collections.emptyList();
 
     if (ProjectFileIndex.getInstance(project).isInContent(file)) {
       final Pair<VirtualFile, String> servedDirAndPath = PubServerPathHandlerKt.getServedDirAndPathForPubServer(project, file);
@@ -166,7 +167,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
     final String authority = url.getAuthority();
     if (authority != null && !BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(authority)) {
       return ReadAction.compute(() -> ContainerUtil
-        .getFirstItem(FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))));
+        .getFirstItem(FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))));
     }
 
     return null;
@@ -174,7 +175,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
   @Nullable
   private static VirtualFile findFileInAnyPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
-    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
+    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
       final VirtualFile file = DartUrlResolver.getInstance(project, yamlFile).findFileByDartUrl(packageUrl);
       if (file != null) return file;
     }

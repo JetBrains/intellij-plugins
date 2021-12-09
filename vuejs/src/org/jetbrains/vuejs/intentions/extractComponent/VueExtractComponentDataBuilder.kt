@@ -2,13 +2,10 @@
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ES6_IMPORT_DECLARATION
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -24,16 +21,15 @@ import com.intellij.psi.css.CssSelectorSuffix
 import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.getUnusedStyles
 import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
+import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.detectLanguage
-import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
-import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
@@ -42,7 +38,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val containingFile = list[0].containingFile
-  private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile) else null
+  private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile, false) else null
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
   private val styleTags = findStyles(containingFile)
@@ -55,7 +51,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val refList: List<RefData> = gatherReferences()
     val map: MutableMap<XmlTag, MutableList<RefData>> = mutableMapOf()
     refList.forEach { refData ->
-      if (refData.ref is VueTagNameReference) {
+      if (refData.ref is TagNameReference) {
         processVueComponent(refData.ref)
         return@forEach
       }
@@ -75,22 +71,18 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     return map
   }
 
-  private fun processVueComponent(ref: VueTagNameReference) {
-    if (scriptTag == null) return
-    val content = PsiTreeUtil.findChildOfType(scriptTag, JSEmbeddedContent::class.java) ?: return
-
-    val declarations = JSResolveUtil.getStubbedChildren(content, ES6_IMPORT_DECLARATION)
-    val foundImport = declarations.firstOrNull { declaration ->
-      val importDeclaration = declaration as ES6ImportDeclaration
-      val byName = importDeclaration.importedBindings.firstOrNull {
-        !it.isNamespaceImport && it.name != null &&
-        fromAsset(
-          ref.nameElement.text) == fromAsset(
-          it.name!!)
-      }
-      return@firstOrNull byName != null
-    } as? ES6ImportDeclaration ?: return
-
+  private fun processVueComponent(ref: TagNameReference) {
+    val name = fromAsset(ref.nameElement.text)
+    val foundImport = sequenceOf(findModule(scriptTag, false), findModule(scriptTag, true))
+                        .filterNotNull()
+                        .flatMap { JSResolveUtil.getStubbedChildren(it, ES6_IMPORT_DECLARATION).asSequence() }
+                        .filterIsInstance<ES6ImportDeclaration>()
+                        .firstOrNull { importDeclaration ->
+                          importDeclaration.importedBindings.find { binding ->
+                            !binding.isNamespaceImport && binding.name.let { it != null && name == fromAsset(it) }
+                          } != null
+                        }
+                      ?: return
     importsToCopy[toAsset(ref.nameElement.text).capitalize()] = foundImport
   }
 
@@ -141,14 +133,14 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { TEMPLATE_TAG_NAME == (it as? XmlTag)?.name } as? XmlTag
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
-    val newText = generateNewComponentText(newComponentName) ?: return null
+    val newText = generateNewComponentText(newComponentName)
     val folder: PsiDirectory = containingFile.parent ?: return null
     val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName).capitalize() + ".vue")
     VfsUtil.saveText(virtualFile, newText)
     return virtualFile
   }
 
-  private fun generateNewComponentText(newComponentName: String): String? {
+  private fun generateNewComponentText(newComponentName: String): String {
     // this piece of code is responsible for handling the cases when the same function is use in a call and passed further as function
     val hasDirectUsageSet = mutableSetOf<String>()
     val hasReplaceMap = mutableMapOf<String, Boolean>()
@@ -216,7 +208,7 @@ export default {
   }
 
   private fun hasMeaningfulChildren(element: PsiElement) =
-    !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, element.children)
+    !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, *element.children)
 
   private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
 
@@ -264,13 +256,10 @@ export default {
   }
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
-    val content = findModule(file) ?: return
-    val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment
-    val component = defaultExport?.stubSafeElement as? JSObjectLiteralExpression
-
-    val components = (component?.findProperty("components")?.value as? JSObjectLiteralExpression)?.properties
-    if (components != null && components.isNotEmpty()) {
-      val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
+    val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
+      ?.findProperty("components")?.value?.castSafelyTo<JSObjectLiteralExpression>()?.properties
+    if (componentsInitializer != null && componentsInitializer.isNotEmpty()) {
+      val names = componentsInitializer.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement) {
           if (element is XmlTag) {
@@ -279,10 +268,9 @@ export default {
           if (scriptTag != element) recursion(element)
         }
       })
-      components.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
-      ES6CreateImportUtil.optimizeImports(file)
+      componentsInitializer.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
     }
-
+    ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)
   }
 
@@ -300,12 +288,12 @@ export default {
   private class RefData(val ref: PsiReference, val tag: XmlTag, val offset: Int) {
     fun getRefName(): String {
       val jsRef = ref as? JSReferenceExpression ?: return ref.canonicalText
-      return JSResolveUtil.getLeftmostQualifier(jsRef).referenceName ?: ref.canonicalText
+      return JSResolveUtil.getLeftmostQualifier(jsRef).castSafelyTo<JSReferenceExpression>()?.referenceName ?: ref.canonicalText
     }
 
     fun resolve(): PsiElement? {
       val jsRef = ref as? JSReferenceExpression ?: return ref.resolve()
-      return JSResolveUtil.getLeftmostQualifier(jsRef).resolve()
+      return JSResolveUtil.getLeftmostQualifier(jsRef).castSafelyTo<JSReferenceExpression>()?.resolve()
     }
 
     fun getReplaceRange(): TextRange? {

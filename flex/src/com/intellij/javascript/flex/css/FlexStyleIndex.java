@@ -46,7 +46,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   private static final int VERSION = 18;
 
-  private final DataExternalizer<Set<FlexStyleIndexInfo>> myDataExternalizer = new DataExternalizer<Set<FlexStyleIndexInfo>>() {
+  private final DataExternalizer<Set<FlexStyleIndexInfo>> myDataExternalizer = new DataExternalizer<>() {
 
     @Override
     public void save(@NotNull DataOutput out, Set<FlexStyleIndexInfo> value) throws IOException {
@@ -148,7 +148,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   @NotNull
   @Override
   public DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent> getIndexer() {
-    return new DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent>() {
+    return new DataIndexer<>() {
       @Override
       @NotNull
       public Map<String, Set<FlexStyleIndexInfo>> map(@NotNull FileContent inputData) {
@@ -191,7 +191,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
       @Override
       public boolean process(@NotNull JSAttribute jsAttribute) {
         String attrName = jsAttribute.getName();
-        if (attrName != null && FlexAnnotationNames.STYLE.equals(attrName)) {
+        if (FlexAnnotationNames.STYLE.equals(attrName)) {
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
           String propertyName = pair != null ? pair.getSimpleValue() : null;
           if (propertyName != null) {

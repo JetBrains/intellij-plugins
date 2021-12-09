@@ -3,6 +3,7 @@ package org.angular2.lang.html.lexer;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.containers.ContainerUtil;
 import com.mscharhag.oleaster.matcher.matchers.CollectionMatcher;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import org.angular2.lang.OleasterTestUtil;
@@ -21,7 +22,6 @@ import static com.mscharhag.oleaster.matcher.util.Expectations.expectNotNull;
 import static com.mscharhag.oleaster.matcher.util.Expectations.expectTrue;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
-import static java.util.stream.Collectors.toList;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
 import static org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.*;
 
@@ -862,10 +862,8 @@ public class Angular2HtmlLexerSpecTest {
   private static List<List<?>> tokenizeAndHumanizeParts(
     String input, boolean tokenizeExpansionForms,
     Pair<String, String> interpolationConfig) {
-    return tokenizeWithoutErrors(input, tokenizeExpansionForms, interpolationConfig)
-      .stream()
-      .map(token -> newArrayList(token.type, token.contents))
-      .collect(toList());
+    return ContainerUtil.map(tokenizeWithoutErrors(input, tokenizeExpansionForms, interpolationConfig),
+                             token -> newArrayList(token.type, token.contents));
   }
 
   private static List<List<?>> tokenizeAndHumanizeSourceSpans(String input) {
@@ -873,10 +871,8 @@ public class Angular2HtmlLexerSpecTest {
   }
 
   private static List<List<?>> tokenizeAndHumanizeLineColumn(String input) {
-    return tokenizeWithoutErrors(input)
-      .stream()
-      .map(token -> newArrayList(token.type, "0:" + token.start))
-      .collect(toList());
+    return ContainerUtil.map(tokenizeWithoutErrors(input),
+                             token -> newArrayList(token.type, "0:" + token.start));
   }
 
   private static List<List<?>> tokenizeAndHumanizeErrors(String input) {

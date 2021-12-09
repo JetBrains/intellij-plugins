@@ -2,6 +2,7 @@ package org.intellij.plugins.postcss;
 
 import com.intellij.lang.css.CssDialect;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.NlsContexts;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssDialect extends CssDialect {
@@ -13,10 +14,9 @@ public class PostCssDialect extends CssDialect {
     return DIALECT_NAME;
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
-    return "PostCSS";
+  public @NotNull @NlsContexts.Label String getDisplayName() {
+    return PostCssBundle.message("dialect.display.name");
   }
 
   @Override

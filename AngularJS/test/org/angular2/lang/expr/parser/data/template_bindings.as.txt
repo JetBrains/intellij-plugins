@@ -66,5 +66,5 @@ JSFile:test.as.template_bindings
     Angular2TemplateBinding <asBar, false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('bar')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>

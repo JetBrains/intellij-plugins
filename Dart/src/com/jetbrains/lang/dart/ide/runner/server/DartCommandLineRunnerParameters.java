@@ -14,7 +14,9 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -33,11 +35,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DartCommandLineRunnerParameters implements Cloneable {
-  private @Nullable String myFilePath = null;
-  private @Nullable String myVMOptions = null;
+  private @Nullable @NlsSafe String myFilePath = null;
+  private @Nullable @NlsSafe String myVMOptions = null;
   private boolean myCheckedModeOrEnableAsserts = true;
-  private @Nullable String myArguments = null;
-  private @Nullable String myWorkingDirectory = null;
+  private @Nullable @NlsSafe String myArguments = null;
+  private @Nullable @NlsSafe String myWorkingDirectory = null;
   private @NotNull Map<String, String> myEnvs = new LinkedHashMap<>();
   private boolean myIncludeParentEnvs = true;
 
@@ -45,7 +47,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
    * Get the Dart project directory for the given file (or folder) by looking for the first parent that contains a pubspec.
    * In case none can be found, the file's parent (or the folder itself) is used instead.
    */
-  public static String suggestDartWorkingDir(@NotNull final Project project, @NotNull final VirtualFile dartFileOrFolder) {
+  public static @NlsSafe String suggestDartWorkingDir(@NotNull final Project project, @NotNull final VirtualFile dartFileOrFolder) {
     final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, dartFileOrFolder);
     if (pubspec != null) {
       final VirtualFile parent = pubspec.getParent();
@@ -62,20 +64,20 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   }
 
   @Nullable
-  public String getFilePath() {
+  public @NlsSafe String getFilePath() {
     return myFilePath;
   }
 
-  public void setFilePath(final @Nullable String filePath) {
+  public void setFilePath(final @Nullable @NlsSafe String filePath) {
     myFilePath = filePath;
   }
 
   @Nullable
-  public String getVMOptions() {
+  public @NlsSafe String getVMOptions() {
     return myVMOptions;
   }
 
-  public void setVMOptions(final @Nullable String vmOptions) {
+  public void setVMOptions(final @Nullable @NlsSafe String vmOptions) {
     myVMOptions = vmOptions;
   }
 
@@ -95,7 +97,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   }
 
   @Nullable
-  public String getArguments() {
+  public @NlsSafe String getArguments() {
     return myArguments;
   }
 
@@ -104,11 +106,11 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   }
 
   @Nullable
-  public String getWorkingDirectory() {
+  public @NlsSafe String getWorkingDirectory() {
     return myWorkingDirectory;
   }
 
-  public void setWorkingDirectory(final @Nullable String workingDirectory) {
+  public void setWorkingDirectory(final @Nullable @NlsSafe String workingDirectory) {
     myWorkingDirectory = workingDirectory;
   }
 
@@ -134,7 +136,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   }
 
   @NotNull
-  public String computeProcessWorkingDirectory(@NotNull final Project project) {
+  public @NlsSafe String computeProcessWorkingDirectory(@NotNull final Project project) {
     if (!StringUtil.isEmptyOrSpaces(myWorkingDirectory)) return myWorkingDirectory;
 
     try {
@@ -156,7 +158,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
       throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(myFilePath)));
     }
 
-    if (dartFile.getFileType() != DartFileType.INSTANCE && !dartFile.isDirectory()) {
+    if (!FileTypeRegistry.getInstance().isFileOfType(dartFile, DartFileType.INSTANCE) && !dartFile.isDirectory()) {
       throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file.or.directory", FileUtil.toSystemDependentName(myFilePath)));
     }
 

@@ -1,9 +1,13 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
+import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -11,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +36,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
     PrettierConfiguration.getInstance(getProject())
-      .withInterpreterRef(getNodeInterpreter())
       .withLinterPackage(NodePackageRef.create(getNodePackage()));
   }
 
@@ -126,6 +130,51 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     finally {
       configuration.setRunOnReformat(origRunOnReformat);
     }
+  }
+
+  public void testYarnPrettierBasicExample() {
+    doReformatFile("toReformat", "js", () -> {
+      VirtualFile file = myFixture.findFileInTempDir("toReformat.js");
+      VirtualFile root = file.getParent();
+      try {
+        NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
+        AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
+        configureYarnPrettierPackage(root);
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  public void testIncompleteBlock() {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    boolean origRunOnReformat = configuration.isRunOnReformat();
+    configuration.setRunOnReformat(true);
+    try {
+      String dirName = getTestName(true);
+      myFixture.copyDirectoryToProject(dirName, "");
+      myFixture.configureFromTempProjectFile("toReformat.js");
+      // should be used exactly ACTION_EDITOR_REFORMAT instead of ReformatWithPrettierAction
+      // to check a default formatter behavior combined with Prettier
+      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+      myFixture.checkResultByFile(dirName + "/" + "toReformat_after.js");
+    }
+    finally {
+      configuration.setRunOnReformat(origRunOnReformat);
+    }
+  }
+
+  private void configureYarnPrettierPackage(VirtualFile root) {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
+                                                                   PackageJsonUtil.findChildPackageJsonFile(root),
+                                                                   PrettierUtil.PACKAGE_NAME, false, false);
+    assertNotNull(yarnPrettierPkg);
+    configuration.withLinterPackage(NodePackageRef.create(yarnPrettierPkg));
+    NodePackage readYarnPrettierPkg = configuration.getPackage();
+    assertInstanceOf(readYarnPrettierPkg, YarnPnpNodePackage.class);
+    assertEquals("yarn:package.json:prettier", readYarnPrettierPkg.getSystemIndependentPath());
   }
 
   private void doReformatFile(final String extension) {

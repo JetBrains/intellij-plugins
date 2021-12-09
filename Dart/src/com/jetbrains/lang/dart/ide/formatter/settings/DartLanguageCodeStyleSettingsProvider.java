@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter.settings;
 
 import com.intellij.application.options.CodeStyleAbstractConfigurable;
@@ -31,6 +31,9 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 2;
+
+    commonSettings.LINE_COMMENT_AT_FIRST_COLUMN = false;
+    commonSettings.LINE_COMMENT_ADD_SPACE = true;
   }
 
   @Override

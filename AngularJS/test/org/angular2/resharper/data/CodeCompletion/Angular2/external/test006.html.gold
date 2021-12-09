@@ -17,8 +17,6 @@ virtualScroll
 (seeking)
 (select)
 (selectstart)
-(show)
-(sort)
 (stalled)
 (submit)
 (suspend)

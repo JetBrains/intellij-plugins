@@ -36,12 +36,23 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final String FORMATTER_OPTIONS_4 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter";
   public static final String FORMATTER_OPTIONS_5 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter";
 
-  public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
-                                                                                   "cucumber.annotation.After",
-                                                                                   "cucumber.api.java.Before",
-                                                                                   "cucumber.api.java.After",
-                                                                                   "io.cucumber.java.Before",
-                                                                                   "io.cucumber.java.After");
+  public static final Set<String> HOOK_AND_TYPE_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
+                                                                                            "cucumber.annotation.After",
+                                                                                            "cucumber.api.java.Before",
+                                                                                            "cucumber.api.java.After",
+                                                                                            "io.cucumber.java.Before",
+                                                                                            "io.cucumber.java.After",
+                                                                                            "io.cucumber.java.BeforeStep",
+                                                                                            "io.cucumber.java.AfterStep",
+                                                                                            "io.cucumber.java.ParameterType",
+                                                                                            "io.cucumber.java.DataTableType",
+                                                                                            "io.cucumber.java.DocStringType",
+                                                                                            "io.cucumber.java.DefaultParameterTransformer",
+                                                                                            "io.cucumber.java.DefaultDataTableEntryTransformer",
+                                                                                            "io.cucumber.java.DefaultDataTableCellTransformer");
+
+  public static final Set<String> CONFIGURATION_ANNOTATION_NAMES = ContainerUtil.newHashSet("io.cucumber.spring.CucumberContextConfiguration",
+                                                                                            "io.cucumber.spring.ScenarioScope");
 
   @NotNull
   @Override
@@ -111,7 +122,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     configuration.setNameFilter(getNameFilter(context));
     configuration.setFilePath(file.getPath());
     String programParametersFromDefaultConfiguration = StringUtil.defaultIfEmpty(configuration.getProgramParameters(), "");
-    configuration.setProgramParameters(programParametersFromDefaultConfiguration + formatterOptions);
+    if (StringUtil.isEmpty(programParametersFromDefaultConfiguration)) {
+      configuration.setProgramParameters(formatterOptions);
+    }
 
     if (configuration.getMainClassName() == null) {
       configuration.setMainClassName(mainClassName);

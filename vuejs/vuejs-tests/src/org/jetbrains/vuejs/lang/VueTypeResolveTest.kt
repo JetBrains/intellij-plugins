@@ -1,16 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.javascript.web.findOffsetBySignature
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
 class VueTypeResolveTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/typeResolve/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/typeResolve/"
 
   fun testVForJS() {
     myFixture.configureByFile("vFor-js.vue")
@@ -26,8 +26,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
              Triple("obj", "boolean", "string"),
-             Triple("objNum", "string,string|string", "number"),
-             Triple("objMix", "Foo2,string|boolean", "string|number"),
+             Triple("objNum", "string,string", "number"),
+             Triple("objMix", "Foo2,string|boolean", "number|string"),
              Triple("objIter", "boolean", "number"),
              Triple("objInit", "number", "\"a\"|\"b\"|\"c\"|\"d\""),
              Triple("state", "ShopState,Foo2", "number"))

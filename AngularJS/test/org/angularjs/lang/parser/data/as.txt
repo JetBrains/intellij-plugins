@@ -17,7 +17,7 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:IDENTIFIER)('AppCtrl')
       PsiWhiteSpace(' ')
       PsiElement(JS:AS_KEYWORD)('as')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
 ------
 ASTWrapperPsiElement(FILE)

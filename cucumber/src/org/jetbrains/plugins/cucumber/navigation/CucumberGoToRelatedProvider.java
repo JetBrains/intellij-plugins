@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
@@ -53,7 +54,7 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
         PsiFile stepDefFile = stepDefMethod.getContainingFile();
         if (!resultFiles.contains(stepDefFile)) {
           resultFiles.add(stepDefFile);
-          result.add(new GotoRelatedItem(stepDefFile, "Step definition file"));
+          result.add(new GotoRelatedItem(stepDefFile, CucumberBundle.message("create.step.definition.title")));
         }
       }
       return result;

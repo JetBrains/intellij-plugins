@@ -8,12 +8,16 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +33,7 @@ public class AnalysisError {
 
   public static final AnalysisError[] EMPTY_ARRAY = new AnalysisError[0];
 
-  public static final List<AnalysisError> EMPTY_LIST = new ArrayList<>();
+  public static final List<AnalysisError> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The severity of the error.

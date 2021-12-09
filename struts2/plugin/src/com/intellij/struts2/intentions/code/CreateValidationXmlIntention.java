@@ -38,6 +38,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.PackageWrapper;
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
 import com.intellij.refactoring.util.RefactoringUtil;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -46,7 +47,6 @@ import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
@@ -124,7 +124,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     final List<Action> filteredActions = getActionsWithoutValidation(actionClass);
     if (filteredActions.size() > 1) {
       final ListPopupStep<Action> step =
-        new BaseListPopupStep<Action>("Choose action mapping", filteredActions) {
+        new BaseListPopupStep<>("Choose action mapping", filteredActions) {
 
           @Override
           public Icon getIconFor(final Action value) {

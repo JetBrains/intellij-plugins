@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.ide.util.MemberChooser;
@@ -90,7 +91,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     };
 
     if (CommandProcessor.getInstance().getCurrentCommand() == null) {
-      CommandProcessor.getInstance().executeCommand(project, runnable, getClass().getName(), null);
+      CommandProcessor.getInstance().executeCommand(project, runnable, createMethodsFix.getCommandName(), null);
     }
     else {
       runnable.run();
@@ -169,7 +170,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
                                                                           @NotNull @NlsContexts.DialogTitle String title) {
     final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, DartNamedElementNode::new);
     final MemberChooser<DartNamedElementNode> chooser =
-      new MemberChooser<DartNamedElementNode>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {
+      new MemberChooser<>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {
 
         @Override
         protected JComponent createCenterPanel() {

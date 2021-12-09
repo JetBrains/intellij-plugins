@@ -1,0 +1,26 @@
+@value a from './moduleValueReferences.pcss';
+@value foo from <error descr="Cannot find @value bar">bar</error>;
+@value baz from foo;
+
+@value a: b, c: d;
+
+/* alias paths for other values or composition */
+@value colors: "./<error descr="Cannot resolve file 'colors.css'">colors.css</error>";
+/* import multiple from a single file */
+@value primary, secondary from colors;
+/* make local aliases to imported values */
+@value small as bp-small, large as bp-large from "./<error descr="Cannot resolve file 'breakpoints.css'">breakpoints.css</error>";
+/* value as selector name */
+@value selectorValue: secondary-color;
+
+.selectorValue {
+    color: secondary;
+}
+
+.header {
+    composes: text-primary from "./<error descr="Cannot resolve file 'colors.css'">colors.css</error>";
+    composes: <error descr="Invalid CSS class reference">text-primary</error> from "./moduleValueReferences.pcss";
+
+    box-shadow: 0 0 10px secondary;
+    box-shadow: 0 0 10px<error descr="Mismatched property value (none | <shadow># | [initial | inherit | unset | revert])"> bad</error>;
+}

@@ -1,12 +1,9 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.CoverageBundle;
-import com.intellij.coverage.CoverageDataManager;
-import com.intellij.coverage.CoverageSuitesBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +16,7 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
   }
 
   public static KarmaCoverageAnnotator getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, KarmaCoverageAnnotator.class);
+    return project.getService(KarmaCoverageAnnotator.class);
   }
 
   @Override
@@ -34,33 +31,6 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
   }
 
   @Override
-  @Nullable
-  public String getDirCoverageInformationString(@NotNull PsiDirectory directory,
-                                                @NotNull CoverageSuitesBundle currentSuite,
-                                                @NotNull CoverageDataManager manager) {
-    DirCoverageInfo coverageInfo = getDirCoverageInfo(directory, currentSuite);
-    if (coverageInfo == null) {
-      return null;
-    }
-
-    if (manager.isSubCoverageActive()) {
-      return coverageInfo.coveredLineCount > 0 ? "covered" : null;
-    }
-
-    String filesCoverageInfo = getFilesCoverageInformationString(coverageInfo);
-    if (filesCoverageInfo != null) {
-      StringBuilder builder = new StringBuilder();
-      builder.append(filesCoverageInfo);
-      String linesCoverageInfo = getLinesCoverageInformationString(coverageInfo);
-      if (linesCoverageInfo != null) {
-        builder.append(": ").append(linesCoverageInfo);
-      }
-      return builder.toString();
-    }
-    return null;
-  }
-
-  @Override
   protected String getLinesCoverageInformationString(@NotNull FileCoverageInfo info) {
     if (info.totalLineCount == 0) {
       return null;
@@ -71,12 +41,5 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
     else {
       return calcCoveragePercentage(info) + CoverageBundle.message("lines.covered.info.percent.lines.covered");
     }
-  }
-
-  @Nullable
-  @Override
-  protected String getFilesCoverageInformationString(@NotNull DirCoverageInfo info) {
-    if (info.totalFilesCount == 0) return null;
-    return info.totalFilesCount + (info.totalFilesCount == 1 ? " file" : " files");
   }
 }

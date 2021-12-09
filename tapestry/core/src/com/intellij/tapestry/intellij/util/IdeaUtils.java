@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
 /**
  * Utility methods for IDEA.
  */
-public class IdeaUtils {
+public final class IdeaUtils {
 
   /**
    * Checks if the given event was created from a module node.

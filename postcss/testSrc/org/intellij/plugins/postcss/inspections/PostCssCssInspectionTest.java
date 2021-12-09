@@ -37,6 +37,14 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
     doTest();
   }
 
+  public void testModuleValueReferences() {
+    myFixture.enableInspections(PostCssUnresolvedModuleValueReferenceInspection.class,
+                                CssUnknownTargetInspection.class,
+                                CssUnresolvedClassInComposesRuleInspection.class,
+                                CssInvalidPropertyValueInspection.class);
+    doTest();
+  }
+
   private void doTest() {
     myFixture.testHighlighting(true, false, false, getTestName(true) + ".pcss");
   }

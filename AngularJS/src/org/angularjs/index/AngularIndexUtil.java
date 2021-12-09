@@ -15,18 +15,13 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
@@ -47,15 +42,18 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.angularjs.index.AngularJSDirectivesSupport.findAttributeDirectives;
+
 /**
  * @author Dennis.Ushakov
  */
-public class AngularIndexUtil {
+public final class AngularIndexUtil {
   public static final int BASE_VERSION = 65; // Don't forget to update AngularJSIndexingHandler registration
 
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     new ConcurrentHashMap<>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
+  private static Key<Pair<Integer, Long>> VERSION_CACHE = new Key<>("angularjs.version");
 
   public static @Nullable JSImplicitElement resolve(@NotNull Project project,
                                                     @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
@@ -154,20 +152,27 @@ public class AngularIndexUtil {
   private static int getAngularJSVersion(final @NotNull Project project) {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
-    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
-      int version = -1;
-      PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
-        version = 13;
+    UserDataHolderEx holder = ((UserDataHolderEx)project);
+    Pair<Integer, Long> version = holder.getUserData(VERSION_CACHE);
+    ModificationTracker tracker = ProjectRootModificationTracker.getInstance(project);
+    if (version == null || version.second != tracker.getModificationCount()) {
+      Integer result = calcVersion(project);
+      if (result == null) return -1;
+      version = Pair.create(result, tracker.getModificationCount());
+      holder.putUserData(VERSION_CACHE, version);
+    }
+    return version.first;
+  }
+
+  private static Integer calcVersion(final @NotNull Project project) {
+    return RecursionManager.doPreventingRecursion(VERSION_CACHE, false, () -> {
+      if (ContainerUtil.getFirstItem(findAttributeDirectives(project, "ngMessages")) != null) {
+        return 13;
       }
-      else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
-        version = 12;
+      else if (ContainerUtil.getFirstItem(findAttributeDirectives(project, "ngModel")) != null) {
+        return 12;
       }
-      if (resolve != null) {
-        return CachedValueProvider.Result.create(version, resolve.getContainingFile());
-      }
-      return CachedValueProvider.Result
-        .create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project));
+      return -1;
     });
   }
 

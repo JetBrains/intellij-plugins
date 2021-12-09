@@ -22,14 +22,14 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
         </clientProperties>
-        <border type="etched" title="Run"/>
+        <border type="etched" title-resource-bundle="messages/OsmorcBundle" title-key="run.configuration.form.equinox.group.run"/>
         <children>
           <component id="3f390" class="javax.swing.JRadioButton" binding="myJustTheBundlesRadioButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Just the bundles"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.equinox.run.bundles"/>
             </properties>
           </component>
           <component id="e933e" class="javax.swing.JRadioButton" binding="myProductRadioButton">
@@ -37,7 +37,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Product"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.equinox.run.product"/>
             </properties>
           </component>
           <component id="d17f7" class="javax.swing.JTextField" binding="myProductTextField">
@@ -56,7 +56,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Application"/>
+              <text resource-bundle="messages/OsmorcBundle" key="run.configuration.form.equinox.run.app"/>
             </properties>
           </component>
           <component id="3a0c5" class="javax.swing.JTextField" binding="myApplicationTextField">

@@ -120,7 +120,7 @@ export default {
 export default {
   actions: {
     updateValue({commit}, payload) {
-      commit(updateValue, payload);
+      commit('updateValue', payload);
     }
   }
 }

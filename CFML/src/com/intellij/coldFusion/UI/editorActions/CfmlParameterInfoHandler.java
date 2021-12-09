@@ -1,25 +1,23 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions;
 
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.info.CfmlLangInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.parameterInfo.*;
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoHandler;
+import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
+import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author vnikolaenko
@@ -27,26 +25,6 @@ import java.util.List;
 public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement, CfmlFunctionDescription> {
   // for test purposes
   private String myText;
-
-  @Override
-  public boolean couldShowInLookup() {
-    return true;
-  }
-
-  @Override
-  public Object[] getParametersForLookup(LookupElement item, ParameterInfoContext context) {
-    final Object o = item.getObject();
-    if (o instanceof PsiElement) {
-      PsiElement element = (PsiElement)o;
-
-      List<PsiElement> methods = new ArrayList<>();
-      if (element instanceof CfmlFunction || element instanceof PsiMethod) {
-        methods.add(element);
-      }
-      return ArrayUtil.toObjectArray(methods);
-    }
-    return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
-  }
 
   private static boolean isEmbraced(@Nullable PsiElement element, int offset) {
     if (element == null) {

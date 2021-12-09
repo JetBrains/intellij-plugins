@@ -13,10 +13,10 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.javascript.web.moveToOffsetBySignature
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
@@ -28,7 +28,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     return "" // not used
   }
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/intentions"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/intentions"
 
   fun testComputeConstant() {
     doIntentionTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"))
@@ -51,7 +51,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   }
 
   fun testReplaceIfElseWithElvis() {
-    doIntentionTest("Replace if-else with ?:")
+    doIntentionTest(JSIntentionBundle.message("trivialif.replace-if-with-conditional.display-name"))
   }
 
   fun testReplaceWithIndexerAccess() {
@@ -60,6 +60,15 @@ class VueIntentionsTest : BasePlatformTestCase() {
       custom.USE_DOUBLE_QUOTES = true
       doIntentionTest("Replace with indexer access")
     }
+  }
+
+  fun testExpandVModel() {
+    myFixture.configureByFile("expandVModel.vue")
+    for (signature in listOf("v-<caret>model=","v-<caret>model.lazy","v-<caret>model.number","v-<caret>model.trim")) {
+      myFixture.moveToOffsetBySignature(signature)
+      myFixture.findSingleIntention("Expand v-model").invoke(project, myFixture.editor, myFixture.file)
+    }
+    myFixture.checkResultByFile("expandVModel.after.vue")
   }
 
   private fun doIntentionTest(name: String) {

@@ -2,10 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.refactoring.introduceVariable.JSIntroduceVariableTestCase
-import com.intellij.openapi.application.PathManager
 
 class VueIntroduceVariableTest : JSIntroduceVariableTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/refactoring/introduceVar/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/refactoring/introduceVar/"
 
   fun testExpandArrowBody() {
     doTest("created", true, ".vue")

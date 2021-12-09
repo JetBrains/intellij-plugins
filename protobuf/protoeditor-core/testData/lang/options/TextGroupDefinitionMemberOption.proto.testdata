@@ -1,0 +1,23 @@
+syntax = "proto2";
+import "descriptor.proto";
+
+package foo.bar;
+
+message OptionType {
+  optional group MyGroupOption = 10000 {
+    optional int32 zz = 5;
+  }
+}
+
+extend proto2.MessageOptions {
+  optional OptionType opt = 10000;
+}
+
+message TestMessage {
+  option (opt) = {
+    // In text format, the group type name is used rather than the lowercased field name.
+    MyGroupOption {
+      z<caret>z: 10
+    }
+  };
+}

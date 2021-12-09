@@ -1,16 +1,14 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
@@ -41,7 +39,7 @@ import java.util.List;
  * An abstract {@link AnAction} for processing a single Dart file open in the editor,
  * or a group of selected Dart files.
  */
-public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware {
+public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware, UpdateInBackground {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {
@@ -159,7 +157,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   private static boolean isApplicableFile(@NotNull final Project project, @Nullable final VirtualFile file) {
-    if (file == null || file.getFileType() != DartFileType.INSTANCE) return false;
+    if (file == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return false;
     if (!ProjectFileIndex.getInstance(project).isInContent(file)) return false;
 
     final Module module = ModuleUtilCore.findModuleForFile(file, project);

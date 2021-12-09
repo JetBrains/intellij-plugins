@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.paths.PathReference
 import com.intellij.openapi.paths.PathReferenceProviderBase
 import com.intellij.openapi.paths.PsiDynaReference
@@ -16,11 +17,10 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueLoaderPathReferenceProvider : PathReferenceProviderBase() {
-
   override fun createReferences(psiElement: PsiElement,
                                 offset: Int,
                                 text: String,
-                                references: MutableList<PsiReference>,
+                                references: MutableList<in PsiReference>,
                                 soft: Boolean): Boolean {
     // Vue-loader strips `~` and treats the rest as module reference (require parameter)
     // and if first char is `@` the whole string is treated as module reference.
@@ -92,7 +92,7 @@ class VueLoaderPathReferenceProvider : PathReferenceProviderBase() {
     return psiElement.containingFile
              .let {
                it.language == VueLanguage.INSTANCE
-               && it.originalFile.virtualFile.let { vf -> vf == null || vf.fileType == VueFileType.INSTANCE }
+               && it.originalFile.virtualFile.let { vf -> vf == null || FileTypeRegistry.getInstance().isFileOfType(vf, VueFileType.INSTANCE) }
              }
            && isVueContext(psiElement)
   }

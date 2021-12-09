@@ -69,7 +69,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     FlexStructureViewClassElement(@NotNull JSClass clazz, boolean inherited) {
-      super(Collections.singletonList(clazz), Collections.emptySet(), null, true, inherited);
+      super(Collections.singletonList(clazz), (OwnAndAncestorSiblings)null, null, true, inherited);
       myFile = (XmlFile)clazz.getContainingFile();
     }
 
@@ -79,7 +79,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected List<StructureViewTreeElement> collectMyElements(Set<String> referencedNames, 
+    protected List<StructureViewTreeElement> collectMyElements(@NotNull Set<String> outChildrenNames,
                                                                JSQualifiedName ns,
                                                                PsiFile contextFile) {
       List<StructureViewTreeElement> result = new ArrayList<>();
@@ -113,12 +113,13 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected JSStructureViewElement createStructureViewElement(PsiElement element, Set<String> parentReferencedNames) {
+    protected JSStructureViewElement createStructureViewElement(PsiElement element,
+                                                                @Nullable OwnAndAncestorSiblings ownAndAncestorSiblings) {
       if (element instanceof XmlBackedJSClassImpl) {
         return new FlexStructureViewClassElement((JSClass)element);
       }
       else {
-        return super.createStructureViewElement(element, parentReferencedNames);
+        return super.createStructureViewElement(element, ownAndAncestorSiblings);
       }
     }
   }

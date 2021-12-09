@@ -15,6 +15,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.openapi.util.NlsContexts.DialogMessage;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -171,7 +172,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     });
   }
 
-  private static @Nullable String validateFolderName(String path, String label) {
+  private static @DialogMessage @Nullable String validateFolderName(String path, String label) {
     String fileName = PathUtil.getFileName(path);
     if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
       return XmlStringUtil.wrapInHtml(

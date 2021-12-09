@@ -1,0 +1,77 @@
+syntax = "proto2";
+
+package com.proto.pack.api_v2;
+
+option java_package = "com.test.api_v2";
+
+enum Shapes {
+  UNKNOWN = 0;
+  TRIANGLE = 3;
+  SQUARE = 4;
+  CIRCLE = 999;
+}
+
+enum weirdEnum_name {
+  weirdValue_name = 0;
+}
+
+message M1 {
+  optional int32 single_primitive = 1;
+  repeated int32 repeated_primitive = 2;
+  optional string single_string = 3;
+  repeated string repeated_string = 4;
+  optional bytes single_bytes = 5;
+  repeated bytes repeated_bytes = 6;
+  optional Shapes single_enum = 7;
+  repeated Shapes repeated_enum = 8;
+  optional bool single_bool = 9;
+  repeated bool repeated_bool = 10;
+
+  message NestedM1 {
+    // Make sure we can get the right parent message, despite same field name.
+    optional int32 single_primitive = 99;
+    repeated int32 repeated_primitive = 100;
+
+    enum NestedEnum {
+      UNKNOWN = 0;
+      KNOWN_KNOWNS = 1;
+      KNOWN_UNKNOWNS = 2;
+      UNKNOWN_UNKNOWNS = 3;
+    }
+    optional NestedEnum single_enum = 101;
+  }
+
+  optional NestedM1 single_message = 11;
+  repeated NestedM1 repeated_message = 12;
+
+  map<int32, int32> test_map = 13;
+
+  oneof test_oneof {
+    int32 int_choice = 14;
+    string string_choice = 15;
+  }
+
+  enum NestedEnum {
+    UNKNOWN = 0;
+    RED = 1;
+    GREEN = 2;
+    BLUE = 3;
+  }
+  optional NestedEnum single_enum2 = 16;
+
+  optional string single_string_piece = 17 [ctype = STRING_PIECE];
+  repeated string repeated_string_piece = 18 [ctype = STRING_PIECE];
+
+  optional group SingleGroupField = 99 { optional int32 in_group = 100; }
+}
+
+// Test a message name that doesn't follow the style guide.
+message weirdMessage_name {
+  // Make sure we can get the right parent message, despite same field name.
+  optional int32 single_primitive = 1;
+
+  // Field with an evil name. It would clash with:
+  // "repeated int32 repeated_primitive" -> getRepeatedPrimitiveCount(),
+  // if such a field existed.
+  optional int32 Repeated_primitiveCount = 3;
+}

@@ -7,9 +7,11 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,7 @@ public class DartProblemsPresentationHelper {
   }
 
   RowFilter<DartProblemsTableModel, Integer> getRowFilter() {
-    return new RowFilter<DartProblemsTableModel, Integer>() {
+    return new RowFilter<>() {
       @Override
       public boolean include(final @NotNull Entry<? extends DartProblemsTableModel, ? extends Integer> entry) {
         return shouldShowProblem(entry.getModel().getItem(entry.getIdentifier()));
@@ -200,30 +202,36 @@ public class DartProblemsPresentationHelper {
     myContentRootUpToDate = true;
   }
 
-  public @NotNull String getFilterTypeText() {
-    final StringBuilder builder = new StringBuilder();
+  public @NotNull @Nls String getFilterTypeText() {
+    final String filtering;
 
     switch (getFileFilterMode()) {
-      case All:
-        break;
       case ContentRoot:
-        builder.append("filtering by current content root");
+        filtering = DartBundle.message("dart.problems.view.filter.current.content.root");
         break;
       case DartPackage:
-        builder.append("filtering by current Dart package");
+        filtering = DartBundle.message("dart.problems.view.filter.current.dart.package");
         break;
       case Directory:
-        builder.append("filtering by current directory");
+        filtering = DartBundle.message("dart.problems.view.filter.current.directory");
         break;
       case File:
-        builder.append("filtering by current file");
+        filtering = DartBundle.message("dart.problems.view.filter.current.file");
         break;
+      default:
+        filtering = "";
     }
 
-    if (!isShowErrors() || !isShowWarnings() || !isShowHints()) {
-      builder.append(builder.length() == 0 ? "filtering by severity" : " and severity");
+    boolean filteringBySeverity = !isShowErrors() || !isShowWarnings() || !isShowHints();
+
+    if (!filteringBySeverity) {
+      return DartBundle.message("dart.problems.view.filtering.by.0", filtering);
     }
 
-    return builder.toString();
+    if (filtering.isEmpty()) {
+      return DartBundle.message("dart.problems.view.filtering.by.severity");
+    }
+
+    return DartBundle.message("dart.problems.view.filtering.by.0.and.severity", filtering);
   }
 }

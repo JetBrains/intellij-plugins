@@ -1,0 +1,10 @@
+syntax = "proto3";
+package foo.bar;
+
+message abcd {
+//  int32 x = 34;
+}<caret>
+
+option foo = {
+//  bar: 10
+}<caret>

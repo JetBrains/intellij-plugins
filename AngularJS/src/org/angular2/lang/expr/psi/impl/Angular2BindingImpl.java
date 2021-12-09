@@ -1,22 +1,32 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.psi.impl;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.xml.XmlAttribute;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.angular2.lang.expr.psi.Angular2Quote;
+import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.types.Angular2PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl implements Angular2Binding {
+import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
 
+public final class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl implements Angular2Binding {
   public Angular2BindingImpl(IElementType elementType) {
     super(elementType);
   }
@@ -38,11 +48,20 @@ public class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl implemen
       .orElse(null);
   }
 
-  static Angular2Quote getQuote(Angular2EmbeddedExpressionImpl expression) {
+  static @Nullable Angular2Quote getQuote(Angular2EmbeddedExpressionImpl expression) {
     return Arrays.stream(expression.getChildren(TokenSet.create(Angular2ElementTypes.QUOTE_STATEMENT)))
       .map(node -> node.getPsi(Angular2Quote.class))
       .findFirst()
       .orElse(null);
+  }
+
+  public static @Nullable XmlAttribute getEnclosingAttribute(Angular2EmbeddedExpression expression) {
+    XmlAttribute attribute = getParentOfType(expression, XmlAttribute.class);
+    if (attribute == null) {
+      attribute = getParentOfType(InjectedLanguageManager.getInstance(expression.getProject()).getInjectionHost(expression),
+                                  XmlAttribute.class);
+    }
+    return attribute;
   }
 
   @Override

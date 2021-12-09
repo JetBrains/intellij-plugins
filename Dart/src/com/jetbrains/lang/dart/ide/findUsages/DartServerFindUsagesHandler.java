@@ -48,7 +48,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
     final Project project = ReadAction.compute(this::getProject);
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
 
-    final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
+    final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<>() {
       @Override
       public void consumeInReadAction(SearchResult result) {
         if (result.getKind().equals(SearchResultKind.DECLARATION)) return;

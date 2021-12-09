@@ -5,17 +5,16 @@
   <category>JavaScript Frameworks and Tools</category>
   <resource-bundle>messages.PhoneGapBundle</resource-bundle>
 
-  <description><![CDATA[
-        <h4>Cordova integration for IntelliJ Platform.</h4>
-        <br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
-
-        <p>* Cordova Project wizard</p>
-        <p>* Run Cordova application from IntelliJ toolbar</p>
-        <p>* Code completion for event types</p>
-        <p>* PhoneGap support</p>
-        <p>* Ionic support</p>
-        <p>See README.md</p>
-
+  <description><![CDATA[  
+Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this support:
+<ul>
+<li>Cordova project template </li>
+<li>Run/debug configuration template </li>
+<li>Code completion for event types </li>
+<li>PhoneGap support </li>
+</ul>
+<p>WebStorm comes with this plugin bundled, so Cordova support is available by default in it.
+<p>For more information, check out our <a href="https://www.jetbrains.com/help/webstorm/using-phonegap-cordova.html">documentation</a>.
     ]]></description>
 
   <depends>com.intellij.modules.lang</depends>
@@ -23,16 +22,16 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType
-        implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType"/>
+      implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType"/>
     <!--<programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>-->
 
     <applicationService serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
-    
+
     <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
-    <postStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
+    <backgroundPostStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
     <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>
-    <notificationAllowlist groupIds="PhoneGap notification;Cordova Generator"/>
+    <notificationGroup id="PhoneGap notification" displayType="BALLOON"/>
   </extensions>
 
 

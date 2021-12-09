@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -8,7 +8,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +23,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
+
 public class ScenarioToOutlineIntention implements IntentionAction {
   public static final String ARGUMENT = "argument";
 
@@ -36,7 +37,7 @@ public class ScenarioToOutlineIntention implements IntentionAction {
   @Override
   @NotNull
   public String getFamilyName() {
-    return "Cucumber";
+    return CucumberBundle.message("intention.convert.scenario.to.outline.name");
   }
 
   @Override
@@ -85,9 +86,7 @@ public class ScenarioToOutlineIntention implements IntentionAction {
     newScenarioText.append(keywordsTable.getScenarioOutlineKeyword()).append(": ").append(scenario.getScenarioName());
     Map<String, String> examples = new LinkedHashMap<>();
     for(GherkinStep step: scenario.getSteps()) {
-
-      PsiReference[] references = step.getReferences();
-      final CucumberStepReference reference = references.length > 0 ? (CucumberStepReference)step.getReferences()[0] : null;
+      CucumberStepReference reference = getCucumberStepReference(step);
       final AbstractStepDefinition definition = reference != null ? reference.resolveToDefinition() : null;
       if (definition != null) {
         String stepName = replaceVarNames(step.getName(), definition, examples);

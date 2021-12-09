@@ -5,9 +5,9 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.tapestry.psi.TelLexer;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage.*;
@@ -16,7 +16,7 @@ import static com.intellij.tapestry.psi.TelTokenTypes.*;
 /**
  * @author Alexey Chmutov
  */
-public class TelHighlighter extends SyntaxHighlighterBase {
+public final class TelHighlighter extends SyntaxHighlighterBase {
   @Override
   @NotNull
   public Lexer getHighlightingLexer() {
@@ -35,7 +35,7 @@ public class TelHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> ourMap;
 
   static {
-    ourMap = new THashMap<>();
+    ourMap = new HashMap<>();
     SyntaxHighlighterBase.fillMap(ourMap, TEL_BOUNDS, TAP5_EL_START, TAP5_EL_END);
     SyntaxHighlighterBase.fillMap(ourMap, TEL_IDENT, TAP5_EL_IDENTIFIER);
     SyntaxHighlighterBase.fillMap(ourMap, TEL_DOT, TAP5_EL_DOT, TAP5_EL_COLON, TAP5_EL_COMMA, TAP5_EL_QUESTION_DOT, TAP5_EL_RANGE, TAP5_EL_EXCLAMATION);

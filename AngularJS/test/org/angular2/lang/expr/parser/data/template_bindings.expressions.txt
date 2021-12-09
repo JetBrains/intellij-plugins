@@ -179,7 +179,7 @@ JSFile:test.expressions.template_bindings
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('b')
       JSAssignmentExpression
-        PsiErrorElement:expression expected
+        PsiErrorElement:Expression expected
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression
@@ -188,7 +188,7 @@ JSFile:test.expressions.template_bindings
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:COLON)(':')
@@ -277,7 +277,7 @@ JSFile:test.expressions.template_bindings
     Angular2TemplateBinding <expressionsTodoService, false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('todoService')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:DOT)('.')
@@ -324,7 +324,7 @@ JSFile:test.expressions.template_bindings
     Angular2TemplateBinding <expressionsTodoService, false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('todoService')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:DOT)('.')

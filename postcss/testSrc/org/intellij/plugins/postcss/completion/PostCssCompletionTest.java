@@ -38,7 +38,7 @@ public abstract class PostCssCompletionTest extends PostCssFixtureTestCase {
     for (int i = 0; i < expectedItems.length; i++) {
       final LookupElement lookupElement = lookupElements[i];
       if (lookupElement instanceof PrioritizedLookupElement<?>) {
-        final double p = ((PrioritizedLookupElement)lookupElement).getPriority();
+        final double p = ((PrioritizedLookupElement<?>)lookupElement).getPriority();
         if (priority != 0 && priority != p) {
           fail("There are lookup elements with different priorities among top " + expectedItems.length + " completion items");
         }

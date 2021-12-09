@@ -19,12 +19,12 @@ import com.intellij.facet.ProjectFacetManager;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

@@ -1,13 +1,14 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import static com.intellij.util.ObjectUtils.coalesce;
+import static org.jetbrains.osgi.jps.OsgiJpsBundle.message;
 
 public class OsgiBuildSession implements Reporter {
   private static final Logger LOG = Logger.getInstance(OsgiBuildSession.class);
@@ -43,7 +45,7 @@ public class OsgiBuildSession implements Reporter {
   private CompileContext myContext;
   private JpsOsmorcModuleExtension myExtension;
   private JpsModule myModule;
-  private String myMessagePrefix;
+  private @NlsSafe String myModulePrefix;
   private File myOutputJarFile;
   private Collection<File> myOutputJarFiles;
   private File myModuleOutputDir;
@@ -57,9 +59,9 @@ public class OsgiBuildSession implements Reporter {
     myContext = context;
     myExtension = target.getExtension();
     myModule = target.getModule();
-    myMessagePrefix = "[" + myModule.getName() + "] ";
+    myModulePrefix = "[" + myModule.getName() + "] ";
 
-    progress("Building OSGi bundle");
+    progress(message("session.progress"));
 
     try {
       prepare();
@@ -72,7 +74,7 @@ public class OsgiBuildSession implements Reporter {
 
     for (File jarFile : myOutputJarFiles) {
       if (!jarFile.exists()) {
-        error("Bundle was not built: " + jarFile, null, null, -1);
+        error(message("session.bundle.failed", jarFile), null, null, -1);
         return;
       }
     }
@@ -88,12 +90,12 @@ public class OsgiBuildSession implements Reporter {
   private void prepare() throws OsgiBuildException {
     myModuleOutputDir = JpsJavaExtensionService.getInstance().getOutputDirectory(myModule, false);
     if (myModuleOutputDir == null) {
-      throw new OsgiBuildException("Unable to determine the compiler output path for the module.");
+      throw new OsgiBuildException(message("session.cannot.locate.output"));
     }
 
     String jarFileLocation = myExtension.getJarFileLocation();
     if (jarFileLocation.isEmpty()) {
-      throw new OsgiBuildException("Bundle path is empty - please check OSGi facet settings.");
+      throw new OsgiBuildException(message("session.bundle.path.empty"));
     }
 
     myOutputJarFile = new File(jarFileLocation);
@@ -101,11 +103,11 @@ public class OsgiBuildSession implements Reporter {
 
     for (File jarFile : myOutputJarFiles) {
       if (!FileUtil.delete(jarFile)) {
-        throw new OsgiBuildException("Can't delete bundle file '" + jarFile + "'.");
+        throw new OsgiBuildException(message("session.cannot.delete.bundle", jarFile));
       }
     }
     if (!FileUtil.createParentDirs(myOutputJarFile)) {
-      throw new OsgiBuildException("Cannot create a directory for bundles '" + myOutputJarFile.getParent() + "'.");
+      throw new OsgiBuildException(message("session.cannot.create.output", myOutputJarFile.getParent()));
     }
 
     List<File> classes = new SmartList<>();
@@ -138,13 +140,13 @@ public class OsgiBuildSession implements Reporter {
   }
 
   private void doBuild() throws OsgiBuildException {
-    progress("Running Bnd to build the bundle");
+    progress(message("session.running.bnd"));
 
     if (myExtension.isUseBndFile()) {
       String bndPath = myExtension.getBndFileLocation();
       File bndFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bndPath);
       if (bndFile == null || !bndFile.isFile()) {
-        throw new OsgiBuildException("Bnd file missing '" + bndPath + "' - please check OSGi facet settings.");
+        throw new OsgiBuildException(message("session.bnd.missing", bndPath));
       }
 
       mySourceToReport = bndFile.getAbsolutePath();
@@ -152,15 +154,56 @@ public class OsgiBuildSession implements Reporter {
         myBndWrapper.build(bndFile, myClasses, mySources, myOutputJarFile);
       }
       catch (Exception e) {
-        throw new OsgiBuildException("Unexpected build error", e, null);
+        throw new OsgiBuildException(message("session.unknown.error"), e, null);
       }
       mySourceToReport = null;
+    }
+    else if (myExtension.isUseBndMavenPlugin()) {
+      File bndFile = myExtension.getBundleDescriptorFile(), base = null;
+      if (bndFile != null && bndFile.isFile()) {
+        // explicitly specified .bnd file that exists
+        mySourceToReport = bndFile.getAbsolutePath();
+      }
+      else if (StringUtil.isNotEmpty(myExtension.getBndFileLocation())) {
+        // explicitly specified .bnd file that does not exist - fail to report a build error
+        throw new OsgiBuildException(message("session.bnd.missing", myExtension.getBndFileLocation()));
+      }
+      else {
+        // no .bnd file specified, try to fallback to the default bnd.bnd file next to the pom.xml
+        File mavenProjectPath = OsgiBuildUtil.getMavenProjectPath(myContext, myModule);
+        if (mavenProjectPath == null) {
+          throw new OsgiBuildException(message("session.pom.missing"));
+        }
+
+        bndFile = new File(mavenProjectPath.getParentFile(), "bnd.bnd");
+        if (bndFile.isFile()) {
+          mySourceToReport = bndFile.getAbsolutePath();
+        }
+        else {
+          bndFile = null;
+          // default not found, use the pom.xml location as the base and error source
+          mySourceToReport = mavenProjectPath.getAbsolutePath();
+          base = mavenProjectPath.getParentFile();
+        }
+      }
+
+      Properties mavenProperties = OsgiBuildUtil.getMavenProjectProperties(myContext, myModule);
+      try {
+        myBndWrapper.build(bndFile, myExtension.getAdditionalProperties(), mavenProperties,
+                           myClasses, mySources, base, myModuleOutputDir, myOutputJarFile);
+      }
+      catch (Exception e) {
+        throw new OsgiBuildException(message("session.unknown.error"), e, null);
+      }
+      finally {
+        mySourceToReport = null;
+      }
     }
     else if (myExtension.isUseBundlorFile()) {
       String bundlorPath = myExtension.getBundlorFileLocation();
       File bundlorFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bundlorPath);
       if (bundlorFile == null) {
-        throw new OsgiBuildException("Bundlor file missing '" + bundlorPath + "' - please check OSGi facet settings.");
+        throw new OsgiBuildException(message("session.bundlor.missing", bundlorPath));
       }
 
       File tempFile = new File(myOutputJarFile.getAbsolutePath() + ".tmp.jar");
@@ -170,20 +213,20 @@ public class OsgiBuildSession implements Reporter {
         myBndWrapper.build(properties, myClasses, mySources, tempFile);
       }
       catch (Exception e) {
-        throw new OsgiBuildException("Unexpected build error", e, null);
+        throw new OsgiBuildException(message("session.unknown.error"), e, null);
       }
 
-      progress("Running Bundlor to calculate the manifest");
+      progress(message("session.bundlor.running"));
       try {
         Properties properties = OsgiBuildUtil.getMavenProjectProperties(myContext, myModule);
         List<String> warnings = new BundlorWrapper().wrapModule(properties, tempFile, myOutputJarFile, bundlorFile);
-        for (String warning : warnings) {
+        for (@NlsSafe String warning : warnings) {
           warning(warning, null, bundlorFile.getPath(), -1);
         }
       }
       finally {
         if (!FileUtil.delete(tempFile)) {
-          warning("Can't delete a temporary file '" + tempFile + "'", null, null, -1);
+          warning(message("session.bundlor.temp.file", tempFile), null, null, -1);
         }
       }
     }
@@ -198,13 +241,13 @@ public class OsgiBuildSession implements Reporter {
         myBndWrapper.build(buildProperties, myClasses, mySources, myOutputJarFile);
       }
       catch (Exception e) {
-        throw new OsgiBuildException("Unexpected build error", e, null);
+        throw new OsgiBuildException(message("session.unknown.error"), e, null);
       }
       mySourceToReport = null;
     }
     else {
       ManifestGenerationMode mode = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties().myManifestGenerationMode;
-      throw new OsgiBuildException("Internal error (unknown build method `" + mode + "`)");
+      throw new OsgiBuildException(message("session.unknown.method", mode));
     }
   }
 
@@ -233,7 +276,7 @@ public class OsgiBuildSession implements Reporter {
     else {
       File manifestFile = myExtension.getManifestFile();
       if (manifestFile == null) {
-        throw new OsgiBuildException("Manifest file '" + myExtension.getManifestLocation() + "' missing - please check OSGi facet settings.");
+        throw new OsgiBuildException(message("session.manifest.missing", myExtension.getManifestLocation()));
       }
       properties.put(Constants.MANIFEST, manifestFile.getAbsolutePath());
     }
@@ -267,14 +310,14 @@ public class OsgiBuildSession implements Reporter {
         Pattern.compile(pattern);
       }
       catch (PatternSyntaxException e) {
-        throw new OsgiBuildException("The file ignore pattern is invalid - please check OSGi facet settings.");
+        throw new OsgiBuildException(message("session.bad.pattern"));
       }
       properties.put(Constants.DONOTCOPY, pattern);
     }
 
     if (myExtension.isOsmorcControlsManifest()) {
       // support the {local-packages} instruction
-      progress("Calculating local packages");
+      progress(message("session.progress.local"));
       LocalPackageCollector.addLocalPackages(myModuleOutputDir, properties);
     }
 
@@ -299,7 +342,7 @@ public class OsgiBuildSession implements Reporter {
 
   @Override
   public void progress(@NotNull String message) {
-    myContext.processMessage(new ProgressMessage(myMessagePrefix + message));
+    myContext.processMessage(new ProgressMessage(myModulePrefix + message));
   }
 
   @Override
@@ -312,9 +355,9 @@ public class OsgiBuildSession implements Reporter {
     process(BuildMessage.Kind.ERROR, message, t, sourcePath, lineNum);
   }
 
-  private void process(BuildMessage.Kind kind, String text, Throwable t, String path, int line) {
+  private void process(BuildMessage.Kind kind, @Nls String text, Throwable t, String path, int line) {
     LOG.warn(text, t);
-    myContext.processMessage(new CompilerMessage(OsmorcBuilder.ID, kind, myMessagePrefix + text, coalesce(path, mySourceToReport), -1, -1, -1, line, -1));
+    myContext.processMessage(new CompilerMessage(OsmorcBuilder.ID, kind, myModulePrefix + text, coalesce(path, mySourceToReport), -1, -1, -1, line, -1));
   }
 
   @Override

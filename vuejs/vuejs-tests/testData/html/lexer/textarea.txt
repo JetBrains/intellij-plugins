@@ -1,0 +1,7 @@
+XML_START_TAG_START ('<')
+XML_NAME ('textarea')
+XML_TAG_END ('>')
+HTML_RAW_TEXT ('with { some } {{wierd}} <stuff> in it')
+XML_END_TAG_START ('</')
+XML_NAME ('textarea')
+XML_TAG_END ('>')

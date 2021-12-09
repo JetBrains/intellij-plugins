@@ -61,8 +61,8 @@ public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTyp
   }
 
   @Override
-  protected int resolvedHashCodeImpl() {
-    return Objects.hash(getClass(), getSourceElement());
+  protected int hashCodeImpl() {
+    return getSourceHashCode();
   }
 
   @Override

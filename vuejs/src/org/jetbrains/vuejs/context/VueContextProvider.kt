@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.context
 
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -8,9 +8,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.ScheduledForRemoval(inVersion = "2022.1")
+@Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
 interface VueContextProvider {
-
   /**
    * Context providers can determine whether a particular, parsed file should have Vue support enabled.
    * In such files Vue expressions will be injected. This API serves for a purpose of enabling Vue.js
@@ -47,6 +49,9 @@ interface VueContextProvider {
   fun isVueContextForbidden(contextFile: VirtualFile, project: Project): Boolean = false
 
   companion object {
+    @Suppress("DEPRECATION")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2022.1")
+    @Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
     val VUE_CONTEXT_PROVIDER_EP = ExtensionPointName.create<VueContextProvider>("com.intellij.vuejs.contextProvider")
   }
 }

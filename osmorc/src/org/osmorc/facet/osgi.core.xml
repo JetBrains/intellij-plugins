@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
+  <artifact version="8.0.0">
+    <item url="https://repo1.maven.org/maven2/org/osgi/osgi.core/8.0.0/osgi.core-8.0.0.jar"
+          srcUrl="https://repo1.maven.org/maven2/org/osgi/osgi.core/8.0.0/osgi.core-8.0.0-sources.jar"/>
+  </artifact>
+  <artifact version="7.0.0">
+    <item url="https://repo1.maven.org/maven2/org/osgi/osgi.core/7.0.0/osgi.core-7.0.0.jar"
+          srcUrl="https://repo1.maven.org/maven2/org/osgi/osgi.core/7.0.0/osgi.core-7.0.0-sources.jar"/>
+  </artifact>
   <artifact version="6.0.0">
-    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0.jar"
-          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0-sources.jar"/>
+    <item url="https://repo1.maven.org/maven2/org/osgi/osgi.core/6.0.0/osgi.core-6.0.0.jar"
+          srcUrl="https://repo1.maven.org/maven2/org/osgi/osgi.core/6.0.0/osgi.core-6.0.0-sources.jar"/>
   </artifact>
   <artifact version="5.0.0">
-    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0.jar"
-          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0-sources.jar"/>
+    <item url="https://repo1.maven.org/maven2/org/osgi/osgi.core/5.0.0/osgi.core-5.0.0.jar"
+          srcUrl="https://repo1.maven.org/maven2/org/osgi/osgi.core/5.0.0/osgi.core-5.0.0-sources.jar"/>
   </artifact>
   <artifact version="4.3.1">
-    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.3.1/org.osgi.core-4.3.1.jar"
-          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.3.1/org.osgi.core-4.3.1-sources.jar"/>
-  </artifact>
-  <artifact version="4.2.0">
-    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"
-          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0-sources.jar"/>
-  </artifact>
-  <artifact version="4.1.0">
-    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.1.0/org.osgi.core-4.1.0.jar"
-          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.1.0/org.osgi.core-4.0.0-sources.jar"/>
-  </artifact>
-  <artifact version="4.0.1">
-    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.0.1/org.osgi.core-4.0.1.jar"
-          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.0.1/org.osgi.core-4.0.1-sources.jar"/>
+    <item url="https://repo1.maven.org/maven2/org/osgi/osgi.core/4.3.1/osgi.core-4.3.1.jar"
+          srcUrl="https://repo1.maven.org/maven2/org/osgi/osgi.core/4.3.1/osgi.core-4.3.1-sources.jar"/>
   </artifact>
 </artifacts>

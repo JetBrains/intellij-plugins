@@ -15,5 +15,7 @@ public abstract class JavaStepDefinitionFactory {
     return new JavaStep2xDefinitionFactory();
   }
   
-  public abstract AbstractJavaStepDefinition buildStepDefinition(@NotNull PsiElement element, @NotNull String annotationClassName);
+  public abstract AbstractJavaStepDefinition buildStepDefinition(@NotNull PsiElement element,
+                                                                 @NotNull Module module,
+                                                                 @NotNull String annotationClassName);
 }

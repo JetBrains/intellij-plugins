@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+message MyType {
+  int32 crazy_option_field = 1;
+}
+
+extend proto2.FieldOptions {
+  MyType test_field_option = 2000;
+}
+
+message TestMessage {
+  // Field with extension option
+  int32 test_field = 1 [(test_field_option).crazy_opt<caret>ion_field = 1];
+}

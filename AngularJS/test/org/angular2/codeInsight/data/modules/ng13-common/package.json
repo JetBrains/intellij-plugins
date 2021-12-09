@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@angular/core": "*",
+    "@angular/common": "*",
+    "@angular/material": "*",
+    "@angular/platform-browser": "*"
+  }
+}

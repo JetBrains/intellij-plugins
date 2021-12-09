@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.assists;
 
 import com.google.common.collect.Maps;
@@ -7,7 +7,8 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
@@ -16,6 +17,7 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -26,6 +28,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
-public class AssistUtils {
+public final class AssistUtils {
   /**
    * @return {@code true} if file contents changed, {@code false} otherwise
    */
@@ -69,6 +72,7 @@ public class AssistUtils {
     }
 
     // do apply the change
+    @NlsSafe String message = sourceChange.getMessage();
     CommandProcessor.getInstance().executeCommand(project, () -> {
       final ChangeTarget linkedEditTarget = withLinkedEdits ? findChangeTarget(project, sourceChange) : null;
       List<SourceEditInfo> sourceEditInfos = null;
@@ -100,7 +104,7 @@ public class AssistUtils {
           }
         }
       }
-    }, sourceChange.getMessage(), null);
+    }, message, null);
   }
 
   public static List<SourceEditInfo> applySourceEdits(@NotNull final Project project,
@@ -164,7 +168,7 @@ public class AssistUtils {
 
       final VirtualFile file = findVirtualFile(fileEdit);
       if (file == null) {
-        throw new DartSourceEditException("Failed to edit file, file not found: " + fileEdit.getFile());
+        throw new DartSourceEditException(DartBundle.message("error.failed.to.edit.file.file.not.found.0", fileEdit.getFile()));
       }
 
       if (isInContent(project, file)) {
@@ -172,7 +176,8 @@ public class AssistUtils {
       }
     }
     if (map.isEmpty() && !fileEdits.isEmpty()) {
-      throw new DartSourceEditException("None of the files were in this project content: " + fileEdits.get(0).getFile());
+      throw new DartSourceEditException(
+        DartBundle.message("error.none.of.the.files.were.in.this.project.content.0", fileEdits.get(0).getFile()));
     }
     return map;
   }
@@ -295,7 +300,8 @@ public class AssistUtils {
           if (firstPosition) {
             firstPosition = false;
             final String text = editor.getDocument().getText(range);
-            ConstantNode expression = new ConstantNode(text).withLookupItems(ContainerUtil.map(group.getSuggestions(), AssistUtils::createLookupElement));
+            ConstantNode expression =
+              new ConstantNode(text).withLookupItems(ContainerUtil.map(group.getSuggestions(), AssistUtils::createLookupElement));
             builder.replaceRange(range, mainVar, expression, true);
           }
           else {
@@ -336,7 +342,7 @@ public class AssistUtils {
 
   private static LookupElement createLookupElement(LinkedEditSuggestion suggestion) {
     String value = suggestion.getValue();
-    return LookupElementBuilder.create(value).withRenderer(new LookupElementRenderer<LookupElement>() {
+    return LookupElementBuilder.create(value).withRenderer(new LookupElementRenderer<>() {
       @Override
       public void renderElement(final LookupElement element, final LookupElementPresentation presentation) {
         final Icon icon = getIcon(suggestion.getKind());
@@ -361,7 +367,6 @@ public class AssistUtils {
     }
     return null;
   }
-
 }
 
 class ChangeTarget {

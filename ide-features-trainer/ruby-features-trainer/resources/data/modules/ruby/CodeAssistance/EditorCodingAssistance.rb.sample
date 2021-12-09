@@ -1,0 +1,16 @@
+<caret>
+class Cat
+  @happiness = 50
+
+  def say_meow
+    print "meow"
+  end
+
+  def eat
+    @happiness = 100
+  end
+end
+
+cat = Cat.new
+cat.say_meow("meow")
+cat.eat

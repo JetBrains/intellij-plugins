@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.roots.OrderRootType;
@@ -35,7 +35,6 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
       "file://" + sdkHomePath + "/lib/mirrors",
       "file://" + sdkHomePath + "/lib/svg",
       "file://" + sdkHomePath + "/lib/typed_data",
-      "file://" + sdkHomePath + "/lib/wasm",
       "file://" + sdkHomePath + "/lib/web_audio",
       "file://" + sdkHomePath + "/lib/web_gl",
       "file://" + sdkHomePath + "/lib/web_sql",

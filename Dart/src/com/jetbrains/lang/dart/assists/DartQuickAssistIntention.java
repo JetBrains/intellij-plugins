@@ -5,6 +5,7 @@ import com.intellij.CommonBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -41,7 +42,10 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
 
   @Override
   public @NotNull String getText() {
-    return sourceChange == null ? "" : sourceChange.getMessage();
+    if (sourceChange == null) return "";
+
+    @NlsSafe String message = sourceChange.getMessage();
+    return message;
   }
 
   @Override

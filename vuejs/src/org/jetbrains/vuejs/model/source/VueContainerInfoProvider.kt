@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.DecoratedContainerInfoProvider
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
@@ -13,12 +15,16 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
   @JvmDefault
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo?
+  fun getAdditionalComponents(scope: GlobalSearchScope, sourceComponents: ComponentsInfo): ComponentsInfo? = null
 
   @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
                             standardProperties: MutableMap<String, PropertySignature>)
     : Collection<PropertySignature> = emptyList()
+
+  data class ComponentsInfo(val local: MultiMap<String, VueComponent>, val global: MultiMap<String, VueComponent>) {
+    fun get(local: Boolean): MultiMap<String, VueComponent> = if (local) this.local else global
+  }
 
   interface VueContainerInfo {
     val components: Map<String, VueComponent> get() = emptyMap()
@@ -48,10 +54,10 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
   abstract class VueDecoratedContainerInfoProvider(createInfo: (clazz: JSClass) -> VueContainerInfo)
     : DecoratedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider
 
-  abstract class VueInitializedContainerInfoProvider(createInfo: (initializer: JSObjectLiteralExpression) -> VueContainerInfo)
+  abstract class VueInitializedContainerInfoProvider(createInfo: (initializer: JSElement) -> VueContainerInfo)
     : InitializedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider {
 
-    protected abstract class VueInitializedContainerInfo(declaration: JSObjectLiteralExpression)
+    protected abstract class VueInitializedContainerInfo(declaration: JSElement)
       : InitializedContainerInfo(declaration), VueContainerInfo
 
   }

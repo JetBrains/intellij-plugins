@@ -1,0 +1,129 @@
+{
+  parserClass = "com.jetbrains.lang.makefile.MakefileParser"
+  parserUtilClass = "com.jetbrains.lang.makefile.MakefileParserUtil"
+  extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix = "Makefile"
+  psiImplClassSuffix = "Impl"
+  psiPackage = "com.jetbrains.lang.makefile.psi"
+  psiImplPackage = "com.jetbrains.lang.makefile.psi.impl"
+
+  elementTypeHolderClass = "com.jetbrains.lang.makefile.psi.MakefileTypes"
+  elementTypeClass = "com.jetbrains.lang.makefile.psi.MakefileElementType"
+  tokenTypeClass = "com.jetbrains.lang.makefile.psi.MakefileTokenType"
+
+  tokens = [
+    TAB = "\t"
+    COLON = ":"
+    SEMICOLON = ";"
+    COMMA = ","
+    ASSIGN = "="
+    PIPE = "|"
+    BACKTICK = "`"
+    QUOTE = "'"
+    DOUBLEQUOTE = "\""
+    ESCAPED_DOUBLEQUOTE = "\\\""
+
+    DOLLAR = "$"
+    OPEN_PAREN = "("
+    CLOSE_PAREN = ")"
+    OPEN_CURLY = "{"
+    CLOSE_CURLY = "}"
+
+    KEYWORD_INCLUDE = "include"
+    KEYWORD_IFEQ = "ifeq"
+    KEYWORD_IFNEQ = "ifneq"
+    KEYWORD_IFDEF = "ifdef"
+    KEYWORD_IFNDEF = "ifndef"
+    KEYWORD_ELSE = "else"
+    KEYWORD_ENDIF = "endif"
+    KEYWORD_ENDEF = "endef"
+    KEYWORD_DEFINE = "define"
+    KEYWORD_UNDEFINE = "undefine"
+    KEYWORD_OVERRIDE = "override"
+    KEYWORD_EXPORT = "export"
+    KEYWORD_UNEXPORT = "unexport"
+    KEYWORD_PRIVATE = "private"
+    KEYWORD_VPATH = "vpath"
+  ]
+
+  psiImplUtilClass = "com.jetbrains.lang.makefile.psi.MakefilePsiImplUtil"
+}
+
+makefile ::= any*
+
+private stmt ::= (directive|conditional|variable-assignment|rule|command|function|macro|EOL)
+private recover ::= !(any)
+private any ::= !<<eof>> stmt {pin=1 recoverWhile=recover}
+
+directive ::= define|include|undefine|override|export|unexport|privatevar|vpath
+
+rule ::= target_line recipe? {methods=[getTargets]}
+recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="com.jetbrains.lang.makefile.psi.impl.MakefileRecipeElementImpl"}
+command ::= '\t'+ line EOL? {pin=1}
+inline_command ::= line
+private line ::= (<<parseLine>>|function|variable-usage|substitution|string)*
+private defline ::= (<<parseLineNotEndef>>|function|variable-usage|substitution|string)*
+substitution ::= '`' (<<parseLine>>|function|variable-usage|string)* '`' {pin=1 implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="com.jetbrains.lang.makefile.psi.impl.MakefileSubstitutionInjectionHost"}
+
+target_line ::= targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
+targets ::= target+
+
+target ::= target_part | (<<parseToDollarNoWhitespaceOrColon>> target_part) | <<parseNoWhitespaceOrColon>> {mixin="com.jetbrains.lang.makefile.psi.impl.MakefileTargetNamedElementImpl" implements=["com.jetbrains.lang.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="com.jetbrains.lang.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="com.jetbrains.lang.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
+private target_part ::= ((function | variable-usage) <<parseToDollarNoWhitespaceOrColonBehind>> target_part) | ((function | variable-usage) <<parseNoWhitespaceOrColonBehind>>)
+
+target_pattern ::= target
+
+prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
+normal_prerequisites ::= prerequisite* (split prerequisite*)*
+order_only_prerequisites ::= prerequisite* (split prerequisite*)*
+
+prerequisite ::= prerequisite_part | (<<parsePrereqToDollarNoWhitespace>> prerequisite_part) | <<parsePrereqNoWhitespace>> {mixin="com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
+private prerequisite_part ::= ((function | variable-usage) <<parsePrereqToDollarNoWhitespaceBehind>> prerequisite_part) | ((function | variable-usage) <<parsePrereqNoWhitespaceBehind>>)
+
+private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
+conditional ::= conditional-keyword condition EOL block conditional-else* 'endif' {pin=1}
+conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}
+condition ::= condition-parens | (condition-body condition-body?)
+private condition-parens ::= '(' (condition-body|',')* ')' {pin=1}
+private condition-body ::= variable-usage|function|string|identifier|'='|':'
+block ::= stmt*
+
+identifier ::= identifier_part | (<<parseToDollarNoWhitespace>> identifier_part) | <<parseNoWhitespace>>
+private identifier_part ::= ((function | variable-usage) <<parseToDollarNoWhitespaceBehind>> identifier_part) | ((function | variable-usage) <<parseNoWhitespaceBehind>>)
+
+meta variable-assignment ::= variable assignment variable-value {pin=2 methods=[getAssignment getValue]}
+private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
+variable ::= identifier {mixin="com.jetbrains.lang.makefile.psi.impl.MakefileVariableNamedElementImpl" implements=["com.jetbrains.lang.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] methods=[getName setName getNameIdentifier]}
+meta variable-value ::= line
+define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 methods=[getAssignment getValue]}
+undefine ::= 'undefine' variable EOL? {pin=1}
+override ::= 'override' (undefine|variable-assignment) {pin=1}
+export ::= 'export' (EOL | (variable-assignment|variable) EOL?)
+unexport ::= 'unexport' (EOL | (variable-assignment|variable) EOL?)
+private exportvar ::= 'export' variable-assignment {pin=1}
+privatevar ::= 'private' variable-assignment {pin=1}
+
+include ::= ('include'|'-include'|'sinclude') filename+ EOL?
+filename ::= identifier {mixin="com.jetbrains.lang.makefile.psi.impl.MakefileFilenameMixin"}
+
+vpath ::= 'vpath' (pattern 'include'? directory*)? EOL? {pin=1}
+pattern ::= identifier
+directory ::= identifier {mixin="com.jetbrains.lang.makefile.psi.impl.MakefileFilenameMixin"}
+
+private function-recover ::= !( ')' | EOL )
+function ::= '$' '(' function-name function-param* ')' {implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="com.jetbrains.lang.makefile.psi.impl.MakefileFunctionElementImpl" pin=3}
+function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'findstring'|
+                    'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
+                    'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
+                    'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
+meta function-param ::= (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split|'(' function-param ')'|'{'|'}')+ {recoverWhile=function-recover}
+
+variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars) {mixin="com.jetbrains.lang.makefile.psi.impl.MakefileVariableUsageMixin"}
+
+string ::= string-double-quoted | string-single-quoted
+private string-double-quoted ::= '"' (<<parseDoubleQuotedString>>|function|variable-usage)* '"' {pin=1}
+private string-single-quoted ::= "'" (<<parseSingleQuotedString>>|function|variable-usage)* "'" {pin=1}
+
+comment ::=
+doc_comment ::=

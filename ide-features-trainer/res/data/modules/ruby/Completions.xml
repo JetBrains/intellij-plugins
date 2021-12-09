@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Code Completion" lessonsPath="Completions/" version="0.3" id="ruby.completions" fileType="PROJECT" description="Basic, statement, smart type and other completion types">
-    <lesson-kt implementationClass="training.learn.lesson.ruby.completion.RubyBasicCompletionLesson"/>
-    <lesson-kt implementationClass="training.learn.lesson.ruby.completion.RubyHippieCompletionLesson"/>
-    <lesson-kt implementationClass="training.learn.lesson.ruby.completion.RubyPostfixCompletionLesson"/>
-    <lesson-kt implementationClass="training.learn.lesson.ruby.completion.RubyCompletionWithTabLesson"/>
-</module>

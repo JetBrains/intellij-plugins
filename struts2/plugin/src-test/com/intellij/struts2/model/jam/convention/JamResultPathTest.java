@@ -14,8 +14,8 @@
  */
 package com.intellij.struts2.model.jam.convention;
 
+import com.intellij.javaee.web.WebDirectoryElement;
 import com.intellij.lang.properties.IProperty;
-import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
   private final LightProjectDescriptor CONVENTION_WEB = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()
     .withStrutsFacet()
-    .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar")
+    .withStrutsConvention()
     .withWebModuleType();
 
   @NotNull

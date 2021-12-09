@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps.reference;
 
 import com.intellij.openapi.module.Module;
@@ -14,6 +14,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
@@ -24,9 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * @author yole
- */
+
 public class CucumberStepReference implements PsiPolyVariantReference {
   private static final MyResolver RESOLVER = new MyResolver();
 
@@ -111,7 +110,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getCachedValue(featureFile, () -> {
       List<AbstractStepDefinition> allStepDefinition = new ArrayList<>();
       for (CucumberJvmExtensionPoint e : frameworks) {
-        allStepDefinition.addAll(e.loadStepsFor(featureFile, module));
+        allStepDefinition.addAll(CucumberUtil.loadFrameworkSteps(e, featureFile, module));
       }
       return CachedValueProvider.Result.create(allStepDefinition, PsiModificationTracker.MODIFICATION_COUNT);
     });

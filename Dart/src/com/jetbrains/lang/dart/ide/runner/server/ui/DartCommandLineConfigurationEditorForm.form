@@ -28,7 +28,7 @@
         <properties>
           <inheritsPopupMenu value="true"/>
           <labelFor value="17e7a"/>
-          <text value="Dart &amp;file:"/>
+          <text resource-bundle="messages/DartBundle" key="command.line.run.config.label.dart.file"/>
         </properties>
       </component>
       <component id="c23d5" class="javax.swing.JLabel">
@@ -37,7 +37,7 @@
         </constraints>
         <properties>
           <labelFor value="c3dd1"/>
-          <text value="&amp;VM options:"/>
+          <text resource-bundle="messages/DartBundle" key="command.line.run.config.label.vm.options"/>
         </properties>
       </component>
       <component id="c3dd1" class="com.intellij.ui.RawCommandLineEditor" binding="myVMOptions">
@@ -53,7 +53,7 @@
         <properties>
           <inheritsPopupMenu value="true"/>
           <labelFor value="103fd"/>
-          <text value="Program a&amp;rguments:"/>
+          <text resource-bundle="messages/DartBundle" key="command.line.run.config.label.program.arguments"/>
         </properties>
       </component>
       <component id="103fd" class="com.intellij.ui.RawCommandLineEditor" binding="myArguments">
@@ -68,7 +68,7 @@
         </constraints>
         <properties>
           <labelFor value="849ec"/>
-          <text value="&amp;Working directory:"/>
+          <text resource-bundle="messages/DartBundle" key="command.line.run.config.label.working.directory"/>
         </properties>
       </component>
       <component id="849ec" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myWorkingDirectory">
@@ -83,7 +83,6 @@
         </constraints>
         <properties>
           <labelLocation value="West"/>
-          <text value="&amp;Environment variables"/>
         </properties>
       </component>
       <component id="62b97" class="com.intellij.ui.components.JBCheckBox" binding="myCheckedModeOrEnableAssertsCheckBox">
@@ -92,7 +91,7 @@
         </constraints>
         <properties>
           <margin top="2" left="0" bottom="2" right="3"/>
-          <text value="Checked mode or Enable asserts"/>
+          <text resource-bundle="messages/DartBundle" key="command.line.run.config.checkbox.enable.asserts"/>
         </properties>
       </component>
     </children>

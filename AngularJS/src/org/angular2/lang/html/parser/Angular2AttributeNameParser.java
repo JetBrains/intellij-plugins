@@ -1,15 +1,15 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.HtmlUtil;
-import org.angular2.codeInsight.tags.Angular2NgContentDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,15 +17,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.*;
 
-public class Angular2AttributeNameParser {
+public final class Angular2AttributeNameParser {
 
   @NonNls
-  private static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(
+  public static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(
     pair("class", "className"),
     pair("for", "htmlFor"),
     pair("formaction", "formAction"),
@@ -41,11 +40,11 @@ public class Angular2AttributeNameParser {
   }
 
   public static AttributeInfo parse(@NotNull String name) {
-    return parse(name, NG_TEMPLATE);
+    return parse(name, ELEMENT_NG_TEMPLATE);
   }
 
   public static @NotNull AttributeInfo parse(@NotNull String name, @Nullable XmlTag tag) {
-    return parse(name, tag != null ? tag.getLocalName() : NG_TEMPLATE);
+    return parse(name, tag != null ? tag.getLocalName() : ELEMENT_NG_TEMPLATE);
   }
 
   public static @NotNull AttributeInfo parse(@NotNull String name, @NotNull String tagName) {
@@ -83,7 +82,7 @@ public class Angular2AttributeNameParser {
     else if (name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
     }
-    else if (name.equals(Angular2NgContentDescriptor.ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
+    else if (name.equals(ATTR_SELECT) && tagName.equals(ELEMENT_NG_CONTENT)) {
       return new AttributeInfo(name, false, Angular2AttributeType.NG_CONTENT_SELECTOR);
     }
     else if (name.startsWith("i18n-")) {
@@ -193,7 +192,7 @@ public class Angular2AttributeNameParser {
   public static class AttributeInfo {
 
     public final @NotNull String name;
-    public final @Nullable String error;
+    public final @Nullable @Nls String error;
     public final @NotNull Angular2AttributeType type;
     public final boolean isCanonical;
 
@@ -201,7 +200,7 @@ public class Angular2AttributeNameParser {
       this(name, isCanonical, type, null);
     }
 
-    public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type, @Nullable String error) {
+    public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type, @Nullable @Nls String error) {
       this.name = name;
       this.error = error;
       this.type = type;
@@ -282,7 +281,7 @@ public class Angular2AttributeNameParser {
       this(name, isCanonical, animationPhase, null);
     }
 
-    public EventInfo(@NotNull String name, boolean isCanonical, @NotNull AnimationPhase animationPhase, @Nullable String error) {
+    public EventInfo(@NotNull String name, boolean isCanonical, @NotNull AnimationPhase animationPhase, @Nullable @Nls String error) {
       super(name, isCanonical, Angular2AttributeType.EVENT, error);
       this.animationPhase = animationPhase;
       this.eventType = EventType.ANIMATION;

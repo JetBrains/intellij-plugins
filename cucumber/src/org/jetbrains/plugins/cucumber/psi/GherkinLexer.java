@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lexer.LexerBase;
@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public class GherkinLexer extends LexerBase {
   protected CharSequence myBuffer = Strings.EMPTY_CHAR_SEQUENCE;
   protected int myStartOffset = 0;
@@ -34,7 +32,7 @@ public class GherkinLexer extends LexerBase {
   private final static int STATE_PARAMETER_INSIDE_PYSTRING = 6;
   private final static int STATE_PARAMETER_INSIDE_STEP = 7;
 
-  private static final String PYSTRING_MARKER = "\"\"\"";
+  public static final String PYSTRING_MARKER = "\"\"\"";
   private final GherkinKeywordProvider myKeywordProvider;
   private String myCurLanguage;
 

@@ -12,16 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.lang.ognl;
 
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.ui.JBUI;
-import icons.OgnlIcons;
+import com.intellij.ui.scale.JBUIScale;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -30,19 +27,14 @@ import javax.swing.*;
  * @author Yann C&eacute;bron
  */
 public final class OgnlFileType extends LanguageFileType {
-
   public static final OgnlFileType INSTANCE = new OgnlFileType();
 
-  private static final NotNullLazyValue<LayeredIcon> ICON = new AtomicNotNullLazyValue<LayeredIcon>() {
-    @NotNull
-    @Override
-    protected LayeredIcon compute() {
-      final LayeredIcon icon = new LayeredIcon(2);
-      icon.setIcon(FileTypes.PLAIN_TEXT.getIcon(), 0);
-      icon.setIcon(OgnlIcons.Action_small, 1, 0, 6);
-      return JBUI.scale(icon);
-    }
-  };
+  private static final NotNullLazyValue<LayeredIcon> ICON = NotNullLazyValue.atomicLazy(() -> {
+    final LayeredIcon icon = new LayeredIcon(2);
+    icon.setIcon(FileTypes.PLAIN_TEXT.getIcon(), 0);
+    icon.setIcon(OgnlIcons.Action_small, 1, 0, 6);
+    return JBUIScale.scaleIcon(icon);
+  });
 
   private OgnlFileType() {
     super(OgnlLanguage.INSTANCE);

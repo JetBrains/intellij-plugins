@@ -1,10 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.MultiRootJSLinterLanguageServiceManager;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,7 @@ public final class TslintLanguageServiceManager extends MultiRootJSLinterLanguag
 
   @NotNull
   public static TslintLanguageServiceManager getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, TslintLanguageServiceManager.class);
+    return project.getService(TslintLanguageServiceManager.class);
   }
 
   @NotNull

@@ -1,0 +1,226 @@
+syntax = "proto2";
+
+package foo.bar;
+
+message Extensions {
+  extensions 1 to max;
+}
+
+message DuplicateFieldNumbers {
+  optional string foo = 17;
+  optional int32 a = 1;
+  optional int32 b = 2;
+  optional int32 c = 3;
+  optional string bar = <error descr="Field number 17 has already been used by field 'foo'">17</error>;
+}
+
+message DuplicateFieldNumWithGroup {
+  optional int32 foo = 1;
+  optional group Group = <error descr="Field number 1 has already been used by field 'foo'">1</error> {
+    optional int32 okay = 1;
+  }
+}
+
+message DuplicateFieldNumWithOneof {
+  optional int32 foo = 1;
+  oneof oneof_field {
+    int32 a = <error descr="Field number 1 has already been used by field 'foo'">1</error>;
+    int32 b = 2;
+  }
+}
+
+message DuplicateFieldNumNested {
+  optional int32 foo = 1;
+  message Nested {
+    optional int32 bar = 1;
+    optional int32 baz = <error descr="Field number 1 has already been used by field 'bar'">1</error>;
+  }
+}
+
+message DuplicateFieldNumInExtendIsValid {
+  optional int32 foo = 10;
+  extend Extensions {
+    optional int32 bar = 10;  // This is valid; this field number is part of Extend.
+  }
+}
+
+message DuplicateFieldNames {
+  optional string foo = 1;
+  optional int32 a = 2;
+  optional int32 b = 3;
+  optional int32 c = 4;
+  optional int32 <error descr="'foo' is already defined in scope 'foo.bar.DuplicateFieldNames'">foo</error> = 5;
+}
+
+message DuplicateFieldNameWithGroup {
+  optional string foo = 1;
+  optional group <error descr="'foo' is already defined in scope 'foo.bar.DuplicateFieldNameWithGroup'">Foo</error> = 2 {
+    optional int32 foo = 1;
+  }
+}
+
+message DuplicateFieldNameWithOneof {
+  optional string foo = 1;
+  oneof oneof_field {
+    int32 <error descr="'foo' is already defined in scope 'foo.bar.DuplicateFieldNameWithOneof'">foo</error> = 2;
+  }
+}
+
+message DuplicateFieldNameWithExtend {
+  optional string foo = 1;
+  extend Extensions {
+    optional int32 <error descr="'foo' is already defined in scope 'foo.bar.DuplicateFieldNameWithExtend'">foo</error> = 2;
+  }
+}
+
+message FieldNumbersNotPositive {
+  optional string foo = <error descr="Field numbers must be positive integers">0</error>;
+}
+
+message ReservedNumbersNotPositiveInRange {
+  reserved 42, 13, <error descr="Reserved numbers must be positive integers">0 to 10</error>;
+}
+
+message ReservedNumbersNotPositiveSingular {
+  reserved <error descr="Reserved numbers must be positive integers">0</error>;
+}
+
+message FieldUsesReservedNumber {
+  optional int32 okay = 1;
+  optional int32 beginning = <error descr="Field 'beginning' uses reserved number 123">123</error>;
+  optional group Middle = <error descr="Field 'middle' uses reserved number 126">126</error> {
+    optional int32 x = 130;
+  }
+  optional int32 end = <error descr="Field 'end' uses reserved number 130">130</error>;
+  optional int32 not_overlap = 131;
+
+  reserved 123 to 130;
+}
+
+message FieldUsesSingularRange {
+  optional int32 foo = <error descr="Field 'foo' uses reserved number 10">10</error>;
+  reserved 10 to 10;
+}
+
+message ReservedToMax {
+  optional int32 foo = <error descr="Field 'foo' uses reserved number 536,870,911">536870911</error>;
+  reserved 10 to max;
+}
+
+message FieldVsEmptyRange {
+  optional int32 foo = 10;
+  reserved 10 to 9;
+}
+
+message FieldNumReservedByImplementation {
+  optional int32 beginning = <error descr="Field numbers 19,000 through 19,999 are reserved for the protobuf implementation">19000</error>;
+  optional group Other = <error descr="Field numbers 19,000 through 19,999 are reserved for the protobuf implementation">19789</error> {
+    optional int32 x = 1;
+  }
+  map<int32, int32> ending = <error descr="Field numbers 19,000 through 19,999 are reserved for the protobuf implementation">19999</error>;
+}
+
+message FieldNumberMax {
+  optional int32 max_field = 536870911;
+  optional int32 past_max_field = <error descr="Field numbers cannot be greater than 536,870,911">536870912</error>;
+  optional int32 not_int32 = <error descr="Integer value out of range">5368709111111</error>;
+}
+
+message FieldNumberNegative {
+  optional int32 negative_field = <error descr="Field numbers must be positive integers">-1</error>;
+}
+
+message ReservedRangeOverlaps {
+  reserved 10;
+  reserved <error descr="Reserved range 1 to 10 overlaps with already-defined range 10 to 10">1 to 10</error>;
+  reserved 20 to 22;
+  reserved <error descr="Reserved range 11 to 20 overlaps with already-defined range 20 to 22">11 to 20</error>;
+  reserved 26 to 30;
+  reserved <error descr="Reserved range 24 to 32 overlaps with already-defined range 26 to 30">24 to 32</error>;
+  reserved <error descr="Reserved range 28 to 28 overlaps with already-defined range 26 to 30">28</error>;
+}
+
+message ReservedRangeNegative {
+  reserved <error descr="Reserved numbers must be positive integers">-5 to 10</error>;
+}
+
+message ReservedNameTwice {
+  reserved "foo";
+  reserved <error descr="Field name 'foo' is reserved multiple times">"foo"</error>;
+}
+
+message UsesReservedName {
+  optional int32 bar = 1;
+  optional int32 <error descr="Field name 'foo' is reserved">foo</error> = 2;
+  optional int32 baz = 3;
+
+  reserved "foo";
+}
+
+message ExtensionsAreNotAffectedByReservedNames {
+  reserved "foo";
+  extensions 10 to 100;
+
+  extend ExtensionsAreNotAffectedByReservedNames {
+    optional int32 foo = 20;
+  }
+}
+
+// Test that both reference and field errors show up together.
+message FieldAndReferenceError {
+  optional <error descr="Cannot resolve symbol 'UnknownType'">UnknownType</error> foo = 1;
+  optional int32 use_same_field_number = <error descr="Field number 1 has already been used by field 'foo'">1</error>;
+}
+
+message ExtensionRangeOverlaps {
+  extensions 10;
+  extensions <error descr="Extension range 1 to 10 overlaps with already-defined range 10 to 10">1 to 10</error>;
+  extensions 20 to 22;
+  extensions <error descr="Extension range 11 to 20 overlaps with already-defined range 20 to 22">11 to 20</error>;
+  extensions 26 to 30;
+  extensions <error descr="Extension range 24 to 32 overlaps with already-defined range 26 to 30">24 to 32</error>;
+  extensions <error descr="Extension range 28 to 28 overlaps with already-defined range 26 to 30">28</error>;
+}
+
+message ExtensionOverlapsReserved {
+  reserved 10;
+  extensions <error descr="Extension range 1 to 10 overlaps with reserved range 10 to 10">1 to 10</error>;
+  reserved 20 to 22;
+  extensions <error descr="Extension range 11 to 20 overlaps with reserved range 20 to 22">11 to 20</error>;
+  reserved 26 to 30;
+  extensions <error descr="Extension range 24 to 32 overlaps with reserved range 26 to 30">24 to 32</error>;
+  extensions <error descr="Extension range 28 to 28 overlaps with reserved range 26 to 30">28</error>;
+}
+
+message ExtensionEndCanEqualStart {
+  extensions 3 to 3;
+}
+
+message ExtensionNumbersInvalid {
+  extensions <error descr="Extension end must be greater than start">3 to 1</error>;
+  extensions <error descr="Extension numbers must be positive integers">-3 to 1</error>;
+  extensions <error descr="Extension numbers cannot be greater than 536,870,911">10 to 536870912</error>;
+}
+
+message FieldUsesExtensionNumber {
+  extensions 10 to 20;
+  optional bool invalid = <error descr="Field 'invalid' uses extension number 12">12</error>;
+  extend FieldUsesExtensionNumber {
+    optional bool valid = 15;  // This is valid since it's part of an extension.
+  }
+}
+
+message WithJsonName {
+  extensions 15 to 30;
+  optional string with_json_name = 10 [json_name="foo"];
+}
+
+extend Extensions {
+  optional string ext = 20 [<error descr="Option 'json_name' is not allowed on extension fields">json_name</error>="foo"];
+}
+
+message SpecialOptionsMultipleTimes {
+  optional int32 json_name_and_default = 10 [default=10, json_name="foo"];
+  optional int32 two_defaults = 11 [default=10, <error descr="Option 'default' specified multiple times">default</error>=11];
+  optional int32 two_json_names = 12 [json_name="foo", <error descr="Option 'json_name' specified multiple times">json_name</error>="bar"];
+}

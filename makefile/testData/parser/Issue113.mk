@@ -1,0 +1,1 @@
+$(eval CFLAGS += $(DEPS:%=$$(CFLAGS_%)))

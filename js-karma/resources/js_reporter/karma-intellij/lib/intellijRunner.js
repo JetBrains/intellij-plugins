@@ -32,7 +32,7 @@ function stripExitCodeInfo(buffer) {
 
 function runWithConfig(config) {
   var options = {
-    hostname: config.hostname,
+    hostname: config.hostname || '127.0.0.1',
     path: config.urlRoot + 'run',
     port: config.port,
     method: 'POST',
@@ -81,10 +81,10 @@ function runTests() {
     refresh: true,
     urlRoot: urlRoot
   };
-  var testName = cli.getTestName();
+  var testNamePattern = cli.getTestNamePattern();
   // if testName is undefined, reset jasmine.getEnv().specFilter function
   // otherwise, last specified specFilter will be used
-  config.clientArgs = ['--grep=' + (testName || '')];
+  config.clientArgs = ['--testNamePattern_intellij=' + (testNamePattern || '')];
   runWithConfig(config);
 }
 

@@ -1,0 +1,134 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+import "lang/options/any.proto";
+
+enum EnumType {
+  NEGATIVE = -2;
+  FOO = 1;
+  BAR = 2;
+  HUNDRED = 100;
+}
+
+message SubType {
+  optional int32 a = 1;
+  optional int32 b = 2;
+}
+
+message AnyType {
+  optional int32 a = 1;
+  optional int32 b = 2;
+  optional google.protobuf.Any any = 3;
+}
+
+message OptionType {
+  repeated string str = 1;
+  repeated EnumType enumval = 2;
+  repeated SubType subval = 3;
+  repeated google.protobuf.Any any = 4;
+  extensions 100 to 200;
+
+  extend OptionType {
+    optional bool inner_ext_opt = 103;
+  }
+}
+
+message OtherType {
+  extensions 100 to 200;
+}
+
+extend google.protobuf.FileOptions {
+  optional OptionType opt = 5000;
+  optional google.protobuf.Any any = 5001;
+}
+
+extend OptionType {
+  repeated int32 ext_opt = 150;
+}
+
+extend OtherType {
+  repeated int32 other_ext_opt = 150;
+}
+
+option (opt) = {
+  // invalid
+  <error descr="Cannot resolve field 'missing'" type="WRONG_REF">missing</error>: 1
+  enumval: <error descr="Cannot resolve enum value 'BAZ'" type="WRONG_REF">BAZ</error>
+  enumval: <error descr="Cannot resolve enum value '5'" type="WRONG_REF">5</error>
+  [foo.bar.<error descr="Cannot resolve symbol 'invalid'" type="WRONG_REF">invalid</error>]: 10
+  [<error descr="Field 'other_ext_opt' does not extend type 'foo.bar.OptionType'">other_ext_opt</error>]: 10
+  [foo.bar.ext_opt]: <error descr="Integer value expected">true</error>
+
+  // valid
+  str: "abc"
+  enumval: FOO
+  enumval: -2
+  enumval: 100
+
+  // Test a value list
+  enumval: [
+    FOO,
+    <error descr="Cannot resolve enum value 'BAZ'" type="WRONG_REF">BAZ</error>,
+    BAR,
+    -2,
+    100,
+    <error descr="Cannot resolve enum value '5'" type="WRONG_REF">5</error>
+  ]
+  subval: [{a: 1, b: 2}, {<error descr="Cannot resolve field 'c'" type="WRONG_REF">c</error>: 3}]
+
+  // Extension names
+  [foo.bar.ext_opt]: 10
+  [bar.ext_opt]: 10
+  [ext_opt]: 10
+
+  // This doesn't work because relative lookup starts at the scope above the option descriptor
+  // message. I.e., this option's descriptor message is "foo.bar.OptionType", so the following
+  // unqualified extension option is searched for starting at "foo.bar.inner_ext_opt". This is
+  // generally fine, but in the edge case presented here the extension option is actually defined
+  // within the scope it is extending.
+  [<error descr="Cannot resolve symbol 'inner_ext_opt'" type="WRONG_REF">inner_ext_opt</error>]: true
+
+  // This works.
+  [OptionType.inner_ext_opt]: true
+
+  // This doesn't work. Extension names in text format must point to actual extension fields.
+  // str is just a member of OptionType.
+  [OptionType.<error descr="Field 'str' does not extend type 'foo.bar.OptionType'">str</error>]: "abc"
+
+  any {
+    [type.googleapis.com/foo.bar.AnyType] {
+      a: 1
+      b: 2
+      // Nested any
+      any {
+        [type.googleapis.com/foo.bar.AnyType] {
+          a: 1
+          b: 2
+        }
+      }
+    }
+  }
+  any {
+    [type.googleapis.com/<error descr="Cannot resolve symbol 'SubType'" type="WRONG_REF">SubType</error>] {}
+  }
+  any {
+    [<error descr="Domain must be ''type.googleapis.com'' or ''type.googleprod.com''">invalid.com</error>/foo.bar.SubType] {}
+  }
+  subval {
+    <error descr="Any value must have a parent field of type google.protobuf.Any">[type.googleapis.com/foo.bar.SubType]</error> {}
+  }
+};
+
+
+// There should be no error below. In this case the Any value is the top level pbtext element.
+// The Any field is in the host proto document ("(any)"). This test verifies that the pbtext
+// annotator looks at the host proto field type when determining whether a top-level Any value is
+// valid.
+option (any) = {
+  [type.googleapis.com/foo.bar.AnyType] {
+    a: 1
+    b: 2
+  }
+};

@@ -4,23 +4,24 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Collection;
 
-@SuppressWarnings("unchecked")
-public class ComboBoxWithMoreOption extends ComboBox {
+public class ComboBoxWithMoreOption extends ComboBox<String> {
 
   @NotNull
-  private final Collection<String> myStartItems;
+  private final Collection<@Nls String> myStartItems;
   @NotNull
   private final Collection<String> myExtendedItems;
-  @NotNull
+  
+  @NotNull @Nls
   private final String myMoreItem;
 
-  public ComboBoxWithMoreOption(@NotNull Collection<String> startItems, @NotNull Collection<String> extendedItems) {
+  public ComboBoxWithMoreOption(@NotNull Collection<@Nls String> startItems, @NotNull Collection<@Nls String> extendedItems) {
     super();
     this.myStartItems = startItems;
     myExtendedItems = extendedItems;
@@ -54,15 +55,15 @@ public class ComboBoxWithMoreOption extends ComboBox {
     });
   }
 
-  public void setSelectedWithExtend(String value) {
+  public void setSelectedWithExtend(@Nls String value) {
     if (!myStartItems.contains(value)) {
       extend();
     }
     setSelectedItem(value);
   }
 
-  private static void addItems(ComboBox box, Collection<String> items) {
-    for (String item : items) {
+  private static void addItems(@NotNull ComboBox<String> box, Collection<@Nls String> items) {
+    for (@Nls String item : items) {
       box.addItem(item);
     }
   }

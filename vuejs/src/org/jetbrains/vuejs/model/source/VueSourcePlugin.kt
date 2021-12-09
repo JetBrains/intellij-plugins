@@ -16,11 +16,13 @@ import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
 import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
 import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 class VueSourcePlugin constructor(private val project: Project,
+                                  override val moduleName: String?,
+                                  override val moduleVersion: String?,
                                   private val packageJsonFile: VirtualFile) : UserDataHolderBase(), VuePlugin {
 
-  override val moduleName: String? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val directives: Map<String, VueDirective> = emptyMap()
@@ -30,14 +32,20 @@ class VueSourcePlugin constructor(private val project: Project,
   override val source: PsiDirectory?
     get() = PsiManager.getInstance(project).findFile(packageJsonFile)?.parent
 
+  override val defaultProximity: VueModelVisitor.Proximity
+    get() = componentsWithProximity.first
+
   override val components: Map<String, VueComponent>
+    get() = componentsWithProximity.second
+
+  private val componentsWithProximity: Pair<VueModelVisitor.Proximity, Map<String, VueComponent>>
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
       val dependencies = mutableListOf<Any>(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
                                             packageJsonFile)
       val psiDirectory = source
-      val components: Map<String, VueComponent>
+      val components: Pair<VueModelVisitor.Proximity, Map<String, VueComponent>>
       if (psiDirectory == null) {
-        components = emptyMap()
+        components = Pair(VueModelVisitor.Proximity.GLOBAL, emptyMap())
         dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
       }
       else {
@@ -50,13 +58,18 @@ class VueSourcePlugin constructor(private val project: Project,
           dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
         }
 
-        components = VueComponentsCalculation.calculateScopeComponents(scope, globalize).map.asSequence()
-          .mapNotNull { VueModelManager.getComponent(it.value.first)?.let { component -> Pair(it.key, component) } }
-          .distinctBy { it.first }
-          .toMap()
+        components =
+          VueTypedEntitiesProvider.calculateDtsComponents(psiDirectory)
+            .takeIf { it.isNotEmpty() }
+            ?.let { Pair(VueModelVisitor.Proximity.OUT_OF_SCOPE, it) }
+          ?: VueComponentsCalculation.calculateScopeComponents(scope, globalize).map.asSequence()
+            .mapNotNull { VueModelManager.getComponent(it.value.first)?.let { component -> Pair(it.key, component) } }
+            .distinctBy { it.first }
+            .toMap()
+            .let { Pair(VueModelVisitor.Proximity.GLOBAL, it) }
       }
       CachedValueProvider.Result(components, *dependencies.toTypedArray())
-    } ?: emptyMap()
+    }
 
   override fun equals(other: Any?): Boolean {
     return (other as? VueSourcePlugin)?.packageJsonFile == packageJsonFile

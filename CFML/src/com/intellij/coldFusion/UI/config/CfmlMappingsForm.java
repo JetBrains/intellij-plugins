@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -71,7 +72,7 @@ public class CfmlMappingsForm {
   @SuppressWarnings("unchecked")
   public CfmlMappingsForm(Project project) {
     myProject = project;
-    myTableEditor = new ValidatingTableEditor<Item>() {
+    myTableEditor = new ValidatingTableEditor<>() {
       @Override
       protected Item cloneOf(Item item) {
         return new Item(item.myDirectoryPath, item.myLogicalPath);
@@ -101,6 +102,7 @@ public class CfmlMappingsForm {
         return new Item("", "");
       }
     };
+    myTableEditor.setShowGrid(false);
     myTableEditor.getEmptyText().setText(CfmlBundle.message("no.mapping"));
 
     myTablePanel.setBorder(IdeBorderFactory.createTitledBorder(CfmlBundle.message("border.text.server.mappings"), false, JBUI.insetsTop(8)).setShowLine(false));
@@ -108,12 +110,12 @@ public class CfmlMappingsForm {
 
     //noinspection SpellCheckingInspection
     myLanguageLevel.setRenderer(SimpleListCellRenderer.create(
-      "", value -> CfmlLanguage.CF8.equals(value) ? "ColdFusion 8" :
-                   CfmlLanguage.CF9.equals(value) ? "ColdFusion 9" :
-                   CfmlLanguage.CF10.equals(value) ? "ColdFusion 10" :
-                   CfmlLanguage.CF11.equals(value) ? "ColdFusion 11" :
-                   CfmlLanguage.RAILO.equals(value) ? "Railo" :
-                   CfmlLanguage.LUCEE.equals(value) ? "Lucee" : ""));
+      "", value -> CfmlLanguage.CF8.equals(value) ? "ColdFusion 8" : //NON-NLS
+                   CfmlLanguage.CF9.equals(value) ? "ColdFusion 9" : //NON-NLS
+                   CfmlLanguage.CF10.equals(value) ? "ColdFusion 10" : //NON-NLS
+                   CfmlLanguage.CF11.equals(value) ? "ColdFusion 11" : //NON-NLS
+                   CfmlLanguage.RAILO.equals(value) ? "Railo" : //NON-NLS
+                   CfmlLanguage.LUCEE.equals(value) ? "Lucee" : "")); //NON-NLS
     myLanguageLevel.addItem(CfmlLanguage.CF8);
     myLanguageLevel.addItem(CfmlLanguage.CF9);
     myLanguageLevel.addItem(CfmlLanguage.CF10);
@@ -187,6 +189,7 @@ public class CfmlMappingsForm {
         JTextField myComponent;
 
         @Override
+        @NonNls
         public Object getCellEditorValue() {
           return myComponent.getText();
         }

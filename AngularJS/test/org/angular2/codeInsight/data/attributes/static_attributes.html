@@ -1,7 +1,10 @@
 <todo-cmp [model]=""
           <warning descr="Attribute foo is not allowed here">foo</warning>="12"
-          testAttrOne="12"
+          testAttrOne=<warning descr="12 is not a valid value for testAttrOne. Expected: always, never, or auto">"12"</warning>
           testAttrThree="3"
           testAttrTwo="foo"
           <weak_warning descr="Property bar is not provided by any applicable directives nor by todo-cmp element">[bar]</weak_warning>="12"
+></todo-cmp>
+<todo-cmp
+    testAttrOne="always"
 ></todo-cmp>

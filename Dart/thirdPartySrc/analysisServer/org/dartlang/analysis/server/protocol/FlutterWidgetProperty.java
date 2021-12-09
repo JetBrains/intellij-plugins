@@ -8,12 +8,16 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +33,7 @@ public class FlutterWidgetProperty {
 
   public static final FlutterWidgetProperty[] EMPTY_ARRAY = new FlutterWidgetProperty[0];
 
-  public static final List<FlutterWidgetProperty> EMPTY_LIST = new ArrayList<>();
+  public static final List<FlutterWidgetProperty> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The documentation of the property to show to the user. Omitted if the server does not know the

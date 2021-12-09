@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
-    <mx:RegExpValidator expression="/(<error descr="Unclosed group">/</error>g" />
+    <mx:RegExpValidator expression="/(<error descr="')' expected">/</error>g" />
 </mx:Application>

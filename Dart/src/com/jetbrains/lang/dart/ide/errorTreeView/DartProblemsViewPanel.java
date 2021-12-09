@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -103,9 +104,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                           ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
                                           : "");
 
-    table.setShowVerticalLines(false);
-    table.setShowHorizontalLines(false);
-    table.setStriped(true);
+    table.setShowGrid(false);
     table.setRowHeight(table.getRowHeight() + JBUIScale.scale(4));
 
     JTableHeader tableHeader = table.getTableHeader();
@@ -153,7 +152,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     for (SourceChange sourceChangeFix : selectedProblemSourceChangeFixes) {
       if (sourceChangeFix == null) continue;
-      group.add(new AnAction(sourceChangeFix.getMessage(), null, AllIcons.Actions.QuickfixBulb) {
+      @NlsSafe String fixMessage = sourceChangeFix.getMessage();
+      group.add(new AnAction(fixMessage, null, AllIcons.Actions.QuickfixBulb) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent event) {
           OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile, problem.getOffset()));
@@ -167,7 +167,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private void addDiagnosticMessageActions(@NotNull DefaultActionGroup group, @Nullable DartProblem problem) {
-    List<DiagnosticMessage> diagnosticMessages = problem != null ? problem.getDiagnosticMessages() : null;
+    List<DiagnosticMessage> diagnosticMessages = problem != null ? problem.getContextMessages() : null;
     if (diagnosticMessages == null || diagnosticMessages.isEmpty()) return;
 
     group.addSeparator();
@@ -175,7 +175,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     Icon jumpToSourceIcon = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE).getTemplatePresentation().getIcon();
     for (DiagnosticMessage diagnosticMessage : diagnosticMessages) {
       // Reference the message, trim, non-nullize, and remove a trailing period, if one exists
-      String message = StringUtil.notNullize(diagnosticMessage.getMessage());
+      @NlsSafe String message = StringUtil.notNullize(diagnosticMessage.getMessage());
       message = StringUtil.trimEnd(StringUtil.trim(message), ".");
 
       // Reference the Location, compute the VirtualFile
@@ -235,7 +235,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   private void updateStatusDescription() {
     DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
     DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
-    problemsView.setHeaderText(model.getStatusText());
+    problemsView.setTabTitle(model.getTabTitleText());
     problemsView.setToolWindowIcon(model.hasErrors() ? DART_ERRORS_ICON : model.hasWarnings() ? DART_WARNINGS_ICON : DartIcons.Dart_13);
   }
 
@@ -306,7 +306,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       }
     });
 
-    createAndShowPopup("Dart Problems Filter", filterForm.getMainPanel());
+    createAndShowPopup(DartBundle.message("dart.problems.view.popup.title.dart.problems.filter"), filterForm.getMainPanel());
   }
 
   private void showAnalysisServerSettingsPopup() {
@@ -318,7 +318,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
     });
 
-    createAndShowPopup(DartBundle.message("analysis.server.settings.title"), serverSettingsForm.getMainPanel());
+    createAndShowPopup(DartBundle.message("dart.problems.view.popup.title.analysis.server.settings"), serverSettingsForm.getMainPanel());
   }
 
   private void createAndShowPopup(@NotNull @NlsContexts.PopupTitle String title, @NotNull JPanel jPanel) {
@@ -385,13 +385,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     return null;
   }
 
-  private void navigate(@SuppressWarnings("SameParameterValue") boolean requestFocus) {
-    Navigatable navigatable = createNavigatable();
-    if (navigatable != null && navigatable.canNavigateToSource()) {
-      navigatable.navigate(requestFocus);
-    }
-  }
-
   public void setErrors(@NotNull Map<String, List<? extends AnalysisError>> filePathToErrors) {
     DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
     DartProblem oldSelectedProblem = myTable.getSelectedObject();
@@ -412,7 +405,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
     FilterProblemsAction() {
-      super(DartBundle.messagePointer("filter.problems"), DartBundle.messagePointer("filter.problems.description"),
+      super(DartBundle.messagePointer("dart.problems.view.action.name.filter.problems"),
+            DartBundle.messagePointer("dart.problems.view.action.description.filter.problems"),
             AllIcons.General.Filter);
     }
 
@@ -430,7 +424,9 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private class AnalysisServerSettingsAction extends DumbAwareAction implements Toggleable {
     AnalysisServerSettingsAction() {
-      super(DartBundle.messagePointer("analysis.server.settings"), DartBundle.messagePointer("analysis.server.settings.description"),
+      //noinspection DialogTitleCapitalization
+      super(DartBundle.messagePointer("dart.problems.view.action.name.analysis.server.settings"),
+            DartBundle.messagePointer("dart.problems.view.action.description.analysis.server.settings"),
             AllIcons.General.GearPlain);
     }
 

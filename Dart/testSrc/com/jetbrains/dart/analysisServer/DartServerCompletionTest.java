@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -43,13 +43,13 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest(lookupToSelect, Lookup.NORMAL_SELECT_CHAR);
   }
 
-  private void doTest(@Nullable final String lookupToSelect, final char complationChar) {
+  private void doTest(@Nullable final String lookupToSelect, final char completionChar) {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting(); // warm up
     myFixture.complete(CompletionType.BASIC);
 
     if (lookupToSelect != null) {
-      selectLookup(lookupToSelect, complationChar);
+      selectLookup(lookupToSelect, completionChar);
     }
 
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
@@ -123,6 +123,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("for");
   }
 
+  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testWithImportPrefix() {
     doTest();
   }
@@ -166,10 +167,10 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                               "}");
     myFixture.doHighlighting();
     myFixture.completeBasic();
-    myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "new", "null", "true",
-                                             "AXB", "AXB.four", "AXB.three", "AXX",
-                                             "AbstractClassInstantiationError", "AbstractClassInstantiationError", "ArgumentError",
-                                             "ArgumentError", "ArgumentError.notNull", "ArgumentError.value", "AssertionError",
+    myFixture.assertPreferredCompletionItems(0, "AXX", "AXX.one", "AXX.two", "const", "true", "false",
+                                             "AXB", "AXB.four", "AXB.three", "null", "main",
+                                             "AbstractClassInstantiationError", "ArgumentError",
+                                             "ArgumentError.notNull", "ArgumentError.value",
                                              "AssertionError", "BidirectionalIterator");
   }
 
@@ -187,6 +188,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     assertNull(myFixture.getLookup());
   }
 
+  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testNotYetImportedClass() {
     doTest();
   }

@@ -172,7 +172,7 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
-  /**
+  /*
    * Note on the spec/parser.js porting: some tests at the end are omitted
    * because they make no sense in the context of the plugin
    */

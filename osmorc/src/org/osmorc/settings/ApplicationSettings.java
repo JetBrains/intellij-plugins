@@ -24,8 +24,9 @@
  */
 package org.osmorc.settings;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.RoamingType;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.containers.ContainerUtil;
@@ -35,10 +36,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Application wide settings which apply to all Osmorc driven projects.
@@ -46,14 +49,13 @@ import java.util.List;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-@State(name = "Osmorc", storages = @Storage("osmorc.xml"))
+@State(name = "Osmorc", storages = @Storage(value = "osmorc.xml", roamingType = RoamingType.DISABLED))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> myInstances = new ArrayList<>();
-  private List<FrameworkInstanceDefinition> myActiveInstances = null;
   private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
 
   public static ApplicationSettings getInstance() {
-    return ServiceManager.getService(ApplicationSettings.class);
+    return ApplicationManager.getApplication().getService(ApplicationSettings.class);
   }
 
   @Override
@@ -66,6 +68,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     XmlSerializerUtil.copyBean(state, this);
   }
 
+  @SuppressWarnings("deprecation")
   @AbstractCollection(elementTag = "frameworkDefinition")
   public List<FrameworkInstanceDefinition> getFrameworkInstanceDefinitions() {
     return myInstances;
@@ -73,9 +76,9 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
   public void setFrameworkInstanceDefinitions(List<FrameworkInstanceDefinition> instances) {
     myInstances = instances;
-    myActiveInstances = null;
   }
 
+  @SuppressWarnings("deprecation")
   @AbstractCollection(elementTag = "libraryBundlificationRule")
   public List<LibraryBundlificationRule> getLibraryBundlificationRules() {
     return myRules;
@@ -102,10 +105,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
   @NotNull
   public List<FrameworkInstanceDefinition> getActiveFrameworkInstanceDefinitions() {
-    if (myActiveInstances == null) {
-      final FrameworkIntegratorRegistry registry = FrameworkIntegratorRegistry.getInstance();
-      myActiveInstances = ContainerUtil.filter(myInstances, definition -> registry.findIntegratorByInstanceDefinition(definition) != null);
-    }
-    return myActiveInstances;
+    Set<String> names = ContainerUtil.map2Set(FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators(), FrameworkIntegrator::getDisplayName);
+    return ContainerUtil.filter(myInstances, definition -> names.contains(definition.getFrameworkIntegratorName()));
   }
 }

@@ -4,6 +4,7 @@ package org.angular2.inspections;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInspection.InspectionSuppressor;
 import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory;
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -11,8 +12,8 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
+import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSReferenceChecker;
-import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter;
 import com.intellij.lang.javascript.validation.TypeScriptReferenceChecker;
 import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
@@ -20,7 +21,6 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
@@ -41,7 +41,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
   }
 
   @Override
-  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
     return new TypeScriptReferenceChecker(reporter) {
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
@@ -64,9 +64,9 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       }
 
       @Override
-      protected @NotNull Ref<String> createUnresolvedCallReferenceMessage(@NotNull JSReferenceExpression methodExpression, boolean isNewExpression) {
+      protected @NotNull @InspectionMessage String createUnresolvedCallReferenceMessage(@NotNull JSReferenceExpression methodExpression, boolean isNewExpression) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
-          return Ref.create(Angular2Bundle.message("angular.inspection.unresolved-pipe.message", methodExpression.getReferenceName()));
+          return Angular2Bundle.message("angular.inspection.unresolved-pipe.message", methodExpression.getReferenceName());
         }
         return super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression);
       }
@@ -75,7 +75,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       protected void reportUnresolvedReference(ResolveResult @NotNull [] resolveResults,
                                                @NotNull JSReferenceExpression referenceExpression,
                                                @NotNull List<LocalQuickFix> quickFixes,
-                                               @NotNull Ref<String> message,
+                                               @NotNull @InspectionMessage String message,
                                                boolean isFunction,
                                                boolean inTypeContext) {
         if (referenceExpression instanceof Angular2PipeReferenceExpression) {

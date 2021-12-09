@@ -2,28 +2,27 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
+import com.intellij.javascript.web.assertUnresolvedReference
+import com.intellij.javascript.web.resolveReference
+import com.intellij.lang.javascript.JSTestUtils.setWebpack
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigPath
 import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
-import com.intellij.lang.javascript.modules.JSFrameworkImportTest.setWebpack
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.lang.VueTestModule
-import org.jetbrains.vuejs.lang.assertUnresolvedReference
-import org.jetbrains.vuejs.lang.configureDependencies
-import org.jetbrains.vuejs.lang.resolveReference
+import org.jetbrains.vuejs.lang.*
 
 class VueLoaderTest  : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vueLoader"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vueLoader"
 
   override fun setUp() {
     super.setUp()
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     val resolve = WebPackResolve(
-      mapOf(Pair("@", "src"), Pair("foo", "src")),
-      mutableListOf(myFixture.tempDirFixture.getFile(".")!!.path)
+      mapOf(Pair("@", WebPackConfigPath("src")), Pair("foo", WebPackConfigPath("src"))),
+      mutableListOf(WebPackConfigPath(myFixture.tempDirFixture.getFile(".")!!.path))
     )
     setWebpack(project, resolve, testRootDisposable)
   }

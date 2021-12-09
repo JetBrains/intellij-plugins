@@ -4,10 +4,10 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.psi.stubs.StubIndexKey
 
-class VueGlobalFiltersIndex : VueIndexBase<JSImplicitElementProvider>(KEY, JS_KEY) {
+class VueGlobalFiltersIndex : VueIndexBase<JSImplicitElementProvider>(KEY) {
   companion object {
     val KEY: StubIndexKey<String, JSImplicitElementProvider> =
-      StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("vue.global.filters.index")
+      StubIndexKey.createIndexKey("vue.global.filters.index")
     val JS_KEY: String = createJSKey(KEY)
   }
 }

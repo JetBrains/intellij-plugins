@@ -1,0 +1,5 @@
+<root>
+  <item name='aQute.bnd.build.Project java.lang.String getName()'>
+    <annotation name='com.intellij.openapi.util.NlsSafe'/>
+  </item>
+</root>

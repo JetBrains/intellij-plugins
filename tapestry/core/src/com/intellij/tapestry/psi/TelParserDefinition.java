@@ -30,7 +30,7 @@ public class TelParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public IFileElementType getFileNodeType() {
+  public @NotNull IFileElementType getFileNodeType() {
     return TelTokenTypes.TEL_FILE;
   }
 
@@ -59,7 +59,7 @@ public class TelParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiFile createFile(FileViewProvider viewProvider) {
+  public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
     return new PsiFileBase(viewProvider, TelFileType.INSTANCE.getLanguage()) {
       {
         init(TelTokenTypes.TEL_FILE, TelTokenTypes.TAP5_EL_HOLDER);
@@ -74,7 +74,7 @@ public class TelParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public ParserDefinition.SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+  public ParserDefinition.@NotNull SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     final Lexer lexer = createLexer(left.getPsi().getProject());
     return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }

@@ -12,6 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,13 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
       while (nextError != null) {
         if (hasAngularInjectionAt(project, file, nextError.getTextOffset())) return false;
         nextError = PsiTreeUtil.getNextSiblingOfType(nextError, PsiErrorElement.class);
+      }
+    }
+    if (language == AngularJSLanguage.INSTANCE) {
+      PsiElement host = InjectedLanguageManager.getInstance(error.getProject()).getInjectionHost(error);
+      XmlAttribute attribute = PsiTreeUtil.getParentOfType(host, XmlAttribute.class, false, XmlTag.class);
+      if (attribute != null && DirectiveUtil.getAttributeName(attribute.getName()).equals("ng-options")) {
+        return false;
       }
     }
     if (HTMLLanguage.INSTANCE.is(language) && error.getErrorDescription().endsWith("not closed")) {

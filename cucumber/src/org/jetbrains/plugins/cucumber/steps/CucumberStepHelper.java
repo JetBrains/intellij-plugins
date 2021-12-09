@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.OptionalStepDefinitionExtensionPoint;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepDefinitionCreationContext;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
@@ -20,10 +21,8 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * @author yole
- */
-public class CucumberStepHelper {
+
+public final class CucumberStepHelper {
   private static final Logger LOG = Logger.getInstance(CucumberStepHelper.class.getName());
 
   /**
@@ -128,7 +127,7 @@ public class CucumberStepHelper {
     ArrayList<AbstractStepDefinition> result = new ArrayList<>();
 
     for (CucumberJvmExtensionPoint extension : getCucumberExtensions()) {
-      result.addAll(extension.loadStepsFor(featureFile, module));
+      result.addAll(CucumberUtil.loadFrameworkSteps(extension, featureFile, module));
     }
     return result;
   }
@@ -165,7 +164,7 @@ public class CucumberStepHelper {
   public static int getExtensionCount() {
     return getCucumberExtensions().size();
   }
-  
+
   public static boolean isGherkin6Supported(@NotNull Module module) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return true;

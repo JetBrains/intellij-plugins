@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CfmlCodeStyleConfigurable extends CodeStyleAbstractConfigurable {
   public CfmlCodeStyleConfigurable(@NotNull CodeStyleSettings settings, CodeStyleSettings cloneSettings) {
+    //noinspection HardCodedStringLiteral
     super(settings, cloneSettings, "CFML");
   }
 

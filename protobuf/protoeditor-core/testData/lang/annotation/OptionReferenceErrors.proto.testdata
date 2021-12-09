@@ -1,0 +1,54 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+
+message OptionType {
+  extensions 100 to 200;
+  optional int32 opt_field = 1;
+}
+
+extend OptionType {
+  optional int32 ext_field = 101;
+}
+
+extend google.protobuf.MessageOptions {
+  optional int32 message_option = 5000;
+  optional OptionType opt = 1003;
+}
+
+extend google.protobuf.FieldOptions {
+  optional int32 field_option = 5000;
+}
+
+message Foo {
+}
+
+message TestMessage {
+  option <error descr="Cannot resolve option 'missing'" type="WRONG_REF">missing</error> = 0;
+
+  option (message_option) = 5;
+
+  optional int32 var1 = 1 [<error descr="Cannot resolve option 'missing'" type="WRONG_REF">missing</error>=0];
+  optional int32 var2 = 2 [weak.<error descr="Cannot resolve option 'missing'" type="WRONG_REF">missing</error>=0];
+  optional int32 var3 = 3 [(<error descr="Cannot resolve symbol 'custom'" type="WRONG_REF">custom</error>)=0];
+  optional int32 var4 = 4 [(<error descr="Extension option 'Foo' is not a field">Foo</error>)=0];
+  optional int32 var5 = 5 [(<error descr="Field 'message_option' does not extend type 'google.protobuf.FieldOptions'">message_option</error>)=0];
+
+  // Valid
+  optional int32 var6 = 6 [(field_option)=0];
+}
+
+// These cases work.
+message Test {
+  option deprecated = true;
+  option (opt).opt_field = 10;
+  option (opt).(ext_field) = 10;
+}
+
+// These are other valid ways to specify option fields.
+message Test2 {
+  option (google.protobuf.MessageOptions.deprecated) = true;
+  option (opt).(OptionType.opt_field) = 10;
+}

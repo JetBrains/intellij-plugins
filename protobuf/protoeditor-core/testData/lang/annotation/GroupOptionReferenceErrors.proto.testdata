@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+
+message TestMessage {
+
+  optional group GroupWithMissingOption = 1 [<error descr="Cannot resolve option 'missing'" type="WRONG_REF">missing</error>=0] {
+    optional int32 yy = 1;
+  }
+
+  optional group NotExtensionOption = 2 [deprecated = false] {
+    optional int32 yy = 1;
+  }
+
+  extend google.protobuf.MessageOptions {
+    optional group ExtensionOption = 10000 [deprecated = false] {
+      optional int32 zz = 1;
+    }
+  }
+
+  message Inner {
+    option (<error descr="Field 'notextensionoption' does not extend type 'google.protobuf.MessageOptions'">notextensionoption</error>).yy = 5;
+    option (extensionoption).zz = 6;
+  }
+}

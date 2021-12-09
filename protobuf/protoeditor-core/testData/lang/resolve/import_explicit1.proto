@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "lang/resolve/import_message.proto";
+
+extend ImportMessage {
+  optional string explicit_ext_1 = 52;
+}

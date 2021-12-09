@@ -21,6 +21,7 @@ public class DartSwitchCaseImpl extends DartPsiCompositeElementImpl implements D
     visitor.visitSwitchCase(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

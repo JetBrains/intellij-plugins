@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class CloudFormationFileTypeDetector: FileTypeRegistry.FileTypeDetector {
   override fun detect(file: VirtualFile, firstBytes: ByteSequence, firstCharsIfText: CharSequence?): FileType? {
-    if (file.extension != "template") return null
     if (firstCharsIfText == null) return null
 
     if (isJson(firstCharsIfText)) {

@@ -62,7 +62,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
 
     // additional variants (String only)
     if (converter instanceof ResolvingConverter) {
-      final Set additionalVariants = ((ResolvingConverter) converter).getAdditionalVariants(convertContext);
+      final Set additionalVariants = ((ResolvingConverter<?>) converter).getAdditionalVariants(convertContext);
       if (additionalVariants.contains(getValue())) {
         return myElement;
       }
@@ -137,10 +137,10 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
       for (final PsiReference customReference : references) {
         if (customReference instanceof JavaClassReference) {
           JavaClassReference javaClassReference = (JavaClassReference)customReference;
-          String[] names = javaClassReference.getExtendClassNames();
+          @NotNull List<String> names = javaClassReference.getSuperClasses();
           PsiElement context = javaClassReference.getCompletionContext();
-          if (names != null && context instanceof PsiPackage) {
-            javaClassReference.processSubclassVariants((PsiPackage)context, names, element -> variants.add(element));
+          if (!names.isEmpty() && context instanceof PsiPackage) {
+            javaClassReference.processSubclassVariants((PsiPackage)context, ArrayUtil.toStringArray(names), element -> variants.add(element));
             continue;
           }
         }

@@ -22,6 +22,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -87,11 +88,11 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
   @NotNull
   @Attribute("package_name")
-  public String getPackageName() {
+  public @NlsSafe String getPackageName() {
     return myPackageName;
   }
 
-  public void setPackageName(@NotNull String packageName) {
+  public void setPackageName(@NotNull @NlsSafe String packageName) {
     myPackageName = packageName;
   }
 
@@ -107,11 +108,11 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
   @NotNull
   @Attribute("method_name")
-  public String getMethodName() {
+  public @NlsSafe String getMethodName() {
     return myMethodName;
   }
 
-  public void setMethodName(@NotNull String methodName) {
+  public void setMethodName(@NotNull @NlsSafe String methodName) {
     myMethodName = methodName;
   }
 

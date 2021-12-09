@@ -1,0 +1,14 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+extend proto2.OneofOptions {
+  int32 test_oneof_option = 2000;
+}
+message TestMessage {
+  oneof TestOneof {
+    // Custom oneof option
+    option (test_on<caret>eof_option) = 10;
+  }
+}

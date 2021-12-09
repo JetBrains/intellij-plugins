@@ -18,7 +18,7 @@ package com.intellij.struts2.annotators;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import icons.Struts2Icons;
+import com.intellij.struts2.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

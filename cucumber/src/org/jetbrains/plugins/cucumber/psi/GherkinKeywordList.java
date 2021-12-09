@@ -1,23 +1,19 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author yole, Roman.Chernyatchik
- */
-public class GherkinKeywordList {
-  // i18n.json file contains list of keywords and some meta-information about the language. At the moment it's three attributes below. 
+public final class GherkinKeywordList {
+  // i18n.json file contains list of keywords and some meta-information about the language. At the moment it's three attributes below.
   private static final Collection<String> GHERKIN_LANGUAGE_META_ATTRIBUTES = Arrays.asList("name", "native", "encoding");
 
   // maps custom language keyword to base (English) keyword
-  private final Map<String, String> myKeyword2BaseNameTable = new THashMap<>();
-  private final Set<String> mySpaceAfterKeywords = new THashSet<>();
+  private final Map<String, String> myKeyword2BaseNameTable = new HashMap<>();
+  private final Set<String> mySpaceAfterKeywords = new HashSet<>();
   private final GherkinKeywordTable myKeywordsTable = new GherkinKeywordTable();
 
   public GherkinKeywordList() {

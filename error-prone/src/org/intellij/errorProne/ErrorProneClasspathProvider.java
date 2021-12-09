@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.errorProne;
 
+import com.intellij.ReviseWhenPortedToJDK;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
@@ -93,9 +94,10 @@ public final class ErrorProneClasspathProvider extends BuildProcessParametersPro
     return Collections.emptyList();
   }
 
+  @ReviseWhenPortedToJDK("13")
   private static String readVersion(File jarFile) {
     try {
-      try (FileSystem zipFS = FileSystems.newFileSystem(jarFile.toPath(), null)) {
+      try (@SuppressWarnings({"RedundantCast", "RedundantSuppression"}) FileSystem zipFS = FileSystems.newFileSystem(jarFile.toPath(), (ClassLoader)null)) {
         Path propertiesPath = zipFS.getPath("META-INF/maven/com.google.errorprone/error_prone_core/pom.properties");
         if (Files.exists(propertiesPath)) {
           Properties properties = new Properties();

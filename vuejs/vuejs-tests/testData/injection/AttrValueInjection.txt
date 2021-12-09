@@ -12,7 +12,7 @@ HtmlFile:AttrValueInjection.vue
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('div')
         PsiWhiteSpace(' ')
-        PsiElement(XML_ATTRIBUTE)
+        PsiElement(VUE:REF_ATTRIBUTE)
           XmlToken:XML_NAME('ref')
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
@@ -51,7 +51,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
                   JSParameterList
@@ -90,7 +90,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
                   JSParameterList
@@ -112,7 +112,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someText')
@@ -132,7 +132,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someHtml')
@@ -152,7 +152,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someShow')
@@ -172,7 +172,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someIf')
@@ -209,7 +209,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someElseIf')
@@ -229,7 +229,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSVForExpression
                   JSVarStatement
@@ -253,7 +253,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someModel')
@@ -324,7 +324,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
                   JSParameterList
@@ -351,7 +351,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
                   JSParameterList
@@ -378,7 +378,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSExpressionStatement
                   JSReferenceExpression
@@ -399,7 +399,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSExpressionStatement
                   JSReferenceExpression
@@ -420,7 +420,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSExpressionStatement
                   JSReferenceExpression
@@ -441,7 +441,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSExpressionStatement
                   JSReferenceExpression
@@ -462,7 +462,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')
@@ -482,7 +482,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')
@@ -502,7 +502,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')
@@ -522,7 +522,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')
@@ -542,7 +542,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')
@@ -562,7 +562,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')
@@ -582,7 +582,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('someBind')

@@ -12,9 +12,7 @@ PostCSS File:PartOfNestKeywordInsideAtRule.pcss
           PsiElement(CSS_DECLARATION_BLOCK)
             PsiElement(CSS_LBRACE)('{')
             PsiWhiteSpace('\n  ')
-            PsiElement(CSS_BAD_AT_RULE)
+            PsiElement(CSS_GENERIC_AT_RULE)
               PsiElement(CSS_ATKEYWORD)('@n')
-              PsiWhiteSpace('\n')
-              PsiElement(CSS_RBRACE)('}')
-            PsiErrorElement:'}' expected
-              <empty list>
+            PsiWhiteSpace('\n')
+            PsiElement(CSS_RBRACE)('}')

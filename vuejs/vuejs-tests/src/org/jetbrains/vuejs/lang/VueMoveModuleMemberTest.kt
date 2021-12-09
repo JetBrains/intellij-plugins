@@ -2,10 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.refactoring.JSMoveModuleMembersLightTestBase
-import com.intellij.openapi.application.PathManager
 
 class VueMoveModuleMemberTest: JSMoveModuleMembersLightTestBase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/refactoring/moveModuleMember/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/refactoring/moveModuleMember/"
   
   override fun getTestRoot(): String {
     return ""

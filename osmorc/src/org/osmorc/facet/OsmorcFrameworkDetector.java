@@ -3,7 +3,6 @@ package org.osmorc.facet;
 import com.intellij.facet.FacetType;
 import com.intellij.framework.detection.FacetBasedFrameworkDetector;
 import com.intellij.framework.detection.FileContentPattern;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -22,7 +21,6 @@ import org.osgi.framework.Constants;
 import java.util.*;
 
 public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcFacet, OsmorcFacetConfiguration> {
-  private final Logger logger = Logger.getInstance("#org.osmorc.facet.OsmorcFrameworkDetector");
   private final String[] DETECTION_HEADERS = {Constants.BUNDLE_SYMBOLICNAME};
 
   public OsmorcFrameworkDetector() {
@@ -36,7 +34,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   }
 
   @Override
-  protected OsmorcFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
+  protected OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
     OsmorcFacetConfiguration osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
     osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Manually);
     osmorcFacetConfiguration.setManifestLocation(ContainerUtil.getFirstItem(files).getPath());
@@ -73,7 +71,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   @NotNull
   @Override
   public ElementPattern<FileContent> createSuitableFilePattern() {
-    return FileContentPattern.fileContent().with(new PatternCondition<FileContent>("osmorc manifest file") {
+    return FileContentPattern.fileContent().with(new PatternCondition<>("osmorc manifest file") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
         return isSuitableFile(content.getContentAsText());

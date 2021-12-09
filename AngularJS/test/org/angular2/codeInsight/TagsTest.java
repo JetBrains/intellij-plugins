@@ -3,11 +3,13 @@ package org.angular2.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -31,10 +33,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testCustomTagsResolve20TypeScriptComponent() {
     myFixture.configureByFiles("custom.after.html", "package.json", "custom.ts");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
+    PsiElement resolve = WebTestUtil.resolveWebSymbolReference(myFixture, "my-cus<caret>tomer").getPsiContext();
     assertNotNull(resolve);
     assertEquals("custom.ts", resolve.getContainingFile().getName());
     assertEquals("@Component({\n" +
@@ -47,10 +46,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testCustomTagsResolve20TypeScriptDirective() {
     myFixture.configureByFiles("custom.after.html", "package.json", "custom_directive.ts");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
+    PsiElement resolve = WebTestUtil.resolveWebSymbolReference(myFixture, "my-cus<caret>tomer").getPsiContext();
     assertNotNull(resolve);
     assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
     assertEquals("@Directive({\n" +
@@ -152,10 +148,17 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.copyDirectoryToProject("component-navigation", ".");
     for (int i = 1; i <= 4; i++) {
       myFixture.configureFromTempProjectFile("app" + i + "/app/app.component.html");
-      String filePath = AngularTestUtil.resolveReference("<app-<caret>test>", myFixture).getContainingFile()
+      String filePath = WebTestUtil.resolveWebSymbolReference(myFixture, "<app-<caret>test>").getPsiContext().getContainingFile()
         .getVirtualFile()
         .getPath();
       assertTrue(filePath + " should have " + i, filePath.endsWith("/app" + i + "/app/test.component.ts"));
     }
+  }
+
+  public void testSelfClosedTags() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.copyDirectoryToProject("selfClosedTags", ".");
+    myFixture.configureFromTempProjectFile("app.component.html");
+    myFixture.checkHighlighting();
   }
 }

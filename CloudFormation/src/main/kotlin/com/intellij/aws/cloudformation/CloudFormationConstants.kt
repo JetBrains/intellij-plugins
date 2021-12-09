@@ -7,33 +7,33 @@ import com.intellij.aws.cloudformation.metadata.awsServerlessSimpleTable
 object CloudFormationConstants {
   val SupportedTemplateFormatVersions = setOf("2010-09-09")
 
-  val awsServerless20161031TransformName = "AWS::Serverless-2016-10-31"
+  const val awsServerless20161031TransformName = "AWS::Serverless-2016-10-31"
 
   // from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
-  val ParameterDescriptionLimit = 4000
-  val ParameterTypePropertyName = "Type"
+  const val ParameterDescriptionLimit = 4000
+  const val ParameterTypePropertyName = "Type"
 
-  val CloudFormationInterfaceType = "AWS::CloudFormation::Interface"
-  val CloudFormationInterfaceParameterLabels = "ParameterLabels"
-  val CloudFormationInterfaceParameterGroups = "ParameterGroups"
-  val CloudFormationInterfaceParameters = "Parameters"
+  const val CloudFormationInterfaceType = "AWS::CloudFormation::Interface"
+  const val CloudFormationInterfaceParameterLabels = "ParameterLabels"
+  const val CloudFormationInterfaceParameterGroups = "ParameterGroups"
+  const val CloudFormationInterfaceParameters = "Parameters"
 
-  val CustomResourceType = "AWS::CloudFormation::CustomResource"
-  val CustomResourceTypePrefix = "Custom::"
+  const val CustomResourceType = "AWS::CloudFormation::CustomResource"
+  const val CustomResourceTypePrefix = "Custom::"
 
-  val CommentResourcePropertyName = "Comment"
+  const val CommentResourcePropertyName = "Comment"
 
-  val ConditionPropertyName = "Condition"
-  val TypePropertyName = "Type"
-  val PropertiesPropertyName = "Properties"
-  val CreationPolicyPropertyName = "CreationPolicy"
-  val DeletionPolicyPropertyName = "DeletionPolicy"
-  val DescriptionPropertyName = "Description"
-  val DependsOnPropertyName = "DependsOn"
-  val MetadataPropertyName = "Metadata"
-  val UpdatePolicyPropertyName = "UpdatePolicy"
-  val UpdateReplacePolicyPropertyName = "UpdateReplacePolicy"
-  val VersionPropertyName = "Version"
+  const val ConditionPropertyName = "Condition"
+  const val TypePropertyName = "Type"
+  const val PropertiesPropertyName = "Properties"
+  const val CreationPolicyPropertyName = "CreationPolicy"
+  const val DeletionPolicyPropertyName = "DeletionPolicy"
+  const val DescriptionPropertyName = "Description"
+  const val DependsOnPropertyName = "DependsOn"
+  const val MetadataPropertyName = "Metadata"
+  const val UpdatePolicyPropertyName = "UpdatePolicy"
+  const val UpdateReplacePolicyPropertyName = "UpdateReplacePolicy"
+  const val VersionPropertyName = "Version"
 
   // https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst#supported-resources
   val GlobalsResourcesMap = mapOf(

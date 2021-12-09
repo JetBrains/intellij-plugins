@@ -6,15 +6,15 @@
 
     function <info descr="instance method">copy</info>() {
         <info descr="instance field">destination</info>.<info descr="instance method">text</info>=<info descr="instance field">source</info>.<info descr="instance method">text</info> = ' '
-        var <info descr="local variable">aaa</info>:<info>Function</info> = <info descr="instance method">copy_</info>
+        var <info descr="local function">aaa</info>:<info>Function</info> = <info descr="instance method">copy_</info>
     }
 
     function <info descr="instance method">copy_</info>() {
     }
     </inject></mx:Script>
     <mx:Script><![CDATA[<inject descr="null">
-    var <info descr="field">a</info> = <xxx>{<error descr="Unresolved variable or type zzz">zzz</error>}</xxx>;
-    var <info descr="field">b</info> = <xxx>{<info descr="field">a</info>}</xxx>;
+    var <info descr="instance field">a</info> = <xxx>{<error descr="Unresolved variable or type zzz">zzz</error>}</xxx>;
+    var <info descr="instance field">b</info> = <xxx>{<info descr="instance field">a</info>}</xxx>;
  </inject>]]></mx:Script>
 
     <mx:TextInput id="source" width="100" horizontalCenter="0" verticalCenter="1"/>

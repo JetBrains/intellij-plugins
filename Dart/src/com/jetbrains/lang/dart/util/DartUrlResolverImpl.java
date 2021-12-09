@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,26 +23,22 @@ import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class DartUrlResolverImpl extends DartUrlResolver {
+public final class DartUrlResolverImpl extends DartUrlResolver {
   // TODO Fold into superclass.
 
   @NotNull private final Project myProject;
   @Nullable private final DartSdk myDartSdk;
   @Nullable private final VirtualFile myPubspecYamlFile;
   // myLivePackageNameToDirMap also contains packages map from .packages file if applicable
-  @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<>();
+  @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new HashMap<>();
   // myPackagesMapFromLib is not empty only if pubspec.yaml file is null
-  @NotNull private final Map<String, List<String>> myPackagesMapFromLib = new THashMap<>();
+  @NotNull private final Map<String, List<String>> myPackagesMapFromLib = new HashMap<>();
 
   public DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;

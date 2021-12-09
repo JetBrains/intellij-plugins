@@ -10,5 +10,5 @@
 <div (event)="fun($event.<error descr="Unresolved variable foo">foo</error>)"></div>
 
 <div [foo]="items[0].someName | pipe"></div>
-<div [foo]="<warning descr="Type number is not assignable to type string">items[0].someValue | pipe</warning>"></div>
+<div [foo]="<error descr="Type number is not assignable to type string">items[0].someValue | pipe</error>"></div>
 <div [foo]="items[0].<error descr="Unresolved variable foo">foo</error> | pipe"></div>

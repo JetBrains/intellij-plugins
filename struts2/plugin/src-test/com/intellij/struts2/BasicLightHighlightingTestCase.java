@@ -17,22 +17,20 @@ package com.intellij.struts2;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.MavenDependencyUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -132,51 +130,37 @@ public abstract class BasicLightHighlightingTestCase extends LightJavaCodeInsigh
   protected void performTearDown() {
   }
 
-  private static final String LIBRARY_PATH =
-    FileUtil.toSystemIndependentName(PathManager.getHomePath() + TEST_DATA_PATH + "/lib/");
-
-  /**
-   * Adds the S2 jars.
-   *
-   */
-  static void addStrutsJars(Module module, ModifiableRootModel model) {
-    addLibrary(model, "struts2",
-               "struts2-core-" + STRUTS2_VERSION + ".jar",
-               "freemarker-2.3.18.jar",
-               "ognl-3.0.3.jar",
-               "xwork-core-2.3.1.jar");
-  }
-
-  static void addLibrary(ModifiableRootModel model,
-                         @NonNls final String libraryName, @NonNls final String... jarPaths) {
-    PsiTestUtil.addLibrary(model, libraryName, LIBRARY_PATH, jarPaths);
+  static void addStrutsJars(ModifiableRootModel model) {
+    MavenDependencyUtil.addFromMaven(model, "org.apache.struts:struts2-core:2.3.1");
+    MavenDependencyUtil.addFromMaven(model, "org.apache.struts.xwork:xwork-core:2.3.1");
+    MavenDependencyUtil.addFromMaven(model, "org.freemarker:freemarker:2.3.18");
+    MavenDependencyUtil.addFromMaven(model, "ognl:ognl:3.0.3");
   }
 
   /**
-   * For files located in JAR: {@code [PATH_TO_JAR]!/[PATH_TO_STRUTS_XML]}.
-   *
-   * @param strutsXmlPaths Paths to files.
+   * @param strutsXmlPaths Paths to files or URL inside JAR from VFS
    */
-  protected void createStrutsFileSet(@NonNls final String... strutsXmlPaths) {
+  protected void createStrutsFileSet(@NonNls String... strutsXmlPaths) {
     final StrutsFacet strutsFacet = StrutsFacet.getInstance(getModule());
     assertNotNull(strutsFacet);
     final StrutsFacetConfiguration facetConfiguration = strutsFacet.getConfiguration();
 
     final StrutsFileSet fileSet = new StrutsFileSet("test", "test", facetConfiguration);
     myStrutsFileSets.add(fileSet);
-    for (final String fileName : strutsXmlPaths) {
-      final VirtualFile file;
-      final String path;
+    for (String fileName : strutsXmlPaths) {
+      VirtualFile file;
       if (fileName.contains("!")) {
-        path = PathManager.getHomePath() + TEST_DATA_PATH + "/" + fileName;
-        file = JarFileSystem.getInstance().refreshAndFindFileByPath(path);
+        file = VirtualFileManager.getInstance().findFileByUrl(fileName);
       }
       else {
-        path = fileName;
-        file = myFixture.copyFileToProject(fileName);
+        try {
+          file = myFixture.copyFileToProject(fileName);
+        } catch (UncheckedIOException e) {
+          throw new RuntimeException("Cannot process " + fileName, e);
+        }
       }
 
-      assertNotNull("could not find file: '" + path + "'", file);
+      assertNotNull("could not find file: '" + fileName + "'", file);
       fileSet.addFile(file);
     }
     final Set<StrutsFileSet> strutsFileSetSet = facetConfiguration.getFileSets();

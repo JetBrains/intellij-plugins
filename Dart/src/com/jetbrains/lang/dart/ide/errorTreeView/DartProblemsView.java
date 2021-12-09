@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.execution.runners.ExecutionUtil;
@@ -10,19 +10,25 @@ import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsContexts.TabTitle;
+import com.intellij.openapi.util.text.HtmlBuilder;
+import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
+import com.intellij.util.ModalityUiUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
@@ -31,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,8 +45,7 @@ import java.util.Map;
   name = "DartProblemsView",
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
-public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
-
+public final class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
   @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
   private static final NotificationGroup NOTIFICATION_GROUP =
@@ -51,7 +57,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private final DartProblemsPresentationHelper myPresentationHelper;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
-  private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
+  private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new HashMap<>();
   private final Alarm myAlarm;
 
   @NotNull
@@ -76,7 +82,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       final Map<String, List<? extends AnalysisError>> filePathToErrors;
       synchronized (myLock) {
-        filePathToErrors = new THashMap<>(myScheduledFilePathToErrors);
+        filePathToErrors = new HashMap<>(myScheduledFilePathToErrors);
         myScheduledFilePathToErrors.clear();
       }
 
@@ -97,13 +103,13 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         @Override
         public void analysisStarted() {
           myAnalysisIsBusy = true;
-          GuiUtils.invokeLaterIfNeeded(() -> updateIcon(), ModalityState.NON_MODAL, myProject.getDisposed());
+          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myProject.getDisposed(), () -> updateIcon());
         }
 
         @Override
         public void analysisFinished() {
           myAnalysisIsBusy = false;
-          GuiUtils.invokeLaterIfNeeded(() -> updateIcon(), ModalityState.NON_MODAL, myProject.getDisposed());
+          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myProject.getDisposed(), () -> updateIcon());
         }
       }
     );
@@ -126,11 +132,11 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     return content != null ? (DartProblemsViewPanel)content.getComponent() : null;
   }
 
-  void setHeaderText(@NotNull String headerText) {
+  void setTabTitle(@TabTitle @NotNull String tabTitle) {
     ToolWindow toolWindow = getDartAnalysisToolWindow();
     Content content = toolWindow != null ? toolWindow.getContentManager().getContent(0) : null;
     if (content != null) {
-      content.setDisplayName(headerText);
+      content.setDisplayName(tabTitle);
     }
   }
 
@@ -152,7 +158,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   public static @NotNull DartProblemsView getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, DartProblemsView.class);
+    return project.getService(DartProblemsView.class);
   }
 
   public static DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode(@NotNull final Project project) {
@@ -167,15 +173,19 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   }
 
   @SuppressWarnings("unused")
-  public void showWarningNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
+  public void showWarningNotification(@NotNull @NlsContexts.NotificationTitle String title,
+                                      @Nullable @NlsContexts.NotificationContent String content,
+                                      @Nullable Icon icon) {
     showNotification(NotificationType.WARNING, title, content, icon, false);
   }
 
-  public void showErrorNotificationTerse(@NotNull String title) {
+  public void showErrorNotificationTerse(@NotNull @NlsContexts.NotificationTitle String title) {
     showNotification(NotificationType.ERROR, title, null, null, true);
   }
 
-  public void showErrorNotification(@NotNull String title, @Nullable String content, @Nullable Icon icon) {
+  public void showErrorNotification(@NotNull @NlsContexts.NotificationTitle String title,
+                                    @Nullable @NlsContexts.NotificationContent String content,
+                                    @Nullable Icon icon) {
     showNotification(NotificationType.ERROR, title, content, icon, false);
   }
 
@@ -189,8 +199,8 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   public static final String OPEN_DART_ANALYSIS_LINK = "open.dart.analysis";
 
   private void showNotification(@NotNull NotificationType notificationType,
-                                @NotNull String title,
-                                @Nullable String content,
+                                @NotNull @NlsContexts.NotificationTitle String title,
+                                @Nullable @NlsContexts.NotificationContent String content,
                                 @Nullable Icon icon,
                                 boolean terse) {
     clearNotifications();
@@ -200,11 +210,14 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     content = StringUtil.notNullize(content);
     if (!terse) {
       if (!content.endsWith("<br>")) content += "<br>";
-      content += "<br><a href='disable.for.session'>Don't show for this session</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-                 "<a href='never.show.again'>Never show again</a>";
+      content +=
+        new HtmlBuilder().br()
+          .appendLink("disable.for.session", DartBundle.message("notification.link.don.t.show.for.this.session"))
+          .append(HtmlChunk.nbsp(7))
+          .appendLink("never.show.again", DartBundle.message("notification.link.never.show.again"));
     }
 
-    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
+    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType).setListener(new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
         notification.expire();
@@ -222,7 +235,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
           NOTIFICATION_GROUP
             .createNotification(DartBundle.message("notification.title.warning.disabled"),
                                 DartBundle.message("notification.content.you.can.enable.it.back.in.the.a.href.event.log.a.settings"),
-                                NotificationType.INFORMATION, new Adapter() {
+                                NotificationType.INFORMATION).setListener(new Adapter() {
                 @Override
                 protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                   notification.expire();

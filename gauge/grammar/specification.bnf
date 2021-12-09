@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2020 ThoughtWorks, Inc.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+{
+  parserClass="com.thoughtworks.gauge.parser.SpecParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Spec"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.thoughtworks.gauge.language.psi"
+  psiImplPackage="com.thoughtworks.gauge.language.psi.impl"
+
+  elementTypeHolderClass="com.thoughtworks.gauge.language.token.SpecTokenTypes"
+  elementTypeClass="com.thoughtworks.gauge.language.token.SpecElementType"
+  tokenTypeClass="com.thoughtworks.gauge.language.token.SpecTokenType"
+
+  psiImplUtilClass="com.thoughtworks.gauge.language.psi.SpecPsiImplUtil"
+}
+
+specFile ::= (comment)* specDetail scenario* teardown?
+specDetail ::= specHeading (comment | tags | keyword | table)* (step|comment)*
+scenario ::= (comment)* scenarioHeading (comment)* tags? (comment)* (step | comment)*
+teardown ::=  TEARDOWN_IDENTIFIER (comment)* (step | comment | TEARDOWN_IDENTIFIER)*
+private comment ::= COMMENT
+private specComment ::= SPEC_COMMENT
+private specHeading ::= SPEC_HEADING
+private scenarioHeading ::= SCENARIO_HEADING
+step ::= STEP_IDENTIFIER (arg|STEP)+ (comment)* table?    {mixin="com.thoughtworks.gauge.language.psi.impl.SpecNamedElementImpl"
+                                   implements="com.thoughtworks.gauge.language.psi.SpecNamedElement" methods = [getStepValue]}
+arg ::= dynamicArg | staticArg
+dynamicArg ::= DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END
+staticArg ::= ARG_START ARG? ARG_END
+tags ::= TAGS
+keyword ::= KEYWORD
+table ::= tableHeader tableBody
+tableHeader ::= TABLE_BORDER (TABLE_HEADER* TABLE_BORDER)+ NEW_LINE ((TABLE_BORDER)* NEW_LINE)?
+tableBody ::=(TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE?)*
+tableRowValue ::= TABLE_ROW_VALUE+ | (DYNAMIC_ARG_START DYNAMIC_ARG+ DYNAMIC_ARG_END WHITESPACE* TABLE_ROW_VALUE* WHITESPACE*)+

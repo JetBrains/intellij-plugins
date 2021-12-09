@@ -1,11 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -20,27 +20,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.intellij.util.ObjectUtils.notNull;
-
 public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2MetadataDirectiveStubBase<?>>
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
 
-  private final AtomicNotNullLazyValue<List<String>> myExportAsList = new AtomicNotNullLazyValue<List<String>>() {
-    @Override
-    protected @NotNull List<String> compute() {
-      String exportAsString = getStub().getExportAs();
-      return exportAsString == null
-             ? Collections.emptyList()
-             : StringUtil.split(exportAsString, ",");
-    }
-  };
-  private final AtomicNotNullLazyValue<Angular2DirectiveSelector> mySelector = AtomicNotNullLazyValue.createValue(
-    () -> new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this), getStub().getSelector(), null)
-  );
-  private final AtomicNotNullLazyValue<Collection<? extends Angular2DirectiveAttribute>> myAttributes = AtomicNotNullLazyValue.createValue(
-    this::buildAttributes
-  );
+  private final NotNullLazyValue<List<String>> myExportAsList = NotNullLazyValue.lazy(() -> {
+    String exportAsString = getStub().getExportAs();
+    return exportAsString == null
+           ? Collections.emptyList()
+           : StringUtil.split(exportAsString, ",");
+  });
+  private final NotNullLazyValue<Angular2DirectiveSelector> mySelector = NotNullLazyValue.lazy(() -> {
+    return new Angular2DirectiveSelectorImpl(this, getStub().getSelector(), null);
+  });
+  private final NotNullLazyValue<Collection<? extends Angular2DirectiveAttribute>> myAttributes = NotNullLazyValue.lazy(this::buildAttributes);
 
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
     super(element);
@@ -63,7 +56,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   @Override
   protected @NotNull Result<Map<String, String>> resolveMappings(@NotNull String prop) {
-    StubElement propertyStub = getStub().getDecoratorFieldValueStub(prop);
+    StubElement<?> propertyStub = getStub().getDecoratorFieldValueStub(prop);
     if (propertyStub == null) {
       return Result.create(Collections.emptyMap(), this);
     }
@@ -80,12 +73,11 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   private @NotNull Collection<? extends Angular2DirectiveAttribute> buildAttributes() {
     return EntryStream.of(getStub().getAttributes())
-      .mapKeyValue((name, index) -> new Angular2MetadataDirectiveAttribute(() -> getConstructorParameter(index),
-                                                                           this::getSourceElement, name))
+      .mapKeyValue((name, index) -> new Angular2MetadataDirectiveAttribute(this, index, name))
       .toImmutableList();
   }
 
-  private @Nullable JSParameter getConstructorParameter(@NotNull Integer index) {
+  protected @Nullable JSParameter getConstructorParameter(@NotNull Integer index) {
     TypeScriptClass cls = getTypeScriptClass();
     if (cls == null || index < 0) {
       return null;

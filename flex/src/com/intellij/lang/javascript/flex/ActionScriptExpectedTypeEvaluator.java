@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -11,9 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author yole
- */
+
 public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   public ActionScriptExpectedTypeEvaluator(PsiElement parent, JSExpectedTypeKind expectedTypeKind) {
     super(parent, expectedTypeKind);
@@ -41,7 +40,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       String name = fun.getName();
       JSType qualifiedExpressionType = null;
 
-      PsiElement originalElement = JSTypeUtils.getScopeInOriginalTree(myGrandParent);
+      PsiElement originalElement = JSTypeUtils.getScopeInOriginalTree(myParent);
       if (originalElement == null) return;
       PsiElement originalElementParent = originalElement.getParent();
       if (!(originalElementParent instanceof JSCallExpression)) return;
@@ -66,22 +65,22 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       }
     }
     else {
-      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent));
+      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myElement));
     }
   }
 
   @Override
   protected JSType getQualifiedExpressionType(JSExpression qualifier) {
-    return ActionScriptResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
+    return ActionScriptResolveUtil.getQualifiedExpressionJSType(qualifier);
   }
 
   @Override
   protected void evaluateIndexedAccessType(JSIndexedPropertyAccessExpression node) {
     if (isASDictionaryAccess(node)) {
-      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent));
+      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent));
     }
     else {
-      final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myGrandParent, true);
+      final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myParent, true);
       setResult(JSCompositeTypeFactory.createUnionType(typeSource,
                                          JSNamedTypeFactory.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
                                         JSNamedTypeFactory.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE)));
@@ -93,15 +92,18 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
     final JSExpression qualifier = expression.getQualifier();
     final PsiElement resolve = qualifier instanceof JSReferenceExpression ? ((JSReferenceExpression)qualifier).resolve() : null;
-    final String type = resolve instanceof JSVariable ? ((JSVariable)resolve).getTypeString() : null;
+    JSType rType = resolve instanceof JSVariable ? ((JSVariable)resolve).getJSType() : null;
+    JSType lType = JSNamedTypeFactory.createType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY,
+                                                 JSTypeSourceFactory.createTypeSource(expression, true),
+                                                 JSContext.INSTANCE);
 
-    return type != null && ActionScriptResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
+    return rType != null && JSResolveUtil.isAssignableJSType(lType, rType, null);
   }
 
   @Override
   public void visitJSArgumentList(@NotNull JSArgumentList node) {
-    if (!(myParent instanceof JSExpression)) return;
-    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument((JSExpression)myParent, node);
+    if (!(myElement instanceof JSExpression)) return;
+    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument((JSExpression)myElement, node);
 
     if (param != null) {
       if (param.isRest()) {
@@ -115,8 +117,8 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
   @Override
   public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
-    if (myGrandParent.getParent() instanceof JSNewExpression) {
-      JSType type = getQualifiedExpressionType((JSExpression)myGrandParent.getParent());
+    if (myParent.getParent() instanceof JSNewExpression) {
+      JSType type = getQualifiedExpressionType((JSExpression)myParent.getParent());
       if (type instanceof JSGenericTypeImpl) {
         setResult(ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments()));
       }

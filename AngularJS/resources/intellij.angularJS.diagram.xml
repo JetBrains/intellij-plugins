@@ -1,0 +1,19 @@
+<idea-plugin package="org.angularjs.diagram">
+  <dependencies>
+    <plugin id="com.intellij.diagram"/>
+    <module name="intellij.javascript.impl/diagrams"/>
+  </dependencies>
+  <actions>
+    <action class="org.angularjs.diagram.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action">
+      <add-to-group group-id="UML.EditorGroup" />
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.angularjs.diagram.AngularUiRouterProviderContext"/>
+    <diagram.Provider implementation="org.angularjs.diagram.AngularUiRouterDiagramProvider"/>
+    <javascript.module.provider implementation="org.angularjs.diagram.AngularModulesProvider"/>
+  </extensions>
+
+  <resource-bundle>messages.AngularJSBundle</resource-bundle>
+</idea-plugin>

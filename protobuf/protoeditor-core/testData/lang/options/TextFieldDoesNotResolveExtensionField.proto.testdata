@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+message MyType {
+  MyNestedType nested = 1;
+  extend proto2.FileOptions {
+    int32 xyz = 2005;
+  }
+}
+
+extend proto2.FileOptions {
+  MyType opt = 2000;
+}
+
+option (opt) = {
+  x<caret>yz: 10
+};

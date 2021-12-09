@@ -1,10 +1,11 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
 import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.diagram.actions.DiagramCreateNewNodeElementAction;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Kirill Safonov
  * @author Konstantin Bulenkov
  */
-public class FlashUmlProvider extends DiagramProvider<Object> {
+public final class FlashUmlProvider extends DiagramProvider<Object> {
   public static final String ID = "Flash";
 
   private final FlashUmlVisibilityManager myVisibilityManager = new FlashUmlVisibilityManager();
@@ -36,40 +37,45 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
 
   @Pattern("[a-zA-Z0-9_-]*")
   @Override
-  public String getID() {
+  public @NotNull String getID() {
     return ID;
   }
 
   @Override
-  public FlashUmlVisibilityManager createVisibilityManager() {
+  public @NotNull FlashUmlVisibilityManager createVisibilityManager() {
     return myVisibilityManager;
   }
 
   @Override
-  public FlashUmlNodeContentManager getNodeContentManager() {
+  public @NotNull FlashUmlNodeContentManager getNodeContentManager() {
     return myNodeContentManager;
   }
 
   @Override
-  public FlashUmlElementManager getElementManager() {
+  public @NotNull DiagramNodeContentManager createNodeContentManager() {
+    return new FlashUmlNodeContentManager();
+  }
+
+  @Override
+  public @NotNull FlashUmlElementManager getElementManager() {
     return myElementManager;
   }
 
   @Override
-  public FlashUmlVfsResolver getVfsResolver() {
+  public @NotNull FlashUmlVfsResolver getVfsResolver() {
     return myVfsResolver;
   }
 
   @Override
-  public FlashUmlRelationshipManager getRelationshipManager() {
+  public @NotNull FlashUmlRelationshipManager getRelationshipManager() {
     return myRelationshipManager;
   }
 
   @Override
-  public FlashUmlDataModel createDataModel(@NotNull Project project,
-                                           @Nullable Object element,
-                                           @Nullable VirtualFile file,
-                                           DiagramPresentationModel presentationModel) {
+  public @NotNull FlashUmlDataModel createDataModel(@NotNull Project project,
+                                                    @Nullable Object element,
+                                                    @Nullable VirtualFile file,
+                                                    @NotNull DiagramPresentationModel presentationModel) {
     if (element instanceof JSFile) {
       element = JSPsiImplUtils.findQualifiedElement((JSFile)element);
     }
@@ -84,12 +90,12 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
   }
 
   @Override
-  public DiagramScopeManager<Object> createScopeManager(Project project) {
+  public DiagramScopeManager<Object> createScopeManager(@NotNull Project project) {
     return new DiagramPsiScopeManager<>(project);
   }
 
   @Override
-  public DiagramColorManager getColorManager() {
+  public @NotNull DiagramColorManager getColorManager() {
     return myColorManager;
   }
 
@@ -111,20 +117,20 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
   };
 
   @Override
-  public DiagramCreateNewElementAction<Object, ?>[] getCreateNewActions() {
+  public DiagramCreateNewElementAction<Object, ?> @NotNull [] getCreateNewActions() {
     //noinspection unchecked
     return myElementActions;
   }
 
   @Override
-  public DiagramCreateNewNodeElementAction<Object, ?>[] getCreateNewNodeElementActions() {
+  public DiagramCreateNewNodeElementAction<Object, ?> @NotNull [] getCreateNewNodeElementActions() {
     //noinspection unchecked
     return myNodeActions;
   }
 
   @Override
-  public String getPresentableName() {
-    return JavaScriptBundle.message("js.uml.presentable.name");
+  public @NotNull String getPresentableName() {
+    return FlexBundle.message("js.uml.presentable.name");
   }
 
   @Override

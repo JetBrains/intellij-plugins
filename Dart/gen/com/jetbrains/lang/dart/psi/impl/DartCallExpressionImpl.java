@@ -21,26 +21,26 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
     visitor.visitCallExpression(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+    return findChildByClass(DartExpression.class);
   }
 
   @Override
-  @Nullable
-  public DartTypeArguments getTypeArguments() {
-    return findChildByClass(DartTypeArguments.class);
+  @NotNull
+  public List<DartTypeArguments> getTypeArgumentsList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTypeArguments.class);
   }
 
   @Override
-  @Nullable
-  public DartArguments getArguments() {
+  public @Nullable DartArguments getArguments() {
     return DartPsiImplUtil.getArguments(this);
   }
 

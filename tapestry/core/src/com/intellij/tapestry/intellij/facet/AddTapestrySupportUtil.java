@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class AddTapestrySupportUtil {
+public final class AddTapestrySupportUtil {
 
   private static final Logger _logger = Logger.getInstance(AddTapestrySupportUtil.class);
 

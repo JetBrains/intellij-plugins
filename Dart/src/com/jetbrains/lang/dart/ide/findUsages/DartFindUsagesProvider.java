@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.lang.findUsages.FindUsagesProvider;
@@ -30,9 +30,8 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
     }
     final DartComponentType type = DartComponentType.typeOf(element.getParent());
     if (type == null) return DartBundle.message("find.usages.type.reference");
-    if (type == DartComponentType.LOCAL_VARIABLE) return DartBundle.message("find.usages.type.local.variable");
-    if (type == DartComponentType.GLOBAL_VARIABLE) return DartBundle.message("find.usages.type.top.level.variable");
-    return StringUtil.toLowerCase(type.toString());
+
+    return type.getUsageType();
   }
 
   @Override

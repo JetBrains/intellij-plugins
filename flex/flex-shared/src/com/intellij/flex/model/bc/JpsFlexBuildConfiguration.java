@@ -1,5 +1,6 @@
 package com.intellij.flex.model.bc;
 
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsCompositeElement;
@@ -20,7 +21,7 @@ public interface JpsFlexBuildConfiguration
 
   @Override
   @NotNull
-  String getName();
+  @Nls(capitalization = Nls.Capitalization.Title) String getName();
 
   @NotNull
   TargetPlatform getTargetPlatform();

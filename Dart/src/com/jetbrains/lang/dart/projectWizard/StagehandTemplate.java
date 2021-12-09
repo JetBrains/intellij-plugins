@@ -1,5 +1,7 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
@@ -9,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,13 +24,9 @@ class StagehandTemplate extends DartProjectTemplate {
   @NotNull private final Stagehand.StagehandDescriptor myTemplate;
 
   StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandDescriptor template) {
-    super(getLabel(template), template.myDescription);
+    super(template.myLabel, template.myDescription);
     myStagehand = stagehand;
     myTemplate = template;
-  }
-
-  private static String getLabel(final Stagehand.StagehandDescriptor descriptor) {
-    return !StringUtil.isEmptyOrSpaces(descriptor.myLabel) ? descriptor.myLabel : descriptor.myId;
   }
 
   @Override
@@ -37,7 +36,7 @@ class StagehandTemplate extends DartProjectTemplate {
     try {
       myStagehand.generateInto(sdkRoot, baseDir, myTemplate.myId);
     }
-    catch (Stagehand.StagehandException e) {
+    catch (ExecutionException e) {
       throw new IOException(e);
     }
 
@@ -47,10 +46,19 @@ class StagehandTemplate extends DartProjectTemplate {
       LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/" + PubspecYamlUtil.PUBSPEC_YAML);
     ContainerUtil.addIfNotNull(files, pubspec);
 
-    final VirtualFile mainFile = myTemplate.myEntrypoint.isEmpty()
-                                 ? null
-                                 : LocalFileSystem.getInstance()
-                                   .refreshAndFindFileByPath(baseDir.getPath() + "/" + myTemplate.myEntrypoint);
+    // template entrypoint is usually like "bin/__projectName__.dart"
+    String entrypoint = myTemplate.myEntrypoint;
+    if (pubspec != null && entrypoint != null) {
+      String projectName = PubspecYamlUtil.getDartProjectName(pubspec);
+      if (projectName != null) {
+        @NonNls String projectNamePlaceholder = "__projectName__";
+        entrypoint = StringUtil.replace(entrypoint, projectNamePlaceholder, projectName);
+      }
+    }
+
+    final VirtualFile mainFile =
+      StringUtil.isEmpty(entrypoint) ? null
+                                     : LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/" + entrypoint);
 
     if (mainFile != null && mainFile.getName().equals("index.html")) {
       ContainerUtil.addIfNotNull(files, mainFile.getParent().findChild("main.dart"));
@@ -58,11 +66,16 @@ class StagehandTemplate extends DartProjectTemplate {
 
     ContainerUtil.addIfNotNull(files, mainFile);
 
-    if (!myTemplate.myEntrypoint.isEmpty() && mainFile != null) {
-      if (myTemplate.myEntrypoint.startsWith("bin/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, DartFileType.INSTANCE)) {
+    VirtualFile testFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/test");
+    if (testFolder != null && testFolder.isDirectory()) {
+      createTestRunConfiguration(module, baseDir.getPath());
+    }
+
+    if (!StringUtil.isEmpty(entrypoint) && mainFile != null) {
+      if (entrypoint.startsWith("bin/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, DartFileType.INSTANCE)) {
         createCmdLineRunConfiguration(module, mainFile);
       }
-      if (myTemplate.myEntrypoint.startsWith("web/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, HtmlFileType.INSTANCE)) {
+      if (entrypoint.startsWith("web/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, HtmlFileType.INSTANCE)) {
         createWebRunConfiguration(module, mainFile);
       }
     }

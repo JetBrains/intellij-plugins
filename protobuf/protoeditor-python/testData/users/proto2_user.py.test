@@ -1,0 +1,117 @@
+"""Tests usages of python code generated from proto2 syntax w/ API v2."""
+
+# NOTE: remove the carets and rename the file if you want to try it in an IDE.
+# We give these files an extra extension to trick lint.
+
+# EXPECT-NEXT: proto2.proto / <file>
+from python import <caret>proto2_pb2
+from python import proto2_pb2 as Alias
+from python.proto2_pb2 import M1
+
+
+class MessageLevelUser(object):
+  # NOTE: We don't handle static methods on the message, like FromString.
+  # The IDE python resolver doesn't quite understand how to look through all
+  # the reflection magic.
+
+  @staticmethod
+  def constructor():
+    # EXPECT-NEXT: proto2.proto / M1
+    instance = proto2_pb2.<caret>M1()
+    return instance.single_primitive
+
+  @staticmethod
+  def nonqualified_constructor():
+    # Google style guide says "Use imports for packages and modules only, not
+    # for individual classes or functions":
+    # https://github.com/google/styleguide/blob/gh-pages/pyguide.md#22-imports
+    # But, it's just a style guide, not a style policy. Also, could have
+    # non-Google style code.
+    # EXPECT-NEXT: proto2.proto / M1
+    instance = <caret>M1()
+    return instance.single_primitive
+
+  @staticmethod
+  def type(x):
+    # EXPECT-NEXT: proto2.proto / M1
+    return isinstance(x, proto2_pb2.<caret>M1)
+
+  @staticmethod
+  def variable_not_proto():
+    instance = proto2_pb2.M1()
+    # EXPECT-NEXT: proto2_user.py / instance
+    return <caret>instance
+
+
+class AliasOfProto(object):
+
+  @staticmethod
+  def constructor():
+    # EXPECT-NEXT: proto2.proto / M1
+    return Alias.<caret>M1()
+
+
+class SingleEnumUser(object):
+  # NOTE: We don't handle static methods on the enum, like Name and Value.
+
+  @staticmethod
+  def enum_type():
+    # EXPECT-NEXT: proto2.proto / Shapes
+    return proto2_pb2.<caret>Shapes
+
+  @staticmethod
+  def enum_value():
+    # EXPECT-NEXT: proto2.proto / CIRCLE
+    return proto2_pb2.<caret>CIRCLE
+
+  @staticmethod
+  def weird_enum():
+    # EXPECT-NEXT: proto2.proto / weirdEnum_name
+    return proto2_pb2.<caret>weirdEnum_name
+
+  @staticmethod
+  def weird_enum_value():
+    # EXPECT-NEXT: proto2.proto / weirdValue_name
+    return proto2_pb2.<caret>weirdValue_name
+
+
+# Check weird names that violate the style guide.
+class SecondMessageType(object):
+
+  @staticmethod
+  def weird_message_name():
+    # EXPECT-NEXT: proto2.proto / weirdMessage_name
+    instance = proto2_pb2.<caret>weirdMessage_name()
+    return instance.single_primitive
+
+
+class NestedUser(object):
+
+  @staticmethod
+  def nested_one_level():
+    # EXPECT-NEXT: proto2.proto / M1.RED
+    return proto2_pb2.M1.<caret>RED
+
+  @staticmethod
+  def nested_two_level():
+    # EXPECT-NEXT: proto2.proto / M1.NestedM1.UNKNOWN_UNKNOWNS
+    return proto2_pb2.M1.NestedM1.<caret>UNKNOWN_UNKNOWNS
+
+  @staticmethod
+  def nested_message():
+    # EXPECT-NEXT: proto2.proto / M1.NestedM1
+    return proto2_pb2.M1.<caret>NestedM1()
+
+
+class TestClass(object):
+
+  class NestedClass(object):
+    field_in_nested_class = 0
+
+    def __init__(self, x):
+      self.field_in_nested_class = x
+
+  @staticmethod
+  def test_non_proto_qualifier():
+    # EXPECT-NEXT: proto2_user.py / field_in_nested_class
+    TestClass.NestedClass().<caret>field_in_nested_class

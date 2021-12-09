@@ -24,6 +24,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -31,13 +32,13 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
-import icons.Struts2Icons;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Provides paths to "/XYZ.action".
@@ -55,7 +56,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
   @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
-                                  @NotNull final List<PsiReference> references,
+                                  final @NotNull List<PsiReference> references,
                                   final boolean soft) {
     final StrutsModel model = StrutsManager.getInstance(psiElement.getProject())
                                            .getModelByFile((XmlFile) psiElement.getContainingFile());

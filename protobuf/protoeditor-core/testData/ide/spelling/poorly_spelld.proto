@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package foo.bar;
+
+enum Foo {
+  ADFDS = 0;
+  HELLO = 1;
+}
+
+message Type {
+  repeated string good_spelling = 1;
+  repeated string bad_spellng = 2;
+}
+
+message PoorlySpelld {
+  repeated Foo foo = 1;
+  repeated string string = 2;
+  repeated Type type = 3;
+}

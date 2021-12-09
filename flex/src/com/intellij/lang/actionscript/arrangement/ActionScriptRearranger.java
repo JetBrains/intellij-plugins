@@ -1,11 +1,15 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.actionscript.arrangement;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.arrangement.JSArrangementEntry;
 import com.intellij.lang.javascript.arrangement.JSElementArrangementEntry;
 import com.intellij.lang.javascript.arrangement.JSRearrangerBase;
+import com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider;
 import com.intellij.lang.javascript.generation.ActionScriptGenerateEventHandler;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
@@ -143,7 +147,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
       JSAttributeList.AccessType accessType = attributes.getExplicitAccessType();
 
       if (accessType == null) {
-        final String namespace = attributes.getNamespace();
+        final String namespace = ActionScriptPsiImplUtil.getNamespace(attributes);
         if (namespace == null) {
           accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
         }
@@ -291,6 +295,13 @@ public class ActionScriptRearranger extends JSRearrangerBase {
       LOG.error(type);
       return true;
     }
+  }
+
+  @Override
+  public @NotNull Collection<ArrangementTabInfo> getArrangementTabInfos() {
+    return List.of(new ArrangementTabInfo(AllIcons.FileTypes.AS,
+                                          JavaScriptBundle.message("filetype.actionscript.description"),
+                                          ActionScriptLanguageCodeStyleSettingsProvider.CONFIGURABLE_DISPLAY_NAME));
   }
 }
 

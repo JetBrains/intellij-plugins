@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.lang.javascript.uml;
 
@@ -37,6 +23,7 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
@@ -59,7 +46,7 @@ import java.util.concurrent.Callable;
  * @author Konstantin Bulenkov
  * @author Kirill Safonov
  */
-public class FlashUmlDataModel extends DiagramDataModel<Object> {
+public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   private final Map<String, SmartPsiElementPointer<JSClass>> classesAddedByUser = new HashMap<>();
   private final Map<String, SmartPsiElementPointer<JSClass>> classesRemovedByUser = new HashMap<>();
   private final String initialPackage;
@@ -162,7 +149,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   @Override
   @NotNull
   @NonNls
-  public String getNodeName(final DiagramNode<Object> node) {
+  public String getNodeName(final @NotNull DiagramNode<Object> node) {
     Object element = getIdentifyingElement(node);
     if (element instanceof JSClass) {
       return "Class " + ((JSClass)element).getQualifiedName();
@@ -174,12 +161,12 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  public void removeNode(DiagramNode<Object> node) {
+  public void removeNode(@NotNull DiagramNode<Object> node) {
     removeElement(getIdentifyingElement(node));
   }
 
   @Override
-  public void removeEdge(DiagramEdge<Object> edge) {
+  public void removeEdge(@NotNull DiagramEdge<Object> edge) {
     final Object source = edge.getSource().getIdentifyingElement();
     final Object target = edge.getTarget().getIdentifyingElement();
     final DiagramRelationshipInfo relationship = edge.getRelationship();
@@ -623,7 +610,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
 
   @Override
   @Nullable
-  public DiagramNode<Object> addElement(Object element) {
+  public DiagramNode<Object> addElement(@Nullable Object element) {
     if (findNode(element) != null) return null;
 
     if (element instanceof JSClass) {
@@ -653,7 +640,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
 
 
   @Override
-  public void expandNode(final DiagramNode<Object> node) {
+  public void expandNode(final @NotNull DiagramNode<Object> node) {
     final Object element = node.getIdentifyingElement();
     if (element instanceof String) {
       expandPackage((String)element);
@@ -673,7 +660,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  public void collapseNode(final DiagramNode<Object> node) {
+  public void collapseNode(final @NotNull DiagramNode<Object> node) {
     Object element = node.getIdentifyingElement();
     String fqn = getFqn(element);
     if (fqn == null) {
@@ -768,7 +755,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  public boolean hasElement(Object element) {
+  public boolean hasElement(@Nullable Object element) {
     return findNode(element) != null;
   }
 
@@ -838,10 +825,8 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
 
         if (superClasses.length > 0) { // if base component is not resolved, replace it silently
           final JSClass currentParent = superClasses[0];
-          if (Messages.showYesNoDialog(
-            FlexBundle.message("replace.base.component.prompt", currentParent.getQualifiedName(), toClass.getQualifiedName()),
-            FlexBundle.message("create.edge.title"),
-            Messages.getQuestionIcon()) == Messages.NO) {
+          if (MessageDialogBuilder.yesNo(FlexBundle.message("create.edge.title"), FlexBundle
+            .message("replace.base.component.prompt", currentParent.getQualifiedName(), toClass.getQualifiedName())).show() == Messages.NO) {
             return null;
           }
         }
@@ -862,10 +847,9 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
         if (superClasses.length > 0 &&
             !JSResolveUtil.isObjectClass(superClasses[0])) { // if base class is not resolved, replace it silently
           final JSClass currentParent = superClasses[0];
-          if (Messages.showYesNoDialog(
-            FlexBundle.message("replace.base.class.prompt", currentParent.getQualifiedName(), toClass.getQualifiedName()),
-            FlexBundle.message("create.edge.title"),
-            Messages.getQuestionIcon()) == Messages.NO) {
+          if (MessageDialogBuilder.yesNo(FlexBundle.message("create.edge.title"), FlexBundle
+            .message("replace.base.class.prompt", currentParent.getQualifiedName(), toClass.getQualifiedName()))
+                .icon(Messages.getQuestionIcon()).show() == Messages.NO) {
             return null;
           }
         }
@@ -898,7 +882,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     FlashUmlEdge result = addEdge(from, to, type);
     final DiagramBuilder builder = getBuilder();
     if (builder != null) {
-      builder.update(true, false);
+      builder.queryUpdate().withDataReload().withPresentationUpdate().run();
     }
     return result;
   }

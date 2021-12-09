@@ -25,7 +25,9 @@
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Builder;
+import aQute.bnd.osgi.Processor;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,7 +40,7 @@ public class ReportingBuilder extends Builder {
     myReporter = reporter;
   }
 
-  public ReportingBuilder(@NotNull Reporter reporter, @NotNull Builder parent) {
+  public ReportingBuilder(@NotNull Reporter reporter, @NotNull Processor parent) {
     super(parent);
     myReporter = reporter;
     use(parent);
@@ -51,7 +53,8 @@ public class ReportingBuilder extends Builder {
   }
 
   @Override
-  public void progress(float progress, String format, Object... args) {
+  @SuppressWarnings("deprecation")
+  public void progress(float progress, @Nls(capitalization = Nls.Capitalization.Sentence) String format, Object... args) {
     myReporter.progress(formatArrays(format, args));
   }
 

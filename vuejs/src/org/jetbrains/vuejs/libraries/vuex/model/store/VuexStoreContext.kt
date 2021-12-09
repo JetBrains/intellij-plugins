@@ -42,15 +42,17 @@ interface VuexStoreContext {
   }
 
   fun visit(consumer: (qualifiedName: String, container: VuexContainer) -> Unit) {
-    val containers = Stack<Pair<String, VuexContainer>>()
-    rootStores.asSequence().mapTo(containers) { "" to it }
-    registeredModules.asSequence().mapTo(containers) { (if (it.isNamespaced) it.name else "") to it }
+    val containers = Stack<Triple<String, VuexContainer, Set<PsiElement>>>()
+    rootStores.mapTo(containers) { Triple("", it, setOf(it.source)) }
+    registeredModules.mapTo(containers) { Triple((if (it.isNamespaced) it.name else ""), it, setOf(it.source)) }
 
     while (!containers.empty()) {
-      val (qualifiedName, container) = containers.pop()
-      container.modules.values.asSequence().mapTo(containers) {
-        (if (it.isNamespaced) appendSegment(qualifiedName, it.name) else qualifiedName) to it
-      }
+      val (qualifiedName, container, sources) = containers.pop()
+      container.modules.values.asSequence()
+        .filter { !sources.contains(it.source) }
+        .mapTo(containers) {
+          Triple((if (it.isNamespaced) appendSegment(qualifiedName, it.name) else qualifiedName), it, sources + it.source)
+        }
       consumer(qualifiedName, container)
     }
   }

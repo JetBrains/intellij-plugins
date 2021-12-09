@@ -29,7 +29,7 @@
 
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
-    <compileServer.plugin classpath="flex-jps-plugin.jar;flex-shared.jar"/>
+    <compileServer.plugin classpath="flex-jps.jar;flex-shared.jar"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>
     <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>
@@ -53,7 +53,7 @@
                              order="before moveFileOrDir, before moveJavaFileOrDir"/>
     <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersHandler"/>
     <fileType name="SWF" implementationClass="com.intellij.javascript.flex.SwfFileType" fieldName="SWF_FILE_TYPE" extensions="swf"/>
-    <fileType name="MXML" implementationClass="com.intellij.lang.javascript.flex.MxmlFileType" fieldName="MXML" extensions="mxml;fxg" language="Mxml"/>
+    <fileType name="MXML" implementationClass="com.intellij.lang.javascript.flex.MxmlFileType" fieldName="MXML" extensions="fxg;mxml" language="Mxml"/>
     <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
     <todoIndexer filetype="MXML" implementationClass="com.intellij.javascript.flex.MxmlTodoIndexer"/>
     <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
@@ -116,6 +116,7 @@
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
+    <annotator language="CSS" implementationClass="com.intellij.javascript.flex.css.FlexCssAnnotator"/>
     <multiHostInjector implementation="com.intellij.javascript.flex.mxml.MxmlLanguageInjector"/>
 
     <internalFileTemplate name="ActionScript Class"/>
@@ -160,6 +161,7 @@
     <orderEnumerationHandlerFactory
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
     <sdkFinder implementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk$SdkFinderImpl"/>
+    <applicationService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdkManager"/>
 
     <projectStructureValidator implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureValidator"/>
 
@@ -270,9 +272,15 @@
 
     <xml.undefinedElementFixProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexUndefinedElementFixProvider"/>
     <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
+    <completion.contributor language="XML" implementationClass="com.intellij.javascript.flex.completion.FlexTextReferenceCompletionProvider"
+                            id="FlexTextReferenceCompletionProvider"
+                            order="after JSCompletionContributor"/>
 
     <projectService serviceImplementation="com.intellij.javascript.flex.mxml.schema.CodeContextHolder"/>
-    <notificationAllowlist groupIds="AIR Packaging;Flash app not compiled before launch;Maven;Flash Compiler;Debugger"/>
+    <notificationGroup id="AIR Packaging" displayType="BALLOON"/>
+    <notificationGroup id="Flash app not compiled before launch" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.FlexBundle" key="check.flash.app.compiled.before.launch.notification.group" isLogByDefault="false"/>
+    <notificationGroup id="Flash Compiler" displayType="BALLOON"/>
+    <notificationGroup id="Debugger" displayType="BALLOON"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

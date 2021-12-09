@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class BndLaunchUtil {
+public final class BndLaunchUtil {
   @NotNull
   public static Run getRun(@NotNull File runFile) throws Exception {
     Workspace ws = Workspace.getWorkspaceWithoutException(runFile.getParentFile().getParentFile());

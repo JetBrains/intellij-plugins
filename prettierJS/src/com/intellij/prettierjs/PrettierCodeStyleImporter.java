@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.execution.ExecutionException;
@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,8 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
   @NotNull
   @Override
   protected String getToolName() {
-    return "Prettier";
+    @NlsSafe String prettier = "Prettier";
+    return prettier;
   }
 
   @Override
@@ -65,10 +67,11 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
                                                   @NotNull NodeJsInterpreter interpreter,
                                                   @NotNull NodePackage linterPackage) throws ExecutionException {
     String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
-    String convertConfigScriptPath = getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
+    String convertConfigScriptPath =
+      getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
     String absPkgPathToRequire = linterPackage.getAbsolutePackagePathToRequire(configPsi.getProject());
     if (absPkgPathToRequire == null) {
-      throw new ExecutionException("Cannot find absolute package path to require: " + linterPackage);
+      throw new ExecutionException(PrettierBundle.message("dialog.message.cannot.find.absolute.package.path.to.require", linterPackage));
     }
     List<String> parameters = Arrays.asList(convertConfigScriptPath, absPkgPathToRequire, configFilePath);
     String text = runToolWithArguments(configPsi, interpreter, parameters);

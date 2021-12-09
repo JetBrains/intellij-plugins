@@ -2,14 +2,16 @@
 package org.angular2.inspections.actions;
 
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
-import com.intellij.lang.javascript.modules.JSModuleNameInfo;
+import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
+import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
@@ -24,10 +26,8 @@ import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP;
@@ -42,9 +42,9 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
                                @NotNull PsiElement context,
                                @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
                                @NotNull String declarationName,
-                               @NotNull String actionName,
+                               @NotNull @NlsContexts.Command String actionName,
                                boolean codeCompletion) {
-    super(editor, context, "", DEFAULT_FILTER, actionName, codeCompletion);
+    super(editor, context, "", JSPlaceElementFilter.DEFAULT_FILTER, actionName, codeCompletion);
     myDeclarationName = declarationName;
     myDecorator = declarationDecorator;
   }
@@ -55,42 +55,40 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
   }
 
   @Override
-  public @NotNull List<JSElement> getCandidates() {
+  public @NotNull List<? extends JSImportCandidate> getRawCandidates() {
     Angular2SourceDeclaration declaration = tryCast(
       Angular2EntitiesProvider.getDeclaration(myDecorator.getElement()),
       Angular2SourceDeclaration.class);
-    if (myContext == null || declaration == null) {
+    if (declaration == null) {
       return Collections.emptyList();
     }
-    return StreamEx.of(AddNgModuleDeclarationQuickFix.getCandidates(myContext))
+    return StreamEx.of(AddNgModuleDeclarationQuickFix.getCandidates(getContext()))
       .map(Angular2Entity::getTypeScriptClass)
       .select(JSElement.class)
+      .map(el -> new ES6ImportCandidate(myName, el, getContext()))
       .toList();
   }
 
   @Override
-  protected @NotNull List<JSElement> getFinalElements(@NotNull Project project,
-                                                      @NotNull PsiFile file,
-                                                      @NotNull List<JSElement> candidates,
-                                                      @NotNull Collection<JSElement> elementsFromLibraries,
-                                                      @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
+  protected @NotNull List<? extends JSImportCandidate> filter(@NotNull List<? extends JSImportCandidate> candidates) {
     return candidates;
   }
 
   @Override
   protected void runAction(@Nullable Editor editor,
-                           @NotNull String ignored,
-                           @NotNull JSElement moduleClassToDeclareIn,
+                           @NotNull JSImportCandidateWithExecutor candidate,
                            @NotNull PsiElement place) {
-    if (myContext == null || !myContext.isValid()) {
+    PsiElement context = getContext();
+    if (!context.isValid()) {
       return;
     }
-    Angular2SourceModule module = tryCast(Angular2EntitiesProvider.getModule(moduleClassToDeclareIn),
+    JSElement element = candidate.getElement();
+    Angular2SourceModule module = tryCast(Angular2EntitiesProvider.getModule(element),
                                           Angular2SourceModule.class);
     Angular2SourceDeclaration declaration = tryCast(Angular2EntitiesProvider.getDeclaration(myDecorator.getElement()),
                                                     Angular2SourceDeclaration.class);
 
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(myContext);
+    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(context);
     Angular2Module contextModule = scope.getModule();
     if (module == null || declaration == null || contextModule == null) {
       return;

@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.*;
@@ -18,11 +19,16 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
   }
 
   @Override
+  protected @NotNull @NlsContexts.Command String getCommandName() {
+    return myImplementNotOverride ? DartBundle.message("command.implement.methods")
+                                  : DartBundle.message("command.override.methods");
+  }
+
+  @Override
   @NotNull
   protected String getNothingFoundMessage() {
     return DartBundle.message(myImplementNotOverride ? "dart.fix.implement.none.found" : "dart.fix.override.none.found");
   }
-
 
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent element) {

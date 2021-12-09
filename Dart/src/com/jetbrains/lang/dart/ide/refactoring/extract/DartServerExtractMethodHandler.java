@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring.extract;
 
 import com.intellij.openapi.actionSystem.DataContext;
@@ -76,17 +76,15 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
 }
 
 class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtractMethodRefactoring> {
-  @NotNull final ServerExtractMethodRefactoring myRefactoring;
   private final JTextField myMethodNameField = new JTextField();
   private final JCheckBox myAllCheckBox = new JCheckBox(DartBundle.message("checkbox.text.extract.all.occurrences"));
   private final JCheckBox myGetterCheckBox = new JCheckBox(DartBundle.message("checkbox.text.extract.getter"));
   private final JLabel mySignatureLabel = new JLabel();
 
   DartServerExtractMethodDialog(@NotNull Project project,
-                                       @Nullable Editor editor,
-                                       @NotNull ServerExtractMethodRefactoring refactoring) {
+                                @Nullable Editor editor,
+                                @NotNull ServerExtractMethodRefactoring refactoring) {
     super(project, editor, refactoring);
-    myRefactoring = refactoring;
     setTitle(DartBundle.message("dialog.title.extract.method"));
     init();
 

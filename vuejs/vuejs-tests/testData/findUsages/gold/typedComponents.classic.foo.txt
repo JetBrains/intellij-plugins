@@ -1,0 +1,1 @@
+<typedComponentsClassic.vue:(58,72):(1,4)>	Foo

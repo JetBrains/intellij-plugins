@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package ext_bug.validation;
+
+import "lang/options/validation.proto";
+
+extend Constraints {
+  optional InRange in_range = 109657885;
+}
+
+message InRange {
+  optional double min = 1;
+  optional double max = 2;
+}

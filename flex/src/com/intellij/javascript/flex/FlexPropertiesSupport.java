@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexPropertiesSupport {
+public final class FlexPropertiesSupport {
   private static final BundleNameEvaluator MY_BUNDLE_NAME_EVALUATOR = new BundleNameEvaluator() {
     @Override
     public String evaluateBundleName(PsiFile psiFile) {

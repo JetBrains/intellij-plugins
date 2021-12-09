@@ -1,4 +1,5 @@
 
+import com.intellij.ReviseWhenPortedToJDK
 import com.intellij.aws.cloudformation.tests.TestUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Urls
@@ -23,7 +24,7 @@ object OfficialExamplesSaver {
     val doc = Jsoup.parse(docText)
     for (key in doc.getElementsByTag("Key")) {
       val name = key.text()
-      val size = Integer.parseInt(key.parent().getElementsByTag("Size").first().text())
+      val size = Integer.parseInt(key.parent()?.getElementsByTag("Size")?.first()?.text())
 
       val fileUrl = url.resolve(name.replace(" ", "%20"))
 
@@ -39,6 +40,7 @@ object OfficialExamplesSaver {
     }
   }
 
+  @ReviseWhenPortedToJDK("13")
   fun saveServerless() {
     val targetRoot = TestUtil.getTestDataFile("serverless-application-model/src")
 
@@ -48,7 +50,7 @@ object OfficialExamplesSaver {
     val url = URL("https://github.com/awslabs/serverless-application-model/archive/master.zip")
     FileUtils.copyURLToFile(url, tempFile.toFile())
 
-    val zipFs = FileSystems.newFileSystem(tempFile, null)
+    val zipFs = FileSystems.newFileSystem(tempFile, null as ClassLoader?)
 
     val rootPath = zipFs.rootDirectories.toList().single()
 

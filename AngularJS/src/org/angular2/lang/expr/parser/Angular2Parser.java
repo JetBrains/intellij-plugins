@@ -3,6 +3,7 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
+import com.intellij.lang.ecmascript6.ES6StubElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.openapi.util.Ref;
@@ -13,10 +14,10 @@ import com.intellij.util.Consumer;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
-import static org.angular2.lang.expr.parser.Angular2StubElementTypes.PROPERTY;
 
 public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2ExpressionParser,
   Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
@@ -283,7 +284,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     if (isVariable) {
       key.collapse(IDENTIFIER);
       key = key.precede();
-      key.done(TEMPLATE_BINDING_VARIABLE);
+      key.done(TEMPLATE_VARIABLE);
       key.precede().done(VAR_STATEMENT);
     }
     else {
@@ -307,7 +308,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     }
 
     @Override
-    public void parseScriptExpression(boolean isTypeContext) {
+    public void parseScriptExpression() {
       throw new UnsupportedOperationException();
     }
 
@@ -433,9 +434,13 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     }
 
     @Override
+    protected @Nullable IElementType getSafeAccessOperator() {
+      return JSTokenTypes.ELVIS;
+    }
+
+    @Override
     protected boolean isReferenceQualifierSeparator(IElementType tokenType) {
-      return tokenType == ELVIS
-             || tokenType == JSTokenTypes.DOT;
+      return tokenType == JSTokenTypes.DOT || tokenType == getSafeAccessOperator();
     }
 
     @Override
@@ -465,6 +470,16 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     @AdvancesLexer
     protected boolean parsePropertyNoMarker(PsiBuilder.Marker property) {
       final IElementType firstToken = builder.getTokenType();
+      final IElementType secondToken = builder.lookAhead(1);
+
+      if (myJavaScriptParser.isIdentifierName(firstToken) && // Angular, in contrast to ECMAScript, accepts Reserved Words here
+          (secondToken == JSTokenTypes.COMMA || secondToken == JSTokenTypes.RBRACE)) {
+        final PsiBuilder.Marker ref = builder.mark();
+        builder.advanceLexer();
+        ref.done(JSElementTypes.REFERENCE_EXPRESSION);
+        property.done(ES6StubElementTypes.PROPERTY);
+        return true;
+      }
 
       if (PROPERTY_NAMES.contains(firstToken)) {
         String errorMessage = validateLiteral();
@@ -480,7 +495,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
 
       parsePropertyInitializer(false);
 
-      property.done(PROPERTY);
+      property.done(JSStubElementTypes.PROPERTY);
       property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
 
       return true;

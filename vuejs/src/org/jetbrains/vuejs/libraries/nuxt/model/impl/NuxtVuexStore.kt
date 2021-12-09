@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -24,7 +23,7 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.*
 import org.jetbrains.vuejs.model.VueImplicitElement
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class NuxtVuexContainer(override val source: PsiFileSystemItem) : VuexContainer {
+abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContainer {
 
   override val state: Map<String, VuexStateProperty>
     get() = get(VuexUtils.STATE, ::VuexStatePropertyImpl)
@@ -40,24 +39,20 @@ abstract class NuxtVuexContainer(override val source: PsiFileSystemItem) : VuexC
 
   override val modules: Map<String, VuexModule>
     get() = getFromCache(MODULES) {
-      if (source is PsiDirectory) {
-        val result = mutableMapOf<String, VuexModule>()
-        getJSFiles(source as PsiDirectory).forEach { (name, file) ->
-          if (name !in RESERVED_NAMES) {
-            result[name] = NuxtVuexModule(name, file)
-          }
+
+      val result = mutableMapOf<String, VuexModule>()
+      getJSFiles(source).forEach { (name, file) ->
+        if (name !in RESERVED_NAMES) {
+          result[name] = VuexModuleImpl(name, file, true)
         }
-        source.processChildren {
-          if (it is PsiDirectory) {
-            result[it.name] = NuxtVuexModule(it.name, it)
-          }
-          true
+      }
+      source.processChildren {
+        if (it is PsiDirectory) {
+          result[it.name] = NuxtVuexModule(it.name, it)
         }
-        result.toMap()
+        true
       }
-      else {
-        emptyMap()
-      }
+      result.toMap()
     }
 
   override val initializer: JSObjectLiteralExpression?
@@ -67,33 +62,20 @@ abstract class NuxtVuexContainer(override val source: PsiFileSystemItem) : VuexC
   private fun <T> getFromCache(key: String, provider: () -> Map<String, T>): Map<String, T> {
     val source = source
     return CachedValuesManager.getCachedValue(source) {
-      val dependencies = mutableListOf<Any>(PsiModificationTracker.MODIFICATION_COUNT)
-      if (source is PsiDirectory) {
-        dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-      }
-      CachedValueProvider.Result.create(ConcurrentHashMap<String, Map<String, *>>(), dependencies.toTypedArray())
-    }.computeIfAbsent(key) { provider() } as Map<String, T>
+      CachedValueProvider.Result.create(ConcurrentHashMap<String, Map<String, *>>(),
+                                        arrayOf(PsiModificationTracker.MODIFICATION_COUNT, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS))
+    }.getOrPut(key) { provider() } as Map<String, T>
   }
 
   private fun <T> get(symbolKind: String, constructor: (name: String, source: JSProperty) -> T): Map<String, T> {
     @Suppress("UNCHECKED_CAST")
     return getFromCache(symbolKind) {
-      when (source) {
-        is JSFile -> {
-          buildFromExportedMembers(source as JSFile, symbolKind, constructor)
-        }
-        is PsiDirectory -> {
-          val files = getJSFiles(source as PsiDirectory)
-          files[symbolKind]?.let {
-            buildFromExportedMembers(it, null, constructor)
-          } ?: files[INDEX_FILE_NAME]?.let {
-            buildFromExportedMembers(it, symbolKind, constructor)
-          } ?: emptyMap<String, T>()
-        }
-        else -> {
-          emptyMap<String, T>()
-        }
-      }
+      val files = getJSFiles(source)
+      files[symbolKind]?.let {
+        buildFromExportedMembers(it, null, constructor)
+      } ?: files[INDEX_FILE_NAME]?.let {
+        buildFromExportedMembers(it, symbolKind, constructor)
+      } ?: emptyMap()
     }
   }
 
@@ -148,7 +130,7 @@ class NuxtVuexStore(storeDir: PsiDirectory) : NuxtVuexContainer(storeDir), VuexS
 }
 
 
-class NuxtVuexModule(override val name: String, source: PsiFileSystemItem) : NuxtVuexContainer(source), VuexModule {
+class NuxtVuexModule(override val name: String, source: PsiDirectory) : NuxtVuexContainer(source), VuexModule {
 
   override val isNamespaced: Boolean
     get() = true

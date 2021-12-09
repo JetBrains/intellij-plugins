@@ -18,6 +18,7 @@ import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
 
 /**
  * @author Maxim.Mossienko
@@ -32,12 +33,12 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
   }
 
   @Override
-  public StubElement buildStubTree(@NotNull FileContent fileContent) {
+  public StubElement<?> buildStubTree(@NotNull FileContent fileContent) {
     return buildFileStub(fileContent.getFile(), fileContent.getContent());
   }
 
-  static PsiFileStub buildFileStub(VirtualFile file, byte[] content) {
-    PsiFileStubImpl stub = new JSFileStubImpl(JavaScriptSupportLoader.ECMA_SCRIPT_L4, new JSFileCachedData());
+  static PsiFileStub<?> buildFileStub(VirtualFile file, byte[] content) {
+    PsiFileStubImpl<?> stub = new JSFileStubImpl(JavaScriptSupportLoader.ECMA_SCRIPT_L4, new JSFileCachedData(), Collections.emptySet());
     try {
 
       FlexImporter.buildStubsInterfaceFromStream(

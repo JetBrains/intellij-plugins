@@ -39,11 +39,11 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  *
  * @author Yann C&eacute;bron
  */
-public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
+final class FreeMarkerJavaScriptInjector implements MultiHostInjector {
   private static class Holder {
     private static final PsiElementPattern.Capture<FtlStringLiteral> JS_ELEMENT_PATTERN =
       psiElement(FtlStringLiteral.class)
-        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib JS Attributes") {
+        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<>("S2 taglib JS Attributes") {
           @Override
           public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
             final String name = ftlNameValuePair.getName();

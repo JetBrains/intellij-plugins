@@ -16,7 +16,7 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(JS:ELSE_KEYWORD)('else')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
 ------
 ASTWrapperPsiElement(FILE)
@@ -42,7 +42,7 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(THEN)('then')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:ELSE_KEYWORD)('else')
@@ -62,7 +62,7 @@ ASTWrapperPsiElement(FILE)
       PsiElement(JS:IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
     PsiElement(JS:ELSE_KEYWORD)('else')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
 ------
 ASTWrapperPsiElement(FILE)
@@ -72,11 +72,11 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(THEN)('then')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:ELSE_KEYWORD)('else')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
 ------
 ASTWrapperPsiElement(FILE)
@@ -200,7 +200,7 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(THEN)('then')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
@@ -222,7 +222,7 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(JS:ELSE_KEYWORD)('else')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
 ------
 ASTWrapperPsiElement(FILE)
@@ -232,12 +232,12 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(THEN)('then')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
     PsiElement(JS:ELSE_KEYWORD)('else')
-    PsiErrorElement:identifier expected
+    PsiErrorElement:Identifier expected
       <empty list>
 ------
 ASTWrapperPsiElement(FILE)

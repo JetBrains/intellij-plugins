@@ -97,7 +97,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     if (referenceName == null) return ResolveResult.EMPTY_ARRAY;
 
     final TelVariantsProcessor<ResolveResult> processor =
-      new TelVariantsProcessor<ResolveResult>(myElement.getParent(), referenceName, getReferenceQualifier() == null) {
+      new TelVariantsProcessor<>(myElement.getParent(), referenceName, getReferenceQualifier() == null) {
         @Override
         protected ResolveResult createResult(PsiNamedElement element, final boolean validResult) {
           if (element instanceof BeanPropertyElement) {
@@ -151,7 +151,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
   @Override
   public Object @NotNull [] getVariants() {
     final TelVariantsProcessor<PsiNamedElement> processor =
-      new TelVariantsProcessor<PsiNamedElement>(myElement.getParent(), null, getReferenceQualifier() == null) {
+      new TelVariantsProcessor<>(myElement.getParent(), null, getReferenceQualifier() == null) {
         @Override
         protected PsiNamedElement createResult(final PsiNamedElement element, final boolean validResult) {
           return element;

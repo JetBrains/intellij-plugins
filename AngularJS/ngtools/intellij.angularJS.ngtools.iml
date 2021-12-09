@@ -10,7 +10,6 @@
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.angularJS" />
-    <orderEntry type="module" module-name="intellij.tools.index" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" />
     <orderEntry type="module" module-name="intellij.webstorm" />
     <orderEntry type="module" module-name="intellij.platform.commercial" />
@@ -18,5 +17,6 @@
     <orderEntry type="library" name="commons-compress" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
   </component>
 </module>

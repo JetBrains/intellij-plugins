@@ -1,13 +1,13 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.FileCollectionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ProjectPaths;
@@ -29,8 +29,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
-
+public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   FlexResourceBuildTarget(final FlexResourceBuildTargetType type, @NotNull JpsTypedModule<JpsFlexBuildConfigurationManager> module) {
     super(type, module);
   }
@@ -101,8 +100,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
       return outputDir == null ? Collections.emptyList() : Collections.singletonList(outputDir);
     }
 
-    final Set<File> result = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
-
+    Set<File> result = FileCollectionFactory.createCanonicalFileSet();
     for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
       if (FlexCommonUtils.canHaveResourceFiles(bc.getNature())) {
         result.add(new File(PathUtilRt.getParentPath(bc.getActualOutputFilePath())));

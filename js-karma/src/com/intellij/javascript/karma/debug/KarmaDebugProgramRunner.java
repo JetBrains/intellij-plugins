@@ -21,6 +21,7 @@ import com.intellij.javascript.debugger.DebuggableFileFinder;
 import com.intellij.javascript.debugger.JavaScriptDebugEngine;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
 import com.intellij.javascript.debugger.RemoteDebuggingFileFinder;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -97,12 +98,11 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   private static DebuggableWebBrowser getChromeInfo() throws ExecutionException {
     WebBrowser browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME);
     if (browser == null) {
-      throw new ExecutionException("Debugging is available in Chrome browser only.<p>" +
-                                   "Please configure Chrome browser in 'Settings | Tools | Web Browsers'");
+      throw new ExecutionException(KarmaBundle.message("debug.debugging_available_in_chrome_only.dialog.message"));
     }
     DebuggableWebBrowser debuggableWebBrowser = DebuggableWebBrowser.create(browser);
     if (debuggableWebBrowser == null) {
-      throw new ExecutionException("Cannot find Chrome engine for debugging");
+      throw new ExecutionException(KarmaBundle.message("debug.cannot_find_chrome.dialog.message"));
     }
     return debuggableWebBrowser;
   }
@@ -207,7 +207,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
       }
     }
-    return new RemoteDebuggingFileFinder(mappings, (DebuggableFileFinder)null);
+    return new RemoteDebuggingFileFinder(mappings, null);
   }
 
   private static void resumeTestRunning(@NotNull OSProcessHandler processHandler) {

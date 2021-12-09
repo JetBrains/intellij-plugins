@@ -8,22 +8,26 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
-import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
+import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.plugins.stylus.StylusLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
+import java.io.File
 import java.nio.file.Paths
 
 class VueFormatterTest : JavaScriptFormatterTestBase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/"
 
   init {
     myUseReformatText = true
@@ -48,6 +52,10 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
   }
 
   fun testScriptTagWithinTemplateTag() {
+    doTestFromFile("vue")
+  }
+
+  fun testI18nTag() {
     doTestFromFile("vue")
   }
 
@@ -90,7 +98,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
   }
 
   fun testPureHtmlUniformIndent() {
-    myFixture.configureDependencies()
+    myFixture.configureVueDependencies()
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = true
@@ -102,7 +110,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
   }
 
   fun testPureHtmlPerLangIndent() {
-    myFixture.configureDependencies()
+    myFixture.configureVueDependencies()
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = true
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = false
@@ -185,6 +193,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
   }
 
   fun testInterpolationWrapping() {
+    myFixture.configureByText("package.json", "{\"dependencies\":{\"vue\":\"*\"}}")
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
       val vueSettings = styleSettings.getCustomSettings(VueCodeStyleSettings::class.java)
       vueSettings.UNIFORM_INDENT = true
@@ -230,15 +239,10 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
 
   private fun doTest(id: Int) {
     val testName = getTestName(false)
-    myFixture.configureByFile("$basePath/$testName.vue")
-    try {
-      val file = myFixture.file
-      doReformat(file)
-      myFixture.checkResultByFile("$basePath/${testName}_after$id.vue")
-    }
-    finally {
-      myFixture.configureByFile("$basePath/$testName.vue")
-    }
+    val sourceFile = "$testDataPath/$basePath/$testName.vue"
+    val goldFile = "$testDataPath/$basePath/${testName}_after$id.vue"
+    doTestFromAbsolutePaths(sourceFile, goldFile, "vue")
+    doEmbedmentTest(sourceFile, goldFile)
   }
 
   private fun doIndentationTest(settings: CodeStyleSettings) {
@@ -254,4 +258,33 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
                             "vue")
   }
 
+  private fun doEmbedmentTest(sourceFile: String, goldFile: String) {
+    configureFromFileText("dummy.{{.}}.#@injected@#.html", loadText(File(sourceFile)))
+    val start = editor.selectionModel.selectionStart
+    val end = editor.selectionModel.selectionEnd
+    var psiElement = file.findElementAt(start)
+    while (psiElement != null && psiElement.textRange.endOffset != end) {
+      psiElement = psiElement.parent
+      if (psiElement is PsiFile) psiElement = null
+    }
+
+    if (psiElement == null) psiElement = file
+    doReformat(psiElement)
+    try {
+      checkResultByText(loadText(File(goldFile)))
+    }
+    catch (e: junit.framework.ComparisonFailure) {
+      throw FileComparisonFailure(e.message, e.expected, e.actual, goldFile)
+    }
+  }
+
+  private fun loadText(file: File): String {
+    try {
+      return StringUtil.convertLineSeparators(FileUtil.loadFile(file))
+    }
+    catch (e: Exception) {
+      throw RuntimeException(e)
+    }
+
+  }
 }

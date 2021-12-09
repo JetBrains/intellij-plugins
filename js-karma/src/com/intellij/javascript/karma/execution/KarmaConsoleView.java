@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
@@ -20,10 +20,10 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.LayoutAttractionPolicy;
 import com.intellij.execution.ui.layout.LayoutViewOptions;
 import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.debugger.JSDebugTabLayouter;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.openapi.application.ModalityState;
@@ -32,6 +32,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.debugger.connection.VmConnection;
@@ -72,8 +73,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.getOptions().setMinimizeActionEnabled(false);
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
-                                                    "Test Run",
-                                                    AllIcons.Debugger.Console,
+                                                    KarmaBundle.message("console.test_run_tab.name"),
+                                                    null,
                                                     getPreferredFocusableComponent());
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
@@ -170,7 +171,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     if (console instanceof KarmaConsoleView) {
       return (KarmaConsoleView)console;
     }
-    Class consoleClass = console != null ? console.getClass() : null;
+    Class<?> consoleClass = console != null ? console.getClass() : null;
     LOG.info("Cannot cast " + consoleClass + " to " + KarmaConsoleView.class.getSimpleName() +
              ", RunProfileState: " + state.getClass().getName());
     return null;
@@ -191,7 +192,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       }
     }
 
-    private static void render(@NotNull TestTreeRenderer renderer, @NotNull String msg) {
+    private static void render(@NotNull TestTreeRenderer renderer, @NotNull @Nls String msg) {
       renderer.clear();
       renderer.append(msg);
     }
@@ -199,7 +200,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     @Override
     public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
       if (testProxy.isLeaf()) {
-        render(renderer, myTestRunProcessTerminated ? "Stopped" : "Waiting for browser capturing...");
+        render(renderer, myTestRunProcessTerminated ? KarmaBundle.message("test.run.process_terminated.text")
+                                                    : KarmaBundle.message("test.run.waiting_for_browser_capturing.text"));
       }
     }
 

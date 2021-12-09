@@ -24,11 +24,6 @@ public class JpsFlexSdkType extends JpsSdkType<JpsDummyElement> {
       public JpsDummyElement loadProperties(@Nullable final Element propertiesElement) {
         return JpsElementFactory.getInstance().createDummyElement();
       }
-
-      @Override
-      public void saveProperties(@NotNull final JpsDummyElement properties, @NotNull final Element element) {
-        // no additional data for this sdk type
-      }
     };
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.editor.Document;
@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewSettings;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
@@ -24,11 +23,11 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class PubspecYamlUtil {
-
+public final class PubspecYamlUtil {
   public static final String PUBSPEC_YAML = "pubspec.yaml";
 
   private static final String NAME = "name";
@@ -42,7 +41,7 @@ public class PubspecYamlUtil {
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
 
   public static boolean isPubspecFile(@NotNull final VirtualFile file) {
-    // https://www.dartlang.org/tools/pub/pubspec
+    // https://dart.dev/tools/pub/pubspec
     return !file.isDirectory() && file.getName().equals(PUBSPEC_YAML);
   }
 
@@ -77,8 +76,7 @@ public class PubspecYamlUtil {
   public static void processInProjectPathPackagesRecursively(@NotNull final Project project,
                                                              @NotNull final VirtualFile pubspecYamlFile,
                                                              @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
-
-    processInProjectPathPackagesRecursively(project, pubspecYamlFile, new THashSet<>(), pathPackageNameAndDirConsumer);
+    processInProjectPathPackagesRecursively(project, pubspecYamlFile, new HashSet<>(), pathPackageNameAndDirConsumer);
   }
 
   private static void processInProjectPathPackagesRecursively(@NotNull final Project project,
@@ -96,7 +94,7 @@ public class PubspecYamlUtil {
     processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCY_OVERRIDES));
   }
 
-  // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
+  // Path packages: https://dart.dev/tools/pub/dependencies#path-packages
   private static void processYamlDepsRecursively(@NotNull final Project project,
                                                  @NotNull final Set<VirtualFile> processedPubspecs,
                                                  @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
@@ -111,7 +109,7 @@ public class PubspecYamlUtil {
 
       final Object packageEntryValue = packageEntry.getValue();
       if (packageEntryValue instanceof Map) {
-        final Object pathObj = ((Map)packageEntryValue).get(PATH);
+        final Object pathObj = ((Map<?, ?>)packageEntryValue).get(PATH);
         if (pathObj instanceof String) {
           final VirtualFile packageFolder = VfsUtilCore.findRelativeFile(pathObj + "/" + LIB_DIR_NAME, baseDir);
           if (packageFolder != null &&

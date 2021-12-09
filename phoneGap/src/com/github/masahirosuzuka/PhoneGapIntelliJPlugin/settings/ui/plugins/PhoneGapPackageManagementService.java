@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -5,6 +6,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapPlug
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.util.CatchingConsumer;
@@ -12,11 +14,11 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementServiceEx;
 import com.intellij.webcore.packaging.RepoPackage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 public class PhoneGapPackageManagementService extends PackageManagementServiceEx {
@@ -68,11 +70,12 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public Collection<InstalledPackage> getInstalledPackages() throws IOException {
-    List<String> names = myCommands.pluginList();
-
-
-    return PhoneGapPluginsList.wrapInstalled(names);
+  public @NotNull List<? extends InstalledPackage> getInstalledPackagesList() {
+    return ContainerUtil.map(myCommands.pluginList(),
+                             string -> {
+                               String[] split = string.split(" ");
+                               return new InstalledPackage(split[0], split.length > 1 ? split[1] : "");
+                             });
   }
 
   @Override
@@ -94,7 +97,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
                              boolean installToUser) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       listener.operationStarted(repoPackage.getName());
-      final Ref<String> errorMessage = new Ref<>();
+      final Ref<@NlsSafe String> errorMessage = new Ref<>();
       try {
         String appendVersion = version == null ? "" : "@" + version;
         myCommands.pluginAdd(repoPackage.getName() + appendVersion);
@@ -116,7 +119,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   public void uninstallPackages(final List<InstalledPackage> installedPackages, final Listener listener) {
     ApplicationManager.getApplication().executeOnPooledThread((Runnable)() -> ContainerUtil.process(installedPackages, aPackage -> {
       listener.operationStarted(aPackage.getName());
-      final Ref<String> errorMessage = new Ref<>();
+      final Ref<@NlsSafe String> errorMessage = new Ref<>();
       try {
         myCommands.pluginRemove(aPackage.getName());
       }
@@ -144,7 +147,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public void fetchPackageDetails(String packageName, CatchingConsumer<String, Exception> consumer) {
+  public void fetchPackageDetails(String packageName, CatchingConsumer<@Nls String, Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(packageName);
     consumer.consume(aPackage != null ? aPackage.getDesc() : "");
   }

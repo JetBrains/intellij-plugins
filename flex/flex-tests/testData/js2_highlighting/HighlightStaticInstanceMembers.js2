@@ -4,7 +4,7 @@ class <info>SampleClass</info> {
     static var <info descr="static field">staticField</info>:int;
     static function <info descr="static method">staticMethod</info>():void {}
     function <info descr="instance method">instanceMethod</info>(<info descr="parameter">p</info>):int {}
-    var <info descr="field">instanceField</info>:int;
+    var <info descr="instance field">instanceField</info>:int;
 }
 
 function <info descr="global function">testFun</info>(<info descr="parameter">param</info>:int):void {
@@ -12,7 +12,7 @@ function <info descr="global function">testFun</info>(<info descr="parameter">pa
     <info>SampleClass</info>.<info descr="static method">staticMethod</info>();
     var <info descr="local variable">a</info>:<info>SampleClass</info>;
     <info descr="local variable">a</info>.<info descr="instance method">instanceMethod</info>(<info descr="parameter">param</info>)
-    <info descr="local variable">a</info>.<info descr="field">instanceField</info> = 1
+    <info descr="local variable">a</info>.<info descr="instance field">instanceField</info> = 1
 }
 
 class <info>SomeConstants</info> {
@@ -26,19 +26,19 @@ class <info>Foo2</info> {
 }
 
 class <lineMarker descr="Has subclasses"><info>Base</info></lineMarker> {
-    var <info descr="field">x</info>;
+    var <info descr="instance field">x</info>;
     public static function  <info descr="static method">staticFunction</info>():void {}
 }
 
 class <info>Derived</info> extends <info>Base</info> {
-    var <info descr="field">x2</info>;
+    var <info descr="instance field">x2</info>;
 
     public static function  <info descr="static method">derivedStaticFunction</info>():void {
-      <error descr="Instance member is not accessible"><info descr="field">x</info></error> = 1;
-      <error descr="Instance member is not accessible"><info descr="field">x2</info></error> = 1;
-      <info descr="class">Base</info>.<error descr="Instance member is not accessible"><info descr="field">x</info></error> = 1;
-      <info descr="class">Derived</info>.<error descr="Instance member is not accessible"><info descr="field">x</info></error> = 1;
-      <info descr="class">Derived</info>.<error descr="Instance member is not accessible"><info descr="field">x2</info></error> = 1;
+      <error descr="Instance member is not accessible"><info descr="instance field">x</info></error> = 1;
+      <error descr="Instance member is not accessible"><info descr="instance field">x2</info></error> = 1;
+      <info descr="class">Base</info>.<error descr="Instance member is not accessible"><info descr="instance field">x</info></error> = 1;
+      <info descr="class">Derived</info>.<error descr="Instance member is not accessible"><info descr="instance field">x</info></error> = 1;
+      <info descr="class">Derived</info>.<error descr="Instance member is not accessible"><info descr="instance field">x2</info></error> = 1;
     }
 }
 

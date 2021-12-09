@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
@@ -17,6 +17,7 @@ import com.intellij.openapi.options.ex.SingleConfigurableEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,7 +65,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myWorkingDirComponent = createWorkingDirComponent(project);
     myConfigPathField = createConfigurationFileTextField(project);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
-    myKarmaOptionsEditor = createOptionsEditor("CLI options, e.g. --browsers");
+    myKarmaOptionsEditor = createOptionsEditor(KarmaBundle.message("run_config.karma_options.placeholder.text"));
     JPanel scopeKindPanel = createScopeKindRadioButtonPanel();
     mySelectedScopeKindPanel = new JPanel(new BorderLayout());
     myRootComponent = new FormBuilder()
@@ -84,11 +85,11 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   }
 
   @NotNull
-  private static RawCommandLineEditor createOptionsEditor(@Nullable String emptyText) {
+  private static RawCommandLineEditor createOptionsEditor(@Nullable @NlsContexts.StatusText String emptyText) {
     RawCommandLineEditor editor = new RawCommandLineEditor();
     JTextField field = editor.getTextField();
     if (field instanceof ExpandableTextField) {
-      field.putClientProperty("monospaced", false);
+      ((ExpandableTextField)field).setMonospaced(false);
     }
     if (field instanceof ComponentWithEmptyText && emptyText != null) {
       ((ComponentWithEmptyText)field).getEmptyText().setText(emptyText);
@@ -115,12 +116,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     testKindPanel.setBorder(JBUI.Borders.emptyLeft(10));
     ButtonGroup buttonGroup = new ButtonGroup();
     for (KarmaScopeKind scopeKind : KarmaScopeKind.values()) {
-      JRadioButton radioButton = new JRadioButton(UIUtil.removeMnemonic(scopeKind.getName()));
-      final int index = UIUtil.getDisplayMnemonicIndex(scopeKind.getName());
-      if (index != -1) {
-        radioButton.setMnemonic(scopeKind.getName().charAt(index + 1));
-        radioButton.setDisplayedMnemonicIndex(index);
-      }
+      JRadioButton radioButton = new JRadioButton(UIUtil.replaceMnemonicAmpersand(scopeKind.getName()));
       radioButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {

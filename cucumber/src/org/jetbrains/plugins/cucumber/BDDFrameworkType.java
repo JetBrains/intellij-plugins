@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Type of BDD framework. Cucumber, behave and lettuce are good examples.
+ * Type of BDD framework. Cucumber, behave etc
  *
  * @author Ilya.Kazakevich
  */

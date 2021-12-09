@@ -1,18 +1,20 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuelidate
 
-import com.intellij.openapi.application.PathManager
+import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.javascript.web.renderLookupItems
+import com.intellij.javascript.web.resolveReference
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.*
 
 class VuelidateTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuelidate"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuelidate"
 
   override fun setUp() {
     super.setUp()
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.VUELIDATE_0_7_13)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.VUELIDATE_0_7_13)
   }
 
   fun testCompletion() {

@@ -1,7 +1,9 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.InlineLocalVariableFeedback;
 import org.dartlang.analysis.server.protocol.RefactoringFeedback;
 import org.dartlang.analysis.server.protocol.RefactoringKind;
@@ -16,7 +18,7 @@ public class ServerInlineLocalRefactoring extends ServerRefactoring {
   private int occurrences;
 
   public ServerInlineLocalRefactoring(@NotNull final Project project, @NotNull final VirtualFile file, final int offset, final int length) {
-    super(project, "Inline Local Variable", RefactoringKind.INLINE_LOCAL_VARIABLE, file, offset, length);
+    super(project, DartBundle.message("progress.title.inline.local.variable"), RefactoringKind.INLINE_LOCAL_VARIABLE, file, offset, length);
   }
 
   public int getOccurrences() {

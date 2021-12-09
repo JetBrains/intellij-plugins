@@ -1,0 +1,11 @@
+addItemToList#void
+msg#number
+tasks#string[]
+userInput#string
+constructor#Function
+hasOwnProperty#boolean
+isPrototypeOf#boolean
+propertyIsEnumerable#boolean
+toLocaleString#string
+toString#string
+valueOf#Object

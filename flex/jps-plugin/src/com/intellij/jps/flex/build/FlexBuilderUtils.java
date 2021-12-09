@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -11,9 +11,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtilRt;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
@@ -38,8 +36,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class FlexBuilderUtils {
-
+public final class FlexBuilderUtils {
   public static String getCompilerName(final JpsFlexBuildConfiguration bc) {
     String postfix = bc.isTempBCForCompilation() ? " - " + FlexCommonUtils.getBCSpecifier(bc) : "";
     if (!bc.getName().equals(bc.getModule().getName())) postfix += " (module " + bc.getModule().getName() + ")";
@@ -187,7 +184,7 @@ public class FlexBuilderUtils {
 
   private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer,
                                       final String mainClassPath) {
-    final Map<String, String> replacementMap = new THashMap<>();
+    final Map<String, String> replacementMap = new HashMap<>();
 
     replacementMap.put(FlexCommonUtils.SWF_MACRO, outputFileName);
     replacementMap.put(FlexCommonUtils.TITLE_MACRO, outputFileName);
@@ -252,7 +249,7 @@ public class FlexBuilderUtils {
   private static Map<String, String> getAttributesMap(final String metadata) {
     if (metadata == null) return Collections.emptyMap();
 
-    final THashMap<String, String> result = new THashMap<>();
+    final Map<String, String> result = new HashMap<>();
 
     final int beginIndex = metadata.indexOf('(');
     final int endIndex = metadata.lastIndexOf(')');
@@ -451,6 +448,6 @@ public class FlexBuilderUtils {
 
     contentElement.setText(swfName);
 
-    return JDOMUtil.write(rootElement, SystemProperties.getLineSeparator());
+    return JDOMUtil.write(rootElement, System.lineSeparator());
   }
 }

@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationSingletonPolicy;
 import com.intellij.execution.configurations.SimpleConfigurationType;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class KarmaConfigurationType extends SimpleConfigurationType implements DumbAware {
   public KarmaConfigurationType() {
-    super("JavaScriptTestRunnerKarma", "Karma", "Karma", NotNullLazyValue.createValue(() -> KarmaIcons.Karma2));
+    super("JavaScriptTestRunnerKarma", KarmaBundle.message("rc.run_configuration_type.name"), null, NotNullLazyValue.createValue(() -> KarmaIcons.Karma2));
   }
 
   @NotNull
@@ -44,5 +45,10 @@ public final class KarmaConfigurationType extends SimpleConfigurationType implem
   @NotNull
   public static KarmaConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(KarmaConfigurationType.class);
+  }
+
+  @Override
+  public boolean isEditableInDumbMode() {
+    return true;
   }
 }

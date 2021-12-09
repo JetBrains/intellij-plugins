@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.actions
 
-import com.intellij.execution.configurations.CommandLineTokenizer
+import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
@@ -13,12 +13,9 @@ import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
@@ -31,17 +28,14 @@ import com.intellij.util.ui.JBScalableIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.angular2.cli.*
+import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
-import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
-import javax.swing.JComponent
-import javax.swing.JLabel
 import javax.swing.JList
-import javax.swing.JPanel
 
 class AngularCliGenerateAction : DumbAwareAction() {
 
@@ -50,11 +44,11 @@ class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
-    val editor = e.getData(PlatformDataKeys.FILE_EDITOR)
+    val editor = e.getData(PlatformCoreDataKeys.FILE_EDITOR)
     val cli = AngularCliUtil.findAngularCliFolder(project, file) ?: return
 
     if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
-      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, "Can't generate code from Angular Schematics")
+      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, Angular2Bundle.message("angular.action.ng-generate.cant-generate-code"))
       return
     }
 
@@ -79,7 +73,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
         icon = JBUIScale.scaleIcon(EmptyIcon.create(5) as JBScalableIcon)
         if (value.error != null) {
           append(value.name!!, SimpleTextAttributes.ERROR_ATTRIBUTES, true)
-          append(" - Error: " + value.error!!.decapitalize(), SimpleTextAttributes.GRAY_ATTRIBUTES, false)
+          append(Angular2Bundle.message("angular.action.ng-generate.error-label", value.error!!.decapitalize()),
+                 SimpleTextAttributes.GRAY_ATTRIBUTES, false)
         }
         else {
           append(value.name!!, SimpleTextAttributes.REGULAR_ATTRIBUTES, true)
@@ -116,7 +111,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val scroll = ScrollPaneFactory.createScrollPane(list)
     scroll.border = JBUI.Borders.empty()
-    val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Schematic::class.java))
+    val pane = ListWithFilter.wrap(list, scroll) { obj: Schematic? -> obj.toString() }
 
     val builder = JBPopupFactory
       .getInstance()
@@ -129,13 +124,13 @@ class AngularCliGenerateAction : DumbAwareAction() {
       .setCancelOnOtherWindowOpen(true)
       .setMovable(true)
       .setResizable(true)
-      .setTitle("Generate Code with Angular Schematics")
+      .setTitle(Angular2Bundle.message("angular.action.ng-generate.title"))
       .setSettingButtons(toolbarComponent)
       .setCancelOnWindowDeactivation(false)
       .setCancelOnClickOutside(true)
       .setDimensionServiceKey(project, "org.angular.cli.generate", true)
       .setMinSize(Dimension(JBUI.scale(350), JBUI.scale(300)))
-      .setCancelButton(IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
+      .setCancelButton(IconButton(CommonBundle.message("action.text.close"), AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
     val popup = builder.createPopup()
     list.addKeyListener(object : KeyAdapter() {
       override fun keyPressed(e: KeyEvent?) {
@@ -186,48 +181,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
       return
     }
     popup.closeOk(null)
-    val dialog = object : DialogWrapper(project, true) {
-      private lateinit var editor: EditorTextField
 
-      init {
-        title = "Generate ${schematic.name}"
-        init()
-      }
-
-      override fun createCenterPanel(): JComponent {
-        val panel = JPanel(BorderLayout(0, 4))
-        panel.add(JLabel(schematic.description), BorderLayout.NORTH)
-        editor = SchematicOptionsTextField(project, schematic.options)
-        editor.setPreferredWidth(250)
-        panel.add(LabeledComponent.create(editor, "Parameters" + paramsDesc(schematic)), BorderLayout.SOUTH)
-        return panel
-      }
-
-      override fun getPreferredFocusedComponent(): JComponent {
-        return editor
-      }
-
-      fun paramsDesc(b: Schematic): String {
-        val argDisplay = b.arguments.joinToString(" ") { "<" + it.name + ">" }
-        val optionsDisplay = if (b.options.isEmpty()) "" else "<options...>"
-
-        val display = listOf(argDisplay, optionsDisplay).filter { it.isNotEmpty() }
-        if (display.isEmpty()) {
-          return ""
-        }
-        return display.joinToString(" ", " (", ")")
-      }
-
-      fun arguments(): Array<String> {
-        val tokenizer = CommandLineTokenizer(editor.text)
-        val result: MutableList<String> = mutableListOf()
-        while (tokenizer.hasMoreTokens()) {
-          result.add(tokenizer.nextToken())
-        }
-        return result.toTypedArray()
-      }
-    }
-
+    val dialog = AngularCliGenerateOptionsDialogs(project, schematic)
     if (dialog.showAndGet()) {
       runGenerator(project, schematic, dialog.arguments(), cli, workingDir)
     }
@@ -243,7 +198,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val filter = AngularCliFilter(project, cli.path)
     AngularCliProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
-                                        Function<NodePackage, String> { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
+                                        Function { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", schematic.name, *arguments)
   }

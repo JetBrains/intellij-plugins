@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Editor Basics" lessonsPath="EditorBasics/" version="0.1" id="js.completion" fileType="PROJECT"
-        description="Get the hang of the editor essentials – start writing better code and saving time on common tasks from day one.">
-    <lesson-kt implementationClass="training.learn.lesson.javascript.completion.BasicCompletionLesson" lang="JavaScript"/>
-    <lesson-kt implementationClass="training.learn.lesson.javascript.completion.CodeInspectionLesson" lang="JavaScript"/>
-    <lesson-kt implementationClass="training.learn.lesson.javascript.completion.RefactoringLesson" lang="JavaScript"/>
-    <lesson-kt implementationClass="training.learn.lesson.javascript.completion.CodeEditingLesson" lang="HTML"/>
-    <lesson-kt implementationClass="training.learn.lesson.javascript.completion.NavigationLesson" lang="JavaScript"/>
-</module>

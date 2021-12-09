@@ -43,7 +43,7 @@ import java.util.jar.Manifest;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class CachingBundleInfoProvider {
+public final class CachingBundleInfoProvider {
   private static final Map<String, Pair<Long, Manifest>> ourCache = new WeakHashMap<>();
 
   /**

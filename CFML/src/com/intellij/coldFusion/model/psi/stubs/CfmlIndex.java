@@ -15,17 +15,13 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.indexing.FileBasedIndex;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author vnikolaenko
- */
 public abstract class CfmlIndex implements Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.model.psi.stubs.CfmlIndex");
+  private static final Logger LOG = Logger.getInstance(CfmlIndex.class);
   private static final Key<GlobalSearchScope> MY_SCOPE_KEY = Key.create("default.cfml.scope");
   private static final Map<Project, CfmlIndex> managers = new HashMap<>();
   private final Project project;
@@ -117,11 +113,10 @@ public abstract class CfmlIndex implements Disposable {
 
     if (ok) return items;
 
-    Set<T> result = new THashSet<>(items.size());
-    for (PsiElement element : items) {
+    Set<T> result = new HashSet<>(items.size());
+    for (T element : items) {
       if (aClass.isInstance(element)) {
-        //noinspection unchecked
-        result.add((T)element);
+        result.add(element);
       }
       else {
         rebuildFileIndex(element, key);

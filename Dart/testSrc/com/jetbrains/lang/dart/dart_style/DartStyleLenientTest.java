@@ -1,9 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.dart_style;
 
-import gnu.trove.THashSet;
-
-import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Run the dart_style test suite using the expected output as the input.
@@ -16,9 +14,7 @@ public class DartStyleLenientTest extends DartStyleTest {
    */
   @Override
   protected void runTestInDirectory(String dirName) throws Exception {
-    Set<String> fail = new THashSet<>();
-    fail.addAll(KNOWN_TO_FAIL);
-    runTestInDirectory(dirName, fail);
+    runTestInDirectory(dirName, new HashSet<String>(KNOWN_TO_FAIL));
   }
 
   @Override

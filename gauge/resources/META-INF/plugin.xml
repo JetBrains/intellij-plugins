@@ -1,0 +1,147 @@
+<idea-plugin>
+  <id>com.thoughtworks.gauge</id>
+  <name>Gauge</name>
+  <vendor>JetBrains</vendor>
+  <category>Test Tools</category>
+
+  <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.properties</depends>
+  <depends>com.intellij.modules.json</depends>
+
+  <depends optional="true" config-file="with-gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="with-maven.xml">org.jetbrains.idea.maven</depends>
+
+  <description><![CDATA[
+    Plugin for writing <a href="https://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).
+    Supports only steps written in Java.
+    <p>Features:</p>
+    <ul>
+      <li>Basic language parsing and highlighting</li>
+      <li>Project Creation with Maven and Gradle</li>
+      <li>Auto completion</li>
+      <li>Navigation from step to implementation</li>
+      <li>Quick Fix for unimplemented steps</li>
+      <li>Execution and Debugging of specs</li>
+      <li>Support for Concepts</li>
+      <li>Refactoring support</li>
+    </ul>
+    ]]></description>
+
+  <resource-bundle>messages.GaugeBundle</resource-bundle>
+
+  <projectListeners>
+    <listener class="com.thoughtworks.gauge.GaugeProjectListener"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    <listener class="com.thoughtworks.gauge.GaugeModuleListener"
+              topic="com.intellij.openapi.project.ModuleListener"/>
+  </projectListeners>
+
+  <extensionPoints>
+    <extensionPoint name="moduleImporter" dynamic="true"
+                    interface="com.thoughtworks.gauge.wizard.GaugeModuleImporter"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="Specification" language="Specification" fieldName="INSTANCE"
+              implementationClass="com.thoughtworks.gauge.language.SpecFileType"
+              extensions="spec"/>
+    <fileType name="Concept" language="Concept" fieldName="INSTANCE"
+              implementationClass="com.thoughtworks.gauge.language.ConceptFileType"
+              extensions="cpt"/>
+
+    <lang.parserDefinition language="Specification"
+                           implementationClass="com.thoughtworks.gauge.parser.SpecParserDefinition"/>
+    <lang.parserDefinition language="Concept"
+                           implementationClass="com.thoughtworks.gauge.parser.ConceptParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Specification"
+                                   implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Concept"
+                                   implementationClass="com.thoughtworks.gauge.highlight.ConceptSyntaxHighlighterFactory"/>
+    <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
+    <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"/>
+    <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
+    <annotator language="Concept" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
+    <annotator language="JAVA" implementationClass="com.thoughtworks.gauge.annotator.ParamAnnotator"/>
+    <completion.contributor language="Specification"
+                            implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"
+                            order="first,before liveTemplates"/>
+    <completion.contributor language="Concept"
+                            implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"
+                            order="first,before liveTemplates"/>
+    <quoteHandler fileType="Specification" className="com.thoughtworks.gauge.autocomplete.ArgQuoteHandler"/>
+    <lang.braceMatcher language="Specification"
+                       implementationClass="com.thoughtworks.gauge.autocomplete.PairMatcher"/>
+
+    <moduleType id="Gauge_Module" implementationClass="com.thoughtworks.gauge.module.GaugeModuleType"/>
+    <moduleConfigurationEditorProvider
+      implementation="com.thoughtworks.gauge.module.GaugeModuleConfigurationProvider"/>
+
+    <configurationType implementation="com.thoughtworks.gauge.execution.GaugeRunTaskConfigurationType"/>
+    <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
+    <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
+    <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.ScenarioExecutionProducer"/>
+    <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.SpecsExecutionProducer"/>
+    <enterHandlerDelegate implementation="com.thoughtworks.gauge.GaugeEnterHandlerDelegate"/>
+    <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
+    <fileTemplateGroup implementation="com.thoughtworks.gauge.idea.template.SpecificationLiveTemplate"/>
+    <lang.findUsagesProvider language="Specification"
+                             implementationClass="com.thoughtworks.gauge.findUsages.SpecStepFindUsagesProvider"/>
+    <lang.findUsagesProvider language="Concept"
+                             implementationClass="com.thoughtworks.gauge.findUsages.ConceptStepFindUsagesProvider"/>
+    <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
+    <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
+    <defaultLiveTemplates file="liveTemplates/gaugeTemplates.xml"/>
+    <liveTemplateContext implementation="com.thoughtworks.gauge.idea.template.LiveTemplateContext"/>
+    <fileBasedIndex implementation="com.thoughtworks.gauge.stub.GaugeFileStubIndex"/>
+    <lang.commenter language="Specification" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
+    <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
+    <problemFileHighlightFilter implementation="com.thoughtworks.gauge.highlight.ErrorHighLighter"/>
+    <implicitUsageProvider implementation="com.thoughtworks.gauge.findUsages.ImplUsageProvider"/>
+    <runLineMarkerContributor language="Specification"
+                              implementationClass="com.thoughtworks.gauge.execution.TestRunLineMarkerProvider"/>
+    <lang.foldingBuilder language="Specification"
+                         implementationClass="com.thoughtworks.gauge.folding.SpecFoldingBuilder"/>
+    <lang.foldingBuilder language="Concept"
+                         implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>
+
+    <applicationConfigurable groupId="tools" id="gauge"
+                             key="gauge.inspection.group"
+                             instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
+    <intentionAction>
+      <categoryKey>gauge.intention.category</categoryKey>
+      <className>com.thoughtworks.gauge.intention.ConvertToDynamicArgIntention</className>
+      <descriptionDirectoryName>ConvertToDynamicArgIntention</descriptionDirectoryName>
+    </intentionAction>
+    <intentionAction>
+      <categoryKey>gauge.intention.category</categoryKey>
+      <className>com.thoughtworks.gauge.intention.ConvertToStaticArgIntention</className>
+      <descriptionDirectoryName>ConvertToStaticArgIntention</descriptionDirectoryName>
+    </intentionAction>
+    <webBrowserUrlProvider implementation="com.thoughtworks.gauge.markdownPreview.GaugeWebBrowserPreview"/>
+
+    <applicationService serviceImplementation="com.thoughtworks.gauge.settings.GaugeSettingsService"/>
+
+    <properties.implicitPropertyUsageProvider
+      implementation="com.thoughtworks.gauge.properties.GaugeImplicitPropertyUsageProvider"/>
+
+    <moduleBuilder builderClass="com.thoughtworks.gauge.wizard.GaugeModuleBuilder"/>
+
+    <notificationGroup id="Gauge Error" displayType="BALLOON"/>
+    <notificationGroup id="Gauge" displayType="BALLOON"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript.JsonSchema">
+    <ProviderFactory implementation="com.thoughtworks.gauge.json.ManifestSchemaProviderFactory"/>
+  </extensions>
+
+  <actions>
+    <action id="Gauge.Format" class="com.thoughtworks.gauge.formatter.SpecFormatter">
+      <keyboard-shortcut first-keystroke="ctrl alt shift l" keymap="$default"/>
+    </action>
+    <action id="Gauge.Extract"
+            class="com.thoughtworks.gauge.extract.ExtractConceptAction">
+      <add-to-group group-id="RefactoringMenu" anchor="last"/>
+      <keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>
+    </action>
+  </actions>
+</idea-plugin>

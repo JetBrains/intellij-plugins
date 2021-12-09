@@ -2,13 +2,13 @@
 package org.jetbrains.vuejs.pug
 
 import com.intellij.lang.javascript.inspections.JSIncompatibleTypesComparisonInspection
-import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class PugTemplateTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/pug/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/pug/"
 
   fun testJadeExtendsResolve() {
     createPackageJsonWithVueDependency(myFixture)
@@ -28,6 +28,48 @@ class PugTemplateTest : BasePlatformTestCase() {
     myFixture.enableInspections(JSIncompatibleTypesComparisonInspection())
     myFixture.configureByFile("injectedExpressions.vue")
     myFixture.checkHighlighting()
+  }
+
+  fun testLineCommenterWithinTemplate() {
+    doCommenterTest(true)
+  }
+
+  fun testLineCommenterCaret() {
+    doCommenterTest(true)
+  }
+
+  fun testLineCommenterAcrossTemplate() {
+    doCommenterTest(true)
+  }
+
+  fun testLineCommenterBinding() {
+    doCommenterTest(true)
+  }
+
+  fun testBlockCommenterBinding() {
+    doCommenterTest(false)
+  }
+
+  fun testHtmlTagTyping() {
+    myFixture.configureByFile("htmlTagTyping.vue")
+    myFixture.type("te")
+    myFixture.completeBasic()
+    myFixture.type("\n")
+    myFixture.checkResultByFile("htmlTagTyping_after.vue")
+  }
+
+  fun testComponentCompletion() {
+    myFixture.configureByFiles("componentCompletion.vue", "htmlTagTyping.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "HtmlTagTyping", "html-tag-typing",
+                           "template", "component", "suspense", "teleport")
+  }
+
+  private fun doCommenterTest(lineCommenter: Boolean) {
+    val name = getTestName(true)
+    myFixture.configureByFile("$name.vue")
+    myFixture.performEditorAction(if (lineCommenter) "CommentByLineComment" else "CommentByBlockComment")
+    myFixture.checkResultByFile("${name}_after.vue")
   }
 
 }

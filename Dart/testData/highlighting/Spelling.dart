@@ -18,6 +18,9 @@ var wrongSingleQuotes = '<TYPO descr="Typo: In word 'Sspelling'">Sspelling</TYPO
 var correctDoubleQuotes = "Spelling";
 var wrongDoubleQuotes = "<TYPO descr="Typo: In word 'Sspelling'">Sspelling</TYPO>";
 
+var correctEmbeddingWithDictionary = "Embedder" + "dartdevc";
+var wrongEmbeddingEvenWithDictionary = "<TYPO descr="Typo: In word 'Embeder'">Embeder</TYPO>" + "<TYPO descr="Typo: In word 'dartdevcompiler'">dartdevcompiler</TYPO>";
+
 var correctMultiLine = '''
 Good
 Spelling

@@ -43,12 +43,11 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.settings.ApplicationSettings;
-import org.osmorc.util.OsgiUiUtil;
+import org.osmorc.util.FrameworkInstanceRenderer;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -60,6 +59,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
+
+import static org.osmorc.i18n.OsmorcBundle.message;
 
 /**
  * Editor for a bundle run configuration.
@@ -107,7 +108,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     }
     myFrameworkInstances.setModel(model);
     myFrameworkInstances.addActionListener((e) -> onFrameworkChange());
-    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[project default]"));
+    myFrameworkInstances.setRenderer(new FrameworkInstanceRenderer('[' + message("framework.project.default") + ']'));
 
     myBundlesTable.setModel(new RunConfigurationTableModel());
     myBundlesTable.setRowSelectionAllowed(true);
@@ -141,8 +142,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     });
 
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    String title = OsmorcBundle.message("run.configuration.working.dir.title");
-    String description = OsmorcBundle.message("run.configuration.working.dir.description");
+    String title = message("run.configuration.working.dir.title");
+    String description = message("run.configuration.working.dir.description");
     myWorkingDirField.addBrowseFolderListener(title, description, null, descriptor);
     myWorkingDirField.getTextField().setColumns(30);
 
@@ -308,11 +309,11 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     public String getColumnName(int columnIndex) {
       switch (columnIndex) {
         case 0:
-          return "Bundle name";
+          return message("run.configuration.col.bundle");
         case 1:
-          return "Start level";
+          return message("run.configuration.col.level");
         case 2:
-          return "Start after install";
+          return message("run.configuration.col.start");
         default:
           return "";
       }

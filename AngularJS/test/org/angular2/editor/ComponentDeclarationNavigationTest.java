@@ -1,16 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.editor;
 
-import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.codeInsight.navigation.actions.GotoTypeDeclarationAction;
+import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.model.psi.PsiSymbolService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
+import static com.intellij.model.psi.impl.TargetsKt.targetSymbols;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 @RunWith(Parameterized.class)
@@ -94,7 +96,6 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
     myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json");
 
     AngularTestUtil.moveToOffsetBySignature(location, myFixture);
-
     Presentation result = myFixture.testAction(action);
     assertEquals(actionLabel, result.getText());
 
@@ -105,9 +106,16 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
     if (elementText == null) {
       return;
     }
-    int findTargetFlags = TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.ELEMENT_NAME_ACCEPTED;
-    PsiElement element = TargetElementUtil.findTargetElement(focusedEditor, findTargetFlags);
-    assertNotNull(element);
-    assertEquals(elementText, element.getText());
+    var symbols = targetSymbols(file, focusedEditor.getCaretModel().getOffset());
+    assertSize(1, symbols);
+    var symbol = ContainerUtil.getFirstItem(symbols);
+    if (symbol instanceof WebSymbol) {
+      assertInstanceOf(symbol, WebSymbol.class);
+      assertEquals(elementText, ((WebSymbol)symbol).getName());
+    } else {
+      var psiElement = PsiSymbolService.getInstance().extractElementFromSymbol(symbol);
+      assertNotNull("Bad symbol class: "+ symbol.getClass(), psiElement);
+      assertEquals(elementText, psiElement.getText());
+    }
   }
 }

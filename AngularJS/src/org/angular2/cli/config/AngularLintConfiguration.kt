@@ -1,11 +1,12 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.config
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil
 import com.intellij.lang.javascript.linter.tslint.TslintUtil
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
-import com.intellij.openapi.util.AtomicNotNullLazyValue
 import com.intellij.openapi.util.AtomicNullableLazyValue
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.nullize
@@ -14,11 +15,10 @@ import com.intellij.util.text.minimatch.Minimatch
 class AngularLintConfiguration internal constructor(private val ngProject: AngularProject,
                                                     private val config: AngularJsonLintOptions,
                                                     val name: String? = null) {
-
-  private val myIncludes = AtomicNullableLazyValue.createValue {
+  private val myIncludes = NullableLazyValue.createValue {
     config.files.mapNotNull(::createGlobMatcher).nullize()
   }
-  private val myExcludes = AtomicNotNullLazyValue.createValue {
+  private val myExcludes = NotNullLazyValue.lazy {
     config.exclude.mapNotNull(::createGlobMatcher)
   }
 
