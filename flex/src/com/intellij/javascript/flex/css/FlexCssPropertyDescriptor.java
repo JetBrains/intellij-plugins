@@ -421,7 +421,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
     Set<JSClass> visited = new LinkedHashSet<>();
     for (String className : myClassNames) {
-      Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, className.hashCode(), project,
+      Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, className, project,
                                                                              scope, JSQualifiedNamedElement.class);
       findStyleAttributes(candidates, visited, navElement2pairInfo);
       // search in MXML files

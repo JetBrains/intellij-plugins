@@ -133,7 +133,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
         String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
         GlobalSearchScope searchScope = scope != null ? scope : JSResolveUtil.getResolveScope(element);
         final Collection<JSQualifiedNamedElement> candidates =
-          StubIndex.getElements(JSQualifiedElementIndex.KEY, qName.hashCode(), editor.getProject(), searchScope,
+          StubIndex.getElements(JSQualifiedElementIndex.KEY, qName, editor.getProject(), searchScope,
                                 JSQualifiedNamedElement.class);
         for (JSQualifiedNamedElement candidate : candidates) {
           if (!qName.equals(candidate.getQualifiedName())) {
