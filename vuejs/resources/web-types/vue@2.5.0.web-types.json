@@ -917,6 +917,16 @@
           }
         }
       ]
+    },
+    "css": {
+      "pseudo-elements": [
+        {
+          "name": "v-deep",
+          "doc-url": "https://vue-loader.vuejs.org/guide/scoped-css.html",
+          "arguments": false,
+          "description": "Make a rule that targets child components."
+        }
+      ]
     }
   }
 }

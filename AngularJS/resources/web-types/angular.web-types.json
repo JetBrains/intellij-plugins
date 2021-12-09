@@ -17,7 +17,7 @@
       "elements": [
         {
           "name": "ng-container",
-          "description": "The `<ng-container> can be used to hold directives without creating an HTML element.",
+          "description": "The `<ng-container>` can be used to hold directives without creating an HTML element.",
           "doc-url": "https://angular.io/api/core/ng-container"
         },
         {
@@ -695,6 +695,16 @@
           "name": "Animation callback",
           "pattern": "@.+",
           "doc-hide-pattern": true
+        }
+      ]
+    },
+    "css": {
+      "pseudo-elements": [
+        {
+          "name": "ng-deep",
+          "doc-url": "https://angular.io/guide/component-styles#deprecated-deep--and-ng-deep",
+          "deprecated": true,
+          "description": "Applying the `::ng-deep` pseudo-class to any CSS rule completely disables view-encapsulation for that rule. Any style with `::ng-deep` applied becomes a global style. In order to scope the specified style to the current component and all its descendants, be sure to include the `:host` selector before `::ng-deep`. If the `::ng-deep` combinator is used without the `:host` pseudo-class selector, the style can bleed into other components."
         }
       ]
     }
