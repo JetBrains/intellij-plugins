@@ -67,6 +67,7 @@
                              key="configurable.ClionEmbeddedPlatformioBundle.display.name"
                              groupId="language"/>
     <statistics.counterUsagesCollector implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector"/>
+    <projectService serviceImplementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState"/>
   </extensions>
 
   <actions>
@@ -88,11 +89,6 @@
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
   </actions>
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState</implementation-class>
-    </component>
-  </project-components>
 
   <resource-bundle>messages.ClionEmbeddedPlatformioBundle</resource-bundle>
 </idea-plugin>

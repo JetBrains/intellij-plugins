@@ -10,4 +10,4 @@ Supports
  * Basic platformio commands
  * Debugging
  
- Some of target platforms may not work because of outdated toolchains shipped for them. 
+ Some targets platforms may not work because of outdated toolchains shipped for them. 

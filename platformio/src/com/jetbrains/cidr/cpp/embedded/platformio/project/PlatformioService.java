@@ -3,6 +3,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -18,7 +19,9 @@ import java.util.stream.Stream;
 
 @Service
 public final class PlatformioService {
-  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("PlatformIO plugin");
+
+  public static final NotificationGroup NOTIFICATION_GROUP =
+    NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin");
   private State myState = State.NONE;
 
   public PlatformioService() {
@@ -50,9 +53,11 @@ public final class PlatformioService {
 
   public static void notifyPlatformioNotFound(@Nullable Project project) {
     NOTIFICATION_GROUP
-      .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found"), ClionEmbeddedPlatformioBundle.message("please.check.system.path"), NotificationType.ERROR)
+      .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found"),
+                          ClionEmbeddedPlatformioBundle.message("please.check.system.path"), NotificationType.ERROR)
       .addAction(NotificationAction.createSimple(ClionEmbeddedPlatformioBundle.message("install.guide"), () -> openInstallGuide()))
-      .addAction(NotificationAction.createSimpleExpiring(ClionEmbeddedPlatformioBundle.message("open.settings.link"), () -> openSettings(project)))
+      .addAction(
+        NotificationAction.createSimpleExpiring(ClionEmbeddedPlatformioBundle.message("open.settings.link"), () -> openSettings(project)))
       .notify(project);
   }
 

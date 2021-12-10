@@ -7,7 +7,7 @@ import com.jetbrains.cidr.cpp.execution.debugger.embedded.svd.SvdWindowState;
 
 @State(
   name = "PlatformioSvdWindowState",
-  storages = {@Storage(StoragePathMacros.WORKSPACE_FILE)}
+  storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
 public class PlatformioSvdWindowState extends SvdWindowState {
 
