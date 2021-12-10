@@ -20,7 +20,7 @@ public interface GherkinInjectorExtensionPoint {
      * Returns the suffix to be injected for the specified language
      *
      * @param language injected language
-     * @return injection prefix
+     * @return injection suffix
      */
     default String getSuffix(String language) {
         return "";

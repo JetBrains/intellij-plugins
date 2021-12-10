@@ -1,16 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.injector;
 
-import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.intellij.plugins.intelliLang.inject.InjectorUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
-
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
@@ -18,6 +8,15 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import org.intellij.plugins.intelliLang.inject.InjectorUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
 
 public class GherkinLanguageInjector implements MultiHostInjector {
     @NotNull
