@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -6,7 +6,7 @@ import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.AtomicNullableLazyValue;
+import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.RenameableFakePsiElement;
@@ -18,9 +18,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.openapi.util.NullableLazyValue.atomicLazyNullable;
+
 public class CfmlAssignmentExpression extends CfmlCompositeElement implements CfmlExpression {
-  private final AtomicNullableLazyValue<AssignedVariable> myAssignedVariable =
-    AtomicNullableLazyValue.createValue(() -> createAssignedVariable());
+  private final NullableLazyValue<AssignedVariable> myAssignedVariable = atomicLazyNullable(() -> createAssignedVariable());
 
   public CfmlAssignmentExpression(@NotNull ASTNode node) {
     super(node);
