@@ -16,7 +16,6 @@
 package com.intellij.protobuf.ide.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.EmptyModuleType;
@@ -52,7 +51,7 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
   @Override
   public void tearDown() throws Exception {
     try {
-      FileUtil.delete(Paths.get(PathManager.getSystemPath(), "protoeditor"));
+      FileUtil.delete(DefaultConfigurator.getExtractedProtoPath());
     }
     catch (Exception exception) {
       Logger.getInstance(DefaultConfiguratorTest.class).warn(exception);

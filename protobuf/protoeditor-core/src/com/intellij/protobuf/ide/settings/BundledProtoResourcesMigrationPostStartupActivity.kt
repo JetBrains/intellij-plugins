@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.util.io.exists
 import java.io.IOException
@@ -47,6 +48,7 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
     }
     catch (exception: IOException) {
       Logger.getInstance(DefaultConfigurator::class.java).warn("Unable to create temp binary file", exception)
+      FileUtil.delete(DefaultConfigurator.getExtractedProtoPath())
     }
   }
 }
