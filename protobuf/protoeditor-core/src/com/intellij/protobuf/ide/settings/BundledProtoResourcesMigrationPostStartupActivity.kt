@@ -4,13 +4,10 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.util.io.URLUtil
 import com.intellij.util.io.exists
 import java.io.IOException
 import java.net.URL
-import java.nio.file.Files
 import java.nio.file.Path
 
 internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivity.Background {
@@ -46,15 +43,7 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
 
   private fun extractBundledProtoToTempDirectory() {
     try {
-      Files.createDirectories(DefaultConfigurator.getExtractedProtoPath())
-      val bundledGoogleProto = bundledProtoUrl
-
-      if (bundledGoogleProto == null) {
-        thisLogger().warn("Unable to extract bundled proto files because resource URL is null")
-        return
-      }
-
-      FileUtil.copyDir(URLUtil.urlToFile(bundledGoogleProto), DefaultConfigurator.getExtractedProtoPath().toFile())
+      PbBundledResourcesUtil.extractResources(bundledProtoUrl, DefaultConfigurator.getExtractedProtoPath())
     }
     catch (exception: IOException) {
       Logger.getInstance(DefaultConfigurator::class.java).warn("Unable to create temp binary file", exception)
