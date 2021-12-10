@@ -12,8 +12,8 @@ import training.featuresSuggester.getParentByPredicate
 import training.featuresSuggester.getParentOfType
 
 class JavaScriptLanguageSupport : LanguageSupport {
-  override fun isSourceFile(file: PsiFile): Boolean {
-    return file is JSFileImpl
+  override fun isLoadedSourceFile(file: PsiFile): Boolean {
+    return file is JSFileImpl && file.isContentsLoaded
   }
 
   override fun isIfStatement(element: PsiElement): Boolean {
