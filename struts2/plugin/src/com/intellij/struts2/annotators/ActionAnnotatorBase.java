@@ -52,15 +52,16 @@ import java.util.*;
  * @author Yann C&eacute;bron
  */
 public abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
-  private static final DomElementListCellRenderer<Action> ACTION_RENDERER =
-      new DomElementListCellRenderer<>(StrutsBundle.message("annotators.action.no.name")) {
-        @Override
-        @NotNull
-        @NonNls
-        public String getAdditionalLocation(final Action action) {
-          return action != null ? "[" + action.getNamespace() + "] " : "";
-        }
-      };
+  private static final DomElementListCellRenderer<Action> getActionRenderer() {
+    return new DomElementListCellRenderer<>(StrutsBundle.message("annotators.action.no.name")) {
+      @Override
+      @NotNull
+      @NonNls
+      public String getAdditionalLocation(final Action action) {
+        return action != null ? "[" + action.getNamespace() + "] " : "";
+      }
+    };
+  }
 
   private static final NotNullFunction<PathReference, Collection<? extends PsiElement>> PATH_REFERENCE_CONVERTER =
     pathReference -> {
@@ -153,7 +154,7 @@ public abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider 
                                    .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
                                    .setTargets(actions)
                                    .setTooltipTitle(tooltip)
-                                   .setCellRenderer(ACTION_RENDERER);
+                                   .setCellRenderer(ActionAnnotatorBase::getActionRenderer);
     lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
   }
 
