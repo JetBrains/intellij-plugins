@@ -234,12 +234,13 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
         else if ("never.show.again".equals(e.getDescription())) {
           NOTIFICATION_GROUP
             .createNotification(DartBundle.message("notification.title.warning.disabled"),
-                                DartBundle.message("notification.content.you.can.enable.it.back.in.the.a.href.event.log.a.settings"),
+                                DartBundle.message("notification.content.you.can.enable.it.back.in.the.a.href.event.log.a.settings",
+                                                   ActionCenter.getToolwindowName()),
                                 NotificationType.INFORMATION).setListener(new Adapter() {
                 @Override
                 protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                   notification.expire();
-                  final ToolWindow toolWindow = EventLog.getEventLog(myProject);
+                  final ToolWindow toolWindow = ActionCenter.getToolwindow(myProject);
                   if (toolWindow != null) toolWindow.activate(null);
                 }
               }).notify(myProject);
