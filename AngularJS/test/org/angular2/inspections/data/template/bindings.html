@@ -21,7 +21,7 @@
 
 <ng-template <weak_warning descr="Property myTemplateFor is not provided by any applicable directive on an embedded template">[myTemplateFor]</weak_warning>="nope"
   (otherEvent)="yup"
-  <weak_warning descr="Event badEvent is not emitted by any applicable directive on an embedded template">(badEvent)</weak_warning>="fff"
+  <weak_warning descr="Event badEvent is not emitted by any applicable directive on an embedded template">(<warning descr="Unrecognized event">badEvent</warning>)</weak_warning>="fff"
 ></ng-template>
 <ng-template myTemplate="foo" [myTemplateFor]="nope" (otherEvent)="yup"></ng-template>
 

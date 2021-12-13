@@ -174,28 +174,21 @@
                     "/js/events",
                     "/js/ng-directive-outputs"
                   ],
-                  "priority": "high"
+                  "priority": "high",
+                  "template": [
+                    "#item:event"
+                  ]
                 },
                 {
                   "items": "/js/ng-custom-events",
-                  "priority": "normal"
-                },
-                {
-                  "delegate": "ng-unknown-event",
-                  "priority": "lowest"
+                  "priority": "normal",
+                  "template": [
+                    "#item:event"
+                  ]
                 }
               ]
             }
-          },
-          "ng-unknown-event": [
-            {
-              "name": "Unknown event",
-              "priority": "low",
-              "pattern": "(?!key(down|up)\\.).+",
-              "doc-hide-pattern": true,
-              "ng-error-symbol": true
-            }
-          ]
+          }
         },
         {
           "name": "Property binding",
