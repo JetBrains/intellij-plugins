@@ -1,11 +1,11 @@
 package com.intellij.protobuf.ide.settings
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.util.io.createFile
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.io.exists
 import com.intellij.util.io.outputStream
 import java.io.IOException
@@ -43,13 +43,12 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
   }
 
   private fun findBundledInJarProtoPath(oldSettings: List<PbProjectSettings.ImportPathEntry>): PbProjectSettings.ImportPathEntry? {
-    val protoInJarPath = DefaultConfigurator::class.java.classLoader.getResource("include")?.toURI()?.path
-    if (protoInJarPath == null) {
-      thisLogger().warn("Unable to detect old style bundled protos path. Abort migration.")
+    val bundledProtoFiles = this::class.java.classLoader.getResource("include")!!
+    val protoVfsUrl = runReadAction { VfsUtil.findFileByURL(bundledProtoFiles)?.url } ?: run {
+      thisLogger().warn("Bundled proto files are not found in plugin distributive")
       return null
     }
 
-    val protoVfsUrl = VfsUtilCore.pathToUrl(protoInJarPath)
     return oldSettings.firstOrNull { it.location == protoVfsUrl }
   }
 
@@ -58,14 +57,9 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
       for (bundledProtoFile in bundledProtoFiles) {
         val extractedFilePath = DefaultConfigurator.getExtractedProtoPath().resolve("google/protobuf/$bundledProtoFile")
         if (!extractedFilePath.exists()) {
-          extractedFilePath.createFile()
-          this::class.java.classLoader.getResource("include/google/protobuf/$bundledProtoFile")?.openStream().use {
-            if (it == null) {
-              thisLogger().warn("Bundled resource '$bundledProtoFile' is not found in plugin distributive")
-            }
-            else {
-              FileUtil.copy(it, extractedFilePath.outputStream(false))
-            }
+          val resourceUrl = this::class.java.classLoader.getResource("include/google/protobuf/$bundledProtoFile")!!
+          resourceUrl.openStream().use {
+            FileUtil.copy(it, extractedFilePath.outputStream(false))
           }
         }
       }
