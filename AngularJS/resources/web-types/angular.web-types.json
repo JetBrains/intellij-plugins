@@ -433,7 +433,8 @@
           "ng-i18n-attributes": [
             {
               "name": "Absent attribute name",
-              "priority": "low",
+              "priority": "lowest",
+              "proximity": 0,
               "pattern": ".+",
               "doc-hide-pattern": true,
               "ng-error-symbol": true
