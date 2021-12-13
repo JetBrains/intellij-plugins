@@ -1,25 +1,35 @@
 package com.intellij.protobuf.ide.settings
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.util.io.createFile
 import com.intellij.util.io.exists
+import com.intellij.util.io.outputStream
 import java.io.IOException
-import java.net.URL
-import java.nio.file.Path
 
 internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivity.Background {
-  private val bundledProtoUrl: URL?
-    get() = DefaultConfigurator::class.java.classLoader.getResource("include")
-
-  private val anyProtoPreciseUrl: Path
-    get() = DefaultConfigurator.getExtractedProtoPath().resolve("google/protobuf/any.proto")
+  private val bundledProtoFiles = setOf(
+    "any.proto",
+    "api.proto",
+    "duration.proto",
+    "descriptor.proto",
+    "empty.proto",
+    "field_mask.proto",
+    "source_context.proto",
+    "struct.proto",
+    "timestamp.proto",
+    "type.proto",
+    "wrappers.proto"
+  )
 
   override fun runActivity(project: Project) {
-    if (!anyProtoPreciseUrl.exists()) extractBundledProtoToTempDirectory()
+    val baseExtractionPath = DefaultConfigurator.getExtractedProtoPath()
+    if (!bundledProtoFiles.all { baseExtractionPath.resolve("google/protobuf/$it").exists() }) {
+      extractBundledProtoToTempDirectory()
+    }
 
     val extractedProtoPath = DefaultConfigurator().builtInIncludeEntry ?: return
     val oldSettings = PbProjectSettings.getInstance(project).importPathEntries
@@ -29,10 +39,11 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
     val oldStyleEntry = findBundledInJarProtoPath(oldSettings) ?: return
     val newSettings = oldSettings.filter { it != oldStyleEntry }.plus(extractedProtoPath)
     PbProjectSettings.getInstance(project).importPathEntries = newSettings
+    PbProjectSettings.notifyUpdated(project)
   }
 
   private fun findBundledInJarProtoPath(oldSettings: List<PbProjectSettings.ImportPathEntry>): PbProjectSettings.ImportPathEntry? {
-    val protoInJarPath = bundledProtoUrl?.toURI()?.path
+    val protoInJarPath = DefaultConfigurator::class.java.classLoader.getResource("include")?.toURI()?.path
     if (protoInJarPath == null) {
       thisLogger().warn("Unable to detect old style bundled protos path. Abort migration.")
       return null
@@ -44,10 +55,23 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
 
   private fun extractBundledProtoToTempDirectory() {
     try {
-      PbBundledResourcesUtil.extractResources(bundledProtoUrl, DefaultConfigurator.getExtractedProtoPath())
+      for (bundledProtoFile in bundledProtoFiles) {
+        val extractedFilePath = DefaultConfigurator.getExtractedProtoPath().resolve("google/protobuf/$bundledProtoFile")
+        if (!extractedFilePath.exists()) {
+          extractedFilePath.createFile()
+          this::class.java.classLoader.getResource("include/google/protobuf/$bundledProtoFile")?.openStream().use {
+            if (it == null) {
+              thisLogger().warn("Bundled resource '$bundledProtoFile' is not found in plugin distributive")
+            }
+            else {
+              FileUtil.copy(it, extractedFilePath.outputStream(false))
+            }
+          }
+        }
+      }
     }
     catch (exception: IOException) {
-      Logger.getInstance(DefaultConfigurator::class.java).warn("Unable to create temp binary file", exception)
+      thisLogger().warn("Unable to create temp binary file", exception)
       FileUtil.delete(DefaultConfigurator.getExtractedProtoPath())
     }
   }
