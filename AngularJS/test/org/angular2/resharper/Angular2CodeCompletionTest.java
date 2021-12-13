@@ -38,6 +38,9 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
     if (element.getLookupString().startsWith("[(")) {
       return true;
     }
+    if (element.getLookupString().startsWith("ion-")) {
+      return false;
+    }
     if (HIGH_PRIORITY_ONLY.contains(getName())) {
       return !(element instanceof PrioritizedLookupElement)
              || ((PrioritizedLookupElement<?>)element).getPriority() < WebSymbol.Priority.HIGH.getValue();
