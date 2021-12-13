@@ -6,6 +6,7 @@ import com.intellij.javascript.web.symbols.WebSymbolsRegistryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
+import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
@@ -21,7 +22,7 @@ import org.jetbrains.vuejs.model.source.VueSourceGlobal
 import org.jetbrains.vuejs.model.source.VueSourcePlugin
 import java.util.concurrent.ConcurrentHashMap
 
-internal class VueGlobalImpl(override val project: Project, private val packageJsonUrl: String)
+internal class VueGlobalImpl(override val project: Project, override val packageJsonUrl: String)
   : VueDelegatedEntitiesContainer<VueGlobal>(), VueGlobal {
 
   override val source: PsiElement? = null
@@ -87,6 +88,8 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   override fun hashCode(): Int {
     return (project.hashCode()) * 31 + packageJsonUrl.hashCode()
   }
+
+  override fun createPointer(): Pointer<out VueEntitiesContainer> = Pointer.hardPointer(this)
 
   companion object {
 

@@ -72,7 +72,7 @@ class VueExtractComponentRefactoring(private val project: Project,
     @Nls
     fun validate(text: String): String? {
       val normalized = fromAsset(text.trim())
-      val fileName = toAsset(text.trim()).capitalize() + ".vue"
+      val fileName = toAsset(text.trim(), true) + ".vue"
       if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) ||
           normalized.contains(' ') || forbidden.contains(normalized)) {
         return VueBundle.message("vue.template.intention.extract.component.error.component.name", normalized)

@@ -8,4 +8,5 @@ interface VueGlobal : VueEntitiesContainer {
   val plugins: List<VuePlugin>
   val unregistered: VueEntitiesContainer
   val project: Project
+  val packageJsonUrl: String?
 }
