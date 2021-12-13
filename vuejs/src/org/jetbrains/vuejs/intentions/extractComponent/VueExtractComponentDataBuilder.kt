@@ -83,7 +83,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
                           } != null
                         }
                       ?: return
-    importsToCopy[toAsset(ref.nameElement.text).capitalize()] = foundImport
+    importsToCopy[toAsset(ref.nameElement.text, true)] = foundImport
   }
 
   private fun gatherReferences(): List<RefData> {
@@ -135,7 +135,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName)
     val folder: PsiDirectory = containingFile.parent ?: return null
-    val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName).capitalize() + ".vue")
+    val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName, true) + ".vue")
     VfsUtil.saveText(virtualFile, newText)
     return virtualFile
   }
@@ -240,7 +240,7 @@ export default {
     unusedStylesInExistingComponent = getUnusedStyles(containingFile)
 
     val leader = list[0]
-    val newTagName = toAsset(replaceName).capitalize() // Pascal case
+    val newTagName = toAsset(replaceName, true) // Pascal case
     val replaceText = if (templateLanguage in setOf("pug", "jade"))
       "<template lang=\"pug\">\n$newTagName(${generateProps()})\n</template>"
     else "<template><$newTagName ${generateProps()}/></template>"
@@ -259,16 +259,16 @@ export default {
     val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
       ?.findProperty("components")?.value?.castSafelyTo<JSObjectLiteralExpression>()?.properties
     if (componentsInitializer != null && componentsInitializer.isNotEmpty()) {
-      val names = componentsInitializer.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
+      val names = componentsInitializer.map { toAsset(it.name ?: "", true) }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement) {
           if (element is XmlTag) {
-            names.remove(toAsset(element.name).capitalize())
+            names.remove(toAsset(element.name, true))
           }
           if (scriptTag != element) recursion(element)
         }
       })
-      componentsInitializer.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
+      componentsInitializer.filter { it.name != null && names.contains(toAsset(it.name!!, true)) }.forEach { it.delete() }
     }
     ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)

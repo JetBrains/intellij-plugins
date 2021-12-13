@@ -2,10 +2,12 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VFileProperty
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.impl.LightFilePointer
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScopesCore
@@ -80,6 +82,18 @@ class VueSourcePlugin constructor(private val project: Project,
     var result = project.hashCode()
     result = 31 * result + packageJsonFile.hashCode()
     return result
+  }
+
+  override fun createPointer(): Pointer<out VueEntitiesContainer> {
+    val project = this.project
+    val moduleName = this.moduleName
+    val moduleVersion = this.moduleVersion
+    val packageJsonFilePtr = LightFilePointer(packageJsonFile.url)
+    return Pointer {
+      packageJsonFilePtr.file?.let {
+        VueSourcePlugin(project, moduleName, moduleVersion, it)
+      }
+    }
   }
 
   companion object {

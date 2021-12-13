@@ -30,6 +30,7 @@ import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -103,8 +104,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
                               editor: Editor?,
                               isClass: Boolean = false) {
       val file: XmlFile = context as? XmlFile ?: context.containingFile as? XmlFile ?: return
-      val decapitalized = toAsset(name).decapitalize()
-      val capitalizedName = decapitalized.capitalize()
+      val capitalizedName = toAsset(name, true)
+      val decapitalized = StringUtil.decapitalize(capitalizedName)
 
       val info = if (elementToImport is PsiFile) {
         ES6ImportPsiUtil.CreateImportExportInfo(capitalizedName, capitalizedName, ImportExportType.DEFAULT,

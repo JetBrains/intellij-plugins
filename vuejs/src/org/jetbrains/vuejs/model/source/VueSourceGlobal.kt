@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
@@ -21,7 +22,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import java.util.*
 
-class VueSourceGlobal(override val project: Project, private val packageJsonUrl: String?) : VueGlobal {
+class VueSourceGlobal(override val project: Project, override val packageJsonUrl: String?) : VueGlobal {
 
   override val global: VueGlobal = this
   override val plugins: List<VuePlugin>
@@ -49,6 +50,7 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
     override val mixins: List<VueMixin> get() = emptyList()
     override val source: PsiElement? = null
     override val parents: List<VueEntitiesContainer> = emptyList()
+    override fun createPointer(): Pointer<out VueEntitiesContainer> = Pointer.hardPointer(this)
   }
 
   override fun equals(other: Any?): Boolean =
@@ -57,6 +59,8 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
     } ?: false
 
   override fun hashCode(): Int = (project.hashCode()) * 31 + packageJsonUrl.hashCode()
+
+  override fun createPointer(): Pointer<out VueEntitiesContainer> = Pointer.hardPointer(this)
 
   private fun getComponents(global: Boolean): Map<String, VueComponent> =
     getCachedValue { scope ->

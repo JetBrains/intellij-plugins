@@ -251,7 +251,7 @@ class VueModelManager {
     }
 
     private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
-      val file = element as? XmlFile ?: element.containingFile as? XmlFile
+      val file = element.containingFile?.originalFile as? XmlFile
       if (file != null && file.fileType == VueFileType.INSTANCE) {
         val script = findScriptTag(file, false)
         if (script != null) {
@@ -263,8 +263,8 @@ class VueModelManager {
             ?.castSafelyTo<VueSourceEntityDescriptor>()
             ?.let { return it }
         }
-        if (element.containingFile.originalFile.virtualFile?.fileType == VueFileType.INSTANCE)
-          return VueSourceEntityDescriptor(source = element.containingFile)
+        if (file.virtualFile?.fileType == VueFileType.INSTANCE)
+          return VueSourceEntityDescriptor(source = file)
       }
       return null
     }

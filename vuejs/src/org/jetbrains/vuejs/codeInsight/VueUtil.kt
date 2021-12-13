@@ -96,9 +96,9 @@ fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
   return result.toString()
 }
 
-fun toAsset(name: String): String {
+fun toAsset(name: String, capitalized: Boolean = false): String {
   val result = StringBuilder()
-  var nextCapitalized = false
+  var nextCapitalized = capitalized
   for (ch in name) {
     when {
       ch == '-' -> nextCapitalized = true

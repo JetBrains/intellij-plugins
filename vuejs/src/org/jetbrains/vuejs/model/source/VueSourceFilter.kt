@@ -12,7 +12,7 @@ class VueSourceFilter(override val defaultName: String,
 
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
-  override val source: PsiElement? get() {
+  override val source: PsiElement get() {
     return (originalSource as? PsiReference)?.resolve() ?: originalSource
   }
 

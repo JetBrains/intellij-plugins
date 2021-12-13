@@ -214,6 +214,7 @@
     <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
     <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider" id="vue-i18n"/>
 
+    <javascript.web.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
     <javascript.web.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <javascript.web.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider$VueSymbolsCodeCompletionItemCustomizer"/>
