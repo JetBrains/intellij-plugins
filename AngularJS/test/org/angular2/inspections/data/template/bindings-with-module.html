@@ -21,7 +21,7 @@
 
 <ng-template <error descr="Property myTemplateFor is not provided by any applicable directive on an embedded template">[myTemplateFor]</error>="nope"
   <error descr="Event otherEvent is not emitted by any applicable directive on an embedded template">(otherEvent)</error>="yup"
-  <error descr="Event badEvent is not emitted by any applicable directive on an embedded template">(badEvent)</error>="fff"
+  <error descr="Event badEvent is not emitted by any applicable directive on an embedded template">(<warning descr="Unrecognized event">badEvent</warning>)</error>="fff"
 ></ng-template>
 <ng-template <warning descr="Directive that provides attribute myTemplate is out of the current Angular module's scope">myTemplate</warning>="foo" <error descr="Property myTemplateFor is not provided by any applicable directive on an embedded template">[myTemplateFor]</error>="nope" <error descr="Event otherEvent is not emitted by any applicable directive on an embedded template">(otherEvent)</error>="yup"></ng-template>
 
@@ -29,7 +29,7 @@
 
 <div [innerHTML]="s"
      (click)="s"
-     <error descr="Event foo is not emitted by any applicable directives nor by div element">(foo)</error>="a"
+     <error descr="Event foo is not emitted by any applicable directives nor by div element">(<warning descr="Unrecognized event">foo</warning>)</error>="a"
      <warning descr="Attribute onfoo is not allowed here">onfoo</warning>=""
      onclick=""
 ></div>
