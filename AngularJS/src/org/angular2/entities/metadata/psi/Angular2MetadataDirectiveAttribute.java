@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSParameter;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.intellij.openapi.util.NullableLazyValue.lazyNullable;
 import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
@@ -30,8 +32,7 @@ public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttr
     myOwner = owner;
     myIndex = index;
     myName = name;
-    myParameter = NullableLazyValue.createValue(
-      () -> myOwner.getConstructorParameter(myIndex));
+    myParameter = lazyNullable(() -> myOwner.getConstructorParameter(myIndex));
   }
 
   @Override

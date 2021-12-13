@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSRecordType;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.intellij.openapi.util.NullableLazyValue.lazyNullable;
 import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 
@@ -35,8 +36,7 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
     this.myName = name;
     this.myKind = kind;
     this.myOwner = owner;
-    this.mySignature = NullableLazyValue.createValue(
-      () -> myOwner.getPropertySignature(myFieldName));
+    this.mySignature = lazyNullable(() -> myOwner.getPropertySignature(myFieldName));
   }
 
   @Override
