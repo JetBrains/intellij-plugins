@@ -1,9 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.javascript.web.symbols.SymbolKind
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
-import com.intellij.javascript.web.symbols.WebSymbolsNameMatchQueryParams
+import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
+import com.intellij.javascript.web.symbols.*
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -29,7 +28,13 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
           if (isI18nCandidate(info) && (name == null || name.equals(info.name, true))) {
-            return@mapNotNull Angular2I18nAttributeSymbol(attr)
+            return@mapNotNull (attr.descriptor as? WebSymbolAttributeDescriptor)?.symbol
+                                ?.let {
+                                  WebSymbolMatch.create(info.name, listOf(WebSymbol.NameSegment(0, info.name.length, it)),
+                                                        WebSymbolsContainer.Namespace.HTML, KIND_NG_I18N_ATTRIBUTES, it.origin,
+                                                        WebSymbol.Priority.NORMAL)
+                                }
+                              ?: Angular2I18nAttributeSymbol(attr)
           }
           null
         }
