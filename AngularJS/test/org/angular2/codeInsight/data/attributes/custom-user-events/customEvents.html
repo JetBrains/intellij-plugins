@@ -1,0 +1,8 @@
+<div
+  (click)="$event.<error descr="Unresolved function or method subarray()">subarray</error>()"
+  <weak_warning descr="Event clicked is not emitted by any applicable directives nor by div element">(<warning descr="Unrecognized event">clicked</warning>)</weak_warning>="$event.subarray()"
+  (click.prevent)="$event.<error descr="Unresolved function or method subarray()">subarray</error>()"
+  (click.prevent.<warning descr="Unrecognized modifier">foo</warning>)="$event.<error descr="Unresolved function or method subarray()">subarray</error>()"
+  (<warning descr="Unrecognized event">clicked</warning>.prevent)="$event.subarray()"
+  (<warning descr="Unrecognized event">clicked</warning>.prevent<warning descr="Duplicated name">.<warning descr="Duplicated name"></warning></warning><warning descr="Duplicated modifier">prevent</warning>)="$event.subarray()"
+></div>

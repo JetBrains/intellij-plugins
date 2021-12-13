@@ -1118,4 +1118,11 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.checkHighlighting();
   }
+
+  public void testCustomUserEvents() {
+    myFixture.copyDirectoryToProject("custom-user-events", ".");
+    myFixture.configureFromTempProjectFile("customEvents.html");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
+  }
 }
