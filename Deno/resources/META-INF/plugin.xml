@@ -3,12 +3,8 @@
   <name>Deno</name>
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
-<p>Support for <a href="https://deno.land/">Deno</a> projects.</p>
-<ul>
-<li>Coding assistance for Deno APIs and imports
-<li>Run files with Deno and debug them using the built-in visual debugger
-</ul>
-Enable Deno support for the current project in <i>Preferences | Languages \& Frameworks | Deno</i>.
+Adds support for <a href="https://deno.land/">Deno</a> in WebStorm and other JetBrains IDEs, including PhpStorm, and IntelliJ IDEA Ultimate. 
+To learn more about how to get started with Deno, check out <a href="https://blog.jetbrains.com/webstorm/2020/06/deno-support-in-jetbrains-ides/">this blog post</a>.
 ]]></description>
 
   <vendor>JetBrains</vendor>
