@@ -194,7 +194,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doCompletionTest("formsModule",
                      "test.html",
                      "ngModel ",
-                     "ngMod\n\b\b ",
+                     "ngMod\n ",
                      "FormsModule - \"@angular/forms\"",
                      Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
@@ -248,7 +248,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doCompletionTest("reactiveFormsModule",
                      "test.html",
                      "ngModel ",
-                     "ngMod\n\b\b ",
+                     "ngMod\n ",
                      "ReactiveFormsModule - \"@angular/forms\"",
                      Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }

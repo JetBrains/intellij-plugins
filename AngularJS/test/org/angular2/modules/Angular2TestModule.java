@@ -24,6 +24,7 @@ public enum Angular2TestModule {
   ANGULAR_CORE_4_0_0("@angular/core", "4.0.0"),
   ANGULAR_CORE_8_2_14("@angular/core", "8.2.14"),
   ANGULAR_CORE_9_1_1_MIXED("@angular/core", "9.1.1-mixed"),
+  ANGULAR_FLEX_LAYOUT_13_0_0("@angular/flex-layout", "13.0.0-beta.36"),
   ANGULAR_FORMS_4_0_0("@angular/forms", "4.0.0"),
   ANGULAR_FORMS_8_2_14("@angular/forms", "8.2.14"),
   ANGULAR_MATERIAL_7_2_1("@angular/material", "7.2.1"),

@@ -1,0 +1,10 @@
+{
+  "module": "../fesm2015/angular-flex-layout-_private-utils.mjs",
+  "es2020": "../fesm2020/angular-flex-layout-_private-utils.mjs",
+  "esm2020": "../esm2020/_private-utils/angular-flex-layout-_private-utils.mjs",
+  "fesm2020": "../fesm2020/angular-flex-layout-_private-utils.mjs",
+  "fesm2015": "../fesm2015/angular-flex-layout-_private-utils.mjs",
+  "typings": "angular-flex-layout-_private-utils.d.ts",
+  "sideEffects": false,
+  "name": "@angular/flex-layout/_private-utils"
+}
