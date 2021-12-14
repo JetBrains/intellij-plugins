@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.lang.javascript.service.protocol.LocalFilePath;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -380,7 +381,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       if (!currentFile.isValid()) return;
 
       VirtualFile currentVFile = currentFile.getVirtualFile();
-      filePath.set(currentVFile.getPath());
+      filePath.set(LocalFilePath.asLocalFilePath(currentVFile.toNioPath()));
       // PsiFile might be not committed at this point, take text from document
       Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
       if (document == null) return;
