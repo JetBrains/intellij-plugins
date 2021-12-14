@@ -2,7 +2,6 @@
 package org.angular2.refactoring;
 
 import com.intellij.codeInsight.TargetElementUtil;
-import com.intellij.idea.Bombed;
 import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
@@ -43,7 +42,6 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
     doMultiFileTest("test.component.html", "newName");
   }
 
-  @Bombed(year = 2021, month = 11, day = 5, description = "Requires further improvements", user = "piotr.tomiak")
   public void testI18nAttribute() {
     doMultiFileTest("directive.ts", "new-name");
   }
