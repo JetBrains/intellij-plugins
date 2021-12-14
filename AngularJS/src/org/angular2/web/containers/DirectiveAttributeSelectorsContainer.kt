@@ -3,6 +3,7 @@ package org.angular2.web.containers
 
 import com.intellij.javascript.web.symbols.*
 import com.intellij.model.Pointer
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
@@ -79,6 +80,8 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
 
       for (candidate in findElementDirectivesCandidates(project, tagName)
         .asSequence().plus(findElementDirectivesCandidates(project, ""))) {
+
+        ProgressManager.checkCanceled()
 
         fillNamesAndProperties(inputs, candidate.inputs)
         val kind = candidate.directiveKind

@@ -35,6 +35,7 @@ import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable.Kind;
+import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -1122,6 +1123,13 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testCustomUserEvents() {
     myFixture.copyDirectoryToProject("custom-user-events", ".");
     myFixture.configureFromTempProjectFile("customEvents.html");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
+  }
+
+  public void testFxLayout() {
+    configureCopy(myFixture, ANGULAR_CORE_9_1_1_MIXED, ANGULAR_FLEX_LAYOUT_13_0_0);
+    myFixture.configureByFiles("fxLayout.html", "package.json");
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.checkHighlighting();
   }
