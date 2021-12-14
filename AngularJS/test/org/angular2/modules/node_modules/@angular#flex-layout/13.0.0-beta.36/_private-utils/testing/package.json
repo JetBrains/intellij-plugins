@@ -1,0 +1,10 @@
+{
+  "module": "../../fesm2015/angular-flex-layout-_private-utils-testing.mjs",
+  "es2020": "../../fesm2020/angular-flex-layout-_private-utils-testing.mjs",
+  "esm2020": "../../esm2020/_private-utils/testing/angular-flex-layout-_private-utils-testing.mjs",
+  "fesm2020": "../../fesm2020/angular-flex-layout-_private-utils-testing.mjs",
+  "fesm2015": "../../fesm2015/angular-flex-layout-_private-utils-testing.mjs",
+  "typings": "angular-flex-layout-_private-utils-testing.d.ts",
+  "sideEffects": false,
+  "name": "@angular/flex-layout/_private-utils/testing"
+}

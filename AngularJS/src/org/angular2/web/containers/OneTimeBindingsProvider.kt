@@ -2,7 +2,6 @@
 package org.angular2.web.containers
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
-import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol
 import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
@@ -17,10 +16,12 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
+import com.intellij.util.containers.mapSmartSet
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
+import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_INPUTS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-import org.angular2.web.Angular2WebSymbolsScope
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsProvider : WebSymbolsContainer {
@@ -30,14 +31,23 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.Namespace.JS && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS) {
+    if (namespace == WebSymbolsContainer.Namespace.JS
+        && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+        && params.registry.allowResolve) {
+      // Avoid any conflicts with attribute selectors over the attribute value
+      val attributeSelectors = params.registry
+        .runNameMatchQuery(listOfNotNull(WebSymbolsContainer.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name),
+                           context = context.toList())
+        .filter { it.attributeValue?.required == false }
+        .mapSmartSet { it.matchedName }
+
       params.registry
         .runNameMatchQuery(
           listOfNotNull(WebSymbolsContainer.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name),
           context = context.toList())
         .asSequence()
         .filter { isOneTimeBindingProperty(it) }
-        .map { Angular2OneTimeBinding(it) }
+        .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.matchedName)) }
         .toList()
     }
     else emptyList()
@@ -82,7 +92,8 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
         type).transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
-  private class Angular2OneTimeBinding(delegate: WebSymbol) : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
+  private class Angular2OneTimeBinding(delegate: WebSymbol, val requiresValue: Boolean)
+    : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
 
     override val source: PsiElement?
       get() = (delegate as? PsiSourcedWebSymbol)?.source
@@ -110,14 +121,25 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
                                           JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
                                         ))
       }
+      else if (!requiresValue)
+        WebSymbolHtmlAttributeValueData(required = false)
       else null
 
     override fun createPointer(): Pointer<out WebSymbol> {
-      val delegate = this.delegate.createPointer()
+      val delegatePtr = this.delegate.createPointer()
+      val requiresValue = this.requiresValue
       return Pointer {
-        delegate.dereference()?.let { Angular2OneTimeBinding(it) }
+        delegatePtr.dereference()?.let { Angular2OneTimeBinding(it, requiresValue) }
       }
     }
+
+    override fun equals(other: Any?): Boolean =
+      other is Angular2OneTimeBinding
+      && other.delegate == delegate
+      && other.requiresValue == requiresValue
+
+    override fun hashCode(): Int =
+      Objects.hash(delegate, requiresValue)
 
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
       super<WebSymbolDelegate>.getNavigationTargets(project)
