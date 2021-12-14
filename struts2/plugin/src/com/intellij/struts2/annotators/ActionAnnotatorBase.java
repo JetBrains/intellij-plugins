@@ -52,7 +52,7 @@ import java.util.*;
  * @author Yann C&eacute;bron
  */
 public abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
-  private static final DomElementListCellRenderer<Action> getActionRenderer() {
+  private static DomElementListCellRenderer<Action> getActionRenderer() {
     return new DomElementListCellRenderer<>(StrutsBundle.message("annotators.action.no.name")) {
       @Override
       @NotNull
