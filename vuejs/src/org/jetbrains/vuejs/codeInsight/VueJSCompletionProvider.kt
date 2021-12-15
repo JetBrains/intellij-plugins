@@ -27,18 +27,27 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
 
   companion object {
     private val FILTERED_NON_CONTEXT_KEYWORDS = setOf("do", "class", "for", "function", "if", "import()", "switch", "throw",
-      "var", "let", "const", "try", "while", "with", "debugger")
+                                                      "var", "let", "const", "try", "while", "with", "debugger")
 
-    fun filterOutGenericJSResults(result: CompletionResultSet,
+    fun filterOutGenericJSResults(allowGlobalSymbols: Boolean,
+                                  result: CompletionResultSet,
                                   parameters: CompletionParameters) {
       result.runRemainingContributors(parameters) { completionResult ->
         val lookupElement = completionResult.lookupElement
-        // Filter out JavaScript global and top level symbols, and keywords 'class' and 'function'
+        // Filter out JavaScript symbols, and keywords such as 'class' and 'function'
         if (lookupElement is PrioritizedLookupElement<*>
             && lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR) is JSCompletionContributor) {
-          val priority = lookupElement.priority
-          if (priority <= TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES.priorityValue
-              || (priority.toInt() == NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
+          val priority = lookupElement.priority.toInt()
+          val proximity = lookupElement.explicitProximity
+
+          val maxLookupPriority = if (allowGlobalSymbols)
+            RELEVANT_SMARTNESS_PRIORITY
+          else
+            NO_RELEVANT_NO_SMARTNESS_PRIORITY
+
+          if (priority < maxLookupPriority.priorityValue
+              || (priority == maxLookupPriority.priorityValue && proximity <= maxLookupPriority.proximityValue)
+              || (priority == NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
                   && FILTERED_NON_CONTEXT_KEYWORDS.contains(lookupElement.lookupString)))
             return@runRemainingContributors
         }
@@ -90,7 +99,7 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
         patchedResult.stopHere()
       }
       else {
-        filterOutGenericJSResults(result, parameters)
+        filterOutGenericJSResults(true, result, parameters)
       }
     }
   }
