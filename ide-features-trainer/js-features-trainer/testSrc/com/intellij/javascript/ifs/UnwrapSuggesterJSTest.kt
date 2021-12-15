@@ -14,9 +14,7 @@ import training.featuresSuggester.UnwrapSuggesterTest
 class UnwrapSuggesterJSTest : UnwrapSuggesterTest() {
   override val testingCodeFileName: String = "JavaScriptCodeExample.js"
 
-  override fun getTestDataPath(): String {
-    return "$homePath/contrib/ide-features-trainer/js-features-trainer/testData"
-  }
+  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
 
   override fun `testUnwrap IF statement and get suggestion`() {
     with(myFixture) {

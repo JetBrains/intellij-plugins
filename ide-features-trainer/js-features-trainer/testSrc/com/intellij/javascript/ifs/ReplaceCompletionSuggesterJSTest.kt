@@ -14,9 +14,7 @@ import training.featuresSuggester.ReplaceCompletionSuggesterTest
 class ReplaceCompletionSuggesterJSTest : ReplaceCompletionSuggesterTest() {
   override val testingCodeFileName = "JavaScriptCodeExample.js"
 
-  override fun getTestDataPath(): String {
-    return "$homePath/contrib/ide-features-trainer/js-features-trainer/testData"
-  }
+  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
 
   override fun `testDelete and type dot, complete method call, remove previous identifier and get suggestion`() {
     with(myFixture) {

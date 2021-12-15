@@ -12,9 +12,7 @@ import training.featuresSuggester.NoSuggestion
 class FileStructureSuggesterJSTest : FileStructureSuggesterTest() {
   override val testingCodeFileName = "JavaScriptCodeExample.js"
 
-  override fun getTestDataPath(): String {
-    return "$homePath/contrib/ide-features-trainer/js-features-trainer/testData"
-  }
+  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
 
   override fun `testFind field and get suggestion`() {
     with(myFixture) {

@@ -17,9 +17,7 @@ import training.featuresSuggester.NoSuggestion
 class IntroduceVariableSuggesterJSTest : IntroduceVariableSuggesterTest() {
   override val testingCodeFileName = "JavaScriptCodeExample.js"
 
-  override fun getTestDataPath(): String {
-    return "$homePath/contrib/ide-features-trainer/js-features-trainer/testData"
-  }
+  override fun getTestDataPath() = homePath + JsSuggestersTestUtils.relativeTestDataPath
 
   override fun `testIntroduce expression from IF and get suggestion`() {
     with(myFixture) {
