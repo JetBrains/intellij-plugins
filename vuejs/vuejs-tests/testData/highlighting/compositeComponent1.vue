@@ -7,7 +7,7 @@
     </div>
     <ul v-if="isFolder" v-show="open">
       <tree-item class="item" v-for="model in model.children" :model="model" :foo="123"></tree-item>
-      <<warning descr="Unknown html tag tree-items">tree-items</warning>>{{<weak_warning descr="Unresolved variable or type closed">closed</weak_warning>}}</<warning descr="Unknown html tag tree-items">tree-items</warning>>
+      <<warning descr="Unknown html tag tree-items">tree-items</warning>>{{<weak_warning descr="Unresolved variable or type clossed">clossed</weak_warning>}}</<warning descr="Unknown html tag tree-items">tree-items</warning>>
       <li class="add" @click="addChild" @show="<weak_warning descr="Unresolved variable or type doShow">doShow</weak_warning>">+</li>
     </ul>
   </li>

@@ -31,7 +31,7 @@ class VueThisInstanceCompletionProvider : CompletionProvider<CompletionParameter
       }
       ?.forEach(result.withRelevanceSorter(JSCompletionContributor.createOwnSorter(parameters))::addElement)
       ?.also {
-        VueJSCompletionProvider.filterOutGenericJSResults(result, parameters)
+        VueJSCompletionProvider.filterOutGenericJSResults(false, result, parameters)
       }
   }
 }
