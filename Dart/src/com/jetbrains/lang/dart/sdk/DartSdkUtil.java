@@ -15,7 +15,6 @@ import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.BooleanFunction;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.Contract;
@@ -28,6 +27,7 @@ import javax.swing.text.JTextComponent;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
 
 public final class DartSdkUtil {
   private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<>();
@@ -134,7 +134,7 @@ public final class DartSdkUtil {
 
   private static void addKnownPathsToCombo(@NotNull final JComboBox combo,
                                            @NotNull final String propertyKey,
-                                           @NotNull final BooleanFunction<? super String> pathChecker) {
+                                           @NotNull final Predicate<? super String> pathChecker) {
     final SmartList<String> validPathsForUI = new SmartList<>();
 
     final String currentPath = getItemFromCombo(combo);
@@ -146,7 +146,7 @@ public final class DartSdkUtil {
     if (knownPaths != null && knownPaths.length > 0) {
       for (String path : knownPaths) {
         final String pathSD = FileUtil.toSystemDependentName(path);
-        if (!pathSD.equals(currentPath) && pathChecker.fun(path)) {
+        if (!pathSD.equals(currentPath) && pathChecker.test(path)) {
           validPathsForUI.add(pathSD);
         }
       }
