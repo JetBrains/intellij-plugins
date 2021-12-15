@@ -11,7 +11,7 @@ JSFile:IncorrectGenerics.js2
       JSReferenceExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('Vector')
-        PsiErrorElement:Expecting .
+        PsiErrorElement:. expected
           <empty list>
         JSGenericSignature
           PsiElement(JS:LT)('<')
@@ -28,7 +28,7 @@ JSFile:IncorrectGenerics.js2
             PsiWhiteSpace(' ')
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('Vector')
-            PsiErrorElement:Expecting .
+            PsiErrorElement:. expected
               <empty list>
           PsiElement(JS:LT)('<')
           JSReferenceExpression

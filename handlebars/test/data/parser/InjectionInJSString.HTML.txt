@@ -20,7 +20,7 @@ HtmlFile:InjectionInJSString.hbs
             PsiWhiteSpace(' ')
             JSLiteralExpression
               PsiElement(JS:STRING_LITERAL)('"rest/logstats?from=-1d&postFunctionId=')
-          PsiErrorElement:Expecting newline or semicolon
+          PsiErrorElement:Newline or semicolon expected
             <empty list>
         JSExpressionStatement
           JSLiteralExpression

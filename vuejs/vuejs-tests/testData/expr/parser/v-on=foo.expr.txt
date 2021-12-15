@@ -25,7 +25,7 @@ JSFile:test.js.v-on:foo.expr
     JSExpressionStatement
       JSLiteralExpression
         PsiElement(JS:STRING_LITERAL)('"foo"')
-      PsiErrorElement:Expecting newline or semicolon
+      PsiErrorElement:Newline or semicolon expected
         <empty list>
     PsiWhiteSpace(' ')
     PsiElement(JS:OR)('|')
@@ -89,13 +89,13 @@ JSFile:test.js.v-on:foo.expr
           JSLiteralExpression
             PsiElement(JS:NUMERIC_LITERAL)('12')
           PsiElement(JS:RPAR)(')')
-      PsiErrorElement:Expecting newline or semicolon
+      PsiErrorElement:Newline or semicolon expected
         <empty list>
     PsiWhiteSpace(' ')
     JSExpressionStatement
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('b')
-      PsiErrorElement:Expecting newline or semicolon
+      PsiErrorElement:Newline or semicolon expected
         <empty list>
     PsiWhiteSpace(' ')
     JSExpressionStatement
@@ -107,13 +107,13 @@ JSFile:test.js.v-on:foo.expr
     JSExpressionStatement
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('a')
-      PsiErrorElement:Expecting newline or semicolon
+      PsiErrorElement:Newline or semicolon expected
         <empty list>
     PsiWhiteSpace(' ')
     JSExpressionStatement
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('b')
-      PsiErrorElement:Expecting newline or semicolon
+      PsiErrorElement:Newline or semicolon expected
         <empty list>
     PsiWhiteSpace(' ')
     JSExpressionStatement
@@ -167,7 +167,7 @@ JSFile:test.js.v-on:foo.expr
     JSExpressionStatement
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('CV')
-      PsiErrorElement:Expecting newline or semicolon
+      PsiErrorElement:Newline or semicolon expected
         <empty list>
     JSExpressionStatement
       JSAttributeList

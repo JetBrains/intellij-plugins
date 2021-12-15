@@ -151,7 +151,7 @@ JSFile:AttributesListErrors.js2
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
       PsiElement(JS:RBRACKET)(']')
-    PsiErrorElement:Expecting newline or semicolon
+    PsiErrorElement:Newline or semicolon expected
       <empty list>
   PsiWhiteSpace(' ')
   ActionScriptClass

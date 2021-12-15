@@ -62,7 +62,7 @@ JSFile:VectorInitializers.js2
           PsiElement(JS:LT)('<')
           PsiElement(JS:INT_KEYWORD)('int')
           PsiElement(JS:GT)('>')
-        PsiErrorElement:Expected [
+        PsiErrorElement:[ expected
           <empty list>
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
@@ -89,7 +89,7 @@ JSFile:VectorInitializers.js2
         JSGenericSignature
           PsiElement(JS:LT)('<')
           PsiElement(JS:INT_KEYWORD)('int')
-          PsiErrorElement:Expected >
+          PsiErrorElement:> expected
             <empty list>
   PsiElement(BAD_CHARACTER)(';')
   PsiWhiteSpace('\n')

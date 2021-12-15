@@ -362,7 +362,7 @@ JSFile:MiscGotchas.js2
           PsiElement(JS:COLON)(':')
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('foo')
-        PsiErrorElement:Expecting newline or semicolon
+        PsiErrorElement:Newline or semicolon expected
           <empty list>
       PsiElement(JS:ELVIS)('?.')
       JSExpressionStatement

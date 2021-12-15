@@ -52,7 +52,7 @@ JSFile:Generics.js2
           JSReferenceExpression
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('Vector')
-            PsiErrorElement:Expecting .
+            PsiErrorElement:. expected
               <empty list>
             JSGenericSignature
               PsiElement(JS:LT)('<')
@@ -78,7 +78,7 @@ JSFile:Generics.js2
             JSReferenceExpression
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('Vector')
-              PsiErrorElement:Expecting .
+              PsiErrorElement:. expected
                 <empty list>
               JSGenericSignature
                 PsiElement(JS:LT)('<')
