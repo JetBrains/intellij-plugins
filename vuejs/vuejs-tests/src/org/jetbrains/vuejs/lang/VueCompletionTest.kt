@@ -1465,14 +1465,20 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testSlotProps() {
-    doLookupTest(renderPriority = false, renderTypeText = false)
+    doLookupTest(renderPriority = true, renderTypeText = false) {
+      // Ignore global objects
+      item -> !item.endsWith("#1")
+    }
   }
 
   fun testVueDefaultSymbolsWithDefinitions() {
     doLookupTest(VueTestModule.VUE_2_5_3, locations = listOf(
       "v-on:click=\"<caret>\"",
       "v-bind:about=\"<caret>\""
-    ))
+    )) {
+      // Ignore global objects
+      item -> !item.endsWith("#1")
+    }
   }
 
   fun testVueDefaultSymbols() {
@@ -1577,7 +1583,10 @@ export default class ComponentInsertion extends Vue {
       "{{<caret>}}",
       "{{foo.<caret>}}",
       "{{state.<caret>count}}"
-    ))
+    )) {
+      // Ignore global objects
+      item -> !item.endsWith("#1")
+    }
   }
 
   fun testVue3CompositionApi() {
@@ -1589,7 +1598,10 @@ export default class ComponentInsertion extends Vue {
       "{{<caret>}}",
       "{{foo.<caret>}}",
       "{{state.<caret>count}}"
-    ))
+    )) {
+      // Ignore global objects
+      item -> !item.endsWith("#1")
+    }
   }
 
   fun testDefineComponent() {
@@ -1710,7 +1722,10 @@ export default {
   }
 
   fun testExpression() {
-    doLookupTest(VueTestModule.VUE_2_6_10)
+    doLookupTest(VueTestModule.VUE_2_6_10) {
+      // Ignore global objects
+      item -> !item.endsWith("#1")
+    }
   }
 
   fun testObjectLiteralProperty() {
@@ -1718,7 +1733,10 @@ export default {
   }
 
   fun testEnum() {
-    doLookupTest(VueTestModule.VUE_3_2_2)
+    doLookupTest(VueTestModule.VUE_3_2_2) {
+      // Ignore global objects
+      item -> !item.endsWith("#1")
+    }
   }
 
   fun testScriptSetupRef() {

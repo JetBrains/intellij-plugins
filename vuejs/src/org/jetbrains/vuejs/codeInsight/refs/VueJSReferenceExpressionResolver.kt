@@ -10,10 +10,7 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
-import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult
-import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor
+import com.intellij.lang.javascript.psi.resolve.*
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
@@ -60,7 +57,11 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
   override fun resolveFromIndices(localProcessor: SinkResolveProcessor<ResolveResultSink>,
                                   excludeGlobalTypeScript: Boolean,
                                   includeTypeOnlyContextSymbols: Boolean): Array<ResolveResult> =
-    if (myQualifier == null) ResolveResult.EMPTY_ARRAY
+    if (myQualifier == null) {
+      val processor = WalkUpResolveProcessor(myReferencedName!!, myContainingFile, myRef)
+      processor.addLocalResults(localProcessor)
+      getResultsFromProcessor(processor)
+    }
     else super.resolveFromIndices(localProcessor, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
 
   private fun resolveFilterNameReference(expression: VueJSFilterReferenceExpression, incompleteCode: Boolean): Array<ResolveResult> {

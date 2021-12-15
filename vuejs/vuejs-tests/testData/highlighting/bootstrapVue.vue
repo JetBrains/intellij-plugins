@@ -12,10 +12,10 @@
       description="Let us know your name."
       label="Enter your name"
     >
-      <b-form-input v-model.trim="<weak_warning descr="Unresolved variable or type name">name</weak_warning>"></b-form-input>
+      <b-form-input v-model.trim="<weak_warning descr="Unresolved variable or type names">names</weak_warning>"></b-form-input>
     </b-form-group>
 
-    <b-alert variant="success" :show="<weak_warning descr="Unresolved variable or type showAlert">showAlert</weak_warning>">Hello {{ <weak_warning descr="Unresolved variable or type name">name</weak_warning> }}</b-alert>
+    <b-alert variant="success" :show="<weak_warning descr="Unresolved variable or type showAlert">showAlert</weak_warning>">Hello {{ <weak_warning descr="Unresolved variable or type names">names</weak_warning> }}</b-alert>
   </b-container>
 </template>
 <script>

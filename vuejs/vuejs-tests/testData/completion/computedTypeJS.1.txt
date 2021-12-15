@@ -9,3 +9,120 @@ $watch#() => void
 false#null
 async#null
 await#null
+addEventListener#void
+alert#void
+atob#string
+btoa#string
+caches#CacheStorage
+cancelAnimationFrame#void
+cancelIdleCallback#void
+captureEvents#void
+clearInterval#void
+clearTimeout#void
+clientInformation#Navigator
+createImageBitmap#Promise<ImageBitmap>
+crossOriginIsolated#boolean
+devicePixelRatio#number
+dispatchEvent#boolean
+escape#null
+eval#any
+external#External
+frameElement#Element
+frames#Window
+isNaN#boolean
+localStorage#Storage
+location#null
+locationbar#BarProp
+matchMedia#MediaQueryList
+menubar#BarProp
+name#null
+navigator#null
+onabort#(this:Window, ev: UIEvent) => any
+onafterprint#(this:Window, ev: Event) => any
+onanimationcancel#(this:Window, ev: AnimationEvent) => any
+onanimationend#(this:Window, ev: AnimationEvent) => any
+onanimationiteration#(this:Window, ev: AnimationEvent) => any
+onanimationstart#(this:Window, ev: AnimationEvent) => any
+onauxclick#(this:Window, ev: MouseEvent) => any
+onbeforeunload#(this:Window, ev: BeforeUnloadEvent) => any
+oncanplay#(this:Window, ev: Event) => any
+oncanplaythrough#(this:Window, ev: Event) => any
+onchange#(this:Window, ev: Event) => any
+oncuechange#(this:Window, ev: Event) => any
+ondeviceorientation#(this:Window, ev: DeviceOrientationEvent) => any
+ondrag#(this:Window, ev: DragEvent) => any
+ondragend#(this:Window, ev: DragEvent) => any
+ondragenter#(this:Window, ev: DragEvent) => any
+ondragleave#(this:Window, ev: DragEvent) => any
+ondragover#(this:Window, ev: DragEvent) => any
+ondragstart#(this:Window, ev: DragEvent) => any
+ondurationchange#(this:Window, ev: Event) => any
+onformdata#(this:Window, ev: FormDataEvent) => any
+ongamepadconnected#(this:Window, ev: Event) => any
+ongamepaddisconnected#(this:Window, ev: Event) => any
+ongotpointercapture#(this:Window, ev: PointerEvent) => any
+onhashchange#(this:Window, ev: Event) => any
+oninvalid#(this:Window, ev: Event) => any
+onlanguagechange#null
+onload#(this:Window, ev: Event) => any
+onloadeddata#(this:Window, ev: Event) => any
+onloadedmetadata#(this:Window, ev: Event) => any
+onloadstart#(this:Window, ev: Event) => any
+onlostpointercapture#(this:Window, ev: PointerEvent) => any
+onmessage#null
+onmessageerror#null
+onmouseleave#(this:Window, ev: MouseEvent) => any
+onorientationchange#(this:Window, ev: Event) => any
+onpagehide#(this:Window, ev: PageTransitionEvent) => any
+onpageshow#(this:Window, ev: PageTransitionEvent) => any
+onpause#(this:Window, ev: Event) => any
+onplay#(this:Window, ev: Event) => any
+onplaying#(this:Window, ev: Event) => any
+onpointercancel#(this:Window, ev: PointerEvent) => any
+onpointerleave#(this:Window, ev: PointerEvent) => any
+onpopstate#(this:Window, ev: PopStateEvent) => any
+onratechange#(this:Window, ev: Event) => any
+onrejectionhandled#null
+onselectionchange#(this:Window, ev: Event) => any
+onselectstart#(this:Window, ev: Event) => any
+onstalled#(this:Window, ev: Event) => any
+onstorage#(this:Window, ev: StorageEvent) => any
+ontimeupdate#(this:Window, ev: Event) => any
+ontouchcancel#(this:Window, ev: TouchEvent) => any
+ontouchstart#(this:Window, ev: TouchEvent) => any
+ontransitioncancel#(this:Window, ev: TransitionEvent) => any
+ontransitionend#(this:Window, ev: TransitionEvent) => any
+ontransitionrun#(this:Window, ev: TransitionEvent) => any
+ontransitionstart#(this:Window, ev: TransitionEvent) => any
+onunhandledrejection#null
+onunload#(this:Window, ev: Event) => any
+onvolumechange#(this:Window, ev: Event) => any
+onwaiting#(this:Window, ev: Event) => any
+onwebkitanimationend#(this:Window, ev: Event) => any
+onwebkitanimationiteration#(this:Window, ev: Event) => any
+onwebkitanimationstart#(this:Window, ev: Event) => any
+onwebkittransitionend#(this:Window, ev: Event) => any
+openDatabase#Database
+orientation#number
+pageXOffset#number
+pageYOffset#number
+parent#Window
+parseFloat#number
+parseInt#number
+performance#Performance
+personalbar#BarProp
+postMessage#void
+queueMicrotask#void
+releaseEvents#void
+requestAnimationFrame#number
+requestIdleCallback#number
+scrollbars#BarProp
+sessionStorage#Storage
+setInterval#number
+status#string
+statusbar#BarProp
+toolbar#BarProp
+unescape#null
+visualViewport#VisualViewport
+webkitCancelAnimationFrame#any
+webkitRequestAnimationFrame#any
