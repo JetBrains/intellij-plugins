@@ -11,13 +11,11 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.wsl.WSLCommandLineOptions
 import com.intellij.execution.wsl.WslPath
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsContexts.ProgressTitle
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.encoding.EncodingManager
 import com.intellij.util.EnvironmentUtil
@@ -145,7 +143,6 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   @Throws(ExecutionException::class)
   private fun newCommandLineWsl(remoteMakePath: WslPath): GeneralCommandLine {
     val distribution = remoteMakePath.distribution
-    val distributionId = distribution.msId
 
     /*-
      * It is possible to set a non-root default user on a per-distribution
@@ -161,8 +158,9 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
      * to modify a file created by root), we should at least log the user's home,
      * or, better, display it in the event log (once per WSL distribution).
      */
-    LOGGER.debugInBackground(MakefileLangBundle.message("progress.wsl.reading.user.home", distributionId)) {
-      "The current user's home within the $distributionId WSL distribution is ${distribution.userHome}. Edit /etc/wsl.conf to change the default user."
+    LOGGER.debugInBackground {
+      @Suppress("LongLine")
+      "The current user's home within the ${distribution.msId} WSL distribution is ${distribution.userHome}. Edit /etc/wsl.conf to change the default user."
     }
 
     val macroManager = PathMacroManager.getInstance(project)
@@ -322,14 +320,11 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   }
 
   @RequiresEdt
-  private inline fun Logger.debugInBackground(@ProgressTitle title: String,
-                                              crossinline lazyMessage: () -> @NonNls String) {
+  private inline fun Logger.debugInBackground(crossinline lazyMessage: () -> @NonNls String) {
     if (isDebugEnabled) {
-      object : Backgroundable(project, title, false) {
-        override fun run(indicator: ProgressIndicator) {
-          debug(lazyMessage())
-        }
-      }.queue()
+      ApplicationManager.getApplication().executeOnPooledThread {
+        debug(lazyMessage())
+      }
     }
   }
 }
