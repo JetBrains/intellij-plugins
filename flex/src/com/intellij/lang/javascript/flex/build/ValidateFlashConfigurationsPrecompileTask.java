@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
@@ -46,20 +46,15 @@ import com.intellij.pom.Navigatable;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
-
+public final class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
   private static final String FLASH_COMPILER_GROUP_ID = "Flash Compiler";
 
   private boolean myParallelCompilationSuggested = false;
@@ -123,8 +118,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
   private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile,
                                                  final Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
 
-    final Map<String, Pair<Module, FlexBuildConfiguration>> outputPathToModuleAndBC =
-      new THashMap<>();
+    final Map<String, Pair<Module, FlexBuildConfiguration>> outputPathToModuleAndBC = new HashMap<>();
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final FlexBuildConfiguration bc = moduleAndBC.second;
       final String outputFilePath = bc.getActualOutputFilePath();
