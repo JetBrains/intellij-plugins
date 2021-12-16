@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.toolwindow;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
+import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
@@ -40,6 +41,7 @@ public class DependenciesTab {
     private JToolBar _toolbar;
     private final NavigateToElementAction _navigateToElementAction;
     private final NavigateToUsageAction _navigateToUsageAction;
+    private final PresentationFactory myPresentations = new PresentationFactory();
 
     public DependenciesTab() {
         _splitPane.setDividerLocation(0.5);
@@ -118,34 +120,34 @@ public class DependenciesTab {
                           _dependenciesTree.getSelectionCount();
                           _documentationPane.setText(null);
 
-                          _navigateToElementAction.getTemplatePresentation().setEnabled(false);
-                          _navigateToUsageAction.getTemplatePresentation().setEnabled(false);
+                          myPresentations.getPresentation(_navigateToElementAction).setEnabled(false);
+                          myPresentations.getPresentation(_navigateToUsageAction).setEnabled(false);
                         }
                     }
                 }
         );
         _dependenciesTree.setVisible(false);
 
-        _navigateToElementAction.getTemplatePresentation().setEnabled(false);
-        _navigateToUsageAction.getTemplatePresentation().setEnabled(false);
+        myPresentations.getPresentation(_navigateToElementAction).setEnabled(false);
+        myPresentations.getPresentation(_navigateToUsageAction).setEnabled(false);
 
         CollapseAllAction collapseAllAction = new CollapseAllAction(_dependenciesTree);
         ExpandAllAction expandAllAction = new ExpandAllAction(_dependenciesTree);
 
-        ActionButton navigateToElement = new ActionButton(_navigateToElementAction, _navigateToElementAction.getTemplatePresentation(), "Navigate to Element", new Dimension(24, 24));
+        ActionButton navigateToElement = new ActionButton(_navigateToElementAction, myPresentations.getPresentation(_navigateToElementAction), "Navigate to Element", new Dimension(24, 24));
         navigateToElement.setToolTipText("Navigate to Element");
         _toolbar.add(navigateToElement);
 
-        ActionButton navigateToUsage = new ActionButton(_navigateToUsageAction, _navigateToUsageAction.getTemplatePresentation(), "Navigate to Usage", new Dimension(24, 24));
+        ActionButton navigateToUsage = new ActionButton(_navigateToUsageAction, myPresentations.getPresentation(_navigateToUsageAction), "Navigate to Usage", new Dimension(24, 24));
         navigateToUsage.setToolTipText("Navigate to Usage");
         _toolbar.add(navigateToUsage);
         _toolbar.addSeparator();
 
-        ActionButton expandAll = new ActionButton(expandAllAction, expandAllAction.getTemplatePresentation(), expandAllAction.getTemplatePresentation().getText(), new Dimension(24, 24));
+        ActionButton expandAll = new ActionButton(expandAllAction, myPresentations.getPresentation(expandAllAction), expandAllAction.getTemplatePresentation().getText(), new Dimension(24, 24));
         expandAll.setToolTipText("Expand All");
         _toolbar.add(expandAll);
 
-        ActionButton collapseAll = new ActionButton(collapseAllAction, collapseAllAction.getTemplatePresentation(), collapseAllAction.getTemplatePresentation().getText(), new Dimension(24, 24));
+        ActionButton collapseAll = new ActionButton(collapseAllAction, myPresentations.getPresentation(collapseAllAction), collapseAllAction.getTemplatePresentation().getText(), new Dimension(24, 24));
         collapseAll.setToolTipText("Collapse All");
         _toolbar.add(collapseAll);
 
@@ -170,8 +172,8 @@ public class DependenciesTab {
 
             _documentationPane.setText(null);
 
-            _navigateToElementAction.getTemplatePresentation().setEnabled(false);
-            _navigateToUsageAction.getTemplatePresentation().setEnabled(false);
+            myPresentations.getPresentation(_navigateToElementAction).setEnabled(false);
+            myPresentations.getPresentation(_navigateToUsageAction).setEnabled(false);
         } else {
             clear();
         }
