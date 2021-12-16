@@ -10,6 +10,7 @@ import com.intellij.util.containers.Stack
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag
 import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates
 import org.angular2.web.Angular2DirectiveSymbolWrapper
@@ -113,14 +114,14 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
           for (selector in candidate.selector.simpleSelectorsWithPsi) {
             for (attr in selector.attributes) {
               val attrName = attr.name
-              var added = false
+              var addSelector = true
               sequenceOf(inOuts, inputs, attributes, outputs)
                 .mapNotNull { it[attrName] }
                 .forEach {
                   consumer(Angular2DirectiveSymbolWrapper.create(candidate, it))
-                  added = true
+                  addSelector = addSelector && (it as? Angular2DirectiveProperty)?.virtual == true
                 }
-              if (!added) {
+              if (addSelector) {
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
               }
             }
