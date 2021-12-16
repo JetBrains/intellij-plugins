@@ -35,7 +35,6 @@ import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable.Kind;
-import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -598,7 +597,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
       .put("myInOut", "ppxp")
       .put("myInOutChange", "xxpx")
       .put("fake", "ccxc")
-      .put("fakeChange", "xxcx")
+      .put("fakeChange", "sxcx")
       .build().entrySet()) {
 
       String name = attr.getKey();
