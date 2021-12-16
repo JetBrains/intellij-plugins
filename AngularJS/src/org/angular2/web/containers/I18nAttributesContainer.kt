@@ -2,7 +2,10 @@
 package org.angular2.web.containers
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.javascript.web.symbols.*
+import com.intellij.javascript.web.symbols.SymbolKind
+import com.intellij.javascript.web.symbols.WebSymbol
+import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.javascript.web.symbols.WebSymbolsNameMatchQueryParams
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -27,16 +30,9 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
-          if (isI18nCandidate(info) && (name == null || name.equals(info.name, true))) {
-            return@mapNotNull (attr.descriptor as? WebSymbolAttributeDescriptor)?.symbol
-                                ?.let {
-                                  WebSymbolMatch.create(info.name, listOf(WebSymbol.NameSegment(0, info.name.length, it)),
-                                                        WebSymbolsContainer.Namespace.HTML, KIND_NG_I18N_ATTRIBUTES, it.origin,
-                                                        WebSymbol.Priority.NORMAL)
-                                }
-                              ?: Angular2I18nAttributeSymbol(attr)
-          }
-          null
+          if (isI18nCandidate(info) && (name == null || name.equals(info.name, true)))
+            Angular2I18nAttributeSymbol(attr)
+          else null
         }
     }
     else emptyList()
@@ -77,6 +73,17 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
     override val name: String
       get() = attribute.name
 
+    override val nameSegments: List<WebSymbol.NameSegment> by lazy(LazyThreadSafetyMode.NONE) {
+      (attribute.descriptor as? WebSymbolAttributeDescriptor)?.symbol?.nameSegments
+      ?: super.nameSegments
+    }
+
+    override val priority: WebSymbol.Priority
+      get() = WebSymbol.Priority.NORMAL
+
+    override val project: Project
+      get() = attribute.project
+
     override val namespace: WebSymbolsContainer.Namespace
       get() = WebSymbolsContainer.Namespace.HTML
 
@@ -92,14 +99,12 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
       attribute.hashCode()
 
     override fun createPointer(): Pointer<Angular2I18nAttributeSymbol> {
-      val attribute = this.attribute.createSmartPointer()
+      val attributePtr = attribute.createSmartPointer()
       return Pointer {
-        attribute.dereference()?.let { Angular2I18nAttributeSymbol(it) }
+        val attribute = attributePtr.dereference() ?: return@Pointer null
+        Angular2I18nAttributeSymbol(attribute)
       }
     }
-
-    override val project: Project
-      get() = attribute.project
 
   }
 

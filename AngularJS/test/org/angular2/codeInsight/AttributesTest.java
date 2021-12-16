@@ -543,8 +543,9 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testI18NAttr() {
+    configureCopy(myFixture, ANGULAR_MATERIAL_8_2_3_MIXED);
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.configureByFiles("i18n.html", "package.json");
+    myFixture.configureByFiles("i18n.html");
     myFixture.checkHighlighting(true, false, true);
   }
 
