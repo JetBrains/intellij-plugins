@@ -18,7 +18,7 @@ package org.jetbrains.osgi.maven
 import aQute.bnd.osgi.Constants
 import com.intellij.facet.FacetTypeId
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.idea.maven.importing.FacetImporterTestCase
+import com.intellij.maven.testFramework.FacetImporterTestCase
 import org.junit.Test
 import org.osmorc.facet.OsmorcFacet
 import org.osmorc.facet.OsmorcFacetConfiguration

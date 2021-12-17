@@ -9,7 +9,7 @@ import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.idea.maven.MavenImportingTestCase;
+import com.intellij.maven.testFramework.MavenImportingTestCase;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
