@@ -223,7 +223,9 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     group.addAction(new FilterProblemsAction());
     group.addSeparator();
 
-    return ActionManager.getInstance().createActionToolbar("DartProblemsView", group, false).getComponent();
+    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("DartProblemsView", group, false);
+    toolbar.setTargetComponent(myTable);
+    return toolbar.getComponent();
   }
 
   private @NotNull JPanel createCenterPanel() {
