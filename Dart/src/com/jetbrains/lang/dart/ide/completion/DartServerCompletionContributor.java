@@ -43,6 +43,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,7 +105,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
 
                if (!das.getServerVersion().isEmpty() && StringUtil.compareVersionNumbers(das.getServerVersion(), "1.33") >= 0) {
-                 handleCompletion2(project, resultSet, file, offset);
+                 handleCompletion2(project, resultSet, file, offset, parameters.getInvocationCount());
                  return;
                }
 
@@ -189,10 +190,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
   private static void handleCompletion2(@NotNull Project project,
                                         @NotNull CompletionResultSet resultSet,
                                         @NotNull VirtualFile file,
-                                        int offset) {
+                                        int offset,
+                                        int invocationCount) {
+    // Invocation count is the number of times that the user has pressed Ctrl + Space querying for completions at this location.
+    // If 0 or 1, the initial query, then get only the first 100 results, if more than 1, then return (invocationCount - 1) * 1000
+    // completions.
+    int maxResults;
+    if (invocationCount <= 1) {
+      maxResults = 100;
+    }
+    else {
+      maxResults = (invocationCount - 1) * 1000;
+    }
     DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-
-    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, 100);
+    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, maxResults);
     if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
       return;
     }
@@ -209,6 +220,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     // completions.
     if (completionInfo2.myIsIncomplete) {
       updatedResultSet.restartCompletionOnAnyPrefixChange();
+      updatedResultSet.addLookupAdvertisement("Ctrl + Space for more results");
     }
   }
 
