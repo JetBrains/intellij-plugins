@@ -18,9 +18,11 @@ import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.xml.XMLLanguage;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -33,6 +35,7 @@ import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
@@ -104,7 +107,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
 
                if (!das.getServerVersion().isEmpty() && StringUtil.compareVersionNumbers(das.getServerVersion(), "1.33") >= 0) {
-                 handleCompletion2(project, resultSet, file, offset);
+                 handleCompletion2(project, resultSet, file, offset, parameters.getInvocationCount());
                  return;
                }
 
@@ -189,10 +192,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
   private static void handleCompletion2(@NotNull Project project,
                                         @NotNull CompletionResultSet resultSet,
                                         @NotNull VirtualFile file,
-                                        int offset) {
+                                        int offset,
+                                        int invocationCount) {
+    // Invocation count is the number of times that the user has pressed Ctrl + Space querying for completions at this location.
+    // If 0 or 1, the initial query, then get only the first 100 results, if more than 1, then return (invocationCount - 1) * 1000
+    // completions.
+    int maxResults;
+    if (invocationCount <= 1) {
+      maxResults = 100;
+    }
+    else {
+      maxResults = (invocationCount - 1) * 1000;
+    }
     DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-
-    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, 100);
+    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, maxResults);
     if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
       return;
     }
@@ -209,6 +222,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     // completions.
     if (completionInfo2.myIsIncomplete) {
       updatedResultSet.restartCompletionOnAnyPrefixChange();
+
+      String shortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION);
+      updatedResultSet.addLookupAdvertisement(DartBundle.message("press.completion.shortcut.again.for.more.results", shortcut));
     }
   }
 
