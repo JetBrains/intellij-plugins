@@ -180,7 +180,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                      createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
                    String displayUri = includedSet.getDisplayUri() != null ? includedSet.getDisplayUri() : suggestionSet.getUri();
                    LookupElementBuilder lookupElement =
-                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, displayUri);
+                     createLookupElement(project, completionSuggestion, targetFile, suggestionSet.getId(), true, displayUri);
 
                    resultSet.addElement(lookupElement);
                  }
@@ -214,8 +214,16 @@ public class DartServerCompletionContributor extends CompletionContributor {
     List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
 
     // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
+    List<String> libraryUrisToImport = completionInfo2.myLibraryUrisToImport;
     for (CompletionSuggestion suggestion : suggestions) {
-      updatedResultSet.addElement(createLookupElement(project, suggestion));
+      if (suggestion.getLibraryUriToImportIndex() != null) {
+        int libraryIndex = suggestion.getLibraryUriToImportIndex();
+        String libraryUri = libraryUrisToImport.get(libraryIndex);
+        updatedResultSet.addElement(createLookupElement(project, suggestion, file, offset, suggestion.getCompletion(), libraryUri));
+      }
+      else {
+        updatedResultSet.addElement(createLookupElement(project, suggestion));
+      }
     }
 
     // As the user types additional characters, restart the completion only if we don't already have the complete set of
@@ -409,10 +417,41 @@ public class DartServerCompletionContributor extends CompletionContributor {
   @NotNull
   public static LookupElementBuilder createLookupElement(@NotNull final Project project,
                                                          @NotNull final CompletionSuggestion suggestion,
-                                                         final Integer suggestionSetId,
                                                          final VirtualFile file,
+                                                         final Integer suggestionSetId,
                                                          final boolean isNotYetImported,
                                                          @Nullable final String displayUri) {
+    return createLookupElement(project, suggestion, file, suggestionSetId, isNotYetImported, displayUri, null, null, null);
+  }
+
+  @NotNull
+  public static LookupElementBuilder createLookupElement(@NotNull final Project project,
+                                                         @NotNull final CompletionSuggestion suggestion,
+                                                         final VirtualFile file,
+                                                         final Integer offset,
+                                                         final String completion,
+                                                         final String libraryUri
+  ) {
+    return createLookupElement(project, suggestion, file, null, false, null, offset, completion, libraryUri);
+  }
+
+  /**
+   * If the file is non-null, then either the suggestionSetId, isNotYetImported and displayUri are passed as requirements for a possible
+   * call to {@link DartAnalysisServerService#completion_getSuggestionDetails(VirtualFile, int, String, int)}, or offset, completion and
+   * libraryUri are passed for a possible call to
+   * {@link DartAnalysisServerService#completion_getSuggestionDetails2(VirtualFile, int, String, String)}.
+   */
+  @NotNull
+  private static LookupElementBuilder createLookupElement(@NotNull final Project project,
+                                                          @NotNull final CompletionSuggestion suggestion,
+                                                          @Nullable final VirtualFile file,
+                                                          @Nullable final Integer suggestionSetId,
+                                                          final boolean isNotYetImported,
+                                                          @Nullable final String displayUri,
+                                                          @Nullable final Integer offset,
+                                                          @Nullable final String completion,
+                                                          @Nullable final String libraryUri
+  ) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
@@ -492,11 +531,44 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
     }
 
-    if (isNotYetImported) {
+    if (file != null && isNotYetImported && suggestionSetId != null) {
+      // completion_getSuggestionDetails
       lookup = lookup.withInsertHandler((context, item) -> {
         final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
         final Pair<String, SourceChange> result =
           das.completion_getSuggestionDetails(file, suggestionSetId, suggestion.getCompletion(), context.getStartOffset());
+        if (result == null) {
+          return;
+        }
+
+        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.getFirst());
+
+        @Nullable final SourceChange change = result.getSecond();
+        if (change == null) {
+          return;
+        }
+
+        try {
+          AssistUtils.applySourceChange(project, change, true);
+        }
+        catch (DartSourceEditException e) {
+          CommonRefactoringUtil.showErrorHint(project, context.getEditor(), e.getMessage(), CommonBundle.getErrorTitle(), null);
+          return;
+        }
+
+        if (element != null &&
+            (ElementKind.FUNCTION.equals(element.getKind()) || ElementKind.CONSTRUCTOR.equals(element.getKind())) &&
+            suggestion.getParameterNames() != null) {
+          handleFunctionInvocationInsertion(context, item, suggestion);
+        }
+      });
+    }
+    else if (file != null && offset != null && completion != null && libraryUri != null) {
+      // completion_getSuggestionDetails2
+      lookup = lookup.withInsertHandler((context, item) -> {
+        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+        final Pair<String, SourceChange> result =
+          das.completion_getSuggestionDetails2(file, offset, completion, libraryUri);
         if (result == null) {
           return;
         }

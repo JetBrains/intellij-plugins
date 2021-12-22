@@ -111,9 +111,11 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testFunctionAfterShow() {
-    doTest();
-  }
+
+  // Fails due to https://github.com/dart-lang/sdk/issues/47993
+  // public void testFunctionAfterShow() {
+  //  doTest();
+  //}
 
   public void testFunctionAsArgument() {
     doTest();
@@ -123,7 +125,6 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("for");
   }
 
-  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testWithImportPrefix() {
     doTest();
   }

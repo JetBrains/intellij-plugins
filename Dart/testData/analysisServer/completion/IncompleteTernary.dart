@@ -1,7 +1,7 @@
 void main() {
-  new A(x: true ? tru<caret>);
+  new A(x: 1 != 2 ? tru<caret>);
 }
 
 class A {
-  A({int x});
+  A({bool? x});
 }
