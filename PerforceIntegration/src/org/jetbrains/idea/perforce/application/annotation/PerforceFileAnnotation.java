@@ -20,16 +20,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vcs.VcsKey;
-import com.intellij.openapi.vcs.annotate.FileAnnotation;
-import com.intellij.openapi.vcs.annotate.LineAnnotationAspect;
-import com.intellij.openapi.vcs.annotate.LineAnnotationAspectAdapter;
-import com.intellij.openapi.vcs.annotate.VFSForAnnotationListener;
+import com.intellij.openapi.vcs.annotate.*;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vcs.annotate.AnnotationTooltipBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -238,5 +234,11 @@ public class PerforceFileAnnotation extends FileAnnotation {
   @Override
   public VirtualFile getFile() {
     return myFile;
+  }
+
+  @Nullable
+  @Override
+  public LineModificationDetailsProvider getLineModificationDetailsProvider() {
+    return DefaultLineModificationDetailsProvider.create(this);
   }
 }
