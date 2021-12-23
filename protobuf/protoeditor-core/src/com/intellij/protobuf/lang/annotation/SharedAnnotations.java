@@ -20,13 +20,14 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.PbLangBundle;
+import com.intellij.protobuf.lang.intentions.PbAddImportStatementIntention;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
-import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,6 +156,7 @@ public class SharedAnnotations {
             HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.symbol", path.getSymbol().getText()))
             .range(path.getSymbol().getTextRange())
             .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+            .withFix(new PbAddImportStatementIntention(path.getSymbol().getTextOffset()))
             .create();
         return true;
     }
