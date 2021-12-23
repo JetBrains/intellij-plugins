@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
+import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -23,6 +24,7 @@ import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.project.workspace.CidrWorkspace
 import com.jetbrains.cidr.project.workspace.WorkspaceWithEnvironment
 import com.jetbrains.cidr.system.*
+import com.jetbrains.cidr.toolchains.CidrExecutableTool
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
 import org.jetbrains.annotations.NonNls
 import java.io.File
@@ -89,6 +91,16 @@ fun processRemoteHost(log: CdIndenter, environment: CidrToolEnvironment) {
   }
 }
 
+private fun logTool(tool: CidrExecutableTool, toolName: String, log: CdIndenter) {
+  val version = try {
+    tool.readVersion()
+  } catch (e: ExecutionException) {
+    null
+  }
+
+  log.put("$toolName ($version): ${tool.executablePath}")
+}
+
 private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) {
   ProgressManager.checkCanceled()
   val toolchain = environment.toolchain
@@ -98,9 +110,9 @@ private fun processCPPEnvironment(log: CdIndenter, environment: CPPEnvironment) 
   log.scope {
     processGeneralToolchainInfo(log, toolchain)
 
-    environment.cMake?.let { log.put("cmake (${it.readVersion()}): ${it.executablePath}") }
-    environment.make?.let { log.put("make (${it.readVersion()}): ${it.executablePath}") }
-    environment.gdb?.let { log.put("gdb (${it.readVersion()}): ${it.executablePath}") }
+    environment.cMake?.let { logTool(it, "cmake", log) }
+    environment.make?.let { logTool(it, "make", log) }
+    environment.gdb?.let { logTool(it, "cmake", log) }
 
     if (hostMachine is MappedHost) {
       log.put("Path Mappings:")
