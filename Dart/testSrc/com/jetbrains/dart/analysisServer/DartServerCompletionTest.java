@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -111,7 +111,8 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testFunctionAfterShow() {
+  // Fails due to https://github.com/dart-lang/sdk/issues/47993
+  public void _testFunctionAfterShow() {
     doTest();
   }
 
@@ -123,7 +124,6 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("for");
   }
 
-  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testWithImportPrefix() {
     doTest();
   }
@@ -188,7 +188,6 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     assertNull(myFixture.getLookup());
   }
 
-  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testNotYetImportedClass() {
     doTest();
   }

@@ -103,6 +103,7 @@ public final class DartAnalysisServerService implements Disposable {
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_SUGGESTION_DETAILS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_SUGGESTION_DETAILS2_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long EXECUTION_CREATE_CONTEXT_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -1446,6 +1447,41 @@ public final class DartAnalysisServerService implements Disposable {
     }
     return resultRef.get();
   }
+
+  public @Nullable Pair<String, SourceChange> completion_getSuggestionDetails2(@NotNull VirtualFile file,
+                                                                               int _offset,
+                                                                               @NotNull String completion,
+                                                                               @NotNull String libraryUri) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<Pair<String, SourceChange>> resultRef = new Ref<>();
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+    server.completion_getSuggestionDetails2(filePath, offset, completion, libraryUri, new GetSuggestionDetailsConsumer2() {
+      @Override
+      public void computedDetails(String completion, SourceChange change) {
+        resultRef.set(new Pair<>(completion, change));
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError requestError) {
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTION_DETAILS2_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("completion_getSuggestionDetails2", GET_SUGGESTION_DETAILS2_TIMEOUT, filePath);
+    }
+    return resultRef.get();
+  }
+
 
   @Nullable
   public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {

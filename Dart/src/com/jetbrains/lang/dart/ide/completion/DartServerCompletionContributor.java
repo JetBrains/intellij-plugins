@@ -68,9 +68,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
            ),
            new CompletionProvider<>() {
              @Override
-             protected void addCompletions(@NotNull final CompletionParameters parameters,
-                                           @NotNull final ProcessingContext context,
-                                           @NotNull final CompletionResultSet originalResultSet) {
+             protected void addCompletions(@NotNull CompletionParameters parameters,
+                                           @NotNull ProcessingContext context,
+                                           @NotNull CompletionResultSet originalResultSet) {
                final PsiFile originalFile = parameters.getOriginalFile();
                final Project project = originalFile.getProject();
 
@@ -104,14 +104,15 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
                das.updateFilesContent();
 
-               final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
+               final int startOffsetInHostFile =
+                 InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
 
                if (!das.getServerVersion().isEmpty() && StringUtil.compareVersionNumbers(das.getServerVersion(), "1.33") >= 0) {
-                 handleCompletion2(project, resultSet, file, offset, parameters.getInvocationCount());
+                 handleCompletion2(project, resultSet, file, startOffsetInHostFile, parameters.getInvocationCount());
                  return;
                }
 
-               final String completionId = das.completion_getSuggestions(file, offset);
+               final String completionId = das.completion_getSuggestions(file, startOffsetInHostFile);
                if (completionId == null) return;
 
                final VirtualFile targetFile = file;
@@ -179,8 +180,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    CompletionSuggestion completionSuggestion =
                      createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
                    String displayUri = includedSet.getDisplayUri() != null ? includedSet.getDisplayUri() : suggestionSet.getUri();
-                   LookupElementBuilder lookupElement =
-                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, displayUri);
+                   SuggestionDetailsInsertHandlerBase insertHandler =
+                     new SuggestionDetailsInsertHandler(project, targetFile, completionSuggestion, startOffsetInHostFile,
+                                                        suggestionSet.getId());
+                   LookupElementBuilder lookupElement = createLookupElement(project, completionSuggestion, displayUri, insertHandler);
 
                    resultSet.addElement(lookupElement);
                  }
@@ -192,7 +195,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
   private static void handleCompletion2(@NotNull Project project,
                                         @NotNull CompletionResultSet resultSet,
                                         @NotNull VirtualFile file,
-                                        int offset,
+                                        int startOffsetInHostFile,
                                         int invocationCount) {
     // Invocation count is the number of times that the user has pressed Ctrl + Space querying for completions at this location.
     // If 0 or 1, the initial query, then get only the first 100 results, if more than 1, then return (invocationCount - 1) * 1000
@@ -205,7 +208,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       maxResults = (invocationCount - 1) * 1000;
     }
     DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, maxResults);
+    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, startOffsetInHostFile, maxResults);
     if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
       return;
     }
@@ -214,8 +217,18 @@ public class DartServerCompletionContributor extends CompletionContributor {
     List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
 
     // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
+    List<String> libraryUrisToImport = completionInfo2.myLibraryUrisToImport;
     for (CompletionSuggestion suggestion : suggestions) {
-      updatedResultSet.addElement(createLookupElement(project, suggestion));
+      if (suggestion.getLibraryUriToImportIndex() != null) {
+        int libraryUriToImportIndex = suggestion.getLibraryUriToImportIndex();
+        String libraryUriToImport = libraryUrisToImport.get(libraryUriToImportIndex);
+        SuggestionDetailsInsertHandlerBase insertHandler =
+          new SuggestionDetailsInsertHandler2(project, file, startOffsetInHostFile, suggestion, libraryUriToImport);
+        updatedResultSet.addElement(createLookupElement(project, suggestion, null, insertHandler));
+      }
+      else {
+        updatedResultSet.addElement(createLookupElement(project, suggestion));
+      }
     }
 
     // As the user types additional characters, restart the completion only if we don't already have the complete set of
@@ -241,8 +254,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return !Character.isJavaIdentifierStart(text.charAt(currentOffset));
   }
 
-  private static void appendRuntimeCompletion(@NotNull final CompletionParameters parameters,
-                                              @NotNull final CompletionResultSet resultSet) {
+  private static void appendRuntimeCompletion(@NotNull CompletionParameters parameters,
+                                              @NotNull CompletionResultSet resultSet) {
     final PsiFile originalFile = parameters.getOriginalFile();
     final Project project = originalFile.getProject();
     final PsiElement contextElement = originalFile.getContext();
@@ -274,7 +287,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static CompletionSorter createSorter(@NotNull final CompletionParameters parameters, @NotNull final PrefixMatcher prefixMatcher) {
+  private static CompletionSorter createSorter(@NotNull CompletionParameters parameters, @NotNull PrefixMatcher prefixMatcher) {
     final LookupElementWeigher dartWeigher = new LookupElementWeigher("dartRelevance", true, false) {
       @Override
       public Integer weigh(@NotNull LookupElement element) {
@@ -287,8 +300,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return defaultSorter.weighBefore("liftShorter", dartWeigher);
   }
 
-  @Nullable
-  private static String getPrefixIfCompletingUri(@NotNull final CompletionParameters parameters) {
+  private static @Nullable String getPrefixIfCompletingUri(@NotNull CompletionParameters parameters) {
     final PsiElement psiElement = parameters.getOriginalPosition();
     final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
     final PsiElement parentParent = parent instanceof DartStringLiteralExpression ? parent.getParent() : null;
@@ -305,8 +317,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
    * Handles completion provided by angular_analyzer_plugin in HTML files and inside string literals;
    * our PSI doesn't allow to calculate prefix in such cases
    */
-  @Nullable
-  private static String getPrefixForSpecialCases(@NotNull final CompletionParameters parameters, final int replacementOffset) {
+  private static @Nullable String getPrefixForSpecialCases(@NotNull CompletionParameters parameters, int replacementOffset) {
     final PsiElement psiElement = parameters.getOriginalPosition();
     if (psiElement == null) return null;
 
@@ -319,8 +330,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return null;
   }
 
-  @Nullable
-  private static String getPrefixUsingServerData(@NotNull final CompletionParameters parameters, final int replacementOffset) {
+  private static @Nullable String getPrefixUsingServerData(@NotNull CompletionParameters parameters, int replacementOffset) {
     PsiElement element = parameters.getOriginalPosition();
     if (element == null) return null;
 
@@ -350,7 +360,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
   }
 
   @Override
-  public void beforeCompletion(@NotNull final CompletionInitializationContext context) {
+  public void beforeCompletion(@NotNull CompletionInitializationContext context) {
     final PsiElement psiElement = context.getFile().findElementAt(context.getStartOffset());
     final PsiElement parent = psiElement != null ? psiElement.getParent() : null;
     if (parent instanceof DartStringLiteralExpression) {
@@ -401,18 +411,14 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return base;
   }
 
-  @NotNull
-  public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
-    return createLookupElement(project, suggestion, null, null, false, null);
+  public static @NotNull LookupElementBuilder createLookupElement(@NotNull Project project, @NotNull CompletionSuggestion suggestion) {
+    return createLookupElement(project, suggestion, null, null);
   }
 
-  @NotNull
-  public static LookupElementBuilder createLookupElement(@NotNull final Project project,
-                                                         @NotNull final CompletionSuggestion suggestion,
-                                                         final Integer suggestionSetId,
-                                                         final VirtualFile file,
-                                                         final boolean isNotYetImported,
-                                                         @Nullable final String displayUri) {
+  private static @NotNull LookupElementBuilder createLookupElement(@NotNull Project project,
+                                                                   @NotNull CompletionSuggestion suggestion,
+                                                                   @Nullable String displayUri,
+                                                                   @Nullable SuggestionDetailsInsertHandlerBase insertHandler) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
@@ -486,42 +492,16 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
 
       // Prepare for typing arguments, if any.
-      if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind()) && suggestion.getParameterNames() != null) {
+      if (insertHandler == null &&
+          CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind()) &&
+          suggestion.getParameterNames() != null) {
         shouldSetSelection = false;
         lookup = lookup.withInsertHandler((context, item) -> handleFunctionInvocationInsertion(context, item, suggestion));
       }
     }
 
-    if (isNotYetImported) {
-      lookup = lookup.withInsertHandler((context, item) -> {
-        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-        final Pair<String, SourceChange> result =
-          das.completion_getSuggestionDetails(file, suggestionSetId, suggestion.getCompletion(), context.getStartOffset());
-        if (result == null) {
-          return;
-        }
-
-        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.getFirst());
-
-        @Nullable final SourceChange change = result.getSecond();
-        if (change == null) {
-          return;
-        }
-
-        try {
-          AssistUtils.applySourceChange(project, change, true);
-        }
-        catch (DartSourceEditException e) {
-          CommonRefactoringUtil.showErrorHint(project, context.getEditor(), e.getMessage(), CommonBundle.getErrorTitle(), null);
-          return;
-        }
-
-        if (element != null &&
-            (ElementKind.FUNCTION.equals(element.getKind()) || ElementKind.CONSTRUCTOR.equals(element.getKind())) &&
-            suggestion.getParameterNames() != null) {
-          handleFunctionInvocationInsertion(context, item, suggestion);
-        }
-      });
+    if (insertHandler != null) {
+      lookup = lookup.withInsertHandler(insertHandler);
     }
     else if (shouldSetSelection) {
       // Use selection offset / length.
@@ -604,10 +584,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
   }
 
 
-  @NotNull
-  private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull AvailableSuggestion suggestion,
-                                                                                        int suggestionSetRelevance,
-                                                                                        @NotNull Map<String, IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags) {
+  private static @NotNull CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull AvailableSuggestion suggestion,
+                                                                                                 int suggestionSetRelevance,
+                                                                                                 @NotNull Map<String, IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags) {
     int relevanceBoost = 0;
     List<String> relevanceTags = suggestion.getRelevanceTags();
     if (relevanceTags != null) {
@@ -696,6 +675,87 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
     else {
       return null;
+    }
+  }
+
+  private static abstract class SuggestionDetailsInsertHandlerBase implements InsertHandler<LookupElement> {
+    protected final @NotNull Project myProject;
+    protected final @NotNull VirtualFile myFile;
+    protected final int myStartOffsetInHostFile;
+    protected final @NotNull CompletionSuggestion mySuggestion;
+
+    private SuggestionDetailsInsertHandlerBase(@NotNull Project project,
+                                               @NotNull VirtualFile file,
+                                               int startOffsetInHostFile,
+                                               @NotNull CompletionSuggestion suggestion) {
+      myProject = project;
+      myFile = file;
+      myStartOffsetInHostFile = startOffsetInHostFile;
+      mySuggestion = suggestion;
+    }
+
+    protected abstract @Nullable Pair<String, SourceChange> getSuggestionDetails(@NotNull DartAnalysisServerService das);
+
+    @Override
+    public final void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
+      Pair<String, SourceChange> result = getSuggestionDetails(DartAnalysisServerService.getInstance(myProject));
+      if (result == null) return;
+
+      context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.getFirst());
+
+      SourceChange change = result.getSecond();
+      if (change == null) return;
+
+      try {
+        AssistUtils.applySourceChange(myProject, change, true);
+      }
+      catch (DartSourceEditException e) {
+        CommonRefactoringUtil.showErrorHint(myProject, context.getEditor(), e.getMessage(), CommonBundle.getErrorTitle(), null);
+        return;
+      }
+
+      Element element = mySuggestion.getElement();
+      if (element != null &&
+          (ElementKind.FUNCTION.equals(element.getKind()) || ElementKind.CONSTRUCTOR.equals(element.getKind())) &&
+          mySuggestion.getParameterNames() != null) {
+        handleFunctionInvocationInsertion(context, item, mySuggestion);
+      }
+    }
+  }
+
+  private static class SuggestionDetailsInsertHandler extends SuggestionDetailsInsertHandlerBase {
+    private final int mySuggestionSetId;
+
+    private SuggestionDetailsInsertHandler(@NotNull Project project,
+                                           @NotNull VirtualFile file,
+                                           @NotNull CompletionSuggestion suggestion,
+                                           int startOffsetInHostFile,
+                                           int suggestionSetId) {
+      super(project, file, startOffsetInHostFile, suggestion);
+      mySuggestionSetId = suggestionSetId;
+    }
+
+    @Override
+    protected @Nullable Pair<String, SourceChange> getSuggestionDetails(@NotNull DartAnalysisServerService das) {
+      return das.completion_getSuggestionDetails(myFile, mySuggestionSetId, mySuggestion.getCompletion(), myStartOffsetInHostFile);
+    }
+  }
+
+  private static class SuggestionDetailsInsertHandler2 extends SuggestionDetailsInsertHandlerBase {
+    private final String myLibraryUriToImport;
+
+    private SuggestionDetailsInsertHandler2(@NotNull Project project,
+                                            @NotNull VirtualFile file,
+                                            int startOffsetInHostFile,
+                                            @NotNull CompletionSuggestion suggestion,
+                                            @NotNull String libraryUriToImport) {
+      super(project, file, startOffsetInHostFile, suggestion);
+      myLibraryUriToImport = libraryUriToImport;
+    }
+
+    @Override
+    protected @Nullable Pair<String, SourceChange> getSuggestionDetails(@NotNull DartAnalysisServerService das) {
+      return das.completion_getSuggestionDetails2(myFile, myStartOffsetInHostFile, mySuggestion.getCompletion(), myLibraryUriToImport);
     }
   }
 }
