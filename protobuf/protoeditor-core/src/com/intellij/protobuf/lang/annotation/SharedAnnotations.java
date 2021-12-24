@@ -156,7 +156,7 @@ public class SharedAnnotations {
             HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.symbol", path.getSymbol().getText()))
             .range(path.getSymbol().getTextRange())
             .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .withFix(new PbAddImportStatementIntention(path.getSymbol().getTextOffset()))
+            .withFix(new PbAddImportStatementIntention())
             .create();
         return true;
     }

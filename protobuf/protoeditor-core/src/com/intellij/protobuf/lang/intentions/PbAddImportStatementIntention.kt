@@ -29,7 +29,7 @@ import com.intellij.psi.util.parentsOfType
 import com.intellij.util.PathUtil
 import com.intellij.util.castSafelyTo
 
-internal class PbAddImportStatementIntention(private val elementOffset: Int) : IntentionAction {
+internal class PbAddImportStatementIntention : IntentionAction {
   override fun startInWriteAction(): Boolean {
     return false
   }
@@ -43,7 +43,29 @@ internal class PbAddImportStatementIntention(private val elementOffset: Int) : I
   }
 
   override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-    return findSymbolPathReference(editor, file)?.resolve() == null
+    return file is PbFile
+           && findSymbolPathReference(editor, file)?.resolve() == null
+           && constructUnresolvedSymbolPath(file, editor)?.let { allProtoFilesWithGivenFqn(it, project) }?.isNotEmpty() ?: false
+  }
+
+  override fun invoke(project: Project, editor: Editor, file: PsiFile) {
+    if (file !is PbFile) return
+
+    val unresolvedMessageFqn = constructUnresolvedSymbolPath(file, editor) ?: return
+    val importCandidates = allProtoFilesWithGivenFqn(unresolvedMessageFqn, project)
+    val importCandidatesPaths = importCandidates.map { FileUtil.toSystemIndependentName(it.virtualFile.path) }
+
+    val suitableExistingInCurrentFileImportStatements = file.importStatements
+      .filter { importCorrespondsToFile(it, importCandidatesPaths) }
+
+    // All inner commands should have the same group id to be merged with already running one
+    WriteCommandAction.runWriteCommandAction(
+      project,
+      PbLangBundle.message("intention.add.import.path.popup.title"),
+      PbLangBundle.message("intention.fix.import.problems.familyName"),
+      { fixImportIssue(suitableExistingInCurrentFileImportStatements, project, file, importCandidates) },
+      file
+    )
   }
 
   private fun findSymbolPathReference(editor: Editor, file: PsiFile): PsiReference? {
@@ -51,7 +73,7 @@ internal class PbAddImportStatementIntention(private val elementOffset: Int) : I
   }
 
   private fun constructUnresolvedSymbolPath(file: PbFile, editor: Editor): String? {
-    return file.findElementAt(elementOffset)
+    return file.findElementAt(editor.caretModel.offset)
       ?.parentsOfType<PbSymbolPath>(true)
       ?.lastOrNull()
       ?.qualifiedName
@@ -73,7 +95,7 @@ internal class PbAddImportStatementIntention(private val elementOffset: Int) : I
       project,
       GlobalSearchScope.allScope(project),
       PbNamedElement::class.java
-    ).map { it.containingFile }
+    ).map(PsiElement::getContainingFile)
   }
 
   private fun importCorrespondsToFile(currentImportStatement: PbImportStatement, protoFileCandidates: List<String>): Boolean {
@@ -147,45 +169,33 @@ internal class PbAddImportStatementIntention(private val elementOffset: Int) : I
       .firstOrNull { it.path.let(PathUtil::toSystemIndependentName).endsWith(relativePath) }
   }
 
-  override fun invoke(project: Project, editor: Editor, file: PsiFile) {
-    if (file !is PbFile) return
+  private fun fixImportIssue(suitableExistingInCurrentFileImportStatements: List<PbImportStatement>,
+                             project: Project,
+                             file: PbFile,
+                             importCandidates: List<PsiFile>) {
+    when (suitableExistingInCurrentFileImportStatements.size) {
+      0 -> {
+        val importedPsiFile = addImportStatement(project, file, importCandidates) ?: return
+        configurePlugin(project, importedPsiFile.virtualFile)
+      }
+      1 -> {
+        val relativeProtoPath = suitableExistingInCurrentFileImportStatements.single().importName?.stringValue?.value
+                                ?: run {
+                                  thisLogger().warn("Empty import statement selected as suitable for import paths configuration")
+                                  return
+                                }
 
-    val unresolvedMessageFqn = constructUnresolvedSymbolPath(file, editor) ?: return
-    val protoFileCandidates = allProtoFilesWithGivenFqn(unresolvedMessageFqn, project)
-
-    val protoFileCandidatePaths = protoFileCandidates.map { FileUtil.toSystemIndependentName(it.virtualFile.path) }
-
-    val suitableExistingInCurrentFileImportStatements = file.importStatements
-      .filter { importCorrespondsToFile(it, protoFileCandidatePaths) }
-
-    // All inner commands should have the same group id to be merged with already running one
-    WriteCommandAction.runWriteCommandAction(
-      project,
-      PbLangBundle.message("intention.add.import.path.popup.title"),
-      PbLangBundle.message("intention.fix.import.problems.familyName"), {
-        when (suitableExistingInCurrentFileImportStatements.size) {
-          0 -> {
-            val importedPsiFile = addImportStatement(project, file, protoFileCandidates) ?: return@runWriteCommandAction
-            configurePlugin(project, importedPsiFile.virtualFile)
-          }
-          1 -> {
-            val relativeProtoPath = suitableExistingInCurrentFileImportStatements.single().importName?.stringValue?.value
-                                    ?: run {
-                                      thisLogger().warn(
-                                        "Empty import statement selected as suitable for import paths configuration")
-                                      return@runWriteCommandAction
-                                    }
-            val foundProtoFile = findProtoFileByLocation(project, relativeProtoPath) ?: run {
-              thisLogger().warn("Unable to find suitable PROTO file for specified import statement")
-              return@runWriteCommandAction
-            }
-            configurePlugin(project, foundProtoFile)
-          }
-          else -> {
-            thisLogger().warn("Several (${suitableExistingInCurrentFileImportStatements.size}) suitable import statements " +
-                              "found for unresolved symbol path. Abort intention.")
-          }
-        }
-      }, file)
+        val foundProtoFile = findProtoFileByLocation(project, relativeProtoPath)
+                             ?: run {
+                               thisLogger().warn("Unable to find suitable PROTO file for specified import statement")
+                               return
+                             }
+        configurePlugin(project, foundProtoFile)
+      }
+      else -> {
+        thisLogger().warn("Several (${suitableExistingInCurrentFileImportStatements.size}) suitable import statements " +
+                          "found for unresolved symbol path. Abort intention.")
+      }
+    }
   }
 }

@@ -68,7 +68,7 @@ public final class DefaultConfigurator implements ProjectSettingsConfigurator {
   }
 
   @Nullable
-  ImportPathEntry getBuiltInIncludeEntry() {
+  public ImportPathEntry getBuiltInIncludeEntry() {
     // Assume that the migration was successfully performed in the post startup activity, return null otherwise
     File extractedProtoFile = getExtractedProtoPath().toFile();
     if (!extractedProtoFile.exists()) {
