@@ -1,11 +1,12 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.ide.FrameStateListener;
-import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.FileStatus;
@@ -22,10 +23,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Irina.Chernushina
- */
-public class PerforceReadOnlyFileStateManager {
+public final class PerforceReadOnlyFileStateManager {
   private static final Logger LOG = Logger.getInstance(PerforceReadOnlyFileStateManager.class);
 
   private final Project myProject;
@@ -44,6 +42,7 @@ public class PerforceReadOnlyFileStateManager {
 
   private volatile boolean myPreviousRescanProblem;
   private volatile boolean myHasLostFocus;
+  private Disposable frameStateListenerDisposable;
 
   public PerforceReadOnlyFileStateManager(Project project) {
     myProject = project;
@@ -64,14 +63,24 @@ public class PerforceReadOnlyFileStateManager {
     myConnection = myProject.getMessageBus().connect();
     myConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> scheduleTotalRescan.run());
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVfsListener(), parentDisposable);
-    FrameStateManager.getInstance().addListener(myFrameStateListener);
+
+    frameStateListenerDisposable = Disposer.newDisposable();
+    Disposer.register(parentDisposable, frameStateListenerDisposable);
+    Disposer.register(frameStateListenerDisposable, () -> {
+      frameStateListenerDisposable = null;
+    });
+    ApplicationManager.getApplication().getMessageBus().connect(frameStateListenerDisposable).subscribe(FrameStateListener.TOPIC, myFrameStateListener);
+
     myConnection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, scheduleTotalRescan);
   }
 
   public void deactivate() {
     myUnversionedTracker.isActive = false;
     myConnection.disconnect();
-    FrameStateManager.getInstance().removeListener(myFrameStateListener);
+    if (frameStateListenerDisposable != null) {
+      Disposer.dispose(frameStateListenerDisposable);
+      frameStateListenerDisposable = null;
+    }
     myHasLostFocus = true;
   }
 
@@ -101,7 +110,8 @@ public class PerforceReadOnlyFileStateManager {
       if (!isKnownToPerforce(addGate, vf)) {
         if (myUnversionedTracker.isUnversioned(vf)) {
           builder.processUnversionedFile(vf);
-        } else if (myUnversionedTracker.isIgnored(vf)) {
+        }
+        else if (myUnversionedTracker.isIgnored(vf)) {
           builder.processIgnoredFile(vf);
         }
       }
