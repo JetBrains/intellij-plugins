@@ -1,5 +1,5 @@
 void main() {
-  new A(x: true ? tru<caret>);
+  new A(x: true ? tr<caret>);
 }
 
 class A {
