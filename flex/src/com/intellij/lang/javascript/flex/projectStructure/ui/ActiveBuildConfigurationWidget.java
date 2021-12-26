@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
@@ -32,6 +32,7 @@ import com.intellij.ui.ClickListener;
 import com.intellij.ui.HintHint;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
@@ -138,7 +139,7 @@ public class ActiveBuildConfigurationWidget {
       myPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       myPanel.setBorder(JBUI.CurrentTheme.StatusBar.Widget.border());
       GridBagConstraints c =
-        new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.emptyInsets(), 0, 0);
+        new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBInsets.emptyInsets(), 0, 0);
       myPanel.add(myEnabledLabel, c);
       c.gridx++;
       c.anchor = GridBagConstraints.CENTER;
