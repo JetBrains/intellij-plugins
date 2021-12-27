@@ -37,7 +37,7 @@ public class AngularJSInjector implements MultiHostInjector {
     .delimitersFactory(AngularJSLanguage.INSTANCE.getDisplayName(),
                        (project, key) -> {
                          final JSImplicitElement element = AngularIndexUtil.resolve(project, AngularInjectionDelimiterIndex.KEY, key);
-                         return element != null ? Pair.create(element.getTypeString(), element) : null;
+                         return element != null ? Pair.create(element.getUserStringData(), element) : null;
                        });
 
   @Override

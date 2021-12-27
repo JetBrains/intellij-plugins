@@ -59,7 +59,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   }
 
   private static boolean isApplicable(@NotNull Project project, @NotNull XmlTag tag, @NotNull JSImplicitElement directive) {
-    final String restrictions = directive.getTypeString();
+    final String restrictions = directive.getUserStringData();
     if (restrictions != null) {
       int semicolon = restrictions.indexOf(';');
       if (semicolon < 0) {

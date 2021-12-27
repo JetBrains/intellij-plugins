@@ -46,7 +46,7 @@ public final class AngularAttributesRegistry {
     XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(parent.getName(), parent.getParent());
     final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
     if (directive instanceof JSImplicitElement) {
-      final String restrict = ((JSImplicitElement)directive).getTypeString();
+      final String restrict = ((JSImplicitElement)directive).getUserStringData();
       final String[] args = restrict != null ? restrict.split(";", -1) : null;
       return args != null && args.length > 2 ? args[2] : "";
     }

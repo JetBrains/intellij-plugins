@@ -83,7 +83,7 @@ object VuexModelManager {
   }
 
   private fun resolveFromImplicitElement(implicitElement: JSImplicitElement): PsiElement? {
-    return JSStubBasedPsiTreeUtil.resolveLocally(implicitElement.typeString ?: return null,
+    return JSStubBasedPsiTreeUtil.resolveLocally(implicitElement.jsType?.typeText ?: return null,
                                                  implicitElement.context ?: return null)
   }
 

@@ -52,7 +52,7 @@ public final class AngularJSDirectivesSupport {
   }
 
   public static List<String> getDirectiveIndexKeys(@NotNull JSImplicitElementStructure directive) {
-    String restrictions = directive.getTypeString();
+    String restrictions = directive.getUserStringData();
     List<String> result = new SmartList<>();
     String name = directive.getName();
     boolean isAttribute = false;
@@ -93,7 +93,7 @@ public final class AngularJSDirectivesSupport {
   }
 
   public static boolean isTagDirective(@NotNull JSImplicitElement directive) {
-    final String restrictions = directive.getTypeString();
+    final String restrictions = directive.getUserStringData();
     if (restrictions != null) {
       final CharSequence restrict =
         AngularIndexUtil.convertRestrictions(directive.getProject(), restrictions.subSequence(0, restrictions.indexOf(';')));

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitParameterStructure;
+import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttribute;
@@ -79,7 +80,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
     private Angular2$AnyScope(@NotNull PsiElement context) {
       super(null);
       $any = new JSImplicitElementImpl.Builder($ANY, context)
-        .setTypeString("*")
+        .setJSType(JSAnyType.get(context, true))
         .setParameters(Collections.singletonList(
           new JSImplicitParameterStructure("arg", "*", false, false, true)
         ))

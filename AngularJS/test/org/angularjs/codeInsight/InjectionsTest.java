@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
+import com.intellij.lang.javascript.psi.types.primitives.JSNumberType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
@@ -51,7 +52,7 @@ public class InjectionsTest extends BasePlatformTestCase {
   public void testNgRepeatImplicitResolve() {
     myFixture.configureByFiles("ngRepeatImplicitType.html", "angular.js");
     final JSLocalImplicitElementImpl resolve = checkVariableResolve("ind<caret>ex", "$index", JSLocalImplicitElementImpl.class);
-    assertEquals("Number", resolve.getTypeString());
+    assertInstanceOf(resolve.getJSType(), JSNumberType.class);
   }
 
   public void testNgRepeatExplicitCompletion() {

@@ -93,7 +93,7 @@ public final class AngularIndexUtil {
               if (element.getQualifiedName().equals(lookupKey)
                   && ((index != AngularDirectivesIndex.KEY && index != AngularDirectivesDocIndex.KEY) ||
                       (!element.getType().isFunction()
-                       && AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString())))) {
+                       && AngularJSIndexingHandler.isAngularRestrictions(element.getUserStringData())))) {
                 if (!processor.process(element)) return false;
               }
             }

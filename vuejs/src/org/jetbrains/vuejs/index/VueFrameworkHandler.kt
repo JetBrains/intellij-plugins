@@ -422,8 +422,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     var descriptorRef = asIndexed?.qualifier?.text ?: (descriptor as? JSReferenceExpression)?.text ?: ""
     if (asIndexed != null) descriptorRef += INDEXED_ACCESS_HINT
     return JSImplicitElementImpl.Builder(normalized, provider)
-      .setUserString(this, indexKey)
-      .setTypeString("${if (isGlobal) 1 else 0}$DELIMITER$nameTypeRecord$DELIMITER$descriptorRef$DELIMITER$name")
+      .setUserStringWithData(this, indexKey, "${if (isGlobal) 1 else 0}$DELIMITER$nameTypeRecord$DELIMITER$descriptorRef$DELIMITER$name")
       .toImplicitElement()
   }
 

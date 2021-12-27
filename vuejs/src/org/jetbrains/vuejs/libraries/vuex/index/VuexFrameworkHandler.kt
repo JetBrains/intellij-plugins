@@ -16,6 +16,10 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.lang.javascript.psi.types.JSContext
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.castSafelyTo
@@ -116,7 +120,9 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)
           .setUserString(this, VuexStoreIndex.JS_KEY)
-          .setTypeString(type)
+          .setJSType(type?.let {
+            JSNamedTypeFactory.createType(it, JSTypeSource.EMPTY, JSContext.STATIC)
+          })
           .forbidAstAccess()
           .toImplicitElement())
     }

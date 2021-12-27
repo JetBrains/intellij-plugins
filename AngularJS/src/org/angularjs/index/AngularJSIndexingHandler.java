@@ -525,8 +525,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     assert keys != null && keys.size() == 1;
     final Consumer<JSImplicitElementImpl.Builder> adder = builder -> {
       builder.setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
-        .setTypeString(value);
-      builder.setUserString(this, keys.get(0));
+        .setUserStringWithData(this, keys.get(0), value);
       final JSImplicitElementImpl implicitElement = builder.toImplicitElement();
       outData.addImplicitElement(implicitElement);
     };
@@ -547,11 +546,10 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final String name = converter != null ? converter.fun(defaultName) : defaultName;
     if (!StringUtil.equals(defaultName, name)) {
       JSImplicitElementImpl.Builder symbolElementBuilder = new JSImplicitElementImpl.Builder(name, elementProvider)
-        .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
-        .setTypeString(value);
+        .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class);
       final List<String> symbolKeys = INDEXES.getKeysByValue(AngularSymbolIndex.KEY);
       assert symbolKeys != null && symbolKeys.size() == 1;
-      symbolElementBuilder.setUserString(this, symbolKeys.get(0));
+      symbolElementBuilder.setUserStringWithData(this, symbolKeys.get(0), value);
       final JSImplicitElementImpl implicitElement2 = symbolElementBuilder.toImplicitElement();
       outData.addImplicitElement(implicitElement2);
     }
@@ -789,8 +787,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     String fileName = new File(url).getName();
     data.addImplicitElement(
       new JSImplicitElementImpl.Builder(fileName, property)
-        .setTypeString("TU;;;")
-        .setUserString(this, Objects.requireNonNull(INDEXES.getKeysByValue(AngularTemplateUrlIndex.KEY)).get(0))
+        .setUserStringWithData(this, Objects.requireNonNull(INDEXES.getKeysByValue(AngularTemplateUrlIndex.KEY)).get(0), "TU;;;")
         .toImplicitElement());
     return true;
   }

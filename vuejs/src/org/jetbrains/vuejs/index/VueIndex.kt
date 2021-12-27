@@ -83,7 +83,7 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
 internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
 fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
-  val typeStr = element.typeString ?: return null
+  val typeStr = element.userStringData ?: return null
   val originalName = typeStr.substringAfterLast(DELIMITER)
   val s = typeStr.substringBeforeLast(DELIMITER)
   val parts = s.split(DELIMITER)
