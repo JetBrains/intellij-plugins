@@ -1,8 +1,8 @@
 Foo#null
-count#UnwrapRef<Ref<UnwrapRef<number>>>
+count#ShallowUnwrapSingleRef<Ref<UnwrapRef<number>>>
 foo#null
 foos#null
-inc#UnwrapRef<function(): void>
+inc#ShallowUnwrapSingleRef<function(): void>
 props#null
 ref#<T extends object>(value: T) => ToRef<T>
 vClickOutside#null

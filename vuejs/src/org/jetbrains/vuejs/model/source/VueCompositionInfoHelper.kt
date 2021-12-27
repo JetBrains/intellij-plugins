@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -18,6 +19,8 @@ import org.jetbrains.vuejs.model.*
 
 object VueCompositionInfoHelper {
 
+  private const val SHALLOW_UNWRAP_REF_TYPE = "ShallowUnwrapRef"
+  private const val SHALLOW_UNWRAP_SINGLE_REF_ARTIFICIAL_TYPE = "ShallowUnwrapSingleRef"
   private const val UNWRAP_REF_TYPE = "UnwrapRef"
   private const val READ_ONLY_TYPE = "ReadOnly"
 
@@ -33,10 +36,18 @@ object VueCompositionInfoHelper {
   fun getUnwrapRefType(context: PsiElement): TypeScriptTypeAlias? =
     context.containingFile.let { file ->
       CachedValuesManager.getCachedValue(file) {
-        val unwrapRef = resolveSymbolFromNodeModule(file, VUE_MODULE,
+        val shallowUnwrap = resolveSymbolFromNodeModule(file, VUE_MODULE,
+                                                        SHALLOW_UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)
+        if (shallowUnwrap != null) {
+          // We have Vue 3 with ShallowUnwrapRef - create artificial type to unwrap single type using the original ShallowUnwrapRef type.
+          val typeAlias = JSPsiElementFactory.createJSSourceElement(
+            "declare type $SHALLOW_UNWRAP_SINGLE_REF_ARTIFICIAL_TYPE<T> = import('vue').$SHALLOW_UNWRAP_REF_TYPE<{val: T}>['val']",
+            shallowUnwrap, TypeScriptTypeAlias::class.java)
+          return@getCachedValue CachedValueProvider.Result(typeAlias, shallowUnwrap)
+        }
+
+        val unwrapRef = resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE,
                                                     UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)
-                        ?: resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE,
-                                                       UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)
                         ?: resolveSymbolFromNodeModule(
                           file, "$COMPOSITION_API_MODULE/dist/reactivity/ref",
                           UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)
