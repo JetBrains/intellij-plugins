@@ -1,4 +1,4 @@
-!foo#UnwrapRef<Ref<UnwrapRef<string>>>#101
+!foo#ShallowUnwrapSingleRef<Ref<UnwrapRef<string>>>#101
 !increment#any#101
 !state#null#101
 !$#ComponentInternalInstance#100

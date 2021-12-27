@@ -7,7 +7,7 @@
   <tree-modal-direct></tree-modal-direct>
   <ComplexModalDirect></ComplexModalDirect>
   <default-modal-direct></default-modal-direct>
-  {{ printString(<weak_warning descr="Argument type UnwrapRef<12> is not assignable to parameter type string  Type 12 is not assignable to type string">Bar</weak_warning>) + printString(<weak_warning descr="Argument type UnwrapRef<12> is not assignable to parameter type string  Type 12 is not assignable to type string">Foo</weak_warning>) }}
+  {{ printString(<weak_warning descr="Argument type ShallowUnwrapSingleRef<12> is not assignable to parameter type string  Type 12 is not assignable to type string">Bar</weak_warning>) + printString(<weak_warning descr="Argument type ShallowUnwrapSingleRef<12> is not assignable to parameter type string  Type 12 is not assignable to type string">Foo</weak_warning>) }}
 
   <TabGroup>
     <TabList>
