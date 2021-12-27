@@ -1967,13 +1967,20 @@ export default class UsageComponent extends Vue {
   }
 
   fun testNoScriptSection() {
-    myFixture.configureByFiles("noScriptSection/test.vue", "noScriptSection/noScriptSection.vue")
+    myFixture.copyDirectoryToProject("noScriptSection", ".")
+    myFixture.configureFromTempProjectFile("test.vue")
     myFixture.checkGotoDeclaration("<no-script<caret>-section>", 0, "noScriptSection.vue")
   }
 
   fun testLazyLoaded() {
     myFixture.configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
     myFixture.checkGotoDeclaration("<Hello<caret>World", 24, "index.vue")
+  }
+
+  fun testScriptSetupTagNavigation() {
+    myFixture.copyDirectoryToProject("scriptSetupTagNavigation", ".")
+    myFixture.configureFromTempProjectFile("HelloWorld.vue")
+    myFixture.checkGotoDeclaration("<Sam<caret>ple/>", 0, "Sample.vue")
   }
 
   fun testScriptSetupRef() {

@@ -21,7 +21,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -456,7 +455,8 @@ fun processScriptSetupTopLevelDeclarations(context: PsiElement, consumer: (JSPsi
     val name = resolved?.name
     if (name != null) {
       consumer(resolved)
-    } else true
+    }
+    else true
   }, false)
 }
 
@@ -492,7 +492,10 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> B
         return stub.childrenStubs
           .asSequence()
           .mapNotNull { (it as? XmlTagStub<*>)?.psi }
-          .find { it.localName.equals(tagName, ignoreCase = true) }
+          .find {
+            it.localName.equals(tagName, ignoreCase = true)
+            && accept?.invoke(it) != false
+          }
       }
     }
 

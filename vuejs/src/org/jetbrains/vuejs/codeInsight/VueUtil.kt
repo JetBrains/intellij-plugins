@@ -211,7 +211,7 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
         is ES6ImportCall -> cur.resolveReferencedElements()
           .toCollection(queue)
         is JSEmbeddedContent -> {
-          if (cur.parent.let { tag ->
+          if (cur.context.let { tag ->
               tag is XmlTag && PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java)
                 .find { it.name == SETUP_ATTRIBUTE_NAME } != null
             }) {
