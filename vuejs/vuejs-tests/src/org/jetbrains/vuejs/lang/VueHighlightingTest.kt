@@ -507,6 +507,11 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_1_0))
   }
 
+  fun testStandardBooleanAttributes() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doTest()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
