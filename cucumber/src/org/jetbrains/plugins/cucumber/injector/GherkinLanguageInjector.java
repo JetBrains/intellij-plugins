@@ -14,6 +14,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinPystring;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
 
@@ -32,7 +33,7 @@ public class GherkinLanguageInjector implements MultiHostInjector {
 
         final PsiLanguageInjectionHost host = (PsiLanguageInjectionHost) context;
 
-        String hostText = host.getText();
+        final String hostText = host.getText();
         int newLineCharacterOffset = 0;
         while (newLineCharacterOffset < hostText.length() && hostText.charAt(newLineCharacterOffset) != '\n') {
             newLineCharacterOffset++;
@@ -40,15 +41,20 @@ public class GherkinLanguageInjector implements MultiHostInjector {
         if (newLineCharacterOffset >= hostText.length()) {
             return;
         }
-        String languageMarker = StringUtil.trimTrailing(hostText.substring(PYSTRING_MARKER.length(), newLineCharacterOffset));
+        final String languageMarker = StringUtil.trimTrailing(hostText.substring(PYSTRING_MARKER.length(), newLineCharacterOffset));
         final Language language = InjectorUtils.getLanguageByString(languageMarker);
 
         if (language != null) {
-            TextRange range = TextRange.create(newLineCharacterOffset, host.getTextLength() - PYSTRING_MARKER.length());
+            final TextRange range = TextRange.create(newLineCharacterOffset, host.getTextLength() - PYSTRING_MARKER.length());
 
             if (!range.isEmpty()) {
+                final Optional<GherkinInjectorExtensionPoint> extensionPoint =
+                        GherkinInjectorExtensionPoint.EP_NAME.getExtensionList().stream().findFirst();
+                final String prefix = extensionPoint.map(ep -> ep.getPrefix(languageMarker)).orElse(null);
+                final String suffix = extensionPoint.map(ep -> ep.getSuffix(languageMarker)).orElse(null);
+
                 registrar.startInjecting(language);
-                registrar.addPlace(null, null, host, range);
+                registrar.addPlace(prefix, suffix, host, range);
                 registrar.doneInjecting();
             }
         }
