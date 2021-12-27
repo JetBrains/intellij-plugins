@@ -131,18 +131,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    }
                  }
 
-                 LookupElementBuilder lookupElement = null;
-
-                 for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
-                   lookupElement = extension.createLookupElement(project, suggestion);
-                   if (lookupElement != null) break;
-                 }
-
-                 if (lookupElement == null) {
-                   lookupElement = createLookupElement(project, suggestion);
-                 }
-
-                 updatedResultSet.addElement(lookupElement);
+                 updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, null, null));
                }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
                  if (includedKinds.isEmpty()) {
                    return;
@@ -183,9 +172,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    SuggestionDetailsInsertHandlerBase insertHandler =
                      new SuggestionDetailsInsertHandler(project, targetFile, completionSuggestion, startOffsetInHostFile,
                                                         suggestionSet.getId());
-                   LookupElementBuilder lookupElement = createLookupElement(project, completionSuggestion, displayUri, insertHandler);
 
-                   resultSet.addElement(lookupElement);
+                   resultSet.addElement(createLookupElementAskingExtensions(project, completionSuggestion, displayUri, insertHandler));
                  }
                });
              }
@@ -224,10 +212,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
         String libraryUriToImport = libraryUrisToImport.get(libraryUriToImportIndex);
         SuggestionDetailsInsertHandlerBase insertHandler =
           new SuggestionDetailsInsertHandler2(project, file, startOffsetInHostFile, suggestion, libraryUriToImport);
-        updatedResultSet.addElement(createLookupElement(project, suggestion, null, insertHandler));
+        updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, null, insertHandler));
       }
       else {
-        updatedResultSet.addElement(createLookupElement(project, suggestion));
+        updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, null, null));
       }
     }
 
@@ -281,8 +269,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                    Collections.emptyList(), Collections.emptyList());
     if (completionResult != null && completionResult.getFirst() != null) {
       for (CompletionSuggestion suggestion : completionResult.getFirst()) {
-        LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
-        resultSet.addElement(lookupElement);
+        resultSet.addElement(createLookupElementAskingExtensions(project, suggestion, null, null));
       }
     }
   }
@@ -411,6 +398,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
     return base;
   }
 
+  private static @NotNull LookupElement createLookupElementAskingExtensions(@NotNull Project project,
+                                                                            @NotNull CompletionSuggestion suggestion,
+                                                                            @Nullable String displayUri,
+                                                                            @Nullable SuggestionDetailsInsertHandlerBase insertHandler) {
+    for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
+      LookupElement lookupElement = extension.createLookupElement(project, suggestion);
+      if (lookupElement != null) {
+        return lookupElement;
+      }
+    }
+    return createLookupElement(project, suggestion, displayUri, insertHandler);
+  }
+
+  // used by Flutter plugin
   public static @NotNull LookupElementBuilder createLookupElement(@NotNull Project project, @NotNull CompletionSuggestion suggestion) {
     return createLookupElement(project, suggestion, null, null);
   }
