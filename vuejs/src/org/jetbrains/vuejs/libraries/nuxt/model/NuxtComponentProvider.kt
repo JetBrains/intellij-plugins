@@ -12,6 +12,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
@@ -20,7 +22,11 @@ class NuxtComponentProvider : VueContainerInfoProvider {
   override fun getAdditionalComponents(scope: GlobalSearchScope,
                                        sourceComponents: VueContainerInfoProvider.ComponentsInfo): VueContainerInfoProvider.ComponentsInfo? =
     NuxtModelManager.getApplication(scope)
-      ?.config?.takeIf { it.file != null }
+      ?.config
+      ?.takeIf { config -> config.file.let {
+        // Ensure we have a config, and ensure we don't have the auto-generated list of components in .nuxt folder
+        it != null && it.parent?.findSubdirectory(NUXT_OUTPUT_FOLDER)?.findFile(NUXT_COMPONENTS_DEFS) == null}
+      }
       ?.let { config ->
         val resolvedDirs = config.components.asSequence()
           .mapNotNull { componentDir -> resolvePath(config.file!!, componentDir)?.let { Pair(it, componentDir) } }

@@ -60,7 +60,10 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
   override fun hashCode(): Int = (project.hashCode()) * 31 + packageJsonUrl.hashCode()
 
-  override fun createPointer(): Pointer<out VueEntitiesContainer> = Pointer.hardPointer(this)
+  override fun createPointer(): Pointer<out VueGlobal> = Pointer.hardPointer(this)
+
+  override fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> =
+    emptyList()
 
   private fun getComponents(global: Boolean): Map<String, VueComponent> =
     getCachedValue { scope ->

@@ -38,18 +38,26 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
   override val nuxtVersion: SemVer? by lazy(LazyThreadSafetyMode.NONE) {
     PsiManager.getInstance(project).findFile(configFile)?.let { file ->
       CachedValuesManager.getCachedValue(file) {
-        CachedValueProvider.Result.create(NodeModuleSearchUtil.resolveModule(
-          NUXT_PKG, file.virtualFile, emptyList(), false, file.project)
-          ?.let { PackageJsonUtil.findChildPackageJsonFile(it.moduleSourceRoot) }
-          ?.let { PackageJsonData.getOrCreate(it) }
-          ?.version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        CachedValueProvider.Result.create(
+          (NodeModuleSearchUtil.resolveModule(NUXT_PKG, file.virtualFile, emptyList(), false, file.project)
+           ?: NodeModuleSearchUtil.resolveModule(NUXT3_PKG, file.virtualFile, emptyList(), false, file.project)
+          )
+            ?.let { PackageJsonUtil.findChildPackageJsonFile(it.moduleSourceRoot) }
+            ?.let { PackageJsonData.getOrCreate(it) }
+            ?.version
+            ?.let {
+              // Remove prerelease part
+              if (it.preRelease != null)
+                SemVer("${it.major}.${it.minor}.${it.patch}", it.major, it.minor, it.patch)
+              else it
+            }, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
     }
   }
 
   init {
     if (!hasBeenNotifiedAboutTypes()
-        && nuxtVersion?.isGreaterOrEqualThan(NUXT_2_9_0) == true
+        && nuxtVersion?.let { NUXT_2_9_0 <= it && it < NUXT_3_0_0 } == true
         && NodeModuleSearchUtil.resolveModule(
         NUXT_TYPES_PKG, configFile.parent, emptyList(), false, project) == null) {
       notifyNuxtTypesNotInstalled()
@@ -67,9 +75,12 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     get() = config.sourceDir ?: configFile.parent
 
   override val vuexStore: VuexStore?
-    get() = sourceDir?.findChild("store")?.let {
-      PsiManager.getInstance(project).findDirectory(it)
-    }?.let { NuxtVuexStore(it) }
+    get() = if (nuxtVersion?.let { it >= NUXT_3_0_0 } == true)
+      null
+    else
+      sourceDir?.findChild("store")?.let {
+        PsiManager.getInstance(project).findDirectory(it)
+      }?.let { NuxtVuexStore(it) }
 
   override val staticResourcesDir: PsiDirectory?
     get() = sourceDir?.findChild("static")?.let {
@@ -94,7 +105,7 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     get() = PsiManager.getInstance(project).findFile(configFile)?.let { file ->
       CachedValuesManager.getCachedValue(file) {
         CachedValueProvider.Result.create(NuxtConfigImpl(file, nuxtVersion?.isGreaterOrEqualThan(NUXT_2_15_0) != false),
-          file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+                                          file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
     } ?: EmptyNuxtConfig
 

@@ -11,6 +11,7 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.vuejs.libraries.nuxt.NUXT3_PKG
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
 import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES
@@ -45,7 +46,7 @@ object NuxtModelManager {
       ?: PackageJsonFileManager.getInstance(project).let { pkgJsonManager ->
         pkgJsonManager.validPackageJsonFiles.asSequence()
           .map { PackageJsonData.getOrCreate(it) }
-          .filter { it.containsOneOfDependencyOfAnyType(NUXT_PKG) }
+          .filter { it.containsOneOfDependencyOfAnyType(NUXT_PKG, NUXT3_PKG) }
           .associateBy({ it.packageJsonFile.parent }, { NuxtApplicationImpl(it.packageJsonFile, project) })
           .let {
             create(it, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, pkgJsonManager.modificationTracker)

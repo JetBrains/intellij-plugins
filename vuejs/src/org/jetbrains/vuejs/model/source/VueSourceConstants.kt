@@ -37,5 +37,7 @@ const val EL_PROP = "el"
 
 const val INSTANCE_PROPS_PROP = "\$props"
 const val INSTANCE_REFS_PROP = "\$refs"
+const val INSTANCE_SLOTS_PROP = "\$slots"
+const val INSTANCE_EMIT_METHOD = "\$emit"
 const val INSTANCE_DATA_PROP = "\$data"
 const val INSTANCE_OPTIONS_PROP = "\$options"

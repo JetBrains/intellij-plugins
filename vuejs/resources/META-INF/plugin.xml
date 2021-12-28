@@ -109,6 +109,7 @@
     <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
 
     <directoryIndexExcludePolicy implementation="org.jetbrains.vuejs.libraries.nuxt.index.NuxtIndexExcludePolicy"/>
+    <additionalLibraryRootsProvider implementation="org.jetbrains.vuejs.libraries.nuxt.library.NuxtDotFolderSyntheticLibraryProvider"/>
 
     <!-- works in WebStorm and other SmallIDEs -->
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>

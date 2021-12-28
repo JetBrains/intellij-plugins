@@ -41,20 +41,23 @@ import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
+import org.jetbrains.vuejs.model.typed.VueTypedGlobal
 
 class VueModelManager {
 
   companion object {
 
-    fun getGlobal(context: PsiElement): VueGlobal {
-      return VueGlobalImpl.get(context)
-    }
+    fun getGlobal(context: PsiElement): VueGlobal =
+      findEntitiesContainerContext(context).first()
 
-    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer {
-      return findComponent(templateElement) as? VueEntitiesContainer
-             ?: findVueApp(templateElement)
-             ?: getGlobal(templateElement)
-    }
+    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer =
+      findEntitiesContainerContext(templateElement).second
+
+    private fun findEntitiesContainerContext(context: PsiElement): Pair<() -> VueGlobal, VueEntitiesContainer> =
+      VueGlobalImpl.get(context).let { global ->
+        val container = findComponent(context) as? VueEntitiesContainer ?: findVueApp(context, global) ?: global
+        Pair({ container.source?.let { VueTypedGlobal(global, it) } ?: global }, container)
+      }
 
     /* This method is required in JS context. In TS context `this` type is resolved from the expected type handler. */
     fun findComponentForThisResolve(jsThisExpression: JSThisExpression): VueComponent? {
@@ -269,8 +272,7 @@ class VueModelManager {
       return null
     }
 
-    private fun findVueApp(templateElement: PsiElement): VueApp? {
-      val global = getGlobal(templateElement)
+    private fun findVueApp(templateElement: PsiElement, global: VueGlobal): VueApp? {
       val xmlElement =
         if (templateElement is XmlElement) {
           templateElement
@@ -306,15 +308,15 @@ class VueModelManager {
     fun getComponent(descriptor: VueEntityDescriptor?): VueComponent? =
       VueTypedEntitiesProvider.getComponent(descriptor)
       ?: (descriptor as? VueSourceEntityDescriptor)?.getCachedValue { descr ->
-          val declaration = descr.source
-          val implicitElement = getComponentImplicitElement(declaration)
-          val data = implicitElement
-            ?.let { getVueIndexData(it) }
-            ?.takeIf { it.originalName != JavaScriptBundle.message("element.name.anonymous") }
-          CachedValueProvider.Result.create(VueSourceComponent(implicitElement
-                                                               ?: buildImplicitElement(declaration),
-                                                               descr, data), declaration)
-        }
+        val declaration = descr.source
+        val implicitElement = getComponentImplicitElement(declaration)
+        val data = implicitElement
+          ?.let { getVueIndexData(it) }
+          ?.takeIf { it.originalName != JavaScriptBundle.message("element.name.anonymous") }
+        CachedValueProvider.Result.create(VueSourceComponent(implicitElement
+                                                             ?: buildImplicitElement(declaration),
+                                                             descr, data), declaration)
+      }
 
     fun getMixin(mixin: PsiElement): VueMixin? =
       getMixin(getSourceComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))

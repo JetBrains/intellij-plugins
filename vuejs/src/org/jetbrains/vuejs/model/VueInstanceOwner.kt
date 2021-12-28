@@ -5,10 +5,14 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeOwner
+import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.ecma6.impl.jsdoc.JSDocPropertySignatureImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
@@ -43,13 +47,13 @@ fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =
   ?: resolveSymbolFromNodeModule(context, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)?.jsType
 
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(
-  "\$el", INSTANCE_OPTIONS_PROP, "\$parent", "\$root", "\$children", INSTANCE_REFS_PROP, "\$slots",
+  "\$el", INSTANCE_OPTIONS_PROP, "\$parent", "\$root", "\$children", INSTANCE_REFS_PROP, INSTANCE_SLOTS_PROP,
   "\$scopedSlots", "\$isServer", INSTANCE_DATA_PROP, INSTANCE_PROPS_PROP,
   "\$ssrContext", "\$vnode", "\$attrs", "\$listeners")
 
 private val VUE_INSTANCE_METHODS: List<String> = listOf(
   "\$mount", "\$forceUpdate", "\$destroy", "\$set", "\$delete", "\$watch", "\$on",
-  "\$once", "\$off", "\$emit", "\$nextTick", "\$createElement")
+  "\$once", "\$off", INSTANCE_EMIT_METHOD, "\$nextTick", "\$createElement")
 
 private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val source = instance.source ?: return null
@@ -136,7 +140,9 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
 
   replaceStandardProperty(INSTANCE_PROPS_PROP, props.values.toList(), source, result)
   replaceStandardProperty(INSTANCE_DATA_PROP, data.values.toList(), source, result)
+
   replaceStandardProperty(INSTANCE_OPTIONS_PROP, buildOptionsType(instance, result[INSTANCE_OPTIONS_PROP]?.jsType), source, result)
+  replaceStandardProperty(INSTANCE_SLOTS_PROP, buildSlotsType(instance, result[INSTANCE_SLOTS_PROP]?.jsType), source, result)
 
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
@@ -151,6 +157,23 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   mergePut(result, data)
   mergePut(result, computed)
   mergePut(result, methods)
+}
+
+private fun buildSlotsType(instance: VueInstanceOwner, originalType: JSType?): JSType {
+  val typeSource = JSTypeSourceFactory.createTypeSource(instance.source!!, false)
+  val slots = (instance as? VueContainer)?.slots ?: return originalType ?: JSAnyType.get(typeSource)
+  val slotType = resolveSymbolFromNodeModule(instance.source, VUE_MODULE, "Slot", JSTypedEntity::class.java)?.jsType
+  val slotsType = slots.asSequence().filter {
+    it.pattern == null
+  }.map {
+    PropertySignatureImpl(it.name, slotType, true,true, it.source)
+  }
+    .toList()
+    .let { JSRecordTypeImpl(typeSource, it) }
+  return if (originalType == null)
+     slotsType
+  else
+    JSCompositeTypeFactory.createIntersectionType(listOf(originalType, slotsType), typeSource)
 }
 
 private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType {

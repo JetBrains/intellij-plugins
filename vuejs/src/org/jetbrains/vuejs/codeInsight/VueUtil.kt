@@ -136,7 +136,7 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
       val context = it.context
       !it.significantValue.isNullOrBlank() &&
       QUOTES.contains(it.significantValue!![0]) &&
-      ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
+      ((context is JSArrayLiteralExpression) && (context.context == holder) || context == holder)
     }
 }
 

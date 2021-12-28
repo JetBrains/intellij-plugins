@@ -3,12 +3,15 @@ package org.jetbrains.vuejs.model.typed
 
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSImportType
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeKeyTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.TypeScriptIndexedAccessJSTypeImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
@@ -20,8 +23,11 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.source.INSTANCE_EMIT_METHOD
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
+import org.jetbrains.vuejs.model.source.INSTANCE_SLOTS_PROP
 
 class VueTypedComponent(override val source: PsiElement,
                         override val defaultName: String) : VueRegularComponent {
@@ -35,10 +41,30 @@ class VueTypedComponent(override val source: PsiElement,
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        resolveElementTo(source, TypeScriptVariable::class)?.jsType
-          ?.let { JSApplyNewType(it, it.source).substitute().asRecordType() },
+        resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class)
+          ?.jsType
+          ?.let { getFromVueFile(it) ?: JSApplyNewType(it, it.source).substitute().asRecordType() },
         PsiModificationTracker.MODIFICATION_COUNT)
     } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+
+  private fun getFromVueFile(type: JSType): JSRecordType? {
+    if (type is TypeScriptIndexedAccessJSTypeImpl
+        && type.parameterType.let { it is JSStringLiteralTypeImpl && it.literal == "default" }) {
+      val importType = type.owner as? JSImportType ?: return null
+      val prefix = "typeof import("
+      val contextFile = type.source.scope ?: return null
+      return importType.qualifiedName.name
+        .takeIf { it.startsWith(prefix) && it.endsWith(")") }
+        ?.let {it.substring(prefix.length + 1, it.length - 2)}
+        ?.takeIf { it.endsWith("." + VueFileType.INSTANCE.defaultExtension) }
+        ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
+        ?.let { contextFile.manager.findFile(it) }
+        ?.let { VueModelManager.findEnclosingContainer(it) as? VueRegularComponent }
+        ?.thisType
+        ?.asRecordType()
+    }
+    return null
+  }
 
   override val data: List<VueDataProperty>
     get() = emptyList()
@@ -68,7 +94,7 @@ class VueTypedComponent(override val source: PsiElement,
   override val emits: List<VueEmitCall>
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result(
-        thisType.asRecordType().findPropertySignature("\$emit")
+        thisType.asRecordType().findPropertySignature(INSTANCE_EMIT_METHOD)
           ?.jsType
           ?.asRecordType()
           ?.callSignatures
@@ -86,7 +112,17 @@ class VueTypedComponent(override val source: PsiElement,
     }
 
   override val slots: List<VueSlot>
-    get() = emptyList()
+    get() = CachedValuesManager.getCachedValue(source) {
+      CachedValueProvider.Result(
+        thisType.asRecordType().findPropertySignature(INSTANCE_SLOTS_PROP)
+          ?.jsType
+          ?.asRecordType()
+          ?.properties
+          ?.mapNotNull { signature ->
+            VueTypedSlot(signature.memberName, signature.memberSource.singleElement)
+          } ?: emptyList(),
+        PsiModificationTracker.MODIFICATION_COUNT)
+    }
 
   override val model: VueModelDirectiveProperties
     get() = VueModelDirectiveProperties()
@@ -141,6 +177,8 @@ class VueTypedComponent(override val source: PsiElement,
                 ?.keySourceElements?.firstOrNull()
               ?: callSignature.memberSource.singleElement
   }
+
+  private class VueTypedSlot(override val name: String, override val source: PsiElement?) : VueSlot
 
   companion object {
 

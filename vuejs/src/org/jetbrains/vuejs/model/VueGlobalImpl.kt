@@ -41,6 +41,9 @@ internal class VueGlobalImpl(override val project: Project, override val package
   override val delegate
     get() = mySourceGlobal
 
+  override fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> =
+    getElementToParentMap().get(scopeElement).toList()
+
   private fun getElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> =
     CachedValuesManager.getManager(project).getCachedValue(this) {
       Result.create(buildElementToParentMap(),
@@ -89,7 +92,7 @@ internal class VueGlobalImpl(override val project: Project, override val package
     return (project.hashCode()) * 31 + packageJsonUrl.hashCode()
   }
 
-  override fun createPointer(): Pointer<out VueEntitiesContainer> = Pointer.hardPointer(this)
+  override fun createPointer(): Pointer<out VueGlobal> = Pointer.hardPointer(this)
 
   companion object {
 
@@ -101,12 +104,8 @@ internal class VueGlobalImpl(override val project: Project, override val package
       else null
     }
 
-    fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> {
-      return (scopeElement.global as? VueGlobalImpl)
-               ?.getElementToParentMap()
-               ?.get(scopeElement)
-               ?.toList() ?: return emptyList()
-    }
+    fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> =
+      scopeElement.global?.getParents(scopeElement) ?: emptyList()
 
     fun get(context: PsiElement): VueGlobal {
       val psiFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
