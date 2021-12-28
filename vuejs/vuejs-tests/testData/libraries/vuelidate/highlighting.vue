@@ -11,7 +11,7 @@
             <label class="form__label">Age</label>
             <input class="form__input" :value="age" @change="setAge($event.target.value)"/>
         </div>
-        {{$v.<weak_warning descr="Unresolved variable brb">brb</weak_warning>.$params.between.min}}
+        {{$v.brb.$params.between.min}}
         <div class="error"
              v-if="!$v.age.between">Must be between {{$v.age.$params.between.min}} and {{$v.age.$params.between.max}}
         </div>
@@ -55,7 +55,7 @@ export default {
         setAge(value) {
             this.age = value
             this.$v.age.$touch()
-            this.$v.age.<weak_warning descr="Unresolved function or method $foo()">$foo</weak_warning>()
+            this.$v.age.<weak_warning descr="Method expression is not of Function type">$foo</weak_warning>()
         }
     }
 }

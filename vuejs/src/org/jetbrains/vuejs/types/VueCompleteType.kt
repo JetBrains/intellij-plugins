@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.types
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
+import com.intellij.lang.javascript.psi.types.JSRecursiveTypeVisitor
 import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
@@ -24,6 +25,10 @@ private class VueCompleteTypeImpl(private val baseType: JSType, source: JSTypeSo
   override fun copyWithNewSource(source: JSTypeSource): JSType = VueCompleteTypeImpl(baseType, source)
 
   override fun hashCodeImpl(): Int = baseType.hashCode()
+
+  override fun acceptChildren(visitor: JSRecursiveTypeVisitor) {
+    baseType.accept(visitor)
+  }
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is VueCompleteTypeImpl
