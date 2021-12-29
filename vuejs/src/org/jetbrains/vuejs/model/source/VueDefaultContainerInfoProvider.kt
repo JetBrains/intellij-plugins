@@ -104,12 +104,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val original = CompletionUtil.getOriginalOrSelf<PsiElement>(mixinsProperty)
       val referencedMixins: List<VueMixin> =
         resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), indexKey)
-          ?.asSequence()
-          ?.filter { PsiTreeUtil.isAncestor(original, it.parent, false) }
-          ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-          ?.mapNotNull { VueModelManager.getMixin(it) }
-          ?.toList()
-        ?: emptyList()
+          .asSequence()
+          .filter { PsiTreeUtil.isAncestor(original, it.parent, false) }
+          .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+          .mapNotNull { VueModelManager.getMixin(it) }
+          .toList()
 
       val initializerMixins: List<VueMixin> =
         (mixinsProperty as? StubBasedPsiElement<*>)?.stub

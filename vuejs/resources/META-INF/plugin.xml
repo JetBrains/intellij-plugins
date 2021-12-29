@@ -88,6 +88,7 @@
                        bundle="messages.VueBundle" key="vue.documentation.vue"/>
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex"/>
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueCompositionAppIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueMixinBindingIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex"/>
@@ -283,7 +284,7 @@
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="15"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="16"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexFrameworkHandler" version="7"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler" version="1"/>
 

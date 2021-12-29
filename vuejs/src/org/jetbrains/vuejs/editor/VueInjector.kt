@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
- import com.intellij.lang.injection.MultiHostInjector
+import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
@@ -60,7 +60,8 @@ class VueInjector : MultiHostInjector {
       })
 
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
-      val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
+      val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY)
+        .ifEmpty { return null }
       val element = onlyLocal(elements).firstOrNull() ?: return null
       val obj = element as? JSObjectLiteralExpression
                 ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)

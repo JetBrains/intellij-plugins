@@ -13,6 +13,8 @@ const val DEFINE_PROPS_FUN = "defineProps"
 const val DEFINE_EMITS_FUN = "defineEmits"
 const val DEFINE_EXPOSE_FUN = "defineExpose"
 const val WITH_DEFAULTS_FUN = "withDefaults"
+const val CREATE_APP_FUN = "createApp"
+const val MOUNT_FUN = "mount"
 
 const val MIXINS_PROP: String = "mixins"
 const val EXTENDS_PROP: String = "extends"

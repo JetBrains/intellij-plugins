@@ -17,6 +17,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
 import org.jetbrains.vuejs.model.source.VueSourcePlugin
@@ -76,7 +77,11 @@ internal class VueGlobalImpl(override val project: Project, override val package
                    container.filters.values,
                    container.mixins)
           .flatMap { it.asSequence() }
-          .map { if (it is VueContainerDelegate) it.delegate else it }
+          .let {
+            container.castSafelyTo<VueApp>()?.rootComponent
+              ?.let { c -> it.plus(c) } ?: it
+          }
+          .mapNotNull { if (it is VueDelegatedContainer<*>) it.delegate else it }
           .forEach { el -> result.putValue(el, container) }
       }
     return result

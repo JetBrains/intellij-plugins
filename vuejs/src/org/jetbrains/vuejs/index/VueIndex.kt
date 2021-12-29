@@ -39,11 +39,11 @@ const val DELIMITER = "#"
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
-  return keys.mapNotNull { resolve(it, scope, key) }.flatMap { it.toList() }
+  return keys.flatMap { resolve(it, scope, key) }
 }
 
-fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement>? {
-  if (DumbService.isDumb(scope.project!!)) return null
+fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
+  if (DumbService.isDumb(scope.project!!)) return emptyList()
   val normalized = normalizeNameForIndex(name)
   val indexKey = createJSKey(key)
 
@@ -59,7 +59,7 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
         ?.forEach { result.add(it) }
       return@Processor true
     })
-  return if (result.isEmpty()) null else result
+  return result
 }
 
 fun hasVueClassComponentLibrary(project: Project): Boolean {

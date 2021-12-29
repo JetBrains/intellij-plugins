@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -142,7 +143,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
       manager.getKeyForClass(provider::class.java),
       {
         Result.create(provider(searchScope), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-          PsiModificationTracker.MODIFICATION_COUNT)
+                      PsiModificationTracker.MODIFICATION_COUNT)
       },
       false)
   }
@@ -158,11 +159,10 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
     private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> =
       resolve(GLOBAL, scope, VueMixinBindingIndex.KEY)
-        ?.asSequence()
-        ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-        ?.mapNotNull { VueModelManager.getMixin(it) }
-        ?.toList()
-      ?: emptyList()
+        .asSequence()
+        .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+        .mapNotNull { VueModelManager.getMixin(it) }
+        .toList()
 
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =
       getForAllKeys(scope, VueOptionsIndex.KEY)
@@ -171,6 +171,12 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
         .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
+        .plus(
+          resolve(CREATE_APP_FUN, scope, VueCompositionAppIndex.KEY)
+            .asSequence()
+            .filter(VueComponents.Companion::isNotInLibrary)
+            .mapNotNull { (it.context as? JSCallExpression)?.let { call -> VueCompositionApp(call) } }
+        )
         .toList()
 
     private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> =

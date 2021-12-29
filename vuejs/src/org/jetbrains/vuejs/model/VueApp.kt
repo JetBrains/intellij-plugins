@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.model
 
 interface VueApp : VueContainer {
 
+  val rootComponent: VueComponent? get() = null
+
   fun getProximity(plugin: VuePlugin): VueModelVisitor.Proximity
 
 }

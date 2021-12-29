@@ -51,6 +51,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private val VUE_INDEXES = mapOf(
     record(VueComponentsIndex.KEY),
+    record(VueCompositionAppIndex.KEY),
     record(VueExtendsBindingIndex.KEY),
     record(VueGlobalDirectivesIndex.KEY),
     record(VueMixinBindingIndex.KEY),
@@ -237,7 +238,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
-    return VueStaticMethod.matchesAny(reference)
+    return isCompositionApiAppObjectCall(node, reference)
+           || VueStaticMethod.matchesAny(reference)
            || isScriptSetupDefineCall(node, reference)
   }
 
@@ -250,15 +252,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
     val reference = callExpression?.methodExpression as? JSReferenceExpression ?: return
+    val referenceName = reference.referenceName ?: return
+
     if (isScriptSetupDefineCall(callExpression.node, reference)) {
-      outData.addImplicitElement(JSImplicitElementImpl.Builder(reference.referenceName!!, callExpression)
+      outData.addImplicitElement(JSImplicitElementImpl.Builder(referenceName, callExpression)
                                    .setUserString(this, METHOD_NAME_USER_STRING)
                                    .toImplicitElement())
       return
     }
 
     val arguments = callExpression.arguments
-    if (arguments.isEmpty()) return
+    if (arguments.isEmpty() && referenceName != CREATE_APP_FUN) return
 
     if (VueStaticMethod.Component.matches(reference)) {
       if (arguments.size >= 2) {
@@ -295,7 +299,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           arguments[1], true))
       }
     }
-    else if (reference.referenceName == EXTEND_FUN) {
+    else if (referenceName == EXTEND_FUN) {
       when (val qualifier = reference.qualifier) {
         is JSReferenceExpression -> if (
           !qualifier.hasQualifier() && qualifier.referenceName != VUE_NAMESPACE) {
@@ -320,6 +324,20 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           }
         }
       }
+    }
+    else if (callExpression.methodExpression
+        .castSafelyTo<JSReferenceExpression>()?.let { isCompositionApiAppObjectCall(callExpression.node, it) } == true) {
+      outData.addImplicitElement(JSImplicitElementImpl.Builder(normalizeNameForIndex(referenceName), callExpression)
+                                   .setUserStringWithData(
+                                     this, VueCompositionAppIndex.JS_KEY,
+                                     // Store reference name for resolution
+                                     callExpression.arguments
+                                       .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
+                                       .castSafelyTo<JSReferenceExpression>()
+                                       ?.takeIf { it.qualifier == null }
+                                       ?.referenceName
+                                   )
+                                   .toImplicitElement())
     }
   }
 
@@ -383,6 +401,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
+    if (parentType == JSElementTypes.ARGUMENT_LIST) {
+      expression.node.treeParent.treeParent
+        ?.takeIf { it.elementType == JSElementTypes.CALL_EXPRESSION }
+        ?.let { callNode ->
+          val reference = (callNode.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
+          return isCompositionApiAppObjectCall(callNode, reference)
+        }
+    }
     return false
   }
 
@@ -429,14 +455,27 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun computeJSImplicitElementUserStringKeys(): Set<String> =
     setOf(VueUrlIndex.JS_KEY, VueOptionsIndex.JS_KEY, VueMixinBindingIndex.JS_KEY, VueComponentsIndex.JS_KEY,
           VueGlobalDirectivesIndex.JS_KEY, VueExtendsBindingIndex.JS_KEY, VueGlobalFiltersIndex.JS_KEY, VueIdIndex.JS_KEY,
-          METHOD_NAME_USER_STRING)
+          METHOD_NAME_USER_STRING, VueCompositionAppIndex.JS_KEY)
 
-  private fun isScriptSetupDefineCall(callNode: ASTNode?,
+  private fun isScriptSetupDefineCall(callNode: ASTNode,
                                       reference: JSReferenceExpression) =
     reference.referenceName in SCRIPT_SETUP_DEFINE_FUNS
     && TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
       ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
       .let { it?.psi?.castSafelyTo<HtmlTag>()?.name == SCRIPT_TAG_NAME }
+
+  private fun isCompositionApiAppObjectCall(callNode: ASTNode,
+                                            ref: JSReferenceExpression): Boolean {
+    val refName = ref.referenceName
+    return if (ref.qualifier == null)
+      refName == CREATE_APP_FUN
+    else {
+      refName == MOUNT_FUN || refName == MIXIN_FUN ||
+      ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN)
+       && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
+    }
+  }
+
 }
 
 fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {

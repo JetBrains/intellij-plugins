@@ -1,29 +1,40 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.lang.ecmascript6.psi.ES6Property
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
-class VueLocallyDefinedRegularComponent(delegate: VueRegularComponent, source: JSPsiNamedElementBase)
-  : VueContainerDelegate(delegate), VueRegularComponent {
+class VueLocallyDefinedRegularComponent
+private constructor(override val delegate: VueRegularComponent, source: PsiElement)
+  : VueDelegatedContainer<VueRegularComponent>(), VueRegularComponent {
+
+  constructor(delegate: VueRegularComponent, source: JSLiteralExpression)
+    : this(delegate, source as PsiElement)
+
+  constructor(delegate: VueRegularComponent, source: JSPsiNamedElementBase)
+    : this(delegate, source as PsiElement)
 
   private val mySource = source
 
-  override val nameElement: JSPsiNamedElementBase get() = source
+  override val nameElement: PsiElement
+    get() = if (mySource is JSPsiNamedElementBase) source else mySource
 
-  override val source: JSPsiNamedElementBase by lazy(LazyThreadSafetyMode.NONE) {
-    mySource.resolveIfImportSpecifier()
+  override val source: PsiElement by lazy(LazyThreadSafetyMode.NONE) {
+    if (mySource is JSPsiNamedElementBase)
+      mySource.resolveIfImportSpecifier()
+    else
+      (delegate.source ?: mySource)
   }
 
   override val defaultName: String?
-    get() = source.name
+    get() = (source as? JSPsiNamedElementBase)?.name
+            ?: getTextIfLiteral(source as JSLiteralExpression)
 
   override val documentation: VueItemDocumentation
     get() = delegate.documentation
