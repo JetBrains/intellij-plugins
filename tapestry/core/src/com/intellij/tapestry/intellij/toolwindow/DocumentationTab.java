@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.toolwindow;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -11,7 +12,6 @@ import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import icons.TapestryIcons;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
@@ -41,7 +41,7 @@ public class DocumentationTab {
     private JButton _docButton;
     private JPanel _mainPanel;
 
-    private static final Logger _logger = Logger.getLogger(DocumentationTab.class);
+    private static final Logger _logger = Logger.getInstance(DocumentationTab.class);
 
 //    private DocumentBuilderImpl _documentBuilder;
 //    private HtmlPanel _htmlPanel;
