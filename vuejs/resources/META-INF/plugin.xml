@@ -191,6 +191,9 @@
                                  implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"
                                  anyReferenceClass="true"
                                  targetClass="com.intellij.javascript.web.symbols.WebSymbol"/>
+    <rename.symbolRenameTargetFactory implementation="org.jetbrains.vuejs.web.VueSymbolRenameTargetFactory"/>
+    <javascript.web.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
+    <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
     <javascript.web.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
     <javascript.web.context framework="vue"

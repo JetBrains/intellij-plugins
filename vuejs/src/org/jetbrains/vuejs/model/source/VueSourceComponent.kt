@@ -26,8 +26,10 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
   : VueSourceContainer(sourceElement, descriptor), VueRegularComponent {
 
   override val nameElement: PsiElement?
-    get() = descriptor.initializer?.castSafelyTo<JSObjectLiteralExpression>()
-      ?.findProperty(NAME_PROP)?.value
+    get() = descriptor.initializer
+      ?.castSafelyTo<JSObjectLiteralExpression>()
+      ?.findProperty(NAME_PROP)
+      ?.let { it.literalExpressionInitializer ?: it.value }
 
   override val defaultName: String?
     get() = indexData?.originalName

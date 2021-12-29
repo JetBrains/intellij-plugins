@@ -204,6 +204,14 @@ class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralEx
       .forEach { element -> element?.let { PsiUtilCore.ensureValid(it) } }
   }
 
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    (other is VueSourceEntityDescriptor
+     && other.source == source)
+
+  override fun hashCode(): Int =
+    source.hashCode()
+
   fun createPointer(): Pointer<VueSourceEntityDescriptor> {
     val initializerPtr = this.initializer?.createSmartPointer()
     val clazzPtr = this.clazz?.createSmartPointer()

@@ -2,7 +2,10 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.codeInsight.navigation.targetPresentation
+import com.intellij.find.usages.api.SearchTarget
+import com.intellij.find.usages.api.UsageHandler
 import com.intellij.ide.util.EditSourceUtil
+import com.intellij.javascript.web.refactoring.WebSymbolRenameTarget
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
@@ -14,12 +17,12 @@ import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPA
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace
 import com.intellij.javascript.web.symbols.patterns.RegExpPattern
 import com.intellij.javascript.web.symbols.patterns.WebSymbolsPattern
-import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.javascript.library.JSLibraryUtil
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
+import com.intellij.model.Symbol
+import com.intellij.model.presentation.SymbolPresentation
 import com.intellij.navigation.EmptyNavigatable
 import com.intellij.navigation.NavigationRequest
 import com.intellij.navigation.NavigationTarget
@@ -34,13 +37,15 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.SmartList
 import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.Stack
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -87,6 +92,19 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> Priority.NORMAL
         VueModelVisitor.Proximity.OUT_OF_SCOPE -> Priority.LOW
       }
+
+    fun wrap(name: String, element: VueScopeElement, forcedProximity: VueModelVisitor.Proximity): WebSymbol? =
+      when (element) {
+        is VueComponent -> ComponentWrapper(toAsset(name, true), element, forcedProximity)
+        is VueDirective -> DirectiveWrapper(name, element, forcedProximity)
+        else -> null
+      }
+
+    fun renameTarget(symbol: Symbol): RenameTarget? =
+      if (symbol is ScopeElementWrapper<*> && symbol.source is JSLiteralExpression)
+        WebSymbolRenameTarget(symbol)
+      else null
+
   }
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> {
@@ -253,12 +271,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       container.acceptEntities(object : VueModelVisitor() {
 
         override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-          consumer(ComponentWrapper(toAsset(name, true), component, forcedProximity))
+          wrap(name, component, forcedProximity)?.let(consumer)
           return true
         }
 
         override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-          consumer(DirectiveWrapper(name, directive, forcedProximity))
+          wrap(name, directive, forcedProximity)?.let(consumer)
           return true
         }
 
@@ -355,13 +373,27 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val docUrl: String?
       get() = item.documentation.docUrl
 
+    override fun getSymbolPresentation(): SymbolPresentation {
+      val description = VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name)
+      return SymbolPresentation.create(icon, name, description, description)
+    }
+
     override fun equals(other: Any?): Boolean =
-      other is DocumentedItemWrapper<*>
-      && other.javaClass == this.javaClass
-      && matchedName == other.matchedName
-      && item == other.item
+      other === this ||
+      (other is DocumentedItemWrapper<*>
+       && other.javaClass == this.javaClass
+       && matchedName == other.matchedName
+       && item == other.item)
 
     override fun hashCode(): Int = Objects.hash(matchedName, item)
+
+    override fun isEquivalentTo(symbol: Symbol): Boolean =
+      if (symbol is DocumentedItemWrapper<*>)
+        symbol === this || (symbol.javaClass == this.javaClass
+                            && symbol.matchedName == matchedName
+                            && VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))
+      else
+        super.isEquivalentTo(symbol)
   }
 
   private abstract class NamedSymbolWrapper<T : VueNamedSymbol>(item: T,
@@ -398,7 +430,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   }
 
   private abstract class ScopeElementWrapper<T : VueDocumentedItem>(matchedName: String, item: T) :
-    DocumentedItemWrapper<T>(matchedName, item) {
+    DocumentedItemWrapper<T>(matchedName, item), SearchTarget {
+
+    abstract override fun createPointer(): Pointer<out ScopeElementWrapper<T>>
 
     override val origin: WebSymbolsContainer.Origin =
       object : WebSymbolsContainer.Origin {
@@ -420,6 +454,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             ?.castSafelyTo<VuePlugin>()
             ?.moduleVersion
       }
+
+    override val usageHandler: UsageHandler<*>
+      get() = UsageHandler.createEmptyUsageHandler(presentation.presentableText)
+
   }
 
   private class ComponentWrapper(matchedName: String, component: VueComponent, val vueProximity: VueModelVisitor.Proximity) :
@@ -431,8 +469,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val name: String
       get() = matchedName
 
+    // The source field is used for refactoring purposes by Web Symbols framework
     override val source: PsiElement?
-      get() = item.source
+      get() = (item as? VueRegularComponent)?.nameElement ?: item.source
 
     override val priority: Priority
       get() = priorityOf(vueProximity)
@@ -444,8 +483,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override fun hashCode(): Int =
       31 * super.hashCode() + vueProximity.hashCode()
 
+    // Use actual item source field for navigation
     override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-      source?.let { listOf(ComponentSourceNavigationTarget(it)) } ?: emptyList()
+      item.source?.let { listOf(ComponentSourceNavigationTarget(it)) } ?: emptyList()
 
     override val properties: Map<String, Any>
       get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity))

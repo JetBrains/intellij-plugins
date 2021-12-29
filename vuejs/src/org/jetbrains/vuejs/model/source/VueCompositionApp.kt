@@ -1,11 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.model.Pointer
@@ -20,6 +17,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueCompositionAppIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
@@ -85,6 +83,46 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
 
   companion object {
 
+    @StubSafe
+    fun getVueElement(call: JSCallExpression): VueScopeElement? {
+      val implicitElement = call.indexingData
+                              ?.implicitElements
+                              ?.find { it.userString == VueCompositionAppIndex.JS_KEY }
+                              ?.takeIf { isVueContext(it) }
+                            ?: return null
+      return when (implicitElement.name) {
+        COMPONENT_FUN -> {
+          val args = call.stubSafeCallArguments
+          VueModelManager.getComponent(getComponentDescriptor(getParam(implicitElement, call, 1, args))).let {
+            val literal = args.getOrNull(0) as? JSLiteralExpression ?: return@let it
+            if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, literal) else it
+          }
+        }
+        DIRECTIVE_FUN, FILTER_FUN -> call.stubSafeCallArguments.getOrNull(0)
+          ?.castSafelyTo<JSLiteralExpression>()
+          ?.let { literal ->
+            getTextIfLiteral(literal)?.let { name ->
+              if (implicitElement.name == DIRECTIVE_FUN)
+                VueSourceDirective(name, literal)
+              else
+                VueSourceFilter(name, literal)
+            }
+          }
+        MIXIN_FUN -> VueModelManager.getMixin(getComponentDescriptor(getParam(implicitElement, call, 0)) as? VueSourceEntityDescriptor)
+        else -> null
+      }
+    }
+
+    private fun getParam(element: JSImplicitElement,
+                         call: JSCallExpression,
+                         nr: Int,
+                         args: List<PsiElement> = call.stubSafeCallArguments): PsiElement? {
+      val refName = element.userStringData
+      return if (refName != null)
+        JSStubBasedPsiTreeUtil.resolveLocally(refName, call, true)
+      else args.getOrNull(nr)
+    }
+
     private fun analyzeCall(call: JSCallExpression): EntitiesAnalysis {
       val resolveScope = PsiTreeUtil.findFirstContext(call, false) { JSUtils.isScopeOwner(it) || it is JSFile || it is JSEmbeddedContent }
       val searchScope = GlobalSearchScopeUtil.toGlobalSearchScope(LocalSearchScope(resolveScope ?: call.containingFile), call.project)
@@ -96,16 +134,13 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
           .mapNotNull { el ->
             val componentCall = el.context as? JSCallExpression ?: return@mapNotNull null
             val args = componentCall.stubSafeCallArguments
-            val nameLiteral =  if (hasName)
+            val nameLiteral = if (hasName)
               args.getOrNull(0) as? JSLiteralExpression ?: return@mapNotNull null
             else null
             val name = if (hasName)
               getTextIfLiteral(nameLiteral) ?: return@mapNotNull null
             else ""
-            val refName = el.userStringData
-            (if (refName != null)
-              JSStubBasedPsiTreeUtil.resolveLocally(refName, componentCall, true)
-            else args.getOrNull(if (hasName) 1 else 0))
+            getParam(el, componentCall, if (hasName) 1 else 0, args)
               ?.let { processor(name, it, nameLiteral) }
           }
 
@@ -131,7 +166,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       val element = resolve(MOUNT_FUN, searchScope, VueCompositionAppIndex.KEY)
         .firstNotNullOfOrNull {
           (it.context as? JSCallExpression)?.stubSafeCallArguments?.getOrNull(0)
-            ?.let { arg -> getTextIfLiteral(arg)}
+            ?.let { arg -> getTextIfLiteral(arg) }
         }
 
       return EntitiesAnalysis(components, directives, mixins, filters, element)

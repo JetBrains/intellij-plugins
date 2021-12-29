@@ -9,6 +9,7 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
+import java.util.*
 
 abstract class VueSourceContainer(sourceElement: JSImplicitElement,
                                   override val descriptor: VueSourceEntityDescriptor)
@@ -43,6 +44,16 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   private fun <T> get(accessor: MemberAccessor<T>): T {
     return accessor.get(descriptor)
   }
+
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    (other is VueSourceContainer
+     && other.javaClass == javaClass
+     && other.source == source
+     && other.descriptor == descriptor)
+
+  override fun hashCode(): Int =
+    Objects.hash(source, descriptor)
 
   companion object {
     private val EXTENDS = ListAccessor(VueContainerInfo::extends)

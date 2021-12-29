@@ -398,7 +398,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val parentType = expression.node.treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
         || (JSElementTypes.PROPERTY == parentType
-            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP))) {
+            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP, NAME_PROP))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {

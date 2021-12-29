@@ -46,4 +46,9 @@ abstract class VueDelegatedContainer<T : VueContainer> : VueDelegatedEntitiesCon
 
   override val parents: List<VueEntitiesContainer>
     get() = delegate?.parents ?: emptyList()
+
+  companion object {
+    fun unwrap(container: Any): Any =
+      (container as? VueDelegatedContainer<*>)?.delegate ?: container
+  }
 }

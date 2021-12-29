@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.documentation
 
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.model.*
 
@@ -38,6 +39,7 @@ interface VueItemDocumentation {
 
   companion object {
 
+    @Nls
     fun typeOf(item: VueDocumentedItem): String =
       when (item) {
         is VueFunctionComponent -> "vue.documentation.type.functional.component"
