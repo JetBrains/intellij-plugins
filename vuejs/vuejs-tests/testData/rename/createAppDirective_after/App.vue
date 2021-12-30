@@ -8,4 +8,6 @@
 
 <script setup lang="ts">
 
+  import ImportedByRoot from "./ImportedByRoot.vue"
+
 </script>

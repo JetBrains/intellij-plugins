@@ -1,3 +1,3 @@
 <template>
-  <<caret>
+  <div
 </template>

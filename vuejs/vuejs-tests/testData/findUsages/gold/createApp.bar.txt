@@ -1,5 +1,5 @@
-<App.vue:(0,141):(28,31)>	Bar
-<App.vue:(0,141):(34,37)>	Bar
+<App.vue:(0,194):(28,31)>	Bar
+<App.vue:(0,194):(34,37)>	Bar
 <TheComponent.vue:(0,132):(28,31)>	Bar
 <TheComponent.vue:(0,132):(34,37)>	Bar
 <foo.vue:(0,143):(28,31)>	Bar

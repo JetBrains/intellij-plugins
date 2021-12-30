@@ -1,5 +1,5 @@
-<App.vue:(0,141):(42,45)>	Car
-<App.vue:(0,141):(48,51)>	Car
+<App.vue:(0,194):(42,45)>	Car
+<App.vue:(0,194):(48,51)>	Car
 <TheComponent.vue:(0,132):(42,45)>	Car
 <TheComponent.vue:(0,132):(48,51)>	Car
 <foo.vue:(0,143):(42,45)>	Car

@@ -1844,6 +1844,7 @@ export default {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("ImportedByRoot.vue")
+    myFixture.moveToOffsetBySignature("<<caret>div")
     doLookupTest(renderPriority = true, noConfigure = true) {
       !it.contains("www.w3.org")
     }
@@ -1853,6 +1854,7 @@ export default {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("NotImported.vue")
+    myFixture.moveToOffsetBySignature("<<caret>div")
     doLookupTest(renderPriority = true, noConfigure = true) {
       !it.contains("www.w3.org")
     }
