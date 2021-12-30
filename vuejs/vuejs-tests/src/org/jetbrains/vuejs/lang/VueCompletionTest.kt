@@ -1810,6 +1810,10 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = false)
   }
 
+  fun testCssVBindScriptSetup() {
+    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+  }
+
   fun testCreateAppIndex() {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)

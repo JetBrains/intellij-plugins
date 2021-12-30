@@ -86,6 +86,10 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("newColor")
   }
 
+  fun testCssVBindScriptSetup() {
+    doTest("newColor", true)
+  }
+
   fun testCreateAppComponent() {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
@@ -122,9 +126,20 @@ class VueRenameTest : BasePlatformTestCase() {
     checkResultByDir("createAppDirective_after")
   }
 
-  private fun doTest(newName: String) {
+  private fun doTest(newName: String, usingHandler: Boolean = false) {
     myFixture.configureByFile(getTestName(true) + ".vue")
-    myFixture.renameElementAtCaret(newName)
+    if (usingHandler) {
+      val oldSetting = myFixture.editor.settings.isVariableInplaceRenameEnabled
+      myFixture.editor.settings.isVariableInplaceRenameEnabled = false
+      try {
+        myFixture.renameElementAtCaretUsingHandler(newName)
+      }
+      finally {
+        myFixture.editor.settings.isVariableInplaceRenameEnabled = oldSetting
+      }
+    } else {
+      myFixture.renameElementAtCaret(newName)
+    }
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
   }
 
