@@ -24,10 +24,9 @@ class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
   private class VueScriptSetupScope constructor(private val module: JSEmbeddedContent) : VueTemplateScope(null) {
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
-      val unwrapRef = VueCompositionInfoHelper.getUnwrapRefType(module)
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
         val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
-        val elementToConsume = VueCompositionInfoHelper.getUnwrappedRefElement(resolved, unwrapRef)
+        val elementToConsume = VueCompositionInfoHelper.getUnwrappedRefElement(resolved, module)
                                ?: resolved ?: element
         consumer.accept(PsiElementResolveResult(elementToConsume, true)).let { true }
       }, false)

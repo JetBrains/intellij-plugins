@@ -1,5 +1,5 @@
-!count#UnwrapRef2<number>#101
-!double#UnwrapRef2<Readonly<Ref<Readonly<unknown>>>>#101
+!count#null#101
+!double#null#101
 constructor#Function#98
 hasOwnProperty#boolean#98
 isPrototypeOf#boolean#98
