@@ -1721,6 +1721,26 @@ export default {
     assertContainsElements(myFixture.lookupElementStrings!!, "foo")
   }
 
+  fun testScriptSetupTs() {
+    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, locations = listOf(
+      ":count=\"<caret>count\"",
+      " v<caret>/>",
+      ":<caret>foo=",
+      "<<caret>Foo"
+    )) {
+      !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
+      && !it.contains("www.w3.org")
+    }
+
+    myFixture.moveToOffsetBySignature("<caret>\n// write")
+    myFixture.type("fo")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "foos")
+    myFixture.type("os.")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "foo")
+  }
+
   fun testExpression() {
     doLookupTest(VueTestModule.VUE_2_6_10) {
       // Ignore global objects

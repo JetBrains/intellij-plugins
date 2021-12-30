@@ -1,8 +1,8 @@
 Foo#null
-count#null
-foo#null
+count#number
+foo#string
 foos#null
-inc#null
+inc#() => void
 props#null
 ref#<T extends object>(value: T) => ToRef<T>
 vClickOutside#null

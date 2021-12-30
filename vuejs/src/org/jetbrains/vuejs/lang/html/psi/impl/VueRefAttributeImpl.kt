@@ -56,8 +56,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
           ?.takeIf { it.isNotEmpty() }
           ?.let { name ->
             findScriptSetupVar(name)?.let {
-              VueCompositionInfoHelper.getUnwrappedRefElement(
-                it, VueCompositionInfoHelper.getUnwrapRefType(this))
+              VueCompositionInfoHelper.getUnwrappedRefElement(it, this)
             }
             //?: findSetupVar(name)
             ?: VueRefDeclarationImpl(name, resolveTagType(), this, JSImplicitElement.Type.Property)
