@@ -58,7 +58,7 @@ object VueTypedEntitiesProvider {
 
     val searchProcessor = TypeScriptNodeReference.TypeScriptNodeModuleDirectorySearchProcessor()
     val mainFile = JSExactFileReference.resolveForNpmPackages(moduleDir.virtualFile, searchProcessor)
-    val mainPsiFile = moduleDir.manager.findFile(mainFile) as? JSFile
+    val mainPsiFile = mainFile?.let { moduleDir.manager.findFile(it) } as? JSFile
     if (mainPsiFile != null) {
       JSModuleTypeImpl(mainPsiFile, false)
         .asRecordType()
