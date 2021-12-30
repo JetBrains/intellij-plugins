@@ -57,4 +57,16 @@ class VueFindUsagesTest : BasePlatformTestCase() {
                                                                         true))
   }
 
+  fun testCreateApp() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("main.ts")
+
+    myFixture.checkUsages("\"f<caret>oo", "createApp.foo")
+    myFixture.checkUsages("\"B<caret>ar", "createApp.bar")
+    myFixture.checkUsages("\"C<caret>ar", "createApp.car")
+    myFixture.checkUsages("\"Foo<caret>Bar", "createApp.foo-bar")
+
+  }
+
 }

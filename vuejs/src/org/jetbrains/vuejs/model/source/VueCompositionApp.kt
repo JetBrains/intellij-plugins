@@ -44,16 +44,18 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
     get() = getEntitiesAnalysis().element
 
   override val delegate: VueContainer?
-    get() = source.stubSafeCallArguments.firstOrNull()?.let { initializer ->
-      if (initializer is JSObjectLiteralExpression)
-        VueModelManager.getApp(initializer)
-      else
-        CachedValuesManager.getCachedValue(initializer) {
-          CachedValueProvider.Result.create(getComponentDescriptor(initializer)?.let {
-            VueModelManager.getComponent(it)
-          } as? VueContainer, PsiModificationTracker.MODIFICATION_COUNT)
-        }
-    }
+    get() = getImplicitElement(source)
+      ?.let { getParam(it, source, 0) }
+      ?.let { initializer ->
+        if (initializer is JSObjectLiteralExpression)
+          VueModelManager.getApp(initializer)
+        else
+          CachedValuesManager.getCachedValue(initializer) {
+            CachedValueProvider.Result.create(getComponentDescriptor(initializer)?.let {
+              VueModelManager.getComponent(it)
+            } as? VueContainer, PsiModificationTracker.MODIFICATION_COUNT)
+          }
+      }
 
   override fun getProximity(plugin: VuePlugin): VueModelVisitor.Proximity =
     plugin.defaultProximity
@@ -85,20 +87,16 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
 
     @StubSafe
     fun getVueElement(call: JSCallExpression): VueScopeElement? {
-      val implicitElement = call.indexingData
-                              ?.implicitElements
-                              ?.find { it.userString == VueCompositionAppIndex.JS_KEY }
-                              ?.takeIf { isVueContext(it) }
-                            ?: return null
+      val implicitElement = getImplicitElement(call)?.takeIf { isVueContext(it) } ?: return null
       return when (implicitElement.name) {
         COMPONENT_FUN -> {
-          val args = call.stubSafeCallArguments
+          val args = getFilteredArgs(call)
           VueModelManager.getComponent(getComponentDescriptor(getParam(implicitElement, call, 1, args))).let {
             val literal = args.getOrNull(0) as? JSLiteralExpression ?: return@let it
             if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, literal) else it
           }
         }
-        DIRECTIVE_FUN, FILTER_FUN -> call.stubSafeCallArguments.getOrNull(0)
+        DIRECTIVE_FUN, FILTER_FUN -> getFilteredArgs(call).getOrNull(0)
           ?.castSafelyTo<JSLiteralExpression>()
           ?.let { literal ->
             getTextIfLiteral(literal)?.let { name ->
@@ -113,10 +111,18 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       }
     }
 
+    private fun getFilteredArgs(call: JSCallExpression) =
+      call.stubSafeCallArguments.dropWhile { it is JSCallExpression }
+
+    private fun getImplicitElement(call: JSCallExpression): JSImplicitElement? =
+      call.indexingData
+        ?.implicitElements
+        ?.find { it.userString == VueCompositionAppIndex.JS_KEY }
+
     private fun getParam(element: JSImplicitElement,
                          call: JSCallExpression,
                          nr: Int,
-                         args: List<PsiElement> = call.stubSafeCallArguments): PsiElement? {
+                         args: List<PsiElement> = getFilteredArgs(call)): PsiElement? {
       val refName = element.userStringData
       return if (refName != null)
         JSStubBasedPsiTreeUtil.resolveLocally(refName, call, true)
@@ -132,15 +138,15 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
           .asSequence()
           .filter { resolveScope == null || PsiTreeUtil.isAncestor(resolveScope, it, false) }
           .mapNotNull { el ->
-            val componentCall = el.context as? JSCallExpression ?: return@mapNotNull null
-            val args = componentCall.stubSafeCallArguments
+            val defineCall = el.context as? JSCallExpression ?: return@mapNotNull null
+            val args = getFilteredArgs(defineCall)
             val nameLiteral = if (hasName)
               args.getOrNull(0) as? JSLiteralExpression ?: return@mapNotNull null
             else null
             val name = if (hasName)
               getTextIfLiteral(nameLiteral) ?: return@mapNotNull null
             else ""
-            getParam(el, componentCall, if (hasName) 1 else 0, args)
+            getParam(el, defineCall, if (hasName) 1 else 0, args)
               ?.let { processor(name, it, nameLiteral) }
           }
 
@@ -164,8 +170,10 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       }.toMap()
 
       val element = resolve(MOUNT_FUN, searchScope, VueCompositionAppIndex.KEY)
-        .firstNotNullOfOrNull {
-          (it.context as? JSCallExpression)?.stubSafeCallArguments?.getOrNull(0)
+        .firstNotNullOfOrNull { element ->
+          (element.context as? JSCallExpression)
+            ?.let { getFilteredArgs(it) }
+            ?.getOrNull(0)
             ?.let { arg -> getTextIfLiteral(arg) }
         }
 

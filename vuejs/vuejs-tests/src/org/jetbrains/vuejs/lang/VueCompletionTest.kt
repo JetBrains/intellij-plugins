@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
@@ -21,6 +20,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
+import junit.framework.AssertionFailedError
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -1467,7 +1467,8 @@ export default class ComponentInsertion extends Vue {
   fun testSlotProps() {
     doLookupTest(renderPriority = true, renderTypeText = false) {
       // Ignore global objects
-      item -> !item.endsWith("#1")
+      item ->
+      !item.endsWith("#1")
     }
   }
 
@@ -1477,7 +1478,8 @@ export default class ComponentInsertion extends Vue {
       "v-bind:about=\"<caret>\""
     )) {
       // Ignore global objects
-      item -> !item.endsWith("#1")
+      item ->
+      !item.endsWith("#1")
     }
   }
 
@@ -1585,7 +1587,8 @@ export default class ComponentInsertion extends Vue {
       "{{state.<caret>count}}"
     )) {
       // Ignore global objects
-      item -> !item.endsWith("#1")
+      item ->
+      !item.endsWith("#1")
     }
   }
 
@@ -1600,7 +1603,8 @@ export default class ComponentInsertion extends Vue {
       "{{state.<caret>count}}"
     )) {
       // Ignore global objects
-      item -> !item.endsWith("#1")
+      item ->
+      !item.endsWith("#1")
     }
   }
 
@@ -1724,7 +1728,8 @@ export default {
   fun testExpression() {
     doLookupTest(VueTestModule.VUE_2_6_10) {
       // Ignore global objects
-      item -> !item.endsWith("#1")
+      item ->
+      !item.endsWith("#1")
     }
   }
 
@@ -1735,7 +1740,8 @@ export default {
   fun testEnum() {
     doLookupTest(VueTestModule.VUE_3_2_2) {
       // Ignore global objects
-      item -> !item.endsWith("#1")
+      item ->
+      !item.endsWith("#1")
     }
   }
 
@@ -1784,6 +1790,53 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = false)
   }
 
+  fun testCreateAppIndex() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("index.html")
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>")) {
+      !it.contains("www.w3.org")
+    }
+    myFixture.moveToOffsetBySignature("w<<caret>")
+    myFixture.completeBasic()
+    assertDoesntContain(myFixture.lookupElementStrings!!, "Car", "Bar", "foo-bar")
+  }
+
+  fun testCreateAppIncludedComponent() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("foo.vue")
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>")) {
+      !it.contains("www.w3.org")
+    }
+  }
+
+  fun testCreateAppRootComponent() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("App.vue")
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>")) {
+      !it.contains("www.w3.org")
+    }
+  }
+
+  fun testCreateAppImportedByRootComponent() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("ImportedByRoot.vue")
+    doLookupTest(renderPriority = true, noConfigure = true) {
+      !it.contains("www.w3.org")
+    }
+  }
+
+  fun testCreateAppNotImported() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("NotImported.vue")
+    doLookupTest(renderPriority = true, noConfigure = true) {
+      !it.contains("www.w3.org")
+    }
+  }
 
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
@@ -1793,6 +1846,7 @@ export default {
   private fun doLookupTest(vararg modules: VueTestModule,
                            fileContents: String? = null,
                            dir: Boolean = false,
+                           noConfigure: Boolean = false,
                            locations: List<String> = emptyList(),
                            renderPriority: Boolean = true,
                            renderTypeText: Boolean = true,
@@ -1800,20 +1854,22 @@ export default {
                            containsCheck: Boolean = false,
                            renderProximity: Boolean = false,
                            filter: (item: String) -> Boolean = { true }) {
-    if (dir) {
-      myFixture.copyDirectoryToProject(getTestName(true), ".")
-    }
-    if (modules.isNotEmpty()) {
-      myFixture.configureVueDependencies(*modules)
-    }
-    if (fileContents != null) {
-      myFixture.configureByText(getTestName(true) + ".vue", fileContents)
-    }
-    else if (dir) {
-      myFixture.configureFromTempProjectFile(getTestName(true) + ".vue")
-    }
-    else {
-      myFixture.configureByFile(getTestName(true) + ".vue")
+    if (!noConfigure) {
+      if (dir) {
+        myFixture.copyDirectoryToProject(getTestName(true), ".")
+      }
+      if (modules.isNotEmpty()) {
+        myFixture.configureVueDependencies(*modules)
+      }
+      if (fileContents != null) {
+        myFixture.configureByText(getTestName(true) + ".vue", fileContents)
+      }
+      else if (dir) {
+        myFixture.configureFromTempProjectFile(getTestName(true) + ".vue")
+      }
+      else {
+        myFixture.configureByFile(getTestName(true) + ".vue")
+      }
     }
     if (locations.isEmpty()) {
       myFixture.completeBasic()

@@ -1,0 +1,8 @@
+<App.vue:(55,74):(1,8)>	foo-bar
+<App.vue:(55,74):(11,18)>	foo-bar
+<TheComponent.vue:(55,74):(1,8)>	foo-bar
+<TheComponent.vue:(55,74):(11,18)>	foo-bar
+<foo.vue:(55,74):(1,8)>	foo-bar
+<foo.vue:(55,74):(11,18)>	foo-bar
+<index.html:(326,345):(1,8)>	foo-bar
+<index.html:(326,345):(11,18)>	foo-bar

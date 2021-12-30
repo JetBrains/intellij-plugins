@@ -3,9 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.javascript.web.*
 import com.intellij.lang.ecmascript6.psi.ES6Property
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -904,7 +902,7 @@ Vue.component(alias, WiseComp)
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     assertInstanceOf(target.parent, JSProperty::class.java)
-    TestCase.assertEquals(compName, (target as JSImplicitElement).name)
+    TestCase.assertEquals(compName, (target as JSLiteralExpression).value)
   }
 
   fun testGlobalComponentLiteral() {
@@ -1991,6 +1989,29 @@ export default class UsageComponent extends Vue {
       Pair("\$refs.fo<caret>o ", 48))) {
 
       myFixture.checkGotoDeclaration(check.first, check.second)
+    }
+  }
+
+  fun testCreateApp() {
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    sequenceOf(
+      Triple("<B<caret>oo>", null, null),
+      Triple("<B<caret>ar>", 128, "foo.vue"),
+      Triple("<C<caret>ar>", 0, "TheComponent.vue"),
+      Triple("v-f<caret>oo", 175, "main.ts"),
+      Triple("<B<caret>oo>", null, null),
+      Triple("w<B<caret>ar>", null, null),
+      Triple("w<C<caret>ar>", null, null),
+      Triple("w<div v-f<caret>oo", null, null)
+    ).forEach {
+      myFixture.configureFromTempProjectFile("index.html")
+      if (it.second == null) {
+        assertEmpty(myFixture.multiResolveWebSymbolReference(it.first))
+      }
+      else {
+        myFixture.checkGotoDeclaration(it.first, it.second!!, it.third)
+      }
     }
   }
 
