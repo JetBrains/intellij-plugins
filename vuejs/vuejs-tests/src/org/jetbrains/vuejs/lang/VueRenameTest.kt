@@ -85,9 +85,24 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("newColor")
   }
 
-  private fun doTest(newName: String) {
+  fun testCssVBindScriptSetup() {
+    doTest("newColor", true)
+  }
+
+  private fun doTest(newName: String, usingHandler: Boolean = false) {
     myFixture.configureByFile(getTestName(true) + ".vue")
-    myFixture.renameElementAtCaret(newName)
+    if (usingHandler) {
+      val oldSetting = myFixture.editor.settings.isVariableInplaceRenameEnabled
+      myFixture.editor.settings.isVariableInplaceRenameEnabled = false
+      try {
+        myFixture.renameElementAtCaretUsingHandler(newName)
+      }
+      finally {
+        myFixture.editor.settings.isVariableInplaceRenameEnabled = oldSetting
+      }
+    } else {
+      myFixture.renameElementAtCaret(newName)
+    }
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
   }
 

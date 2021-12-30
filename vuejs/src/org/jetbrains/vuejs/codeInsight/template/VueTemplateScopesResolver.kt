@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.template
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
@@ -36,12 +37,12 @@ object VueTemplateScopesResolver {
       .findFirst { s -> !s.processAllScopesInHierarchy(processor) }
   }
 
-  private fun checkLanguage(element: PsiElement): Boolean {
-    return (element.language.`is`(VueJSLanguage.INSTANCE)
-            || element.language.`is`(VueLanguage.INSTANCE)
-            || element.parent != null
-            && (element.parent.language.`is`(VueJSLanguage.INSTANCE)
-                || element.parent.language.`is`(VueLanguage.INSTANCE)))
-  }
+  private fun checkLanguage(element: PsiElement): Boolean =
+    element.language.let {
+      it.`is`(VueJSLanguage.INSTANCE) || it.`is`(VueLanguage.INSTANCE) || it.isKindOf(CSSLanguage.INSTANCE)
+    }
+    || element.parent?.language?.let {
+      it.`is`(VueJSLanguage.INSTANCE) || it.`is`(VueLanguage.INSTANCE)
+    } == true
 
 }

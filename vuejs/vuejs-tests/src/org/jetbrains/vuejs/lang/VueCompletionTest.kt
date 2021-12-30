@@ -1784,6 +1784,10 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = false)
   }
 
+  fun testCssVBindScriptSetup() {
+    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+  }
+
 
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()

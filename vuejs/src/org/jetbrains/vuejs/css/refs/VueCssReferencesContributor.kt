@@ -4,6 +4,9 @@ package org.jetbrains.vuejs.css.refs
 import com.intellij.javascript.web.codeInsight.css.refs.CssClassInJSLiteralOrIdentifierReferenceProvider
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSFunctionItem
+import com.intellij.lang.javascript.psi.JSFunctionType
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.*
@@ -15,7 +18,10 @@ import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.reference.CssReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference
 import com.intellij.util.ProcessingContext
+import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider.Companion.isVBindClassAttribute
+import org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider
+import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.model.VueModelManager
@@ -49,31 +55,34 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
 
     override fun getRangeInElement(): TextRange = TextRange(0, myElement.textLength)
 
-    override fun resolveInner(incompleteCode: Boolean, containingFile: PsiFile): Array<ResolveResult> =
-      VueModelManager.findEnclosingContainer(myElement)
-        .thisType
-        .asRecordType()
-        .findPropertySignature(canonicalText)
-        ?.memberSource
-        ?.allSourceElements
-        ?.map { PsiElementResolveResult(it) }
-        ?.toTypedArray()
-      ?: ResolveResult.EMPTY_ARRAY
-
-    override fun getVariants(): Array<Any> =
-      VueModelManager.findEnclosingContainer(myElement)
-        .thisType
-        .asRecordType()
-        .properties
-        .mapNotNull { property ->
-          property
-            ?.takeIf { !it.memberName.startsWith("$") }
-            ?.memberSource
-            ?.singleElement
-            ?.takeIf { it !is JSFunctionItem }
-            ?.let { JSLookupUtilImpl.createLookupElement(it, property.memberName) }
+    override fun resolveInner(incompleteCode: Boolean, containingFile: PsiFile): Array<ResolveResult> {
+      val result = mutableListOf<ResolveResult>()
+      val name = canonicalText
+      VueTemplateScopesResolver.resolve(myElement) {
+        val element = it.element as? JSPsiNamedElementBase
+        if (element != null && name == StringUtils.uncapitalize(element.name)) {
+          result.add(it)
+          return@resolve false
         }
-        .toTypedArray()
+        true
+      }
+      return result.toTypedArray()
+    }
+
+    override fun getVariants(): Array<Any> {
+        val result = mutableListOf<Any>()
+        VueTemplateScopesResolver.resolve(myElement) { resolveResult ->
+          (resolveResult.element as? JSPsiNamedElementBase)
+            .takeIf { it !is JSFunctionItem
+                      && it?.name?.startsWith("$") == false
+                      && (it as? JSTypeOwner)?.jsType?.substitute() !is JSFunctionType}
+            ?.let {
+              result.add(JSLookupUtilImpl.createLookupElement(it, it.name!!))
+            }
+          true
+        }
+        return result.toTypedArray()
+    }
 
     override fun getCanonicalText(): String = myElement.text
 
