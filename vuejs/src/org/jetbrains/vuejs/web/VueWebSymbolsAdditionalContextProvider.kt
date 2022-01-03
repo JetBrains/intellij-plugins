@@ -46,8 +46,6 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
-import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.model.typed.VueTypedComponent
@@ -483,9 +481,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             else emptyList()
           }
           KIND_VUE_MODEL -> {
-            (item as? VueContainer)?.model?.takeIf {
-              it.prop != DEFAULT_PROP || it.event != DEFAULT_EVENT
-            }?.let {
+            (item as? VueContainer)?.model?.let {
               listOf(VueModelWrapper(this.origin, it))
             }
             ?: emptyList()
@@ -652,10 +648,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val kind: SymbolKind get() = KIND_VUE_MODEL
 
     override val properties: Map<String, Any>
-      get() = mapOf(
-        Pair(PROP_VUE_MODEL_PROP, vueModel.prop),
-        Pair(PROP_VUE_MODEL_EVENT, vueModel.event),
-      )
+      get() {
+        val map = mutableMapOf<String, Any>()
+        vueModel.prop?.let { map[PROP_VUE_MODEL_PROP] = it }
+        vueModel.event?.let { map[PROP_VUE_MODEL_EVENT] = it }
+        return map
+      }
 
     override fun createPointer(): Pointer<VueModelWrapper> =
       Pointer.hardPointer(this)

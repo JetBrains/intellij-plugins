@@ -902,7 +902,7 @@
             "name": "v-model prop/event pair to bind",
             "pattern": {
               "items": {
-                "path": "attributes",
+                "path": "/html/attributes",
                 "filter": "match-with-target-list",
                 "target-list": "/js/events",
                 "prefix": "update:"
@@ -965,6 +965,13 @@
             "type": "string",
             "required": true
           }
+        }
+      ],
+      "vue-model-modifiers": [
+        {
+          "name": "Unknown",
+          "description": "An unknown Vue model modifier.",
+          "pattern": ".*"
         }
       ]
     },

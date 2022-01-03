@@ -3,8 +3,6 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
-import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
-import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_PROP
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_MODEL
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_MODEL_EVENT
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_MODEL_PROP
@@ -12,7 +10,7 @@ import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.
 fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
   runNameMatchQuery(listOf(KIND_VUE_MODEL)).firstOrNull()
     ?.let {
-      VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String ?: DEFAULT_PROP,
-                                  event = it.properties[PROP_VUE_MODEL_EVENT] as? String ?: DEFAULT_EVENT)
+      VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String,
+                                  event = it.properties[PROP_VUE_MODEL_EVENT] as? String)
     }
   ?: VueModelDirectiveProperties()

@@ -27,7 +27,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val methods: List<VueMethod> get() = get(METHODS)
   override val props: List<VueInputProperty> get() = get(PROPS)
 
-  override val model: VueModelDirectiveProperties get() = get(MODEL)
+  override val model: VueModelDirectiveProperties? get() = get(MODEL)
 
   override val emits: List<VueEmitCall> get() = get(EMITS)
   override val template: VueTemplate<*>? get() = if (this is VueRegularComponent) get(TEMPLATE) else null
@@ -138,9 +138,8 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
       return VueModelDirectiveProperties()
     }
 
-    override fun merge(arg1: VueModelDirectiveProperties, arg2: VueModelDirectiveProperties): VueModelDirectiveProperties {
-      return arg2
-    }
+    override fun merge(arg1: VueModelDirectiveProperties, arg2: VueModelDirectiveProperties): VueModelDirectiveProperties =
+      VueModelDirectiveProperties(arg1.prop ?: arg2.prop, arg1.event ?: arg2.event)
   }
 
   private class TemplateAccessor(extInfoAccessor: (VueContainerInfo) -> VueTemplate<*>?)

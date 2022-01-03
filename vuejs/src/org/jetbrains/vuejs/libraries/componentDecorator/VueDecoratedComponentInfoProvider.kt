@@ -59,8 +59,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
             }
             MODEL_DEC -> if (member is PropertySignature && model === null) {
               val name = getNameFromDecorator(decorator)
-              model = VueModelDirectiveProperties(member.memberName,
-                                                  name ?: VueModelDirectiveProperties.DEFAULT_EVENT)
+              model = VueModelDirectiveProperties(member.memberName, name)
               props.add(VueDecoratedInputProperty(member.memberName, member, decorator, 1))
             }
             EMIT_DEC -> if (member is PropertySignature) {

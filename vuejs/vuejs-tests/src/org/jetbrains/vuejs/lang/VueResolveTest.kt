@@ -1769,6 +1769,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testComponentModelProperty() {
+    myFixture.configureVueDependencies(VUE_2_6_10)
     val file = myFixture.configureByText("a-component.vue", """
       <script>
         export default {
@@ -1779,8 +1780,8 @@ export default class UsageComponent extends Vue {
       </script>
     """)
     val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
-    assertEquals("value", component.model.prop)
-    assertEquals("foo", component.model.event)
+    assertEquals(null, component.model?.prop)
+    assertEquals("foo", component.model?.event)
   }
 
   fun testResolveToUnresolvedComponent() {
@@ -1799,6 +1800,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testAtComponentResolution() {
+    myFixture.configureVueDependencies(VUE_2_6_10)
     val file = myFixture.configureByFile("at_component.vue")
     val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
 
@@ -1809,11 +1811,12 @@ export default class UsageComponent extends Vue {
     assertSameElements(getNames(component.computed), "computedBar", "computedSetter", "syncedName")
     assertSameElements(getNames(component.methods), "addToCount", "getBar", "resetCount")
     assertSameElements(getNames(component.emits), "add-to-count", "reset", "update:name")
-    assertEquals(component.model.prop, "checked")
-    assertEquals(component.model.event, "change")
+    assertEquals("checked", component.model?.prop)
+    assertEquals("change", component.model?.event)
   }
 
   fun testAtComponentResolutionTs() {
+    myFixture.configureVueDependencies(VUE_2_6_10)
     val file = myFixture.configureByFile("at_component_ts.vue")
     val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
 
@@ -1824,8 +1827,8 @@ export default class UsageComponent extends Vue {
     assertSameElements(getNames(component.computed), "computedBar", "computedSetter", "syncedName")
     assertSameElements(getNames(component.methods), "addToCount", "getBar", "resetCount")
     assertSameElements(getNames(component.emits), "add-to-count", "reset", "update:name")
-    assertEquals(component.model.prop, "checked")
-    assertEquals(component.model.event, "change")
+    assertEquals("checked", component.model?.prop)
+    assertEquals("change", component.model?.event)
   }
 
   fun testWebTypesSource() {

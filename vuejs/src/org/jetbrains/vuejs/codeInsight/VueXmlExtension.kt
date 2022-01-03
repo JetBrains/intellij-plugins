@@ -42,8 +42,9 @@ class VueXmlExtension : WebSymbolsXmlExtension() {
       var name: String? = null
       if (info is VueAttributeNameParser.VueDirectiveInfo) {
         if (info.directiveKind == VueAttributeNameParser.VueDirectiveKind.MODEL) {
-          name = (tag.descriptor as? WebSymbolElementDescriptor)?.getModel()?.prop
-                 ?: VueModelDirectiveProperties.DEFAULT_PROP
+          name = info.arguments
+                 ?: (tag.descriptor as? WebSymbolElementDescriptor)?.getModel()?.prop
+                 ?: VueModelDirectiveProperties.getDefault(tag).prop
         }
         else if (info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND
                  && info.arguments != null) {

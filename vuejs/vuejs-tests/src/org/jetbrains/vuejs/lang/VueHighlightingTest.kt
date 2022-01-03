@@ -120,7 +120,9 @@ const props = {seeMe: {}}
 
   fun testRequiredAttributeWithModifierTest() = doDirTest()
 
-  fun testRequiredAttributeWithVModel() = doDirTest()
+  fun testRequiredAttributeWithVModel() = doDirTest(listOf(VueTestModule.VUE_2_6_10))
+
+  fun testRequiredAttributeWithVModel3() = doDirTest(listOf(VueTestModule.VUE_3_0_0))
 
   fun testVueAttributeInCustomTag() = doTest()
 

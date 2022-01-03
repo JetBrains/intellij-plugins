@@ -21,7 +21,7 @@ abstract class VueContainerDelegate(val delegate: VueRegularComponent) : VueCont
     get() = delegate.slots
   override val extends: List<VueContainer>
     get() = delegate.extends
-  override val model: VueModelDirectiveProperties
+  override val model: VueModelDirectiveProperties?
     get() = delegate.model
   override val components: Map<String, VueComponent>
     get() = delegate.components

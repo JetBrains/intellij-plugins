@@ -10,6 +10,7 @@ import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
@@ -45,6 +46,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.castSafelyTo
+import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
@@ -411,3 +413,8 @@ fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, contai
   }, VueModelVisitor.Proximity.GLOBAL)
   return result
 }
+
+fun SemVer.withoutPreRelease() =
+  if (this.preRelease != null)
+    SemVer("${this.major}.${this.minor}.${this.patch}", this.major, this.minor, this.patch)
+  else this

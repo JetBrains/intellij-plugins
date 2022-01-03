@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.web.getModel
 
 class VueExpandVModelIntention : JavaScriptIntention() {
@@ -46,8 +47,9 @@ class VueExpandVModelIntention : JavaScriptIntention() {
     val componentDescriptor = componentTag.descriptor as? WebSymbolElementDescriptor ?: return
 
     val model = componentDescriptor.getModel()
-    var event = model.event
-    val prop = model.prop
+    val defaultModel = VueModelDirectiveProperties.getDefault(psiElement)
+    var event = model.event ?: defaultModel.event
+    val prop = model.prop ?: defaultModel.prop
     val info = VueAttributeNameParser.parse(parent.name, parent.parent)
 
     val modifiers = info.modifiers
