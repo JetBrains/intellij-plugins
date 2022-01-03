@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
+import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.context.VUE_3_0_0
+import org.jetbrains.vuejs.context.detectVueVersion
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -17,16 +20,26 @@ interface VueContainer : VueEntitiesContainer {
   val element: String? get() = null
   val extends: List<VueContainer>
   val delimiters: Pair<String, String>? get() = null
-  val model: VueModelDirectiveProperties
+  val model: VueModelDirectiveProperties?
 }
 
 data class VueModelDirectiveProperties(
-  val prop: String = DEFAULT_PROP,
-  val event: String = DEFAULT_EVENT
+  val prop: String? = null,
+  val event: String? = null
 ) {
   companion object {
-    const val DEFAULT_PROP = "value"
-    const val DEFAULT_EVENT = "input"
+
+    private val DEFAULT_V2 = VueModelDirectiveProperties("value", "input")
+    private val DEFAULT_V3 = VueModelDirectiveProperties("modelValue", "update:modelValue")
+
+    fun getDefault(version: SemVer?): VueModelDirectiveProperties =
+      if (version == null || version >= VUE_3_0_0)
+        DEFAULT_V3
+      else
+        DEFAULT_V2
+
+    fun getDefault(context: PsiElement): VueModelDirectiveProperties =
+      getDefault(detectVueVersion(context))
   }
 }
 

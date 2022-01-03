@@ -26,6 +26,7 @@ import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
+import org.jetbrains.vuejs.codeInsight.withoutPreRelease
 import org.jetbrains.vuejs.libraries.nuxt.*
 import org.jetbrains.vuejs.libraries.nuxt.actions.InstallNuxtTypesAction
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtApplication
@@ -45,12 +46,8 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
             ?.let { PackageJsonUtil.findChildPackageJsonFile(it.moduleSourceRoot) }
             ?.let { PackageJsonData.getOrCreate(it) }
             ?.version
-            ?.let {
-              // Remove prerelease part
-              if (it.preRelease != null)
-                SemVer("${it.major}.${it.minor}.${it.patch}", it.major, it.minor, it.patch)
-              else it
-            }, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+            ?.withoutPreRelease()
+          , VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
     }
   }

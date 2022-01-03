@@ -176,8 +176,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class ModelAccessor : MemberAccessor<VueModelDirectiveProperties>() {
     override fun build(declaration: JSElement): VueModelDirectiveProperties {
-      var prop = VueModelDirectiveProperties.DEFAULT_PROP
-      var event = VueModelDirectiveProperties.DEFAULT_EVENT
+      var prop: String? = null
+      var event: String? = null
       ContainerMember.Model.readMembers(declaration).forEach { (name, element) ->
         (element as? JSProperty)?.value
           ?.let { getTextIfLiteral(it) }
