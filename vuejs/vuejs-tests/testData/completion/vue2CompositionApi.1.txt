@@ -1,6 +1,6 @@
-!foo#null#101
+!foo#string#101
 !increment#any#101
-!state#null#101
+!state#{double: {}, count: number}#101
 !$attrs#null#100
 !$children#Vue[]#100
 !$createElement#CreateElement#100

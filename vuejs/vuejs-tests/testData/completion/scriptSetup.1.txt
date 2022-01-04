@@ -1,9 +1,9 @@
 Foo#null
-count#null
+count#number
 foo#null
 foos#null
-inc#null
-props#null
+inc#function(): void
+props#{readonly foo?: InferPropType<String | StringConstructor>}
 ref#<T extends object>(value: T) => ToRef<T>
 vClickOutside#null
 $#ComponentInternalInstance

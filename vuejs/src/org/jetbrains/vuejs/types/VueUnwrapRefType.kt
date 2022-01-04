@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.types
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
+import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
@@ -28,7 +29,8 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
   override fun hashCodeImpl(): Int = typeToUnwrap.hashCode()
 
   override fun acceptChildren(visitor: JSRecursiveTypeVisitor) {
-    typeToUnwrap.accept(visitor)
+    // We don't want to expose any children,
+    // otherwise type will not be rendered in JS context.
   }
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
@@ -37,7 +39,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {
-      builder.append(SHALLOW_UNWRAP_SINGLE_REF_ARTIFICIAL_TYPE).append("<")
+      builder.append("#VueUnwrapRefType").append("<")
       typeToUnwrap.buildTypeText(format, builder)
       builder.append(">")
       return
@@ -67,10 +69,13 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
         .findPropertySignature("val")
         ?.jsType
         ?.substitute()
+        ?.substituteUnwrapRecursively()
       return unwrapped ?: JSAnyType.get(source)
     }
     else {
       return JSGenericTypeImpl(substituted.source, unwrapRef.jsType, substituted)
+        .substitute()
+        .substituteUnwrapRecursively()
     }
   }
 
@@ -90,10 +95,49 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
       }
     }
 
+  private fun JSType.unwrapAliases(): JSType {
+    var res = this
+    while (res is JSAliasTypeImpl) {
+      res = res.originalType
+    }
+    return res
+  }
+
+  private fun JSType.substituteUnwrapRecursively() =
+    (if (source.isJavaScript) {
+      // In JS context `unknown` doesn't work properly in conditionals, replace it with `any`
+      transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
+        override fun `fun`(type: JSType): JSType =
+          if (type is JSUnknownType)
+            JSAnyType.get(type.source)
+          else type
+      })
+    } else this)
+      .transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
+        override fun `fun`(type: JSType): JSType {
+          var result = type.unwrapAliases()
+            .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
+          // Expand only generics with "Unwrap" in the type name
+          if (result is JSGenericTypeImpl
+              && result.type
+                .takeIf { (it is JSAliasTypeImpl || it is JSNamedType) }
+                ?.getTypeText(JSType.TypeTextFormat.SIMPLE)
+                ?.contains("Unwrap") == true) {
+            result = result.substitute()
+              .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
+          }
+          // In JS context `unknown` doesn't work properly in conditionals,
+          // so we need to ensure that we are not left with huge list of expanded conditionals,
+          // just in case there is some `unknown` out there.
+          return if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java))
+            result.transformTypeHierarchy(this)
+          else type
+        }
+      })
+
   companion object {
 
     private const val SHALLOW_UNWRAP_REF_TYPE = "ShallowUnwrapRef"
-    private const val SHALLOW_UNWRAP_SINGLE_REF_ARTIFICIAL_TYPE = "ShallowUnwrapSingleRef"
     private const val UNWRAP_REF_TYPE = "UnwrapRef"
   }
 
