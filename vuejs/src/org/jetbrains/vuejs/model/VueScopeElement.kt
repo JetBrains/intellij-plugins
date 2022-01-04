@@ -115,4 +115,31 @@ interface VueScopeElement {
     }, VueModelVisitor.Proximity.GLOBAL)
   }
 
+  fun collectModelDirectiveProperties(): VueModelDirectiveProperties {
+    var prop: String? = null
+    var event: String? = null
+    acceptEntities(object : VueModelVisitor() {
+      override fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean {
+        return if (component is VueContainer) visitContainer(component) else true
+      }
+
+      override fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean {
+        return visitContainer(application)
+      }
+
+      override fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
+        return visitContainer(mixin)
+      }
+
+      fun visitContainer(container: VueContainer): Boolean {
+        container.model?.let {
+          prop = prop ?: it.prop
+          event = event ?: it.event
+        }
+        return prop == null && event == null
+      }
+    }, VueModelVisitor.Proximity.GLOBAL)
+    return VueModelDirectiveProperties(prop, event)
+  }
+
 }

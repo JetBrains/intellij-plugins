@@ -518,9 +518,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             else emptyList()
           }
           KIND_VUE_MODEL -> {
-            (item as? VueContainer)?.model?.let {
-              listOf(VueModelWrapper(this.origin, it))
-            }
+            (item as? VueContainer)
+              ?.collectModelDirectiveProperties()
+              ?.takeIf { it.prop != null || it.event != null }
+              ?.let { listOf(VueModelWrapper(this.origin, it)) }
             ?: emptyList()
           }
           else -> emptyList()
