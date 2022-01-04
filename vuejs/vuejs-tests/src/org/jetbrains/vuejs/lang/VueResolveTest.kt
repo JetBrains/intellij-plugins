@@ -2007,13 +2007,13 @@ export default class UsageComponent extends Vue {
       Triple("w<B<caret>ar>", null, null),
       Triple("w<C<caret>ar>", null, null),
       Triple("w<div v-f<caret>oo", null, null)
-    ).forEach {
+    ).forEach { (signature, offset, expectedFileName) ->
       myFixture.configureFromTempProjectFile("index.html")
-      if (it.second == null) {
-        assertEmpty(myFixture.multiResolveWebSymbolReference(it.first))
+      if (offset == null) {
+        assertEmpty(myFixture.multiResolveWebSymbolReference(signature))
       }
       else {
-        myFixture.checkGotoDeclaration(it.first, it.second!!, it.third)
+        myFixture.checkGotoDeclaration(signature, offset, expectedFileName)
       }
     }
   }
