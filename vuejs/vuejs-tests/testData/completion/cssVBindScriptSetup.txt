@@ -1,2 +1,2 @@
 count#number
-foo#null
+foo#string

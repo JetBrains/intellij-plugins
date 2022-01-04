@@ -1,6 +1,6 @@
 !foo#string#101
 !increment#any#101
-!state#null#101
+!state#{double: any, count: number}#101
 !$#ComponentInternalInstance#100
 !$attrs#null#100
 !$data#null#100

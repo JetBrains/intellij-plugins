@@ -1,5 +1,5 @@
-!count#UnwrapRef<number>#101
-!double#UnwrapRef<ComputedRef<unknown>>#101
+!count#number#101
+!double#any#101
 constructor#Function#98
 hasOwnProperty#boolean#98
 isPrototypeOf#boolean#98

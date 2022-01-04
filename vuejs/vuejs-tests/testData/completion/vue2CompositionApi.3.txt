@@ -1,4 +1,4 @@
-!count#null#101
+!count#number#101
 !double#null#101
 constructor#Function#98
 hasOwnProperty#boolean#98
