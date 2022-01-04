@@ -3,7 +3,7 @@ count#number
 foo#null
 foos#null
 inc#function(): void
-props#{readonly foo?: InferPropType<String | StringConstructor>}
+props#any
 ref#<T extends object>(value: T) => ToRef<T>
 vClickOutside#null
 $#ComponentInternalInstance

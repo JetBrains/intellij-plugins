@@ -49,6 +49,20 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType {
     val substituted = VueCompositionInfoHelper.substituteRefType(typeToUnwrap)
+      .let {
+        if (source.isJavaScript) {
+          // In JS context `unknown` doesn't work properly in conditionals, replace it with `any`
+          it.transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
+            override fun `fun`(type: JSType): JSType =
+              if (type is JSUnknownType)
+                JSAnyType.get(type.source)
+              else type
+          })
+        }
+        else it
+      }
+
+    if (JSTypeUtils.isAnyType(substituted)) return JSAnyType.get(source)
 
     val hasUnwrap = (substituted as? JSGenericTypeImpl)
       ?.type
@@ -104,36 +118,27 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
   }
 
   private fun JSType.substituteUnwrapRecursively() =
-    (if (source.isJavaScript) {
-      // In JS context `unknown` doesn't work properly in conditionals, replace it with `any`
-      transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
-        override fun `fun`(type: JSType): JSType =
-          if (type is JSUnknownType)
-            JSAnyType.get(type.source)
-          else type
-      })
-    } else this)
-      .transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
-        override fun `fun`(type: JSType): JSType {
-          var result = type.unwrapAliases()
+    transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
+      override fun `fun`(type: JSType): JSType {
+        var result = type.unwrapAliases()
+          .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
+        // Expand only generics with "Unwrap" in the type name
+        if (result is JSGenericTypeImpl
+            && result.type
+              .takeIf { (it is JSAliasTypeImpl || it is JSNamedType) }
+              ?.getTypeText(JSType.TypeTextFormat.SIMPLE)
+              ?.contains("Unwrap") == true) {
+          result = result.substitute()
             .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
-          // Expand only generics with "Unwrap" in the type name
-          if (result is JSGenericTypeImpl
-              && result.type
-                .takeIf { (it is JSAliasTypeImpl || it is JSNamedType) }
-                ?.getTypeText(JSType.TypeTextFormat.SIMPLE)
-                ?.contains("Unwrap") == true) {
-            result = result.substitute()
-              .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
-          }
-          // In JS context `unknown` doesn't work properly in conditionals,
-          // so we need to ensure that we are not left with huge list of expanded conditionals,
-          // just in case there is some `unknown` out there.
-          return if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java))
-            result.transformTypeHierarchy(this)
-          else type
         }
-      })
+        // In JS context `unknown` doesn't work properly in conditionals,
+        // so we need to ensure that we are not left with huge list of expanded conditionals,
+        // just in case there is some `unknown` out there.
+        return if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java))
+          result.transformTypeHierarchy(this)
+        else type
+      }
+    })
 
   companion object {
 
