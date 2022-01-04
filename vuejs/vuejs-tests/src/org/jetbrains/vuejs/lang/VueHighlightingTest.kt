@@ -46,14 +46,15 @@ class VueHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
-  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList()) {
+  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
       myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
     }
     myFixture.copyDirectoryToProject(testName, ".")
-    myFixture.configureFromTempProjectFile("$testName.vue")
-      .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$testName.vue")
+    val actualFileName = fileName ?: "$testName.vue"
+    myFixture.configureFromTempProjectFile(actualFileName)
+      .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$actualFileName")
     myFixture.checkHighlighting()
   }
 
@@ -517,6 +518,10 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   fun testRefUnwrap() {
     myFixture.enableInspections(VueInspectionsProvider())
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+  }
+
+  fun testVModelWithMixin() {
+    doDirTest(fileName = "MyForm.vue")
   }
 
 }
