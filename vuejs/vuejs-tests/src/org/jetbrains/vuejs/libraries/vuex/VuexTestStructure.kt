@@ -64,6 +64,11 @@ class VuexTestStructure : BasePlatformTestCase() {
     doTestStructure()
   }
 
+  fun testWithRecursiveProp() {
+    myFixture.configureStore(VuexTestStore.RecursiveStore)
+    doTestStructure()
+  }
+
   private fun doTestStructure(createFile: Boolean = true) {
     if (createFile) {
       myFixture.configureByText("foo.vue", "<script>export default{}</script>")

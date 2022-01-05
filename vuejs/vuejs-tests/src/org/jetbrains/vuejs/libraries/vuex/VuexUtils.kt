@@ -17,6 +17,7 @@ enum class VuexTestStore(val dirName: String, val isComposition: Boolean = false
   Comics("comics"),
   CompositionCounter("composition-counter", true),
   CompositionShoppingCart("composition-shopping-cart", true),
+  RecursiveStore("recursive-store")
 }
 
 fun CodeInsightTestFixture.configureStore(store: VuexTestStore) {
