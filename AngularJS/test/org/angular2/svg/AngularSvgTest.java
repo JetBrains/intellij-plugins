@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.svg;
 
+import com.intellij.javascript.web.WebTestUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -29,13 +30,8 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts");
     AngularTestUtil.moveToOffsetBySignature("<<caret>paths></paths>", myFixture);
     myFixture.completeBasic();
-    assertEquals(StreamEx.of(
-      "a", "altGlyphDef", "animate", "animateColor", "animateMotion", "animateTransform", "circle", "clipPath", "color-profile", "cursor",
-      "defs", "desc", "ellipse", "filter", "font", "font-face", "foreignObject", "g", "image", "line", "linearGradient", "marker", "mask",
-      "metadata", "path", "pattern", "polygon", "polyline", "radialGradient", "rect", "script", "set", "style", "svg", "switch", "symbol",
-      "text", "title", "use", "view"
-                 ).map(str -> str + "#http://www.w3.org/2000/svg").sorted().toList(),
-                 sorted(renderLookupItems(myFixture, false, true)));
+    WebTestUtil.checkListByFile(myFixture, WebTestUtil.renderLookupItems(myFixture, true, true),
+                                "svg-completion.component.txt", false);
   }
 
   public void testExpressionsCompletion() {
