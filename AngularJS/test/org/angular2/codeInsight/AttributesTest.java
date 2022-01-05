@@ -921,7 +921,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("animationCallbacks.html", "animationCallbacks.ts", "package.json");
     myFixture.checkHighlighting();
-
   }
 
   public void testAttributeNameMapping() {
@@ -955,33 +954,35 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "type");
   }
 
-  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Standard id html attribute resolution fails")
   public void testMultiResolve() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("multi-resolve.html", "multi-resolve.ts", "package.json");
     myFixture.checkHighlighting();
 
     Map<String, List<String>> data = newLinkedHashMap(
-      pair("id=", asList("id", "id: /*c1*/ string")),
-      pair("[id]=", asList("/**\n" +
-                           "     * Returns the value of element's id content attribute. Can be set to change it.\n" +
-                           "     */\n" +
-                           "    id: string", "id: /*c1*/ string")),
-      pair("[attr.id]=", singletonList("id")),
-      pair("bar=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
-      pair("[bar]=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
-      pair("boo=", asList("boo: /*c1*/ number", "boo: /*c2*/ string")),
-      pair("[boo]=", asList("boo: /*c1*/ number", "boo: /*c2*/ string"))
+      pair("i<caret>d=", asList("id", "id: /*c1*/ string")),
+      pair("[i<caret>d]=", asList("/**\n" +
+                                  "     * Returns the value of element's id content attribute. Can be set to change it.\n" +
+                                  "     */\n" +
+                                  "    id: string", "id: /*c1*/ string")),
+      pair("[attr.i<caret>d]=", singletonList("id")),
+      pair("b<caret>ar=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
+      pair("[b<caret>ar]=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
+      pair("bo<caret>o=", asList("boo: /*c1*/ number", "boo: /*c2*/ string")),
+      pair("[b<caret>oo]=", asList("boo: /*c1*/ number", "boo: /*c2*/ string"))
     );
 
     for (Map.Entry<String, List<String>> entry : data.entrySet()) {
       String location = entry.getKey();
-      assertSameElements(multiResolveWebSymbolReference(myFixture, location.charAt(0) + "<caret>" + location.substring(1))
+      assertSameElements(multiResolveWebSymbolReference(myFixture, location)
                            .stream()
                            .map(s -> {
                              if (s instanceof PsiSourcedWebSymbol) {
                                var source = ((PsiSourcedWebSymbol)s).getSource();
-                               if (source.getText() != null) {
+                               if (source == null) {
+                                 return "<null>";
+                               }
+                               else if (source.getText() != null) {
                                  return source.getText();
                                }
                                else {
@@ -1007,7 +1008,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testNgContentCompletion() {
     myFixture.configureByFiles("ng-content-completion.html", "package.json");
     myFixture.completeBasic();
-    assertEquals(newArrayList("select","xml:base", "xml:lang", "xml:space"), myFixture.getLookupElementStrings());
+    assertEquals(newArrayList("select", "xml:base", "xml:lang", "xml:space"), myFixture.getLookupElementStrings());
   }
 
   public void testNgContentInspection() {
