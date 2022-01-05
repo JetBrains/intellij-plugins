@@ -2,6 +2,7 @@
 package org.angular2.web
 
 import com.intellij.javascript.web.symbols.*
+import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.HTML
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.JS
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
@@ -9,12 +10,14 @@ import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
+import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2CodeInsightUtils.wrapWithImportDeclarationModuleHandler
@@ -35,9 +38,10 @@ import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PR
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
-class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
+class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
 
-  private val scope = Angular2DeclarationsScope(context)
+  private val scope = Angular2DeclarationsScope(context.containingFile)
+  private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
@@ -79,6 +83,13 @@ class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
   override fun apply(item: WebSymbolCodeCompletionItem,
                      namespace: WebSymbolsContainer.Namespace?,
                      kind: SymbolKind): WebSymbolCodeCompletionItem? {
+    // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
+    // remove everything else from completion
+    if (svgContext
+        && namespace == HTML
+        && kind == WebSymbol.KIND_HTML_ELEMENTS
+        && item.name !in svgAllowedElements)
+      return null
     val symbol = item.symbol
     if (symbol == null || namespace != JS || !kinds.contains(kind)) return item
     val directives = symbol.unwrapMatchedSymbols()
@@ -106,6 +117,8 @@ class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
   }
 
   companion object {
+    private val svgAllowedElements = setOf("ng-container", "ng-template")
+
     private val kinds = setOf(KIND_NG_STRUCTURAL_DIRECTIVES,
                               KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS, KIND_NG_DIRECTIVE_ATTRIBUTES,
                               KIND_NG_DIRECTIVE_INPUTS, KIND_NG_DIRECTIVE_OUTPUTS, KIND_NG_DIRECTIVE_IN_OUTS,
@@ -134,7 +147,7 @@ class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
     override fun get(context: PsiElement, framework: FrameworkId?): WebSymbolsScope? =
       framework
         ?.takeIf { it == Angular2Framework.ID }
-        ?.let { Angular2WebSymbolsScope(context.containingFile) }
+        ?.let { Angular2WebSymbolsScope(context) }
 
   }
 
