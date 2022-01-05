@@ -954,7 +954,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "type");
   }
 
-  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Standard id html attribute resolution fails")
   public void testMultiResolve() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("multi-resolve.html", "multi-resolve.ts", "package.json");
@@ -973,12 +972,15 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
     for (Map.Entry<String, List<String>> entry : data.entrySet()) {
       String location = entry.getKey();
-      assertSameElements(multiResolveWebSymbolReference(myFixture, location.charAt(0) + "<caret>" + location.substring(1))
+      assertSameElements(multiResolveWebSymbolReference(myFixture, location)
                            .stream()
                            .map(s -> {
                              if (s instanceof PsiSourcedWebSymbol) {
                                var source = ((PsiSourcedWebSymbol)s).getSource();
-                               if (source.getText() != null) {
+                               if (source == null) {
+                                 return "<null>";
+                               }
+                               else if (source.getText() != null) {
                                  return source.getText();
                                }
                                else {
