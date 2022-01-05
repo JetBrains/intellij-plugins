@@ -165,8 +165,6 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   return detectLanguage(scriptTag)
 }
 
-val BOOLEAN_TYPE get() = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
-
 fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
   return resolveElementTo(element, JSObjectLiteralExpression::class)
 }
@@ -242,8 +240,11 @@ fun collectPropertiesRecursively(element: JSObjectLiteralExpression): List<Pair<
   val initialPropsList = element.propertiesIncludingSpreads
   val queue = ArrayDeque<JSElement>(initialPropsList.size)
   queue.addAll(initialPropsList)
+  val visited = mutableSetOf<PsiElement>()
   while (queue.isNotEmpty()) {
-    when (val property = queue.pollLast()) {
+    val property = queue.pollLast()
+    if (!visited.add(property)) continue
+    when (property) {
       is JSSpreadExpression -> {
         objectLiteralFor(property.expression)
           ?.propertiesIncludingSpreads
