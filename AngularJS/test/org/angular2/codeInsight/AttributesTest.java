@@ -961,9 +961,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
     Map<String, List<String>> data = newLinkedHashMap(
       pair("i<caret>d=", asList("id", "id: /*c1*/ string")),
-      pair("[i<caret>d]=", asList("/**\n" +
-                                  "     * Returns the value of element's id content attribute. Can be set to change it.\n" +
-                                  "     */\n" +
+      pair("[i<caret>d]=", asList("/** Returns the value of element's id content attribute. Can be set to change it. */\n" +
                                   "    id: string", "id: /*c1*/ string")),
       pair("[attr.i<caret>d]=", singletonList("id")),
       pair("b<caret>ar=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
