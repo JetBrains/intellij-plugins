@@ -71,6 +71,10 @@
     <action id="Perforce.Force.Refresh" class="org.jetbrains.idea.perforce.actions.ForceRefreshAction">
       <add-to-group group-id="ChangesViewToolbar" relative-to-action="ChangesView.Refresh" anchor="after"/>
     </action>
+
+    <action id="Perforce.Toolbar.ShowMoreActions" class="org.jetbrains.idea.perforce.actions.PerforceQuickActionsToolbarPopup">
+      <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="last"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
