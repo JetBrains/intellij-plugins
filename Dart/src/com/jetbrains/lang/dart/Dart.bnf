@@ -251,14 +251,15 @@ classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? 
 mixinDeclaration ::= metadata* 'mixin' componentName typeParameters? onMixins? interfaces? classBody
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
-enumDefinition ::= metadata* 'enum' componentName '{' enumConstantDeclaration (',' enumConstantDeclaration)* ','? '}'
-{pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
+enumDefinition ::= metadata* 'enum' componentName typeParameters? mixins? interfaces? '{' enumConstantDeclaration? (',' enumConstantDeclaration)* ','? ';'? classMemberDefinition* '}'
+ {pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
-enumConstantDeclaration ::= componentName
+enumConstantDeclaration ::= metadata* componentName typeArguments? arguments? |
+                            metadata* componentName typeArguments? '.' componentName arguments
 {
   mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"
   implements="com.jetbrains.lang.dart.psi.DartComponent"
-  methods = [getMetadataList]
+  methods= [getMetadataList]
 }
 
 extensionDeclaration ::= 'extension' typeParameters? 'on' type '?'? classBody |

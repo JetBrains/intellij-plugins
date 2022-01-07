@@ -41,8 +41,68 @@ public class DartEnumDefinitionImpl extends AbstractDartPsiClass implements Dart
 
   @Override
   @NotNull
+  public List<DartFactoryConstructorDeclaration> getFactoryConstructorDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartFactoryConstructorDeclaration.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartGetterDeclaration> getGetterDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartGetterDeclaration.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartIncompleteDeclaration> getIncompleteDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartIncompleteDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DartInterfaces getInterfaces() {
+    return findChildByClass(DartInterfaces.class);
+  }
+
+  @Override
+  @NotNull
   public List<DartMetadata> getMetadataList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartMethodDeclaration> getMethodDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMethodDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DartMixins getMixins() {
+    return findChildByClass(DartMixins.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartNamedConstructorDeclaration> getNamedConstructorDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNamedConstructorDeclaration.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartSetterDeclaration> getSetterDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSetterDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartVarDeclarationList> getVarDeclarationListList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartVarDeclarationList.class);
   }
 
 }
