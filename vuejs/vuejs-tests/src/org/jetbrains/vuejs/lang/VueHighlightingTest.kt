@@ -34,6 +34,10 @@ class VueHighlightingTest : BasePlatformTestCase() {
   private fun doTest(packageJsonDependencies: String? = null,
                      addNodeModules: List<VueTestModule> = emptyList(),
                      extension: String = "vue",
+                     checkWarnings: Boolean = true,
+                     checkInfos: Boolean = false,
+                     checkWeakWarnings: Boolean = true,
+                     ignoreExtraHighlighting: Boolean = false,
                      vararg files: String) {
     if (packageJsonDependencies != null) {
       createPackageJsonWithVueDependency(myFixture, packageJsonDependencies)
@@ -43,7 +47,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
     }
     myFixture.configureByFiles(*files)
     myFixture.configureByFile(getTestName(true) + "." + extension)
-    myFixture.checkHighlighting()
+    myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings, ignoreExtraHighlighting)
   }
 
   private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null) {
@@ -325,18 +329,7 @@ const props = {seeMe: {}}
   }
 
   fun testSemanticHighlighting() {
-    myFixture.configureByText("c-component.vue", """
-<script lang="ts">
-namespace <info descr="moduleName">space</info> {
-    export class <info descr="exported class">SpaceInterface</info> {
-    }
-    var <info descr="static field">i</info>:<info descr="exported class">SpaceInterface</info>;
-}
-import <info descr="exported class">SpaceInterface</info> = <info descr="moduleName">space</info>.<info descr="exported class">SpaceInterface</info>;
-var <info descr="global variable">i</info>:<info descr="exported class">SpaceInterface</info>;
-</script>
-""")
-    myFixture.checkHighlighting(false, true, true)
+    doTest(checkInfos = true, checkWarnings = false, checkWeakWarnings = false)
   }
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
@@ -522,6 +515,10 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testVModelWithMixin() {
     doDirTest(fileName = "MyForm.vue")
+  }
+
+  fun testScriptSetupSymbolsHighlighting() {
+    doTest(checkInfos = true)
   }
 
 }
