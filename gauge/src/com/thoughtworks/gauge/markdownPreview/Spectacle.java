@@ -26,15 +26,13 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
 
 final class Spectacle {
   private static final Logger LOG = Logger.getInstance(Spectacle.class);
@@ -96,7 +94,8 @@ final class Spectacle {
   }
 
   void notifyToInstall() {
-    Notification notification = STANDARD_NOTIFICATION.createNotification(
+    Notification notification = new Notification(
+      NotificationGroups.GAUGE_GROUP,
       GaugeBundle.message("notification.title.error.specification.preview"),
       GaugeBundle.message("notification.content.missing.plugin.spectacle.to.install.do"),
       NotificationType.ERROR);
