@@ -137,6 +137,7 @@
 !DragEvent#DragEvent#1
 !DynamicsCompressorNode#DynamicsCompressorNode#1
 !Element#Element#1
+!ElementInternals#ElementInternals#1
 !ErrorEvent#ErrorEvent#1
 !Event#Event#1
 !EventSource#EventSource#1
@@ -147,7 +148,7 @@
 !FileReader#FileReader#1
 !FileSystem#FileSystem#1
 !FileSystemDirectoryEntry#FileSystemDirectoryEntry#1
-!~FileSystemDirectoryReader#FileSystemDirectoryReader#1
+!FileSystemDirectoryReader#FileSystemDirectoryReader#1
 !FileSystemEntry#FileSystemEntry#1
 !FileSystemFileEntry#FileSystemFileEntry#1
 !FocusEvent#FocusEvent#1
@@ -314,7 +315,6 @@
 !PageTransitionEvent#PageTransitionEvent#1
 !PannerNode#PannerNode#1
 !Path2D#Path2D#1
-!~PaymentAddress#PaymentAddress#1
 !PaymentMethodChangeEvent#PaymentMethodChangeEvent#1
 !PaymentRequest#PaymentRequest#1
 !PaymentRequestUpdateEvent#PaymentRequestUpdateEvent#1

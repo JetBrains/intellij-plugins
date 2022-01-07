@@ -87,7 +87,7 @@
 (selectionchange)%null#Event#50
 (selectstart)%null#Event#50
 (stalled)%null#Event#50
-(submit)%null#Event#50
+(submit)%null#SubmitEvent#50
 (suspend)%null#Event#50
 (timeupdate)%null#Event#50
 (toggle)%null#Event#50

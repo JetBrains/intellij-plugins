@@ -58,10 +58,10 @@ ondragover#(this:Window, ev: DragEvent) => any
 ondragstart#(this:Window, ev: DragEvent) => any
 ondurationchange#(this:Window, ev: Event) => any
 onformdata#(this:Window, ev: FormDataEvent) => any
-ongamepadconnected#(this:Window, ev: Event) => any
-ongamepaddisconnected#(this:Window, ev: Event) => any
+ongamepadconnected#(this:Window, ev: GamepadEvent) => any
+ongamepaddisconnected#(this:Window, ev: GamepadEvent) => any
 ongotpointercapture#(this:Window, ev: PointerEvent) => any
-onhashchange#(this:Window, ev: Event) => any
+onhashchange#(this:Window, ev: HashChangeEvent) => any
 oninvalid#(this:Window, ev: Event) => any
 onlanguagechange#null
 onload#(this:Window, ev: Event) => any

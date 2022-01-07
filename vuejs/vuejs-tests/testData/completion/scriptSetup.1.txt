@@ -134,6 +134,7 @@ DocumentType#DocumentType
 DragEvent#DragEvent
 DynamicsCompressorNode#DynamicsCompressorNode
 Element#Element
+ElementInternals#ElementInternals
 ErrorEvent#ErrorEvent
 Event#Event
 EventSource#EventSource
@@ -311,7 +312,6 @@ OverconstrainedError#OverconstrainedError
 PageTransitionEvent#PageTransitionEvent
 PannerNode#PannerNode
 Path2D#Path2D
-PaymentAddress#PaymentAddress
 PaymentMethodChangeEvent#PaymentMethodChangeEvent
 PaymentRequest#PaymentRequest
 PaymentRequestUpdateEvent#PaymentRequestUpdateEvent
