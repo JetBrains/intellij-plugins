@@ -1,6 +1,6 @@
 <style scoped>
 /* deprecated selector */
-::v-deep .foo {}
+::<weak_warning descr="Deprecated symbol used, consult docs for better alternative">v-deep</weak_warning> .foo {}
 /* deep selectors */
 ::v-deep(.foo) {}
 /* shorthand */
