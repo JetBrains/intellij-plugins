@@ -164,11 +164,6 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
       }
 
       @Override
-      public HistoryAsTreeProvider getHistoryAsTreeProvider() {
-        return null;
-      }
-
-      @Override
       public VcsHistorySession copy() {
         return createSession(p4File, getRevisionList(), getCurrentRevisionNumber());
       }
