@@ -1,9 +1,9 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
+import com.intellij.ide.util.BasePropertyService;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.ide.util.PropertiesComponentImpl;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
@@ -51,8 +51,8 @@ public abstract class HbParserTest extends ParsingTestCase {
     myProject.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
 
     // PropertiesComponent is used by HbConfig
-    app.registerService(PropertiesComponent.class, PropertiesComponentImpl.class);
-    myProject.registerService(PropertiesComponent.class, PropertiesComponentImpl.class);
+    app.registerService(PropertiesComponent.class, BasePropertyService.class);
+    myProject.registerService(PropertiesComponent.class, BasePropertyService.class);
 
     app.registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
     registerParserDefinition(new HbParseDefinition());
