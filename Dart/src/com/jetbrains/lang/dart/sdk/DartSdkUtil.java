@@ -26,7 +26,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public final class DartSdkUtil {
@@ -125,9 +128,9 @@ public final class DartSdkUtil {
 
   @Nullable
   public static String getFirstKnownDartSdkPath() {
-    final String[] knownPaths = PropertiesComponent.getInstance().getValues(DART_SDK_KNOWN_PATHS);
-    if (knownPaths != null && knownPaths.length > 0 && isDartSdkHome(knownPaths[0])) {
-      return knownPaths[0];
+    List<String> knownPaths = PropertiesComponent.getInstance().getList(DART_SDK_KNOWN_PATHS);
+    if (knownPaths != null && !knownPaths.isEmpty() && isDartSdkHome(knownPaths.get(0))) {
+      return knownPaths.get(0);
     }
     return null;
   }
@@ -142,8 +145,8 @@ public final class DartSdkUtil {
       validPathsForUI.add(currentPath);
     }
 
-    final String[] knownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
-    if (knownPaths != null && knownPaths.length > 0) {
+    List<String> knownPaths = PropertiesComponent.getInstance().getList(propertyKey);
+    if (knownPaths != null && knownPaths.size() > 0) {
       for (String path : knownPaths) {
         final String pathSD = FileUtil.toSystemDependentName(path);
         if (!pathSD.equals(currentPath) && pathChecker.test(path)) {
@@ -159,9 +162,9 @@ public final class DartSdkUtil {
     final DartSdk oldSdk = DartSdk.getDartSdk(project);
     final List<String> knownPaths = new ArrayList<>();
 
-    final String[] oldKnownPaths = PropertiesComponent.getInstance().getValues(DART_SDK_KNOWN_PATHS);
+    List<String> oldKnownPaths = PropertiesComponent.getInstance().getList(DART_SDK_KNOWN_PATHS);
     if (oldKnownPaths != null) {
-      knownPaths.addAll(Arrays.asList(oldKnownPaths));
+      knownPaths.addAll(oldKnownPaths);
     }
 
     if (oldSdk != null) {
@@ -172,7 +175,7 @@ public final class DartSdkUtil {
     knownPaths.remove(newSdkPath);
     knownPaths.add(0, newSdkPath);
 
-    PropertiesComponent.getInstance().setValues(DART_SDK_KNOWN_PATHS, ArrayUtilRt.toStringArray(knownPaths));
+    PropertiesComponent.getInstance().setList(DART_SDK_KNOWN_PATHS, knownPaths);
   }
 
   public static @Nullable @NlsContexts.Label String getErrorMessageIfWrongSdkRootPath(final @NotNull String sdkRootPath) {
