@@ -64,24 +64,22 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     myFixture.addFileToProject("/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
-
-    myFixture.configureByText("main.proto", """
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
       
-      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
             
       message MainMessage {
         <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
       }
     """.trimIndent())
-    myFixture.checkHighlighting(true, true, true)
 
     findAndInvokeIntention(myFixture)
 
-    myFixture.checkResult("""
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
       
-      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
       import "importMe.proto";
       
       message MainMessage {
@@ -101,18 +99,16 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     myFixture.addFileToProject("/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
-
-    myFixture.configureByText("main.proto", """
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
       
-      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
       import "<error descr="Cannot resolve import 'importMe.proto'">importMe.proto</error>";
             
       message MainMessage {
         <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
       }
     """.trimIndent())
-    myFixture.checkHighlighting(true, true, true)
 
     Assert.assertFalse(
       PbProjectSettings.getInstance(myFixture.project)
@@ -121,10 +117,10 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     )
 
     findAndInvokeIntention(myFixture)
-    myFixture.checkResult("""
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
       
-      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
       import "importMe.proto";
             
       message MainMessage {
@@ -140,21 +136,19 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
   @Test
   fun `configure settings with respect to existing unresolved import statement`() {
-    myFixture.addFileToProject("/root/imports/importMe.proto", """
+     myFixture.addFileToProject("/root/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
-
-    myFixture.configureByText("main.proto", """
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
       
-      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
       import "<error descr="Cannot resolve import 'imports/importMe.proto'">imports/importMe.proto</error>";
             
       message MainMessage {
         <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
       }
     """.trimIndent())
-    myFixture.checkHighlighting(true, true, true)
 
     Assert.assertFalse(
       PbProjectSettings.getInstance(myFixture.project)
@@ -163,10 +157,10 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     )
 
     findAndInvokeIntention(myFixture)
-    myFixture.checkResult("""
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
       
-      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'unknown.proto'">unknown.proto</error>";
       import "imports/importMe.proto";
             
       message MainMessage {
@@ -320,14 +314,13 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
       message ImportedMessage {}
     """.trimIndent())
 
-    myFixture.configureByText("main.proto", """
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
                   
       message MainMessage {
         <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
       }
     """.trimIndent())
-    myFixture.checkHighlighting(true, true, true)
 
     findAndInvokeIntention(myFixture)
 
@@ -347,12 +340,12 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
     val selectedEditor = FileEditorManager.getInstance(myFixture.project).getSelectedEditor(myFixture.file.virtualFile)
     UndoManager.getInstance(myFixture.project).undo(selectedEditor)
-    // for some reason error is not present in the test, however it is in prod mode: mb some dirty trick should be performed to rerun annotators
-    myFixture.checkResult("""
+    @Suppress("SameParameterValue")
+    configureAndCheckHighlighting(myFixture, "main.proto", """
       syntax = "proto3";
                   
       message MainMessage {
-        ImportedMessage importedMessageField = 1;
+        <error descr="Cannot resolve symbol 'ImportedMessage'">ImportedMessage</error> importedMessageField = 1;
       }
     """.trimIndent())
     Assert.assertFalse(
@@ -366,5 +359,11 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     val intention = fixture.getAvailableIntention("Add import statement and configure import path")
     Assert.assertNotNull(intention)
     intention!!.invoke(fixture.project, fixture.editor, fixture.file)
+  }
+
+  @Suppress("SameParameterValue")
+  private fun configureAndCheckHighlighting(fixture: CodeInsightTestFixture, fileName: String, text: String) {
+    fixture.configureByText(fileName, text)
+    fixture.checkHighlighting(true, true, true)
   }
 }
