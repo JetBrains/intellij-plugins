@@ -317,9 +317,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void completion_getSuggestionDetails2(String file, int offset, String completion, String libraryUri, GetSuggestionDetailsConsumer2 consumer) {
+  public void completion_getSuggestionDetails2(String file,
+                                               int offset,
+                                               String completion,
+                                               String libraryUri,
+                                               GetSuggestionDetailsConsumer2 consumer) {
     String requestId = generateUniqueId();
-    sendRequestToServer(requestId, RequestUtilities.generateCompletionGetSuggestionDetails2(requestId, file, offset, completion, libraryUri), consumer);
+    sendRequestToServer(requestId,
+                        RequestUtilities.generateCompletionGetSuggestionDetails2(requestId, file, offset, completion, libraryUri),
+                        consumer);
   }
 
   @Override
@@ -329,9 +335,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void completion_getSuggestions2(String file, int offset, int maxResults, GetSuggestionsConsumer2 consumer) {
+  public void completion_getSuggestions2(String file,
+                                         int offset,
+                                         int maxResults,
+                                         String completionMode,
+                                         int invocationCount,
+                                         int timeout,
+                                         GetSuggestionsConsumer2 consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions2(id, file, offset, maxResults), consumer);
+    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions2(id, file, offset, maxResults, completionMode, invocationCount, timeout), consumer);
   }
 
   @Override
@@ -355,7 +367,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer) {}
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer) { }
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
@@ -479,12 +491,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void flutter_getWidgetDescription(String file, int offset, GetWidgetDescriptionConsumer consumer) {}
+  public void flutter_getWidgetDescription(String file, int offset, GetWidgetDescriptionConsumer consumer) { }
 
   @Override
-  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {}
+  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) { }
 
-  public void flutter_setWidgetPropertyValue(int id, FlutterWidgetPropertyValue value, SetWidgetPropertyValueConsumer consumer) {}
+  public void flutter_setWidgetPropertyValue(int id, FlutterWidgetPropertyValue value, SetWidgetPropertyValueConsumer consumer) { }
 
   @Override
   public boolean isSocketOpen() {
@@ -547,6 +559,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateSearchGetTypeHierarchy(id, file, offset, superOnly), consumer);
   }
+
+  @Override
+  public void server_cancelRequest(String id) { }
 
   @Override
   public void server_getVersion(GetVersionConsumer consumer) {
