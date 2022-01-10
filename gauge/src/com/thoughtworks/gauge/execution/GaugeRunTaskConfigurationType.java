@@ -21,13 +21,14 @@ import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.gauge.GaugeBundle;
 import org.jetbrains.annotations.NotNull;
 
 final class GaugeRunTaskConfigurationType extends ConfigurationTypeBase {
   GaugeRunTaskConfigurationType() {
-    super("executeSpecs", GaugeBundle.message("gauge.execution"), GaugeBundle.message("execute.the.gauge.tests"), AllIcons.Actions.Execute);
+    super("executeSpecs", GaugeBundle.message("gauge.execution"), GaugeBundle.message("execute.the.gauge.tests"), NotNullLazyValue.lazy(() -> AllIcons.Actions.Execute));
     ConfigurationFactory scenarioConfigFactory = new ConfigurationFactory(this) {
       @Override
       public @NotNull String getId() {
