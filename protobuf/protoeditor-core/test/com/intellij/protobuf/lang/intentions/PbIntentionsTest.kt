@@ -3,6 +3,7 @@ package com.intellij.protobuf.lang.intentions
 import com.intellij.protobuf.ide.settings.DefaultConfigurator
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.junit.After
 import org.junit.Assert
 import org.junit.Test
@@ -17,7 +18,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun `test configure plugin from import statement`() {
+  fun `configure plugin from import statement`() {
     myFixture.addFileToProject("/directory/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
@@ -57,7 +58,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun `test add import statement and configure plugin`() {
+  fun `add import statement and configure plugin`() {
     myFixture.addFileToProject("/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
@@ -73,10 +74,8 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
 
-    val intention = myFixture.getAvailableIntention("Add import statement and configure import path")
-    Assert.assertNotNull(intention)
+    findAndInvokeIntention(myFixture)
 
-    intention!!.invoke(myFixture.project, myFixture.editor, myFixture.file)
     myFixture.checkResult("""
       syntax = "proto3";
       
@@ -96,7 +95,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun `test find existing import statement and configure plugin`() {
+  fun `find existing import statement and configure plugin`() {
     myFixture.addFileToProject("/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
@@ -119,10 +118,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
         .contains(PbProjectSettings.ImportPathEntry("temp:///src/imports", ""))
     )
 
-    val intention = myFixture.getAvailableIntention("Add import statement and configure import path")
-    Assert.assertNotNull(intention)
-
-    intention!!.invoke(myFixture.project, myFixture.editor, myFixture.file)
+    findAndInvokeIntention(myFixture)
     myFixture.checkResult("""
       syntax = "proto3";
       
@@ -141,7 +137,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun `test no intention for non-existent fqn`() {
+  fun `no intention for non-existent fqn`() {
     myFixture.configureByText("main.proto", """
       syntax = "proto3";
                   
@@ -155,7 +151,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun `test add import statement to empty imports list`() {
+  fun `add import statement to empty imports list`() {
     myFixture.addFileToProject("/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
@@ -169,10 +165,8 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
 
-    val intention = myFixture.getAvailableIntention("Add import statement and configure import path")
-    Assert.assertNotNull(intention)
+    findAndInvokeIntention(myFixture)
 
-    intention!!.invoke(myFixture.project, myFixture.editor, myFixture.file)
     myFixture.checkResult("""
       syntax = "proto3";
       import "importMe.proto";
@@ -190,7 +184,7 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
-  fun `test add import statement to file without required header`() {
+  fun `add import statement to file without required header`() {
     myFixture.addFileToProject("/imports/importMe.proto", """
       message ImportedMessage {}
     """.trimIndent())
@@ -202,10 +196,8 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
     """.trimIndent())
     myFixture.checkHighlighting(true, true, true)
 
-    val intention = myFixture.getAvailableIntention("Add import statement and configure import path")
-    Assert.assertNotNull(intention)
+    findAndInvokeIntention(myFixture)
 
-    intention!!.invoke(myFixture.project, myFixture.editor, myFixture.file)
     myFixture.checkResult("""
       import "importMe.proto";
       message MainMessage {
@@ -218,5 +210,47 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
         .importPathEntries
         .contains(PbProjectSettings.ImportPathEntry("temp:///src/imports", ""))
     )
+  }
+
+  @Test
+  fun `resolve ambiguous import, add statement and configure settings`() {
+    myFixture.addFileToProject("/imports1/importMe1.proto", """
+      message ImportedMessage {}
+    """.trimIndent())
+    myFixture.addFileToProject("/imports2/importMe2.proto", """
+      message ImportedMessage {}
+    """.trimIndent())
+
+    myFixture.configureByText("main.proto", """
+      message MainMessage {
+        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+      }
+    """.trimIndent())
+    myFixture.checkHighlighting(true, true, true)
+
+    findAndInvokeIntention(myFixture)
+
+    myFixture.checkResult("""
+      import "importMe1.proto";
+      message MainMessage {
+        ImportedMessage importedMessageField = 1;
+      }
+    """.trimIndent())
+    Assert.assertTrue(
+      PbProjectSettings.getInstance(myFixture.project)
+        .importPathEntries
+        .contains(PbProjectSettings.ImportPathEntry("temp:///src/imports1", ""))
+    )
+  }
+
+  @Test
+  fun `find and fix one of several suitable import statements`() {
+
+  }
+
+  private fun findAndInvokeIntention(fixture: CodeInsightTestFixture) {
+    val intention = fixture.getAvailableIntention("Add import statement and configure import path")
+    Assert.assertNotNull(intention)
+    intention!!.invoke(fixture.project, fixture.editor, fixture.file)
   }
 }

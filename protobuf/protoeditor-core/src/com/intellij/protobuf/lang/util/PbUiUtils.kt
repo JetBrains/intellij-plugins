@@ -1,5 +1,6 @@
 package com.intellij.protobuf.lang.util
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -22,9 +23,9 @@ internal object PbUiUtils {
     PsiDocumentManager.getInstance(project).commitAllDocuments()
 
     if (variants.isEmpty()) return
-    val theOnlyPossibleImportPath = variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>().singleOrNull()
-    if (theOnlyPossibleImportPath != null) {
-      theOnlyPossibleImportPath.invokeAction(project)
+    if (instantlyInvokeSingleIntention(variants, project)) return
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      handleUnitTestMode(variants, project)
       return
     }
 
@@ -36,6 +37,28 @@ internal object PbUiUtils {
         }
       }
     }.showInBestPositionFor(editor)
+  }
+
+  private fun instantlyInvokeSingleIntention(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
+    val theOnlyAvailableIntention = variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>().singleOrNull()
+    return invokeIntentionIfNotNull(theOnlyAvailableIntention, project)
+  }
+
+  private fun handleUnitTestMode(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
+    val firstAvailableSortedIntention =
+      variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>()
+        .minByOrNull { it.importPathData.presentablePath }
+    return invokeIntentionIfNotNull(firstAvailableSortedIntention, project)
+  }
+
+  private fun invokeIntentionIfNotNull(intention: PbImportIntentionVariant.AddImportPathToSettings?, project: Project): Boolean {
+    return if (intention != null) {
+      intention.invokeAction(project)
+      true
+    }
+    else {
+      false
+    }
   }
 
   private fun createPopup(variants: List<PbImportIntentionVariant>,
