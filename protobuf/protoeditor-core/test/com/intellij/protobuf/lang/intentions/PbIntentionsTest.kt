@@ -1,5 +1,7 @@
 package com.intellij.protobuf.lang.intentions
 
+import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.protobuf.ide.settings.DefaultConfigurator
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -137,6 +139,48 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
   }
 
   @Test
+  fun `configure settings with respect to existing unresolved import statement`() {
+    myFixture.addFileToProject("/root/imports/importMe.proto", """
+      message ImportedMessage {}
+    """.trimIndent())
+
+    myFixture.configureByText("main.proto", """
+      syntax = "proto3";
+      
+      import "google/protobuf/wrappers.proto";
+      import "<error descr="Cannot resolve import 'imports/importMe.proto'">imports/importMe.proto</error>";
+            
+      message MainMessage {
+        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+      }
+    """.trimIndent())
+    myFixture.checkHighlighting(true, true, true)
+
+    Assert.assertFalse(
+      PbProjectSettings.getInstance(myFixture.project)
+        .importPathEntries
+        .contains(PbProjectSettings.ImportPathEntry("temp:///src/root", ""))
+    )
+
+    findAndInvokeIntention(myFixture)
+    myFixture.checkResult("""
+      syntax = "proto3";
+      
+      import "google/protobuf/wrappers.proto";
+      import "imports/importMe.proto";
+            
+      message MainMessage {
+        ImportedMessage importedMessageField = 1;
+      }
+    """.trimIndent())
+    Assert.assertTrue(
+      PbProjectSettings.getInstance(myFixture.project)
+        .importPathEntries
+        .contains(PbProjectSettings.ImportPathEntry("temp:///src/root", ""))
+    )
+  }
+
+  @Test
   fun `no intention for non-existent fqn`() {
     myFixture.configureByText("main.proto", """
       syntax = "proto3";
@@ -245,7 +289,77 @@ internal class PbIntentionsTest : BasePlatformTestCase() {
 
   @Test
   fun `find and fix one of several suitable import statements`() {
+    myFixture.addFileToProject("/root1/imports1/importMe1.proto", """
+      message ImportedMessage {}
+    """.trimIndent())
+    myFixture.addFileToProject("/aaa/root2/imports2/importMe2.proto", """
+      message ImportedMessage {}
+    """.trimIndent())
 
+    myFixture.configureByText("main.proto", """
+      import "<error descr="Cannot resolve import 'imports1/importMe1.proto'">imports1/importMe1.proto</error>";
+      import "<error descr="Cannot resolve import 'aaa/imports2/importMe2.proto'">aaa/imports2/importMe2.proto</error>";
+
+      message MainMessage {
+        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+      }
+    """.trimIndent())
+    myFixture.checkHighlighting(true, true, true)
+    findAndInvokeIntention(myFixture)
+
+    Assert.assertTrue(
+      PbProjectSettings.getInstance(myFixture.project)
+        .importPathEntries
+        .contains(PbProjectSettings.ImportPathEntry("temp:///src/root1", ""))
+    )
+  }
+
+  @Test
+  fun `plugin settings and PSI structure are undone via single undo call`() {
+    myFixture.addFileToProject("/imports/importMe.proto", """
+      message ImportedMessage {}
+    """.trimIndent())
+
+    myFixture.configureByText("main.proto", """
+      syntax = "proto3";
+                  
+      message MainMessage {
+        <error descr="Cannot resolve symbol 'Imported<caret>Message'">ImportedMessage</error> importedMessageField = 1;
+      }
+    """.trimIndent())
+    myFixture.checkHighlighting(true, true, true)
+
+    findAndInvokeIntention(myFixture)
+
+    myFixture.checkResult("""
+      syntax = "proto3";
+      import "importMe.proto";
+      
+      message MainMessage {
+        ImportedMessage importedMessageField = 1;
+      }
+    """.trimIndent())
+    Assert.assertTrue(
+      PbProjectSettings.getInstance(myFixture.project)
+        .importPathEntries
+        .contains(PbProjectSettings.ImportPathEntry("temp:///src/imports", ""))
+    )
+
+    val selectedEditor = FileEditorManager.getInstance(myFixture.project).getSelectedEditor(myFixture.file.virtualFile)
+    UndoManager.getInstance(myFixture.project).undo(selectedEditor)
+    // for some reason error is not present in the test, however it is in prod mode: mb some dirty trick should be performed to rerun annotators
+    myFixture.checkResult("""
+      syntax = "proto3";
+                  
+      message MainMessage {
+        ImportedMessage importedMessageField = 1;
+      }
+    """.trimIndent())
+    Assert.assertFalse(
+      PbProjectSettings.getInstance(myFixture.project)
+        .importPathEntries
+        .contains(PbProjectSettings.ImportPathEntry("temp:///src/imports", ""))
+    )
   }
 
   private fun findAndInvokeIntention(fixture: CodeInsightTestFixture) {

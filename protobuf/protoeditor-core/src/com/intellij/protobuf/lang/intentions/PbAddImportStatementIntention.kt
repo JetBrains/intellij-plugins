@@ -54,46 +54,34 @@ internal class PbAddImportStatementIntention : IntentionAction {
     val suitableExistingInCurrentFileImportStatements = editedFile.importStatements
       .filter { importCorrespondsToFile(it, importCandidatesPaths) }
 
-
-    //val guessedOrSelectedImportData = guessOrSelectFileToImport(importCandidates, suitableExistingInCurrentFileImportStatements, editedFile) ?: return
-
     PbUiUtils.selectItemAndApply(
       createPossibleImportIssueFixes(importCandidates, suitableExistingInCurrentFileImportStatements, editedFile),
       editor,
       project
     )
-    // All inner commands should have the same group id to be merged with already running one
-    //WriteCommandAction.runWriteCommandAction(
-    //  project,
-    //  PbLangBundle.message("intention.add.import.path.popup.title"),
-    //  PbLangBundle.message("intention.fix.import.problems.familyName"),
-    //  { fixImportIssue(guessedOrSelectedImportData, editedFile, project) },
-    //  editedFile
-    //)
   }
 
   private fun createPossibleImportIssueFixes(protoFileCandidates: List<PsiFile>,
                                              suitableImportStatements: List<PbImportStatement>,
                                              editedProtoFile: PbFile): List<PbImportIntentionVariant> {
 
-    when (suitableImportStatements.size) {
-      1 -> {
-        val onlySuitableImport = findTheOnlySuitableProtoFileToImport(suitableImportStatements.single(), editedProtoFile)
-                                 ?: return emptyList()
-        return listOf(PbImportIntentionVariant.AddImportPathToSettings(onlySuitableImport))
+    if (suitableImportStatements.isEmpty()) {
+      return protoFileCandidates.map {
+        ImportPathData.create(
+          editedProtoFile.virtualFile,
+          it.virtualFile,
+          editedProtoFile.project
+        )
+      }.map {
+        PbImportIntentionVariant.AddImportStatementAndPathToSettings(it)
       }
-      else -> {
-        return protoFileCandidates.map {
-          ImportPathData.create(
-            editedProtoFile.virtualFile,
-            it.virtualFile,
-            editedProtoFile.project
-          )
-        }
-          .map {
-            PbImportIntentionVariant.AddImportStatementAndPathToSettings(it)
-          }
-      }
+    }
+    else {
+      return suitableImportStatements
+        .asSequence()
+        .mapNotNull { findTheOnlySuitableProtoFileToImport(it, editedProtoFile) }
+        .map { PbImportIntentionVariant.AddImportPathToSettings(it) }
+        .toList()
     }
   }
 

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.protobuf.lang.PbFileType
+import com.intellij.protobuf.lang.util.ImportPathData.Companion.shortenPath
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 
@@ -19,13 +20,11 @@ internal object PbImportPathResolver {
       FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.projectScope(project))
         .asSequence()
         .mapNotNull { findEffectiveImportPath(relativeImportPath, it) }
-        .map { originalToImported ->
-          ImportPathData.create(editedFile, originalToImported.second, importStatement, originalToImported.second.url, ImportPathData.shortenPath(originalToImported.first, project)) }
+        .map { ImportPathData.create(editedFile, it, importStatement, it.url, shortenPath(it, project)) }
     })
   }
 
-  // original to imported todo prettify
-  private fun findEffectiveImportPath(relativeImportPath: String, protoFileCandidate: VirtualFile): Pair<VirtualFile, VirtualFile>? {
+  private fun findEffectiveImportPath(relativeImportPath: String, protoFileCandidate: VirtualFile): VirtualFile? {
     val absoluteImportPath = FileUtil.toSystemIndependentName(protoFileCandidate.url).takeIf { it.endsWith(relativeImportPath) }
                              ?: return null
     val effectiveImportPathUrl = absoluteImportPath.removeSuffix(relativeImportPath).removeSuffix("/")
@@ -33,7 +32,6 @@ internal object PbImportPathResolver {
     // one can not simply call VfsUtil.findFile with effectiveUrl arg since unit test TempFileSystem will not handle such request correctly
     return generateSequence(protoFileCandidate, VirtualFile::getParent)
       .firstOrNull { FileUtil.toSystemIndependentName(it.url) == effectiveImportPathUrl }
-      ?.let { protoFileCandidate to it }
   }
 }
 
@@ -45,32 +43,20 @@ internal class ImportPathData private constructor(
   @NlsSafe val presentablePath: String
 ) {
   companion object {
-    private const val MAX_LOCATION_LENGTH = 100
+    private const val MAX_LOCATION_LENGTH = 60
 
     fun create(originalProtoFile: VirtualFile, importedProtoFile: VirtualFile, project: Project): ImportPathData {
-      return ImportPathData(
-        originalProtoFile,
-        importedProtoFile,
-        importedProtoFile.name,
-        importedProtoFile.parent.url,
-        shortenPath(importedProtoFile, project)
-      )
+      return ImportPathData(originalProtoFile, importedProtoFile, importedProtoFile.name, importedProtoFile.parent.url, shortenPath(importedProtoFile, project))
     }
 
     fun create(
-      originalPbVirtualFile: VirtualFile,//todo rename
-      importedPbVirtualFile: VirtualFile,
+      originalProtoFile: VirtualFile,
+      importedProtoFile: VirtualFile,
       originalImportStatement: String,
       effectiveImportPathUrl: String,
       presentablePath: String
     ): ImportPathData {
-      return ImportPathData(
-        originalPbVirtualFile,
-        importedPbVirtualFile,
-        originalImportStatement,
-        effectiveImportPathUrl,
-        presentablePath
-      )
+      return ImportPathData(originalProtoFile, importedProtoFile, originalImportStatement, effectiveImportPathUrl, presentablePath)
     }
 
     fun shortenPath(virtualFile: VirtualFile, project: Project): String {
