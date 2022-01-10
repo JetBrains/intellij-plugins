@@ -4,7 +4,6 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
-import com.intellij.idea.Bombed;
 import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol;
 import com.intellij.javascript.web.symbols.WebSymbol;
@@ -864,7 +863,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("aria.rnc", element.getContainingFile().getName());
   }
 
-  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Pattern code completion fails")
   public void testExtKeyEvent() {
     myFixture.configureByFiles("attrTest.ts", "package.json");
     myFixture.completeBasic();
@@ -873,18 +871,17 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("keyd.\n");
     assertEquals("(keydown.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1).getText());
     assertContainsElements(myFixture.getLookupElementStrings(),
-                           "meta.", "control.", "shift.", "alt.", "escape)", "home)", "f11)");
+                           "meta.", "control.", "shift.", "alt.", "escape)", "home)");
     myFixture.type("alt.");
     assertEquals("(keydown.alt.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1).getText());
     assertContainsElements(myFixture.getLookupElementStrings(),
-                           "meta.", "control.", "escape)", "home)", "f11)");
+                           "meta.", "control.", "escape)", "home)");
     assertDoesntContain(myFixture.getLookupElementStrings(),
                         "alt.");
     myFixture.type("ins\n");
-    assertEquals("(keydown.alt.<caret>insert)=\"\"", myFixture.getFile().getText());
+    assertEquals("<div (keydown.alt.insert)=\"\"", myFixture.getFile().getText());
   }
 
-  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Pattern code completion fails")
   public void testExtKeyEventCanonical() {
     myFixture.configureByFiles("attrTest.ts", "package.json");
     myFixture.completeBasic();
@@ -907,7 +904,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                         "alt.", "meta.");
     myFixture.type("esc\n");
     WebSymbol source = resolveWebSymbolReference("on-keyup.alt.meta.<caret>escape=\"\"");
-    assertEquals("escape", source.getName());
+    assertEquals("Extended event special key", source.getName());
   }
 
   public void testExtKeyEventsInspections() {
