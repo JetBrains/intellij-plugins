@@ -55,6 +55,6 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
 
   @Override
   public int getStubVersion() {
-    return JSFileElementType.getVersion() + VERSION;
+    return JSFileElementType.getVersion(VERSION);
   }
 }

@@ -17,6 +17,6 @@ public final class Angular2SvgFileElementType extends IStubFileElementType<PsiFi
 
   @Override
   public int getStubVersion() {
-    return JSFileElementType.getVersion() + Angular2StubElementTypes.STUB_VERSION;
+    return JSFileElementType.getVersion(Angular2StubElementTypes.STUB_VERSION);
   }
 }

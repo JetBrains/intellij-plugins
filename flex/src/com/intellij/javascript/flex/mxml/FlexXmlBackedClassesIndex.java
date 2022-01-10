@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
-import java.util.HashMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
@@ -22,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<String> {
@@ -80,7 +80,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
 
   @Override
   public int getVersion() {
-    return JSFileElementType.getVersion() + INDEX_VERSION;
+    return JSFileElementType.getVersion(INDEX_VERSION);
   }
 
   public static Collection<JSClass> searchClassInheritors(ID<String, Void> indexId, String name, Project project, final GlobalSearchScope scope) {

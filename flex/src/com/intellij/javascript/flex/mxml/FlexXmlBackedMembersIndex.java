@@ -119,7 +119,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
   @Override
   public int getVersion() {
-    return JSFileElementType.getVersion() + INDEX_VERSION;
+    return JSFileElementType.getVersion(INDEX_VERSION);
   }
 
 
