@@ -1526,7 +1526,11 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public CompletionInfo2 completion_getSuggestions2(@NotNull final VirtualFile file, final int _offset, final int maxResults) {
+  public CompletionInfo2 completion_getSuggestions2(@NotNull final VirtualFile file,
+                                                    final int _offset,
+                                                    final int maxResults,
+                                                    final String completionMode,
+                                                    final int invocationCount) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
@@ -1541,7 +1545,7 @@ public final class DartAnalysisServerService implements Disposable {
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
 
-    server.completion_getSuggestions2(filePath, offset, maxResults, new GetSuggestionsConsumer2() {
+    server.completion_getSuggestions2(filePath, offset, maxResults, completionMode, invocationCount, -1, new GetSuggestionsConsumer2() {
       @Override
       public void computedSuggestions(int replacementOffset,
                                       int replacementLength,

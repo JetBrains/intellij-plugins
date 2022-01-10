@@ -106,6 +106,8 @@ public class RequestUtilities {
   // Code Completion domain
   private static final String COMPLETION = "completion";
   private static final String MAX_RESULTS = "maxResults";
+  private static final String COMPLETION_MODE = "completionMode";
+  private static final String INVOCATION_COUNT = "invocationCount";
   private static final String LIBRARY_URI = "libraryUri";
   private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS = "completion.getSuggestionDetails";
   private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS2 = "completion.getSuggestionDetails2";
@@ -514,15 +516,27 @@ public class RequestUtilities {
    *     "file": FilePath
    *     "offset": int
    *     "maxResults": int
+   *     "completionMode": String
+   *     "invocationCount": int
+   *     "timeout": int
    *   }
    * }
    * </pre>
    */
-  public static JsonObject generateCompletionGetSuggestions2(String idValue, String file, int offset, int maxResults) {
+  public static JsonObject generateCompletionGetSuggestions2(String idValue,
+                                                             String file,
+                                                             int offset,
+                                                             int maxResults,
+                                                             String completionMode,
+                                                             int invocationCount,
+                                                             int timeout) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
     params.addProperty(MAX_RESULTS, maxResults);
+    params.addProperty(COMPLETION_MODE, completionMode);
+    params.addProperty(INVOCATION_COUNT, invocationCount);
+    // "timeout" is intentionally not passed
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTIONS2, params);
   }
 

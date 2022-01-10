@@ -196,7 +196,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
       maxResults = (invocationCount - 1) * 1000;
     }
     DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, startOffsetInHostFile, maxResults);
+    DartAnalysisServerService.CompletionInfo2 completionInfo2 =
+      das.completion_getSuggestions2(file, startOffsetInHostFile, maxResults, CompletionMode.BASIC, invocationCount);
     if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
       return;
     }
