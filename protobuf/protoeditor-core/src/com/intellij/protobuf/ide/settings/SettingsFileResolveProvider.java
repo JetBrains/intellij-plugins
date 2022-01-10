@@ -18,10 +18,10 @@ package com.intellij.protobuf.ide.settings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +57,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
   public VirtualFile findFile(@NotNull String path, @NotNull Project project) {
     PbProjectSettings settings = getSettings(project);
     for (ImportPathEntry entry : settings.getImportPathEntries()) {
+      if (entry == null) continue;
       String prefix = normalizePath(entry.getPrefix());
       if (!path.startsWith(prefix)) {
         continue;
@@ -68,7 +69,7 @@ public class SettingsFileResolveProvider implements FileResolveProvider {
       }
       String unprefixedPath = path.substring(prefix.length());
       VirtualFile imported = location.findFileByRelativePath(unprefixedPath);
-      if (PROTO_FILTER.accept(imported)) {
+      if (imported != null && PROTO_FILTER.accept(imported)) {
         return imported;
       }
     }
