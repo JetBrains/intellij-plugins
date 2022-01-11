@@ -1,4 +1,4 @@
-package com.intellij.protobuf.lang.util
+package com.intellij.protobuf.lang.intentions.util
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -12,6 +12,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import java.awt.BorderLayout
+import java.io.File
 import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.ListCellRenderer
@@ -91,7 +92,8 @@ internal object PbUiUtils {
         when (value) {
           is PbImportIntentionVariant.AddImportPathToSettings -> {
             append(value.importPathData.presentablePath, SimpleTextAttributes.REGULAR_ATTRIBUTES)
-            append("/", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            @Suppress("HardCodedStringLiteral")
+            append(File.separator, SimpleTextAttributes.GRAYED_ATTRIBUTES)
             append(value.importPathData.originalImportStatement, SimpleTextAttributes.GRAYED_ATTRIBUTES)
           }
           is PbImportIntentionVariant.ManuallyConfigureImportPathsSettings -> {

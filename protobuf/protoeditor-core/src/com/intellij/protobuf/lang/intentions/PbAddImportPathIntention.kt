@@ -6,10 +6,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.protobuf.lang.PbLangBundle
+import com.intellij.protobuf.lang.intentions.util.PbUiUtils
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbImportStatement
 import com.intellij.protobuf.lang.util.PbImportPathResolver
-import com.intellij.protobuf.lang.util.PbUiUtils
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.IncorrectOperationException
