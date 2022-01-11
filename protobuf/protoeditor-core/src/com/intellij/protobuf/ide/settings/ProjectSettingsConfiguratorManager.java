@@ -119,14 +119,14 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
   static final class ProjectRootsListener implements ModuleRootListener {
     @Override
     public void rootsChanged(@NotNull ModuleRootEvent event) {
-      ProjectSettingsConfiguratorManager.getInstance(event.getProject()).configureSettingsIfNecessary();
+      getInstance(event.getProject()).configureSettingsIfNecessary();
     }
   }
 
   static final class ProjectOpenedActivity implements StartupActivity {
     @Override
     public void runActivity(@NotNull Project project) {
-      ProjectSettingsConfiguratorManager instance = ProjectSettingsConfiguratorManager.getInstance(project);
+      ProjectSettingsConfiguratorManager instance = getInstance(project);
       project.getExtensionArea().getExtensionPoint(ProjectSettingsConfigurator.EP_NAME)
           .addChangeListener(instance::configureSettingsIfNecessary, instance);
       instance.configureSettingsIfNecessary();
