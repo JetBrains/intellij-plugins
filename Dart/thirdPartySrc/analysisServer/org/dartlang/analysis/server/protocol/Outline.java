@@ -103,8 +103,8 @@ public class Outline {
     Element element = Element.fromJson(elementObject);
     int offset = outlineObject.get("offset").getAsInt();
     int length = outlineObject.get("length").getAsInt();
-    int codeOffset = outlineObject.get("codeOffset") == null ? offset : outlineObject.get("codeOffset").getAsInt();
-    int codeLength = outlineObject.get("codeLength") == null ? length : outlineObject.get("codeLength").getAsInt();
+    int codeOffset = outlineObject.get("codeOffset").getAsInt();
+    int codeLength = outlineObject.get("codeLength").getAsInt();
 
     // create outline object
     Outline outline = new Outline(parent, element, offset, length, codeOffset, codeLength);
