@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.libraries.i18n
 import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
@@ -17,7 +18,7 @@ import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
 
 class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
-  override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
+  override fun getAdditionalContext(project: Project, element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
     if (framework == VueFramework.ID
         && element is HtmlTag
         && element.name == "i18n"

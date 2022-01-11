@@ -3,6 +3,7 @@ package org.angular2.web
 
 import com.intellij.javascript.web.symbols.WebSymbolsAdditionalContextProvider
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -14,7 +15,7 @@ import org.angular2.web.containers.*
 
 class Angular2WebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
-  override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
+  override fun getAdditionalContext(project: Project, element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
     if (framework == Angular2Framework.ID && element != null) {
       val result = mutableListOf(DirectiveElementSelectorsContainer(element.project),
                                  DirectiveAttributeSelectorsContainer(element.project))

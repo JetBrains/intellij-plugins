@@ -105,7 +105,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   }
 
-  override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> {
+  override fun getAdditionalContext(project: Project, element: PsiElement?, framework: String?): List<WebSymbolsContainer> {
     if (framework != VueFramework.ID || element == null) return emptyList()
     val result = SmartList<WebSymbolsContainer>()
     val tag = (element as? XmlAttribute)?.parent ?: element as? XmlTag
