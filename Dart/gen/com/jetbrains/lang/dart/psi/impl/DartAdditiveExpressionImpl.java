@@ -17,6 +17,7 @@ public class DartAdditiveExpressionImpl extends DartOperatorExpressionImpl imple
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitAdditiveExpression(this);
   }

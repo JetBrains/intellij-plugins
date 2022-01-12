@@ -17,6 +17,7 @@ public class DartCompareExpressionImpl extends DartOperatorExpressionImpl implem
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitCompareExpression(this);
   }

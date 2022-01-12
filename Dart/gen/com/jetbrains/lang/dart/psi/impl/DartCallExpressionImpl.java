@@ -17,6 +17,7 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitCallExpression(this);
   }

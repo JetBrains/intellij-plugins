@@ -17,6 +17,7 @@ public class DartBitwiseExpressionImpl extends DartOperatorExpressionImpl implem
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitBitwiseExpression(this);
   }

@@ -17,6 +17,7 @@ public class DartLogicOrExpressionImpl extends DartOperatorExpressionImpl implem
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitLogicOrExpression(this);
   }

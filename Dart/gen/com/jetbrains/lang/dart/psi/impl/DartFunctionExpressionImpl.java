@@ -17,6 +17,7 @@ public class DartFunctionExpressionImpl extends DartFunctionExpressionBase imple
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitFunctionExpression(this);
   }

@@ -17,6 +17,7 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitArrayAccessExpression(this);
   }
