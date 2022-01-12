@@ -206,15 +206,20 @@ public class DartServerCompletionContributor extends CompletionContributor {
     List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
 
     // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
-    List<String> libraryUrisToImport = completionInfo2.myLibraryUrisToImport;
     for (CompletionSuggestion suggestion : suggestions) {
+      Element element = suggestion.getElement();
+      String libraryUri = element != null ? element.getLibraryUri() : null;
+      String libraryUriToImport =
+        element != null && suggestion.getIsNotImported() != null && suggestion.getIsNotImported() ? element.getLibraryUri() : null;
+      String libraryUriToDisplay =
+        libraryUri != null && libraryUri.startsWith("file:") ? StringUtil.substringAfterLast(libraryUri, "/") : libraryUri;
+
       SuggestionDetailsInsertHandlerBase insertHandler = null;
-      if (suggestion.getLibraryUriToImportIndex() != null) {
-        String libraryUriToImport = libraryUrisToImport.get(suggestion.getLibraryUriToImportIndex());
+      if (libraryUriToImport != null) {
         insertHandler = new SuggestionDetailsInsertHandler2(project, file, startOffsetInHostFile, suggestion, libraryUriToImport);
       }
 
-      updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, null, insertHandler));
+      updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, libraryUriToDisplay, insertHandler));
     }
 
     // As the user types additional characters, restart the completion only if we don't already have the complete set of

@@ -1550,9 +1550,8 @@ public final class DartAnalysisServerService implements Disposable {
       public void computedSuggestions(int replacementOffset,
                                       int replacementLength,
                                       List<CompletionSuggestion> suggestions,
-                                      List<String> libraryUrisToImport,
                                       boolean isIncomplete) {
-        resultRef.set(new CompletionInfo2(replacementOffset, replacementLength, suggestions, libraryUrisToImport, isIncomplete));
+        resultRef.set(new CompletionInfo2(replacementOffset, replacementLength, suggestions, isIncomplete));
         latch.countDown();
 
         for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
@@ -2392,18 +2391,15 @@ public final class DartAnalysisServerService implements Disposable {
     public final int myReplacementOffset;
     public final int myReplacementLength;
     public final @NotNull List<CompletionSuggestion> mySuggestions;
-    public final @NotNull List<String> myLibraryUrisToImport;
     public final boolean myIsIncomplete;
 
     CompletionInfo2(int replacementOffset,
                     int replacementLength,
                     @NotNull List<CompletionSuggestion> suggestions,
-                    @NotNull List<String> libraryUrisToImport,
                     boolean isIncomplete) {
       myReplacementOffset = replacementOffset;
       myReplacementLength = replacementLength;
       mySuggestions = suggestions;
-      myLibraryUrisToImport = libraryUrisToImport;
       myIsIncomplete = isIncomplete;
     }
   }
