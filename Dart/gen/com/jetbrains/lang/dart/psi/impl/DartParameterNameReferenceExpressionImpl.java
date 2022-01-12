@@ -17,6 +17,7 @@ public class DartParameterNameReferenceExpressionImpl extends DartReferenceImpl 
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitParameterNameReferenceExpression(this);
   }

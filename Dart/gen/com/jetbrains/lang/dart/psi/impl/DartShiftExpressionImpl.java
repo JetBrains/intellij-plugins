@@ -17,6 +17,7 @@ public class DartShiftExpressionImpl extends DartOperatorExpressionImpl implemen
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitShiftExpression(this);
   }

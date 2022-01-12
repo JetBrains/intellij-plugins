@@ -17,6 +17,7 @@ public class DartThisExpressionImpl extends DartReferenceImpl implements DartThi
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitThisExpression(this);
   }

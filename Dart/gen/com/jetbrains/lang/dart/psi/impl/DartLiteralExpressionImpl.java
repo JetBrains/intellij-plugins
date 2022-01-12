@@ -17,6 +17,7 @@ public class DartLiteralExpressionImpl extends DartClassReferenceImpl implements
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitLiteralExpression(this);
   }

@@ -17,6 +17,7 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitNewExpression(this);
   }

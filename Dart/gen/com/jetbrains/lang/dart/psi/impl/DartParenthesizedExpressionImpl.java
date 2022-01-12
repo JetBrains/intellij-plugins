@@ -17,6 +17,7 @@ public class DartParenthesizedExpressionImpl extends DartClassReferenceImpl impl
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitParenthesizedExpression(this);
   }

@@ -17,6 +17,7 @@ public class DartCascadeReferenceExpressionImpl extends DartReferenceImpl implem
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitCascadeReferenceExpression(this);
   }

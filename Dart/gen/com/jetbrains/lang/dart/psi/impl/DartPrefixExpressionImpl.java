@@ -17,6 +17,7 @@ public class DartPrefixExpressionImpl extends DartOperatorExpressionImpl impleme
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitPrefixExpression(this);
   }

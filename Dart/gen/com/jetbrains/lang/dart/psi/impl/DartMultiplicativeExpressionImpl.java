@@ -17,6 +17,7 @@ public class DartMultiplicativeExpressionImpl extends DartOperatorExpressionImpl
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitMultiplicativeExpression(this);
   }
