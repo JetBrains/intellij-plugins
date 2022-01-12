@@ -2,11 +2,10 @@ package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramEdgeBase;
 import com.intellij.diagram.DiagramNode;
+import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramRelationshipInfoAdapter;
 import com.intellij.diagram.presentation.DiagramLineType;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
 
 public final class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
   private final String myLabel;
@@ -18,22 +17,13 @@ public final class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
                              DiagramNode<DiagramObject> target,
                              final String label,
                              Type type) {
-    super(source, target, new DiagramRelationshipInfoAdapter("BUILTIN", DiagramLineType.SOLID) {
-      @Override
-      public String getLabel() {
-        return "";
-      }
-
-      @Override
-      public Shape getStartArrow() {
-        return NONE;
-      }
-
-      @Override
-      public Shape getEndArrow() {
-        return STANDARD;
-      }
-    });
+    super(source, target,
+          new DiagramRelationshipInfoAdapter.Builder()
+            .setName("BUILTIN")
+            .setLineType(DiagramLineType.SOLID)
+            .setSourceArrow(DiagramRelationshipInfo.NONE)
+            .setTargetArrow(DiagramRelationshipInfo.STANDARD)
+            .create());
     myLabel = label;
     myType = type;
   }

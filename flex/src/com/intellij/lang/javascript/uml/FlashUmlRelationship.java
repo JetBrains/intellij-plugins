@@ -43,7 +43,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
     }
 
     public static FlashUmlRelationship create(@NotNull PsiElement element) {
-      return new Impl(TYPE_CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getLabel(), null, null, 1,
+      return new Impl(TYPE_CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getUpperCenterLabel().getText(), null, null, 1,
                       DiagramRelationships.getAngleArrow(), null, element, false);
     }
 
@@ -60,8 +60,6 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
     private static class Impl extends DiagramRelationshipInfoAdapter implements FlashUmlRelationship {
 
       private final String myType;
-      private final Shape myStartArrow;
-      private final Shape myEndArrow;
       private final boolean myAllowMultipleLinks;
 
       @Nullable
@@ -77,10 +75,8 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
                   final Shape endArrow,
                   @Nullable PsiElement element,
                   boolean allowMultipleLinks) {
-        super(type, lineType, label, fromLabel, toLabel, width);
+        super(type, lineType, width, startArrow, endArrow, label, null, fromLabel, null, toLabel, null);
         myType = type;
-        myStartArrow = startArrow;
-        myEndArrow = endArrow;
         myAllowMultipleLinks = allowMultipleLinks;
         myElementPointer =
           element != null ? SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element) : null;
@@ -96,16 +92,6 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
       @Override
       public String getType() {
         return myType;
-      }
-
-      @Override
-      public Shape getStartArrow() {
-        return myStartArrow;
-      }
-
-      @Override
-      public Shape getEndArrow() {
-        return myEndArrow;
       }
 
       @Override
