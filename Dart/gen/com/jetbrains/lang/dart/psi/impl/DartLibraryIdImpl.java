@@ -17,6 +17,7 @@ public class DartLibraryIdImpl extends DartLibraryIdBase implements DartLibraryI
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitLibraryId(this);
   }

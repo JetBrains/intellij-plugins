@@ -17,6 +17,7 @@ public class DartSuffixExpressionImpl extends DartOperatorExpressionImpl impleme
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitSuffixExpression(this);
   }
