@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -754,7 +754,7 @@ public final class FlexCommonUtils {
 
   public static boolean is64BitJava6(final String javaHome) {
     JdkVersionDetector.JdkVersionInfo info = JdkVersionDetector.getInstance().detectJdkVersionInfo(javaHome);
-    return info != null && info.version.feature == 6 && info.bitness == Bitness.x64;
+    return info != null && info.version.feature == 6 && info.arch.width == 64;
   }
 
   public static List<String> getCommandLineForSdkTool(final @NotNull JpsProject project,
