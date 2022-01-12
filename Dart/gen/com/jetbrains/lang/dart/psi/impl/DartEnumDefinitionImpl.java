@@ -28,6 +28,12 @@ public class DartEnumDefinitionImpl extends AbstractDartPsiClass implements Dart
   }
 
   @Override
+  @Nullable
+  public DartClassMembers getClassMembers() {
+    return findChildByClass(DartClassMembers.class);
+  }
+
+  @Override
   @NotNull
   public DartComponentName getComponentName() {
     return findNotNullChildByClass(DartComponentName.class);
@@ -40,9 +46,27 @@ public class DartEnumDefinitionImpl extends AbstractDartPsiClass implements Dart
   }
 
   @Override
+  @Nullable
+  public DartInterfaces getInterfaces() {
+    return findChildByClass(DartInterfaces.class);
+  }
+
+  @Override
   @NotNull
   public List<DartMetadata> getMetadataList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
+  @Nullable
+  public DartMixins getMixins() {
+    return findChildByClass(DartMixins.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
   }
 
 }
