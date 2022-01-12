@@ -29,7 +29,6 @@ public interface GetSuggestionsConsumer2 extends Consumer {
   public void computedSuggestions(int replacementOffset,
                                   int replacementLength,
                                   List<CompletionSuggestion> suggestions,
-                                  List<String> libraryUrisToImport,
                                   boolean isIncomplete);
 
   /**
