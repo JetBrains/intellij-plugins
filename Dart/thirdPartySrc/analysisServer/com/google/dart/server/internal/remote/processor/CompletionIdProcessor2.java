@@ -42,9 +42,8 @@ public class CompletionIdProcessor2 extends ResultProcessor {
       int replacementOffset = resultObject.get("replacementOffset").getAsJsonPrimitive().getAsInt();
       int replacementLength = resultObject.get("replacementLength").getAsJsonPrimitive().getAsInt();
       List<CompletionSuggestion> suggestions = CompletionSuggestion.fromJsonArray(resultObject.get("suggestions").getAsJsonArray());
-      List<String> libraryUrisToImport = JsonUtilities.decodeStringList(resultObject.get("libraryUrisToImport").getAsJsonArray());
       boolean isIncomplete = resultObject.get("isIncomplete").getAsJsonPrimitive().getAsBoolean();
-      consumer.computedSuggestions(replacementOffset, replacementLength, suggestions, libraryUrisToImport, isIncomplete);
+      consumer.computedSuggestions(replacementOffset, replacementLength, suggestions, isIncomplete);
     }
     if (requestError != null) {
       consumer.onError(requestError);
