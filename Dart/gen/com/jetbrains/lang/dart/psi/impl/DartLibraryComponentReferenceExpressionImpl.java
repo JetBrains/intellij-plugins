@@ -17,6 +17,7 @@ public class DartLibraryComponentReferenceExpressionImpl extends DartLibraryComp
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitLibraryComponentReferenceExpression(this);
   }

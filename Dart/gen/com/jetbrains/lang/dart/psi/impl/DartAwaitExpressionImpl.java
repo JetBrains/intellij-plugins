@@ -17,6 +17,7 @@ public class DartAwaitExpressionImpl extends DartReferenceImpl implements DartAw
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
     visitor.visitAwaitExpression(this);
   }
