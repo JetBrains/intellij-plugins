@@ -7,9 +7,18 @@ import com.intellij.psi.PsiElement;
 
 public interface DartEnumConstantDeclaration extends DartComponent {
 
-  @NotNull
-  DartComponentName getComponentName();
+  @Nullable
+  DartArguments getArguments();
 
-  @NotNull List<DartMetadata> getMetadataList();
+  @NotNull
+  List<DartComponentName> getComponentNameList();
+
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
+  @Nullable
+  DartTypeArguments getTypeArguments();
+
+  @Nullable DartComponentName getComponentName();
 
 }
