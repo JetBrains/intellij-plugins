@@ -9,6 +9,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.*;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
@@ -145,9 +146,8 @@ public final class DartPsiImplUtil {
     return Collections.emptyList();
   }
 
-  @NotNull
-  public static List<DartMetadata> getMetadataList(@NotNull DartEnumConstantDeclaration element) {
-    return Collections.emptyList();
+  public static @Nullable DartComponentName getComponentName(@NotNull DartEnumConstantDeclaration element) {
+    return ContainerUtil.getFirstItem(element.getComponentNameList());
   }
 
   @NotNull

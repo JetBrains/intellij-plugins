@@ -28,14 +28,32 @@ public class DartEnumConstantDeclarationImpl extends AbstractDartComponentImpl i
   }
 
   @Override
-  @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
+  @Nullable
+  public DartArguments getArguments() {
+    return findChildByClass(DartArguments.class);
   }
 
   @Override
-  public @NotNull List<DartMetadata> getMetadataList() {
-    return DartPsiImplUtil.getMetadataList(this);
+  @NotNull
+  public List<DartComponentName> getComponentNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartComponentName.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
+  }
+
+  @Override
+  public @Nullable DartComponentName getComponentName() {
+    return DartPsiImplUtil.getComponentName(this);
   }
 
 }

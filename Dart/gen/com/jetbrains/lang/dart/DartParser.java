@@ -1303,18 +1303,91 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // componentName
+  // metadata* componentName typeArguments? '.' componentName arguments |
+  //                             metadata* componentName typeArguments? arguments?
   public static boolean enumConstantDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumConstantDeclaration")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ENUM_CONSTANT_DECLARATION, "<enum constant declaration>");
-    r = componentName(b, l + 1);
+    r = enumConstantDeclaration_0(b, l + 1);
+    if (!r) r = enumConstantDeclaration_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
+  // metadata* componentName typeArguments? '.' componentName arguments
+  private static boolean enumConstantDeclaration_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = enumConstantDeclaration_0_0(b, l + 1);
+    r = r && componentName(b, l + 1);
+    r = r && enumConstantDeclaration_0_2(b, l + 1);
+    r = r && consumeToken(b, DOT);
+    r = r && componentName(b, l + 1);
+    r = r && arguments(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // metadata*
+  private static boolean enumConstantDeclaration_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_0_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "enumConstantDeclaration_0_0", c)) break;
+    }
+    return true;
+  }
+
+  // typeArguments?
+  private static boolean enumConstantDeclaration_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_0_2")) return false;
+    typeArguments(b, l + 1);
+    return true;
+  }
+
+  // metadata* componentName typeArguments? arguments?
+  private static boolean enumConstantDeclaration_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = enumConstantDeclaration_1_0(b, l + 1);
+    r = r && componentName(b, l + 1);
+    r = r && enumConstantDeclaration_1_2(b, l + 1);
+    r = r && enumConstantDeclaration_1_3(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // metadata*
+  private static boolean enumConstantDeclaration_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_1_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "enumConstantDeclaration_1_0", c)) break;
+    }
+    return true;
+  }
+
+  // typeArguments?
+  private static boolean enumConstantDeclaration_1_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_1_2")) return false;
+    typeArguments(b, l + 1);
+    return true;
+  }
+
+  // arguments?
+  private static boolean enumConstantDeclaration_1_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumConstantDeclaration_1_3")) return false;
+    arguments(b, l + 1);
+    return true;
+  }
+
   /* ********************************************************** */
-  // metadata* 'enum' componentName '{' enumConstantDeclaration (',' enumConstantDeclaration)* ','? '}'
+  // metadata* 'enum' componentName typeParameters? mixins? interfaces? '{' enumConstantDeclaration? (',' enumConstantDeclaration)* ','? ';'? classMembers '}'
   public static boolean enumDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDefinition")) return false;
     if (!nextTokenIs(b, "<enum definition>", AT, ENUM)) return false;
@@ -1324,10 +1397,15 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, ENUM);
     r = r && componentName(b, l + 1);
     p = r; // pin = 3
-    r = r && report_error_(b, consumeToken(b, LBRACE));
-    r = p && report_error_(b, enumConstantDeclaration(b, l + 1)) && r;
+    r = r && report_error_(b, enumDefinition_3(b, l + 1));
+    r = p && report_error_(b, enumDefinition_4(b, l + 1)) && r;
     r = p && report_error_(b, enumDefinition_5(b, l + 1)) && r;
-    r = p && report_error_(b, enumDefinition_6(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, LBRACE)) && r;
+    r = p && report_error_(b, enumDefinition_7(b, l + 1)) && r;
+    r = p && report_error_(b, enumDefinition_8(b, l + 1)) && r;
+    r = p && report_error_(b, enumDefinition_9(b, l + 1)) && r;
+    r = p && report_error_(b, enumDefinition_10(b, l + 1)) && r;
+    r = p && report_error_(b, classMembers(b, l + 1)) && r;
     r = p && consumeToken(b, RBRACE) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -1344,20 +1422,48 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (',' enumConstantDeclaration)*
+  // typeParameters?
+  private static boolean enumDefinition_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_3")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // mixins?
+  private static boolean enumDefinition_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_4")) return false;
+    mixins(b, l + 1);
+    return true;
+  }
+
+  // interfaces?
   private static boolean enumDefinition_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDefinition_5")) return false;
+    interfaces(b, l + 1);
+    return true;
+  }
+
+  // enumConstantDeclaration?
+  private static boolean enumDefinition_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_7")) return false;
+    enumConstantDeclaration(b, l + 1);
+    return true;
+  }
+
+  // (',' enumConstantDeclaration)*
+  private static boolean enumDefinition_8(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_8")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!enumDefinition_5_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "enumDefinition_5", c)) break;
+      if (!enumDefinition_8_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "enumDefinition_8", c)) break;
     }
     return true;
   }
 
   // ',' enumConstantDeclaration
-  private static boolean enumDefinition_5_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "enumDefinition_5_0")) return false;
+  private static boolean enumDefinition_8_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_8_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
@@ -1367,9 +1473,16 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // ','?
-  private static boolean enumDefinition_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "enumDefinition_6")) return false;
+  private static boolean enumDefinition_9(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_9")) return false;
     consumeToken(b, COMMA);
+    return true;
+  }
+
+  // ';'?
+  private static boolean enumDefinition_10(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumDefinition_10")) return false;
+    consumeToken(b, SEMICOLON);
     return true;
   }
 
