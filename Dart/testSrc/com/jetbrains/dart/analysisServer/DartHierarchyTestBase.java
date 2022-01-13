@@ -32,7 +32,7 @@ public abstract class DartHierarchyTestBase extends CodeInsightFixtureTestCase {
     HierarchyTreeStructure structure = treeStructureComputable.compute();
     File file = new File(verificationFilePath);
     if (!file.exists()) {
-      FileUtil.writeToFile(file, HierarchyViewTestFixture.dump(structure, null, 0));
+      FileUtil.writeToFile(file, HierarchyViewTestFixture.dump(structure, null, null,0));
       throw new IllegalStateException("File: " + file.getPath() + " doesn't exist. A new file created.");
     }
     HierarchyViewTestFixture.doHierarchyTest(structure, file);
