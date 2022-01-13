@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.descendantsOfType
-import training.featuresSuggester.LanguageSupport
+import training.featuresSuggester.SuggesterSupport
 import training.featuresSuggester.getParentByPredicate
 import training.featuresSuggester.getParentOfType
 
-class JavaScriptLanguageSupport : LanguageSupport {
+class JavaScriptSuggesterSupport : SuggesterSupport {
   override fun isLoadedSourceFile(file: PsiFile): Boolean {
     return file is JSFileImpl && file.isContentsLoaded
   }

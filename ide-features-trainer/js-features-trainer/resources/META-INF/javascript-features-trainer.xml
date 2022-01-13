@@ -3,7 +3,7 @@
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="JavaScript" implementationClass="com.intellij.javascript.ift.JavaScriptLangSupport"/>
     <ift.learning.course language="JavaScript" implementationClass="com.intellij.javascript.ift.JavaScriptMainLearningCourse"/>
-    <ifs.languageSupport language="JavaScript" implementationClass="com.intellij.javascript.ifs.JavaScriptLanguageSupport"/>
+    <ifs.suggesterSupport language="JavaScript" implementationClass="com.intellij.javascript.ifs.JavaScriptSuggesterSupport"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
