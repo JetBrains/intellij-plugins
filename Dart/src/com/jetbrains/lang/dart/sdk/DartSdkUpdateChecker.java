@@ -137,7 +137,9 @@ public final class DartSdkUpdateChecker {
     final String title = DartBundle.message("dart.sdk.update.title");
     final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
-    UpdateChecker.getNotificationGroup().createNotification(title, message, NotificationType.INFORMATION).setListener((notification, event) -> {
+    UpdateChecker.getNotificationGroup().createNotification(title, message, NotificationType.INFORMATION)
+      .setDisplayId("dart.sdk.update.available")
+      .setListener((notification, event) -> {
       notification.expire();
       if ("download".equals(event.getDescription())) {
         BrowserUtil.browse(downloadUrl);
