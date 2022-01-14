@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -160,6 +161,12 @@ class VueComponents {
           (it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN)
           || it.referenceName == EXTEND_FUN
         } == true
+
+    fun isStrictDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
+      callExpression.methodExpression?.let {
+        JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_COMPONENT_FUN) ||
+        JSSymbolUtil.isAccurateReferenceExpressionName(it, VUE_NAMESPACE, EXTEND_FUN)
+      } ?: false
   }
 }
 

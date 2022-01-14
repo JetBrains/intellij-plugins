@@ -44,6 +44,7 @@ import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 
@@ -204,13 +205,18 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val firstProperty = obj?.firstProperty ?: return outData
     if (firstProperty == property) {
       val parent = obj.parent
-      if (parent is JSExportAssignment
-          || (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))
-          || parent.castSafelyTo<JSArgumentList>()?.parent
-            ?.castSafelyTo<JSCallExpression>()?.let { isDefineComponentOrVueExtendCall(it) } == true) {
+      if (parent is JSExportAssignment ||
+          parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression) ||
+          parent is JSArgumentList && parent.parent?.castSafelyTo<JSCallExpression>()
+            ?.let { isDefineComponentOrVueExtendCall(it) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
-          out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
+          val element = createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY)
+          if (parent is JSArgumentList && parent.parent?.castSafelyTo<JSCallExpression>()
+              ?.let { isStrictDefineComponentOrVueExtendCall(it) } == false) {
+            out.setAddUnderlyingElementToSymbolIndex(true)
+          }
+          out.addImplicitElement(element)
         }
       }
       else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
