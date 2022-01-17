@@ -11,7 +11,7 @@ import icons.MakefileIcons
 
 private const val TOOLWINDOW_ID = "make" // the ID is unfortunate, but should be kept compatible with older versions
 
-class MakefileToolWindowRegistrar : StartupActivity {
+internal class MakefileToolWindowRegistrar : StartupActivity {
   override fun runActivity(project: Project) {
     val toolWindowManager = ToolWindowManager.getInstance(project)
     val toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask(
@@ -29,8 +29,7 @@ class MakefileToolWindowRegistrar : StartupActivity {
   }
 
   private fun shouldDisableStripeButton(project: Project, manager: ToolWindowManager): Boolean {
-    val windowInfo = (manager as ToolWindowManagerEx).layout.getInfo(TOOLWINDOW_ID)
-
+    val windowInfo = (manager as ToolWindowManagerEx).getLayout().getInfo(TOOLWINDOW_ID)
     // toolwindow existed in ths project before - show it
     if (windowInfo != null && windowInfo.isFromPersistentSettings) {
       return false
