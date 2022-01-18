@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
@@ -40,8 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
-
+public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
   public ActionScriptReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
     super(reporter);
   }
