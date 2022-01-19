@@ -201,7 +201,21 @@ public class DartServerCompletionContributor extends CompletionContributor {
     if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
       return;
     }
+    addToCompletionList(project, resultSet, file, startOffsetInHostFile, completionInfo2);
 
+    int counter = 0;
+    while (completionInfo2.myIsIncomplete && completionInfo2.mySuggestions.size() < maxResults && counter++ < 3) {
+      completionInfo2 =
+        das.completion_getSuggestions2(file, startOffsetInHostFile, maxResults, CompletionMode.BASIC, invocationCount);
+      addToCompletionList(project, resultSet, file, startOffsetInHostFile, completionInfo2);
+    }
+  }
+
+  private static void addToCompletionList(@NotNull Project project,
+                                          @NotNull CompletionResultSet resultSet,
+                                          @NotNull VirtualFile file,
+                                          int startOffsetInHostFile,
+                                          DartAnalysisServerService.CompletionInfo2 completionInfo2) {
     CompletionResultSet updatedResultSet = resultSet;
     List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
 
