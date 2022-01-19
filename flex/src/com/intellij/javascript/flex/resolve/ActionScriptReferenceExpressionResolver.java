@@ -26,8 +26,12 @@ public class ActionScriptReferenceExpressionResolver
   extends JSReferenceExpressionResolver
   implements ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> {
 
+  private final boolean myUnqualifiedOrLocalResolve;
+
   public ActionScriptReferenceExpressionResolver(JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
     super(expression, ignorePerformanceLimits);
+    myUnqualifiedOrLocalResolve =
+      myQualifier == null || myQualifier instanceof JSThisExpression || myQualifier instanceof JSSuperExpression;
   }
 
   @Override
