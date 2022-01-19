@@ -1,9 +1,7 @@
 package com.intellij.protobuf.lang.util
 
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -16,12 +14,10 @@ import com.intellij.psi.search.GlobalSearchScope
 internal object PbImportPathResolver {
   fun findSuitableImportPaths(importStatement: String, editedFile: VirtualFile, project: Project): Sequence<ImportPathData> {
     val relativeImportPath = FileUtil.toSystemIndependentName(importStatement)
-    return DumbService.getInstance(project).runReadActionInSmartMode(Computable {
-      FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.projectScope(project))
-        .asSequence()
-        .mapNotNull { findEffectiveImportPath(relativeImportPath, it) }
-        .map { ImportPathData.create(editedFile, it, importStatement, it.url, shortenPath(it, project)) }
-    })
+    return FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+      .asSequence()
+      .mapNotNull { findEffectiveImportPath(relativeImportPath, it) }
+      .map { ImportPathData.create(editedFile, it, importStatement, it.url, shortenPath(it, project)) }
   }
 
   private fun findEffectiveImportPath(relativeImportPath: String, protoFileCandidate: VirtualFile): VirtualFile? {

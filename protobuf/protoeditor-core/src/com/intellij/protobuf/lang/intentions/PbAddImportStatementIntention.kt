@@ -1,10 +1,14 @@
 package com.intellij.protobuf.lang.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager
 import com.intellij.protobuf.lang.PbLangBundle
 import com.intellij.protobuf.lang.intentions.util.PbUiUtils
 import com.intellij.protobuf.lang.psi.PbFile
@@ -24,6 +28,8 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.castSafelyTo
+import com.intellij.util.concurrency.AppExecutorUtil
+import java.util.concurrent.Callable
 
 internal class PbAddImportStatementIntention : IntentionAction {
   override fun startInWriteAction(): Boolean {
@@ -47,18 +53,30 @@ internal class PbAddImportStatementIntention : IntentionAction {
   override fun invoke(project: Project, editor: Editor, editedFile: PsiFile) {
     if (editedFile !is PbFile) return
 
-    val unresolvedMessageFqn = constructUnresolvedSymbolPath(editedFile, editor) ?: return
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      PbUiUtils.selectItemAndApply(prepareQuickFixes(project, editor, editedFile), editor, project)
+      return
+    }
+
+    ReadAction.nonBlocking(Callable { prepareQuickFixes(project, editor, editedFile) })
+      .expireWith(ProjectSettingsConfiguratorManager.getInstance(project))
+      .inSmartMode(project)
+      .coalesceBy(editor, editedFile)
+      .finishOnUiThread(ModalityState.NON_MODAL) { fixes ->
+        PbUiUtils.selectItemAndApply(fixes, editor, project)
+      }
+      .submit(AppExecutorUtil.getAppExecutorService());
+  }
+
+  private fun prepareQuickFixes(project: Project, editor: Editor, editedFile: PbFile): List<PbImportIntentionVariant> {
+    val unresolvedMessageFqn = constructUnresolvedSymbolPath(editedFile, editor) ?: return emptyList()
     val importCandidates = allProtoFilesWithGivenFqn(unresolvedMessageFqn, project)
     val importCandidatesPaths = importCandidates.map { FileUtil.toSystemIndependentName(it.virtualFile.path) }
 
     val suitableExistingInCurrentFileImportStatements = editedFile.importStatements
       .filter { importCorrespondsToFile(it, importCandidatesPaths) }
 
-    PbUiUtils.selectItemAndApply(
-      createPossibleImportIssueFixes(importCandidates, suitableExistingInCurrentFileImportStatements, editedFile),
-      editor,
-      project
-    )
+    return createPossibleImportIssueFixes(importCandidates, suitableExistingInCurrentFileImportStatements, editedFile)
   }
 
   private fun createPossibleImportIssueFixes(protoFileCandidates: List<PsiFile>,
