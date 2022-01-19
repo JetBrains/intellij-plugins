@@ -17,91 +17,84 @@ import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.ListCellRenderer
 
-internal object PbUiUtils {
-  fun selectItemAndApply(variants: List<PbImportIntentionVariant>,
-                         editor: Editor,
-                         project: Project) {
-    PsiDocumentManager.getInstance(project).commitAllDocuments()
+internal fun selectItemAndApply(variants: List<PbImportIntentionVariant>,
+                       editor: Editor,
+                       project: Project) {
+  PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-    if (variants.isEmpty()) return
-    if (instantlyInvokeSingleIntention(variants, project)) return
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-      handleUnitTestMode(variants, project)
-      return
+  if (variants.isEmpty()) return
+  if (instantlyInvokeSingleIntention(variants, project)) return
+  if (ApplicationManager.getApplication().isUnitTestMode) {
+    handleUnitTestMode(variants, project)
+    return
+  }
+
+  val customRenderer = createRenderer()
+  JBPopupFactory.getInstance().createListPopup(project, createPopup(variants, project)) {
+    ListCellRenderer<PbImportIntentionVariant> { list, value, index, isSelected, cellHasFocus ->
+      JPanel(BorderLayout()).apply {
+        add(customRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus))
+      }
+    }
+  }.showInBestPositionFor(editor)
+}
+
+private fun instantlyInvokeSingleIntention(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
+  val theOnlyAvailableIntention = variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>().singleOrNull()
+  return theOnlyAvailableIntention?.invokeIntentionIfNotNull(project) ?: false
+}
+
+private fun handleUnitTestMode(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
+  val firstAvailableSortedIntention =
+    variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>()
+      .minByOrNull { it.importPathData.presentablePath }
+  return firstAvailableSortedIntention?.invokeIntentionIfNotNull(project) ?: false
+}
+
+private fun PbImportIntentionVariant.AddImportPathToSettings.invokeIntentionIfNotNull(project: Project): Boolean {
+  invokeAction(project)
+  return true
+}
+
+private fun createPopup(variants: List<PbImportIntentionVariant>,
+                        project: Project): BaseListPopupStep<PbImportIntentionVariant> {
+  return object : BaseListPopupStep<PbImportIntentionVariant>(PbLangBundle.message("intention.add.import.path.popup.title"),
+                                                              variants) {
+
+    override fun onChosen(selectedValue: PbImportIntentionVariant?, finalChoice: Boolean): PopupStep<Any>? {
+      if (selectedValue == null || project.isDisposed) return null
+
+      if (finalChoice) {
+        selectedValue.invokeAction(project)
+      }
+      return null
     }
 
-    val customRenderer = createRenderer()
-    JBPopupFactory.getInstance().createListPopup(project, createPopup(variants, project)) {
-      ListCellRenderer<PbImportIntentionVariant> { list, value, index, isSelected, cellHasFocus ->
-        JPanel(BorderLayout()).apply {
-          add(customRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus))
+    override fun isSpeedSearchEnabled() = true
+    override fun isAutoSelectionEnabled() = false
+  }
+}
+
+private fun createRenderer(): ListCellRenderer<PbImportIntentionVariant> {
+  return object : ColoredListCellRenderer<PbImportIntentionVariant>() {
+
+    override fun customizeCellRenderer(list: JList<out PbImportIntentionVariant>,
+                                       value: PbImportIntentionVariant,
+                                       index: Int,
+                                       selected: Boolean,
+                                       hasFocus: Boolean) {
+      when (value) {
+        is PbImportIntentionVariant.AddImportPathToSettings -> {
+          append(value.importPathData.presentablePath, SimpleTextAttributes.REGULAR_ATTRIBUTES)
+          @Suppress("HardCodedStringLiteral")
+          append(File.separator, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+          append(value.importPathData.originalImportStatement, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+        }
+        is PbImportIntentionVariant.ManuallyConfigureImportPathsSettings -> {
+          append(value.presentableName, SimpleTextAttributes.REGULAR_ATTRIBUTES)
         }
       }
-    }.showInBestPositionFor(editor)
-  }
-
-  private fun instantlyInvokeSingleIntention(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
-    val theOnlyAvailableIntention = variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>().singleOrNull()
-    return invokeIntentionIfNotNull(theOnlyAvailableIntention, project)
-  }
-
-  private fun handleUnitTestMode(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
-    val firstAvailableSortedIntention =
-      variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>()
-        .minByOrNull { it.importPathData.presentablePath }
-    return invokeIntentionIfNotNull(firstAvailableSortedIntention, project)
-  }
-
-  private fun invokeIntentionIfNotNull(intention: PbImportIntentionVariant.AddImportPathToSettings?, project: Project): Boolean {
-    return if (intention != null) {
-      intention.invokeAction(project)
-      true
-    }
-    else {
-      false
-    }
-  }
-
-  private fun createPopup(variants: List<PbImportIntentionVariant>,
-                          project: Project): BaseListPopupStep<PbImportIntentionVariant> {
-    return object : BaseListPopupStep<PbImportIntentionVariant>(PbLangBundle.message("intention.add.import.path.popup.title"),
-                                                                variants) {
-
-      override fun onChosen(selectedValue: PbImportIntentionVariant?, finalChoice: Boolean): PopupStep<Any>? {
-        if (selectedValue == null || project.isDisposed) return null
-
-        if (finalChoice) {
-          selectedValue.invokeAction(project)
-        }
-        return null
-      }
-
-      override fun isSpeedSearchEnabled() = true
-      override fun isAutoSelectionEnabled() = false
-    }
-  }
-
-  private fun createRenderer(): ListCellRenderer<PbImportIntentionVariant> {
-    return object : ColoredListCellRenderer<PbImportIntentionVariant>() {
-
-      override fun customizeCellRenderer(list: JList<out PbImportIntentionVariant>,
-                                         value: PbImportIntentionVariant,
-                                         index: Int,
-                                         selected: Boolean,
-                                         hasFocus: Boolean) {
-        when (value) {
-          is PbImportIntentionVariant.AddImportPathToSettings -> {
-            append(value.importPathData.presentablePath, SimpleTextAttributes.REGULAR_ATTRIBUTES)
-            @Suppress("HardCodedStringLiteral")
-            append(File.separator, SimpleTextAttributes.GRAYED_ATTRIBUTES)
-            append(value.importPathData.originalImportStatement, SimpleTextAttributes.GRAYED_ATTRIBUTES)
-          }
-          is PbImportIntentionVariant.ManuallyConfigureImportPathsSettings -> {
-            append(value.presentableName, SimpleTextAttributes.REGULAR_ATTRIBUTES)
-          }
-        }
-        icon = value.icon
-      }
+      icon = value.icon
     }
   }
 }

@@ -1,13 +1,14 @@
-package com.intellij.protobuf.lang.util
+package com.intellij.protobuf.lang.intentions.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.protobuf.lang.PbFileType
-import com.intellij.protobuf.lang.util.ImportPathData.Companion.shortenPath
+import com.intellij.protobuf.lang.intentions.util.ImportPathData.Companion.shortenPath
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 
@@ -17,7 +18,7 @@ internal object PbImportPathResolver {
     return FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.projectScope(project))
       .asSequence()
       .mapNotNull { findEffectiveImportPath(relativeImportPath, it) }
-      .map { ImportPathData.create(editedFile, it, importStatement, it.url, shortenPath(it, project)) }
+      .map { ImportPathData(editedFile, it, importStatement, it.url, shortenPath(it, project)) }
   }
 
   private fun findEffectiveImportPath(relativeImportPath: String, protoFileCandidate: VirtualFile): VirtualFile? {
@@ -31,7 +32,7 @@ internal object PbImportPathResolver {
   }
 }
 
-internal class ImportPathData private constructor(
+internal class ImportPathData(
   val originalPbVirtualFile: VirtualFile,
   val importedPbVirtualFile: VirtualFile,
   @NlsSafe val originalImportStatement: String,
@@ -41,20 +42,6 @@ internal class ImportPathData private constructor(
   companion object {
     private const val MAX_LOCATION_LENGTH = 60
 
-    fun create(originalProtoFile: VirtualFile, importedProtoFile: VirtualFile, project: Project): ImportPathData {
-      return ImportPathData(originalProtoFile, importedProtoFile, importedProtoFile.name, importedProtoFile.parent.url, shortenPath(importedProtoFile, project))
-    }
-
-    fun create(
-      originalProtoFile: VirtualFile,
-      importedProtoFile: VirtualFile,
-      originalImportStatement: String,
-      effectiveImportPathUrl: String,
-      presentablePath: String
-    ): ImportPathData {
-      return ImportPathData(originalProtoFile, importedProtoFile, originalImportStatement, effectiveImportPathUrl, presentablePath)
-    }
-
     fun shortenPath(virtualFile: VirtualFile, project: Project): String {
       val sourceRoot = ProjectFileIndex.getInstance(project).getSourceRootForFile(virtualFile)
       val relativePath = sourceRoot?.let {
@@ -62,11 +49,8 @@ internal class ImportPathData private constructor(
       } ?: virtualFile.path
 
       val systemDependentPath = FileUtil.toSystemDependentName(relativePath)
-
-      return if (systemDependentPath.length <= MAX_LOCATION_LENGTH)
-        systemDependentPath
-      else
-        "...${systemDependentPath.substring(systemDependentPath.length - MAX_LOCATION_LENGTH)}"
+      val computedSuffixLength = MAX_LOCATION_LENGTH - StringUtil.THREE_DOTS.length
+      return StringUtil.shortenTextWithEllipsis(systemDependentPath, MAX_LOCATION_LENGTH, computedSuffixLength, StringUtil.THREE_DOTS)
     }
   }
 }

@@ -10,7 +10,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager
 import com.intellij.protobuf.lang.PbLangBundle
-import com.intellij.protobuf.lang.intentions.util.PbUiUtils
+import com.intellij.protobuf.lang.intentions.util.ImportPathData
+import com.intellij.protobuf.lang.intentions.util.PbImportPathResolver
+import com.intellij.protobuf.lang.intentions.util.selectItemAndApply
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbImportStatement
 import com.intellij.protobuf.lang.psi.PbNamedElement
@@ -18,8 +20,6 @@ import com.intellij.protobuf.lang.psi.PbSymbolPath
 import com.intellij.protobuf.lang.resolve.ProtoSymbolPathReference
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex
 import com.intellij.protobuf.lang.stub.index.ShortNameIndex
-import com.intellij.protobuf.lang.util.ImportPathData
-import com.intellij.protobuf.lang.util.PbImportPathResolver
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
@@ -54,7 +54,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
     if (editedFile !is PbFile) return
 
     if (ApplicationManager.getApplication().isUnitTestMode) {
-      PbUiUtils.selectItemAndApply(prepareQuickFixes(project, editor, editedFile), editor, project)
+      selectItemAndApply(prepareQuickFixes(project, editor, editedFile), editor, project)
       return
     }
 
@@ -63,7 +63,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
       .inSmartMode(project)
       .coalesceBy(editor, editedFile)
       .finishOnUiThread(ModalityState.NON_MODAL) { fixes ->
-        PbUiUtils.selectItemAndApply(fixes, editor, project)
+        selectItemAndApply(fixes, editor, project)
       }
       .submit(AppExecutorUtil.getAppExecutorService());
   }
@@ -85,11 +85,12 @@ internal class PbAddImportStatementIntention : IntentionAction {
 
     if (suitableImportStatements.isEmpty()) {
       return protoFileCandidates.map {
-        ImportPathData.create(
-          editedProtoFile.virtualFile,
-          it.virtualFile,
-          editedProtoFile.project
-        )
+        val originalProtoFile = editedProtoFile.virtualFile
+        val importedProtoFile = it.virtualFile
+        val project = editedProtoFile.project
+        val presentablePath = ImportPathData.shortenPath(importedProtoFile, project)
+
+        ImportPathData(originalProtoFile, importedProtoFile, importedProtoFile.name, importedProtoFile.parent.url, presentablePath)
       }.map {
         PbImportIntentionVariant.AddImportStatementAndPathToSettings(it)
       }

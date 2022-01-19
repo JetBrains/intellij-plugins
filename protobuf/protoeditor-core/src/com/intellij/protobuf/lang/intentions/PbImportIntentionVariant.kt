@@ -13,9 +13,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable
 import com.intellij.protobuf.lang.PbLangBundle
+import com.intellij.protobuf.lang.intentions.util.ImportPathData
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.util.PbPsiFactory
-import com.intellij.protobuf.lang.util.ImportPathData
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager

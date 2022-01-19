@@ -5,7 +5,7 @@ import com.intellij.openapi.command.undo.DocumentReferenceManager
 import com.intellij.openapi.command.undo.UndoableAction
 import com.intellij.openapi.project.Project
 import com.intellij.protobuf.ide.settings.PbProjectSettings
-import com.intellij.protobuf.lang.util.ImportPathData
+import com.intellij.protobuf.lang.intentions.util.ImportPathData
 
 internal class PbAddImportPathUndoableAction(pathToAdd: ImportPathData, private val project: Project) : UndoableAction {
   private val currentDocumentReference = DocumentReferenceManager.getInstance().create(pathToAdd.originalPbVirtualFile)
@@ -24,7 +24,7 @@ internal class PbAddImportPathUndoableAction(pathToAdd: ImportPathData, private 
     if (project.isDisposed) return
     val projectSettings = PbProjectSettings.getInstance(project)
     projectSettings.isAutoConfigEnabled = false
-    projectSettings.importPathEntries = listOf(*projectSettings.importPathEntries.toTypedArray(), importPath)
+    projectSettings.importPathEntries = projectSettings.importPathEntries + importPath
     PbProjectSettings.notifyUpdated(project)
   }
 

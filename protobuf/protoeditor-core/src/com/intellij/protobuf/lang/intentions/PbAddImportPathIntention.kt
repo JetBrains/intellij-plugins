@@ -10,10 +10,10 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager
 import com.intellij.protobuf.lang.PbLangBundle
-import com.intellij.protobuf.lang.intentions.util.PbUiUtils
+import com.intellij.protobuf.lang.intentions.util.PbImportPathResolver
+import com.intellij.protobuf.lang.intentions.util.selectItemAndApply
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbImportStatement
-import com.intellij.protobuf.lang.util.PbImportPathResolver
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.IncorrectOperationException
@@ -43,7 +43,7 @@ class PbAddImportPathIntention : IntentionAction {
   @Throws(IncorrectOperationException::class)
   override fun invoke(project: Project, editor: Editor, file: PsiFile) {
     if (ApplicationManager.getApplication().isUnitTestMode) {
-      PbUiUtils.selectItemAndApply(prepareQuickFixes(project, editor, file), editor, project)
+      selectItemAndApply(prepareQuickFixes(project, editor, file), editor, project)
       return
     }
 
@@ -52,7 +52,7 @@ class PbAddImportPathIntention : IntentionAction {
       .inSmartMode(project)
       .coalesceBy(editor, file)
       .finishOnUiThread(ModalityState.NON_MODAL) { fixes ->
-        PbUiUtils.selectItemAndApply(fixes, editor, project)
+        selectItemAndApply(fixes, editor, project)
       }
       .submit(AppExecutorUtil.getAppExecutorService());
   }
