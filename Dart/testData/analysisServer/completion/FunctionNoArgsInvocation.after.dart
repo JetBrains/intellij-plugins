@@ -1,3 +1,3 @@
-main() {
-  main()<caret>
+abcdefghij() {
+  abcdefghij()<caret>
 }
