@@ -198,15 +198,35 @@ public class DartServerCompletionContributor extends CompletionContributor {
     DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
     DartAnalysisServerService.CompletionInfo2 completionInfo2 =
       das.completion_getSuggestions2(file, startOffsetInHostFile, maxResults, CompletionMode.BASIC, invocationCount);
-    if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
+    if (completionInfo2 == null) {
       return;
     }
 
+    Set<CompletionSuggestion> addedCompletions = new HashSet<>();
+    addToCompletionList(project, resultSet, file, startOffsetInHostFile, completionInfo2, addedCompletions);
+
+    int retryCount = 0;
+    while (completionInfo2.myIsIncomplete && completionInfo2.mySuggestions.size() < maxResults && retryCount++ < 3) {
+      completionInfo2 = das.completion_getSuggestions2(file, startOffsetInHostFile, maxResults, CompletionMode.BASIC, invocationCount);
+      if (completionInfo2 == null) return;
+
+      addToCompletionList(project, resultSet, file, startOffsetInHostFile, completionInfo2, addedCompletions);
+    }
+  }
+
+  private static void addToCompletionList(@NotNull Project project,
+                                          @NotNull CompletionResultSet resultSet,
+                                          @NotNull VirtualFile file,
+                                          int startOffsetInHostFile,
+                                          @NotNull DartAnalysisServerService.CompletionInfo2 completionInfo2,
+                                          @NotNull Set<CompletionSuggestion> addedCompletions) {
     CompletionResultSet updatedResultSet = resultSet;
     List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
 
     // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
     for (CompletionSuggestion suggestion : suggestions) {
+      if (!addedCompletions.add(suggestion)) continue;
+
       Element element = suggestion.getElement();
       String libraryUri = element != null ? element.getLibraryUri() : null;
       String libraryUriToImport =
@@ -222,8 +242,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, libraryUriToDisplay, insertHandler));
     }
 
-    // As the user types additional characters, restart the completion only if we don't already have the complete set of
-    // completions.
+    // As the user types additional characters, restart the completion only if we don't already have the complete set of completions.
     if (completionInfo2.myIsIncomplete) {
       updatedResultSet.restartCompletionOnAnyPrefixChange();
 
