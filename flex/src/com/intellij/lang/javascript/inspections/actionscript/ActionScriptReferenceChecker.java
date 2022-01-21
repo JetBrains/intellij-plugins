@@ -259,7 +259,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
   }
 
   @Nullable
-  protected JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
+  private static JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
     if (resultElement instanceof JSVariable) { // do not evaluate initializer
       return ((JSVariable)resultElement).getJSType();
     }
