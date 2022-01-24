@@ -17,6 +17,11 @@ class WithNamedArguments {
     foo(n1:x);
     foo(n1:x, n2:x);
     foo(n1:x, n2:x, n3:x);
+    // Named arguments anywhere
+    // https://github.com/dart-lang/language/issues/1072
+    foo(n1: x, x);
+    foo(n1: x, x, n2: x, n3: x);
+    foo(n1: x, "string", n2: x, n3: x, 42);
   }
 
   foo(covariant Foo param(), covariant param2(), covariant()) {}
