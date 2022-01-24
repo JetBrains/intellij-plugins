@@ -40,5 +40,6 @@
     <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.platform.graph.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl.refactorings" />
   </component>
 </module>

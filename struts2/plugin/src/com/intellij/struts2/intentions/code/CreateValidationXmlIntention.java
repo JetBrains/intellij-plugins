@@ -36,8 +36,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.PackageWrapper;
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
-import com.intellij.refactoring.util.RefactoringUtil;
+import com.intellij.refactoring.util.CommonMoveClassesOrPackagesUtil;
 import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -45,6 +44,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.util.CommonJavaRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -165,9 +165,9 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     assert module != null;
     final List<VirtualFile> sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(JavaModuleSourceRootTypes.PRODUCTION);
     final VirtualFile sourceRoot = sourceRoots.size() == 1 ? sourceRoots.get(0) :
-                                   MoveClassesOrPackagesUtil.chooseSourceRoot(targetPackage,
-                                                                              sourceRoots,
-                                                                              manager.findDirectory(sourceRoots.get(0)));
+                                   CommonMoveClassesOrPackagesUtil.chooseSourceRoot(targetPackage,
+                                                                                    sourceRoots,
+                                                                                    manager.findDirectory(sourceRoots.get(0)));
     if (sourceRoot == null) {
       return;
     }
@@ -178,7 +178,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     final FileTemplateManager templateManager = FileTemplateManager.getInstance(project);
     final FileTemplate validationTemplate = templateManager.getJ2eeTemplate(StrutsFileTemplateGroupDescriptorFactory.VALIDATION_XML);
 
-    final PsiDirectory packageDirectoryInSourceRoot = RefactoringUtil.createPackageDirectoryInSourceRoot(targetPackage, sourceRoot);
+    final PsiDirectory packageDirectoryInSourceRoot = CommonJavaRefactoringUtil.createPackageDirectoryInSourceRoot(targetPackage, sourceRoot);
     try {
       final String filename =
         path == null ? actionClass.getName() + "-validation.xml" : actionClass.getName() + "-" + path + "-validation.xml";
