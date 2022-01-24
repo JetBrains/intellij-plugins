@@ -233,7 +233,7 @@ public class PlatformioLauncher extends CLionLauncher {
 
     CMakeModel model = workspace.getModel();
     CMakeBuildProfileExecutionTarget selectedBuildProfile = CMakeAppRunConfiguration.getSelectedBuildProfile(project);
-    File projectDir = workspace.getModelProjectDir();
+    File projectDir = workspace.getProjectPath().toFile();
     if (model == null || selectedBuildProfile == null || projectDir == null) {
       return null;
     }
