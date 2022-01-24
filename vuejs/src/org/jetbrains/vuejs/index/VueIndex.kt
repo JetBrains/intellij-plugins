@@ -37,9 +37,9 @@ const val GLOBAL_BINDING_MARK: String = "*"
 internal const val INDEXED_ACCESS_HINT = "[]"
 const val DELIMITER = "#"
 
-fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
+fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
-  return keys.flatMap { resolve(it, scope, key) }
+  return keys.asSequence().flatMap { resolve(it, scope, key) }
 }
 
 fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
