@@ -1970,14 +1970,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression typeParameters? formalParameterList?
+  // metadata* finalConstVarVoidOrType? ('this' | 'super') '.' referenceExpression typeParameters? formalParameterList?
   public static boolean fieldFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FIELD_FORMAL_PARAMETER, "<field formal parameter>");
     r = fieldFormalParameter_0(b, l + 1);
     r = r && fieldFormalParameter_1(b, l + 1);
-    r = r && consumeTokens(b, 0, THIS, DOT);
+    r = r && fieldFormalParameter_2(b, l + 1);
+    r = r && consumeToken(b, DOT);
     r = r && referenceExpression(b, l + 1);
     r = r && fieldFormalParameter_5(b, l + 1);
     r = r && fieldFormalParameter_6(b, l + 1);
@@ -2001,6 +2002,15 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "fieldFormalParameter_1")) return false;
     finalConstVarVoidOrType(b, l + 1);
     return true;
+  }
+
+  // 'this' | 'super'
+  private static boolean fieldFormalParameter_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldFormalParameter_2")) return false;
+    boolean r;
+    r = consumeToken(b, THIS);
+    if (!r) r = consumeToken(b, SUPER);
+    return r;
   }
 
   // typeParameters?

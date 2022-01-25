@@ -7,6 +7,14 @@ class ConstructorSyntax {
   ConstructorSyntax.b(x, y) : assert(false), this.x = y, assert(1<2, ""), this.y = x, super() {}
 }
 
+// Dart Super-Initializer Parameters
+// https://github.com/dart-lang/language/blob/master/working/1855%20-%20super%20parameters/proposal.md
+class ConstructorSyntax2 extends SuperClass {
+  ConstructorSyntax2(this.x, super.y, [super.z]) : super(a, b);
+  ConstructorSyntax2.c(this.x, super.y, [super.z]) : super(a, b);
+  ConstructorSyntax2.d(this.x, super.y, {super.z}) : super(a, b);
+}
+
 class CompileTimeConstructorSyntax {
   const CompileTimeConstructorSyntax();
   const CompileTimeConstructorSyntax() : super(1, 2, 3);
