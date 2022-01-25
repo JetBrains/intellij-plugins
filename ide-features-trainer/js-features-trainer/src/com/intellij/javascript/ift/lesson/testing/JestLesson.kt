@@ -60,13 +60,16 @@ class JestLesson
         }
 
         task("editRunConfigurations") {
+          val editConfiguration = strong(ActionsBundle.message("group.RunMenu.text").dropMnemonic() + 
+                                         " > " + 
+                                         ExecutionBundle.message("edit.configuration.action").dropMnemonic())
+          
           text(JsLessonsBundle.message("js.testing.jest.prepare",
-                                     "https://jestjs.io/en/",
-                                     "https://github.com/facebook/jest/tree/master/examples/getting-started",
-                                     "https://jestjs.io/docs/en/getting-started",
-                                     ActionsBundle.message("group.RunMenu.text").dropMnemonic(), ExecutionBundle.message(
-            "edit.configuration.action").dropMnemonic(),
-                                     icon(AllIcons.General.Add), strong("Jest"), strong("OK")))
+                                       "https://jestjs.io/en/",
+                                       "https://github.com/facebook/jest/tree/master/examples/getting-started",
+                                       "https://jestjs.io/docs/en/getting-started",
+                                       editConfiguration,
+                                       icon(AllIcons.General.Add), strong("Jest"), strong("OK")))
           stateCheck {
             RunManager.getInstance(project).findConfigurationByName(TestRunnerBundle.message("all.tests.scope.presentable.text")) != null
           }
@@ -75,8 +78,7 @@ class JestLesson
         highlightButtonById("Run")
         task("Run") {
           text(JsLessonsBundle.message("js.testing.jest.run", strong(TestRunnerBundle.message("all.tests.scope.presentable.text")),
-                                     ExecutionBundle.message(
-                                       "run.configurable.display.name"), icon(AllIcons.RunConfigurations.TestState.Run)))
+                                       strong(ExecutionBundle.message("run.configurable.display.name")), icon(AllIcons.RunConfigurations.TestState.Run)))
           trigger(it)
         }
 
@@ -98,18 +100,9 @@ class JestLesson
             (focusOwner as? Tree)?.getSelectedNodes(DefaultMutableTreeNode::class.java, null)?.firstOrNull()?.toString() == "adds 1 + 2 to equal 3"
           }
         }
-
+        
         task {
-          text(JsLessonsBundle.message("js.testing.jest.double.click", strong("adds 1 + 2 to equal 3")))
-          stateCheck {
-            textAtCaretEqualsTo("toBe") && focusOwner is EditorComponentImpl
-          }
-        }
-
-        task {
-          text(JsLessonsBundle.message("js.testing.jest.fix.test.1",
-                                       strong(SmRunnerBundle.message("sm.test.runner.ui.tests.tree.presentation.labels.test.results")),
-                                       strong(".toBe")))
+          text(JsLessonsBundle.message("js.testing.jest.fix.test.1", strong(".toBe")))
           text(JsLessonsBundle.message("js.testing.jest.fix.test.2", strong(".toBe"), strong("4"), strong("3")))
           stateCheck {
             textOnLine(5, "3")

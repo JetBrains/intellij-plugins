@@ -29,7 +29,7 @@ class CodeEditingLesson
     <td>24</td>
   </tr>
   <tr>
-    <td>First name</td>
+    <caret><td>First name</td>
     <td>Last name</td>
     <td>Age</td>
   </tr>
