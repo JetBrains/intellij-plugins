@@ -39,6 +39,7 @@ public final class DartSdkLibUtil {
     "internal",
     "kernel",
     "profiler",
+    "web_sql",
   };
 
   public static boolean isIdeWithMultipleModuleSupport() {
