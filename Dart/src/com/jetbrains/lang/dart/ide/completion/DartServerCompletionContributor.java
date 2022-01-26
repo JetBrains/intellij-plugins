@@ -107,7 +107,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final int startOffsetInHostFile =
                  InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
 
-               if (!das.getServerVersion().isEmpty() && StringUtil.compareVersionNumbers(das.getServerVersion(), "1.33") >= 0) {
+               if (!das.getServerVersion().isEmpty() && das.shouldUseCompletion2()) {
                  handleCompletion2(project, resultSet, file, startOffsetInHostFile, parameters.getInvocationCount());
                  return;
                }
