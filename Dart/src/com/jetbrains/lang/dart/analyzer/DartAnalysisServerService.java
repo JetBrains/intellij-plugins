@@ -75,6 +75,7 @@ import java.util.concurrent.TimeUnit;
 public final class DartAnalysisServerService implements Disposable {
   public static final String MIN_SDK_VERSION = "1.12";
   private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
+  private static final String COMPLETION_2_SERVER_VERSION = "1.33";
 
   // Webdev works going back to 2.6.0, future minimum version listed in the pubspec.yaml, link below, won't mean that 2.6.0 aren't
   // supported.
@@ -446,6 +447,10 @@ public final class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficientForWebdev(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_WEBDEV_SDK_VERSION) >= 0;
+  }
+
+  public boolean shouldUseCompletion2() {
+    return StringUtil.compareVersionNumbers(getServerVersion(), COMPLETION_2_SERVER_VERSION) >= 0;
   }
 
   public void addCompletions(@NotNull final VirtualFile file,
@@ -2067,7 +2072,10 @@ public final class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         server_setSubscriptions(startedServer);
-        startedServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
+
+        if (!shouldUseCompletion2()) {
+          startedServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
+        }
 
         if (!myInitializationOnServerStartupDone) {
           myInitializationOnServerStartupDone = true;
