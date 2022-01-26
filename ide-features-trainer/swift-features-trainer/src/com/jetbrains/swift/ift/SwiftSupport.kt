@@ -7,9 +7,8 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.wm.ToolWindowAnchor
 import training.lang.AbstractLangSupport
 import training.util.getFeedbackLink
-import java.util.*
 
-internal class SwiftSupport : AbstractLangSupport() {
+class SwiftSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "Swift"
 
@@ -18,7 +17,7 @@ internal class SwiftSupport : AbstractLangSupport() {
   override val defaultProductName: String = "AppCode"
 
   override val projectResourcePath: String =
-    "learnProjects/" + ApplicationNamesInfo.getInstance().fullProductName.lowercase(Locale.getDefault()) + "_swift/LearnProjectSwift"
+    "learnProjects/" + ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift"
 
   override fun cleanupBeforeLessons(project: Project) {
     // Do nothing for Swift
@@ -29,5 +28,7 @@ internal class SwiftSupport : AbstractLangSupport() {
 
   override fun checkSdk(sdk: Sdk?, project: Project) {}
 
-  override fun getToolWindowAnchor() = ToolWindowAnchor.RIGHT
+  override fun getToolWindowAnchor(): ToolWindowAnchor {
+    return ToolWindowAnchor.RIGHT
+  }
 }
