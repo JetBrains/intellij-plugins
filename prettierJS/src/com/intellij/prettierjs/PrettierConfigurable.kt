@@ -1,7 +1,8 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs
 
 import com.intellij.ide.actionsOnSave.*
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
@@ -36,7 +37,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
 
     return panel {
-      packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME, null)
+      packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME) { NodeJsInterpreterManager.getInstance(project).interpreter }
+
       row(JLabel(PrettierBundle.message("prettier.package.label")).apply { labelFor = packageField }) {
         packageField!!().withBinding(
           { it.selectedRef },
