@@ -44,7 +44,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         RubyContextActionsLesson(),
         GotoActionLesson(ls("Actions.rb.sample")),
         RubySelectLesson(),
-        SingleLineCommentLesson(ls("Comment.rb.sample")),
+        CommentUncommentLesson(ls("Comment.rb.sample")),
         DuplicateLesson(ls("Duplicate.rb.sample")),
         MoveLesson("set(v)", ls("Move.rb.sample")),
         CollapseLesson(ls("Collapse.rb.sample")),
