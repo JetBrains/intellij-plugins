@@ -4,10 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.javascript.web.checkListByFile
-import com.intellij.javascript.web.moveToOffsetBySignature
-import com.intellij.javascript.web.noAutoComplete
-import com.intellij.javascript.web.renderLookupItems
+import com.intellij.javascript.web.*
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -1334,13 +1331,11 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testCompletionPriorityAndHints() {
-    doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5, dir = true) {
-      !it.contains("html")
-    }
+    doLookupTest(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5, dir = true, lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCompletionPriorityAndHintsBuiltInTags() {
-    doLookupTest(VueTestModule.VUE_2_5_3) { !it.contains("http://www.w3.org") }
+    doLookupTest(VueTestModule.VUE_2_5_3, lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testDirectiveCompletionOnComponent() {
@@ -1610,9 +1605,7 @@ export default class ComponentInsertion extends Vue {
 
   fun testDefineComponent() {
     doLookupTest(VueTestModule.VUE_2_5_3, VueTestModule.COMPOSITION_API_0_4_0,
-                 dir = true, fileContents = """<template><<caret></template>""") {
-      !it.contains("www.w3.org")
-    }
+                 dir = true, fileContents = """<template><<caret></template>""", lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testNoDuplicateCompletionProposals() {
@@ -1706,14 +1699,16 @@ export default {
   }
 
   fun testScriptSetup() {
-    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, locations = listOf(
-      ":count=\"<caret>count\"",
-      " v<caret>/>",
-      ":<caret>foo=",
-      "<<caret>Foo"
-    )) {
+    doLookupTest(VueTestModule.VUE_3_2_2,
+                 renderPriority = false,
+                 locations = listOf(
+                   ":count=\"<caret>count\"",
+                   " v<caret>/>",
+                   ":<caret>foo=",
+                   "<<caret>Foo",
+                 ),
+                 lookupFilter = nonHtmlLookupFilter) {
       !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
-      && !it.contains("www.w3.org")
     }
 
     myFixture.moveToOffsetBySignature("<caret>\n// write")
@@ -1726,14 +1721,16 @@ export default {
   }
 
   fun testScriptSetupTs() {
-    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, locations = listOf(
-      ":count=\"<caret>count\"",
-      " v<caret>/>",
-      ":<caret>foo=",
-      "<<caret>Foo"
-    )) {
+    doLookupTest(VueTestModule.VUE_3_2_2,
+                 renderPriority = false,
+                 locations = listOf(
+                   ":count=\"<caret>count\"",
+                   " v<caret>/>",
+                   ":<caret>foo=",
+                   "<<caret>Foo",
+                 ),
+                 lookupFilter = nonHtmlLookupFilter) {
       !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
-      && !it.contains("www.w3.org")
     }
 
     myFixture.moveToOffsetBySignature("<caret>\n// write")
@@ -1801,9 +1798,7 @@ export default {
 
   fun testTypedComponentsList() {
     doLookupTest(VueTestModule.VUE_3_2_2, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES,
-                 fileContents = """<template><<caret></template>""") {
-      !it.contains("www.w3.org")
-    }
+                 fileContents = """<template><<caret></template>""", lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCssVBind() {
@@ -1818,9 +1813,7 @@ export default {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("index.html")
-    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>")) {
-      !it.contains("www.w3.org")
-    }
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"), lookupFilter = nonHtmlLookupFilter)
     myFixture.moveToOffsetBySignature("w<<caret>")
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "Car", "Bar", "foo-bar")
@@ -1830,18 +1823,14 @@ export default {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("foo.vue")
-    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>")) {
-      !it.contains("www.w3.org")
-    }
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"), lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCreateAppRootComponent() {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("App.vue")
-    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>")) {
-      !it.contains("www.w3.org")
-    }
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"), lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCreateAppImportedByRootComponent() {
@@ -1849,9 +1838,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("ImportedByRoot.vue")
     myFixture.moveToOffsetBySignature("<<caret>div")
-    doLookupTest(renderPriority = true, noConfigure = true) {
-      !it.contains("www.w3.org")
-    }
+    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter) 
   }
 
   fun testCreateAppNotImported() {
@@ -1859,9 +1846,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("NotImported.vue")
     myFixture.moveToOffsetBySignature("<<caret>div")
-    doLookupTest(renderPriority = true, noConfigure = true) {
-      !it.contains("www.w3.org")
-    }
+    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter)
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
@@ -1879,6 +1864,7 @@ export default {
                            renderTailText: Boolean = false,
                            containsCheck: Boolean = false,
                            renderProximity: Boolean = false,
+                           lookupFilter: (item: LookupElement) -> Boolean = { true },
                            filter: (item: String) -> Boolean = { true }) {
     if (!noConfigure) {
       if (dir) {
@@ -1900,7 +1886,7 @@ export default {
     if (locations.isEmpty()) {
       myFixture.completeBasic()
       myFixture.checkListByFile(
-        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity)
+        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, lookupFilter)
           .filter(filter),
         getTestName(true) + ".txt",
         containsCheck
@@ -1911,7 +1897,7 @@ export default {
         myFixture.moveToOffsetBySignature(location)
         myFixture.completeBasic()
         myFixture.checkListByFile(
-          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity)
+          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, lookupFilter)
             .filter(filter),
           getTestName(true) + ".${index + 1}.txt",
           containsCheck
