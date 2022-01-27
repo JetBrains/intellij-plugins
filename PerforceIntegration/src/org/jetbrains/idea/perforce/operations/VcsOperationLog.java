@@ -215,7 +215,9 @@ public final class VcsOperationLog implements PersistentStateComponent<VcsOperat
     }
 
     @Nullable
-    private LinkedHashMap<ThrowableRunnable<VcsException>, Collection<VcsOperation>> mergeOperations() throws VcsException {
+    private LinkedHashMap<ThrowableRunnable<VcsException>, Collection<VcsOperation>> mergeOperations()
+      throws VcsConnectionProblem {
+
       LinkedHashMap<ThrowableRunnable<VcsException>, Collection<VcsOperation>> result = new LinkedHashMap<>();
 
       MultiMap<P4Connection, VcsOperation> byConnection = new MultiMap<>();
@@ -272,24 +274,16 @@ public final class VcsOperationLog implements PersistentStateComponent<VcsOperat
     }
 
     @Nullable
-    private Set<P4Connection> ensureAuthorized(VcsOperation operation) throws VcsException {
+    private Set<P4Connection> ensureAuthorized(VcsOperation operation) throws VcsConnectionProblem {
       Set<P4Connection> touchedConnections = new HashSet<>();
       for (String path : operation.getAffectedPaths()) {
         P4Connection connection = PerforceConnectionManager.getInstance(myProject).getConnectionForFile(new File(path));
         if (connection == null) {
-          pushBackOperations();
-          throw new VcsException(PerforceBundle.message("error.can.not.execute.invalid.connection.settings", myTitle));
+          return null;
         }
         touchedConnections.add(connection);
         if (myAuthorized.add(connection)) {
-          try {
-            PerforceLoginManager.getInstance(myProject).check(connection, true);
-          }
-          catch (final VcsConnectionProblem e) {
-            pushBackOperations();
-            fixLater(e);
-            return null;
-          }
+          PerforceLoginManager.getInstance(myProject).check(connection, true);
         }
       }
       return touchedConnections;
@@ -319,26 +313,28 @@ public final class VcsOperationLog implements PersistentStateComponent<VcsOperat
         return false;
       }
 
-      LinkedHashMap<ThrowableRunnable<VcsException>, Collection<VcsOperation>> map = mergeOperations();
-      if (map == null) {
-        return false;
-      }
-
-      for (ThrowableRunnable<VcsException> composite : map.keySet()) {
-        try {
-          composite.run();
-        }
-        catch (VcsConnectionProblem e) {
+      try {
+        LinkedHashMap<ThrowableRunnable<VcsException>, Collection<VcsOperation>> map = mergeOperations();
+        if (map == null) {
           pushBackOperations();
-          fixLater(e);
+          AbstractVcsHelper.getInstance(myProject)
+            .showError(new VcsException(PerforceBundle.message("error.can.not.execute.invalid.connection.settings", myTitle)),
+                       myTitle);
           return false;
         }
-        myRemaining.removeAll(map.get(composite));
+
+        for (ThrowableRunnable<VcsException> composite : map.keySet()) {
+          composite.run();
+          myRemaining.removeAll(map.get(composite));
+        }
+      }
+      catch (VcsConnectionProblem e) {
+        pushBackOperations();
+        fixLater(e);
+        return false;
       }
 
       return true;
     }
-
-
   }
 }
