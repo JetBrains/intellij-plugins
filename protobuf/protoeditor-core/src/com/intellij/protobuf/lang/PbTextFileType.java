@@ -19,7 +19,6 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.util.PbIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -52,7 +51,6 @@ public class PbTextFileType extends LanguageFileType {
     return "textproto";
   }
 
-  @Nullable
   @Override
   public Icon getIcon() {
     return PbIcons.TEXT_FILE;

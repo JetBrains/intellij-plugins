@@ -38,7 +38,6 @@ public final class PostCssFileType extends LanguageFileType {
     return DEFAULT_EXTENSION;
   }
 
-  @Nullable
   @Override
   public Icon getIcon() {
     return PostcssIcons.Postcss;

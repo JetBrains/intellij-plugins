@@ -40,8 +40,7 @@ public class PlatformioFileType extends LanguageFileType {
   }
 
   @Override
-  public @Nullable
-  Icon getIcon() {
+  public Icon getIcon() {
     return ClionEmbeddedPlatformioIcons.Platformio;
   }
 

@@ -4,11 +4,9 @@ package org.angular2.lang.metadata;
 import com.intellij.json.psi.JsonValue;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -23,7 +21,7 @@ public abstract class MetadataJsonFileType implements FileType, FileTypeIdentifi
   }
 
   @Override
-  public @Nullable Icon getIcon() {
+  public Icon getIcon() {
     return null;
   }
 

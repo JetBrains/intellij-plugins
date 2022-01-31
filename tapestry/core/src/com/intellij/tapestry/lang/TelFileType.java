@@ -4,7 +4,6 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -38,7 +37,6 @@ public final class TelFileType extends LanguageFileType {
   }
 
   @Override
-  @Nullable
   public Icon getIcon() {
     return PlatformIcons.CUSTOM_FILE_ICON;
   }
