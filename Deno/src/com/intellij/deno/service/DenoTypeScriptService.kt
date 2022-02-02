@@ -73,7 +73,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     return if (DenoSettings.getService(project).isUseDeno()) getDenoDescriptor(project) else null
   }
 
-  private fun <T> withServer(action: LspServer.() -> T): T? = getDescriptor()?.getServer(project)?.action()
+  private fun <T> withServer(action: LspServer.() -> T): T? = getDescriptor()?.server?.action()
 
   override val name = "Deno LSP"
 
@@ -149,7 +149,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
   fun quickInfo(element: PsiElement): String? {
-    val raw = getDescriptor()?.getServer(project)?.invokeSynchronously(HoverMethod.create(element)) ?: return null
+    val raw = getDescriptor()?.server?.invokeSynchronously(HoverMethod.create(element)) ?: return null
     LOG.info("Quick info for $element : $raw")
     return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
   }
@@ -166,7 +166,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   }
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
-    val server = getDescriptor()?.getServer(project) ?: return completedFuture(emptyList())
+    val server = getDescriptor()?.server ?: return completedFuture(emptyList())
     val virtualFile = file.virtualFile
     val changedUnsaved = collectChangedUnsavedFiles()
     if (changedUnsaved.isNotEmpty()) {
@@ -197,7 +197,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     !JSCorePredefinedLibrariesProvider.isCoreLibraryFile(file) &&
     !DenoTypings.getInstance(project).isDenoTypings(file) &&
     !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, file)
-  
+
   override fun dispose() {}
 }
 
