@@ -149,7 +149,8 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
   fun quickInfo(element: PsiElement): String? {
-    val raw = getDescriptor()?.server?.invokeSynchronously(HoverMethod.create(element)) ?: return null
+    val server = getDescriptor()?.server
+    val raw = server?.invokeSynchronously(HoverMethod.create(server, element)) ?: return null
     LOG.info("Quick info for $element : $raw")
     return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
   }
