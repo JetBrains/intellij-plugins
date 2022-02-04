@@ -249,19 +249,8 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     final DiagramScopeManager<Object> scopeManager = getScopeManager();
     if (scopeManager != null && !scopeManager.contains(psiClass)) return false;
 
-    final PsiElement initialElement = getInitialElement();
     if (isInsidePackages(psiClass)) return false;
-    if (initialElement instanceof JSClass && equals(psiClass, (JSClass)initialElement)) return true;
     return true;
-  }
-
-  private static boolean equals(JSClass one, JSClass another) {
-    return one != null &&
-           one.isValid() &&
-           another != null &&
-           another.isValid() &&
-           one.getQualifiedName() != null &&
-           one.getQualifiedName().equals(another.getQualifiedName());
   }
 
   public synchronized void updateDataModel() {

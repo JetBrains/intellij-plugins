@@ -43,7 +43,6 @@ public class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
 
   @Override
   public boolean charDeleted(char c, PsiFile file, Editor editor) {
-    if (file.getLanguage() != CfmlLanguage.INSTANCE) return false;
     return false;
   }
 }
