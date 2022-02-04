@@ -40,45 +40,45 @@ public class ActionScriptGenerateTest extends JSGenerateTestBase {
   }
 
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateGetter() {
     doGenerateTest("Generate.GetAccessor.JavaScript");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateSetter() {
     doGenerateTest("Generate.SetAccessor.JavaScript");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testGenerateGetterAndSetter() {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     doGenerateTest("Generate.GetSetAccessor.JavaScript");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateConstructor() {
     doGenerateTest("Generate.Constructor.JavaScript");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateConstructor2() {
     doGenerateTest("Generate.Constructor.JavaScript");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateConstructor3() {
     doGenerateTest("Generate.Constructor.JavaScript");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateToString() {
     doGenerateTest("Generate.ToString.Actionscript", "", "js2");
     doGenerateTest("Generate.ToString.Actionscript", "_2", "js2");
     doGenerateTest("Generate.ToString.Actionscript", "_3", "as");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateToString2() {
     doGenerateTest("Generate.ToString.Actionscript", "", "js2");
     doGenerateTest("Generate.ToString.Actionscript", "_2", "js2");
