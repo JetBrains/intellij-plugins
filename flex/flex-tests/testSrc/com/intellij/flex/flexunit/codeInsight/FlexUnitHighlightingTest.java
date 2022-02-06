@@ -57,10 +57,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
           tools.add((LocalInspectionTool)aClass.newInstance());
         }
       }
-      catch (InstantiationException e) {
-        fail(e.getMessage());
-      }
-      catch (IllegalAccessException e) {
+      catch (InstantiationException | IllegalAccessException e) {
         fail(e.getMessage());
       }
     }

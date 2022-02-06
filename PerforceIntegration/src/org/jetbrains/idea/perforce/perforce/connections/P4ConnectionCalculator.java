@@ -273,19 +273,7 @@ public class P4ConnectionCalculator {
     try {
       localConnection.runP4Command(settings, new String[]{"set"}, retVal, null);
     }
-    catch (VcsException e) {
-      parameters.setException(e);
-      return false;
-    }
-    catch (PerforceTimeoutException e) {
-      parameters.setException(e);
-      return false;
-    }
-    catch (IOException e) {
-      parameters.setException(e);
-      return false;
-    }
-    catch (InterruptedException e) {
+    catch (VcsException | InterruptedException | IOException | PerforceTimeoutException e) {
       parameters.setException(e);
       return false;
     }

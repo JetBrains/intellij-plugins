@@ -180,8 +180,7 @@ public final class FlashBuilderProjectLoadUtil {
         }
       }
     }
-    catch (JDOMException ignored) {/*ignore*/}
-    catch (IOException ignored) {/*ignore*/}
+    catch (JDOMException | IOException ignored) {/*ignore*/}
   }
 
   private static Map<String, String> loadMapFromDotFxpPropertiesFile(final VirtualFile dotProjectFile) {
@@ -206,8 +205,7 @@ public final class FlashBuilderProjectLoadUtil {
           }
         }
       }
-      catch (JDOMException ignored) {/*ignore*/}
-      catch (IOException ignored) {/*ignore*/}
+      catch (JDOMException | IOException ignored) {/*ignore*/}
     }
 
     return result;
@@ -249,8 +247,7 @@ public final class FlashBuilderProjectLoadUtil {
           }
         }
       }
-      catch (JDOMException ignored) {/*ignore*/}
-      catch (IOException ignored) {/*ignore*/}
+      catch (JDOMException | IOException ignored) {/*ignore*/}
     }
   }
 
@@ -290,8 +287,7 @@ public final class FlashBuilderProjectLoadUtil {
           }
         }
       }
-      catch (JDOMException ignored) {/*ignore*/}
-      catch (IOException ignored) {/*ignore*/}
+      catch (JDOMException | IOException ignored) {/*ignore*/}
     }
   }
 

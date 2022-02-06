@@ -72,10 +72,7 @@ public class FlexMainStep extends MainStep {
         myModel.setSuperclassFqn(getSuperclassFqn());
       }
     }
-    catch (IOException e) {
-      // ignore as the action will not succeed
-    }
-    catch (ParseException e) {
+    catch (IOException | ParseException e) {
       // ignore as the action will not succeed
     }
   }

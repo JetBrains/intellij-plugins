@@ -74,13 +74,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     try {
       runP4Command(settings, strings, result, stringBuffer);
     }
-    catch (PerforceTimeoutException e) {
-      throw new VcsException(e);
-    }
-    catch (IOException e) {
-      throw new VcsException(e);
-    }
-    catch (InterruptedException e) {
+    catch (PerforceTimeoutException | InterruptedException | IOException e) {
       throw new VcsException(e);
     }
     return result;

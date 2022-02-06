@@ -110,8 +110,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
           return element;
         }
       }
-      catch (JDOMException ignored) {/*ignore*/}
-      catch (IOException ignored) {/*ignore*/}
+      catch (JDOMException | IOException ignored) {/*ignore*/}
     }
     return null;
   }

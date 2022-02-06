@@ -1416,10 +1416,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       }
       return PerforceVcsRevisionNumber.createFromFStat(fstat);
     }
-    catch (VcsException e) {
-      return null;
-    }
-    catch (NumberFormatException e) {
+    catch (VcsException | NumberFormatException e) {
       return null;
     }
   }
@@ -1670,16 +1667,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
       ctx.runP4Command(mySettings, p4args, retVal, inputStream);
     }
-    catch (PerforceTimeoutException e) {
-      retVal.setException(e);
-    }
-    catch (IOException e) {
-      retVal.setException(e);
-    }
-    catch (InterruptedException e) {
-      retVal.setException(e);
-    }
-    catch (VcsException e) {
+    catch (PerforceTimeoutException | VcsException | InterruptedException | IOException e) {
       retVal.setException(e);
     }
     finally {

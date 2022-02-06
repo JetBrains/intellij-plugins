@@ -310,8 +310,7 @@ public class FlashBuilderSdkFinder {
 
       return JDOMUtil.load(xmlString);
     }
-    catch (IOException e) {/*ignore*/}
-    catch (JDOMException e) {/*ignore*/}
+    catch (IOException | JDOMException e) {/*ignore*/}
 
     return null;
   }

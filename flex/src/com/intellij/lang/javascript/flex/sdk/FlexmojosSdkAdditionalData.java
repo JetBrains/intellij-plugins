@@ -110,8 +110,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
         }
       }
     }
-    catch (IOException ignored) {/*ignore*/}
-    catch (JDOMException ignored) {/*ignore*/}
+    catch (IOException | JDOMException ignored) {/*ignore*/}
   }
 
   private void setupAirPaths(final String repositoryRootPath, final String version) {

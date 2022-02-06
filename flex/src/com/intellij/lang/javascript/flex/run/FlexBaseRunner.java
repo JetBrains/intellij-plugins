@@ -615,8 +615,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       try {
         return JDOMUtil.load(descriptorFile).getChildTextNormalize("supportedProfiles", JDOMUtil.load(descriptorFile).getNamespace());
       }
-      catch (JDOMException ignore) {/*ignore*/}
-      catch (IOException ignore) {/*ignore*/}
+      catch (JDOMException | IOException ignore) {/*ignore*/}
     }
 
     return null;

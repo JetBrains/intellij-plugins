@@ -207,7 +207,6 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       Disposer.dispose(librariesModel);
       modifiableModel.dispose();
     }
-    catch (IOException ignore) {/**/}
-    catch (ConfigurationException ignore) {/**/}
+    catch (IOException | ConfigurationException ignore) {/**/}
   }
 }

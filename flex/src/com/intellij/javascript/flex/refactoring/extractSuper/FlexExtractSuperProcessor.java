@@ -463,10 +463,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       JSMemberInfo.sortByOffset(infosArray);
       myMembersAfterMove = new JSPullUpHelper(myTargetClass, superClass, infosArray, myDocCommentPolicy).moveMembersToBase(formatters);
     }
-    catch (IOException e) {
-      Messages.showErrorDialog(mySourceClass.getProject(), e.getMessage(), getCommandName());
-    }
-    catch (IncorrectOperationException e) {
+    catch (IOException | IncorrectOperationException e) {
       Messages.showErrorDialog(mySourceClass.getProject(), e.getMessage(), getCommandName());
     }
   }

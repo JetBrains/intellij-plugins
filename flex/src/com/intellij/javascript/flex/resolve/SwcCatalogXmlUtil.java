@@ -212,8 +212,7 @@ public final class SwcCatalogXmlUtil {
         }
       }
     }
-    catch (JDOMException ignored) {/*ignore*/}
-    catch (IOException ignored) {/*ignore*/}
+    catch (JDOMException | IOException ignored) {/*ignore*/}
 
     return swfNameToQnameWithTimestampMap;
   }

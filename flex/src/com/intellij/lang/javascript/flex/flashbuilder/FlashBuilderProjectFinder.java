@@ -115,8 +115,7 @@ public final class FlashBuilderProjectFinder {
           }
         }
       }
-      catch (IOException e) {/*ignore*/}
-      catch (URISyntaxException e) {/*ignore*/}
+      catch (IOException | URISyntaxException e) {/*ignore*/}
       finally {
         if (input != null) {
           try {

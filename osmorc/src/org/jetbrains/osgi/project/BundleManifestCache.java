@@ -165,8 +165,7 @@ public class BundleManifestCache {
       }
       return new BundleManifest(map, manifestFile);
     }
-    catch (IOException ignored) { }
-    catch (InvalidVirtualFileAccessException ignored) { }
+    catch (IOException | InvalidVirtualFileAccessException ignored) { }
 
     return null;
   }
@@ -193,8 +192,7 @@ public class BundleManifestCache {
       }
       return new BundleManifest(map, propertyFile);
     }
-    catch (IOException ignored) { }
-    catch (InvalidVirtualFileAccessException ignored) { }
+    catch (IOException | InvalidVirtualFileAccessException ignored) { }
 
     return null;
   }
