@@ -101,6 +101,7 @@
     <lang.commenter language="protobuf"
                     implementationClass="com.intellij.protobuf.ide.editing.PbCommenter"/>
     <multiLangCommenter implementation="com.intellij.protobuf.ide.editing.ProtoCommentProvider"/>
+    <lang.importOptimizer language="protobuf" implementationClass="com.intellij.protobuf.lang.refactoring.PbImportOptimizer"/>
 
     <!-- Navigation -->
     <lang.findUsagesProvider language="protobuf" implementationClass="com.intellij.protobuf.lang.findusages.PbFindUsagesProvider"/>
