@@ -17,11 +17,8 @@ class ByteBuffer {
   private boolean littleEndian;
 
   void read(@NotNull InputStream inputStream) throws IOException {
-    try {
+    try (inputStream) {
       bytes = readStream(inputStream);
-    }
-    finally {
-      inputStream.close();
     }
   }
 

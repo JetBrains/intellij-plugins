@@ -204,16 +204,10 @@ public final class BndProjectImporter {
         if (file.isFile() && FileUtilRt.extensionEquals(file.getName(), "jar")) {
           String path = file.getPath();
           if (!mySourcesMap.containsKey(path)) {
-            try {
-              ZipFile zipFile = new ZipFile(file);
-              try {
-                ZipEntry srcRoot = zipFile.getEntry(SRC_ROOT);
-                if (srcRoot != null) {
-                  mySourcesMap.put(path, SRC_ROOT);
-                }
-              }
-              finally {
-                zipFile.close();
+            try (ZipFile zipFile = new ZipFile(file)) {
+              ZipEntry srcRoot = zipFile.getEntry(SRC_ROOT);
+              if (srcRoot != null) {
+                mySourcesMap.put(path, SRC_ROOT);
               }
             }
             catch (IOException e) {

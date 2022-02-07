@@ -33,13 +33,16 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 /**
- * This is a helper class which helps providing information about bundles (that do not necessarily belong to the project).
+ * This is a helper class which helps to provide information about bundles (that do not necessarily belong to the project).
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
@@ -87,33 +90,26 @@ public final class CachingBundleInfoProvider {
     Pair<Long, Manifest> pair = ourCache.remove(path);
 
     try {
-      File bundleFile = new File(path);
-      if (bundleFile.isDirectory()) {
-        File manifestFile = new File(bundleFile, JarFile.MANIFEST_NAME);
+      BasicFileAttributes attributes = Files.readAttributes(Paths.get(path), BasicFileAttributes.class);
+      if (attributes.isDirectory()) {
+        File manifestFile = new File(path, JarFile.MANIFEST_NAME);
         if (pair == null || pair.first != manifestFile.lastModified()) {
           pair = null;
-          FileInputStream stream = new FileInputStream(manifestFile);
-          try {
+          try (FileInputStream stream = new FileInputStream(manifestFile)) {
             Manifest manifest = new Manifest(stream);
             pair = Pair.create(manifestFile.lastModified(), manifest);
           }
-          finally {
-            stream.close();
-          }
         }
       }
-      else if (bundleFile.isFile()) {
-        if (pair == null || pair.first != bundleFile.lastModified()) {
+      else if (attributes.isRegularFile()) {
+        long lastModified = attributes.lastModifiedTime().toMillis();
+        if (pair == null || pair.first != lastModified) {
           pair = null;
-          JarFile jar = new JarFile(bundleFile);
-          try {
+          try (JarFile jar = new JarFile(path)) {
             Manifest manifest = jar.getManifest();
             if (manifest != null) {
-              pair = Pair.create(bundleFile.lastModified(), manifest);
+              pair = Pair.create(lastModified, manifest);
             }
-          }
-          finally {
-            jar.close();
           }
         }
       }

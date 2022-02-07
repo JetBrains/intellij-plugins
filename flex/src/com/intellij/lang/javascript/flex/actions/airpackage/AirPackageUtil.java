@@ -22,7 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
-import one.util.streamex.StreamEx;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -575,7 +575,7 @@ public final class AirPackageUtil {
                                             @Override
                                             protected boolean checkMessages() {
                                               return myMessages.isEmpty() ||
-                                                     StreamEx.of(myMessages).anyMatch(s -> StringUtil.containsIgnoreCase(s, "success"));
+                                                     ContainerUtil.or(myMessages, s -> StringUtil.containsIgnoreCase(s, "success"));
                                             }
                                           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
                                           FlexBundle.message("install.android.application.title"));
@@ -600,7 +600,7 @@ public final class AirPackageUtil {
                                             @Override
                                             protected boolean checkMessages() {
                                               return myMessages.isEmpty() ||
-                                                     StreamEx.of(myMessages).anyMatch(s -> StringUtil.containsIgnoreCase(s, "success"));
+                                                     ContainerUtil.or(myMessages, s -> StringUtil.containsIgnoreCase(s, "success"));
                                             }
                                           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
                                           FlexBundle.message("install.android.application.title"));
@@ -943,23 +943,13 @@ public final class AirPackageUtil {
 
   @Nullable
   public static String getAppIdFromPackage(final String packagePath) {
-    ZipFile zipFile = null;
-    try {
-      zipFile = new ZipFile(packagePath);
+    try (ZipFile zipFile = new ZipFile(packagePath)) {
       final ZipEntry entry = zipFile.getEntry("assets/META-INF/AIR/application.xml");
       if (entry != null) {
         return FlexUtils.findXMLElement(zipFile.getInputStream(entry), "<application><id>");
       }
     }
     catch (IOException ignore) {/**/}
-    finally {
-      if (zipFile != null) {
-        try {
-          zipFile.close();
-        }
-        catch (IOException ignored) {/**/}
-      }
-    }
 
     return null;
   }
