@@ -49,7 +49,7 @@ class DebuggingFirstPartLesson
         }
 
         task {
-          triggerByUiComponentAndHighlight { ui: SingleHeightTabs.SingleHeightLabel ->
+          triggerAndFullHighlight().component { ui: SingleHeightTabs.SingleHeightLabel ->
             ui.info.text == JSDebuggerBundle.message("js.console.node.process.name")
           }
         }
@@ -65,7 +65,7 @@ class DebuggingFirstPartLesson
         }
 
         task {
-          triggerByUiComponentAndHighlight { ui: SingleHeightTabs.SingleHeightLabel ->
+          triggerAndFullHighlight().component { ui: SingleHeightTabs.SingleHeightLabel ->
             ui.info.text == JSDebuggerBundle.message("js.scripts.tab.title")
           }
         }

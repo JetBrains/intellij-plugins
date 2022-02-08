@@ -42,7 +42,7 @@ class RubyRefactorMenuLesson
       task("Refactorings.QuickListPopupAction") {
         text(RubyLessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it)))
         val refactoringMenuTitle = RefactoringBundle.message("refactor.this.title")
-        triggerByUiComponentAndHighlight(false, false) { ui: EngravedLabel ->
+        triggerUI().component { ui: EngravedLabel ->
           ui.text.isToStringContains(refactoringMenuTitle)
         }
         restoreIfModifiedOrMoved()

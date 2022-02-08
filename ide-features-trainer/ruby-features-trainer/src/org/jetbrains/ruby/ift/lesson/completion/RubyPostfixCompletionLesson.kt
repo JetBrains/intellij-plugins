@@ -38,7 +38,7 @@ end
       task {
         text(LessonsBundle.message("postfix.completion.intro") + " " + RubyLessonsBundle.message("ruby.postfix.completion.type",
                                                                                                  code(completionSuffix)))
-        triggerByListItemAndHighlight {
+        triggerAndBorderHighlight().listItem {
           it.toString() == completionSuffix
         }
         proposeRestore {
@@ -50,7 +50,7 @@ end
       }
       task {
         text(RubyLessonsBundle.message("ruby.postfix.completion.apply", action("EditorChooseLookupItem")))
-        triggerByListItemAndHighlight {
+        triggerAndBorderHighlight().listItem {
           it.toString() == "string_array.length > 1"
         }
         restoreByUi(delayMillis = defaultRestoreDelay)

@@ -50,7 +50,7 @@ class RubyRenameLesson
       var replace: String? = null
       task("RenameElement") {
         text(RubyLessonsBundle.message("ruby.rename.start.refactoring", action(it), code("teams"), code("teams_number")))
-        triggerByUiComponentAndHighlight(false, false) { ui: NameSuggestionsField ->
+        triggerUI().component { ui: NameSuggestionsField ->
           ui.addDataChangedListener {
             replace = ui.enteredName
           }
@@ -71,7 +71,7 @@ class RubyRenameLesson
 
       val confirmRefactoringButton = RefactoringBundle.message("usageView.doAction").dropMnemonic()
       task {
-        triggerByUiComponentAndHighlight(highlightInside = false) { button: JButton ->
+        triggerAndBorderHighlight().component { button: JButton ->
           button.text.isToStringContains(confirmRefactoringButton)
         }
       }

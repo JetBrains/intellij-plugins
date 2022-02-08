@@ -7,11 +7,11 @@ import com.intellij.execution.impl.RunConfigurable
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.treeStructure.Tree
 import training.dsl.*
 import training.learn.course.KLesson
 import training.ui.LearningUiHighlightingManager
-import javax.swing.JButton
 
 class BeforeDebuggingLesson
   : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title")) {
@@ -51,7 +51,7 @@ class BeforeDebuggingLesson
         }
 
         task {
-          triggerByUiComponentAndHighlight<JButton> { ui ->
+          triggerAndFullHighlight().component { ui: JBCheckBox ->
             ui.text == existedFile
           }
         }
