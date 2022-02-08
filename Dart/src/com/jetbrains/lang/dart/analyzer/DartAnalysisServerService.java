@@ -83,6 +83,10 @@ public final class DartAnalysisServerService implements Disposable {
   // https://github.com/dart-lang/webdev/blob/master/webdev/pubspec.yaml#L11
   public static final String MIN_WEBDEV_SDK_VERSION = "2.6.0";
 
+  // The dart cli command (https://dart.dev/tutorials/server/get-started) provides a language server command, `dart language-server` which
+  // should be used going forward instead of `dart .../analysis_server.dart.snapshot`.
+  public static final String MIN_DARTDEV_LANG_SERVER_SDK_VERSION = "2.16.0";
+
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
   private static final long CHECK_CANCELLED_PERIOD = 10;
@@ -448,6 +452,10 @@ public final class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficientForWebdev(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_WEBDEV_SDK_VERSION) >= 0;
+  }
+
+  public static boolean isDartSdkVersionSufficientForDartdevLangServer(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_DARTDEV_LANG_SERVER_SDK_VERSION) >= 0;
   }
 
   public boolean shouldUseCompletion2() {
@@ -2013,6 +2021,10 @@ public final class DartAnalysisServerService implements Disposable {
 
       final String runtimePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk));
 
+      // If useDartdevDASCall, then the DAS will be invoked via `dart language-server`,
+      // instead of `dart .../analysis_server.dart.snapshot`
+      final boolean useDartdevLangServerCall = isDartSdkVersionSufficientForDartdevLangServer(sdk);
+
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
@@ -2022,13 +2034,13 @@ public final class DartAnalysisServerService implements Disposable {
       if (!runtimePathFile.exists()) {
         dasStartupErrorMessage = DartBundle.message("dart.vm.file.does.not.exist.at.0", runtimePath);
       }
-      else if (!dasSnapshotFile.exists()) {
+      else if (!useDartdevLangServerCall && !dasSnapshotFile.exists()) {
         dasStartupErrorMessage = DartBundle.message("analysis.server.snapshot.file.does.not.exist.at.0", analysisServerPath);
       }
-      else if (!runtimePathFile.canExecute()) {
+      if (!runtimePathFile.canExecute()) {
         dasStartupErrorMessage = DartBundle.message("dart.vm.file.is.not.executable.at.0", runtimePath);
       }
-      else if (!dasSnapshotFile.canRead()) {
+      else if (!useDartdevLangServerCall && !dasSnapshotFile.canRead()) {
         dasStartupErrorMessage = DartBundle.message("analysis.server.snapshot.file.is.not.readable.at.0", analysisServerPath);
       }
       if (!dasStartupErrorMessage.isEmpty()) {
@@ -2060,7 +2072,7 @@ public final class DartAnalysisServerService implements Disposable {
         vmArgsRaw = "";
       }
 
-      @NonNls String serverArgsRaw = "";
+      @NonNls String serverArgsRaw = useDartdevLangServerCall ? "--protocol=analyzer" : "";
       // Note that as of Dart 2.12.0 the '--useAnalysisHighlight2' flag is ignored (and is the
       // default highlighting mode). We still want to pass it in for earlier SDKs.
       serverArgsRaw += " --useAnalysisHighlight2";
@@ -2076,9 +2088,16 @@ public final class DartAnalysisServerService implements Disposable {
       //  serverArgsRaw += " --enable-completion-model";
       //}
 
-      myServerSocket =
-        new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, StringUtil.split(serverArgsRaw, " "),
-                              debugStream);
+      if (useDartdevLangServerCall) {
+        myServerSocket =
+          new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), "language-server", StringUtil.split(serverArgsRaw, " "),
+                                debugStream);
+      }
+      else {
+        myServerSocket =
+          new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, StringUtil.split(serverArgsRaw, " "),
+                                debugStream);
+      }
       myServerSocket.setClientId(getClientId());
       myServerSocket.setClientVersion(getClientVersion());
 
