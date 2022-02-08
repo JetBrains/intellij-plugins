@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
@@ -102,14 +102,22 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile("test", "");
   }
 
-  public void testRunPrettierOnSave() {
+  public void testRunPrettierOnSaveAll() {
+    doTestRunPrettierOnSave("SaveAll");
+  }
+
+  public void testRunPrettierOnSaveDocument() {
+    doTestRunPrettierOnSave("SaveDocument");
+  }
+
+  private void doTestRunPrettierOnSave(@NotNull String saveActionId) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     boolean origRunOnSave = configuration.isRunOnSave();
     configuration.setRunOnSave(true);
     try {
       myFixture.configureByText("foo.js", "var  a=''");
       myFixture.type(' ');
-      myFixture.performEditorAction("SaveAll");
+      myFixture.performEditorAction(saveActionId);
       PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
       myFixture.checkResult("var a = \"\";\n");
     }
