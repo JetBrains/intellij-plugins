@@ -74,15 +74,11 @@ public class FlexImporterTest extends TestCase {
     final byte[] contents;
 
     if (file.getName().endsWith(".swc")) {
-      final ZipFile zipFile = new ZipFile(file);
-      try {
+      try (ZipFile zipFile = new ZipFile(file)) {
         final ZipEntry zipEntry = zipFile.getEntry("library.swf");
         final InputStream inputStream = zipFile.getInputStream(zipEntry);
         contents = FileUtil.loadBytes(inputStream, (int)zipEntry.getSize());
         inputStream.close();
-      }
-      finally {
-        zipFile.close();
       }
     }
     else {

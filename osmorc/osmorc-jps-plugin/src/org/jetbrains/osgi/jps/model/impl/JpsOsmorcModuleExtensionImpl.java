@@ -171,18 +171,12 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
       if (!jarFile.exists()) {
         return null;
       }
-      try {
-        JarFile jar = new JarFile(jarFile);
-        try {
-          JarEntry manifestEntry = jar.getJarEntry("META-INF/MANIFEST.MF");
-          if (manifestEntry == null) {
-            return null;
-          }
-          return new File(jarFile, manifestEntry.getName());
+      try (JarFile jar = new JarFile(jarFile)) {
+        JarEntry manifestEntry = jar.getJarEntry("META-INF/MANIFEST.MF");
+        if (manifestEntry == null) {
+          return null;
         }
-        finally {
-          jar.close();
-        }
+        return new File(jarFile, manifestEntry.getName());
       }
       catch (IOException e) {
         return null;

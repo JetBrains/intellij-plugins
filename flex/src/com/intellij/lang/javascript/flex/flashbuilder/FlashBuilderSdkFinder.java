@@ -167,9 +167,7 @@ public class FlashBuilderSdkFinder {
 
       final String nameElement = "<flex-sdk-description><name>";
       final String versionElement = "<flex-sdk-description><version>";
-      FileInputStream is = null;
-      try {
-        is = new FileInputStream(descriptionFile);
+      try (FileInputStream is = new FileInputStream(descriptionFile)) {
         final Map<String, List<String>> info = FlexUtils.findXMLElements(is, Arrays.asList(nameElement, versionElement));
 
         final List<String> nameInfo = info.get(nameElement);
@@ -187,14 +185,6 @@ public class FlashBuilderSdkFinder {
         }
       }
       catch (IOException ignore) {/**/}
-      finally {
-        if (is != null) {
-          try {
-            is.close();
-          }
-          catch (IOException ignore) {/**/}
-        }
-      }
     }
   }
 

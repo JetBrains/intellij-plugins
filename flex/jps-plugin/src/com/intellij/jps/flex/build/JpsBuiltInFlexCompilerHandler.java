@@ -111,9 +111,7 @@ public final class JpsBuiltInFlexCompilerHandler {
 
   private void readInputStreamUntilConnected(final Process process, final CompileContext context, final String compilerName) {
     SharedThreadPool.getInstance().execute(() -> {
-      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
-
-      try {
+      try (InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream())) {
         char[] buf = new char[1024];
         int read;
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
@@ -131,12 +129,6 @@ public final class JpsBuiltInFlexCompilerHandler {
         closeSocket();
         context.processMessage(
           new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, "Failed to start Flex compiler: " + e.toString()));
-      }
-      finally {
-        try {
-          reader.close();
-        }
-        catch (IOException e) {/*ignore*/}
       }
     });
   }

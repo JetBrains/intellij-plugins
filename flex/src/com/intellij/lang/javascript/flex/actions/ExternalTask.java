@@ -129,9 +129,8 @@ public abstract class ExternalTask {
   protected void scheduleInputStreamReading() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       boolean usageStarted = false;
-      final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream());
 
-      try {
+      try (InputStreamReader reader = FlexCommonUtils.createInputStreamReader(myProcess.getInputStream())) {
         char[] buf = new char[4096];
         int read;
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
@@ -166,11 +165,6 @@ public abstract class ExternalTask {
       }
       finally {
         cancel();
-
-        try {
-          reader.close();
-        }
-        catch (IOException e) {/*ignore*/}
       }
     });
   }

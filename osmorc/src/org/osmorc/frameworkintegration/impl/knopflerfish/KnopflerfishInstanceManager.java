@@ -52,16 +52,10 @@ public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManage
     if (bundles.size() == 1) {
       String path = bundles.iterator().next().getBundlePath();
       if (path != null) {
-        try {
-          JarFile jar = new JarFile(path);
-          try {
-            ZipEntry entry = jar.getEntry("release");
-            if (entry != null) {
-              return FileUtil.loadTextAndClose(jar.getInputStream(entry));
-            }
-          }
-          finally {
-            jar.close();
+        try (JarFile jar = new JarFile(path)) {
+          ZipEntry entry = jar.getEntry("release");
+          if (entry != null) {
+            return FileUtil.loadTextAndClose(jar.getInputStream(entry));
           }
         }
         catch (IOException ignored) { }

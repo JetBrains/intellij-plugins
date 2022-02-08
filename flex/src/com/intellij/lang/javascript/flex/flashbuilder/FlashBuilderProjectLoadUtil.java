@@ -112,23 +112,13 @@ public final class FlashBuilderProjectLoadUtil {
 
   @NotNull
   static String readProjectName(final String dotProjectFilePath) {
-    FileInputStream fis = null;
-    try {
-      fis = new FileInputStream(dotProjectFilePath);
+    try (FileInputStream fis = new FileInputStream(dotProjectFilePath)) {
       final String name = FlexUtils.findXMLElement(fis, PROJECT_NAME_TAG);
       if (!StringUtil.isEmptyOrSpaces(name)) {
         return name;
       }
     }
     catch (IOException ignored) {/*ignore*/}
-    finally {
-      if (fis != null) {
-        try {
-          fis.close();
-        }
-        catch (IOException ignored) {/*ignore*/}
-      }
-    }
     return PathUtil.getFileName(PathUtil.getParentPath(dotProjectFilePath));
   }
 

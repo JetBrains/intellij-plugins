@@ -19,7 +19,7 @@ public final class MavenUtils {
      * @param path               to path to the directory where the pom.xml will be created.
      * @param mavenConfiguration all maven configurations.
      * @param tapestryVersion    the selected Tapestry version.
-     * @throws java.io.IOException if an error occurs creating the pom.xml file.
+     * @throws IOException if an error occurs creating the pom.xml file.
      */
     public static void createMavenSupport(String path, MavenConfiguration mavenConfiguration, String tapestryVersion) throws IOException {
         File file = new File(path + "/pom.xml");
@@ -86,11 +86,8 @@ public final class MavenUtils {
             }
         }
 
-        FileWriter fileWriter = new FileWriter(file);
-        try {
-            mavenXpp3Writer.write(fileWriter, model);
-        } finally {
-            fileWriter.close();
+        try (FileWriter fileWriter = new FileWriter(file)) {
+          mavenXpp3Writer.write(fileWriter, model);
         }
     }
 }

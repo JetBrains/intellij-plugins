@@ -49,16 +49,10 @@ public final class StrutsVersionDetector {
       return null;
     }
 
-    try {
-      final InputStream stream = entry.getInputStream();
-      try {
-        final Properties properties = new Properties();
-        properties.load(stream);
-        return properties.getProperty("version");
-      }
-      finally {
-        stream.close();
-      }
+    try (InputStream stream = entry.getInputStream()) {
+      final Properties properties = new Properties();
+      properties.load(stream);
+      return properties.getProperty("version");
     }
     catch (IOException e) {
       return null;

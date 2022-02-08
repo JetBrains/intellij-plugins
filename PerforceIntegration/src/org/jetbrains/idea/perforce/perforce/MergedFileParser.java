@@ -50,9 +50,8 @@ public class MergedFileParser {
   private void process() throws IOException {
 
     final StringReader stringReader = new StringReader(mySource);
-    final LineNumberReader lineNumberReader = new LineNumberReader(stringReader);
 
-    try {
+    try (LineNumberReader lineNumberReader = new LineNumberReader(stringReader)) {
       String line;
 
       StringBuffer current = null;
@@ -60,25 +59,27 @@ public class MergedFileParser {
       while ((line = lineNumberReader.readLine()) != null) {
         if (line.startsWith(ORIGINAL_PREFIX)) {
           current = myOriginal;
-        } else if (line.startsWith(YOURS_PREFIX)){
+        }
+        else if (line.startsWith(YOURS_PREFIX)) {
           current = myLocal;
-        } else if (line.startsWith(THEIRS_PREFIX)) {
+        }
+        else if (line.startsWith(THEIRS_PREFIX)) {
           current = myLast;
-        } else if (line.startsWith("<<<<") && current != null) {
+        }
+        else if (line.startsWith("<<<<") && current != null) {
           current = null;
-        } else {
+        }
+        else {
           if (current != null) {
             current.append(line + "\n");
-          } else {
+          }
+          else {
             myOriginal.append(line + "\n");
             myLocal.append(line + "\n");
             myLast.append(line + "\n");
           }
         }
       }
-    }
-    finally {
-      lineNumberReader.close();
     }
   }
 }

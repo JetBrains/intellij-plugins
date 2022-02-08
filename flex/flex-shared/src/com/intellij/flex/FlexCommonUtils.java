@@ -296,14 +296,8 @@ public final class FlexCommonUtils {
 
   @Nullable
   public static String findXMLElement(final File file, final String xmlElement) {
-    try {
-      final BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-      try {
-        return findXMLElement(inputStream, xmlElement);
-      }
-      finally {
-        inputStream.close();
-      }
+    try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+      return findXMLElement(inputStream, xmlElement);
     }
     catch (IOException e) {
       return null;

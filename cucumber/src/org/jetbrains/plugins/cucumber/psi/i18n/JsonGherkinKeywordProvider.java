@@ -68,24 +68,18 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
 
   public JsonGherkinKeywordProvider(@NotNull InputStream inputStream) {
     Map<String, Map<String, Object>> fromJson;
-    try {
-      final Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-      try {
-        fromJson = new Gson().fromJson(in, new TypeToken<Map<String, HashMap<String, Object>>>() {}.getType());
+    try (Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+      fromJson = new Gson().fromJson(in, new TypeToken<Map<String, HashMap<String, Object>>>() {}.getType());
 
-        for (Map.Entry<String, Map<String, Object>> entry : fromJson.entrySet()) {
-          Map<String, Object> translation = entry.getValue();
-          final GherkinKeywordList keywordList = new GherkinKeywordList(translation);
-          myLanguageKeywords.put(entry.getKey(), keywordList);
-          for (String keyword : keywordList.getAllKeywords()) {
-            if (keywordList.getTokenType(keyword) == GherkinTokenTypes.STEP_KEYWORD) {
-              myAllStepKeywords.add(keyword);
-            }
+      for (Map.Entry<String, Map<String, Object>> entry : fromJson.entrySet()) {
+        Map<String, Object> translation = entry.getValue();
+        final GherkinKeywordList keywordList = new GherkinKeywordList(translation);
+        myLanguageKeywords.put(entry.getKey(), keywordList);
+        for (String keyword : keywordList.getAllKeywords()) {
+          if (keywordList.getTokenType(keyword) == GherkinTokenTypes.STEP_KEYWORD) {
+            myAllStepKeywords.add(keyword);
           }
         }
-      }
-      finally {
-        in.close();
       }
     }
     catch (MalformedJsonException e) {

@@ -141,10 +141,8 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
 
     if (BLOCK_PORT_843) {
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        ServerSocket socket = null;
         myStopBlocking = false;
-        try {
-          socket = new ServerSocket(843);
+        try (ServerSocket socket = new ServerSocket(843)) {
           socket.setSoTimeout(50);
           while (!myStopBlocking) {
             try {
@@ -157,16 +155,6 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
         }
         catch (IOException e) {
           fail(e.getMessage());
-        }
-        finally {
-          if (socket != null) {
-            try {
-              socket.close();
-            }
-            catch (IOException e) {
-              // ignore
-            }
-          }
         }
       });
     }

@@ -97,16 +97,14 @@ public final class FlashBuilderProjectFinder {
 
     final File dotLocationFile = new File(projectCacheDir + "/" + DOT_LOCATION);
     if (dotLocationFile.isFile()) {
-      DataInputStream input = null;
-      try {
-        input = new DataInputStream(new FileInputStream(dotLocationFile));
+      try (DataInputStream input = new DataInputStream(new FileInputStream(dotLocationFile))) {
         final int CHUNK_START_LENGTH = 16;
         final String URI_PREFIX = "URI//";
 
         final long skipped = input.skip(CHUNK_START_LENGTH);
         if (skipped == CHUNK_START_LENGTH) {
           final String projectUriUri = input.readUTF();
-          if (projectUriUri != null && projectUriUri.startsWith(URI_PREFIX)) {
+          if (projectUriUri.startsWith(URI_PREFIX)) {
             final URI dotProjectUri = new URI(projectUriUri.substring(URI_PREFIX.length()) + "/" + FlashBuilderImporter.DOT_PROJECT);
             final File dotProjectFile = new File(dotProjectUri);
             if (isFlashBuilderProject(dotProjectFile)) {
@@ -116,14 +114,6 @@ public final class FlashBuilderProjectFinder {
         }
       }
       catch (IOException | URISyntaxException e) {/*ignore*/}
-      finally {
-        if (input != null) {
-          try {
-            input.close();
-          }
-          catch (IOException e) {/*ignore*/}
-        }
-      }
     }
 
     // this code is reached if no information was found in '.location' file. It means default project location.
@@ -184,10 +174,7 @@ public final class FlashBuilderProjectFinder {
     boolean containsDotActionScriptFile = false;
     boolean containsNestedProjects = false;
 
-    ZipFile zipFile = null;
-    try {
-      zipFile = new ZipFile(archiveFilePath);
-
+    try (ZipFile zipFile = new ZipFile(archiveFilePath)) {
       final Enumeration<? extends ZipEntry> entries = zipFile.entries();
       while (entries.hasMoreElements()) {
         final String entryName = entries.nextElement().getName();
@@ -210,14 +197,6 @@ public final class FlashBuilderProjectFinder {
     }
     catch (IOException e) {
       throw new ConfigurationException(FlexBundle.message("does.not.contain.flash.builder.projects"), CommonBundle.getErrorTitle());
-    }
-    finally {
-      if (zipFile != null) {
-        try {
-          zipFile.close();
-        }
-        catch (IOException ignore) {/*ignore*/}
-      }
     }
   }
 }

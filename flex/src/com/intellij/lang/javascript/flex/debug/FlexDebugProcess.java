@@ -9,7 +9,6 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeCoreBundle;
 import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -1091,8 +1090,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private void scheduleFdbErrorStreamReading() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream(), StandardCharsets.UTF_8);
-      try {
+      try (InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream(), StandardCharsets.UTF_8)) {
         char[] buf = new char[1024];
         int read;
         while ((read = myErrorStreamReader.read(buf, 0, buf.length)) >= 0) {
@@ -1103,12 +1101,6 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       catch (IOException e) {
         LOG.debug("fdb error stream reading error", e);
-      }
-      finally {
-        try {
-          myErrorStreamReader.close();
-        }
-        catch (IOException e) {/*ignore*/}
       }
     });
   }
@@ -1383,8 +1375,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream(), StandardCharsets.UTF_8);
-        try {
+        try (InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream(), StandardCharsets.UTF_8)) {
           char[] buf = new char[1024];
           int read;
           while ((read = reader12.read(buf, 0, buf.length)) >= 0) {
@@ -1414,16 +1405,11 @@ public class FlexDebugProcess extends XDebugProcess {
           if (myTempDirToDeleteWhenProcessFinished != null) {
             FlexUtils.removeFileLater(myTempDirToDeleteWhenProcessFinished);
           }
-          try {
-            reader12.close();
-          }
-          catch (IOException e) {/*ignore*/}
         }
       });
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream(), StandardCharsets.UTF_8);
-        try {
+        try (InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream(), StandardCharsets.UTF_8)) {
           char[] buf = new char[1024];
           int read;
           while ((read = reader1.read(buf, 0, buf.length)) >= 0) {
@@ -1433,12 +1419,6 @@ public class FlexDebugProcess extends XDebugProcess {
         }
         catch (IOException e) {
           LOG.debug("adl error stream reading error", e);
-        }
-        finally {
-          try {
-            reader1.close();
-          }
-          catch (IOException e) {/*ignore*/}
         }
       });
     }
@@ -1457,7 +1437,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     @Override
-    void launchDebuggedApplication() throws IOException {
+    void launchDebuggedApplication() {
       ApplicationManager.getApplication().invokeLater(
         () -> FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myDevice, myAppId, true));
     }
@@ -1492,7 +1472,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     @Override
-    void launchDebuggedApplication() throws IOException {
+    void launchDebuggedApplication() {
       ApplicationManager.getApplication().invokeLater(() -> {
         final String adtVersion = AirPackageUtil.getAdtVersion(myModule.getProject(), myBC.getSdk());
         if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
