@@ -54,7 +54,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
     }
 
     @Override
-    public PsiFile getDecompiledPsiFile() {
+    public @NotNull PsiFile getDecompiledPsiFile() {
       return this;
     }
 
