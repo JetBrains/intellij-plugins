@@ -199,7 +199,7 @@ export default {
   private fun optimizeAndRemoveEmptyStyles(file: PsiFile) {
     val currentlyUnused = getUnusedStyles(file)
     currentlyUnused.removeAll(unusedStylesInExistingComponent)
-    currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(file.project, suffix, false) }
+    currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(suffix) }
     val toDelete = findStyles(file).filter { styleTag ->
       styleTag.isValid &&
       PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) }
