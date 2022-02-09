@@ -3,6 +3,7 @@ package com.jetbrains.lang.makefile
 import com.intellij.codeInsight.highlighting.AbstractCodeBlockSupportHandler
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import com.jetbrains.lang.makefile.MakefileFoldingBuilder.MakefileConditionalElseFoldingDescriptor
 import com.jetbrains.lang.makefile.MakefileFoldingBuilder.MakefileConditionalFoldingDescriptor
 import com.jetbrains.lang.makefile.psi.MakefileTypes.*
 
@@ -20,10 +21,12 @@ import com.jetbrains.lang.makefile.psi.MakefileTypes.*
  * Pairs of `define ... endef` are handled (in a simpler way) via
  * [MakefileBraceMatcherProvider].
  *
- * Block Folding is handled via [MakefileConditionalFoldingDescriptor].
+ * Block Folding is handled via [MakefileConditionalFoldingDescriptor] and
+ * [MakefileConditionalElseFoldingDescriptor].
  *
  * @see MakefileBraceMatcherProvider
  * @see MakefileConditionalFoldingDescriptor
+ * @see MakefileConditionalElseFoldingDescriptor
  */
 class MakefileCodeBlockSupportHandler : AbstractCodeBlockSupportHandler() {
   override fun getTopLevelElementTypes(): TokenSet =
