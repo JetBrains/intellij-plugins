@@ -91,16 +91,16 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
         }
         references.add(reference);
 
-        final ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance.getExpressionAccess(element);
+        ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance.getExpressionAccess(element);
 
-        if (access == ReadWriteAccessDetector.Access.Read || access == ReadWriteAccessDetector.Access.ReadWrite) {
+        if (access.isReferencedForRead()) {
           final PsiElement previous = functionToFirstReadUsage.get(function);
           if (previous == null || element.getTextRange().getStartOffset() < previous.getTextRange().getStartOffset()) {
             functionToFirstReadUsage.put(function, element);
           }
         }
 
-        if (access == ReadWriteAccessDetector.Access.Write || access == ReadWriteAccessDetector.Access.ReadWrite) {
+        if (access.isReferencedForWrite()) {
           final PsiElement previous = functionToFirstWriteUsage.get(function);
           if (previous == null || element.getTextRange().getStartOffset() < previous.getTextRange().getStartOffset()) {
             functionToFirstWriteUsage.put(function, element);
