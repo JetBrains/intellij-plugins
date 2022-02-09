@@ -206,9 +206,10 @@ class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralEx
     }
   }
 
-  fun ensureValid() {
-    sequenceOf(initializer, clazz, source)
-      .forEach { element -> element?.let { PsiUtilCore.ensureValid(it) } }
+  fun isValid(): Boolean {
+    return initializer?.isValid != false &&
+           clazz?.isValid != false &&
+           source.isValid
   }
 
   override fun equals(other: Any?): Boolean =
