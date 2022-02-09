@@ -29,18 +29,18 @@ public class LocalVarDerived3 {
 }
 
 <structure activeFilters="HIDE_INHERITED">
-    <node text="LocalVarDerived3.js2">
-        <node text="LocalVarDerived3" icon="AS_CLASS_ICON">
-        <node text="LocalVarDerived3()" icon="CONSTRUCTOR_ICON"/>
-        <node text="ttt:int" icon="PROPERTY_READ_ICON"/>
-        <node text="rrr:int" icon="PROPERTY_WRITE_ICON"/>
-        <node text="sss:int" icon="PROPERTY_READ_WRITE_ICON"/>
-        <node text="xxx:Button" icon="FIELD_ICON"/>
-        <node text="UNIT_MAP:Object">
-          <node text="px" icon="PROPERTY_ICON"/>
-          <node text="lpx" icon="PROPERTY_ICON"/>
-          <node text="lpy" icon="PROPERTY_ICON"/>
-        </node>
+<node text="LocalVarDerived3.js2">
+  <node text="LocalVarDerived3" icon="AS_CLASS_ICON">
+    <node text="xxx:Button" icon="FIELD_ICON"/>
+    <node text="UNIT_MAP:Object" icon="FIELD_ICON">
+      <node text="px"/>
+      <node text="lpx"/>
+      <node text="lpy"/>
     </node>
-    </node>
+    <node text="LocalVarDerived3()"/>
+    <node text="ttt:int"/>
+    <node text="rrr:int"/>
+    <node text="sss:int"/>
+  </node>
+</node>
 </structure>

@@ -10,3 +10,17 @@ package xxx {
     var aaa;
   }
 }
+
+<structure>
+<node text="22.js2">
+  <node text="XXX" icon="AS_CLASS_ICON">
+    <node text="aaa:*" icon="FIELD_ICON"/>
+    <node text="staticFun():*" allIcons="CONSTRUCTOR_ICON PACKAGE_LOCAL_ICON" static="true"/>
+    <node text="bbb:*" icon="FIELD_ICON" inherited="true"/>
+  </node>
+  <node text="YYY" icon="AS_CLASS_ICON">
+    <node text="aaa:*" icon="FIELD_ICON"/>
+    <node text="bbb:*" icon="FIELD_ICON" inherited="true"/>
+  </node>
+</node>
+</structure>

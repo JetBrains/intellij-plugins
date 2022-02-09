@@ -22,36 +22,36 @@ class Rectangle {}
 namespace myns;
 
 <structure activeFilters="" activeSorters="ALPHA_COMPARATOR">
-    <node text="ObjectFields.js2">
-        <node text="Foo">
-            <node text="constructor:*" inherited="true"/>
-            <node text="ff():*"/>
-            <node text="hasOwnProperty(propertyName:String):Boolean" inherited="true"/>
-            <node text="isPrototypeOf(o:Object):Boolean" inherited="true"/>
-            <node text="length:Number" inherited="true"/>
-            <node text="propertyIsEnumerable(propertyName:String):Boolean" inherited="true"/>
-            <node text="prototype:Object" inherited="true"/>
-            <node text="toLocaleString():String" inherited="true"/>
-            <node text="toSource():Object" inherited="true"/>
-            <node text="toString():String" inherited="true"/>
-            <node text="unwatch(prop:String):void" inherited="true"/>
-            <node text="watch(prop:String, handler:Object):void" inherited="true"/>
-            <node text="v:*" icon="FIELD_ICON"/>
-            <node text="z:*"/>
-        </node>
-        <node text="Rectangle">
-            <node text="constructor:*" inherited="true"/>
-            <node text="hasOwnProperty(propertyName:String):Boolean" inherited="true"/>
-            <node text="isPrototypeOf(o:Object):Boolean" inherited="true"/>
-            <node text="length:Number" inherited="true"/>
-            <node text="propertyIsEnumerable(propertyName:String):Boolean" inherited="true"/>
-            <node text="prototype:Object" inherited="true"/>
-            <node text="toLocaleString():String" inherited="true"/>
-            <node text="toSource():Object" inherited="true"/>
-            <node text="toString():String" inherited="true"/>
-            <node text="unwatch(prop:String):void" inherited="true"/>
-            <node text="watch(prop:String, handler:Object):void" inherited="true"/>
-        </node>
-        <node text="myns"/>
-    </node>
+<node text="ObjectFields.js2">
+  <node text="Foo" icon="AS_CLASS_ICON">
+    <node text="constructor:*" inherited="true"/>
+    <node text="ff():*"/>
+    <node text="hasOwnProperty(propertyName:String):Boolean" inherited="true"/>
+    <node text="isPrototypeOf(o:Object):Boolean" inherited="true"/>
+    <node text="length:Number" inherited="true"/>
+    <node text="propertyIsEnumerable(propertyName:String):Boolean" inherited="true"/>
+    <node text="prototype:Object" inherited="true"/>
+    <node text="toLocaleString():String" inherited="true"/>
+    <node text="toSource():Object" inherited="true"/>
+    <node text="toString():String" inherited="true"/>
+    <node text="unwatch(prop:String):void" inherited="true"/>
+    <node text="v:*" icon="FIELD_ICON"/>
+    <node text="watch(prop:String, handler:Object):void" inherited="true"/>
+    <node text="z:*"/>
+  </node>
+  <node text="myns"/>
+  <node text="Rectangle" icon="AS_CLASS_ICON">
+    <node text="constructor:*" inherited="true"/>
+    <node text="hasOwnProperty(propertyName:String):Boolean" inherited="true"/>
+    <node text="isPrototypeOf(o:Object):Boolean" inherited="true"/>
+    <node text="length:Number" inherited="true"/>
+    <node text="propertyIsEnumerable(propertyName:String):Boolean" inherited="true"/>
+    <node text="prototype:Object" inherited="true"/>
+    <node text="toLocaleString():String" inherited="true"/>
+    <node text="toSource():Object" inherited="true"/>
+    <node text="toString():String" inherited="true"/>
+    <node text="unwatch(prop:String):void" inherited="true"/>
+    <node text="watch(prop:String, handler:Object):void" inherited="true"/>
+  </node>
+</node>
 </structure> 

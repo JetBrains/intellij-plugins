@@ -13,9 +13,9 @@ public class Inherited2 extends Inherited2Base {
         <node text="Inherited2" icon="AS_CLASS_ICON">
             <node text="foo():*" icon="METHOD_ICON"/>
             <node text="fooBase1():*" icon="METHOD_ICON"/>
+            <node text="field:String" icon="FIELD_ICON"/>
             <node text="prop:String" icon="PROPERTY_READ_ICON"/>
             <node text="fooBase2():*" icon="METHOD_ICON" inherited="true"/>
-            <node text="field:String" icon="FIELD_ICON"/>
             <node text="fieldBase:String" icon="FIELD_ICON" inherited="true"/>
         </node>
     </node>
@@ -65,8 +65,8 @@ public class Inherited2 extends Inherited2Base {
         <node text="Inherited2" icon="AS_CLASS_ICON">
             <node text="foo():*" icon="METHOD_ICON"/>
             <node text="fooBase1():*" icon="METHOD_ICON"/>
-            <node text="prop:String" icon="PROPERTY_READ_ICON"/>
             <node text="field:String" icon="FIELD_ICON"/>
+            <node text="prop:String" icon="PROPERTY_READ_ICON"/>
         </node>
     </node>
 </structure>
