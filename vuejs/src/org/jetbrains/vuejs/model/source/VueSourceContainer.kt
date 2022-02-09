@@ -81,7 +81,8 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   private abstract class MemberAccessor<T>(val extInfoAccessor: (VueContainerInfo) -> T?, val takeFirst: Boolean = false) {
 
     fun get(descriptor: VueSourceEntityDescriptor): T {
-      descriptor.ensureValid()
+      if (!descriptor.isValid()) return empty()
+
       return VueContainerInfoProvider.getProviders()
                .asSequence()
                .mapNotNull { it.getInfo(descriptor)?.let(extInfoAccessor) }
