@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
@@ -87,9 +87,9 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDes
 import static com.intellij.lang.javascript.flex.run.RemoteFlashRunnerParameters.RemoteDebugTarget;
 
 public abstract class FlexBaseRunner extends GenericProgramRunner {
-  public static final NotificationGroup COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP = NotificationGroup
-    .toolWindowGroup("Flash app not compiled before launch", ToolWindowId.RUN, false,
-                     FlexBundle.message("check.flash.app.compiled.before.launch.notification.group"));
+  public static NotificationGroup getCompileBeforeLaunchNotificationGroup() {
+    return NotificationGroupManager.getInstance().getNotificationGroup("Flash app not compiled before launch");
+  }
 
   @Override
   @Nullable
@@ -662,7 +662,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void showMakeBeforeRunTurnedOffWarning(final Project project, final RunnerAndConfigurationSettings configuration) {
     final String message = FlexBundle.message("run.when.compile.before.run.turned.off");
-    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
+    getCompileBeforeLaunchNotificationGroup().createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -681,7 +681,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void showBCCompilationSkippedWarning(final Module module, final FlexBuildConfiguration bc) {
     final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
-    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
+    getCompileBeforeLaunchNotificationGroup().createNotification(message, NotificationType.WARNING).setListener(new NotificationListener() {
       @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -704,7 +704,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void disableCompilationSkippedWarning(final Project project) {
     NotificationsConfiguration.getNotificationsConfiguration()
-      .changeSettings(COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.getDisplayId(), NotificationDisplayType.NONE, false, false);
+      .changeSettings(getCompileBeforeLaunchNotificationGroup().getDisplayId(), NotificationDisplayType.NONE, false, false);
     ToolWindowManager.getInstance(project)
       .notifyByBalloon(EventLog.LOG_TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
   }
