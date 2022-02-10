@@ -306,9 +306,8 @@
                                       implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
     <lang.elementManipulator forClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                              implementationClass="org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorManipulator"/>
-    <notificationGroup id="Angular CLI" displayType="BALLOON" isLogByDefault="false" icon="AngularJSIcons.Angular2"
-                       bundle="messages.Angular2Bundle"
-                       key="angular.description.angular-cli"/>
+    <notificationGroup id="Angular CLI" displayType="BALLOON" isLogByDefault="false"
+                       bundle="messages.Angular2Bundle" key="angular.description.angular-cli"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
