@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
 
 @Deprecated(message = "This class is no longer used. Instead Vue support depends on web symbol API and WebSymbolAttributeDescriptor")
-@ApiStatus.ScheduledForRemoval(inVersion = "2022.1")
+@ApiStatus.ScheduledForRemoval
 open class VueAttributeDescriptor(protected val tag: XmlTag,
                                   private val name: String,
                                   internal val element: PsiElement? = null,
