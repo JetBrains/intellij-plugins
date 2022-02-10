@@ -21,19 +21,18 @@ import com.intellij.util.PlatformIcons;
 import javax.swing.*;
 
 public interface PbIcons {
-
   Icon ENUM = PlatformIcons.ENUM_ICON;
   Icon ENUM_VALUE = PlatformIcons.FIELD_ICON;
   Icon EXTEND = PlatformIcons.EXPORT_ICON;
   Icon FIELD = PlatformIcons.FIELD_ICON;
-  Icon FILE = IconLoader.getIcon("/protoFile.png");
+  Icon FILE = IconLoader.getIcon("protoFile.png", PbIcons.class.getClassLoader());
   Icon GROUP_FIELD = PlatformIcons.ANONYMOUS_CLASS_ICON;
-  Icon MESSAGE = IconLoader.getIcon("/protoMessage.png");
+  Icon MESSAGE = IconLoader.getIcon("protoMessage.png", PbIcons.class.getClassLoader());
   Icon ONEOF = PlatformIcons.CLASS_ICON;
   Icon PACKAGE = PlatformIcons.PACKAGE_ICON;
   Icon SERVICE = PlatformIcons.INTERFACE_ICON;
   Icon SERVICE_METHOD = PlatformIcons.METHOD_ICON;
 
   // TODO(volkman): find a better icon.
-  Icon TEXT_FILE = IconLoader.getIcon("/protoFile.png");
+  Icon TEXT_FILE = IconLoader.getIcon("protoFile.png", PbIcons.class.getClassLoader());
 }
