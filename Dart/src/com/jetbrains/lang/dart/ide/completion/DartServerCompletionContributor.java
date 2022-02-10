@@ -227,10 +227,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
     for (CompletionSuggestion suggestion : suggestions) {
       if (!addedCompletions.add(suggestion)) continue;
 
-      Element element = suggestion.getElement();
-      String libraryUri = element != null ? element.getLibraryUri() : null;
-      String libraryUriToImport =
-        element != null && suggestion.getIsNotImported() != null && suggestion.getIsNotImported() ? element.getLibraryUri() : null;
+      String libraryUri = suggestion.getLibraryUri();
+      String libraryUriToImport = suggestion.getIsNotImported() == Boolean.TRUE ? libraryUri : null;
       String libraryUriToDisplay =
         libraryUri != null && libraryUri.startsWith("file:") ? StringUtil.substringAfterLast(libraryUri, "/") : libraryUri;
 
@@ -641,6 +639,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       element,
       element.getReturnType(),
       suggestion.getParameterNames(),
+      null,
       null,
       null,
       null,
