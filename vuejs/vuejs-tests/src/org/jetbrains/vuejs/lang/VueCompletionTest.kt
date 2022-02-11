@@ -1547,6 +1547,25 @@ export default class ComponentInsertion extends Vue {
     }
   }
 
+  fun testScriptLangAttributeWithAlreadyPresentCode() {
+    myFixture.configureByText("Test.vue", """
+      <script la<caret>>
+      export default {
+        name: "Test"
+      };
+      </script>
+    """.trimIndent())
+    myFixture.completeBasic();
+    myFixture.finishLookup('\t');
+    myFixture.checkResult("""
+      <script lang="<caret>">
+      export default {
+        name: "Test"
+      };
+      </script>
+    """.trimIndent())
+  }
+
   fun testComputedTypeTS() {
     doLookupTest(VueTestModule.VUE_2_6_10, renderPriority = false, locations = listOf(
       "{{ a<caret>",

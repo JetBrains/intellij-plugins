@@ -206,12 +206,6 @@ class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralEx
     }
   }
 
-  fun isValid(): Boolean {
-    return initializer?.isValid != false &&
-           clazz?.isValid != false &&
-           source.isValid
-  }
-
   override fun equals(other: Any?): Boolean =
     other === this ||
     (other is VueSourceEntityDescriptor

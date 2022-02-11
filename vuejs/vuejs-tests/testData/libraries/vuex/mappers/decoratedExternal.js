@@ -1,14 +1,14 @@
 @Component({
-             computed: {
-               ...mapState("foo", ["a", "b"])
-             },
-             methods: {
-               ...mapMutations([
-                                 'increment',
-                                 'incrementBy'
-                               ])
-             }
-           })
+ computed: {
+   ...mapState("foo", ["a", "b"])
+ },
+ methods: {
+   ...mapMutations([
+     'increment',
+     'incrementBy'
+   ])
+ }
+})
 export default class MyComp extends Vue {
   @Prop("foo2") propFoo
   @State('foo') stateFoo

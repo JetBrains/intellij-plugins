@@ -52,13 +52,9 @@ interface VueScopeElement {
 
       if (!visited.add(Pair("", container))) continue
 
-      if ((container is VueMixin
-           && !visitor.visitMixin(container, proximity))
-          || (container is VueComponent
-              && !visitor.visitSelfComponent(container, proximity))
-          || (container is VueApp
-              && proximity == VueModelVisitor.Proximity.LOCAL
-              && !visitor.visitSelfApplication(container, proximity))) {
+      if ((container is VueMixin && !visitor.visitMixin(container, proximity)) ||
+          (container is VueComponent && !visitor.visitSelfComponent(container, proximity)) ||
+          (container is VueApp && proximity == VueModelVisitor.Proximity.LOCAL && !visitor.visitSelfApplication(container, proximity))) {
         return false
       }
 
