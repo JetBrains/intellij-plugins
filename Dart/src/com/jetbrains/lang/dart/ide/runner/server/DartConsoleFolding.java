@@ -44,7 +44,7 @@ public class DartConsoleFolding extends ConsoleFolding {
     myFrameCount = 0;
 
     // fold Dart VM command line created in DartCommandLineRunningState.createCommandLine() together with the following "Observatory listening on ..." message
-    if (line.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) return true;
+    if (line.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON) || line.startsWith(DartConsoleFilter.DART_VM_LISTENING_ON)) return true;
 
     int index = line.indexOf(DART_MARKER);
     if (index < 0) index = line.indexOf(TEST_RUNNER_MARKER);
@@ -71,6 +71,8 @@ public class DartConsoleFolding extends ConsoleFolding {
 
     if (lines.size() == 1 && lines.get(0).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
       return " [Debug service available at " + lines.get(0).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()) + "]";
+    } else if (lines.size() == 1 && lines.get(0).startsWith(DartConsoleFilter.DART_VM_LISTENING_ON)) {
+      return " [Debug service available at " + lines.get(0).substring(DartConsoleFilter.DART_VM_LISTENING_ON.length()) + "]";
     }
 
     if (lines.size() == 1 && lines.get(0).contains(TEST_RUNNER_MARKER)) {
@@ -89,6 +91,7 @@ public class DartConsoleFolding extends ConsoleFolding {
     final String fullText = StringUtil.join(lines, "\n");
     if (lines.size() > 2 ||
         lines.size() == 2 && !lines.get(1).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON) ||
+        lines.size() == 2 && !lines.get(1).startsWith(DartConsoleFilter.DART_VM_LISTENING_ON) ||
         !lines.get(0).contains(DART_MARKER) && !lines.get(0).contains(TEST_RUNNER_MARKER)) {
       // unexpected text
       return fullText;
@@ -131,6 +134,9 @@ public class DartConsoleFolding extends ConsoleFolding {
 
     if (lines.size() == 2 && lines.get(1).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
       b.append(" [Debug service available at ").append(lines.get(1).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()))
+        .append("]");
+    } else if (lines.size() == 2 && lines.get(1).startsWith(DartConsoleFilter.DART_VM_LISTENING_ON)) {
+      b.append(" [Debug service available at ").append(lines.get(1).substring(DartConsoleFilter.DART_VM_LISTENING_ON.length()))
         .append("]");
     }
 
