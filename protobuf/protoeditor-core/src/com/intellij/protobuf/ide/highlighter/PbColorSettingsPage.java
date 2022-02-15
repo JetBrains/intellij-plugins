@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.ide.util.ResourceUtil;
@@ -70,7 +71,7 @@ public class PbColorSettingsPage implements ColorSettingsPage {
   @Override
   public String getDemoText() {
     try {
-      return ResourceUtil.readUrlAsString(getClass().getResource("/example.proto"));
+      return StringUtil.convertLineSeparators(ResourceUtil.readUrlAsString(getClass().getResource("/example.proto")));
     } catch (IOException e) {
       return "Error loading example.";
     }
