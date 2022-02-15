@@ -39,21 +39,21 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
 
     public static FlashUmlRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
       return new Impl(TYPE_DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
-                      DiagramRelationships.getAngleArrow(), null, element, label != null);
+                      DiagramRelationshipInfo.ANGLE, null, element, label != null);
     }
 
     public static FlashUmlRelationship create(@NotNull PsiElement element) {
       return new Impl(TYPE_CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getUpperCenterLabel().getText(), null, null, 1,
-                      DiagramRelationships.getAngleArrow(), null, element, false);
+                      DiagramRelationshipInfo.ANGLE, null, element, false);
     }
 
     public static FlashUmlRelationship oneToOne(String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element,
+      return new Impl(TYPE_ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationshipInfo.ANGLE, DIAMOND, element,
                       true);
     }
 
     public static FlashUmlRelationship oneToMany(String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element,
+      return new Impl(TYPE_ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationshipInfo.ANGLE, DIAMOND, element,
                       true);
     }
 

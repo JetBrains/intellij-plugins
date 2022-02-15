@@ -16,7 +16,7 @@ public class FlashUmlColorManager extends DiagramColorManagerBase {
   public Color getEdgeColor(@NotNull DiagramBuilder builder, @NotNull DiagramEdge edge) {
     return !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getSource())) ||
            !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget())) ||
-           edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA ||
+           edge.getRelationship().getTargetArrow() != DiagramRelationshipInfo.DELTA ||
            edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
            super.getEdgeColor(builder, edge) : Objects.requireNonNull(builder.getColorScheme().getColor(DiagramColors.REALIZATION_EDGE));
   }
