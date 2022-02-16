@@ -41,7 +41,7 @@ class PerforceQuickActionsToolbarPopup : VcsQuickActionsToolbarPopup() {
       ""
     }
     else {
-      PerforceBundle.message("action.Vcs.Toolbar.ShowMoreActions.text") + " "
+      PerforceBundle.message("action.Perforce.Toolbar.ShowMoreActions.text") + " "
     }
   }
 }
