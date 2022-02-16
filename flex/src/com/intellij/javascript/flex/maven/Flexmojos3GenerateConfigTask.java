@@ -119,9 +119,9 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
 
   /**
    * For SWF- and SWC-packaged maven projects returned result contains mapping to respective SWF/SWC target file.
-   * If such SWF/SWC file doesn't not exist - temporary file is created.
+   * If such SWF/SWC file doesn't exist - temporary file is created.
    * Caller of this method is responsible for removing placeholder files
-   * (see {@link #removeTemporaryFiles(com.intellij.openapi.project.Project, java.util.Collection)}).<br>
+   * (see {@link #removeTemporaryFiles(Project, Collection)}).<br>
    * For not SWF/SWC projects - reference to pom.xml file is placed in result map.
    */
   private static List<VirtualFile> mavenIdToOutputFileMapping(final MavenWorkspaceMap workspaceMap, final Project project,
@@ -144,7 +144,6 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
               // if maven project is not compiled and output file doesn't exist flexmojos fails to generate Flex compiler configuration file.
               // Workaround is to create empty placeholder file.
               outputFile = FlexUtils.addFileWithContent(outputFileName, TEMPORARY_FILE_CONTENT, outputDir);
-              if (outputFile == null) throw new IOException(IdeBundle.message("error.message.unable.to.create.file", outputFileName));
               temporaryFiles.add(outputFile);
             }
             workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()), new File(outputFile.getPath()));

@@ -62,7 +62,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * The {@link com.intellij.xdebugger.XDebugProcess} for the Dart VM debug process.
+ * The {@link XDebugProcess} for the Dart VM debug process.
  * <p>
  * This classes has intentionally been left extensible for downstream plugins.
  */

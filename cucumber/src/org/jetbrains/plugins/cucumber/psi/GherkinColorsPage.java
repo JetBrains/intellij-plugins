@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import icons.CucumberIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -76,7 +77,7 @@ public class GherkinColorsPage implements ColorSettingsPage {
   @Override
   @NotNull
   public Icon getIcon() {
-    return icons.CucumberIcons.Cucumber;
+    return CucumberIcons.Cucumber;
   }
 
   @Override

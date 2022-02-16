@@ -29,8 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * Stub element type for {@link
- * com.intellij.protobuf.lang.psi.PbPackageStatement}.
+ * Stub element type for {@link PbPackageStatement}.
  */
 public class PbPackageStatementType
     extends IStubElementType<PbPackageStatementStub, PbPackageStatement> {

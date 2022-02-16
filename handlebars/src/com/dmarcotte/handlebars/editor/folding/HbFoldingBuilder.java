@@ -76,7 +76,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
   }
 
   /**
-   * If the given element is a {@link com.dmarcotte.handlebars.psi.HbOpenBlockMustache} returns the close 'stache node ("}}")
+   * If the given element is a {@link HbOpenBlockMustache} returns the close 'stache node ("}}")
    * <p/>
    * Otherwise, returns null.
    */
@@ -95,7 +95,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
   }
 
   /**
-   * If the given element is a {@link com.dmarcotte.handlebars.psi.HbCloseBlockMustache}, returns the close 'stache node ("}}")
+   * If the given element is a {@link HbCloseBlockMustache}, returns the close 'stache node ("}}")
    * <p/>
    * Otherwise, returns null
    */

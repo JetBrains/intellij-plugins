@@ -47,10 +47,10 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
   }
 
   /**
-   * We have to override {@link com.intellij.formatting.templateLanguages.TemplateLanguageFormattingModelBuilder#createModel}
+   * We have to override {@link TemplateLanguageFormattingModelBuilder#createModel}
    * since after we delegate to some templated languages, those languages (xml/html for sure, potentially others)
    * delegate right back to us to format the HbTokenTypes.OUTER_ELEMENT_TYPE token we tell them to ignore,
-   * causing an stack-overflowing loop of polite format-delegation.
+   * causing a stack-overflowing loop of polite format-delegation.
    */
   @Override
   public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
@@ -80,7 +80,7 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
   /**
    * Do format my model!
    *
-   * @return false all the time to tell the {@link com.intellij.formatting.templateLanguages.TemplateLanguageFormattingModelBuilder}
+   * @return false all the time to tell the {@link TemplateLanguageFormattingModelBuilder}
    * to not-not format our model (i.e. yes please!  Format away!)
    */
   @Override

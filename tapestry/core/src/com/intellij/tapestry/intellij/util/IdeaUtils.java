@@ -59,7 +59,7 @@ public final class IdeaUtils {
   public static List<WebRoot> findWebRoots(Module module) {
     List<WebRoot> finalWebRoots = new ArrayList<>();
 
-    WebFacet webFacet = IdeaUtils.getWebFacet(module);
+    WebFacet webFacet = getWebFacet(module);
     if (webFacet == null) return finalWebRoots;
 
     List<WebRoot> webRoots = webFacet.getWebRoots();
@@ -79,8 +79,7 @@ public final class IdeaUtils {
    * @param sourceDirectory the source directory.
    * @param packageName     the package.
    * @return the new/existing directory.
-   * @throws com.intellij.util.IncorrectOperationException
-   *          if an error occurs executing.
+   * @throws IncorrectOperationException if an error occurs executing.
    */
   @Nullable
   public static PsiDirectory findOrCreateDirectoryForPackage(PsiDirectory sourceDirectory, String packageName)
@@ -109,7 +108,7 @@ public final class IdeaUtils {
    * @return {@code true} if the given directory is a web root in the given module, {@code false} otherwise.
    */
   public static boolean isWebRoot(Module module, VirtualFile directory) {
-    WebFacet webFacet = IdeaUtils.getWebFacet(module);
+    WebFacet webFacet = getWebFacet(module);
     if (webFacet == null) return false;
 
     List<WebRoot> webRoots = webFacet.getWebRoots();
@@ -153,7 +152,7 @@ public final class IdeaUtils {
   }
 
   /**
-   * Executes some code inside a write action commmand block.
+   * Executes some code inside a write action command block.
    *
    * @param project  the project executing the code.
    * @param runnable the code to execute.
@@ -198,7 +197,7 @@ public final class IdeaUtils {
 
       try {
         psiClass = ((PsiClassType)type).resolve();
-        if (psiClass instanceof PsiTypeParameter) { // lets consider generic type T as Object
+        if (psiClass instanceof PsiTypeParameter) { // let's consider generic type T as Object
           psiClass = JavaPsiFacade.getInstance(module.getProject()).findClass("java.lang.Object", GlobalSearchScope.moduleWithLibrariesScope(module));
         }
       }

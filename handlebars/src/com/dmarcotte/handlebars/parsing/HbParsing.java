@@ -915,7 +915,7 @@ public class HbParsing {
   }
 
   /**
-   * See {@link #parsePathSegments(com.intellij.lang.PsiBuilder)} for more info on this method
+   * See {@link #parsePathSegments(PsiBuilder)} for more info on this method
    */
   protected void parsePathSegmentsPrime(PsiBuilder builder) {
     PsiBuilder.Marker pathSegmentsPrimeMarker = builder.mark();

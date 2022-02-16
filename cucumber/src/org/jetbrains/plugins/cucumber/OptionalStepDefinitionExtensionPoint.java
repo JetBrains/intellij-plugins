@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * {@link org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint} that may not want to participate in step definition creation process.
+ * {@link CucumberJvmExtensionPoint} that may not want to participate in step definition creation process.
  * Some frameworks support step definition resolving, but not step definition creation.
  * <p/>
  * Implement this interface only if your EP is kind of described above.

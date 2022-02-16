@@ -51,6 +51,7 @@ import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ProcessingContext;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -125,8 +126,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   /**
-   * @deprecated use {@link com.intellij.lang.javascript.psi.JSTypeUtils
-   * #areTypesCompatible(com.intellij.lang.javascript.psi.JSType, com.intellij.lang.javascript.psi.JSType)} instead.
+   * @deprecated use {@link JSTypeUtils#areTypesCompatible(JSType, JSType, ProcessingContext, PsiElement)} instead.
    */
   @Deprecated(forRemoval = true)
   protected static boolean compatibleType(String overrideParameterType,
@@ -223,7 +223,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (!ok) return;
 
-    // check if attribute value must be FQN of a class class inherited from some other class
+    // check if attribute value must be FQN of a class inherited from some other class
     if (attributeNameValuePair.getValueNode() == null) return;
 
     final PsiElement parent = attributeNameValuePair.getParent();

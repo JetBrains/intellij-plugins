@@ -163,7 +163,7 @@ public final class FlexSdkUtils {
   }
 
   /**
-   * @return either path to a directory or to the zip file. It can't be used to construct command line. Use {@link #getAirRuntimeDirInfoForFlexmojosSdk(com.intellij.openapi.projectRoots.Sdk) instead}
+   * @return either path to a directory or to the zip file. It can't be used to construct command line. Use {@link #getAirRuntimeDirInfoForFlexmojosSdk(Sdk) instead}
    */
   public static String getAirRuntimePathForFlexmojosSdk(final @NotNull Sdk sdk) {
     assert sdk.getSdkType() instanceof FlexmojosSdkType;

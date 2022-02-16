@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.perforce.login;
 
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.util.Collections;
@@ -8,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class LoginStateListener {
   private boolean myIsInBatch;
-  private final Set<P4Connection> myConnections = com.intellij.util.containers.ContainerUtil.newConcurrentSet();
+  private final Set<P4Connection> myConnections = ContainerUtil.newConcurrentSet();
 
   public void reconnected(P4Connection connection) {
     if (myIsInBatch) {

@@ -36,8 +36,8 @@ import java.util.*;
  */
 public class PerforceUnversionedTracker {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
-  private final Set<VirtualFile> myUnversionedFiles = com.intellij.util.containers.ContainerUtil.newConcurrentSet();
-  private final Set<VirtualFile> myIgnoredFiles = com.intellij.util.containers.ContainerUtil.newConcurrentSet();
+  private final Set<VirtualFile> myUnversionedFiles = ContainerUtil.newConcurrentSet();
+  private final Set<VirtualFile> myIgnoredFiles = ContainerUtil.newConcurrentSet();
   private final Project myProject;
   private final static int ourFilesThreshold = 200;
 

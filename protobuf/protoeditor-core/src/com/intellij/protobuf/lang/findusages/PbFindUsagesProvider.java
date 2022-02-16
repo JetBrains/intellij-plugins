@@ -15,6 +15,7 @@
  */
 package com.intellij.protobuf.lang.findusages;
 
+import com.intellij.lang.HelpID;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
@@ -39,7 +40,7 @@ public class PbFindUsagesProvider implements FindUsagesProvider {
   @Nullable
   @Override
   public String getHelpId(@NotNull PsiElement psiElement) {
-    return com.intellij.lang.HelpID.FIND_OTHER_USAGES;
+    return HelpID.FIND_OTHER_USAGES;
   }
 
   @NotNull
