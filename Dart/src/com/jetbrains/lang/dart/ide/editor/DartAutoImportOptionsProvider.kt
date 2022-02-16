@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.options.UiDslUnnamedConfigurable
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.toNullableBinding
 import com.intellij.ui.layout.*
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings
@@ -30,7 +31,7 @@ class DartAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(), AutoImp
                              else -> ""
                            })
                  })
-          .bindItem(DartCodeInsightSettings.getInstance()::ADD_IMPORTS_ON_PASTE)
+          .bindItem(DartCodeInsightSettings.getInstance()::ADD_IMPORTS_ON_PASTE.toNullableBinding())
       }
     }
   }
