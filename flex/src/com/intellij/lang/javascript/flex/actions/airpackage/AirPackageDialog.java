@@ -34,16 +34,16 @@ public class AirPackageDialog extends DialogWrapper {
   private JPanel myMainPanel;
   private FlexBCTree myTree;
 
-  private JComboBox myDesktopTypeCombo;
+  private JComboBox<DesktopPackageType> myDesktopTypeCombo;
 
-  private JComboBox myAndroidTypeCombo;
+  private JComboBox<AndroidPackageType> myAndroidTypeCombo;
   private JCheckBox myApkCaptiveRuntimeCheckBox;
   private JPanel myApkDebugPortPanel;
   private JTextField myApkDebugPortTextField;
   //private JPanel myApkDebugHostPanel;
   //private JTextField myApkDebugHostTextField;
 
-  private JComboBox myIOSTypeCombo;
+  private JComboBox<IOSPackageType> myIOSTypeCombo;
   private JCheckBox myIosFastPackagingCheckBox;
   private JLabel myDesktopTypeLabel;
   private JLabel myAndroidTypeLabel;
@@ -70,9 +70,9 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private void setupComboBoxes() {
-    myDesktopTypeCombo.setModel(new DefaultComboBoxModel(DesktopPackageType.values()));
-    myAndroidTypeCombo.setModel(new DefaultComboBoxModel(AndroidPackageType.values()));
-    myIOSTypeCombo.setModel(new DefaultComboBoxModel(
+    myDesktopTypeCombo.setModel(new DefaultComboBoxModel<>(DesktopPackageType.values()));
+    myAndroidTypeCombo.setModel(new DefaultComboBoxModel<>(AndroidPackageType.values()));
+    myIOSTypeCombo.setModel(new DefaultComboBoxModel<>(
       new IOSPackageType[]{IOSPackageType.Test, IOSPackageType.DebugOverNetwork, IOSPackageType.AdHoc, IOSPackageType.AppStore}));
 
     final ActionListener listener = new ActionListener() {
@@ -275,7 +275,7 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private void loadParameters() {
-    final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(myProject);
+    final AirPackageProjectParameters params = getInstance(myProject);
 
     myDesktopTypeCombo.setSelectedItem(params.desktopPackageType);
 
@@ -296,7 +296,7 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private void saveParameters() {
-    final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(myProject);
+    final AirPackageProjectParameters params = getInstance(myProject);
 
     params.desktopPackageType = (DesktopPackageType)myDesktopTypeCombo.getSelectedItem();
 
