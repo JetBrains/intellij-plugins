@@ -73,16 +73,16 @@ public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescrip
 
   @Override
   public String toString() {
-    return "" +
+    return "<div>" +
            myNamePattern.pattern() +
            "</div>" +
-           "" +
+           "<div>" +
            getDescription() +
            "</div>" +
-           "" +
+           "<div>" +
            getType() +
            "</div>" +
-           "" +
+           "<div>" +
            isRequired() +
            "</div>";
   }

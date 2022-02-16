@@ -10,9 +10,9 @@ import static com.intellij.lang.javascript.flex.importer.Abc.*;
 class MethodInfo extends MemberInfo {
   int flags;
   String debugName;
-  Multiname paramTypes[];
-  String paramNames[];
-  Multiname optionalValues[];
+  Multiname[] paramTypes;
+  String[] paramNames;
+  Multiname[] optionalValues;
   Multiname returnType;
   int local_count;
   int max_scope;
@@ -75,10 +75,11 @@ class MethodInfo extends MemberInfo {
         case OP_pushnamespace:
           processor.append(abc.namespaces[readU32()]);
           break;
-        case OP_pushint:
+        case OP_pushint: {
           int i = abc.ints[readU32()];
           processor.append(i + "\t// 0x" + Integer.toString(i, 16));
           break;
+        }
         case OP_pushuint:
           int u = abc.uints[readU32()];
           processor.append(u + "\t// 0x" + Integer.toString(u, 16));
@@ -124,16 +125,17 @@ class MethodInfo extends MemberInfo {
         case OP_newclass:
           processor.append(abc.instances[readU32()].toString());
           break;
-        case OP_lookupswitch:
+        case OP_lookupswitch: {
           int target = start + readS24();
           int maxindex = readU32();
           processor.append("default:" + labels.labelFor(target)); // target + "("+(target-pos)+")"
           processor.append(" maxcase:" + maxindex);
-          for (i = 0; i <= maxindex; i++) {
+          for (int i = 0; i <= maxindex; i++) {
             target = start + readS24();
             processor.append(" " + labels.labelFor(target)); // target + "("+(target-pos)+")"
           }
           break;
+        }
         case OP_jump:
         case OP_iftrue:
         case OP_iffalse:
@@ -148,13 +150,14 @@ class MethodInfo extends MemberInfo {
         case OP_iflt:
         case OP_ifnlt:
         case OP_ifstricteq:
-        case OP_ifstrictne:
+        case OP_ifstrictne: {
           int offset = readS24();
-          target = code.getPosition() + offset;
+          int target = code.getPosition() + offset;
           //s += target + " ("+offset+")"
           processor.append(labels.labelFor(target));
           if (!(labels.containsKey(code.getPosition()))) processor.append("\n");
           break;
+        }
         case OP_inclocal:
         case OP_declocal:
         case OP_inclocal_i:
@@ -169,10 +172,10 @@ class MethodInfo extends MemberInfo {
         case OP_setslot:
         case OP_pushshort:
         case OP_newcatch:
-          processor.append(""+readU32());
+          processor.append(String.valueOf(readU32()));
           break;
         case OP_debug:
-          processor.append(""+code.readUnsignedByte());
+          processor.append(String.valueOf(code.readUnsignedByte()));
           processor.append(" " + readU32());
           processor.append(" " + code.readUnsignedByte());
           processor.append(" " + readU32());
@@ -190,7 +193,7 @@ class MethodInfo extends MemberInfo {
           break;
         case OP_pushbyte:
         case OP_getscopeobject:
-          processor.append(""+code.readByte());
+          processor.append(String.valueOf(code.readByte()));
           break;
         case OP_hasnext2:
           processor.append(readU32() + " " + readU32());

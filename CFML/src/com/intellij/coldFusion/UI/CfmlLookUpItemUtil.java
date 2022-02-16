@@ -23,7 +23,7 @@ import javax.swing.*;
 
 public class CfmlLookUpItemUtil implements PlatformIcons {
   public static LookupElement functionDescriptionToLookupItem(final CfmlFunctionDescription functionDescription) {
-    String name = "" + functionDescription.getName();
+    String name = functionDescription.getName();
     String typeText = functionDescription.getReturnType();
     String tailText = "(" + functionDescription.getParametersListPresentableText() + ")";
 
@@ -63,7 +63,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
     }
     // about cfml
 
-    String name = "" + element.getName();
+    String name = element.getName();
     String typeText = null;
     String tailText = null;
 
