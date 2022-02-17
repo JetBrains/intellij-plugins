@@ -671,7 +671,7 @@ public class FlexDebugProcess extends XDebugProcess {
     final String result = frame.eval(expression.getExpression(), this);
 
     if (result != null && (result.equalsIgnoreCase("true") || result.equalsIgnoreCase("false"))) {
-      return Boolean.valueOf(result);
+      return Boolean.parseBoolean(result);
     }
     else {
       final String message = result == null || result.startsWith(FlexStackFrame.CANNOT_EVALUATE_EXPRESSION)

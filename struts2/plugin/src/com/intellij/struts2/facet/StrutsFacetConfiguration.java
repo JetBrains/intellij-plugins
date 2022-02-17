@@ -114,7 +114,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
           final String text = fileElement.getText();
           fileSet.addFile(text);
         }
-        fileSet.setRemoved(Boolean.valueOf(removed));
+        fileSet.setRemoved(Boolean.parseBoolean(removed));
         myFileSets.add(fileSet);
       }
     }
@@ -123,7 +123,7 @@ public class StrutsFacetConfiguration extends SimpleModificationTracker implemen
     final Element propertiesElement = element.getChild(PROPERTIES_KEYS);
     if (propertiesElement != null) {
       final String disabled = propertiesElement.getAttributeValue(PROPERTIES_KEYS_DISABLED);
-      myPropertiesKeysDisabled = Boolean.valueOf(disabled);
+      myPropertiesKeysDisabled = Boolean.parseBoolean(disabled);
     }
 
   }

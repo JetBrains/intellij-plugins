@@ -104,7 +104,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
         final String isSingle = attr.getValue("single");
         final String endTagRequired = attr.getValue("endtagrequired");
         myCurrentTag = new CfmlTagDescription(attr.getValue("name"),
-                                              Boolean.valueOf(isSingle), Boolean.valueOf(endTagRequired));
+                                              Boolean.parseBoolean(isSingle), Boolean.parseBoolean(endTagRequired));
       }
       else if (localName.equals("help")) {
         if (myState == TAG_STATE) {
@@ -119,7 +119,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
         myState = TAG_PARAMETER_STATE;
         String aName = attr.getValue("name");
         int aType = CfmlTypesInfo.getTypeByString(attr.getValue("type"));
-        boolean aRequired = Boolean.valueOf(attr.getValue("required"));
+        boolean aRequired = Boolean.parseBoolean(attr.getValue("required"));
         String aDescription = "";
         myCurrentAttribute = new CfmlAttributeDescription(aName, aType, aRequired, aDescription);
       }
@@ -135,7 +135,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
       else if (localName.equals("parameter") && myCurrentFunction != null) {
         String aName = attr.getValue("name");
         String aType = attr.getValue("type");
-        boolean aRequired = Boolean.valueOf(attr.getValue("required"));
+        boolean aRequired = Boolean.parseBoolean(attr.getValue("required"));
 
         myCurrentFunction.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(aName, aType, aRequired));
       }

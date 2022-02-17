@@ -119,10 +119,10 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
     vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
     programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
-    includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
-    useAlternativeJre = Boolean.valueOf(element.getAttributeValue(USE_ALTERNATIVE_JRE_ATTRIBUTE, "false"));
+    includeAllBundlesInClassPath = Boolean.parseBoolean(element.getAttributeValue(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
+    useAlternativeJre = Boolean.parseBoolean(element.getAttributeValue(USE_ALTERNATIVE_JRE_ATTRIBUTE, "false"));
     alternativeJrePath = element.getAttributeValue(ALTERNATIVE_JRE_PATH, "");
-    generateWorkingDir = Boolean.valueOf(element.getAttributeValue(GENERATE_WORKING_DIR_ATTRIBUTE));
+    generateWorkingDir = Boolean.parseBoolean(element.getAttributeValue(GENERATE_WORKING_DIR_ATTRIBUTE));
 
     try {
       frameworkStartLevel = Integer.parseInt(element.getAttributeValue(FRAMEWORK_START_LEVEL, "1"));

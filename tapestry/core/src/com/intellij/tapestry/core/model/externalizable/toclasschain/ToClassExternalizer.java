@@ -47,7 +47,7 @@ public abstract class ToClassExternalizer implements Command {
     private static String suggestNameIterator(String desiredName, String newName, List<String> takenNames) {
         for (String taken : takenNames)
             if (newName.equals(taken)) {
-                short incrementor = Short.valueOf(newName.substring(desiredName.length()));
+                short incrementor = Short.parseShort(newName.substring(desiredName.length()));
                 incrementor++;
 
                 return suggestNameIterator(desiredName, newName.substring(0, desiredName.length()) + incrementor, takenNames);

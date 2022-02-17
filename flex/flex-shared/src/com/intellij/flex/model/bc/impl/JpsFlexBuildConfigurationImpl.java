@@ -196,7 +196,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     for (String entry : entries) {
       final List<String> parts = StringUtil.split(entry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
       assert parts.size() == 3 : entry;
-      result.add(new RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
+      result.add(new RLMInfo(parts.get(0), parts.get(1), Boolean.parseBoolean(parts.get(2))));
     }
     return result;
   }

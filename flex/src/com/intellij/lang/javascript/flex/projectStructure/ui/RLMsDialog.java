@@ -120,7 +120,7 @@ public class RLMsDialog extends RepeatableValueDialog {
     for (StringBuilder listEntry : currentList) {
       final List<String> parts = StringUtil.split(listEntry.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
       assert parts.size() == 3 : listEntry;
-      result.add(new FlexBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
+      result.add(new FlexBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.parseBoolean(parts.get(2))));
     }
 
     return result;
