@@ -11,6 +11,7 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonObject;
+import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -1547,7 +1548,17 @@ public final class DartAnalysisServerService implements Disposable {
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
 
-    server.completion_getSuggestions2(filePath, offset, maxResults, completionMode, invocationCount, -1, new GetSuggestionsConsumer2() {
+    final String completionCaseMatchingMode;
+    final int caseSensitiveSetting = CodeInsightSettings.getInstance().getCompletionCaseSensitive();
+    if(caseSensitiveSetting == CodeInsightSettings.FIRST_LETTER) {
+      completionCaseMatchingMode = CompletionCaseMatchingMode.FIRST_CHAR;
+    } else if(caseSensitiveSetting == CodeInsightSettings.NONE) {
+      completionCaseMatchingMode = CompletionCaseMatchingMode.NONE;
+    } else {
+      completionCaseMatchingMode = CompletionCaseMatchingMode.ALL_CHARS;
+    }
+
+    server.completion_getSuggestions2(filePath, offset, maxResults, completionCaseMatchingMode, completionMode, invocationCount, -1, new GetSuggestionsConsumer2() {
       @Override
       public void computedSuggestions(int replacementOffset,
                                       int replacementLength,
