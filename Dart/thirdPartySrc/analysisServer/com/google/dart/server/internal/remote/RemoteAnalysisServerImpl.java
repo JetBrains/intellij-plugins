@@ -338,12 +338,13 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void completion_getSuggestions2(String file,
                                          int offset,
                                          int maxResults,
+                                         String completionCaseMatchingMode,
                                          String completionMode,
                                          int invocationCount,
                                          int timeout,
                                          GetSuggestionsConsumer2 consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions2(id, file, offset, maxResults, completionMode, invocationCount, timeout), consumer);
+    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions2(id, file, offset, maxResults, completionCaseMatchingMode, completionMode, invocationCount, timeout), consumer);
   }
 
   @Override
