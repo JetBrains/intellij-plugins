@@ -220,10 +220,18 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         @Override
         public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
+          final String prefix2 = DartConsoleFilter.DART_VM_LISTENING_ON + "http://";
           if (event.getText().startsWith(prefix)) {
             getProcessHandler().removeProcessListener(this);
 
             final String urlBase = event.getText().substring(prefix.length());
+            scheduleConnect("ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws");
+            myOpenObservatoryAction.setUrl("http://" + urlBase);
+          }
+          else if (event.getText().startsWith(prefix2)) {
+            getProcessHandler().removeProcessListener(this);
+
+            final String urlBase = event.getText().substring(prefix2.length());
             scheduleConnect("ws://" + StringUtil.trimTrailing(urlBase.trim(), '/') + "/ws");
             myOpenObservatoryAction.setUrl("http://" + urlBase);
           }
