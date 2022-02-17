@@ -80,7 +80,7 @@ public final class PerforceCachingContentRevision extends PerforceContentRevisio
       }
     }
 
-    try (DataInputStream stream = PERFORCE_CONTENT_ATTRIBUTE.readAttribute(vFile)) {
+    try (DataInputStream stream = PERFORCE_CONTENT_ATTRIBUTE.readFileAttribute(vFile)) {
       if (stream == null) return null;
 
       long cachedRevision = stream.readLong();
@@ -91,7 +91,7 @@ public final class PerforceCachingContentRevision extends PerforceContentRevisio
   }
 
   private static void saveCachedContent(VirtualFile vFile, long revision, byte @NotNull [] content) throws IOException {
-    try (DataOutputStream stream = PERFORCE_CONTENT_ATTRIBUTE.writeAttribute(vFile)) {
+    try (DataOutputStream stream = PERFORCE_CONTENT_ATTRIBUTE.writeFileAttribute(vFile)) {
       stream.writeLong(revision);
       stream.writeInt(content.length);
       stream.write(content);
