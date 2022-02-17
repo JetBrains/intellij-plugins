@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider.ChildEntry;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,7 @@ public class AdditionalLibrariesFileResolveProviderTest extends PbCodeInsightFix
     public void testFindFilePrefersFirstListedPath() throws Exception {
         FileUtil.writeToFile(new File(tempDir, "com/foo/dir/foo.proto"), "// foo");
 
+        VirtualFileManager.getInstance().syncRefresh();
 
         FileResolveProvider resolver = new AdditionalLibrariesFileResolveProvider();
         VirtualFile foo = resolver.findFile("com/foo/dir/foo.proto", getProject());
@@ -62,6 +64,7 @@ public class AdditionalLibrariesFileResolveProviderTest extends PbCodeInsightFix
         FileUtil.writeToFile(new File(tempDir, "com/foo/dir/foo.proto"), "// foo");
         FileUtil.writeToFile(new File(tempDir, "com/foo/dir/bar.proto"), "// bar");
 
+        VirtualFileManager.getInstance().syncRefresh();
 
         FileResolveProvider resolver = new AdditionalLibrariesFileResolveProvider();
         assertContainsElements(
