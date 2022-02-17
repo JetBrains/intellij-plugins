@@ -10,7 +10,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.plugins.ruby.RBundle
@@ -34,7 +33,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
   private val rubyProjectName: String
     get() = "RubyMineLearningProject"
 
-  override val filename: String = "Learning.rb"
+  override val scratchFileName: String = "Learning.rb"
 
   override val langCourseFeedback get() = getFeedbackLink(this, false)
 
@@ -116,9 +115,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
   }
 
-  override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
-    return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}$projectSandboxRelativePath"
-  }
+  override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean = true
 
   private val Project.module: Module
     get() {
@@ -127,5 +124,5 @@ internal class RubyLangSupport : AbstractLangSupport() {
       return modules[0]
     }
 
-  override val projectSandboxRelativePath = "src/sandbox.rb"
+  override val sampleFilePath = "src/sandbox.rb"
 }

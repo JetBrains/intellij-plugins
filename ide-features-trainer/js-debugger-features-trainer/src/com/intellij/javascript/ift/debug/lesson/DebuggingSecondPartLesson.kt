@@ -63,7 +63,7 @@ class DebuggingSecondPartLesson
                                           "https://blog.jetbrains.com/webstorm/tag/debug/"))
       }
     }
-  override val existedFile = "debugging.js"
+  override val sampleFilePath = "debugging.js"
 }
 
 

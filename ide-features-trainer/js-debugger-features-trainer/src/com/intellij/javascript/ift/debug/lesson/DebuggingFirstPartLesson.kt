@@ -82,7 +82,7 @@ class DebuggingFirstPartLesson
                                           LessonUtil.rawEnter()))
       }
     }
-  override val existedFile = "debugging.js"
+  override val sampleFilePath = "debugging.js"
 }
 
 

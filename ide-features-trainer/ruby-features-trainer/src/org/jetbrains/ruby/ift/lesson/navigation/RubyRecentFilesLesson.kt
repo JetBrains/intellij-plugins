@@ -5,7 +5,7 @@ import training.dsl.LessonContext
 import training.learn.lesson.general.navigation.RecentFilesLesson
 
 class RubyRecentFilesLesson : RecentFilesLesson() {
-  override val existedFile: String = "src/recent_files_demo.rb"
+  override val sampleFilePath: String = "src/recent_files_demo.rb"
 
   override val transitionMethodName: String = "print"
   override val transitionFileName: String = "kernel"

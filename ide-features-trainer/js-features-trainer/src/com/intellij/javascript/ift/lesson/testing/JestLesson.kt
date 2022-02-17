@@ -12,7 +12,6 @@ import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.LogicalPosition
-import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileEditor.impl.EditorWindow
 import com.intellij.openapi.keymap.KeymapUtil
@@ -22,7 +21,6 @@ import training.dsl.*
 import training.dsl.LessonUtil.highlightBreakpointGutter
 import training.dsl.LessonUtil.productName
 import training.learn.course.KLesson
-import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
 import training.ui.LearningUiHighlightingManager
 import java.awt.event.KeyEvent
@@ -142,5 +140,5 @@ class JestLesson
       }
     }
 
-  override val existedFile: String = "sum.test.js"
+  override val sampleFilePath: String = "sum.test.js"
 }

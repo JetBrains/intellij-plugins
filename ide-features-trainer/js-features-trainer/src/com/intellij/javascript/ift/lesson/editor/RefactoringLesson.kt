@@ -102,5 +102,5 @@ class RefactoringLesson
                                 LessonUtil.rawEnter()))
       }
     }
-  override val existedFile = "refactoring.js"
+  override val sampleFilePath = "refactoring.js"
 }

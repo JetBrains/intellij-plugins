@@ -91,5 +91,5 @@ class CodeEditingLesson
         text(JsLessonsBundle.message("js.editor.code.editing.next", LessonUtil.rawEnter()))
       }
     }
-  override val existedFile = "index.html"
+  override val sampleFilePath = "index.html"
 }
