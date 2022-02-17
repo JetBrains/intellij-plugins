@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -40,6 +39,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
   }
 
 
+  @SafeVarargs
   private static Angular2DirectiveSimpleSelector getSelectorFor(Pair<String, String> @NotNull ... attrs) {
     return getSelectorFor("", "", attrs);
   }
@@ -48,20 +48,22 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
     return getSelectorFor("", classes);
   }
 
+  @SafeVarargs
   private static Angular2DirectiveSimpleSelector getSelectorFor(@NotNull String tag,
                                                                 Pair<String, String> @NotNull ... attrs) {
     return getSelectorFor(tag, "", attrs);
   }
 
+  @SafeVarargs
   private static Angular2DirectiveSimpleSelector getSelectorFor(@NotNull String tag,
                                                                 @NotNull String classes,
                                                                 Pair<String, String> @NotNull ... attrs) {
     Angular2DirectiveSimpleSelector selector = new Angular2DirectiveSimpleSelector();
     selector.setElement(tag);
 
-    Arrays.asList(attrs).forEach(nameValue -> {
+    for (Pair<String, String> nameValue : attrs) {
       selector.addAttribute(nameValue.first, nameValue.second);
-    });
+    }
 
     StringUtil.split(classes, " ").forEach(selector::addClassName);
 

@@ -202,6 +202,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
                 element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
       }
 
+      @SafeVarargs
       private PsiElement moveUpChain(final @Nullable PsiElement element, final Class<? extends PsiElement> @NotNull ... clazz) {
         PsiElement current = element;
         for (Class<? extends PsiElement> aClass : clazz) {
