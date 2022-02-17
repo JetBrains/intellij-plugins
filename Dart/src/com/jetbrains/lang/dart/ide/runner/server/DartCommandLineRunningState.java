@@ -99,7 +99,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine) {
       @Override
       public void coloredTextAvailable(@NotNull String text, @NotNull Key attributes) {
-        if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
+        if (text.startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON) || text.startsWith(DartConsoleFilter.DART_VM_LISTENING_ON)) {
           text += "\n";
         }
         super.coloredTextAvailable(text, attributes);
@@ -110,10 +110,18 @@ public class DartCommandLineRunningState extends CommandLineState {
       @Override
       public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
         final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
+        final String prefix2 = DartConsoleFilter.DART_VM_LISTENING_ON + "http://";
         final String text = event.getText().trim();
         if (text.startsWith(prefix)) {
           processHandler.removeProcessListener(this);
           final String url = "http://" + text.substring(prefix.length());
+          for (Consumer<String> consumer : myObservatoryUrlConsumers) {
+            consumer.consume(url);
+          }
+        }
+        else if (text.startsWith(prefix2)) {
+          processHandler.removeProcessListener(this);
+          final String url = "http://" + text.substring(prefix2.length());
           for (Consumer<String> consumer : myObservatoryUrlConsumers) {
             consumer.consume(url);
           }
