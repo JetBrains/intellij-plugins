@@ -106,6 +106,7 @@ public class RequestUtilities {
   // Code Completion domain
   private static final String COMPLETION = "completion";
   private static final String MAX_RESULTS = "maxResults";
+  private static final String COMPLETION_MATCHING_MODE = "completionCaseMatchingMode";
   private static final String COMPLETION_MODE = "completionMode";
   private static final String INVOCATION_COUNT = "invocationCount";
   private static final String LIBRARY_URI = "libraryUri";
@@ -527,6 +528,7 @@ public class RequestUtilities {
                                                              String file,
                                                              int offset,
                                                              int maxResults,
+                                                             String completionCaseMatchingMode,
                                                              String completionMode,
                                                              int invocationCount,
                                                              int timeout) {
@@ -534,6 +536,7 @@ public class RequestUtilities {
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
     params.addProperty(MAX_RESULTS, maxResults);
+    params.addProperty(COMPLETION_MATCHING_MODE, completionCaseMatchingMode);
     params.addProperty(COMPLETION_MODE, completionMode);
     params.addProperty(INVOCATION_COUNT, invocationCount);
     // "timeout" is intentionally not passed
