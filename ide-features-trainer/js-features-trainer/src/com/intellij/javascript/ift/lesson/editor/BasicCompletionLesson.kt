@@ -76,7 +76,7 @@ class BasicCompletionLesson
         text(JsLessonsBundle.message("js.editor.completion.next", LessonUtil.rawEnter()))
       }
     }
-  override val existedFile = "basicCompletion.js"
+  override val sampleFilePath = "basicCompletion.js"
 
 }
 

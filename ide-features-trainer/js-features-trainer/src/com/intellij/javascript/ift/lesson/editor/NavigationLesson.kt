@@ -111,5 +111,5 @@ class NavigationLesson
                                    "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf"))
       }
     }
-  override val existedFile = "navigation.js"
+  override val sampleFilePath = "navigation.js"
 }

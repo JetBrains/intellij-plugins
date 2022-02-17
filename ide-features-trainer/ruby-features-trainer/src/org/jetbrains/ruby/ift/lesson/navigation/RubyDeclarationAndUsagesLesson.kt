@@ -6,6 +6,6 @@ import training.learn.lesson.general.navigation.DeclarationAndUsagesLesson
 
 class RubyDeclarationAndUsagesLesson : DeclarationAndUsagesLesson() {
   override fun LessonContext.setInitialPosition() = caret(11, 19)
-  override val existedFile: String = "src/declaration_and_usages_demo.rb"
+  override val sampleFilePath: String = "src/declaration_and_usages_demo.rb"
   override val entityName = "discriminant"
 }

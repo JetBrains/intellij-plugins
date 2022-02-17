@@ -83,5 +83,5 @@ class CodeInspectionLesson
         text(JsLessonsBundle.message("js.editor.code.inspection.next", LessonUtil.rawEnter()))
       }
     }
-  override val existedFile = "codeInspection.js"
+  override val sampleFilePath = "codeInspection.js"
 }

@@ -52,7 +52,7 @@ class BeforeDebuggingLesson
 
         task {
           triggerAndFullHighlight().component { ui: JBCheckBox ->
-            ui.text == existedFile
+            ui.text == sampleFilePath
           }
         }
         task {
@@ -82,7 +82,7 @@ class BeforeDebuggingLesson
 
       }
     }
-  override val existedFile = "debugging.js"
+  override val sampleFilePath = "debugging.js"
 }
 
 
