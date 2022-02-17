@@ -32,6 +32,7 @@ public class DartConsoleFilter implements Filter {
   private Collection<VirtualFile> myAllPubspecYamlFiles;
 
   public static final String OBSERVATORY_LISTENING_ON = "Observatory listening on ";
+  public static final String DART_VM_LISTENING_ON = "The Dart VM service is listening on ";
 
   public DartConsoleFilter(final @NotNull Project project) {
     this(project, null);
@@ -46,7 +47,7 @@ public class DartConsoleFilter implements Filter {
   @Override
   @Nullable
   public Result applyFilter(@NotNull final String line, final int entireLength) {
-    if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://")) {
+    if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://") || line.startsWith(DART_VM_LISTENING_ON + "http://")) {
       return getObservatoryUrlResult(line, entireLength - line.length());
     }
 
@@ -99,16 +100,19 @@ public class DartConsoleFilter implements Filter {
 
   @Nullable
   private static Result getObservatoryUrlResult(final String line, final int lineStartOffset) {
-    assert line.startsWith(OBSERVATORY_LISTENING_ON + "http://") : line;
+    assert line.startsWith(OBSERVATORY_LISTENING_ON + "http://") || line.startsWith(DART_VM_LISTENING_ON + "http://") : line;
 
-    final String url = line.trim().substring(OBSERVATORY_LISTENING_ON.length());
+    final int prefixLength =
+      line.startsWith(OBSERVATORY_LISTENING_ON + "http://") ? OBSERVATORY_LISTENING_ON.length() : DART_VM_LISTENING_ON.length();
+
+    final String url = line.trim().substring(prefixLength);
     final int colonIndex = url.indexOf(":", "http://".length());
     if (colonIndex <= 0) return null;
 
     final String port = url.substring(colonIndex + 1);
     try {
       Integer.parseInt(port);
-      final int startOffset = lineStartOffset + OBSERVATORY_LISTENING_ON.length();
+      final int startOffset = lineStartOffset + prefixLength;
       return new Result(startOffset, startOffset + url.length(), new ObservatoryHyperlinkInfo(url));
     }
     catch (NumberFormatException ignore) {/**/}
