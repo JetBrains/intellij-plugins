@@ -141,7 +141,7 @@
     <action id="Gauge.Extract"
             class="com.thoughtworks.gauge.extract.ExtractConceptAction">
       <add-to-group group-id="RefactoringMenu" anchor="last"/>
-      <keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>
+      <keyboard-shortcut first-keystroke="ctrl alt shift c" keymap="$default"/>
     </action>
   </actions>
 </idea-plugin>
