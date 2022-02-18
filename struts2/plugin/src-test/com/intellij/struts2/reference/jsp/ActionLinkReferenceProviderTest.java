@@ -59,6 +59,7 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
   public void testActionLinkCompletionVariantsNamespaceGiven() {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.testCompletionVariants("jsp/actionLink-completionvariants-namespace_given.jsp",
+                                     "/actionLink/",
                                      "actionLink1.action",
                                      "actionLink2.action");
   }
@@ -66,6 +67,8 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
   public void testActionLinkCompletionVariantsNoNamespace() {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.testCompletionVariants("jsp/actionLink-completionvariants-no-namespace.jsp",
+                                     "/",
+                                     "/actionLink/",
                                      "jsp",
                                      "rootActionLink.action",
                                      "struts-actionLink.xml"
