@@ -16,7 +16,7 @@ import com.jetbrains.lang.makefile.psi.MakefileTypes.*
 
 class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {
-    if (quick || root !is MakefileFile) {
+    if (root !is MakefileFile) {
       return EMPTY
     }
 
