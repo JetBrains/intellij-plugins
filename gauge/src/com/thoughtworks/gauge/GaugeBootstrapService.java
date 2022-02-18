@@ -114,7 +114,7 @@ public final class GaugeBootstrapService implements Disposable {
       WriteAction.run(() -> {
         DaemonCodeAnalyzer.getInstance(myProject).restart();
       });
-    });
+    }, myProject.getDisposed());
   }
 
   private void addModule(Module module, GaugeCli gaugeCli) {
