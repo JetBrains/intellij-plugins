@@ -14,7 +14,7 @@ import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathBuilder
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
 import com.intellij.lang.javascript.frameworks.modules.*
-import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet.isRelative
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.isRelative
 import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil.trimSchema
 import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
