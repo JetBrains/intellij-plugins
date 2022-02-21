@@ -40,8 +40,8 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     PsiManager.getInstance(project).findFile(configFile)?.let { file ->
       CachedValuesManager.getCachedValue(file) {
         CachedValueProvider.Result.create(
-          (NodeModuleSearchUtil.resolveModule(NUXT_PKG, file.virtualFile, emptyList(), false, file.project)
-           ?: NodeModuleSearchUtil.resolveModule(NUXT3_PKG, file.virtualFile, emptyList(), false, file.project)
+          (NodeModuleSearchUtil.resolveModule(NUXT_PKG, file.virtualFile, emptyList(), file.project)
+           ?: NodeModuleSearchUtil.resolveModule(NUXT3_PKG, file.virtualFile, emptyList(), file.project)
           )
             ?.let { PackageJsonUtil.findChildPackageJsonFile(it.moduleSourceRoot) }
             ?.let { PackageJsonData.getOrCreate(it) }
@@ -56,7 +56,7 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     if (!hasBeenNotifiedAboutTypes()
         && nuxtVersion?.let { NUXT_2_9_0 <= it && it < NUXT_3_0_0 } == true
         && NodeModuleSearchUtil.resolveModule(
-        NUXT_TYPES_PKG, configFile.parent, emptyList(), false, project) == null) {
+        NUXT_TYPES_PKG, configFile.parent, emptyList(), project) == null) {
       notifyNuxtTypesNotInstalled()
     }
   }

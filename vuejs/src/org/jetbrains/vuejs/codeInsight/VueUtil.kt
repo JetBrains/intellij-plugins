@@ -4,13 +4,14 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
@@ -21,10 +22,10 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
-import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
-import com.intellij.lang.typescript.modules.TypeScriptNodeReference
+import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor.TS_PROCESSOR
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
@@ -375,23 +376,12 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
   } as Key<CachedValue<T>>
   val file = scope?.containingFile ?: return null
   return getCachedValue(file, key) {
-    TypeScriptNodeReference(file, moduleName, 0).resolve()
-      ?.castSafelyTo<JSElement>()
-      ?.let { module ->
-        val symbols = ES6PsiUtil.resolveSymbolInModule(symbolName, file, module)
-        if (symbols.isEmpty()) {
-          TypeScriptAugmentationUtil.getModuleAugmentations(module, module)
-            .asSequence()
-            .filterIsInstance<JSElement>()
-            .flatMap { ES6PsiUtil.resolveSymbolInModule(symbolName, file, it).asSequence() }
-        }
-        else {
-          symbols.asSequence()
-        }
-      }
-      ?.filter { it.element?.isValid == true }
-      ?.mapNotNull { tryCast(it.element, symbolClass) }
-      ?.firstOrNull()
+    JSFileReferencesUtil.resolveModuleReference(file, moduleName)
+      .filterIsInstance<JSElement>()
+      .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
+      .filter { it.element?.isValid == true }
+      .mapNotNull { tryCast(it.element, symbolClass) }
+      .minByOrNull { TypeScriptPsiUtil.isFromAugmentationModule(it) }
       ?.let {
         return@getCachedValue create(it, PsiModificationTracker.MODIFICATION_COUNT)
       }

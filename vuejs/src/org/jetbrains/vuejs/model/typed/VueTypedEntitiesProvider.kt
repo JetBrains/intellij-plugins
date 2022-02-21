@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
-import com.intellij.lang.typescript.modules.TypeScriptNodeReference
+import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
@@ -56,7 +56,7 @@ object VueTypedEntitiesProvider {
     ).toSet()
     if (componentDefs.isEmpty()) return emptyMap()
 
-    val searchProcessor = TypeScriptNodeReference.TypeScriptNodeModuleDirectorySearchProcessor()
+    val searchProcessor = TypeScriptNodeSearchProcessor()
     val mainFile = JSExactFileReference.resolveForNpmPackages(moduleDir.virtualFile, searchProcessor)
     val mainPsiFile = mainFile?.let { moduleDir.manager.findFile(it) } as? JSFile
     if (mainPsiFile != null) {

@@ -7,7 +7,7 @@
   <img src="~foo/<warning descr="Cannot resolve symbol 'foo.png'">foo.png</warning>"/>
   <img src="~<warning descr="Cannot resolve symbol 'bar'">bar</warning>/<warning descr="Cannot resolve symbol 'logo.png'">logo.png</warning>"/>
   <img src="~bar_module/logo.png"/>
-  <img src="~<warning descr="Cannot resolve symbol 'bar_module'">bar_module</warning>/<warning descr="Cannot resolve symbol 'foo.png'">foo.png</warning>"/>
+  <img src="~bar_module/<warning descr="Cannot resolve symbol 'foo.png'">foo.png</warning>"/>
 </template>
 <style>
 @import "~@/logo.png";

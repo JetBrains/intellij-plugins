@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript
 
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.typescript.modules.TypeScriptNodeReference
+import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportResolveContext
@@ -32,7 +32,8 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
   override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver {
-    return VueFileImportsResolver(project, config.resolveContext, TypeScriptNodeReference.TS_PROCESSOR)
+    return VueFileImportsResolver(project, config.resolveContext,
+                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR)
   }
 
   override fun contributeResolver(project: Project,
@@ -40,6 +41,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
                                   contextFile: VirtualFile): TypeScriptFileImportsResolver? {
     if (!isVueContext(contextFile, project)) return null
 
-    return VueFileImportsResolver(project, context, TypeScriptNodeReference.TS_PROCESSOR)
+    return VueFileImportsResolver(project, context,
+                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR)
   }
 }

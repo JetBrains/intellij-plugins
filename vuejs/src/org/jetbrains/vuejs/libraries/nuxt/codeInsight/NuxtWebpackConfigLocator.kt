@@ -18,7 +18,7 @@ class NuxtWebpackConfigLocator : WebPackConfigLocator {
 
     PackageJsonUtil.processUpPackageJsonFiles(project, virtualFile) {
       if (it.isValid && PackageJsonData.getOrCreateWithPreferredProject(project, it).isDependencyOfAnyType(NUXT_PKG)) {
-        val moduleInfo = NodeModuleSearchUtil.resolveModule(NUXT_PKG, it.parent, emptyList(), false, project)
+        val moduleInfo = NodeModuleSearchUtil.resolveModule(NUXT_PKG, it.parent, emptyList(), project)
         config = moduleInfo?.moduleSourceRoot?.findChild("webpack.config.js")
         if (config != null) {
           return@processUpPackageJsonFiles false
