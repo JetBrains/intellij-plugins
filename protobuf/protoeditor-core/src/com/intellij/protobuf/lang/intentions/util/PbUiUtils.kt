@@ -18,8 +18,8 @@ import javax.swing.JPanel
 import javax.swing.ListCellRenderer
 
 internal fun selectItemAndApply(variants: List<PbImportIntentionVariant>,
-                       editor: Editor,
-                       project: Project) {
+                                editor: Editor,
+                                project: Project) {
   PsiDocumentManager.getInstance(project).commitAllDocuments()
 
   if (variants.isEmpty()) return
@@ -41,18 +41,18 @@ internal fun selectItemAndApply(variants: List<PbImportIntentionVariant>,
 
 private fun instantlyInvokeSingleIntention(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
   val theOnlyAvailableIntention = variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>().singleOrNull()
-  return theOnlyAvailableIntention?.invokeIntentionIfNotNull(project) ?: false
+  return theOnlyAvailableIntention.invokeIntentionIfNotNull(project)
 }
 
 private fun handleUnitTestMode(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
   val firstAvailableSortedIntention =
     variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>()
       .minByOrNull { it.importPathData.presentablePath }
-  return firstAvailableSortedIntention?.invokeIntentionIfNotNull(project) ?: false
+  return firstAvailableSortedIntention.invokeIntentionIfNotNull(project)
 }
 
-private fun PbImportIntentionVariant.AddImportPathToSettings.invokeIntentionIfNotNull(project: Project): Boolean {
-  invokeAction(project)
+private fun PbImportIntentionVariant.AddImportPathToSettings?.invokeIntentionIfNotNull(project: Project): Boolean {
+  this?.invokeAction(project) ?: return false
   return true
 }
 
