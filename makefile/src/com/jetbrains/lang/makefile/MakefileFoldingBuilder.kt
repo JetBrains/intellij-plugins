@@ -6,6 +6,7 @@ import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.lang.folding.FoldingDescriptor.EMPTY
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -54,14 +55,19 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   }
 
 
-  override fun getPlaceholderText(node: ASTNode) = "..."
+  override fun getPlaceholderText(node: ASTNode): @NlsSafe String =
+    DEFAULT_PLACEHOLDER_TEXT
+
   override fun isCollapsedByDefault(node: ASTNode) = node.psi is MakefileDefine
 
   companion object {
+    @NlsSafe
+    private const val DEFAULT_PLACEHOLDER_TEXT = "..."
+
     fun cutValue(value: String?): String {
       return value?.let {
         if (it.length > 60) {
-          it.substring(0, 42) + "..."
+          it.substring(0, 42) + DEFAULT_PLACEHOLDER_TEXT
         } else {
           it
         }
@@ -101,8 +107,8 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
                             ?: textRange.endOffset
 
           /*
-               * Include the next sibling in the range returned.
-               */
+           * Include the next sibling in the range returned.
+           */
           val endOffset = nextSibling.textRange.endOffset
           TextRange.create(startOffset, endOffset)
         }
@@ -156,7 +162,11 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
         null -> {
           val placeholderText = cutValue(conditionalElse.block?.text)
           when {
-            placeholderText.isEmpty() -> ""
+            /*
+             * The body of the `else` clause consists of whitespace and/or
+             * comments, return "else ..." in this case.
+             */
+            placeholderText.isEmpty() -> " $DEFAULT_PLACEHOLDER_TEXT"
 
             /*
              * Return "else <descriptor>" instead of "else<descriptor>".
