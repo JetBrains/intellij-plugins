@@ -10,7 +10,7 @@ import com.intellij.psi.css.impl.stubs.base.CssNamedStub;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElement;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
 import com.intellij.util.IncorrectOperationException;
-import icons.PostcssIcons;
+import org.intellij.plugins.postcss.PostCssIcons;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -27,15 +27,13 @@ public class PostCssCustomMediaImpl extends CssNamedStubElement<CssNamedStub<Pos
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiElement getNameIdentifier() {
+  public @NotNull PsiElement getNameIdentifier() {
     return getFirstChild();
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     CssNamedStub<PostCssCustomMedia> stub = getStub();
     if (stub != null) return stub.getName();
     String text = getNameIdentifier().getText();
@@ -52,9 +50,8 @@ public class PostCssCustomMediaImpl extends CssNamedStubElement<CssNamedStub<Pos
     return new CssNamedItemPresentation(this);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
-    return PostcssIcons.Custom_media;
+  public @Nullable Icon getIcon(int flags) {
+    return PostCssIcons.Custom_media;
   }
 }

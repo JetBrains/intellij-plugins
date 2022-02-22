@@ -9,8 +9,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.util.CssHighlighter;
 import com.intellij.util.containers.ContainerUtil;
-import icons.PostcssIcons;
 import org.intellij.plugins.postcss.PostCssBundle;
+import org.intellij.plugins.postcss.PostCssIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,21 +79,18 @@ public class PostCssColorsPage implements ColorSettingsPage {
   };
 
   @Override
-  @Nullable
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ADDITIONAL_ATTRIBUTES_KEY_MAP;
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return PostCssBundle.message("color.settings.postcss.name");
   }
 
   @Override
-  @NotNull
-  public Icon getIcon() {
-    return PostcssIcons.Postcss;
+  public @NotNull Icon getIcon() {
+    return PostCssIcons.Postcss;
   }
 
   @Override
@@ -107,14 +104,12 @@ public class PostCssColorsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new PostCssSyntaxHighlighter();
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return DEMO_TEXT;
   }
 }
