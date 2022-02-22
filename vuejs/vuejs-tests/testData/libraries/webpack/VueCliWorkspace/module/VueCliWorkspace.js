@@ -1,0 +1,1 @@
+import {v<caret>} from "@/assets/asset";
