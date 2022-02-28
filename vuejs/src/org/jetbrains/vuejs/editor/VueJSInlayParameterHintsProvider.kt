@@ -8,6 +8,9 @@ import com.intellij.lang.javascript.psi.JSCallLikeExpression
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 
+/**
+ * Does not work inside text interpolations, because they are injected PSI.
+ */
 class VueJSInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
 
   override fun getShowNameForAllArgsOption(): Option {
