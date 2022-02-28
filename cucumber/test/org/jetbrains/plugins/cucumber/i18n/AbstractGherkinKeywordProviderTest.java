@@ -7,6 +7,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 public abstract class AbstractGherkinKeywordProviderTest extends TestCase {
   private GherkinKeywordProvider myKeywordProvider;
@@ -36,6 +37,11 @@ public abstract class AbstractGherkinKeywordProviderTest extends TestCase {
 
   public void testKeywordsTable_Examples() {
     assertTrue(getKeywordsTableEn().getExampleSectionKeywords().contains("Examples"));
+  }
+
+  public void testKeywordsTable_ExamplesRu() {
+    // Beware that translation "Значения" is not official and was added as an exception (RUBY-29359). It needs to stay.
+    assertTrue(getKeywordsTableRu().getExampleSectionKeywords().containsAll(List.of("Примеры", "Значения")));
   }
 
   public void testKeywordsTable_BackGround() {
@@ -100,4 +106,7 @@ public abstract class AbstractGherkinKeywordProviderTest extends TestCase {
     return myKeywordProvider.getKeywordsTable("fi");
   }
 
+  private GherkinKeywordTable getKeywordsTableRu() {
+    return myKeywordProvider.getKeywordsTable("ru");
+  }
 }
