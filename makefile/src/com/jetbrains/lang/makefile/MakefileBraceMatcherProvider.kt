@@ -13,6 +13,12 @@ private val PAIRS = arrayOf(
 )
 
 /**
+ * Provides brace matching support for:
+ *
+ *  - `define ... endef`;
+ *  - `{ ... }`;
+ *  - `( ... )`.
+ *
  * More complex cases, like `ifdef/ifndef/ifeq/ifneq ... else ... endif` are
  * handled via [MakefileCodeBlockSupportHandler].
  *
