@@ -97,22 +97,6 @@ class MakefileBraceMatcherProviderTest : BasePlatformTestCase() {
            caretBeforeBrace = false,
            forward = true)
 
-  @Test
-  fun parenthesisMatchBackwardCaretBeforeOpeningBrace(): Unit =
-    doTest(PARENTHESIS_EXAMPLE,
-           openingBrace = "(",
-           closingBrace = ")",
-           caretBeforeBrace = true,
-           forward = false)
-
-  @Test
-  fun parenthesisMatchBackwardCaretAfterOpeningBrace(): Unit =
-    doTest(PARENTHESIS_EXAMPLE,
-           openingBrace = "(",
-           closingBrace = ")",
-           caretBeforeBrace = false,
-           forward = false)
-
   private fun doTest(@Language("Makefile") text: String,
                      openingBrace: String,
                      closingBrace: String,
