@@ -13,7 +13,7 @@ import com.intellij.psi.css.impl.stubs.base.CssNamedStub;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElement;
 import com.intellij.psi.css.impl.stubs.base.CssNamedStubElementType;
 import com.intellij.util.IncorrectOperationException;
-import icons.PostcssIcons;
+import org.intellij.plugins.postcss.PostCssIcons;
 import org.intellij.plugins.postcss.descriptors.PostCssCustomSelectorDescriptor;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.jetbrains.annotations.NonNls;
@@ -34,17 +34,15 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
     super(node);
   }
 
-  @Nullable
   @Override
-  public PsiElement getNameIdentifier() {
+  public @Nullable PsiElement getNameIdentifier() {
     PsiElement token = getLastChild();
     if (token == null || token.getNode().getElementType() != CssElementTypes.CSS_IDENT) return null;
     return token;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     CssNamedStub<PostCssCustomSelector> stub = getStub();
     if (stub != null) return stub.getName();
     PsiElement nameIdentifier = getNameIdentifier();
@@ -64,10 +62,9 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
     return new CssNamedItemPresentation(this);
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(int flags) {
-    return PostcssIcons.Custom_selectors;
+  public @Nullable Icon getIcon(int flags) {
+    return PostCssIcons.Custom_selectors;
   }
 
   @Override
@@ -86,15 +83,13 @@ public class PostCssCustomSelectorImpl extends CssNamedStubElement<CssNamedStub<
     }
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssElementDescriptor> getDescriptors() {
+  public @NotNull Collection<? extends CssElementDescriptor> getDescriptors() {
     return Collections.singletonList(new PostCssCustomSelectorDescriptor(this));
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssElementDescriptor> getDescriptors(@NotNull PsiElement context) {
+  public @NotNull Collection<? extends CssElementDescriptor> getDescriptors(@NotNull PsiElement context) {
     return getDescriptors();
   }
 }

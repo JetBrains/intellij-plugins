@@ -4,7 +4,6 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.css.CssFileType;
-import icons.PostcssIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,33 +13,30 @@ import java.nio.charset.Charset;
 
 public final class PostCssFileType extends LanguageFileType {
   public static final PostCssFileType POST_CSS = new PostCssFileType();
-  @NonNls public static final String DEFAULT_EXTENSION = "pcss";
+  public static final @NonNls String DEFAULT_EXTENSION = "pcss";
 
   private PostCssFileType() {
     super(PostCssLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "PostCSS";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return PostCssBundle.message("filetype.postcss.description");
   }
 
-  @NotNull
   @Override
-  public String getDefaultExtension() {
+  public @NotNull String getDefaultExtension() {
     return DEFAULT_EXTENSION;
   }
 
   @Override
   public Icon getIcon() {
-    return PostcssIcons.Postcss;
+    return PostCssIcons.Postcss;
   }
 
   @Override

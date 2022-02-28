@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="org.intellij.plugins.postcss">
   <name>PostCSS</name>
   <id>org.intellij.plugins.postcss</id>
   <category>Style Sheets</category>
@@ -26,16 +26,23 @@
       </ul>
       ]]>
   </description>
-  <depends>com.intellij.css</depends>
-  <depends>com.intellij.modules.lang</depends>
-  <depends optional="true" config-file="postcss-copyright.xml">com.intellij.copyright</depends>
+
+  <dependencies>
+    <plugin id="com.intellij.css"/>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
+
+  <content>
+    <module name="intellij.postcss/copyright"/>
+  </content>
 
   <extensions defaultExtensionNs="com.intellij">
     <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>
     <lang.substitutor language="CSS" implementationClass="org.intellij.plugins.postcss.PostCssLanguageSubstitutor"/>
     <embeddedTokenTypesProvider implementation="org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider"/>
     <embeddedTokenHighlighter implementation="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighter"/>
-    <fileType language="PostCSS" extensions="pcss" fieldName="POST_CSS" name="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssFileType"/>
+    <fileType language="PostCSS" extensions="pcss" fieldName="POST_CSS" name="PostCSS"
+              implementationClass="org.intellij.plugins.postcss.PostCssFileType"/>
     <lang.parserDefinition language="PostCSS" implementationClass="org.intellij.plugins.postcss.parser.PostCssParserDefinition"/>
     <lang.ast.factory language="PostCSS" implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory"/>
     <lang.commenter language="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssCommenter"/>
@@ -43,7 +50,8 @@
     <lang.syntaxHighlighter language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighter"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
     <css.structureViewChildrenProvider implementation="org.intellij.plugins.postcss.fileStructure.PostCssStructureViewElementsProvider"/>
-    <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"
+    <completion.contributor language="CSS"
+                            implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"
                             order="before cssDumbCompletion"/>
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssCompletionContributor"/>
     <css.elementDescriptorProvider implementation="org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider"/>
