@@ -300,6 +300,11 @@ public final class DartAnalysisServerService implements Disposable {
     @Override
     public void serverConnected(@Nullable String version) {
       myServerVersion = version != null ? version : "";
+      // completion_setSubscriptions() are handled here instead of in startServer() as the server version isn't known until this
+      // serverConnected() call.
+      if (myServer != null && !shouldUseCompletion2()) {
+        myServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
+      }
     }
 
     @Override
@@ -1573,20 +1578,21 @@ public final class DartAnalysisServerService implements Disposable {
 
                                           for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
                                             extension.dartCompletionEnd();
-        }
-      }
+                                          }
+                                        }
 
-      @Override
-      public void onError(@NotNull final RequestError error) {
-        // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
-        latch.countDown();
+                                        @Override
+                                        public void onError(@NotNull final RequestError error) {
+                                          // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
+                                          latch.countDown();
 
-        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
-          extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
-                                        StringUtil.notNullize(error.getStackTrace()));
-        }
-      }
-    });
+                                          for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+                                            extension.dartCompletionError(StringUtil.notNullize(error.getCode()),
+                                                                          StringUtil.notNullize(error.getMessage()),
+                                                                          StringUtil.notNullize(error.getStackTrace()));
+                                          }
+                                        }
+                                      });
 
     awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
 
@@ -2087,10 +2093,6 @@ public final class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         server_setSubscriptions(startedServer);
-
-        if (!shouldUseCompletion2()) {
-          startedServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
-        }
 
         if (!myInitializationOnServerStartupDone) {
           myInitializationOnServerStartupDone = true;
