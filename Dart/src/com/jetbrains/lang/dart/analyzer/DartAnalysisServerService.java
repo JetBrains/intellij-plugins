@@ -303,6 +303,11 @@ public final class DartAnalysisServerService implements Disposable {
     @Override
     public void serverConnected(@Nullable String version) {
       myServerVersion = version != null ? version : "";
+      // completion_setSubscriptions() are handled here instead of in startServer() as the server version isn't known until this
+      // serverConnected() call.
+      if (myServer != null && !shouldUseCompletion2()) {
+        myServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
+      }
     }
 
     @Override
@@ -2090,10 +2095,6 @@ public final class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         server_setSubscriptions(startedServer);
-
-        if (!shouldUseCompletion2()) {
-          startedServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
-        }
 
         if (!myInitializationOnServerStartupDone) {
           myInitializationOnServerStartupDone = true;
