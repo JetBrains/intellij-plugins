@@ -5,16 +5,24 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.Before
+import org.junit.FixMethodOrder
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestName
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import org.junit.runners.MethodSorters.NAME_ASCENDING
 import java.nio.file.Paths
 
 /**
  * @see MakefileCodeBlockSupportHandler
  */
 @RunWith(JUnit4::class)
+@FixMethodOrder(NAME_ASCENDING)
 class MakefileCodeBlockSupportHandlerTest : BasePlatformTestCase() {
+  @get:Rule
+  val testName: TestName = TestName()
+
   @Before
   fun before() {
     myFixture.setReadEditorMarkupModel(true)
@@ -41,7 +49,7 @@ class MakefileCodeBlockSupportHandlerTest : BasePlatformTestCase() {
 
   private fun doTest() {
     IdentifierHighlighterPassFactory.doWithHighlightingEnabled(project, testRootDisposable) {
-      val testName = getTestName(true)
+      val testName = testName.methodName
       myFixture.configureByFile("$testName.$DEFAULT_EXTENSION")
       EditorTestUtil.checkEditorHighlighting(myFixture,
                                              Paths.get(testDataPath).resolve("$testName.result.$DEFAULT_EXTENSION").toString(),
