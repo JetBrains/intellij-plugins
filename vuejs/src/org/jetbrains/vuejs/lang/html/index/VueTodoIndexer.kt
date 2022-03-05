@@ -10,7 +10,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueTodoIndexer : VersionedTodoIndexer() {
   override fun map(inputData: FileContent): Map<TodoIndexEntry, Int> {
-    return BaseFilterLexerUtil.scanContent(inputData) { consumer ->
+    return BaseFilterLexerUtil.scanContent(inputData, true) { consumer ->
       VueFilterLexer(consumer, SyntaxHighlighterFactory.getSyntaxHighlighter(
         VueLanguage.INSTANCE, inputData.project, inputData.file).highlightingLexer)
     }.todoMap
