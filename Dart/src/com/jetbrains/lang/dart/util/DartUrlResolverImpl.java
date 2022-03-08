@@ -207,10 +207,28 @@ public final class DartUrlResolverImpl extends DartUrlResolver {
 
   private void initLivePackageNameToDirMap() {
     final VirtualFile baseDir = myPubspecYamlFile == null ? null : myPubspecYamlFile.getParent();
-    if (myPubspecYamlFile == null || baseDir == null) return;
-    final VirtualFile dotPackagesFile = baseDir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
+    if (myPubspecYamlFile == null || baseDir == null) {
+      return;
+    }
 
-    if (dotPackagesFile != null && !dotPackagesFile.isDirectory()) {
+    final VirtualFile packageConfigJsonFile = DotPackagesFileUtil.getPackageConfigJsonFile(baseDir);
+    final VirtualFile dotPackagesFile = baseDir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
+    if (packageConfigJsonFile != null && !packageConfigJsonFile.isDirectory()) {
+      // Use the generated .dart_tool/package_config.json if it exists.
+      final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMapFromPackageConfigJsonFile(packageConfigJsonFile);
+      if (packagesMap != null) {
+        for (Map.Entry<String, String> entry : packagesMap.entrySet()) {
+          final String packageName = entry.getKey();
+          final String packagePath = entry.getValue();
+          final VirtualFile packageDir = myPubspecYamlFile.getFileSystem().findFileByPath(packagePath);
+          if (packageDir != null) {
+            myLivePackageNameToDirMap.put(packageName, packageDir);
+          }
+        }
+      }
+    }
+    else if (dotPackagesFile != null && !dotPackagesFile.isDirectory()) {
+      // Otherwise, fall back to the .packages file.
       final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
       if (packagesMap != null) {
         for (Map.Entry<String, String> entry : packagesMap.entrySet()) {

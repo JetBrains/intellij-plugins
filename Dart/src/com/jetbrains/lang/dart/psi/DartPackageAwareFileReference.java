@@ -24,10 +24,10 @@ class DartPackageAwareFileReference extends FileReference {
   @NotNull private final DartUrlResolver myDartResolver;
 
   DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
-                                       final TextRange range,
-                                       final int index,
-                                       final String text,
-                                       @NotNull final DartUrlResolver dartResolver) {
+                                final TextRange range,
+                                final int index,
+                                final String text,
+                                @NotNull final DartUrlResolver dartResolver) {
     super(fileReferenceSet, range, index, text);
     myDartResolver = dartResolver;
   }
@@ -41,10 +41,23 @@ class DartPackageAwareFileReference extends FileReference {
       if (psiDirectory != null) {
         return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
       }
-      VirtualFile dotPackages = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
-      final PsiFile psiFile = dotPackages == null ? null : containingFile.getManager().findFile(dotPackages);
-      if (psiFile != null) {
-        return new ResolveResult[]{new PsiElementResolveResult(psiFile)};
+
+      // Starting in Dart 2.8.0, the .packages file is deprecated in favor of .dart_tool/package_config.json, this code preserves the
+      // older .packages functionality for older projects, but now looks for the .dart_tool/package_config.json file first.
+      VirtualFile packagesConfigJsonFile = pubspecYamlFile == null ? null : DotPackagesFileUtil.getPackageConfigJsonFile(pubspecYamlFile);
+      if (packagesConfigJsonFile != null) {
+        final PsiFile psiFile = containingFile.getManager().findFile(packagesConfigJsonFile);
+        if (psiFile != null) {
+          return new ResolveResult[]{new PsiElementResolveResult(psiFile)};
+        }
+      }
+      else {
+        // Pre-.packages deprecation fallback for older projects and SDK usages
+        VirtualFile dotPackages = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
+        final PsiFile psiFile = dotPackages == null ? null : containingFile.getManager().findFile(dotPackages);
+        if (psiFile != null) {
+          return new ResolveResult[]{new PsiElementResolveResult(psiFile)};
+        }
       }
     }
 

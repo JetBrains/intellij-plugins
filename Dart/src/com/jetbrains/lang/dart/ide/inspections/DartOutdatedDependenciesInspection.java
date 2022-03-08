@@ -19,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.psi.DartFile;
@@ -67,14 +68,28 @@ public final class DartOutdatedDependenciesInspection extends LocalInspectionToo
 
     if (FlutterUtil.isPubspecDeclaringFlutter(pubspecFile)) return null; // 'pub get' will fail anyway
 
-    final VirtualFile dotPackagesFile = pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
+    if (DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(sdk)) {
+      final VirtualFile packageConfigJsonFile = DotPackagesFileUtil.getPackageConfigJsonFile(pubspecFile);
 
-    if (dotPackagesFile == null) {
-      return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pub.get.never.done"));
+      if (packageConfigJsonFile == null) {
+        return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pub.get.never.done"));
+      }
+
+      if (FileDocumentManager.getInstance().isFileModified(pubspecFile) ||
+          pubspecFile.getTimeStamp() > packageConfigJsonFile.getTimeStamp()) {
+        return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pubspec.edited"));
+      }
     }
+    else {
+      final VirtualFile dotPackagesFile = pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
-    if (FileDocumentManager.getInstance().isFileModified(pubspecFile) || pubspecFile.getTimeStamp() > dotPackagesFile.getTimeStamp()) {
-      return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pubspec.edited"));
+      if (dotPackagesFile == null) {
+        return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pub.get.never.done"));
+      }
+
+      if (FileDocumentManager.getInstance().isFileModified(pubspecFile) || pubspecFile.getTimeStamp() > dotPackagesFile.getTimeStamp()) {
+        return createProblemDescriptors(manager, psiFile, pubspecFile, DartBundle.message("pubspec.edited"));
+      }
     }
 
     return null;

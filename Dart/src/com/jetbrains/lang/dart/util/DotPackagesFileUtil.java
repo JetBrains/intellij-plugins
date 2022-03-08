@@ -1,6 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -15,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +27,140 @@ public final class DotPackagesFileUtil {
 
   public static final String DOT_PACKAGES = ".packages";
 
+  public static final String DART_TOOL_DIR = ".dart_tool";
+  public static final String PACKAGE_CONFIG_JSON = "package_config.json";
+
   private static final Key<Pair<Long, Map<String, String>>> MOD_STAMP_TO_PACKAGES_MAP = Key.create("MOD_STAMP_TO_PACKAGES_MAP");
+
+  /**
+   * Starting with some {@link VirtualFile}, search the parent directories for some instance of .dart_tool/package_config.json.
+   */
+  @Nullable
+  public static VirtualFile findPackageConfigJsonFile(@Nullable final VirtualFile vFile) {
+    if (vFile == null) {
+      return null;
+    }
+    VirtualFile dir = vFile.isDirectory() ? vFile : vFile.getParent();
+    while (dir != null) {
+      VirtualFile dartToolDir = dir.findChild(DART_TOOL_DIR);
+      if (dartToolDir != null && dartToolDir.isDirectory()) {
+        return dartToolDir.findChild(PACKAGE_CONFIG_JSON);
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  /**
+   * Given a file Dart pub root (either the yaml pubspec {@link VirtualFile} or the parent of a yaml pubspec), return the
+   * .dart_tool/package_config.json {@link VirtualFile}, if it exists.
+   */
+  @Nullable
+  public static VirtualFile getPackageConfigJsonFile(@Nullable final VirtualFile vFile) {
+    if (vFile == null) {
+      return null;
+    }
+    VirtualFile dir = vFile.isDirectory() ? vFile : vFile.getParent();
+    VirtualFile dartToolDir = dir.findChild(DART_TOOL_DIR);
+    if (dartToolDir != null && dartToolDir.isDirectory()) {
+      return dartToolDir.findChild(PACKAGE_CONFIG_JSON);
+    }
+    return null;
+  }
+
+  @Nullable
+  public static VirtualFile findDotPackagesFile(@Nullable VirtualFile dir) {
+    while (dir != null) {
+      final VirtualFile file = dir.findChild(DOT_PACKAGES);
+      if (file != null && !file.isDirectory()) {
+        return file;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  @Nullable
+  public static Map<String, String> getPackagesMapFromPackageConfigJsonFile(@NotNull final VirtualFile packageConfigJsonFile) {
+    Pair<Long, Map<String, String>> data = packageConfigJsonFile.getUserData(MOD_STAMP_TO_PACKAGES_MAP);
+
+    final Long currentTimestamp = packageConfigJsonFile.getModificationCount();
+    final Long cachedTimestamp = Pair.getFirst(data);
+
+    if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
+      data = null;
+      packageConfigJsonFile.putUserData(MOD_STAMP_TO_PACKAGES_MAP, null);
+      final Map<String, String> packagesMap = packagesMapFromJson(packageConfigJsonFile);
+
+      if (packagesMap != null) {
+        data = Pair.create(currentTimestamp, packagesMap);
+        packageConfigJsonFile.putUserData(MOD_STAMP_TO_PACKAGES_MAP, data);
+      }
+    }
+
+    return Pair.getSecond(data);
+  }
+
+  /**
+   * Example JSON parsed:
+   * ```
+   * {
+   * "configVersion": 2,
+   * "packages": [
+   * {
+   * "name": "pedantic",
+   * "rootUri": "file:///Users/jwren/.pub-cache/hosted/pub.dartlang.org/pedantic-1.11.0",
+   * "packageUri": "lib/",
+   * "languageVersion": "2.12"
+   * },
+   * {
+   * "name": "console_dart",
+   * "rootUri": "../",
+   * "packageUri": "lib/",
+   * "languageVersion": "2.12"
+   * }
+   * ],
+   * "generated": "2022-03-04T22:10:17.132325Z",
+   * "generator": "pub",
+   * "generatorVersion": "2.17.0-edge.f9147d933ef019c7e304c19ac039f57226ce1e37"
+   * }
+   * ```
+   */
+  @Nullable
+  private static Map<String, String> packagesMapFromJson(@NotNull final VirtualFile packageConfigJsonFile) {
+    String fileContentsStr = FileUtil.loadFileOrNull(packageConfigJsonFile.getPath());
+    if (fileContentsStr == null) {
+      return null;
+    }
+
+    final JsonElement jsonElement = JsonParser.parseString(fileContentsStr);
+    if (jsonElement instanceof JsonObject &&
+        ((JsonObject)jsonElement).get("packages") != null &&
+        ((JsonObject)jsonElement).get("packages").isJsonArray()) {
+      final Map<String, String> result = new HashMap<>();
+      final JsonArray jsonArray = ((JsonObject)jsonElement).get("packages").getAsJsonArray();
+      for (JsonElement element : jsonArray) {
+        JsonObject jsonObjectPackage = element.getAsJsonObject();
+        if (jsonObjectPackage.get("name") != null &&
+            jsonObjectPackage.get("rootUri") != null &&
+            jsonObjectPackage.get("packageUri") != null
+        ) {
+          final String packageName = jsonObjectPackage.get("name").getAsString();
+          final String rootUriValue = jsonObjectPackage.get("rootUri").getAsString();
+          final String packageUriValue = jsonObjectPackage.get("packageUri").getAsString();
+          // need to protect '+' chars because URLDecoder.decode replaces '+' with space
+          final String encodedUriWithoutPluses = StringUtil.replace(rootUriValue + "/" + packageUriValue, "+", "%2B");
+          final String uri = URLUtil.decode(encodedUriWithoutPluses);
+          final String packageUri = getAbsolutePackageRootPath(packageConfigJsonFile.getParent().getParent(), uri);
+          if (!packageName.isEmpty() && packageUri != null) {
+            result.put(packageName, packageUri);
+          }
+        }
+      }
+      return result;
+    }
+    return null;
+  }
 
   @Nullable
   public static Map<String, String> getPackagesMap(@NotNull final VirtualFile dotPackagesFile) {

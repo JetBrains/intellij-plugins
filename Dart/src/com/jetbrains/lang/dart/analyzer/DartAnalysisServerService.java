@@ -83,6 +83,10 @@ public final class DartAnalysisServerService implements Disposable {
   // https://github.com/dart-lang/webdev/blob/master/webdev/pubspec.yaml#L11
   public static final String MIN_WEBDEV_SDK_VERSION = "2.6.0";
 
+  // As of the Dart SDK version 2.8.0, the file .dart_tool/package_config.json is preferred over the .packages file.
+  // https://github.com/dart-lang/sdk/issues/48272
+  public static final String MIN_PACKAGE_CONFIG_JSON_SDK_VERSION = "2.8.0";
+
   // The dart cli command provides a language server command, `dart language-server`, which
   // should be used going forward instead of `dart .../analysis_server.dart.snapshot`.
   public static final String MIN_DART_LANG_SERVER_SDK_VERSION = "2.16.0";
@@ -457,6 +461,10 @@ public final class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficientForWebdev(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_WEBDEV_SDK_VERSION) >= 0;
+  }
+
+  public static boolean isDartSdkVersionSufficientForPackageConfigJson(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_PACKAGE_CONFIG_JSON_SDK_VERSION) >= 0;
   }
 
   public static boolean isDartSdkVersionSufficientForDartLangServer(@NotNull final DartSdk sdk) {

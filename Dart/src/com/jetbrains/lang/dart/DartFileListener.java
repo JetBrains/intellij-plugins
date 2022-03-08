@@ -68,8 +68,12 @@ public class DartFileListener implements AsyncFileListener {
 
       if (event instanceof VFilePropertyChangeEvent) {
         if (((VFilePropertyChangeEvent)event).isRename()) {
-          if (DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
-              DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getNewValue())) {
+          if (
+            DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
+            DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getNewValue()) ||
+            DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
+            DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getNewValue())
+          ) {
             dotPackageEvents.add(event);
           }
 
@@ -80,7 +84,10 @@ public class DartFileListener implements AsyncFileListener {
         }
       }
       else {
-        if (DotPackagesFileUtil.DOT_PACKAGES.equals(PathUtil.getFileName(event.getPath()))) {
+        if (
+          DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(PathUtil.getFileName(event.getPath())) ||
+          DotPackagesFileUtil.DOT_PACKAGES.equals(PathUtil.getFileName(event.getPath()))
+        ) {
           dotPackageEvents.add(event);
         }
 
@@ -155,9 +162,9 @@ public class DartFileListener implements AsyncFileListener {
       final Module module = fileIndex.getModuleForFile(pubspecFile);
       if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) continue;
 
-      final VirtualFile dotPackagesFile = findDotPackagesFile(pubspecFile.getParent());
-      if (dotPackagesFile != null) {
-        final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
+      final VirtualFile packageConfigJsonFile = DotPackagesFileUtil.findPackageConfigJsonFile(pubspecFile.getParent());
+      if (packageConfigJsonFile != null) {
+        final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMapFromPackageConfigJsonFile(packageConfigJsonFile);
         if (packagesMap != null) {
           for (Map.Entry<String, String> entry : packagesMap.entrySet()) {
             final String packageName = entry.getKey();
@@ -167,22 +174,24 @@ public class DartFileListener implements AsyncFileListener {
             }
           }
         }
+      } else {
+        final VirtualFile dotPackagesFile = DotPackagesFileUtil.findDotPackagesFile(pubspecFile.getParent());
+        if (dotPackagesFile != null) {
+          final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
+          if (packagesMap != null) {
+            for (Map.Entry<String, String> entry : packagesMap.entrySet()) {
+              final String packageName = entry.getKey();
+              final String packagePath = entry.getValue();
+              if (isPathOutsideProjectContent(fileIndex, packagePath)) {
+                libInfo.addPackage(packageName, packagePath);
+              }
+            }
+          }
+        }
       }
     }
 
     return libInfo;
-  }
-
-  @Nullable
-  private static VirtualFile findDotPackagesFile(@Nullable VirtualFile dir) {
-    while (dir != null) {
-      final VirtualFile file = dir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
-      if (file != null && !file.isDirectory()) {
-        return file;
-      }
-      dir = dir.getParent();
-    }
-    return null;
   }
 
   @NotNull
