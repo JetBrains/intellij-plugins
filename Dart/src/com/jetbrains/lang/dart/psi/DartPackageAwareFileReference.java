@@ -8,6 +8,8 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
@@ -23,11 +25,11 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 class DartPackageAwareFileReference extends FileReference {
   @NotNull private final DartUrlResolver myDartResolver;
 
-  DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
-                                       final TextRange range,
-                                       final int index,
-                                       final String text,
-                                       @NotNull final DartUrlResolver dartResolver) {
+  DartPackageAwareFileReference(@NotNull FileReferenceSet fileReferenceSet,
+                                TextRange range,
+                                int index,
+                                String text,
+                                @NotNull DartUrlResolver dartResolver) {
     super(fileReferenceSet, range, index, text);
     myDartResolver = dartResolver;
   }
@@ -41,8 +43,22 @@ class DartPackageAwareFileReference extends FileReference {
       if (psiDirectory != null) {
         return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
       }
-      VirtualFile dotPackages = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
-      final PsiFile psiFile = dotPackages == null ? null : containingFile.getManager().findFile(dotPackages);
+
+      DartSdk sdk = DartSdk.getDartSdk(containingFile.getProject());
+      VirtualFile packagesFile;
+      if (sdk != null && pubspecYamlFile != null) {
+        if (DartAnalysisServerService.isDartSdkVersionSufficientForPackageConfigJson(sdk)) {
+          packagesFile = DotPackagesFileUtil.getPackageConfigJsonFile(pubspecYamlFile);
+        }
+        else {
+          packagesFile = pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
+        }
+      }
+      else {
+        packagesFile = null;
+      }
+
+      final PsiFile psiFile = packagesFile == null ? null : containingFile.getManager().findFile(packagesFile);
       if (psiFile != null) {
         return new ResolveResult[]{new PsiElementResolveResult(psiFile)};
       }
