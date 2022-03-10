@@ -111,10 +111,6 @@ public class PerforceFileAnnotation extends FileAnnotation {
     };
 
   @Override
-  public void dispose() {
-  }
-
-  @Override
   public LineAnnotationAspect @NotNull [] getAspects() {
     return new LineAnnotationAspect[]{REVISION, DATE, CLIENT};
   }
