@@ -14,9 +14,9 @@ import java.util.Map;
 public class Angular2HtmlIdIndexer implements LexingIdIndexer {
   @Override
   public @NotNull Map<IdIndexEntry, Integer> map(@NotNull FileContent inputData) {
-    return BaseFilterLexerUtil.scanContent(inputData, consumer ->
+    return BaseFilterLexerUtil.calcIdEntries(inputData, consumer ->
       new Angular2HtmlFilterLexer(consumer, SyntaxHighlighterFactory.getSyntaxHighlighter(
-        Angular2HtmlLanguage.INSTANCE, inputData.getProject(), inputData.getFile()).getHighlightingLexer())).idMap;
+        Angular2HtmlLanguage.INSTANCE, inputData.getProject(), inputData.getFile()).getHighlightingLexer()));
   }
 
   @Override
