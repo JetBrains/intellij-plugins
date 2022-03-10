@@ -95,8 +95,8 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
                                       @NotNull final Editor editor,
                                       @NotNull final RangeMarker bounds,
                                       final int caretOffset,
-                                      final Ref<? super Boolean> indented,
-                                      final List<? extends DartImportsTransferableData> values) {
+                                      final @NotNull Ref<? super Boolean> indented,
+                                      final @NotNull List<? extends DartImportsTransferableData> values) {
     final DartImportsTransferableData data = ContainerUtil.getFirstItem(values);
     if (data == null) return;
 
