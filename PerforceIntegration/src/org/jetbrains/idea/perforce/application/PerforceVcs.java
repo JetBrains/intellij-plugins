@@ -32,6 +32,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.annotate.AnnotationProvider;
+import com.intellij.openapi.vcs.annotate.AnnotationsWriteableFilesVfsListener;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.ChangeProvider;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
@@ -42,6 +43,8 @@ import com.intellij.openapi.vcs.merge.MergeProvider;
 import com.intellij.openapi.vcs.rollback.RollbackEnvironment;
 import com.intellij.openapi.vcs.update.UpdateEnvironment;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileListener;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
@@ -87,6 +90,7 @@ public final class PerforceVcs extends AbstractVcs {
   private PerforceTreeDiffProvider myTreeDiffProvider;
   private final PerforceSettings mySettings;
 
+  private final VirtualFileListener myAnnotationsVfsListener;
   private PerforceVFSListener myVFSListener;
   private MergeProvider myMergeProvider;
 
@@ -106,6 +110,7 @@ public final class PerforceVcs extends AbstractVcs {
     myChangeListManager = project.isDefault() ? null : ChangeListManager.getInstance(project);
     mySettings = PerforceSettings.getSettings(myProject);
     myMyEditFileProvider = new MyEditFileProvider();
+    myAnnotationsVfsListener = new AnnotationsWriteableFilesVfsListener(project, getKey());
 
     myHotFixer = new PerforceExceptionsHotFixer(project);
     // remove used some time before old notification group ids
@@ -390,6 +395,7 @@ public final class PerforceVcs extends AbstractVcs {
     ReadonlyStatusIsVisibleActivationCheck.check(myProject, NAME);
     initChangeProvider();
     myChangeProvider.activate(myVFSListener);
+    VirtualFileManager.getInstance().addVirtualFileListener(myAnnotationsVfsListener);
   }
 
   @Override
@@ -400,6 +406,7 @@ public final class PerforceVcs extends AbstractVcs {
     }
     PerforceManager.getInstance(myProject).stopListening();
     myChangeProvider.deactivate();
+    VirtualFileManager.getInstance().removeVirtualFileListener(myAnnotationsVfsListener);
   }
 
   @Override

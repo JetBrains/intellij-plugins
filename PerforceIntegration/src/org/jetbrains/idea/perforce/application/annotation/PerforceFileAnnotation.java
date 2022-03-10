@@ -24,8 +24,6 @@ import com.intellij.openapi.vcs.annotate.*;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -48,7 +46,6 @@ public class PerforceFileAnnotation extends FileAnnotation {
   private final VirtualFile myFile;
   private final long myRevision;
 
-  private final VirtualFileListener myListener;
   private final Project myProject;
   private final List<VcsFileRevision> myPerforceRevisions;
 
@@ -63,9 +60,6 @@ public class PerforceFileAnnotation extends FileAnnotation {
     myProject = project;
     myFile = file;
     myRevision = revision;
-
-    myListener = new VFSForAnnotationListener(file, this);
-    VirtualFileManager.getInstance().addVirtualFileListener(myListener);
 
     myPerforceRevisions = new ArrayList<>();
     for (P4Revision p4Revision : myRevisions) {
@@ -118,7 +112,6 @@ public class PerforceFileAnnotation extends FileAnnotation {
 
   @Override
   public void dispose() {
-    VirtualFileManager.getInstance().removeVirtualFileListener(myListener);
   }
 
   @Override
