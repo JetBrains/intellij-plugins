@@ -10,10 +10,10 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueIdIndexer : LexingIdIndexer {
   override fun map(inputData: FileContent): Map<IdIndexEntry, Int> {
-    return BaseFilterLexerUtil.scanContent(inputData) { consumer ->
+    return BaseFilterLexerUtil.calcIdEntries(inputData) { consumer ->
       VueFilterLexer(consumer, SyntaxHighlighterFactory.getSyntaxHighlighter(
         VueLanguage.INSTANCE, inputData.project, inputData.file).highlightingLexer)
-    }.idMap
+    }
   }
 
   override fun getVersion(): Int {
