@@ -9,8 +9,8 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.CommonDataKeys.*
+import com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT
+import com.intellij.openapi.actionSystem.CommonDataKeys.PSI_ELEMENT
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -144,7 +144,9 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   fun testScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-    doTestWithCopyDirectory()
+    copyDirectory()
+    myFixture.configureFromTempProjectFile("ScriptSetup1.vue")
+    myFixture.checkHighlighting()
     myFixture.configureFromTempProjectFile("ScriptSetup2.vue")
     myFixture.checkHighlighting()
     myFixture.configureFromTempProjectFile("ScriptSetup3.vue")
@@ -152,6 +154,8 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureFromTempProjectFile("ScriptSetup4.vue")
     myFixture.checkHighlighting()
     myFixture.configureFromTempProjectFile("ScriptSetup5.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetupSkippedErrors.vue")
     myFixture.checkHighlighting()
   }
 

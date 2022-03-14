@@ -1,6 +1,6 @@
 <script lang='ts'>
 import {defineComponent} from "vue"
-const foo = 123
+const <error descr="TS6133: 'foo' is declared but its value is never read.">foo</error> = 123
 export default defineComponent({
   props: {
     a: Boolean
