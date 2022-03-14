@@ -53,9 +53,23 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return super.postprocessErrors(file, errors)
   }
 
-  private fun skipScriptSetupError(error: JSLanguageServiceAnnotationResult): Boolean =
-    error is TypeScriptLanguageServiceAnnotationResult &&
-    error.errorCode.let { it == 6133 || it == 1232 }
+  /**
+   * Transformation from .vue to .ts is imperfect & causes false errors, which we then filter on the IDE side.
+   *
+   * Error codes taken from `src/compiler/diagnosticMessages.json` in TypeScript repository.
+   */
+  private val suppressedErrorCodes = setOf(
+    1232, // An import declaration can only be used in a namespace or module.
+    6192, // All imports in import declaration are unused.
+    6133, // '{0}' is declared but its value is never read.
+    6196, // '{0}' is declared but never used.
+    6198, // All destructured elements are unused.
+    6199, // All variables are unused.
+  )
+
+  private fun skipScriptSetupError(error: JSLanguageServiceAnnotationResult): Boolean {
+    return error is TypeScriptLanguageServiceAnnotationResult && suppressedErrorCodes.contains(error.errorCode)
+  }
 
   private fun getRangeFilter(file: PsiFile, setup: Boolean, document: Document): ((JSLanguageServiceAnnotationResult) -> Boolean)? {
     val module = findModule(file, setup)?.takeIf { DialectDetector.isTypeScript(it) } ?: return null
