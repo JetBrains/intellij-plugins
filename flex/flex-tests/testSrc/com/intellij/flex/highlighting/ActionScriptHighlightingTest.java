@@ -2,6 +2,7 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.Lookup;
@@ -213,21 +214,21 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testMethodCanBeStatic() throws Exception {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
-    inspection.myOnlyPrivate = false;
+    JSTestUtils.setInspectionHighlightLevel(myProject, inspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
     enableInspectionTool(inspection);
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'static'");
   }
 
   public void testMethodCanBeStatic2() throws Exception {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
-    inspection.myOnlyPrivate = false;
+    JSTestUtils.setInspectionHighlightLevel(myProject, inspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
     enableInspectionTool(inspection);
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'static'");
   }
 
   public void testMethodCanBeStatic3() throws Exception {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
-    inspection.myOnlyPrivate = false;
+    JSTestUtils.setInspectionHighlightLevel(myProject, inspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
     enableInspectionTool(inspection);
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'static'");
   }
@@ -240,7 +241,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testMethodCanBeStaticImplicitVars() {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
-    inspection.myOnlyPrivate = false;
+    JSTestUtils.setInspectionHighlightLevel(myProject, inspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
     enableInspectionTool(inspection);
     doTestFor(true, getTestName(false) + ".mxml");
   }

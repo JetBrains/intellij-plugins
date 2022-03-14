@@ -1,8 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
@@ -34,7 +36,7 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testMethodCanBeStatic() {
     JSMethodCanBeStaticInspection canBeStaticInspection = new JSMethodCanBeStaticInspection();
-    canBeStaticInspection.myOnlyPrivate = false;
+    JSTestUtils.setInspectionHighlightLevel(getProject(), canBeStaticInspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
     myFixture.enableInspections(canBeStaticInspection);
     myFixture.configureByFiles("methodCanBeStatic.ts", "methodCanBeStatic.html", "package.json");
     myFixture.checkHighlighting();
