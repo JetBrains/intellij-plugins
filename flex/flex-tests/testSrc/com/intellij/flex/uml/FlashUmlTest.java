@@ -36,7 +36,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
-import com.intellij.uml.UmlGraphBuilderFactory;
 import com.intellij.uml.core.actions.ShowDiagramBase;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
@@ -141,7 +140,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
         provider.getElementManager().findInDataContext(event.getDataContext()));
 
       Object actualOrigin = provider.getVfsResolver().resolveElementByFQN(actualOriginFqn, getProject());
-      builder = UmlGraphBuilderFactory.create(myProject, provider, actualOrigin, null);
+      builder = DiagramBuilderFactory.getInstance().create(myProject, provider, actualOrigin, null);
       Disposer.register(getTestRootDisposable(), builder);
       DiagramDataModel<?> model = builder.getDataModel();
       DiagramConfiguration configuration = DiagramConfiguration.getInstance();
