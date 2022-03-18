@@ -258,7 +258,7 @@ export default {
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
     val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
       ?.findProperty("components")?.value?.castSafelyTo<JSObjectLiteralExpression>()?.properties
-    if (componentsInitializer != null && componentsInitializer.isNotEmpty()) {
+    if (!componentsInitializer.isNullOrEmpty()) {
       val names = componentsInitializer.map { toAsset(it.name ?: "", true) }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement) {

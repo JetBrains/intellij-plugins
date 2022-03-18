@@ -50,7 +50,7 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? =
     if (isEnumerated)
       xmlElement
-    else if (value == null || value.isEmpty())
+    else if (value.isNullOrEmpty())
       null
     else
       super.getEnumeratedValueDeclaration(xmlElement, value)
