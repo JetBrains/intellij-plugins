@@ -368,7 +368,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val resourceTypeValue = resourceType.value
     val typeName = resourceTypeValue?.value
 
-    if (resourceTypeValue == null || typeName == null || typeName.isEmpty()) {
+    if (resourceTypeValue == null || typeName.isNullOrEmpty()) {
       addProblem(resourceType, message("type.value.is.required"))
       return
     }
