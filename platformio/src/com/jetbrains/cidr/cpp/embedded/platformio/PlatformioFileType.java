@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.lang.Language.findLanguageByID;
+import static icons.ClionEmbeddedPlatformioIcons.Platformio;
+
 public class PlatformioFileType extends LanguageFileType {
   public static final String EXTENSION = "ini";
   public static final PlatformioFileType INSTANCE = new PlatformioFileType();
@@ -41,16 +44,16 @@ public class PlatformioFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return ClionEmbeddedPlatformioIcons.Platformio;
+    return Platformio;
   }
 
   private static Language findLanguage() {
-    Language language = Language.findLanguageByID("Ini");
+    final var language = findLanguageByID("Ini");
     return language == null ? PlainTextLanguage.INSTANCE : language;
   }
 
   @Contract("null->false")
-  public static boolean isFileOfType(@Nullable VirtualFile file) {
+  public static boolean isFileOfType(final @Nullable VirtualFile file) {
     return file != null && FileTypeManager.getInstance().isFileOfType(file, INSTANCE);
   }
 }

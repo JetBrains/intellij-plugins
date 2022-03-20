@@ -1,42 +1,46 @@
 package com.jetbrains.cidr.cpp.embedded.platformio;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.FontUtil;
-import com.intellij.util.SystemProperties;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.cidr.cpp.execution.debugger.embedded.ui.FileChooseInput;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.intellij.uiDesigner.core.GridConstraints.*;
+import static com.intellij.openapi.fileChooser.FileChooserDescriptorFactory.createSingleFileDescriptor;
+import static com.intellij.openapi.util.SystemInfo.isWindows;
+import static com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER;
+import static com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST;
+import static com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL;
+import static com.intellij.uiDesigner.core.GridConstraints.FILL_NONE;
+import static com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK;
+import static com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED;
+import static com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW;
+import static com.intellij.util.SystemProperties.getUserHome;
+import static com.intellij.util.ui.UIUtil.getContextHelpForeground;
+import static com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle.message;
+import static java.io.File.separator;
 
 class PlatformioSettingsPanel extends JBPanel<JBPanel<?>> {
-  private static final FileChooserDescriptor PLATFORMIO_UTILITY_DESCRIPTOR =
-    FileChooserDescriptorFactory.createSingleFileDescriptor("exe")
+  private static final FileChooserDescriptor PLATFORMIO_UTILITY_DESCRIPTOR = createSingleFileDescriptor("exe")
       .withShowHiddenFiles(true);
   private final FileChooseInput openOcdLocation;
 
   PlatformioSettingsPanel() {
     super(new GridLayoutManager(4, 2));
-    String utilityName = SystemInfo.isWindows ? "platformio.exe" : "platformio";
-    Path defaultLocationPath =
-      Paths.get(SystemProperties.getUserHome(), ".platformio", "penv", "Scripts", utilityName);
-    File defaultLocation = defaultLocationPath.toFile();
-    openOcdLocation =
-      new FileChooseInput("PlatformIO utility Location", defaultLocation, PLATFORMIO_UTILITY_DESCRIPTOR) {
+    final var utilityName = isWindows ? "platformio.exe" : "platformio";
+    final var defaultLocationPath = Paths.get(getUserHome(), ".platformio", "penv", "Scripts", utilityName);
+    final var defaultLocation = defaultLocationPath.toFile();
+    openOcdLocation = new FileChooseInput("PlatformIO utility Location", defaultLocation, PLATFORMIO_UTILITY_DESCRIPTOR) {
         @Override
-        public boolean validateFile(@NotNull File file) {
+        public boolean validateFile(final @NotNull File file) {
           return file.isFile() && file.canExecute();
         }
 
@@ -46,7 +50,7 @@ class PlatformioSettingsPanel extends JBPanel<JBPanel<?>> {
         }
       };
 
-    add(new TitledSeparator(ClionEmbeddedPlatformioBundle.message("separator.general.settings")),
+    add(new TitledSeparator(message("separator.general.settings")),
         new GridConstraints(0, 0, 1, 2, ANCHOR_WEST, FILL_HORIZONTAL,
                             SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null));
     add(openOcdLocation, new GridConstraints(1, 1, 1, 1, ANCHOR_WEST,
@@ -54,15 +58,14 @@ class PlatformioSettingsPanel extends JBPanel<JBPanel<?>> {
                                              null, null, null));
 
 
-    JLabel label = new JLabel(ClionEmbeddedPlatformioBundle.message("platformio.utility.location"));
+    final var label = new JLabel(message("platformio.utility.location"));
     add(label, new GridConstraints(1, 0, 1, 1, ANCHOR_WEST, FILL_NONE,
                                    SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null));
 
-    JLabel hintLabel = new JLabel(
-      ClionEmbeddedPlatformioBundle.message("platformio.path.hint", SystemProperties.getUserHome(),
-                                            File.separator, SystemInfo.isWindows ? ".exe" : ""));
+    final var hintLabel = new JLabel(message("platformio.path.hint",
+            getUserHome(), separator, isWindows ? ".exe" : ""));
     hintLabel.setFont(FontUtil.minusOne(label.getFont()));
-    hintLabel.setForeground(UIUtil.getContextHelpForeground());
+    hintLabel.setForeground(getContextHelpForeground());
     add(hintLabel, new GridConstraints(2, 1, 1, 1, ANCHOR_WEST, FILL_NONE,
                                        SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null));
     label.setLabelFor(openOcdLocation);
@@ -80,7 +83,7 @@ class PlatformioSettingsPanel extends JBPanel<JBPanel<?>> {
     return openOcdLocation.getText();
   }
 
-  public void setText(@NotNull String text) {
+  public void setText(final @NotNull String text) {
     openOcdLocation.setText(text);
   }
 }

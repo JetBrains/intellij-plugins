@@ -9,14 +9,11 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.ide.util.projectWizard.CustomStepProjectGenerator;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
@@ -38,7 +35,6 @@ import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
 import com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CLionProjectGenerator;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener;
-import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
 import com.jetbrains.cidr.cpp.embedded.platformio.CustomTool;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType;
@@ -47,7 +43,6 @@ import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType;
 import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData;
 import com.jetbrains.cidr.execution.BuildTargetData;
 import com.jetbrains.cidr.execution.ExecutableData;
-import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,24 +51,39 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
+import static com.intellij.execution.configurations.ConfigurationTypeUtil.findConfigurationType;
+import static com.intellij.notification.NotificationType.WARNING;
+import static com.intellij.openapi.actionSystem.impl.SimpleDataContext.getProjectContext;
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
+import static com.intellij.openapi.progress.PerformInBackgroundOption.DEAF;
+import static com.intellij.openapi.vfs.VfsUtilCore.virtualToIoFile;
+import static com.intellij.util.ExceptionUtil.getThrowableText;
+import static com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener.TOPIC;
+import static com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle.message;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration.findPlatformio;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo.EMPTY;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.NOTIFICATION_GROUP;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.notifyPlatformioNotFound;
 import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND.CREATE_PROJECT;
 import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.fusLog;
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME;
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
+import static icons.ClionEmbeddedPlatformioIcons.Platformio;
 
 public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardInfo>>
   implements CustomStepProjectGenerator<Ref<BoardInfo>> {
 
   @Override
-  public AbstractActionWithPanel createStep(DirectoryProjectGenerator<Ref<BoardInfo>> projectGenerator,
-                                            AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo>> callback) {
+  public AbstractActionWithPanel createStep(
+          final @NotNull DirectoryProjectGenerator<Ref<BoardInfo>> projectGenerator,
+          final @NotNull AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo>> callback) {
     return new PlatformioProjectSettingsStep(projectGenerator, callback);
   }
 
   @Nullable
   @Override
   public Icon getLogo() {
-    return ClionEmbeddedPlatformioIcons.Platformio;
+    return Platformio;
   }
 
   @NotNull
@@ -97,57 +107,57 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
   @NotNull
   @Override
   public String getName() {
-    return ClionEmbeddedPlatformioBundle.message("platformio.project.type");
+    return message("platformio.project.type");
   }
 
   @Override
   public String getDescription() {
-    return ClionEmbeddedPlatformioBundle.message("platformio.project.description");
+    return message("platformio.project.description");
   }
 
   @NotNull
   @Override
   public ProjectGeneratorPeer<Ref<BoardInfo>> createPeer() {
-    return new GeneratorPeerImpl<>(new Ref<>(BoardInfo.EMPTY), new JPanel());
+    return new GeneratorPeerImpl<>(new Ref<>(EMPTY), new JPanel());
   }
 
   @Override
-  public void generateProject(@NotNull Project project,
-                              @NotNull VirtualFile baseDir,
-                              @NotNull Ref<@NotNull BoardInfo> settings,
-                              @NotNull Module module) {
+  public void generateProject(final @NotNull Project project,
+                              final @NotNull VirtualFile baseDir,
+                              final @NotNull Ref<BoardInfo> settings,
+                              final @NotNull Module module) {
     super.generateProject(project, baseDir, settings, module);
-    StringBuilder pioCmdLineTail = new StringBuilder();
-    for (String s : settings.get().getParameters()) {
+    final var pioCmdLineTail = new StringBuilder();
+    for (final var s : settings.get().getParameters()) {
       pioCmdLineTail.append(' ').append(s);
     }
     doGenerateProject(project, baseDir, pioCmdLineTail, settings.get().getTemplate());
   }
 
-  public void doGenerateProject(@NotNull Project project,
-                                @NotNull VirtualFile baseDir,
-                                @NotNull CharSequence pioCmdLineTail,
-                                @NotNull SourceTemplate template) {
+  public void doGenerateProject(final @NotNull Project project,
+                                final @NotNull VirtualFile baseDir,
+                                final @NotNull CharSequence pioCmdLineTail,
+                                final @NotNull SourceTemplate template) {
   /* This method starts multi-stage process
      1. PlatformIO utility is started asynchronously under progress indicator
      2. When it's done, another asynchronous code writes empty source code stub if no main.c or main.cpp is generated
      3. When it's done, CMake workspace is initialized asynchronously, and a listener is set to watch the process
      4. When it's done, CMake run configurations and build profiles are created
    */
-    String myPioUtility = PlatformioBaseConfiguration.findPlatformio();
+    final var myPioUtility = findPlatformio();
     if (myPioUtility == null) {
-      PlatformioService.notifyPlatformioNotFound(project);
+      notifyPlatformioNotFound(project);
       return;
     }
     fusLog(null, CREATE_PROJECT);
-    CustomTool initTool = new CustomTool(ClionEmbeddedPlatformioBundle.message("platformio.init.title"));
+    final var initTool = new CustomTool(message("platformio.init.title"));
     initTool.setProgram(myPioUtility);
     initTool.setWorkingDirectory(baseDir.getCanonicalPath());
     initTool.setParameters("init --ide clion" + pioCmdLineTail);
-    DataContext projectContext = SimpleDataContext.getProjectContext(project);
-    Semaphore semaphore = new Semaphore(1);
-    Ref<Boolean> success = new Ref<>(false);
-    ProcessAdapter processListener = new ProcessAdapter() {
+    final var projectContext = getProjectContext(project);
+    final var semaphore = new Semaphore(1);
+    final var success = new Ref<Boolean>(false);
+    final ProcessAdapter processListener = new ProcessAdapter() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
         success.set(event.getExitCode() == 0);
@@ -155,7 +165,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
       }
     };
     if (initTool.executeIfPossible(null, projectContext, -1, processListener)) {
-      new Task.Backgroundable(project, ClionEmbeddedPlatformioBundle.message("initializing"), true, PerformInBackgroundOption.DEAF) {
+      new Task.Backgroundable(project, message("initializing"), true, DEAF) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           while (!semaphore.waitFor(200)) {
@@ -175,29 +185,29 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
     }
   }
 
-  private void finishFileStructure(@NotNull Project project,
-                                   @NotNull VirtualFile baseDir,
-                                   @NotNull SourceTemplate template) {
+  private void finishFileStructure(final @NotNull Project project,
+                                   final @NotNull VirtualFile baseDir,
+                                   final @NotNull SourceTemplate template) {
     baseDir.refresh(false, true);
     if (template != SourceTemplate.NONE) {
-      VirtualFile srcFolder = baseDir.findChild("src");
+      final var srcFolder = baseDir.findChild("src");
       if (srcFolder == null || !srcFolder.isDirectory()) {
-        showError(ClionEmbeddedPlatformioBundle.message("src.not.found"));
+        showError(message("src.not.found"));
         return;
       }
       if (srcFolder.findChild("main.cpp") == null && srcFolder.findChild("main.c") == null) {
         try {
-          VirtualFile virtualFile = srcFolder.createChildData(this, template.getFileName());
+          final var virtualFile = srcFolder.createChildData(this, template.getFileName());
           virtualFile.setBinaryContent(template.getContent());
-          ApplicationManager.getApplication().invokeLater(() -> {
+          getApplication().invokeLater(() -> {
             if (!project.isDisposed()) {
-              OpenFileDescriptor descriptor = new OpenFileDescriptor(project, virtualFile);
+              final var descriptor = new OpenFileDescriptor(project, virtualFile);
               FileEditorManager.getInstance(project).openEditor(descriptor, true);
             }
           });
         }
-        catch (IOException e) {
-          showError(ExceptionUtil.getThrowableText(e));
+        catch (final IOException e) {
+          showError(getThrowableText(e));
           return;
         }
       }
@@ -207,9 +217,9 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
 
   public static void updateCMakeProjectInformation(@NotNull Project project, @NotNull VirtualFile baseDir) {
     if (project.isInitialized()) {
-      CMakeWorkspace cmakeWorkspace = CMakeWorkspace.getInstance(project);
-      MessageBusConnection busConnection = project.getMessageBus().connect();
-      busConnection.subscribe(CMakeWorkspaceListener.TOPIC, new CMakeWorkspaceListener() {
+      final var cmakeWorkspace = CMakeWorkspace.getInstance(project);
+      final var busConnection = project.getMessageBus().connect();
+      busConnection.subscribe(TOPIC, new CMakeWorkspaceListener() {
 
         @Override
         public void reloadingFinished(boolean canceled) {
@@ -221,30 +231,28 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
           }
         }
       });
-      ApplicationManager.getApplication().invokeLaterOnWriteThread(
-        () -> cmakeWorkspace.selectProjectDir(VfsUtilCore.virtualToIoFile(baseDir)) //Phase 3 started
+      getApplication().invokeLaterOnWriteThread(
+        () -> cmakeWorkspace.selectProjectDir(virtualToIoFile(baseDir)) //Phase 3 started
       );
     }
   }
 
   private static void configureRunConfigurations(@NotNull Project project) {
-    RunManager runManager = RunManager.getInstance(project);
-
+    final var runManager = RunManager.getInstance(project);
     final CMakeBuildConfigurationHelper helper = CMakeRunConfigurationType.getHelper(project);
 
-    ConfigurationFactory[] factories =
-      ConfigurationTypeUtil.findConfigurationType(PlatformioConfigurationType.class).getNewProjectFactories();
+    final var factories = findConfigurationType(PlatformioConfigurationType.class).getNewProjectFactories();
     for (int i = 0; i < factories.length; i++) {
-      ConfigurationFactory factory = factories[i];
+      final var factory = factories[i];
       String name = factory.getName();
       if (runManager.findConfigurationByName(name) == null) {
-        RunnerAndConfigurationSettings runSettings = runManager.createConfiguration(name, factory);
+        final var runSettings = runManager.createConfiguration(name, factory);
 
-        PlatformioBaseConfiguration configuration = (PlatformioBaseConfiguration)runSettings.getConfiguration();
-        CMakeTarget target = helper.findFirstSuitableTarget(configuration.getCmakeBuildTarget());
+        final var configuration = (PlatformioBaseConfiguration)runSettings.getConfiguration();
+        final var target = helper.findFirstSuitableTarget(configuration.getCmakeBuildTarget());
         if (target != null) {
-          final BuildTargetData buildTargetData = new BuildTargetData(project.getName(), target.getName());
-          final BuildTargetAndConfigurationData data = new BuildTargetAndConfigurationData(buildTargetData, null);
+          final var buildTargetData = new BuildTargetData(project.getName(), target.getName());
+          final var data = new BuildTargetAndConfigurationData(buildTargetData, null);
           configuration.setTargetAndConfigurationData(data);
           configuration.setExecutableData(new ExecutableData(buildTargetData));
           runManager.addConfiguration(runSettings);
@@ -256,18 +264,16 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
     }
   }
 
-  private static void configureBuildTypes(@NotNull CMakeWorkspace cmakeWorkspace) {
-    CMakeSettings settings = cmakeWorkspace.getSettings();
-    List<CMakeModelConfigurationData> cMakeModelConfigurationData = cmakeWorkspace.getModelConfigurationData();
+  private static void configureBuildTypes(final @NotNull CMakeWorkspace cmakeWorkspace) {
+    final var settings = cmakeWorkspace.getSettings();
+    final var cMakeModelConfigurationData = cmakeWorkspace.getModelConfigurationData();
     if (!cMakeModelConfigurationData.isEmpty()) {
-      List<String> buildTypes = cMakeModelConfigurationData.get(0).getRegisteredBuildTypes();
+      final var buildTypes = cMakeModelConfigurationData.get(0).getRegisteredBuildTypes();
       settings.setProfiles(ContainerUtil.map(buildTypes, CMakeSettings.Profile::new));
     }
   }
 
-  private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
-    PlatformioService.NOTIFICATION_GROUP
-      .createNotification(ClionEmbeddedPlatformioBundle.message("project.init.failed"), message, NotificationType.WARNING)
-      .notify(null);
+  private static void showError(final @NotNull @NlsContexts.NotificationContent String message) {
+    NOTIFICATION_GROUP.createNotification(message("project.init.failed"), message, WARNING).notify(null);
   }
 }

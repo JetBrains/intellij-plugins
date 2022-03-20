@@ -9,6 +9,7 @@ import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.EmptyEditor;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType;
 import icons.ClionEmbeddedPlatformioIcons;
@@ -18,7 +19,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
+import static com.intellij.execution.configurations.RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY;
 import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND.*;
+import static icons.ClionEmbeddedPlatformioIcons.Platformio;
 
 public class PlatformioConfigurationType extends CMakeRunConfigurationType {
 
@@ -29,10 +32,10 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   public PlatformioConfigurationType() {
     super(TYPE_ID, PLATFORM_IO_DEBUG_ID, ClionEmbeddedPlatformioBundle.message("platformio.name"),
           ClionEmbeddedPlatformioBundle.message("platformio.description"),
-          NotNullLazyValue.createValue(() -> ClionEmbeddedPlatformioIcons.Platformio));
+          NotNullLazyValue.createValue(() -> Platformio));
 
-    ConfigurationFactory uploadFactory = getConfigurationFactories()[0];
-    ToolConfigurationFactory uploadConfigurationFactory =
+    final var uploadFactory = getConfigurationFactories()[0];
+    final var uploadConfigurationFactory =
       new ToolConfigurationFactory("PlatformIO Upload", () -> ClionEmbeddedPlatformioBundle.message("run.config.upload"), UPLOAD, "-c",
                                    "clion",
                                    "run", "--target", "upload");
@@ -53,7 +56,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   }
 
   @NotNull
-  public ConfigurationFactory @NotNull [] getNewProjectFactories() {
+  public ConfigurationFactory[] getNewProjectFactories() {
     return myNewProjectFactories;
   }
 
@@ -63,14 +66,14 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
     return new ConfigurationFactory(this) {
       @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+      public RunConfiguration createTemplateConfiguration(final @NotNull Project project) {
         return new PlatformioDebugConfiguration(project, this);
       }
 
       @NotNull
       @Override
       public RunConfigurationSingletonPolicy getSingletonPolicy() {
-        return RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY;
+        return SINGLE_INSTANCE_ONLY;
       }
 
       @NotNull
@@ -93,14 +96,14 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   }
 
   @Override
-  public SettingsEditor<? extends CMakeAppRunConfiguration> createEditor(@NotNull Project project) {
+  public SettingsEditor<? extends CMakeAppRunConfiguration> createEditor(final @NotNull Project project) {
     return new EmptyEditor<>();
   }
 
   @Override
   @NotNull
-  protected PlatformioDebugConfiguration createRunConfiguration(@NotNull Project project,
-                                                                @NotNull ConfigurationFactory configurationFactory) {
+  protected PlatformioDebugConfiguration createRunConfiguration(final @NotNull Project project,
+                                                                final @NotNull ConfigurationFactory configurationFactory) {
     return new PlatformioDebugConfiguration(project, configurationFactory);
   }
 
@@ -113,12 +116,12 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
     private final String[] cliParameters;
     private final Supplier<@NlsActions.ActionText String> name;
     private final String myId;
-    private final PlatformioActionBase.FUS_COMMAND command;
+    private final FUS_COMMAND command;
 
-    ToolConfigurationFactory(@NonNls @NotNull String id,
-                             @NotNull Supplier<@NlsActions.ActionText String> name,
-                             PlatformioActionBase.FUS_COMMAND command,
-                             String... cliParameters) {
+    ToolConfigurationFactory(final @NonNls @NotNull String id,
+                             final @NotNull Supplier<@NlsActions.ActionText String> name,
+                             final FUS_COMMAND command,
+                             final String... cliParameters) {
       super(PlatformioConfigurationType.this);
       this.myId = id;
       this.name = name;
@@ -128,7 +131,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
 
     @Override
     public @NotNull
-    RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+    RunConfiguration createTemplateConfiguration(final @NotNull Project project) {
       return new PlatformioToolConfiguration(project, this, name, command, cliParameters);
     }
 

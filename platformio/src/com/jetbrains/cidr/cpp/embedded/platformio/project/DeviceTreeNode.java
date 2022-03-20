@@ -15,15 +15,19 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 
-public class DeviceTreeNode implements TreeNode {
+import static java.util.Collections.enumeration;
 
+public class DeviceTreeNode implements TreeNode {
   private final DeviceTreeNode myParent;
   private final String myName;
   private final TYPE myType;
   private final BoardInfo myBoardInfo;
   private List<DeviceTreeNode> myChildren = Collections.emptyList();
 
-  public DeviceTreeNode(@Nullable DeviceTreeNode parent, @NotNull TYPE type, @NotNull String name, @NotNull BoardInfo boardInfo) {
+  public DeviceTreeNode(final @Nullable DeviceTreeNode parent,
+                        final @NotNull TYPE type,
+                        final @NotNull String name,
+                        final @NotNull BoardInfo boardInfo) {
     this.myParent = parent;
     this.myName = name;
     this.myType = type;
@@ -87,11 +91,11 @@ public class DeviceTreeNode implements TreeNode {
   @Override
   @NotNull
   public Enumeration<DeviceTreeNode> children() {
-    return Collections.enumeration(myChildren);
+    return enumeration(myChildren);
   }
 
   @NotNull
-  public DeviceTreeNode add(DeviceTreeNode child) {
+  public DeviceTreeNode add(final @NotNull DeviceTreeNode child) {
     if (myChildren.isEmpty()) {
       myChildren = new SmartList<>(child);
     }
@@ -113,7 +117,7 @@ public class DeviceTreeNode implements TreeNode {
     FRAMEWORK(AllIcons.General.GearPlain);
     private final Icon icon;
 
-    TYPE(Icon icon) {
+    TYPE(final @NotNull Icon icon) {
       this.icon = icon;
     }
 
@@ -128,13 +132,12 @@ public class DeviceTreeNode implements TreeNode {
   }
 
   @NotNull
-  public static String searchText(@NotNull TreePath path) {
-    Object[] pathArray = path.getPath();
+  public static String searchText(final @NotNull TreePath path) {
+    final var pathArray = (DeviceTreeNode[]) path.getPath();
     if (pathArray.length == 0) return "";
-    StringBuilder builder = new StringBuilder(((DeviceTreeNode)pathArray[0]).getName());
+    final var builder = new StringBuilder(pathArray[0].getName());
     for (int i = 1; i < pathArray.length; i++) {
-      DeviceTreeNode node = (DeviceTreeNode)pathArray[i];
-      builder.append(' ').append(node.getName());
+      builder.append(' ').append(pathArray[i].getName());
     }
     return builder.toString();
   }

@@ -29,6 +29,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.intellij.execution.runners.ExecutionEnvironment.getNextUnusedExecutionId;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration.findPlatformio;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.notifyPlatformioNotFound;
+import static com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration.getSelectedBuildProfile;
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 public abstract class PlatformioActionBase extends DumbAwareAction {
 
   public static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 1);
@@ -36,7 +42,7 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
     "command", EventFields.String("name", FUS_COMMAND.valuesList())
   );
 
-  public static void fusLog(Project project, FUS_COMMAND fusCommand) {
+  public static void fusLog(final @NotNull Project project, final @NotNull FUS_COMMAND fusCommand) {
     COMMAND_EVENT_ID.log(project, fusCommand.name());
   }
 
@@ -44,20 +50,20 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
   @NotNull
   private final Supplier<String> myDynamicText;
 
-  public PlatformioActionBase(@NotNull Supplier<String> dynamicText, @NotNull Supplier<String> dynamicDescription) {
+  public PlatformioActionBase(final @NotNull Supplier<String> dynamicText, final @NotNull Supplier<String> dynamicDescription) {
     super(dynamicText, dynamicDescription, null);
-    this.myExecutionId = ExecutionEnvironment.getNextUnusedExecutionId();
+    this.myExecutionId = getNextUnusedExecutionId();
     this.myDynamicText = dynamicText;
   }
 
   public abstract @NotNull FUS_COMMAND getFusCommand();
 
-  protected void actionPerformed(@NotNull AnActionEvent e,
-                                 @NotNull String arguments,
-                                 boolean updateCmake,
-                                 boolean appendEnvironmentKey) {
-    Project project = e.getProject();
-    Tool tool = createPlatformioTool(project, appendEnvironmentKey, arguments, myDynamicText.get());
+  protected void actionPerformed(final @NotNull AnActionEvent e,
+                                 final @NotNull String arguments,
+                                 final boolean updateCmake,
+                                 final boolean appendEnvironmentKey) {
+    final var project = e.getProject();
+    final var tool = createPlatformioTool(project, appendEnvironmentKey, arguments, myDynamicText.get());
     if (tool == null) return;
     ProcessAdapter processListener = null;
     if (updateCmake && project != null) {
@@ -66,7 +72,7 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
         @Override
         public void processTerminated(@NotNull ProcessEvent event) {
           if (project.isInitialized()) {
-            final CMakeWorkspace cMakeWorkspace = CMakeWorkspace.getInstance(project);
+            final var cMakeWorkspace = CMakeWorkspace.getInstance(project);
             cMakeWorkspace.scheduleClearGeneratedFilesAndReload();
           }
         }
@@ -93,27 +99,28 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
     UPLOADFS;
 
     public static List<String> valuesList() {
-      return Stream.of(values()).map(Enum::name).collect(Collectors.toUnmodifiableList());
+      return Stream.of(values()).map(Enum::name).collect(toUnmodifiableList());
     }
   }
 
   @Nullable
-  protected static Tool createPlatformioTool(@Nullable Project project,
-                                             boolean appendEnvironmentKey,
-                                             @NotNull String argumentsToPass, @NotNull String text) {
-    String platformioPath = PlatformioBaseConfiguration.findPlatformio();
+  protected static Tool createPlatformioTool(final @Nullable Project project,
+                                             final boolean appendEnvironmentKey,
+                                             @NotNull String argumentsToPass,
+                                             final @NotNull String text) {
+    final var platformioPath = findPlatformio();
     if (platformioPath == null || !(new File(platformioPath).canExecute())) {
-      PlatformioService.notifyPlatformioNotFound(project);
+      notifyPlatformioNotFound(project);
       return null;
     }
     //todo try default profile
-    StringBuilder tabTitle = new StringBuilder("PlatformIO ").append(text);
+    final var tabTitle = new StringBuilder("PlatformIO ").append(text);
     if (appendEnvironmentKey && project != null) {
-      final CMakeWorkspace cMakeWorkspace = CMakeWorkspace.getInstance(project);
-      CMakeBuildProfileExecutionTarget selectedBuildProfile = CMakeAppRunConfiguration.getSelectedBuildProfile(project);
+      final var cMakeWorkspace = CMakeWorkspace.getInstance(project);
+      final var selectedBuildProfile = getSelectedBuildProfile(project);
       if (selectedBuildProfile != null) {
-        String profileName = selectedBuildProfile.getProfileName();
-        Optional<CMakeSettings.Profile> profile =
+        final var profileName = selectedBuildProfile.getProfileName();
+        final Optional<CMakeSettings.Profile> profile =
           cMakeWorkspace.getProfileInfos()
             .stream()
             .map(CMakeProfileInfo::getProfile)
@@ -126,7 +133,7 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
       }
     }
 
-    Tool tool = new CustomTool(tabTitle);
+    final var tool = new CustomTool(tabTitle);
     tool.setProgram(platformioPath);
     tool.setParameters(argumentsToPass);
     return tool;

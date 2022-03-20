@@ -10,7 +10,7 @@ public class PlatformioBuildProductionAction extends PlatformioAction {
   public PlatformioBuildProductionAction() {super(() -> ClionEmbeddedPlatformioBundle.message("task.production"));}
 
   @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     actionPerformed(e, "-c clion run", false, true);
   }
 

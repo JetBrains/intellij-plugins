@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.RunConfigurationWithSuppressedDefau
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsActions;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,11 +15,11 @@ import java.util.function.Supplier;
 public class PlatformioToolConfiguration extends PlatformioBaseConfiguration
   implements RunConfigurationWithSuppressedDefaultDebugAction {
 
-  public PlatformioToolConfiguration(@NotNull Project project,
-                                     @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull Supplier<@NlsActions.ActionText String> name,
-                                     PlatformioActionBase.FUS_COMMAND command,
-                                     String @Nullable ... cliParameters) {
+  public PlatformioToolConfiguration(final @NotNull Project project,
+                                     final @NotNull ConfigurationFactory configurationFactory,
+                                     final @NotNull Supplier<@NlsActions.ActionText String> name,
+                                     final FUS_COMMAND command,
+                                     final @Nullable String ... cliParameters) {
     super(project, configurationFactory, "Production", name, cliParameters, command);
   }
 

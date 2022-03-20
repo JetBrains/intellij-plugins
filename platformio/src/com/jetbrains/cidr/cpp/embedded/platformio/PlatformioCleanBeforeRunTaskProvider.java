@@ -7,21 +7,21 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
-import com.intellij.tools.Tool;
-import com.intellij.util.ModalityUiUtil;
 import com.intellij.util.concurrency.Semaphore;
-import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction;
-import com.jetbrains.cidr.execution.build.CidrBuild;
-import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
+import static com.intellij.openapi.application.ModalityState.NON_MODAL;
+import static com.intellij.openapi.ui.MessageType.ERROR;
+import static com.intellij.util.ModalityUiUtil.invokeLaterIfNeeded;
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction.createPlatformioTool;
+import static com.jetbrains.cidr.execution.build.CidrBuild.showBuildNotification;
+import static icons.ClionEmbeddedPlatformioIcons.Platformio;
 
 
 public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<BeforeRunTask<?>> {
@@ -30,7 +30,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
 
   @Override
   public @Nullable Icon getIcon() {
-    return ClionEmbeddedPlatformioIcons.Platformio;
+    return Platformio;
   }
 
   @Override
@@ -45,21 +45,21 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
 
   @Nullable
   @Override
-  public BeforeRunTask<?> createTask(@NotNull RunConfiguration runConfiguration) {
+  public BeforeRunTask<?> createTask(final @NotNull RunConfiguration runConfiguration) {
     return new BeforeRunTask<>(ID) {
     };
   }
 
   @Override
-  public boolean executeTask(@NotNull DataContext context,
-                             @NotNull RunConfiguration configuration,
-                             @NotNull ExecutionEnvironment env,
-                             @NotNull BeforeRunTask<?> task) {
-    Tool tool = PlatformioCleanAction.createPlatformioTool(configuration.getProject());
-    Ref<Boolean> success = new Ref<>(false);
-    Semaphore actionFinished = new Semaphore();
+  public boolean executeTask(final @NotNull DataContext context,
+                             final @NotNull RunConfiguration configuration,
+                             final @NotNull ExecutionEnvironment env,
+                             final @NotNull BeforeRunTask<?> task) {
+    final var tool = createPlatformioTool(configuration.getProject());
+    final var success = new Ref<>(false);
+    final var actionFinished = new Semaphore();
     if (tool != null) {
-      ProcessAdapter successListener = new ProcessAdapter() {
+      final ProcessAdapter successListener = new ProcessAdapter() {
         @Override
         public void processTerminated(@NotNull ProcessEvent event) {
           success.set(event.getExitCode() == 0);
@@ -67,8 +67,8 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
         }
       };
       actionFinished.down();
-      ApplicationManager.getApplication().invokeLater(() ->
-                                                      {
+      getApplication().invokeLater(() ->
+                                                    {
                                                         if (!tool.executeIfPossible(null, context, executionId, successListener)) {
                                                           actionFinished.up();
                                                         }
@@ -78,10 +78,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
     }
 
     if (!success.get()) {
-      ModalityUiUtil.invokeLaterIfNeeded(
-        ModalityState.NON_MODAL, () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
-                                                                       ClionEmbeddedPlatformioBundle.message("platformio.clean.failed"))
-      );
+      invokeLaterIfNeeded(NON_MODAL, () -> showBuildNotification(configuration.getProject(), ERROR, ClionEmbeddedPlatformioBundle.message("platformio.clean.failed")));
     }
     return success.get();
   }

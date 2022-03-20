@@ -1,60 +1,62 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationGroupManager;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable;
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Stream;
+
+import static com.intellij.ide.BrowserUtil.browse;
+import static com.intellij.notification.NotificationType.ERROR;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType.FILE_NAME;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.State.NONE;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.State.OK;
 
 @Service
 public final class PlatformioService {
 
   public static final NotificationGroup NOTIFICATION_GROUP =
     NotificationGroupManager.getInstance().getNotificationGroup("PlatformIO plugin");
-  private State myState = State.NONE;
+  private State myState = NONE;
 
-  public PlatformioService() {
-  }
+  public PlatformioService() { }
 
   public @NotNull State getState() {
     return myState;
   }
 
-  public static void setEnabled(@NotNull Project project, boolean enabled) {
+  public static void setEnabled(final @NotNull Project project, final boolean enabled) {
     if (enabled) {
-      project.getService(PlatformioService.class).myState = State.OK;
+      project.getService(PlatformioService.class).myState = OK;
     }
     else {
-      PlatformioService serviceIfCreated = project.getServiceIfCreated(PlatformioService.class);
-      if (serviceIfCreated != null) serviceIfCreated.myState = State.NONE;
+      final var serviceIfCreated = project.getServiceIfCreated(PlatformioService.class);
+      if (serviceIfCreated != null) serviceIfCreated.myState = NONE;
     }
   }
 
   public static void openInstallGuide() {
-    BrowserUtil.browse("https://docs.platformio.org/en/latest/core/installation.html");
+    browse("https://docs.platformio.org/en/latest/core/installation.html");
   }
 
-  public static State getState(@Nullable Project project) {
-    if (project == null || project.isDefault()) return State.NONE;
+  public static State getState(final @Nullable Project project) {
+    if (project == null || project.isDefault()) return NONE;
     PlatformioService platformioService = project.getServiceIfCreated(PlatformioService.class);
-    return platformioService == null ? State.NONE : platformioService.getState();
+    return platformioService == null ? NONE : platformioService.getState();
   }
 
   public static void notifyPlatformioNotFound(@Nullable Project project) {
     NOTIFICATION_GROUP
       .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found"),
-                          ClionEmbeddedPlatformioBundle.message("please.check.system.path"), NotificationType.ERROR)
+                          ClionEmbeddedPlatformioBundle.message("please.check.system.path"), ERROR)
       .addAction(NotificationAction.createSimple(ClionEmbeddedPlatformioBundle.message("install.guide"), () -> openInstallGuide()))
       .addAction(
         NotificationAction.createSimpleExpiring(ClionEmbeddedPlatformioBundle.message("open.settings.link"), () -> openSettings(project)))
@@ -62,12 +64,12 @@ public final class PlatformioService {
   }
 
   public static State updateStateForProject(@Nullable Project project) {
-    if (project == null) return State.NONE;
+    if (project == null) return NONE;
     boolean enabled =
       Stream.of(ProjectRootManager.getInstance(project).getContentRoots())
-        .anyMatch(root -> root.findChild(PlatformioFileType.FILE_NAME) != null);
+        .anyMatch(root -> root.findChild(FILE_NAME) != null);
     setEnabled(project, enabled);
-    return enabled ? State.OK : State.NONE;
+    return enabled ? OK : NONE;
   }
 
   public static void openSettings(@Nullable Project project) {

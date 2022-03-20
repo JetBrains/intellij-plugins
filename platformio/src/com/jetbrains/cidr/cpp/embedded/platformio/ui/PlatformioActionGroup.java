@@ -1,41 +1,42 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
-import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
-import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.openapi.actionSystem.ActionPlaces.isMainMenuOrActionSearch;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType.isFileOfType;
+import static icons.ClionEmbeddedPlatformioIcons.Platformio;
+
 public class PlatformioActionGroup extends ActionGroup {
   public PlatformioActionGroup() {
-    super(ClionEmbeddedPlatformioBundle.message("platformio.actiongroup.name"), ClionEmbeddedPlatformioBundle.message("platformio.support"),
-          ClionEmbeddedPlatformioIcons.Platformio);
+    super(ClionEmbeddedPlatformioBundle.message("platformio.actiongroup.name"), ClionEmbeddedPlatformioBundle.message("platformio.support"), Platformio);
   }
 
   @Override
-  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
+  @NotNull
+  public AnAction[] getChildren(final @Nullable AnActionEvent e) {
     return getChildren(e, ActionManager.getInstance());
   }
 
   @Override
-  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e, @NotNull ActionManager manager) {
+  @NotNull
+  public AnAction[] getChildren(final @Nullable AnActionEvent e, final @NotNull ActionManager manager) {
     return ((ActionGroup)manager.getAction("platformio-group")).getChildren(e, manager);
   }
 
   @Override
-  public void update(@NotNull AnActionEvent e) {
+  public void update(final @NotNull AnActionEvent e) {
     super.update(e);
-    Presentation presentation = e.getPresentation();
-    if (presentation.isVisible() && !ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
-      VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-      if (PlatformioFileType.isFileOfType(file)) {
-        presentation.setEnabledAndVisible(true);
-      }
-      else {
-        presentation.setEnabledAndVisible(false);
-      }
+    final var presentation = e.getPresentation();
+    if (presentation.isVisible() && !isMainMenuOrActionSearch(e.getPlace())) {
+      final var file = e.getData(VIRTUAL_FILE);
+      presentation.setEnabledAndVisible(isFileOfType(file));
     }
   }
 

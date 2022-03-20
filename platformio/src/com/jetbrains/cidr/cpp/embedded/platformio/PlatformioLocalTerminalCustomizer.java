@@ -11,21 +11,27 @@ import org.jetbrains.plugins.terminal.LocalTerminalCustomizer;
 import java.io.File;
 import java.util.Map;
 
+import static com.intellij.execution.configurations.PathEnvironmentVariableUtil.getPathDirs;
+import static com.intellij.openapi.util.io.FileUtil.pathsEqual;
+import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable.getPioLocation;
+
 public class PlatformioLocalTerminalCustomizer extends LocalTerminalCustomizer {
 
   private static final String ENV_PATH = "PATH";
 
   @Override
-  public String[] customizeCommandAndEnvironment(@NotNull Project project, String[] command, @NotNull Map<String, String> envs) {
-    String pioLocation = PlatformioConfigurable.getPioLocation();
-    if (!StringUtil.isEmptyOrSpaces(pioLocation)) {
-      File platformioLocation = new File(pioLocation);
+  public String[] customizeCommandAndEnvironment(
+          final @NotNull Project project,
+          final @NotNull String[] command,
+          final @NotNull Map<String, String> envs) {
+    final var pioLocation = getPioLocation();
+    if (!isEmptyOrSpaces(pioLocation)) {
+      final var platformioLocation = new File(pioLocation);
       if (platformioLocation.isFile() && platformioLocation.canExecute()) {
-        String parentPath = platformioLocation.getParent();
-        String path = envs.getOrDefault(ENV_PATH, "");
-        if (
-          PathEnvironmentVariableUtil.getPathDirs(path)
-            .stream().noneMatch(s -> FileUtil.pathsEqual(s, parentPath))) {
+        final var parentPath = platformioLocation.getParent();
+        final var path = envs.getOrDefault(ENV_PATH, "");
+        if (getPathDirs(path).stream().noneMatch(s -> pathsEqual(s, parentPath))) {
           envs.replace(ENV_PATH, path + Platform.current().pathSeparator + parentPath);
         }
       }
