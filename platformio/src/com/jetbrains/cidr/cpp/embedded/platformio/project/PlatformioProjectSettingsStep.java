@@ -31,6 +31,8 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import static com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle.message;
+
 public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<BoardInfo>> {
   private final Tree myTree;
 
@@ -53,7 +55,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
       }
     });
     myTree.setPaintBusy(true);
-    myTree.getEmptyText().setText(ClionEmbeddedPlatformioBundle.message("gathering.info"));
+    myTree.getEmptyText().setText(message("gathering.info"));
     myTree.setRootVisible(false);
 
     myTree.addTreeSelectionListener(e -> {
@@ -82,26 +84,26 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     BorderLayoutPanel panel = new BorderLayoutPanel(0, 0)
       .addToTop(new JBLabel(
-        ClionEmbeddedPlatformioBundle.message("available.boards.frameworks")).withBorder(BorderFactory.createEmptyBorder(0, 5, 3, 0)))
+        message("available.boards.frameworks")).withBorder(BorderFactory.createEmptyBorder(0, 5, 3, 0)))
       .addToCenter(scrollPane)
       .withPreferredHeight(0)
       .withBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
     try {
 
-      new Task.Backgroundable(null, ClionEmbeddedPlatformioBundle.message("platformio.boards.list.query")) {
+      new Task.Backgroundable(null, message("platformio.boards.list.query")) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          myTree.getEmptyText().setText(ClionEmbeddedPlatformioBundle.message("gathering.info"));
+          myTree.getEmptyText().setText(message("gathering.info"));
           String myPioUtility = PlatformioBaseConfiguration.findPlatformio();
           if (myPioUtility == null) {
-            String platformioIsNotFound = ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found");
+            String platformioIsNotFound = message("platformio.utility.is.not.found");
             setErrorText(platformioIsNotFound);
             myTree.getEmptyText().setText(platformioIsNotFound);
             myTree.getEmptyText()
-              .appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
+              .appendLine(message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
                           e -> PlatformioService.openSettings(getProject()))
-              .appendLine(ClionEmbeddedPlatformioBundle.message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
+              .appendLine(message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
                           e -> PlatformioService.openInstallGuide());
 
             return;
@@ -116,10 +118,11 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
             ProcessOutput output = new CapturingProcessRunner(new CapturingProcessHandler(commandLine))
               .runProcess(indicator, 60000);
             if (output.isTimeout()) {
-              setErrorText(ClionEmbeddedPlatformioBundle.message("utility.timeout"));
+              setErrorText(message("utility.timeout"));
             }
             else if (output.getExitCode() != 0) {
-              setErrorText(ClionEmbeddedPlatformioBundle.message("platformio.exit.code", output.getExitCode()));
+              // TODO cancel spinner
+              setErrorText(message("platformio.exit.code", output.getExitCode(), output.getStdout(), output.getStderr()));
             }
             else {
               DeviceTreeNode parsedRoot = BoardsJsonParser.parse(output.getStdout());
@@ -141,7 +144,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
       setErrorText(errorMessage);
       @NlsSafe String className = e.getClass().getSimpleName();
       PlatformioService.NOTIFICATION_GROUP
-        .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.failed"), errorMessage, NotificationType.WARNING)
+        .createNotification(message("platformio.utility.failed"), errorMessage, NotificationType.WARNING)
         .setSubtitle(className)
         .notify(null);
     }
@@ -159,7 +162,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
     if (!super.checkValid()) return false;
     BoardInfo settings = getPeer().getSettings().get();
     if (settings.getParameters().length == 0) {
-      setWarningText(ClionEmbeddedPlatformioBundle.message("please.select.target"));
+      setWarningText(message("please.select.target"));
       return false;
     }
     else {
