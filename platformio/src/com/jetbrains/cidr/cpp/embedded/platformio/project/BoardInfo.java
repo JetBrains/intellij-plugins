@@ -11,7 +11,7 @@ public class BoardInfo {
   private final String[] myParameters;
   private final SourceTemplate myTemplate;
 
-  public BoardInfo(SourceTemplate template, @NotNull String @NotNull ... parameters) {
+  public BoardInfo(SourceTemplate template, @NotNull String ... parameters) {
     myParameters = parameters;
     myTemplate = template;
   }
@@ -22,7 +22,7 @@ public class BoardInfo {
   }
 
   @NotNull
-  public String @NotNull [] getParameters() {
+  public String[] getParameters() {
     return myParameters;
   }
 

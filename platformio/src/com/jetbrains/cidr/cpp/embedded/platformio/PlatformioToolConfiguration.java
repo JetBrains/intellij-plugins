@@ -18,7 +18,7 @@ public class PlatformioToolConfiguration extends PlatformioBaseConfiguration
                                      @NotNull ConfigurationFactory configurationFactory,
                                      @NotNull Supplier<@NlsActions.ActionText String> name,
                                      PlatformioActionBase.FUS_COMMAND command,
-                                     String @Nullable ... cliParameters) {
+                                     @Nullable String ... cliParameters) {
     super(project, configurationFactory, "Production", name, cliParameters, command);
   }
 

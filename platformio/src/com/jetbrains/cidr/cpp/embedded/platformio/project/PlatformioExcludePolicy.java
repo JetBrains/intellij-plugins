@@ -18,7 +18,7 @@ public class PlatformioExcludePolicy implements DirectoryIndexExcludePolicy {
   }
 
   @Override
-  public String @NotNull [] getExcludeUrlsForProject() {
+  public @NotNull String[] getExcludeUrlsForProject() {
     return
       Stream.of(ProjectRootManager.getInstance(myProject).getContentRoots())
         .filter(root -> root.findChild(PlatformioFileType.FILE_NAME) != null)

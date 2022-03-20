@@ -41,7 +41,7 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
                                      @NotNull ConfigurationFactory configurationFactory,
                                      @NotNull String myBuildTargetName,
                                      @NotNull Supplier<@NlsActions.ActionText String> name,
-                                     String @Nullable [] cliParameters,
+                                     @Nullable String[] cliParameters,
                                      @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(project, configurationFactory, name.get());
     this.myBuildTargetName = myBuildTargetName;

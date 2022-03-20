@@ -35,7 +35,7 @@ public final class SourceTemplate {
     return fileName;
   }
 
-  public byte @NotNull [] getContent() {
+  public @NotNull byte[] getContent() {
     return content;
   }
 

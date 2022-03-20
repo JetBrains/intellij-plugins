@@ -15,12 +15,14 @@ public class PlatformioActionGroup extends ActionGroup {
   }
 
   @Override
-  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
+  @NotNull
+  public AnAction[] getChildren(@Nullable AnActionEvent e) {
     return getChildren(e, ActionManager.getInstance());
   }
 
   @Override
-  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e, @NotNull ActionManager manager) {
+  @NotNull
+  public AnAction[] getChildren(@Nullable AnActionEvent e, @NotNull ActionManager manager) {
     return ((ActionGroup)manager.getAction("platformio-group")).getChildren(e, manager);
   }
 

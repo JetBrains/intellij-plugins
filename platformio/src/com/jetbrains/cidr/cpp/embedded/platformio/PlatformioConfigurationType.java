@@ -53,7 +53,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   }
 
   @NotNull
-  public ConfigurationFactory @NotNull [] getNewProjectFactories() {
+  public ConfigurationFactory[] getNewProjectFactories() {
     return myNewProjectFactories;
   }
 

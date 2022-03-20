@@ -61,7 +61,7 @@ public class PlatformioLauncher extends CLionLauncher {
 
   public PlatformioLauncher(@NotNull ExecutionEnvironment executionEnvironment,
                             @NotNull PlatformioBaseConfiguration configuration,
-                            String @Nullable [] cliParameters,
+                            @Nullable String[] cliParameters,
                             @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(executionEnvironment, configuration);
     this.cliParameters = cliParameters;
