@@ -18,7 +18,7 @@ public class PlatformioCleanAction extends PlatformioAction {
   public PlatformioCleanAction() {super(TEXT);}
 
   @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     actionPerformed(e, ARGUMENTS, false, true);
   }
 

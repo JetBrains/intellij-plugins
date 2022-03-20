@@ -54,15 +54,28 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.intellij.execution.ui.ConsoleViewContentType.NORMAL_OUTPUT;
+import static com.intellij.openapi.vfs.VfsUtil.findFileByIoFile;
+import static com.intellij.openapi.vfs.VfsUtilCore.findRelativeFile;
+import static com.intellij.util.containers.ContainerUtil.find;
+import static com.jetbrains.cidr.ArchitectureType.UNKNOWN;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType.FILE_NAME;
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.fusLog;
+import static com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration.getSelectedBuildProfile;
+import static com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget.getProfileName;
+import static com.jetbrains.cidr.cpp.execution.debugger.embedded.svd.SvdPanel.registerPeripheralTab;
+import static icons.CLionEmbeddedIcons.ResetMcu;
+import static java.util.Objects.requireNonNull;
+
 public class PlatformioLauncher extends CLionLauncher {
   private final String[] cliParameters;
   private final PlatformioActionBase.FUS_COMMAND command;
 
 
-  public PlatformioLauncher(@NotNull ExecutionEnvironment executionEnvironment,
-                            @NotNull PlatformioBaseConfiguration configuration,
-                            @Nullable String[] cliParameters,
-                            @NotNull PlatformioActionBase.FUS_COMMAND command) {
+  public PlatformioLauncher(final @NotNull ExecutionEnvironment executionEnvironment,
+                            final @NotNull PlatformioBaseConfiguration configuration,
+                            final @Nullable String[] cliParameters,
+                            final @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(executionEnvironment, configuration);
     this.cliParameters = cliParameters;
     this.command = command;
@@ -71,51 +84,52 @@ public class PlatformioLauncher extends CLionLauncher {
   @NotNull
   @Override
   protected Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
-    PlatformioBaseConfiguration configuration = (PlatformioBaseConfiguration)getConfiguration();
-    CPPToolchains.Toolchain toolchain = configuration.getToolchain();
+    final var configuration = (PlatformioBaseConfiguration) getConfiguration();
+    final var toolchain = configuration.getToolchain();
     return new Pair<>(toolchain.getDebugger().getGdbExecutable(), new CPPEnvironment(toolchain));
   }
 
   @NotNull
   @Override
-  protected GeneralCommandLine createCommandLine(@NotNull CommandLineState state,
-                                                 @NotNull File runFile,
-                                                 @NotNull CPPEnvironment environment,
-                                                 boolean usePty) throws ExecutionException {
-    GeneralCommandLine commandLine = super.createCommandLine(state, runFile, environment, usePty);
+  protected GeneralCommandLine createCommandLine(final @NotNull CommandLineState state,
+                                                 final @NotNull File runFile,
+                                                 final @NotNull CPPEnvironment environment,
+                                                 final boolean usePty) throws ExecutionException {
+    final var commandLine = super.createCommandLine(state, runFile, environment, usePty);
     commandLine.setWorkDirectory(getProjectBaseDir());
     if (cliParameters != null) {
       commandLine.addParameters(cliParameters);
     }
-    Optional<String> cmakeBuildType = getCmakeBuildType(state);
+    final var cmakeBuildType = getCmakeBuildType(state);
     cmakeBuildType.ifPresent(s -> commandLine.addParameters("-e", s));
     return commandLine;
   }
 
   @NotNull
   @Override
-  public ProcessHandler createProcess(@NotNull CommandLineState state) throws ExecutionException {
-    PlatformioActionBase.fusLog(getProject(), command);
+  public ProcessHandler createProcess(final @NotNull CommandLineState state) throws ExecutionException {
+    fusLog(getProject(), command);
     return super.createProcess(state);
   }
 
   @Override
   @NotNull
-  public CidrDebugProcess createDebugProcess(@NotNull CommandLineState commandLineState, @NotNull XDebugSession xDebugSession)
+  public CidrDebugProcess createDebugProcess(
+          final @NotNull CommandLineState commandLineState,
+          final @NotNull XDebugSession xDebugSession)
     throws ExecutionException {
-    PlatformioActionBase.fusLog(getProject(), command);
-    Optional<String> cmakeBuildType = getCmakeBuildType(commandLineState);
-    DebuggerDriverConfiguration debuggerDriverConfiguration = new CLionGDBDriverConfiguration(getConfiguration().getProject(),
-                                                                                              ((PlatformioBaseConfiguration)getConfiguration())
-                                                                                                .getToolchain()) {
+    fusLog(getProject(), command);
+    final var cmakeBuildType = getCmakeBuildType(commandLineState);
+    final var debuggerDriverConfiguration = new CLionGDBDriverConfiguration(getConfiguration().getProject(),
+            ((PlatformioBaseConfiguration) getConfiguration()).getToolchain()) {
       @Override
       public @NotNull
-      GeneralCommandLine createDriverCommandLine(@NotNull DebuggerDriver driver, @NotNull ArchitectureType architectureType)
+      GeneralCommandLine createDriverCommandLine(final @NotNull DebuggerDriver driver, final @NotNull ArchitectureType architectureType)
         throws ExecutionException {
-        GeneralCommandLine driverCommandLine = super.createDriverCommandLine(driver, architectureType)
+        final var driverCommandLine = super.createDriverCommandLine(driver, architectureType)
           .withWorkDirectory(getProject().getBasePath())
           .withRedirectErrorStream(true);
-        ParametersList parametersList = driverCommandLine.getParametersList();
+        final var parametersList = driverCommandLine.getParametersList();
         parametersList.clearAll();
         parametersList.addAll("debug", "--interface=gdb", "--interpreter=mi2", "-x", ".pioinit", "--iex", "set mi-async on");
         cmakeBuildType.ifPresent(s -> parametersList.addAll("-e", s));
@@ -123,39 +137,36 @@ public class PlatformioLauncher extends CLionLauncher {
       }
     };
     @SystemIndependent final String projectPath = getProject().getBasePath();
-    final VirtualFileSystem vfs = LocalFileSystem.getInstance();
-    if (projectPath == null ||
-        Objects.requireNonNull(vfs.findFileByPath(projectPath)).findChild(PlatformioFileType.FILE_NAME) == null) {
-      throw new ExecutionException(ClionEmbeddedPlatformioBundle.message("file.is.not.found", PlatformioFileType.FILE_NAME));
+    final var vfs = LocalFileSystem.getInstance();
+    if (projectPath == null || requireNonNull(vfs.findFileByPath(projectPath)).findChild(FILE_NAME) == null) {
+      throw new ExecutionException(ClionEmbeddedPlatformioBundle.message("file.is.not.found", FILE_NAME));
     }
-    GeneralCommandLine commandLine = new GeneralCommandLine("").withWorkDirectory(projectPath);
-    TrivialRunParameters parameters = new TrivialRunParameters(debuggerDriverConfiguration, commandLine, ArchitectureType.UNKNOWN);
+    final var commandLine = new GeneralCommandLine("").withWorkDirectory(projectPath);
+    final var parameters = new TrivialRunParameters(debuggerDriverConfiguration, commandLine, UNKNOWN);
 
     final ConsoleFilterProvider consoleCopyFilter = project -> new Filter[]{(s, i) -> {
-      xDebugSession.getConsoleView().print(s, ConsoleViewContentType.NORMAL_OUTPUT);
+      xDebugSession.getConsoleView().print(s, NORMAL_OUTPUT);
       return null;
     }};
 
-    VirtualFile defaultSvdLocation = findSvdFile(getProject());
-    return new CidrDebugProcess(parameters, xDebugSession, commandLineState.getConsoleBuilder(),
-                                consoleCopyFilter) {
-
+    final var defaultSvdLocation = findSvdFile(getProject());
+    return new CidrDebugProcess(parameters, xDebugSession, commandLineState.getConsoleBuilder(), consoleCopyFilter) {
       @Override
       public @NotNull
       XDebugTabLayouter createTabLayouter() {
         CidrDebugProcess gdbDebugProcess = this;
-        XDebugTabLayouter innerLayouter = super.createTabLayouter();
+        final var innerLayouter = super.createTabLayouter();
         return new XDebugTabLayouter() {
           @NotNull
           @Override
-          public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
+          public Content registerConsoleContent(final @NotNull RunnerLayoutUi ui, final @NotNull ExecutionConsole console) {
             return innerLayouter.registerConsoleContent(ui, console);
           }
 
           @Override
-          public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
+          public void registerAdditionalContent(final @NotNull RunnerLayoutUi ui) {
             innerLayouter.registerAdditionalContent(ui);
-            SvdPanel panel = SvdPanel.registerPeripheralTab(gdbDebugProcess, ui);
+            final var panel = registerPeripheralTab(gdbDebugProcess, ui);
             panel.setSvdDefaultLocation(defaultSvdLocation);
           }
         };
@@ -163,9 +174,8 @@ public class PlatformioLauncher extends CLionLauncher {
 
       @Override
       protected @NotNull
-      DebuggerDriver.Inferior doLoadTarget(@NotNull DebuggerDriver driver) throws ExecutionException {
-
-        DebuggerDriver.Inferior tempInferior = driver.loadForRemote("", null, null, Collections.emptyList());
+      DebuggerDriver.Inferior doLoadTarget(final @NotNull DebuggerDriver driver) throws ExecutionException {
+        final var tempInferior = driver.loadForRemote("", null, null, List.of());
         return driver.new Inferior(tempInferior.getId()) {
           @SuppressWarnings("RedundantThrows")
           @Override
@@ -187,12 +197,12 @@ public class PlatformioLauncher extends CLionLauncher {
     };
   }
 
-  private Optional<String> getCmakeBuildType(@NotNull CommandLineState commandLineState) throws ExecutionException {
-    CMakeWorkspace workspace = CMakeWorkspace.getInstance(getProject());
+  private Optional<String> getCmakeBuildType(final @NotNull CommandLineState commandLineState) throws ExecutionException {
+    final var workspace = CMakeWorkspace.getInstance(getProject());
     if (!workspace.isInitialized()) {
       throw new ExecutionException(ClionEmbeddedPlatformioBundle.message("cmake.workspace.is.not.initialized"));
     }
-    String buildProfileId = CMakeBuildProfileExecutionTarget.getProfileName(commandLineState.getExecutionTarget());
+    final var buildProfileId = getProfileName(commandLineState.getExecutionTarget());
     return workspace
       .getProfileInfos()
       .stream()
@@ -204,19 +214,18 @@ public class PlatformioLauncher extends CLionLauncher {
 
   @SuppressWarnings("RedundantThrows")
   @Override
-  protected void collectAdditionalActions(@NotNull CommandLineState state,
-                                          @NotNull ProcessHandler processHandler,
-                                          @NotNull ExecutionConsole console,
-                                          @NotNull List<? super AnAction> actions) throws ExecutionException {
+  protected void collectAdditionalActions(final @NotNull CommandLineState state,
+                                          final @NotNull ProcessHandler processHandler,
+                                          final @NotNull ExecutionConsole console,
+                                          final @NotNull List<? super AnAction> actions) throws ExecutionException {
 
     actions.add(
-      new AnAction(() -> EmbeddedBundle.message("mcu.reset.action.title"), () -> EmbeddedBundle.message("mcu.reset.action.description"),
-                   CLionEmbeddedIcons.ResetMcu) {
+      new AnAction(() -> EmbeddedBundle.message("mcu.reset.action.title"), () -> EmbeddedBundle.message("mcu.reset.action.description"), ResetMcu) {
         @Override
-        public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-          XDebugSession session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);
+        public void actionPerformed(final @NotNull AnActionEvent anActionEvent) {
+          final var session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);
           if (session != null) {
-            ((CidrDebugProcess)session.getDebugProcess()).postCommand(
+            ((CidrDebugProcess) session.getDebugProcess()).postCommand(
               drv -> ((GDBDriver)drv).interruptAndExecuteConsole("pio_reset_halt_target")
             );
           }
@@ -225,32 +234,30 @@ public class PlatformioLauncher extends CLionLauncher {
   }
 
   @Nullable
-  public static VirtualFile findSvdFile(@NotNull Project project) {
-    CMakeWorkspace workspace = CMakeWorkspace.getInstance(project);
+  public static VirtualFile findSvdFile(final @NotNull Project project) {
+    final var workspace = CMakeWorkspace.getInstance(project);
     if (!workspace.isInitialized()) {
       return null;
     }
 
-    CMakeModel model = workspace.getModel();
-    CMakeBuildProfileExecutionTarget selectedBuildProfile = CMakeAppRunConfiguration.getSelectedBuildProfile(project);
-    File projectDir = workspace.getProjectPath().toFile();
-    if (model == null || selectedBuildProfile == null || projectDir == null) {
+    final var model = workspace.getModel();
+    final var selectedBuildProfile = getSelectedBuildProfile(project);
+    final var projectDir = workspace.getProjectPath().toFile();
+    if (model == null || selectedBuildProfile == null) {
       return null;
     }
 
-    String profileName = selectedBuildProfile.getProfileName();
-    CMakeModelConfigurationData configurationData = ContainerUtil.find(
+    final var profileName = selectedBuildProfile.getProfileName();
+    final var configurationData = find(
       model.getConfigurationData(), confData -> profileName.equals(confData.getConfigName()));
 
     if (configurationData == null) return null;
     try {
-      CMakeVariable variable = configurationData.getCacheConfigurator().findVariable("CLION_SVD_FILE_PATH");
+      final var variable = configurationData.getCacheConfigurator().findVariable("CLION_SVD_FILE_PATH");
       if (variable == null || variable.getValue() == null) return null;
-      return VfsUtilCore.findRelativeFile(
-        variable.getValue(),
-        VfsUtil.findFileByIoFile(projectDir, false));
+      return findRelativeFile(variable.getValue(), findFileByIoFile(projectDir, false));
     }
-    catch (CMakeException ignored) {
+    catch (final CMakeException ignored) {
       return null;
     }
   }

@@ -13,7 +13,7 @@ public class PlatformioReInitAction extends PlatformioAction {
   }
 
   @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     actionPerformed(e, "-c clion init --ide clion", true, false);
   }
 

@@ -5,7 +5,11 @@ import org.jetbrains.io.JsonReaderEx;
 
 import java.util.*;
 
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo.EMPTY;
 import static com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.SourceTemplate.getByFrameworkName;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
+import static java.util.Objects.requireNonNull;
 
 public final class BoardsJsonParser {
 
@@ -21,15 +25,15 @@ public final class BoardsJsonParser {
    */
   @NotNull
   public static DeviceTreeNode parse(@NotNull CharSequence text) {
-    SortedMap<String, DeviceTreeNode> boardsByVendor = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    DeviceTreeNode rootNode = new DeviceTreeNode(null, ROOT, "", BoardInfo.EMPTY);
-    try (JsonReaderEx jsonReader = new JsonReaderEx(text)) {
+    final var boardsByVendor = new TreeMap<String, DeviceTreeNode>(CASE_INSENSITIVE_ORDER);
+    final var rootNode = new DeviceTreeNode(null, ROOT, "", EMPTY);
+    try (final JsonReaderEx jsonReader = new JsonReaderEx(text)) {
       for (jsonReader.beginArray(); jsonReader.hasNext(); ) {
         jsonReader.beginObject();
         String vendorName = "Generic";
         String boardId = "";
         String boardName = "";
-        SortedSet<String> frameworks = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        final var frameworks = new TreeSet<String>(CASE_INSENSITIVE_ORDER);
         while (jsonReader.hasNext()) {
           String name = jsonReader.nextName();
           switch (name) {
@@ -45,7 +49,7 @@ public final class BoardsJsonParser {
             case "frameworks":
               jsonReader.beginArray();
               while (jsonReader.hasNext()) {
-                String frameworkName = jsonReader.nextAsString();
+                final var frameworkName = jsonReader.nextAsString();
                 frameworks.add(frameworkName);
               }
               jsonReader.endArray();
@@ -59,19 +63,16 @@ public final class BoardsJsonParser {
         if (boardId == null) {
           continue;
         }
-        DeviceTreeNode vendorNode =
-          boardsByVendor.computeIfAbsent(vendorName, name -> rootNode.add(new DeviceTreeNode(rootNode, VENDOR, name, BoardInfo.EMPTY)));
-        BoardInfo boardInfo = new BoardInfo(SourceTemplate.getByFrameworkName(frameworks), "--board", boardId);
-
-        DeviceTreeNode board = new DeviceTreeNode(vendorNode, BOARD, Objects.requireNonNull(boardName), boardInfo);
+        final var vendorNode =
+          boardsByVendor.computeIfAbsent(vendorName, name -> rootNode.add(new DeviceTreeNode(rootNode, VENDOR, name, EMPTY)));
+        final var boardInfo = new BoardInfo(getByFrameworkName(frameworks), "--board", boardId);
+        final var board = new DeviceTreeNode(vendorNode, BOARD, requireNonNull(boardName), boardInfo);
         vendorNode.add(board);
         if (frameworks.size() > 1) {
-          for (String frameworkName : frameworks) {
-            BoardInfo frameworkBoardInfo = new BoardInfo(
-              SourceTemplate.getByFrameworkName(frameworkName),
+          for (final String frameworkName : frameworks) {
+            final var frameworkBoardInfo = new BoardInfo(getByFrameworkName(frameworkName),
               "--board", boardId, "-O", "framework=" + frameworkName);
-            DeviceTreeNode framework =
-              new DeviceTreeNode(board, FRAMEWORK, frameworkName, frameworkBoardInfo);
+            final var framework = new DeviceTreeNode(board, FRAMEWORK, frameworkName, frameworkBoardInfo);
             board.add(framework);
           }
         }

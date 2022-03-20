@@ -12,7 +12,7 @@ public class PlatformioHomeAction extends PlatformioActionBase {
   }
 
   @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     actionPerformed(e, "-c clion home", false, false);
   }
 

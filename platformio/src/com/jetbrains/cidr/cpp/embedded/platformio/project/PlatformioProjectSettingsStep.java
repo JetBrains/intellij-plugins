@@ -31,15 +31,29 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import static com.intellij.notification.NotificationType.WARNING;
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
+import static com.intellij.openapi.util.io.FileUtil.getTempDirectory;
+import static com.intellij.ui.SimpleTextAttributes.LINK_ATTRIBUTES;
+import static com.intellij.util.ExceptionUtil.getMessage;
 import static com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle.message;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration.findPlatformio;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.BoardInfo.EMPTY;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.ROOT;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.NOTIFICATION_GROUP;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.openInstallGuide;
+import static com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService.openSettings;
+import static java.lang.String.valueOf;
+import static javax.swing.BorderFactory.createEmptyBorder;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<BoardInfo>> {
   private final Tree myTree;
 
-  public PlatformioProjectSettingsStep(DirectoryProjectGenerator<Ref<BoardInfo>> projectGenerator,
-                                       AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo>> callback) {
+  public PlatformioProjectSettingsStep(final @NotNull DirectoryProjectGenerator<Ref<BoardInfo>> projectGenerator,
+                                       final @NotNull AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo>> callback) {
     super(projectGenerator, callback);
-    myTree = new Tree(new DefaultTreeModel(new DeviceTreeNode(null, DeviceTreeNode.TYPE.ROOT, "", BoardInfo.EMPTY)));
+    myTree = new Tree(new DefaultTreeModel(new DeviceTreeNode(null, ROOT, "", EMPTY)));
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
       @Override
       public void customizeCellRenderer(@NotNull JTree tree,
@@ -49,7 +63,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
                                         boolean leaf,
                                         int row,
                                         boolean hasFocus) {
-        DeviceTreeNode node = (DeviceTreeNode)value;
+        final var node = (DeviceTreeNode)value;
         append(node.getName());
         setIcon(node.getType().getIcon());
       }
@@ -59,13 +73,13 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
     myTree.setRootVisible(false);
 
     myTree.addTreeSelectionListener(e -> {
-      TreePath selectionPath = e.getNewLeadSelectionPath();
+      final var selectionPath = e.getNewLeadSelectionPath();
       BoardInfo boardInfo;
       if (selectionPath != null) {
         boardInfo = ((DeviceTreeNode)selectionPath.getLastPathComponent()).getBoardInfo();
       }
       else {
-        boardInfo = BoardInfo.EMPTY;
+        boardInfo = EMPTY;
       }
       userSelected(boardInfo);
     });
@@ -79,15 +93,14 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
 
   @Override
   protected JPanel createAdvancedSettings() {
-
-    JBScrollPane scrollPane = new JBScrollPane(myTree);
-    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    BorderLayoutPanel panel = new BorderLayoutPanel(0, 0)
+    final var scrollPane = new JBScrollPane(myTree);
+    scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
+    final var panel = new BorderLayoutPanel(0, 0)
       .addToTop(new JBLabel(
-        message("available.boards.frameworks")).withBorder(BorderFactory.createEmptyBorder(0, 5, 3, 0)))
+        message("available.boards.frameworks")).withBorder(createEmptyBorder(0, 5, 3, 0)))
       .addToCenter(scrollPane)
       .withPreferredHeight(0)
-      .withBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
+      .withBorder(createEmptyBorder(5, 0, 10, 0));
 
     try {
 
@@ -95,27 +108,24 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           myTree.getEmptyText().setText(message("gathering.info"));
-          String myPioUtility = PlatformioBaseConfiguration.findPlatformio();
+          final var myPioUtility = findPlatformio();
           if (myPioUtility == null) {
-            String platformioIsNotFound = message("platformio.utility.is.not.found");
+            final var platformioIsNotFound = message("platformio.utility.is.not.found");
             setErrorText(platformioIsNotFound);
             myTree.getEmptyText().setText(platformioIsNotFound);
             myTree.getEmptyText()
-              .appendLine(message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
-                          e -> PlatformioService.openSettings(getProject()))
-              .appendLine(message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
-                          e -> PlatformioService.openInstallGuide());
-
+              .appendLine(message("open.settings.link"), LINK_ATTRIBUTES, e -> openSettings(getProject()))
+              .appendLine(message("install.guide"), LINK_ATTRIBUTES, e -> openInstallGuide());
             return;
           }
-          GeneralCommandLine commandLine = new GeneralCommandLine()
+          final var commandLine = new GeneralCommandLine()
             .withExePath(myPioUtility)
             .withParameters("boards", "--json-output")
-            .withWorkDirectory(FileUtil.getTempDirectory())
+            .withWorkDirectory(getTempDirectory())
             .withRedirectErrorStream(true);
 
           try {
-            ProcessOutput output = new CapturingProcessRunner(new CapturingProcessHandler(commandLine))
+            final var output = new CapturingProcessRunner(new CapturingProcessHandler(commandLine))
               .runProcess(indicator, 60000);
             if (output.isTimeout()) {
               setErrorText(message("utility.timeout"));
@@ -125,26 +135,26 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
               setErrorText(message("platformio.exit.code", output.getExitCode(), output.getStdout(), output.getStderr()));
             }
             else {
-              DeviceTreeNode parsedRoot = BoardsJsonParser.parse(output.getStdout());
-              ApplicationManager.getApplication().invokeLater(
+              final var parsedRoot = BoardsJsonParser.parse(output.getStdout());
+              getApplication().invokeLater(
                 () -> {
                   myTree.setModel(new DefaultTreeModel(parsedRoot));
                   myTree.setPaintBusy(false);
                 });
             }
           }
-          catch (ExecutionException e) {
+          catch (final ExecutionException e) {
             setErrorText(e.getMessage());
           }
         }
       }.queue();
     }
-    catch (Throwable e) {
-      @NlsSafe String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
+    catch (final Throwable e) {
+      @NlsSafe String errorMessage = valueOf(getMessage(e));
       setErrorText(errorMessage);
       @NlsSafe String className = e.getClass().getSimpleName();
-      PlatformioService.NOTIFICATION_GROUP
-        .createNotification(message("platformio.utility.failed"), errorMessage, NotificationType.WARNING)
+      NOTIFICATION_GROUP
+        .createNotification(message("platformio.utility.failed"), errorMessage, WARNING)
         .setSubtitle(className)
         .notify(null);
     }
@@ -160,7 +170,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
   @Override
   public boolean checkValid() {
     if (!super.checkValid()) return false;
-    BoardInfo settings = getPeer().getSettings().get();
+    final BoardInfo settings = getPeer().getSettings().get();
     if (settings.getParameters().length == 0) {
       setWarningText(message("please.select.target"));
       return false;

@@ -9,13 +9,11 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildConfigurationHelper;
-import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
-import com.jetbrains.cidr.cpp.toolchains.CPPToolchains;
+import com.jetbrains.cidr.cpp.toolchains.CPPToolchains.Toolchain;
 import com.jetbrains.cidr.execution.CidrCommandLineState;
 import com.jetbrains.cidr.execution.CidrExecutableDataHolder;
 import com.jetbrains.cidr.toolchains.OSType;
@@ -24,6 +22,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.function.Supplier;
+
+import static com.intellij.execution.configurations.PathEnvironmentVariableUtil.findExecutableInWindowsPath;
+import static com.intellij.execution.configurations.PathEnvironmentVariableUtil.findInPath;
+import static com.intellij.openapi.util.io.FileUtil.canExecute;
+import static com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable.getPioLocation;
+import static com.jetbrains.cidr.cpp.toolchains.CPPDebugger.Kind.CUSTOM_GDB;
+import static com.jetbrains.cidr.cpp.toolchains.CPPDebugger.create;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfiguration
@@ -34,15 +39,15 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   private final String[] cliParameters;
 
 
-  private volatile CPPToolchains.Toolchain myToolchain;
+  private volatile Toolchain myToolchain;
   private final PlatformioActionBase.FUS_COMMAND command;
 
-  public PlatformioBaseConfiguration(@NotNull Project project,
-                                     @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String myBuildTargetName,
-                                     @NotNull Supplier<@NlsActions.ActionText String> name,
-                                     @Nullable String[] cliParameters,
-                                     @NotNull PlatformioActionBase.FUS_COMMAND command) {
+  public PlatformioBaseConfiguration(final @NotNull Project project,
+                                     final @NotNull ConfigurationFactory configurationFactory,
+                                     final @NotNull String myBuildTargetName,
+                                     final @NotNull Supplier<@NlsActions.ActionText String> name,
+                                     final @Nullable String[] cliParameters,
+                                     final @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(project, configurationFactory, name.get());
     this.myBuildTargetName = myBuildTargetName;
     this.mySuggestedName = name;
@@ -79,13 +84,13 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
 
   private synchronized void createToolchain() {
     String platformioLocation = findPlatformio();
-    if (platformioLocation != null && FileUtil.canExecute(new File(platformioLocation))) {
-      myToolchain = new CPPToolchains.Toolchain(OSType.getCurrent());
-      myToolchain.setDebugger(CPPDebugger.create(CPPDebugger.Kind.CUSTOM_GDB, platformioLocation));
+    if (platformioLocation != null && canExecute(new File(platformioLocation))) {
+      myToolchain = new Toolchain(OSType.getCurrent());
+      myToolchain.setDebugger(create(CUSTOM_GDB, platformioLocation));
     }
   }
 
-  public CPPToolchains.Toolchain getToolchain() {
+  public Toolchain getToolchain() {
     return myToolchain;
   }
 
@@ -103,15 +108,15 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
 
   @Nullable
   public static String findPlatformio() {
-    String platformioLocation = PlatformioConfigurable.getPioLocation();
+    var platformioLocation = getPioLocation();
     if (!platformioLocation.isEmpty()) {
       return new File(platformioLocation).canExecute() ? platformioLocation : null;
     }
     if (SystemInfo.isWindows) {
-      platformioLocation = PathEnvironmentVariableUtil.findExecutableInWindowsPath("platformio", null);
+      platformioLocation = findExecutableInWindowsPath("platformio", null);
     }
     else {
-      File file = PathEnvironmentVariableUtil.findInPath("platformio");
+      final var file = findInPath("platformio");
       platformioLocation = file == null ? null : file.getAbsolutePath();
     }
     return platformioLocation;

@@ -6,13 +6,16 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
 import org.jetbrains.annotations.NotNull;
 
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND.DEBUG;
+
 @SuppressWarnings("WeakerAccess")
 public class PlatformioDebugConfiguration extends PlatformioBaseConfiguration
   implements RunConfigurationWithSuppressedDefaultRunAction {
 
-  public PlatformioDebugConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory) {
-    super(project, configurationFactory, "Debug", () -> ClionEmbeddedPlatformioBundle.message("run.config.debug"),
-          null, PlatformioActionBase.FUS_COMMAND.DEBUG);
+  public PlatformioDebugConfiguration(
+          final @NotNull Project project,
+          final @NotNull ConfigurationFactory configurationFactory) {
+    super(project, configurationFactory, "Debug", () -> ClionEmbeddedPlatformioBundle.message("run.config.debug"),null, DEBUG);
   }
 
   @NotNull
