@@ -13,7 +13,6 @@ import com.intellij.tools.Tool;
 import com.jetbrains.cidr.cpp.cmake.CMakeSettings;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeProfileInfo;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
-import com.jetbrains.cidr.cpp.embedded.platformio.CustomTool;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
@@ -126,8 +125,10 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
       }
     }
 
-    Tool tool = new CustomTool(tabTitle);
+    Tool tool = new Tool();
+    tool.setName(tabTitle.toString());
     tool.setProgram(platformioPath);
+    tool.setUseConsole(true);
     tool.setParameters(argumentsToPass);
     return tool;
   }

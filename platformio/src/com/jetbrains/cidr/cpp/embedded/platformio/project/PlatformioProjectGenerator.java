@@ -24,10 +24,12 @@ import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.platform.GeneratorPeerImpl;
 import com.intellij.platform.ProjectGeneratorPeer;
+import com.intellij.tools.Tool;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
@@ -39,7 +41,6 @@ import com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CLionProjectGenerat
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener;
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
-import com.jetbrains.cidr.cpp.embedded.platformio.CustomTool;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildConfigurationHelper;
@@ -140,7 +141,9 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
       return;
     }
     fusLog(null, CREATE_PROJECT);
-    CustomTool initTool = new CustomTool(ClionEmbeddedPlatformioBundle.message("platformio.init.title"));
+    Tool initTool = new Tool();
+    initTool.setUseConsole(true);
+    initTool.setName(ClionEmbeddedPlatformioBundle.message("platformio.init.title"));
     initTool.setProgram(myPioUtility);
     initTool.setWorkingDirectory(baseDir.getCanonicalPath());
     initTool.setParameters("init --ide clion" + pioCmdLineTail);
@@ -154,25 +157,28 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
         semaphore.up();
       }
     };
-    if (initTool.executeIfPossible(null, projectContext, -1, processListener)) {
-      new Task.Backgroundable(project, ClionEmbeddedPlatformioBundle.message("initializing"), true, PerformInBackgroundOption.DEAF) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          while (!semaphore.waitFor(200)) {
-            indicator.checkCanceled();
-          }
-          baseDir.refresh(false, true);
-        }
 
-        @Override
-        public void onFinished() {
-          if (success.get()) {
-            // Phase 2 started
-            WriteAction.run(() -> finishFileStructure(project, baseDir, template));
+    ToolWindowManager.getInstance(project).invokeLater(() -> {
+      if (initTool.executeIfPossible(null, projectContext, -1, processListener)) {
+        new Task.Backgroundable(project, ClionEmbeddedPlatformioBundle.message("initializing"), true, PerformInBackgroundOption.DEAF) {
+          @Override
+          public void run(@NotNull ProgressIndicator indicator) {
+            while (!semaphore.waitFor(200)) {
+              indicator.checkCanceled();
+            }
+            baseDir.refresh(false, true);
           }
-        }
-      }.queue(); // Phase 1 started
-    }
+
+          @Override
+          public void onFinished() {
+            if (success.get()) {
+              // Phase 2 started
+              WriteAction.run(() -> finishFileStructure(project, baseDir, template));
+            }
+          }
+        }.queue(); // Phase 1 started
+      }
+    });
   }
 
   private void finishFileStructure(@NotNull Project project,
