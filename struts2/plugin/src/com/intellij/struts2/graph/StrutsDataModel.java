@@ -141,9 +141,8 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
         final BasicNodesGroup group = new BasicNodesGroup(name) {
 
           @Override
-          @Nullable
-          public GroupNodeRealizer getGroupNodeRealizer() {
-            final GroupNodeRealizer groupNodeRealizer = super.getGroupNodeRealizer();
+          public @Nullable GroupNodeRealizer createGroupNodeRealizer() {
+            final GroupNodeRealizer groupNodeRealizer = super.createGroupNodeRealizer();
             assert groupNodeRealizer != null;
 
             final NodeLabel nodeLabel = groupNodeRealizer.getLabel();
