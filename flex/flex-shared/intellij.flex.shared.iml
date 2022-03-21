@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
     <orderEntry type="module" module-name="intellij.platform.jps.build" />
     <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
   </component>
 </module>

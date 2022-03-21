@@ -67,6 +67,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="plexus-utils" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module-library">
       <library name="bundlor">
         <CLASSES>

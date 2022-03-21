@@ -27,5 +27,6 @@
     <orderEntry type="library" scope="TEST" name="org.codehaus.groovy:groovy" level="project" />
     <orderEntry type="module" module-name="intellij.maven.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.impl.refactorings" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.util.jdom" scope="TEST" />
   </component>
 </module>
