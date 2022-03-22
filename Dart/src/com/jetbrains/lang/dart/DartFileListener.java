@@ -60,7 +60,7 @@ public class DartFileListener implements AsyncFileListener {
   @Nullable
   @Override
   public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
-    SmartList<VFileEvent> dotPackageEvents = new SmartList<>();
+    SmartList<VFileEvent> packagesFileEvents = new SmartList<>();
     SmartList<VFileEvent> moveOrRenameAnalyzableFileEvents = new SmartList<>();
 
     for (VFileEvent event : events) {
@@ -72,7 +72,7 @@ public class DartFileListener implements AsyncFileListener {
               DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(((VFilePropertyChangeEvent)event).getNewValue()) ||
               DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
               DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getNewValue())) {
-            dotPackageEvents.add(event);
+            packagesFileEvents.add(event);
           }
 
           if (DartAnalysisServerService.isFileNameRespectedByAnalysisServer(((VFilePropertyChangeEvent)event).getOldValue().toString()) ||
@@ -84,7 +84,7 @@ public class DartFileListener implements AsyncFileListener {
       else {
         if (DotPackagesFileUtil.PACKAGE_CONFIG_JSON.equals(PathUtil.getFileName(event.getPath())) ||
             DotPackagesFileUtil.DOT_PACKAGES.equals(PathUtil.getFileName(event.getPath()))) {
-          dotPackageEvents.add(event);
+          packagesFileEvents.add(event);
         }
 
         if (event instanceof VFileMoveEvent &&
@@ -94,11 +94,11 @@ public class DartFileListener implements AsyncFileListener {
       }
     }
 
-    if (dotPackageEvents.isEmpty() && moveOrRenameAnalyzableFileEvents.isEmpty()) {
+    if (packagesFileEvents.isEmpty() && moveOrRenameAnalyzableFileEvents.isEmpty()) {
       return null;
     }
 
-    return new DartFileChangeApplier(dotPackageEvents, moveOrRenameAnalyzableFileEvents);
+    return new DartFileChangeApplier(packagesFileEvents, moveOrRenameAnalyzableFileEvents);
   }
 
   /**
@@ -359,12 +359,12 @@ public class DartFileListener implements AsyncFileListener {
   }
 
   private static final class DartFileChangeApplier implements ChangeApplier {
-    private final List<? extends VFileEvent> myDotPackageEvents;
+    private final List<? extends VFileEvent> myPackagesFileEvents;
     private final List<? extends VFileEvent> myMoveOrRenameAnalyzableFileEvents;
 
-    private DartFileChangeApplier(List<? extends VFileEvent> dotPackageEvents,
+    private DartFileChangeApplier(List<? extends VFileEvent> packagesFileEvents,
                                   List<? extends VFileEvent> moveOrRenameAnalyzableFileEvents) {
-      myDotPackageEvents = dotPackageEvents;
+      myPackagesFileEvents = packagesFileEvents;
       myMoveOrRenameAnalyzableFileEvents = moveOrRenameAnalyzableFileEvents;
     }
 
@@ -376,15 +376,18 @@ public class DartFileListener implements AsyncFileListener {
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         if (DartSdk.getDartSdk(project) == null) continue;
 
-        for (VFileEvent event : myDotPackageEvents) {
+        for (VFileEvent event : myPackagesFileEvents) {
           VirtualFile file = event.getFile();
           if (file == null) continue;
 
-          VirtualFile parent = file.getParent();
-          VirtualFile pubspec = parent == null ? null : parent.findChild(PUBSPEC_YAML);
+          VirtualFile dartRoot = file.getParent();
+          if (dartRoot != null && file.getName().equals(DotPackagesFileUtil.PACKAGE_CONFIG_JSON)) {
+            dartRoot = dartRoot.getParent();
+          }
+          VirtualFile pubspec = dartRoot == null ? null : dartRoot.findChild(PUBSPEC_YAML);
           if (pubspec == null) continue;
 
-          if (ProjectFileIndex.getInstance(project).isInContent(file)) {
+          if (ProjectFileIndex.getInstance(project).isInContent(pubspec)) {
             projectsToUpdate.add(project);
 
             final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
