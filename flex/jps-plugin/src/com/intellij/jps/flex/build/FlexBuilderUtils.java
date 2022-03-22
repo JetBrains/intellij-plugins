@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -36,17 +36,17 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public final class FlexBuilderUtils {
-  public static String getCompilerName(final JpsFlexBuildConfiguration bc) {
+final class FlexBuilderUtils {
+  static String getCompilerName(final JpsFlexBuildConfiguration bc) {
     String postfix = bc.isTempBCForCompilation() ? " - " + FlexCommonUtils.getBCSpecifier(bc) : "";
     if (!bc.getName().equals(bc.getModule().getName())) postfix += " (module " + bc.getModule().getName() + ")";
     return "[" + bc.getName() + postfix + "]";
   }
 
-  public static void performPostCompileActions(final CompileContext context,
-                                               final @NotNull JpsFlexBuildConfiguration bc,
-                                               final Collection<String> dirtyFilePaths,
-                                               final BuildOutputConsumer outputConsumer) {
+  static void performPostCompileActions(final CompileContext context,
+                                        final @NotNull JpsFlexBuildConfiguration bc,
+                                        final Collection<String> dirtyFilePaths,
+                                        final BuildOutputConsumer outputConsumer) {
     final JpsSdk<?> sdk = bc.getSdk();
     assert sdk != null;
 

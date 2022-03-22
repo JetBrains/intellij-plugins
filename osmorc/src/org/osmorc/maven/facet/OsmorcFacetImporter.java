@@ -51,7 +51,7 @@ import java.util.*;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
+public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
   private static final String INCLUDE_MANIFEST = "_include";
 
   public OsmorcFacetImporter() {

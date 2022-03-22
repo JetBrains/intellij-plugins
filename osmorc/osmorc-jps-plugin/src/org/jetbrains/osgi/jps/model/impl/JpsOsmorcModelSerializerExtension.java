@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.model.impl;
 
 import com.intellij.util.xmlb.XmlSerializer;
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author michael.golubev
  */
-public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtension {
+public final class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtension {
   private static final String COMPONENT_NAME = "Osmorc";
 
   @NotNull

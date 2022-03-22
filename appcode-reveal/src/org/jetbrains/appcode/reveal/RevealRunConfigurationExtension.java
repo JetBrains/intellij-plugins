@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -48,7 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
+public final class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");

@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -48,19 +36,18 @@ import java.io.OutputStream;
 public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   private CfmlUnitRunnerParameters myRunnerParameters;
 
-  protected CfmlUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
+  CfmlUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
     myRunnerParameters = createRunnerParametersInstance();
   }
 
 
-  @NotNull
   @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+  public @NotNull SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new CfmlUnitRunConfigurationForm(getProject());
   }
 
-  private static class MyProcessHandler extends ProcessHandler {
+  private static final class MyProcessHandler extends ProcessHandler {
     @Override
     protected void destroyProcessImpl() {
       notifyProcessTerminated(0);
@@ -83,7 +70,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   }
 
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment env) {
+  public RunProfileState getState(@NotNull Executor executor, final @NotNull ExecutionEnvironment env) {
     return new RunProfileState() {
       @Override
       public ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
@@ -171,11 +158,11 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
                     processHandler*/);
   }
 
-  protected CfmlUnitRunnerParameters createRunnerParametersInstance() {
+  private static CfmlUnitRunnerParameters createRunnerParametersInstance() {
     return new CfmlUnitRunnerParameters();
   }
 
-  public CfmlUnitRunnerParameters getRunnerParameters() {
+  CfmlUnitRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 

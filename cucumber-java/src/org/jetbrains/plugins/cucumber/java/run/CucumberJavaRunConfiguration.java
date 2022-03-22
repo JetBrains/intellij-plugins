@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
@@ -45,7 +45,7 @@ import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
+public final class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
   private final static Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
 

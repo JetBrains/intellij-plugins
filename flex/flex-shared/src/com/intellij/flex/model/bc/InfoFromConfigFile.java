@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.model.bc;
 
 import com.intellij.openapi.util.JDOMUtil;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class InfoFromConfigFile {
-  public static InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null, null);
+  public static final InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null, null);
 
   private static final Map<String, Pair<Long, InfoFromConfigFile>> ourCache = new HashMap<>();
 
@@ -131,8 +131,8 @@ public final class InfoFromConfigFile {
         final Element rootElement = JDOMUtil.load(configFile);
         final Element fileSpecsElement = rootElement.getChild("file-specs", rootElement.getNamespace());
         mainClassPath = fileSpecsElement == null ? null
-                                                 : fileSpecsElement.getChildTextNormalize("path-element", rootElement.getNamespace());
-        outputPath = rootElement.getChildTextNormalize("output", rootElement.getNamespace());
+                                                 : fileSpecsElement.getChildText("path-element", rootElement.getNamespace());
+        outputPath = rootElement.getChildText("output", rootElement.getNamespace());
 
         if (outputPath != null && !FileUtil.isAbsolute(outputPath)) {
           try {
@@ -143,7 +143,7 @@ public final class InfoFromConfigFile {
           }
         }
 
-        targetPlayer = rootElement.getChildTextNormalize("target-player", rootElement.getNamespace());
+        targetPlayer = rootElement.getChildText("target-player", rootElement.getNamespace());
       }
       catch (IOException | JDOMException ignore) {/*ignore*/ }
 

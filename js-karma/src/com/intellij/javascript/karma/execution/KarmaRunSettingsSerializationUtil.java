@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public final class KarmaRunSettingsSerializationUtil {
-
+final class KarmaRunSettingsSerializationUtil {
   private static final String CONFIG_FILE = "config-file";
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String WORKING_DIRECTORY = "working-directory";
@@ -29,7 +28,7 @@ public final class KarmaRunSettingsSerializationUtil {
 
   private KarmaRunSettingsSerializationUtil() {}
 
-  public static KarmaRunSettings readXml(@NotNull Element element) {
+  static KarmaRunSettings readXml(@NotNull Element element) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
 
     String configPath = StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, CONFIG_FILE));
@@ -85,7 +84,7 @@ public final class KarmaRunSettingsSerializationUtil {
     return JDOMExternalizerUtil.getChildrenValueAttributes(testNamesElement, TEST_NAME);
   }
 
-  public static void writeXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
+  static void writeXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
     JDOMExternalizerUtil.writeCustomField(element, CONFIG_FILE, settings.getConfigPathSystemIndependent());
     if (StringUtil.isNotEmpty(settings.getKarmaOptions())) {
       JDOMExternalizerUtil.writeCustomField(element, KARMA_OPTIONS, settings.getKarmaOptions());

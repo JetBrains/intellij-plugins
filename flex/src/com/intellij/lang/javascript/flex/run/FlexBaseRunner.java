@@ -613,7 +613,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final File descriptorFile = new File(descriptorPath);
     if (descriptorFile.isFile()) {
       try {
-        return JDOMUtil.load(descriptorFile).getChildTextNormalize("supportedProfiles", JDOMUtil.load(descriptorFile).getNamespace());
+        return JDOMUtil.load(descriptorFile).getChildText("supportedProfiles", JDOMUtil.load(descriptorFile).getNamespace());
       }
       catch (JDOMException | IOException ignore) {/*ignore*/}
     }

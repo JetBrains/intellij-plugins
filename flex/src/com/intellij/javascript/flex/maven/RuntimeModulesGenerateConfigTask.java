@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.openapi.module.Module;
@@ -25,8 +25,7 @@ import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.PATH_ELEMEN
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FILE_SPECS;
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.OUTPUT;
 
-public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasicTask {
-
+public final class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasicTask {
   static class RLMInfo {
     final String myRLMName;
     final String myMainClass;
@@ -100,8 +99,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     });
   }
 
-  @Nullable
-  private static Element getClonedRootElementOfMainConfigFile(final String filePath) {
+  private static @Nullable Element getClonedRootElementOfMainConfigFile(final String filePath) {
     final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (configFile != null) {
       try {
@@ -115,8 +113,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     return null;
   }
 
-  @NotNull
-  private static String findAbsolutePath(final Module module, final String relativeToSourceRoot) {
+  private static @NotNull String findAbsolutePath(final Module module, final String relativeToSourceRoot) {
     for (final VirtualFile root : ModuleRootManager.getInstance(module).getSourceRoots()) {
       final VirtualFile file = VfsUtilCore.findRelativeFile(relativeToSourceRoot, root);
       if (file != null) {

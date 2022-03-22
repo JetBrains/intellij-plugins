@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
-public class TapestryFacetConfiguration implements FacetConfiguration {
+public final class TapestryFacetConfiguration implements FacetConfiguration {
   private String _filterName;
   private String _applicationPackage;
   private TapestryVersion _version;

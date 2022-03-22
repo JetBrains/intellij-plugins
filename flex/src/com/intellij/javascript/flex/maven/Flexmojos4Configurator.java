@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -43,7 +43,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
   protected String getCompilerConfigFilePath(final String rlmName) {
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     final String classifier =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
+      configurationElement == null ? null : configurationElement.getChildText("classifier", configurationElement.getNamespace());
 
     String suffix = "";
     if (rlmName != null) {
@@ -69,9 +69,9 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
     final List<RLMInfo> result = new ArrayList<>();
     for (final Element moduleElement : modulesElement.getChildren()) {
       if (moduleElement.getChildren().size() > 0) {
-        final String mainClassRelativePath = moduleElement.getChildTextNormalize("sourceFile", moduleElement.getNamespace());
-        final String finalName = moduleElement.getChildTextNormalize("finalName", moduleElement.getNamespace());
-        final String destinationPath = moduleElement.getChildTextNormalize("destinationPath", moduleElement.getNamespace());
+        final String mainClassRelativePath = moduleElement.getChildText("sourceFile", moduleElement.getNamespace());
+        final String finalName = moduleElement.getChildText("finalName", moduleElement.getNamespace());
+        final String destinationPath = moduleElement.getChildText("destinationPath", moduleElement.getNamespace());
         final String mainClass = FileUtilRt.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
         final String rlmName = StringUtil.notNullize(finalName, StringUtil.getShortName(mainClass));
         // indeed, rlmName.toLowerCase() is specific to flexmojos 4

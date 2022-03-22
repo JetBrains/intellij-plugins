@@ -7,7 +7,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("WeakerAccess")
-public class PlatformioDebugConfiguration extends PlatformioBaseConfiguration
+public final class PlatformioDebugConfiguration extends PlatformioBaseConfiguration
   implements RunConfigurationWithSuppressedDefaultRunAction {
 
   public PlatformioDebugConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory) {

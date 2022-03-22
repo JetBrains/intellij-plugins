@@ -36,8 +36,7 @@ import java.util.Objects;
 
 /** A persistent service that stores protobuf settings. */
 @State(name = "ProtobufLanguageSettings", storages = @Storage("protoeditor.xml"))
-public class PbProjectSettings implements PersistentStateComponent<PbProjectSettings.State> {
-
+public final class PbProjectSettings implements PersistentStateComponent<PbProjectSettings.State> {
   private State state;
 
   public PbProjectSettings() {
@@ -111,8 +110,7 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
   }
 
   public PbProjectSettings copy() {
-    return new PbProjectSettings(
-        XmlSerializer.deserialize(XmlSerializer.serialize(state), State.class));
+    return new PbProjectSettings(XmlSerializer.deserialize(XmlSerializer.serialize(state), State.class));
   }
 
   @Override

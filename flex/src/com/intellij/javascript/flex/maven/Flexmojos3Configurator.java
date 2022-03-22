@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.flex.model.bc.*;
@@ -66,7 +66,6 @@ public class Flexmojos3Configurator {
   private final List<String> myCompiledLocales;
   private final List<String> myRuntimeLocales;
   private final FlexConfigInformer myInformer;
-
 
   public Flexmojos3Configurator(final Module module,
                                 final IdeModifiableModelsProvider modelsProvider,
@@ -148,7 +147,7 @@ public class Flexmojos3Configurator {
 
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     if (FlexmojosImporter.isFlexApp(myMavenProject)) {
-      final String sourceFile = configurationElement == null ? null : configurationElement.getChildTextNormalize("sourceFile");
+      final String sourceFile = configurationElement == null ? null : configurationElement.getChildText("sourceFile");
       if (sourceFile != null && (sourceFile.endsWith(".as") || sourceFile.endsWith(".mxml"))) {
         mainBC.setMainClass(sourceFile.substring(0, sourceFile.lastIndexOf(".")).replace("/", ".").replace("\\", "."));
       }
@@ -214,7 +213,7 @@ public class Flexmojos3Configurator {
     packagingOptions.getSigningOptions().setKeystorePath(keystorePath);
 
     final String keystoreType =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize("storetype", configurationElement.getNamespace());
+      configurationElement == null ? null : configurationElement.getChildText("storetype", configurationElement.getNamespace());
     if (keystoreType != null) {
       packagingOptions.getSigningOptions().setKeystoreType(keystoreType);
     }
@@ -225,7 +224,7 @@ public class Flexmojos3Configurator {
                                       final @Nullable Element configurationElement,
                                       final String optionName) {
     final String path =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize(optionName, configurationElement.getNamespace());
+      configurationElement == null ? null : configurationElement.getChildText(optionName, configurationElement.getNamespace());
     if (path != null) {
       VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(path);
       if (descriptorFile == null) {
@@ -473,7 +472,7 @@ public class Flexmojos3Configurator {
   protected String getCompilerConfigFilePath(final @Nullable String rlmName) {
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     final String classifier =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
+      configurationElement == null ? null : configurationElement.getChildText("classifier", configurationElement.getNamespace());
 
     String suffix = "";
     if (rlmName != null) {

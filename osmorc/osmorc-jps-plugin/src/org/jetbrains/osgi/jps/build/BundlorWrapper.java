@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.build;
 
 import com.springsource.bundlor.ClassPath;
@@ -26,11 +26,11 @@ import java.util.Properties;
  *
  * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
-public class BundlorWrapper {
-  public List<String> wrapModule(@NotNull Properties properties,
-                                 @NotNull File inputJar,
-                                 @NotNull File outputJar,
-                                 @NotNull File manifestTemplate) throws OsgiBuildException {
+final class BundlorWrapper {
+  List<String> wrapModule(@NotNull Properties properties,
+                          @NotNull File inputJar,
+                          @NotNull File outputJar,
+                          @NotNull File manifestTemplate) throws OsgiBuildException {
     String inputPath = inputJar.getPath();
     ManifestContents manifest;
 

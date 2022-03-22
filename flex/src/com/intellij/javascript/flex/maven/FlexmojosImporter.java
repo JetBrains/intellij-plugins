@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -273,7 +273,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     final String overriddenTargetFilePath =
       configurationElement == null || StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "4") >= 0
       ? null
-      : configurationElement.getChildTextNormalize("output", configurationElement.getNamespace());
+      : configurationElement.getChildText("output", configurationElement.getNamespace());
 
     if (overriddenTargetFilePath != null && !overriddenTargetFilePath.isEmpty()) {
       return FileUtil.isAbsolute(overriddenTargetFilePath)
@@ -282,7 +282,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     }
 
     final String classifier =
-      configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
+      configurationElement == null ? null : configurationElement.getChildText("classifier", configurationElement.getNamespace());
     final String suffix = classifier == null ? "" : "-" + classifier;
     final String fileExtension = "swc".equals(mavenProject.getPackaging()) ? "swc" : "swf";
     return FileUtil.toSystemIndependentName(mavenProject.getBuildDirectory())

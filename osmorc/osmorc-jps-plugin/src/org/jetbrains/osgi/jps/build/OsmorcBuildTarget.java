@@ -1,9 +1,9 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.jps.build;
 
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
-import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.*;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @author michael.golubev
  */
-public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
+public final class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   private final JpsOsmorcModuleExtension myExtension;
   private List<File> myOutputRoots = null;
 
@@ -56,7 +56,7 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
     JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(getModule());
     if (extension != null) {
       OsmorcModuleExtensionProperties p = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties();
-      configHash = new XMLOutputter().outputString(XmlSerializer.serialize(p)).hashCode();
+      configHash = JDOMUtil.write(XmlSerializer.serialize(p)).hashCode();
     }
     out.write(Integer.toHexString(configHash));
   }
