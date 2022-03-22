@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -124,7 +125,15 @@ public final class DotPackagesFileUtil {
       return null;
     }
 
-    final JsonElement jsonElement = JsonParser.parseString(fileContentsStr);
+    final JsonElement jsonElement;
+    try {
+      jsonElement = JsonParser.parseString(fileContentsStr);
+    }
+    catch (Exception e) {
+      Logger.getInstance(DotPackagesFileUtil.class).info(e);
+      return null;
+    }
+
     if (jsonElement instanceof JsonObject &&
         ((JsonObject)jsonElement).get("packages") != null &&
         ((JsonObject)jsonElement).get("packages").isJsonArray()) {
@@ -132,9 +141,9 @@ public final class DotPackagesFileUtil {
       final JsonArray jsonArray = ((JsonObject)jsonElement).get("packages").getAsJsonArray();
       for (JsonElement element : jsonArray) {
         JsonObject jsonObjectPackage = element.getAsJsonObject();
-        if (jsonObjectPackage.get("name") != null &&
-            jsonObjectPackage.get("rootUri") != null &&
-            jsonObjectPackage.get("packageUri") != null
+        if (jsonObjectPackage.get("name") != null && jsonObjectPackage.get("name").isJsonPrimitive() &&
+            jsonObjectPackage.get("rootUri") != null && jsonObjectPackage.get("rootUri").isJsonPrimitive() &&
+            jsonObjectPackage.get("packageUri") != null && jsonObjectPackage.get("packageUri").isJsonPrimitive()
         ) {
           final String packageName = jsonObjectPackage.get("name").getAsString();
           final String rootUriValue = jsonObjectPackage.get("rootUri").getAsString();
