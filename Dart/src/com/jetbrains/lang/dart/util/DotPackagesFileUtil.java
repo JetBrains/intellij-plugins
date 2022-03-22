@@ -17,6 +17,7 @@ import com.intellij.util.io.URLUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -120,8 +121,11 @@ public final class DotPackagesFileUtil {
    * ```
    */
   private static @Nullable Map<String, String> loadPackagesMapFromJson(@NotNull VirtualFile packageConfigJsonFile) {
-    String fileContentsStr = FileUtil.loadFileOrNull(packageConfigJsonFile.getPath());
-    if (fileContentsStr == null) {
+    String fileContentsStr;
+    try {
+      fileContentsStr = FileUtil.loadFile(new File(packageConfigJsonFile.getPath()));
+    }
+    catch (IOException e) {
       return null;
     }
 
