@@ -8,7 +8,6 @@ import com.intellij.coldFusion.model.info.CfmlLangInfo
 import com.intellij.coldFusion.model.info.CfmlTagDescription
 import com.intellij.coldFusion.model.info.CfmlTypesInfo
 import com.intellij.openapi.project.Project
-import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.xml.util.XmlStringUtil
 
 object CfmlDocUtil {

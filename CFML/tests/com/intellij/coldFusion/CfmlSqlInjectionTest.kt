@@ -23,7 +23,6 @@ import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.psi.SqlCommonKeywords
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
-import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
 import org.junit.Test
@@ -98,7 +97,7 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
     if (document is DocumentWindow) document = document.delegate
     val highlights = DaemonCodeAnalyzerImpl.getHighlights(document, HighlightSeverity.ERROR, project)
     val errors = highlights.filter { it.severity == HighlightSeverity.ERROR }
-    if (expectedErrorCount == 0) assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isNullOrEmpty())
+    if (expectedErrorCount == 0) assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isEmpty())
     else TestCase.assertEquals("Highlight errors count should be ${expectedErrorCount}, got ${errors.size}", expectedErrorCount,
                                errors.size)
   }
