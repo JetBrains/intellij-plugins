@@ -84,6 +84,10 @@ class VueSourcePlugin constructor(private val project: Project,
     return result
   }
 
+  override fun toString(): String {
+    return "VueSourcePlugin($moduleName)"
+  }
+
   override fun createPointer(): Pointer<out VueEntitiesContainer> {
     val project = this.project
     val moduleName = this.moduleName

@@ -113,28 +113,28 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     // Entity containers
     VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
-      val containers = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
+      val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
 
-      containers[enclosingContainer] = VueModelVisitor.Proximity.LOCAL
+      containerToProximity[enclosingContainer] = VueModelVisitor.Proximity.LOCAL
 
       enclosingContainer.parents.forEach { parent ->
         when (parent) {
-          is VueApp -> containers[parent] = VueModelVisitor.Proximity.APP
-          is VuePlugin -> containers[parent] = VueModelVisitor.Proximity.PLUGIN
+          is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
+          is VuePlugin -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
         }
       }
 
       enclosingContainer.global?.let { global ->
-        val apps = containers.keys.filterIsInstance<VueApp>()
+        val apps = containerToProximity.keys.filterIsInstance<VueApp>()
         global.plugins.forEach { plugin ->
-          containers.computeIfAbsent(plugin) {
+          containerToProximity.computeIfAbsent(plugin) {
             apps.maxOfOrNull { it.getProximity(plugin) } ?: plugin.defaultProximity
           }
         }
-        containers[global] = VueModelVisitor.Proximity.GLOBAL
+        containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
       }
 
-      containers.forEach { (container, proximity) ->
+      containerToProximity.forEach { (container, proximity) ->
         EntityContainerWrapper.create(container, proximity)
           ?.let {
             if (container == enclosingContainer || container is VueGlobal) {
@@ -240,6 +240,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
     }
 
+    override fun toString(): String {
+      return "EntityContainerWrapper($container)"
+    }
+
     override fun createPointer(): Pointer<EntityContainerWrapper<K>> {
       val containerPtr = container.createPointer()
       val dataHolderPtr = dataHolder.let { if (it is Project) Pointer.hardPointer(it) else (it as PsiElement).createSmartPointer() }
@@ -321,6 +325,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override fun hashCode(): Int =
       Objects.hash(delegate, file)
+
+    override fun toString(): String {
+      return "IncorrectlySelfReferredComponentFilteringContainer($delegate)"
+    }
 
     // Cannot self refer without export declaration with component name or script setup
     private fun isNotIncorrectlySelfReferred(symbol: WebSymbolsContainer?) =

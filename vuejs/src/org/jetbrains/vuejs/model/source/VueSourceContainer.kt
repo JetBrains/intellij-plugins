@@ -55,6 +55,10 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override fun hashCode(): Int =
     Objects.hash(source, descriptor)
 
+  override fun toString(): String {
+    return "${javaClass.simpleName}(${descriptor.source})"
+  }
+
   companion object {
     private val EXTENDS = ListAccessor(VueContainerInfo::extends)
     private val MIXINS = ListAccessor(VueContainerInfo::mixins)
@@ -83,7 +87,10 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     fun get(descriptor: VueSourceEntityDescriptor): T {
       return VueContainerInfoProvider.getProviders()
                .asSequence()
-               .mapNotNull { it.getInfo(descriptor)?.let(extInfoAccessor) }
+               .mapNotNull {
+                 it.getInfo(descriptor)
+                   ?.let(extInfoAccessor)
+               }
                .let {
                  if (takeFirst) it.firstOrNull()
                  else it.reduceOrNull(::merge)

@@ -51,9 +51,10 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
           VueModelManager.getApp(initializer)
         else
           CachedValuesManager.getCachedValue(initializer) {
-            CachedValueProvider.Result.create(getComponentDescriptor(initializer)?.let {
+            val container = getComponentDescriptor(initializer)?.let {
               VueModelManager.getComponent(it)
-            } as? VueContainer, PsiModificationTracker.MODIFICATION_COUNT)
+            } as? VueContainer
+            CachedValueProvider.Result.create(container, PsiModificationTracker.MODIFICATION_COUNT)
           }
       }
 
@@ -75,8 +76,11 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
     (other is VueCompositionApp
      && other.source == this.source)
 
-  override fun hashCode(): Int =
-    source.hashCode()
+  override fun hashCode(): Int = source.hashCode()
+
+  override fun toString(): String {
+    return "VueCompositionApp($source)"
+  }
 
   private fun getEntitiesAnalysis(): EntitiesAnalysis =
     CachedValuesManager.getCachedValue(source) {
