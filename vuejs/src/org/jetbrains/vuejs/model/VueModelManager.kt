@@ -366,10 +366,11 @@ class VueModelManager {
 
     fun getApp(appDeclaration: JSObjectLiteralExpression): VueApp {
       return CachedValuesManager.getCachedValue(appDeclaration) {
-        CachedValueProvider.Result.create(VueSourceApp(getComponentImplicitElement(appDeclaration)
-                                                       ?: buildImplicitElement(appDeclaration),
-                                                       appDeclaration),
-                                          appDeclaration)
+        val app = VueSourceApp(
+          getComponentImplicitElement(appDeclaration) ?: buildImplicitElement(appDeclaration),
+          appDeclaration
+        )
+        CachedValueProvider.Result.create(app, appDeclaration)
       }
     }
 

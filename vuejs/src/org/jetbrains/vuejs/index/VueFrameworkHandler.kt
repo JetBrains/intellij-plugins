@@ -133,14 +133,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       emptyList()
 
   override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
+
   override fun processProperty(name: String?, property: JSProperty, out: JSElementIndexingData): Boolean {
     if (MIXINS_PROP == name && property.value is JSArrayLiteralExpression) {
-      (property.value as JSArrayLiteralExpression).expressions
-        .forEach {
-          if (it is JSReferenceExpression) {
-            recordMixin(out, property, it, false)
-          }
+      (property.value as JSArrayLiteralExpression).expressions.forEach {
+        if (it is JSReferenceExpression) {
+          recordMixin(out, property, it, false)
         }
+      }
     }
     else if (EXTENDS_PROP == name && property.value is JSReferenceExpression) {
       recordExtends(out, property, property.value)

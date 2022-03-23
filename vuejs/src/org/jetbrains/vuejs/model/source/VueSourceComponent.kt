@@ -54,6 +54,10 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
     }
   }
 
+  override fun toString(): String {
+    return "VueSourceComponent(${defaultName})"
+  }
+
   companion object {
 
     private fun buildSlotsList(template: VueTemplate<*>): List<VueSlot> {

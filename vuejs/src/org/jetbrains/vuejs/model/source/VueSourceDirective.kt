@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
-import java.util.Objects
+import java.util.*
 
 class VueSourceDirective(name: String, override val source: PsiElement) : VueDirective {
 
@@ -19,6 +19,10 @@ class VueSourceDirective(name: String, override val source: PsiElement) : VueDir
 
   override fun hashCode(): Int =
     Objects.hash(defaultName, source)
+
+  override fun toString(): String {
+    return "VueSourceDirective($defaultName)"
+  }
 
   override fun createPointer(): Pointer<VueDirective> {
     val name = defaultName
