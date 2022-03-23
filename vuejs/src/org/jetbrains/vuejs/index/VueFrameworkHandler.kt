@@ -24,7 +24,6 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.tree.TreeUtil
@@ -33,7 +32,10 @@ import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.*
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlElementType
+import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import com.intellij.util.castSafelyTo
@@ -597,12 +599,3 @@ private enum class VueStaticMethod(val methodName: String) {
     JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE_NAMESPACE, methodName)
 }
 
-open class VueFileVisitor : XmlElementVisitor() {
-  override fun visitXmlDocument(document: XmlDocument?): Unit = recursion(document)
-
-  override fun visitXmlFile(file: XmlFile?): Unit = recursion(file)
-
-  protected fun recursion(element: PsiElement?) {
-    element?.children?.forEach { it.accept(this) }
-  }
-}
