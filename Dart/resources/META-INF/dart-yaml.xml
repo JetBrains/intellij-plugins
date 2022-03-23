@@ -5,7 +5,7 @@
                      enabledByDefault="true" level="ERROR" language="yaml"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection"/>
     <psi.referenceContributor language="yaml" implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
-    <fileType name="YAML" fileNames=".analysis_options"/>
+    <fileType name="YAML" fileNames=".analysis_options;pubspec.lock"/>
     <completion.contributor language="yaml" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <annotator language="yaml" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
   </extensions>
