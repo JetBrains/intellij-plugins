@@ -7,17 +7,14 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.javascript.web.*
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
-import junit.framework.AssertionFailedError
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -1924,19 +1921,6 @@ export default {
       }
     }
   }
-}
-
-fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
-                                       additionalDependencies: String = "") {
-  fixture.configureByText(PackageJsonUtil.FILE_NAME, """
-  {
-    "name": "test",
-    "version": "0.0.1",
-    "dependencies": {
-      "vue": "2.5.3" ${if (additionalDependencies.isBlank()) "" else ", $additionalDependencies"}
-    }
-  }
-  """)
 }
 
 private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(

@@ -1,11 +1,25 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInEdtAndWait
+
+fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
+                                       additionalDependencies: String = "") {
+  fixture.configureByText(PackageJsonUtil.FILE_NAME, """
+    {
+      "name": "test",
+      "version": "0.0.1",
+      "dependencies": {
+        "vue": "2.5.3" ${if (additionalDependencies.isBlank()) "" else ", $additionalDependencies"}
+      }
+    }
+  """.trimIndent())
+}
 
 fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModule) {
   createPackageJsonWithVueDependency(
