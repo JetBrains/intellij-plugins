@@ -82,6 +82,7 @@
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
 
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before web-symbols-react"/>
+    <xml.xmlSuppressionProvider implementation="org.jetbrains.vuejs.inspections.VueXmlSuppressionProvider" order="first"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <notificationGroup displayType="BALLOON" id="Vue" isLogByDefault="true"
