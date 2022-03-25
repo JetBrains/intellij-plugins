@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
+import com.intellij.psi.PsiFile
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
@@ -34,11 +35,15 @@ class VueHighlightingTest : BasePlatformTestCase() {
   private fun doTest(packageJsonDependencies: String? = null,
                      addNodeModules: List<VueTestModule> = emptyList(),
                      extension: String = "vue",
-                     checkWarnings: Boolean = true,
-                     checkInfos: Boolean = false,
-                     checkWeakWarnings: Boolean = true,
-                     ignoreExtraHighlighting: Boolean = false,
                      vararg files: String) {
+    configureTestProject(packageJsonDependencies, addNodeModules, extension, *files)
+    myFixture.checkHighlighting()
+  }
+
+  private fun configureTestProject(packageJsonDependencies: String? = null,
+                                   addNodeModules: List<VueTestModule> = emptyList(),
+                                   extension: String = "vue",
+                                   vararg files: String): PsiFile {
     if (packageJsonDependencies != null) {
       createPackageJsonWithVueDependency(myFixture, packageJsonDependencies)
     }
@@ -46,9 +51,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
       myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
     }
     myFixture.configureByFiles(*files)
-    myFixture.configureByFile(getTestName(true) + "." + extension)
-
-    myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings, ignoreExtraHighlighting)
+    return myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
   private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null) {
@@ -330,7 +333,8 @@ const props = {seeMe: {}}
   }
 
   fun testSemanticHighlighting() {
-    doTest(checkInfos = true, checkWarnings = false, checkWeakWarnings = false)
+    configureTestProject()
+    myFixture.checkHighlighting( /* checkWarnings = */ false,   /* checkInfos = */ true,  /* checkWeakWarnings = */ false)
   }
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
@@ -469,7 +473,7 @@ const props = {seeMe: {}}
 
   fun testBindingToDataAttributes() = doTest()
 
-  fun testPropertiesValidation() = doDirTest()
+  fun testPropsValidation() = doDirTest()
 
   fun testScriptSetupRef() {
     myFixture.enableInspections(
@@ -519,7 +523,8 @@ const props = {seeMe: {}}
   }
 
   fun testScriptSetupSymbolsHighlighting() {
-    doTest(checkInfos = true)
+    configureTestProject()
+    myFixture.checkHighlighting(/* checkWarnings = */ true, /* checkInfos = */ true, /* checkWeakWarnings = */ true)
   }
 
 }
