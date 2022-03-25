@@ -47,6 +47,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
     }
     myFixture.configureByFiles(*files)
     myFixture.configureByFile(getTestName(true) + "." + extension)
+
     myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings, ignoreExtraHighlighting)
   }
 
