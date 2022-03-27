@@ -709,8 +709,8 @@ public final class PerforceRunner implements PerforceRunnerI {
       }
     }
 
-    Object2LongMap<String> haveRevisions=new Object2LongOpenCustomHashMap<>(SystemInfoRt.isFileSystemCaseSensitive ? FastUtilHashingStrategies
-      .getCaseInsensitiveStringStrategy() : FastUtilHashingStrategies.getCanonicalStrategy());
+    Object2LongMap<String> haveRevisions =
+      new Object2LongOpenCustomHashMap<>(FastUtilHashingStrategies.getStringStrategy(SystemInfoRt.isFileSystemCaseSensitive));
 
     final PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
     pathsHelper.addAllPaths(files);
