@@ -405,7 +405,6 @@ public final class PerforceVcs extends AbstractVcs {
       myVFSListener = null;
     }
     PerforceManager.getInstance(myProject).stopListening();
-    myChangeProvider.deactivate();
     VirtualFileManager.getInstance().removeVirtualFileListener(myAnnotationsVfsListener);
   }
 

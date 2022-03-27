@@ -56,10 +56,6 @@ public class PerforceChangeProvider implements ChangeProvider {
     myPerforceReadOnlyFileStateManager.activate(parentDisposable);
   }
 
-  public void deactivate() {
-    myPerforceReadOnlyFileStateManager.deactivate();
-  }
-
   @Override
   public void getChanges(@NotNull final VcsDirtyScope dirtyScope, @NotNull final ChangelistBuilder builder, @NotNull final ProgressIndicator progress,
                          @NotNull final ChangeListManagerGate addGate) throws VcsException {
