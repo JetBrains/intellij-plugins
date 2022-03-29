@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
@@ -16,6 +17,7 @@ import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -211,7 +213,17 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     protected JSLanguageServiceInitialState createState() {
       InitialState result = new InitialState();
       ExtendedLinterState<TsLintState> extendedState = TsLintConfiguration.getInstance(myProject).getExtendedState();
-      result.tslintPackagePath = LocalFilePath.create(myNodePackage.getSystemDependentPath());
+      if (myNodePackage instanceof YarnPnpNodePackage) {
+        result.tslintPackagePath = LocalFilePath.create(myNodePackage.getName());
+        String packageJsonPath = ((YarnPnpNodePackage)myNodePackage).getPackageJsonPath(myProject);
+        if (packageJsonPath == null) {
+          throw new IllegalStateException("Cannot find package.json path for " + myNodePackage);
+        }
+        result.packageJsonPath = LocalFilePath.create(FileUtil.toSystemDependentName(packageJsonPath));
+      }
+      else {
+        result.tslintPackagePath = LocalFilePath.create(myNodePackage.getSystemDependentPath());
+      }
       result.additionalRootDirectory = LocalFilePath.create(extendedState.getState().getRulesDirectory());
       result.pluginName = "tslint";
       result.pluginPath = LocalFilePath.create(
@@ -241,6 +253,11 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   private static class InitialState extends JSLanguageServiceInitialState {
     LocalFilePath tslintPackagePath;
+    /**
+     * Path to package.json declaring tslint dependency.
+     * Allows requiring dependencies in proper context. Used by Yarn PnP.
+     */
+    @Nullable LocalFilePath packageJsonPath;
     LocalFilePath additionalRootDirectory;
   }
 }
