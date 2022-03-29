@@ -10,6 +10,11 @@ interface PluginState {
     readonly tslintPackagePath: string;
 
     /**
+     * Path to package.json with tslint dependency (e.g. defined for Yarn PnP)
+     */
+    readonly packageJsonPath?: string;
+
+    /**
      * TSLint configuration 'additional root' parameter
      */
     readonly additionalRootDirectory?: string;

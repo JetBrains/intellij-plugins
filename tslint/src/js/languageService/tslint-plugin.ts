@@ -27,7 +27,7 @@ export class TSLintPlugin implements LanguagePlugin {
     private readonly additionalRulesDirectory?: string;
 
     constructor(state: PluginState) {
-        this.linterApi = resolveTsLint(state.tslintPackagePath);
+        this.linterApi = resolveTsLint(state.tslintPackagePath, state.packageJsonPath);
         this.additionalRulesDirectory = state.additionalRootDirectory;
     }
 
@@ -113,10 +113,36 @@ export class TSLintPlugin implements LanguagePlugin {
     }
 }
 
-function resolveTsLint(packagePath: string): LinterApi {
-    const tslint: any = require(packagePath);
+function resolveTsLint(packagePath: string, packageJsonPath?: string): LinterApi {
+    const tslint: any = requireInContext(packagePath, packageJsonPath);
     const version = getVersion(tslint);
     const linter = version.major && version.major >= 4 ? tslint.Linter : tslint;
     return {linter, version};
 }
 
+// Duplicate of eslint/src/eslint-common.ts
+
+function requireInContext(modulePathToRequire: string, contextPath?: string): any {
+  const contextRequire = getContextRequire(contextPath);
+  return contextRequire(modulePathToRequire);
+}
+
+function getContextRequire(contextPath?: string): NodeRequire {
+  if (contextPath != null) {
+    const module = require('module')
+    if (typeof module.createRequire === 'function') {
+      // https://nodejs.org/api/module.html#module_module_createrequire_filename
+      // Implemented in Yarn PnP: https://next.yarnpkg.com/advanced/pnpapi/#requiremodule
+      return module.createRequire(contextPath);
+    }
+    // noinspection JSDeprecatedSymbols
+    if (typeof module.createRequireFromPath === 'function') {
+      // Use createRequireFromPath (a deprecated version of createRequire) to support Node.js 10.x
+      // noinspection JSDeprecatedSymbols
+      return module.createRequireFromPath(contextPath);
+    }
+    throw Error('Function module.createRequire is unavailable in Node.js ' + process.version +
+      ', Node.js >= 12.2.0 is required')
+  }
+  return require;
+}

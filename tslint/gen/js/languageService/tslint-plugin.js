@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
+exports.TSLintPlugin = void 0;
 var utils_1 = require("../utils");
 var fs_1 = require("fs");
 var TsLintCommands;
@@ -25,7 +26,7 @@ var Response = /** @class */ (function () {
 }());
 var TSLintPlugin = /** @class */ (function () {
     function TSLintPlugin(state) {
-        this.linterApi = resolveTsLint(state.tslintPackagePath);
+        this.linterApi = resolveTsLint(state.tslintPackagePath, state.packageJsonPath);
         this.additionalRulesDirectory = state.additionalRootDirectory;
     }
     TSLintPlugin.prototype.process = function (parsedObject) {
@@ -66,8 +67,8 @@ var TSLintPlugin = /** @class */ (function () {
     };
     TSLintPlugin.prototype.fixErrors = function (toProcess) {
         //TODO. why here?
-        var contents = fs_1.readFileSync(toProcess.filePath, "utf8");
-        return this.processLinting(__assign({}, toProcess, { content: contents }), this.getOptions(true));
+        var contents = (0, fs_1.readFileSync)(toProcess.filePath, "utf8");
+        return this.processLinting(__assign(__assign({}, toProcess), { content: contents }), this.getOptions(true));
     };
     TSLintPlugin.prototype.getOptions = function (fix) {
         return {
@@ -103,9 +104,33 @@ var TSLintPlugin = /** @class */ (function () {
     return TSLintPlugin;
 }());
 exports.TSLintPlugin = TSLintPlugin;
-function resolveTsLint(packagePath) {
-    var tslint = require(packagePath);
-    var version = utils_1.getVersion(tslint);
+function resolveTsLint(packagePath, packageJsonPath) {
+    var tslint = requireInContext(packagePath, packageJsonPath);
+    var version = (0, utils_1.getVersion)(tslint);
     var linter = version.major && version.major >= 4 ? tslint.Linter : tslint;
     return { linter: linter, version: version };
+}
+// Duplicate of eslint/src/eslint-common.ts
+function requireInContext(modulePathToRequire, contextPath) {
+    var contextRequire = getContextRequire(contextPath);
+    return contextRequire(modulePathToRequire);
+}
+function getContextRequire(contextPath) {
+    if (contextPath != null) {
+        var module_1 = require('module');
+        if (typeof module_1.createRequire === 'function') {
+            // https://nodejs.org/api/module.html#module_module_createrequire_filename
+            // Implemented in Yarn PnP: https://next.yarnpkg.com/advanced/pnpapi/#requiremodule
+            return module_1.createRequire(contextPath);
+        }
+        // noinspection JSDeprecatedSymbols
+        if (typeof module_1.createRequireFromPath === 'function') {
+            // Use createRequireFromPath (a deprecated version of createRequire) to support Node.js 10.x
+            // noinspection JSDeprecatedSymbols
+            return module_1.createRequireFromPath(contextPath);
+        }
+        throw Error('Function module.createRequire is unavailable in Node.js ' + process.version +
+            ', Node.js >= 12.2.0 is required');
+    }
+    return require;
 }

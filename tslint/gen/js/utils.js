@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 exports.__esModule = true;
+exports.getVersion = void 0;
 function getVersion(tslint) {
     var version = tslint.VERSION || (tslint.Linter && tslint.Linter.VERSION);
     if (version == null) {

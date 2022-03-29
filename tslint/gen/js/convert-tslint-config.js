@@ -12,15 +12,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
-    return {
+    if (o && typeof o.length === "number") return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var __read = (this && this.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -43,7 +44,7 @@ var utils_1 = require("./utils");
 var modulePath = process.argv[2];
 var configFilePath = process.argv[3];
 var tslint = require(modulePath);
-var version = utils_1.getVersion(tslint);
+var version = (0, utils_1.getVersion)(tslint);
 var configFile = version.major && version.major >= 4
     ? tslint.Configuration.loadConfigurationFromPath(configFilePath)
     : tslint.loadConfigurationFromPath(configFilePath);

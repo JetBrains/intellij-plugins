@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.factory = void 0;
 var tslint_plugin_1 = require("./tslint-plugin");
 var TSLintPluginFactory = /** @class */ (function () {
     function TSLintPluginFactory() {
