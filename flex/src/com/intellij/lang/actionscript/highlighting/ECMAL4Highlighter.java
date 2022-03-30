@@ -20,8 +20,6 @@ import java.util.Map;
 
 /**
  * Allows to have separate highlighting settings for ECMAScript L4 (aka ActionScript).
- *
- * @author Rustam Vishnyakov
  */
 public class ECMAL4Highlighter extends JSHighlighter {
   private static final Map<IElementType, TextAttributesKey> ourAttributeMap = new HashMap<>();
