@@ -2,18 +2,25 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
+import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
+import com.intellij.lang.javascript.nodejs.library.yarn.AbstractYarnPnpIntegrationTest;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static com.intellij.lang.javascript.linter.tslint.TsLintTestUtil.BASE_TEST_DATA_PATH;
 
@@ -120,6 +127,19 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testNoJsFilesByDefault() {
     doEditorHighlightingTest("test.js");
+  }
+
+  public void testYarnPnpTsLintExample() throws Exception {
+    doEditorHighlightingTest("app.ts", () -> {
+      VirtualFile root = Objects.requireNonNull(myFixture.findFileInTempDir("."));
+      NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
+      AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
+      YarnPnpNodePackage tslintPkg = YarnPnpNodePackage.create(getProject(),
+                                                               PackageJsonUtil.findChildPackageJsonFile(root),
+                                                               getPackageName(), false, false);
+      assertNotNull(tslintPkg);
+      configureLinterForPackage(NodePackageRef.create(tslintPkg));
+    });
   }
 
   public void testFixFile() {
