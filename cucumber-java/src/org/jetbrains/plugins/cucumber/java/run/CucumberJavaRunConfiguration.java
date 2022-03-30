@@ -49,7 +49,7 @@ public final class CucumberJavaRunConfiguration extends ApplicationConfiguration
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
   private final static Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
 
-  protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
+  CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
     setWorkingDirectory(PathMacroUtil.MODULE_WORKING_DIR);
   }
