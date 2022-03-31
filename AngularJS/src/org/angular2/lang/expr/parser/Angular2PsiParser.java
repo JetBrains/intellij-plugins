@@ -5,12 +5,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,12 +25,7 @@ public class Angular2PsiParser implements PsiParser {
 
   @NonNls private static final Logger LOG = Logger.getInstance(Angular2PsiParser.class);
 
-  private static final Map<String, BiConsumer<PsiBuilder, IElementType>> parseMappings = ContainerUtil.newHashMap(
-    Pair.create(ACTION, Angular2Parser::parseAction),
-    Pair.create(BINDING, Angular2Parser::parseBinding),
-    Pair.create(INTERPOLATION, Angular2Parser::parseInterpolation),
-    Pair.create(SIMPLE_BINDING, Angular2Parser::parseSimpleBinding)
-  );
+  private static final Map<String, BiConsumer<PsiBuilder, IElementType>> parseMappings = Map.of(ACTION, Angular2Parser::parseAction, BINDING, Angular2Parser::parseBinding, INTERPOLATION, Angular2Parser::parseInterpolation, SIMPLE_BINDING, Angular2Parser::parseSimpleBinding);
 
   @Override
   public @NotNull ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {

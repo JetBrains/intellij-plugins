@@ -28,7 +28,6 @@ import com.intellij.testFramework.vcs.AbstractJunitVcsTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.TimeoutUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,18 +136,14 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   private void setupP4Ignore() throws IOException {
     myP4IgnoreFile = new File(myClientRoot, P4_IGNORE_NAME);
     FileUtil.writeToFile(myP4IgnoreFile, createP4Ignore());
-    AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(
-      Pair.create(P4ConfigFields.P4IGNORE.name(), myP4IgnoreFile.getAbsolutePath())
-    ), myTestRootDisposable);
+    AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigFields.P4IGNORE.name(), myP4IgnoreFile.getAbsolutePath()), myTestRootDisposable);
     VfsUtil.markDirtyAndRefresh(false, false, false, VfsUtil.findFileByIoFile(myP4IgnoreFile, true));
   }
 
   private void setupP4Config() throws IOException {
     myP4ConfigFile = new File(myClientRoot, DEFAULT_P4CONFIG);
     FileUtil.writeToFile(myP4ConfigFile, createP4Config("test"));
-    AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(
-      Pair.create(P4ConfigFields.P4CONFIG.name(), DEFAULT_P4CONFIG)
-    ), myTestRootDisposable);
+    AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigFields.P4CONFIG.name(), DEFAULT_P4CONFIG), myTestRootDisposable);
     VfsUtil.markDirtyAndRefresh(false, false, false, VfsUtil.findFileByIoFile(myP4ConfigFile, true));
   }
 
@@ -412,7 +407,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected void setUseP4Config(@NotNull String p4ConfigName) {
     getChangeListManager().waitUntilRefreshed();
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
-    AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(Pair.create(P4ConfigHelper.P4_CONFIG, p4ConfigName)), myTestRootDisposable);
+    AbstractP4Connection.setTestEnvironment(Map.of(P4ConfigHelper.P4_CONFIG, p4ConfigName), myTestRootDisposable);
     PerforceConnectionManager.getInstance(myProject).updateConnections();
   }
 
@@ -574,8 +569,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     final List<String> arguments = new ArrayList<>();
     Collections.addAll(arguments, commandLine);
     try {
-      final Map<String, String> env = ContainerUtil.newHashMap(Pair.create("PATH", myClientBinaryPath.getPath()),
-                                                               Pair.create("PWD", myClientRoot.getPath()));
+      final Map<String, String> env = Map.of("PATH", myClientBinaryPath.getPath(), "PWD", myClientRoot.getPath());
       return createClientRunner(env).runClient(SystemInfo.isMac ? "p4mac" : "p4", stdin, myClientRoot,
                                                ArrayUtilRt.toStringArray(arguments));
     }

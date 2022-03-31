@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
@@ -125,9 +124,7 @@ public final class AngularCliUtil {
   }
 
   private static void createJSDebugConfiguration(@NotNull Project project, @NotNull @NonNls String label, @NotNull String url) {
-    createIfNoSimilar("jsdebug", project, label, null, null, ContainerUtil.newHashMap(
-      pair("uri", url)
-    ));
+    createIfNoSimilar("jsdebug", project, label, null, null, Map.of("uri", url));
   }
 
   private static @Nullable RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
@@ -135,7 +132,7 @@ public final class AngularCliUtil {
                                                                                  @NotNull @NonNls String label,
                                                                                  @NotNull String scriptName) {
     return createIfNoSimilar("npm", project, label, null, packageJsonPath,
-                             ContainerUtil.newHashMap(pair("run-script", scriptName)));
+                             Map.of("run-script", scriptName));
   }
 
   private static void createKarmaConfigurations(@NotNull Project project,

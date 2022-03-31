@@ -24,9 +24,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
-import static com.intellij.util.containers.ContainerUtil.newHashMap;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
@@ -686,28 +684,28 @@ public class Angular2ParserSpecTest {
   @SuppressWarnings("NewClassNamingConvention")
   private static final class MyAstUnparser extends Angular2RecursiveVisitor {
 
-    private static final Map<IElementType, String> operators = newHashMap(
-      pair(PLUS, "+"),
-      pair(MINUS, "-"),
-      pair(MULT, "*"),
-      pair(DIV, "/"),
-      pair(PERC, "%"),
-      pair(XOR, "^"),
-      pair(EQ, "="),
-      pair(EQEQEQ, "==="),
-      pair(NEQEQ, "!=="),
-      pair(EQEQ, "=="),
-      pair(NE, "!="),
-      pair(LT, "<"),
-      pair(GT, ">"),
-      pair(LE, "<="),
-      pair(GE, ">="),
-      pair(ANDAND, "&&"),
-      pair(OROR, "||"),
-      pair(QUEST_QUEST, "??"),
-      pair(AND, "&"),
-      pair(OR, "|"),
-      pair(EXCL, "!")
+    private static final Map<IElementType, String> operators = Map.ofEntries(
+      Map.entry(PLUS, "+"),
+      Map.entry(MINUS, "-"),
+      Map.entry(MULT, "*"),
+      Map.entry(DIV, "/"),
+      Map.entry(PERC, "%"),
+      Map.entry(XOR, "^"),
+      Map.entry(EQ, "="),
+      Map.entry(EQEQEQ, "==="),
+      Map.entry(NEQEQ, "!=="),
+      Map.entry(EQEQ, "=="),
+      Map.entry(NE, "!="),
+      Map.entry(LT, "<"),
+      Map.entry(GT, ">"),
+      Map.entry(LE, "<="),
+      Map.entry(GE, ">="),
+      Map.entry(ANDAND, "&&"),
+      Map.entry(OROR, "||"),
+      Map.entry(QUEST_QUEST, "??"),
+      Map.entry(AND, "&"),
+      Map.entry(OR, "|"),
+      Map.entry(EXCL, "!")
     );
 
     private final StringBuilder result = new StringBuilder();

@@ -1,14 +1,14 @@
 package org.jetbrains.idea.perforce;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +31,7 @@ public class PerforceDvcsTest extends PerforceTestCase {
   @Override
   protected void setupWorkspace() {
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
-    AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(Pair.create("PATH", myClientBinaryPath.getPath())), myTestRootDisposable);
+    AbstractP4Connection.setTestEnvironment(Map.of("PATH", myClientBinaryPath.getPath()), myTestRootDisposable);
 
     ensureNoEnvP4Config();
 

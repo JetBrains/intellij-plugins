@@ -3,7 +3,6 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.HtmlUtil;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.*;
@@ -24,13 +22,13 @@ import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.*;
 public final class Angular2AttributeNameParser {
 
   @NonNls
-  public static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(
-    pair("class", "className"),
-    pair("for", "htmlFor"),
-    pair("formaction", "formAction"),
-    pair("innerHtml", "innerHTML"),
-    pair("readonly", "readOnly"),
-    pair("tabindex", "tabIndex")
+  public static final Map<String, String> ATTR_TO_PROP_MAPPING = Map.ofEntries(
+    Map.entry("class", "className"),
+    Map.entry("for", "htmlFor"),
+    Map.entry("formaction", "formAction"),
+    Map.entry("innerHtml", "innerHTML"),
+    Map.entry("readonly", "readOnly"),
+    Map.entry("tabindex", "tabIndex")
   );
 
   public static @NotNull AttributeInfo parseBound(@NotNull String name) {

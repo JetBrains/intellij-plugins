@@ -5,10 +5,8 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.util.CssHighlighter;
-import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssIcons;
 import org.jetbrains.annotations.NotNull;
@@ -18,11 +16,7 @@ import javax.swing.*;
 import java.util.Map;
 
 public class PostCssColorsPage implements ColorSettingsPage {
-  private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = ContainerUtil.newHashMap(
-    Pair.create("tag", PostCssSyntaxHighlighter.TAG_NAME),
-    Pair.create("id", CssHighlighter.CSS_ID_SELECTOR),
-    Pair.create("class", CssHighlighter.CSS_CLASS_NAME),
-    Pair.create("attr", CssHighlighter.CSS_ATTRIBUTE_NAME));
+  private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = Map.of("tag", PostCssSyntaxHighlighter.TAG_NAME, "id", CssHighlighter.CSS_ID_SELECTOR, "class", CssHighlighter.CSS_CLASS_NAME, "attr", CssHighlighter.CSS_ATTRIBUTE_NAME);
   private static final String DEMO_TEXT = "@import \"manual.css\";\n\n" +
                                           "@font-face {\n" +
                                           "  font-family: DroidSans;\n" +
