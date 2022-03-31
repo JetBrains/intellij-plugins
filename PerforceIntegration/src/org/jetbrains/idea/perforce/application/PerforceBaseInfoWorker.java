@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
@@ -18,6 +17,7 @@ import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Either synchronous or queued
@@ -37,7 +37,7 @@ public final class PerforceBaseInfoWorker {
    * In this case, 'p4 info' is run explicitly for the given connection and cached in this map. Since this
    * "old" connection is unlikely to be needed after all current bg processes have finished, the map is weak.
    */
-  private Map<P4Connection, ConnectionInfo> myInfos = ContainerUtil.createWeakMap();
+  private Map<P4Connection, ConnectionInfo> myInfos = new WeakHashMap<>();
   private final Object myInfoLock = new Object();
   private final Object myRefreshLock = new Object();
   private boolean myIsDirty;
@@ -90,7 +90,7 @@ public final class PerforceBaseInfoWorker {
 
     synchronized (myInfoLock) {
       myIsDirty = false;
-      myInfos = ContainerUtil.createWeakMap();
+      myInfos = new WeakHashMap<>();
       myInfos.putAll(refreshInfo.newInfo);
       myChecker = checker;
       if (!refreshInfo.hasAnyErrorsBesidesAuthentication) {
