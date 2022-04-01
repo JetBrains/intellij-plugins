@@ -55,7 +55,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
   }
 
   override fun toString(): String {
-    return "VueSourceComponent(${defaultName})"
+    return "VueSourceComponent(${defaultName ?: descriptor.source.containingFile.name})"
   }
 
   companion object {
