@@ -57,10 +57,18 @@ interface VueEmitCall : VueNamedSymbol {
   val eventJSType: JSType? get() = null
 }
 
+/**
+ * Any property on the Vue instance, i.e. on `this` within Vue template
+ *
+ * @see VueInputProperty
+ */
 interface VueProperty : VueNamedSymbol {
   val jsType: JSType? get() = null
 }
 
+/**
+ * Base interface for Vue component prop
+ */
 interface VueInputProperty : VueProperty {
   val required: Boolean
   val defaultValue: String? get() = null

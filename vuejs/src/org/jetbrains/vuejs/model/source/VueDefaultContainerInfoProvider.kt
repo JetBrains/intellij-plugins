@@ -214,6 +214,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                          sourceElement, JSImplicitElement.Type.Property, true)
     override val jsType: JSType? = source.jsType
 
+    override fun toString(): String {
+      return "VueSourceInputProperty(name='$name', required=$required, jsType=$jsType)"
+    }
+
   }
 
   private class VueSourceDataProperty(override val name: String,

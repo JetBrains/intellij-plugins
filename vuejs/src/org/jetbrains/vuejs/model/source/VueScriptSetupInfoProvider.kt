@@ -30,8 +30,8 @@ import org.jetbrains.vuejs.model.*
 
 class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo? =
-    descriptor.source
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo? {
+    return descriptor.source
       .takeIf { it is JSObjectLiteralExpression || it is XmlFile }
       ?.let { findModule(it, true) }
       ?.let { module ->
@@ -39,6 +39,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
           CachedValueProvider.Result.create(VueScriptSetupInfo(module), PsiModificationTracker.MODIFICATION_COUNT)
         }
       }
+  }
 
   class VueScriptSetupInfo(val module: JSEmbeddedContent) : VueContainerInfoProvider.VueContainerInfo {
 
@@ -75,62 +76,67 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             directives[name.substring(1)] = VueSourceDirective(name.substring(1), element)
           }
           true
-        }, false
+        },
+        false
       )
+
       val fileName = FileUtil.getNameWithoutExtension(module.containingFile.name)
       VueModelManager.findEnclosingComponent(module)?.let { component ->
         components.putIfAbsent(fileName.capitalize(), component)
       }
+
       this.components = components
       this.directives = directives
+
 
       var props: List<VueInputProperty> = emptyList()
       val emits: List<VueEmitCall> = emptyList()
       var rawBindings: List<VueNamedSymbol> = emptyList()
 
-      module.getStubSafeDefineCalls()
-        .forEach { call ->
-          when (call.indexingData
-            ?.implicitElements?.find { it.userString == VueFrameworkHandler.METHOD_NAME_USER_STRING }
-            ?.name) {
+      module.getStubSafeDefineCalls().forEach { call ->
+        val functionName = call.indexingData
+          ?.implicitElements?.find { it.userString == VueFrameworkHandler.METHOD_NAME_USER_STRING }
+          ?.name
 
-            DEFINE_PROPS_FUN -> {
-              val arguments = call.stubSafeCallArguments
-              val typeArgs = call.typeArguments
-              if (typeArgs.size == 1) {
-                val arg = typeArgs[0]
-                if (arg is TypeScriptObjectType) {
-                  props = arg.typeMembers.asSequence()
-                    .filterIsInstance<TypeScriptPropertySignature>()
-                    .map { VueScriptSetupInputProperty(it) }
-                    .toList()
-                }
-              }
-              else if (arguments.size == 1) {
-                val arg = arguments[0]
-                if (arg is JSObjectLiteralExpression) {
-                  props = collectPropertiesRecursively(arg)
-                    .map { (name, property) -> VueDefaultContainerInfoProvider.VueSourceInputProperty(name, property) }
-                }
-                else if (arg is JSArrayLiteralExpression) {
-                  props = getStringLiteralsFromInitializerArray(arg)
-                    .map { VueDefaultContainerInfoProvider.VueSourceInputProperty(getTextIfLiteral(it) ?: "", it) }
-                }
+        when (functionName) {
+          DEFINE_PROPS_FUN -> {
+            val arguments = call.stubSafeCallArguments
+            val typeArgs = call.typeArguments
+            if (typeArgs.size == 1) {
+              val arg = typeArgs[0]
+              if (arg is TypeScriptObjectType) {
+                props = arg.typeMembers.asSequence()
+                  .filterIsInstance<TypeScriptPropertySignature>()
+                  .map { VueScriptSetupInputProperty(it) }
+                  .toList()
               }
             }
-            DEFINE_EMITS_FUN -> {
-              // TODO
-            }
-            DEFINE_EXPOSE_FUN -> {
-              rawBindings = call.stubSafeCallArguments
-                              .getOrNull(0)
-                              ?.let { JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile)) }
-                              ?.let { VueCompositionInfoHelper.createRawBindings(call, it) }
-                            ?: emptyList()
-
+            else if (arguments.size == 1) {
+              val arg = arguments[0]
+              if (arg is JSObjectLiteralExpression) {
+                props = collectPropertiesRecursively(arg)
+                  .map { (name, property) -> VueDefaultContainerInfoProvider.VueSourceInputProperty(name, property) }
+              }
+              else if (arg is JSArrayLiteralExpression) {
+                props = getStringLiteralsFromInitializerArray(arg)
+                  .map { VueDefaultContainerInfoProvider.VueSourceInputProperty(getTextIfLiteral(it) ?: "", it) }
+              }
             }
           }
+          DEFINE_EMITS_FUN -> {
+            // TODO
+          }
+          DEFINE_EXPOSE_FUN -> {
+            rawBindings = call.stubSafeCallArguments
+                            .getOrNull(0)
+                            ?.let { JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile)) }
+                            ?.let { VueCompositionInfoHelper.createRawBindings(call, it) }
+                          ?: emptyList()
+
+          }
         }
+      }
+
       this.props = props
       this.emits = emits
       this.rawBindings = rawBindings
@@ -138,21 +144,21 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     private fun JSEmbeddedContent.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
       (this as? JSStubElementImpl<*>)?.stub?.let { moduleStub ->
-        return moduleStub.childrenStubs.asSequence()
-          .flatMap { stub ->
-            when (val psi = stub.psi) {
-              is JSCallExpression -> sequenceOf(psi)
-              is JSStatement -> {
-                stub.childrenStubs.asSequence()
-                  .filter { it.stubType == JSStubElementTypes.VARIABLE }
-                  .flatMap { it.childrenStubs.asSequence() }
-                  .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
-                  .mapNotNull { it.psi as? JSCallExpression }
-              }
-              else -> emptySequence()
+        return moduleStub.childrenStubs.asSequence().flatMap { stub ->
+          when (val psi = stub.psi) {
+            is JSCallExpression -> sequenceOf(psi)
+            is JSStatement -> {
+              stub.childrenStubs.asSequence()
+                .filter { it.stubType == JSStubElementTypes.VARIABLE }
+                .flatMap { it.childrenStubs.asSequence() }
+                .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
+                .mapNotNull { it.psi as? JSCallExpression }
             }
+            else -> emptySequence()
           }
+        }
       }
+
       return this.children.asSequence().filterIsInstance<JSStatement>()
         .flatMap { it.children.asSequence() }
         .map { if (it is JSVariable) it.initializer else it }
@@ -178,6 +184,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     private val context = ProcessingContext().also { it.put(NULL_CHECKS, true) }
 
+    override val name: String
+      get() = propertySignature.memberName
+
     override val source: PsiElement?
       get() = propertySignature.memberSource.singleElement
 
@@ -189,8 +198,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         it.isDirectlyAssignableType(JSUndefinedType(it.source), context)
       } == false
 
-    override val name: String
-      get() = propertySignature.memberName
+    override fun toString(): String {
+      return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$jsType)"
+    }
 
   }
 

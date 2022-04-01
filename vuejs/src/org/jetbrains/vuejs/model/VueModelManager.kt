@@ -302,6 +302,11 @@ class VueModelManager {
       return result
     }
 
+    /**
+     * Warning: can return not-null but wrong VueComponent when called with PsiFile
+     *
+     * @see findEnclosingContainer
+     */
     fun getComponent(element: PsiElement): VueComponent? =
       getComponent(getComponentDescriptor(element) ?: getEnclosingComponentDescriptor(element))
 
