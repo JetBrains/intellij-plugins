@@ -4,7 +4,7 @@ import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.javascript.web.checkDocumentationAtCaret
 import com.intellij.javascript.web.checkNoDocumentationAtCaret
 import com.intellij.lang.documentation.ExternalDocumentationProvider
-import com.intellij.lang.javascript.JSAbstractDocumentationTest
+import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
@@ -62,10 +62,12 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testRequiredPropertyTS() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     defaultTest()
   }
 
   fun testNotRequiredPropertyTS() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     defaultTest()
   }
 
