@@ -11,7 +11,7 @@ export default defineComponent({
   name: 'HelloWorld',
   props: {
     msg: {
-      type: String as PropType<string>
+      type: String
     }
   },
   mounted() {
