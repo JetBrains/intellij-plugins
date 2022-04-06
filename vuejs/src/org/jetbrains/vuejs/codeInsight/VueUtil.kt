@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -24,9 +23,7 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
-import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor.TS_PROCESSOR
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
-import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.util.Key
@@ -315,9 +312,9 @@ private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   (expression as? JSObjectLiteralExpression)
     ?.findProperty(PROPS_REQUIRED_PROP)
-    ?.literalExpressionInitializer
-    ?.let {
-      it.isBooleanLiteral && "true" == it.significantValue
+    ?.jsType
+    ?.let { type ->
+      (type as? JSBooleanLiteralTypeImpl)?.literal
     }
   ?: false
 
