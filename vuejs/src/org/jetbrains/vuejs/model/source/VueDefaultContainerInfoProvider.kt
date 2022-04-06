@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -11,7 +10,6 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -208,7 +206,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   class VueSourceInputProperty(override val name: String,
                                sourceElement: PsiElement) : VueInputProperty {
 
-    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
+    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
     override val source: VueImplicitElement =
       VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(!required),
                          sourceElement, JSImplicitElement.Type.Property, true)
