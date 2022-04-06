@@ -151,7 +151,7 @@ public final class DotPackagesFileUtil {
           // need to protect '+' chars because URLDecoder.decode replaces '+' with space
           final String encodedUriWithoutPluses = StringUtil.replace(rootUriValue + "/" + packageUriValue, "+", "%2B");
           final String uri = URLUtil.decode(encodedUriWithoutPluses);
-          final String packageUri = getAbsolutePackageRootPath(packageConfigJsonFile.getParent().getParent(), uri);
+          final String packageUri = getAbsolutePackageRootPath(packageConfigJsonFile.getParent(), uri);
           if (!packageName.isEmpty() && packageUri != null) {
             result.put(packageName, packageUri);
           }
