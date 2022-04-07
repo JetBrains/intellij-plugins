@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -1816,7 +1816,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   private void testCreateSubclass(boolean subclass) throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), subclass ? "Create subclass" : "Implement interface", myEditor, myFile);
+    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), subclass ? "Create Subclass" : "Implement Interface", myEditor, myFile);
 
     VirtualFile subclassFile = myFile.getVirtualFile().getParent().findFileByRelativePath("foo/" + testName + "Impl.as");
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, subclassFile), true);
