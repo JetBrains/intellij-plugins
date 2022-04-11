@@ -24,8 +24,6 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiManager
 import org.jetbrains.yaml.YAMLFileType
 
-private val LOG = logger<CloudFormationFileTypeStatisticProvider>()
-
 internal class CloudFormationFileTypeStatisticProvider : FileTypeStatisticProvider {
   override fun getPluginId(): String = "AWSCloudFormation"
 
@@ -50,7 +48,7 @@ internal class CloudFormationFileTypeStatisticProvider : FileTypeStatisticProvid
       psiFile != null && CloudFormationPsiUtils.isCloudFormationFile(psiFile)
     }
     catch (t: Throwable) {
-      LOG.debug("Unable to detect whether file ${file.path} is CloudFormation file")
+      logger<CloudFormationFileTypeStatisticProvider>().debug("Unable to detect whether file ${file.path} is CloudFormation file")
       false
     }
   }

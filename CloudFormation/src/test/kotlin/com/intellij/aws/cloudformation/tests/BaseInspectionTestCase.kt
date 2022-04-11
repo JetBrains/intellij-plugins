@@ -23,7 +23,7 @@ abstract class BaseInspectionTestCase(private val folder: String) : CodeInsightF
     println("Working on $filePath")
 
     if (!CloudFormationPsiUtils.isCloudFormationFile(psiFile)) {
-      return "Not a cloudformation file"
+      return "Not a cloudformation file $filePath"
     }
 
     val parsed = CloudFormationParser.parse(psiFile)

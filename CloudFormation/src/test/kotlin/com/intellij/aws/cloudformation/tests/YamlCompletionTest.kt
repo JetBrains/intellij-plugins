@@ -42,12 +42,19 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
       *CloudFormationConstants.allParameterTypes.toTypedArray())
   fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
-  fun testServerless1() = checkBasicCompletion("serverless_1.yaml",
-      "AutoPublishAlias", "CodeUri", "DeadLetterQueue", "DeploymentPreference", "InlineCode", "PermissionsBoundary",
-      "Description", "Environment", "Events", "FunctionName", "KmsKeyArn", "MemorySize",
-      "Policies", "VersionDescription", "ReservedConcurrentExecutions", "Role", "Layers", "Tags", "Timeout", "Tracing", "VpcConfig")
-  fun testServerless2() = checkBasicCompletion("serverless_2.yaml",
-      "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable", "AWS::Serverless::Application", "AWS::Serverless::LayerVersion")
+  fun testServerless1() {
+    checkBasicCompletion("serverless_1.yaml", "AutoPublishAlias", "CodeUri", "DeadLetterQueue",
+                         "DeploymentPreference", "Description", "Environment", "Events", "FunctionName", "InlineCode",
+                         "KmsKeyArn", "Layers", "MemorySize", "PermissionsBoundary", "Policies",
+                         "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "Tags", "Timeout",
+                         "Tracing", "VersionDescription", "VpcConfig")
+  }
+
+  fun testServerless2() {
+    checkBasicCompletion("serverless_2.yaml", "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable",
+                         "AWS::Serverless::Application", "AWS::Serverless::LayerVersion")
+  }
+
   fun testServerless3() = checkBasicCompletion("serverless_3.yaml")
 
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
