@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
 import com.intellij.lang.typescript.intentions.TypeScriptAddImportStatementFix
+import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.util.Consumer
 
 private const val BASE_PATH = "/ts_imports"
@@ -81,5 +82,12 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   @JSTestOptions(JSTestOption.WithSymbolNames)
   fun testCustomComponentHighlighting() {
     doTestWithCopyDirectory()
+  }
+
+  fun testCssReferencePathMapping() {
+    myFixture.enableInspections(CssUnknownTargetInspection())
+    myFixture.copyDirectoryToProject(getTestName(false), "")
+    myFixture.configureFromTempProjectFile("src/${getTestName(false)}.vue")
+    myFixture.testHighlighting()
   }
 }
