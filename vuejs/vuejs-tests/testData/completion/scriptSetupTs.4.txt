@@ -1,7 +1,9 @@
 Foo#null
 ScriptSetupTs#null
+SelectProps#null
 foo#null
 script-setup-ts#null
+select-props#null
 Component#vue
 KeepAlive#vue
 Suspense#vue

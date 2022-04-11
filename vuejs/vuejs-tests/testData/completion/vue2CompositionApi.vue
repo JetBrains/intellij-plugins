@@ -17,10 +17,14 @@ export default {
       double: computed(() => state.count * 2)
     });
     const increment = () => state.count++;
+    const recursive1 = ref({recursive2})
+    const recursive2 = ref({recursive1})
     return {
       state,
       foo,
-      increment
+      increment,
+      recursive1,
+      recursive2
     };
   }
 };
