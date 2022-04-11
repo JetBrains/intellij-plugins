@@ -47,7 +47,11 @@ object ResourceTypesSaver {
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
 
-    val resourceTypes = resourceTypeLocations.pmap(numThreads = 10) {
+    val supportedTypeLocations = resourceTypeLocations.filter {
+      it.name != "AWS::MediaTailor::PlaybackConfiguration" // todo unsupported yet
+    }
+
+    val resourceTypes = supportedTypeLocations.pmap(numThreads = 10) {
       val location = when (it.name) {
         "AWS::CloudWatch::Dashboard" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-dashboard.html"
         "AWS::ElasticBeanstalk::ConfigurationTemplate" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-beanstalk-configurationtemplate.html"
@@ -102,7 +106,7 @@ object ResourceTypesSaver {
       return partialDoc
     }
 
-    error("Could not fetch a valid AWS document page from both $doc and $partialDoc")
+    error("Could not fetch a valid AWS document page $url from both $doc and $partialDoc")
   }
 
   private fun downloadDocument(url: URL): Document {
@@ -166,7 +170,7 @@ object ResourceTypesSaver {
 
         val sectionTitle = cur.text()
 
-        if (sectionTitle == "Return Value" || sectionTitle == "Return Values") {
+        if (sectionTitle.equals("Return Value", true) || sectionTitle.equals("Return Values", true)) {
           for (term in vlist.select("span.term")) {
             if (term.parent()?.parent()?.parent() !== vlist) {
               continue
@@ -410,7 +414,7 @@ object ResourceTypesSaver {
       throw IllegalStateException("Unable to fetch $url", t)
     }
 
-    val root = JsonParser().parse(content)
+    val root = JsonParser.parseString(content)
 
     val resourceTypes = root.asJsonObject["ResourceTypes"].asJsonObject
 
