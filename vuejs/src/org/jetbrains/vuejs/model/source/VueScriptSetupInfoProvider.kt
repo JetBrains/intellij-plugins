@@ -5,7 +5,6 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptObjectType
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -99,13 +98,12 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             val arguments = call.stubSafeCallArguments
             val typeArgs = call.typeArguments
             if (typeArgs.size == 1) {
-              val arg = typeArgs[0]
-              if (arg is TypeScriptObjectType) {
-                props = arg.typeMembers.asSequence()
-                  .filterIsInstance<JSRecordType.PropertySignature>()
-                  .map { VueScriptSetupInputProperty(it) }
-                  .toList()
-              }
+              val typeArg = typeArgs[0]
+              val recordType = typeArg.jsType.asRecordType()
+
+              props = recordType.properties
+                .map { VueScriptSetupInputProperty(it) }
+                .toList()
             }
             else if (arguments.size == 1) {
               val arg = arguments[0]

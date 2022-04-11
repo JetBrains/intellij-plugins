@@ -67,6 +67,10 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefinePropsTypeDeclarationTS() = doTest()
 
+  fun testDefinePropsTypeDeclarationInterfaceTS() = doTest()
+
+  fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest()
+
   fun testBothScriptsJS() = doTest()
 
   /**
