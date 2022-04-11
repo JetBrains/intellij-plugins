@@ -1,5 +1,5 @@
-!count#number#101
-!double#null#101
+!count#…#101
+!double#…#101
 constructor#Function#98
 hasOwnProperty#boolean#98
 isPrototypeOf#boolean#98

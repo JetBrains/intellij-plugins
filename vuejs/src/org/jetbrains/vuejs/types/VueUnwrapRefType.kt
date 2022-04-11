@@ -1,13 +1,14 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.types
 
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
-import com.intellij.lang.javascript.psi.JSTypeTextBuilder
-import com.intellij.lang.javascript.psi.JSTypeUtils
+import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -44,10 +45,29 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
       builder.append(">")
       return
     }
-    substitute().buildTypeText(format, builder)
+    if (format == JSType.TypeTextFormat.PRESENTABLE &&
+        ((typeToUnwrap as? JSGenericTypeImpl)?.type as? JSTypeImpl)?.typeText.equals("UnwrapNestedRefs")) {
+      substituteManually().buildTypeText(format, builder)
+      return
+    }
+    val substitute = substitute()
+    if (substitute != this) {
+      substitute.buildTypeText(format, builder)
+    }
   }
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType {
+    val unrefFunction = resolveUnrefFunction()
+    if (unrefFunction != null) {
+      val baseType = JSCodeBasedTypeFactory.getPsiBasedType(unrefFunction, JSEvaluateContext(unrefFunction.containingFile))
+      return JSApplyCallType(baseType, mutableListOf(typeToUnwrap), source)
+    }
+
+    // old vue-composite doesn't have unref(), see VueCompletionTest.testVue2CompositionApi
+    return substituteManually()
+  }
+
+  private fun substituteManually(): JSType {
     val substituted = VueCompositionInfoHelper.substituteRefType(typeToUnwrap)
       .let {
         if (source.isJavaScript) {
@@ -93,6 +113,12 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
     }
   }
 
+  private fun resolveUnrefFunction(): TypeScriptFunction? {
+    val file = source.sourceElement?.containingFile ?: return null
+    return resolveSymbolFromNodeModule(file, VUE_MODULE, "unref", TypeScriptFunction::class.java) ?:
+           resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE, "unref", TypeScriptFunction::class.java)
+  }
+
   private fun getUnwrapRefType(): TypeScriptTypeAlias? =
     source.sourceElement?.containingFile?.let { file ->
       CachedValuesManager.getCachedValue(file) {
@@ -118,7 +144,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
   }
 
   private fun JSType.substituteUnwrapRecursively() =
-    transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
+    transformTypeHierarchy(object : JSCacheableTypeTransformerResolvedIdBase() {
       override fun `fun`(type: JSType): JSType {
         var result = type.unwrapAliases()
           .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
@@ -134,8 +160,17 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
         // In JS context `unknown` doesn't work properly in conditionals,
         // so we need to ensure that we are not left with huge list of expanded conditionals,
         // just in case there is some `unknown` out there.
-        return if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java))
-          result.transformTypeHierarchy(this)
+
+        return if (result is JSRecordType) {
+          result.transformTypeHierarchy {
+            // JSLookupUtilImpl.isTypeAcceptableForLookupElement
+            t -> if (t is JSGenericTypeImpl || t is JSRecordType && t != result)
+              JSNamedTypeFactory.createType("\u2026", t.source, JSContext.STATIC) else t
+          }
+        }
+        else if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java)) {
+          result
+        }
         else type
       }
     })

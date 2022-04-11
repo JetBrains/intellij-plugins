@@ -3,7 +3,9 @@ count#number
 foo#null
 foos#null
 inc#function(): void
-props#{readonly foo?: InferPropType<String | StringConstructor>}
+props#Readonly<{foo?: unknown} & {foo?: InferPropType<String | StringConstructor>}>
+recursive1#UnwrapRef<{recursive2: Ref<UnwrapRef<{recursive1: Ref<...<...>>}>>}>
+recursive2#UnwrapRef<{recursive1: Ref<UnwrapRef<{recursive2: Ref<...<...>>}>>}>
 ref#<T extends object>(value: T) => ToRef<T>
 vClickOutside#null
 $#ComponentInternalInstance

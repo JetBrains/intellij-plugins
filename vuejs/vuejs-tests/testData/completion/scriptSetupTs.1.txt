@@ -1,10 +1,13 @@
 Foo#null
+SelectProps#null
 count#number
 foo#string
 foos#null
 inc#() => void
 props#null
 ref#<T extends object>(value: T) => ToRef<T>
+selectProps#SelectProps
+selectPropsRef#unknown
 vClickOutside#null
 $#ComponentInternalInstance
 $attrs#null

@@ -15,6 +15,15 @@ const inc = () => {
 const props = defineProps({
   foo: String
 })
+
+// WEB-54758
+interface SelectProps {
+  value: string,
+  children: Array<SelectProps>
+}
+declare const selectProps: SelectProps;
+const selectPropsRef = ref(pp);
+
 </script>
 
 <template>
