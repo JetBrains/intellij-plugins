@@ -20,6 +20,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.yaml.psi.impl.YAMLScalarImpl
 import java.util.regex.Pattern
 
@@ -388,11 +389,18 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       addProblem(outputs, message("outputs.section.must.declare.at.least.one.stack.output"))
     }
 
-    if (outputs.properties.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
-      addProblem(outputs, message("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
+    val maxMetadataOutputs = getMaxMetadataOutputs()
+    if (outputs.properties.size > maxMetadataOutputs) {
+      addProblem(outputs, message("format.max.outputs.exceeded", maxMetadataOutputs))
     }
 
     super.outputs(outputs)
+  }
+
+  private fun getMaxMetadataOutputs(): Int {
+    if (customMaxMetadataOutputs > 0) return customMaxMetadataOutputs
+
+    return CloudFormationMetadataProvider.METADATA.limits.maxOutputs
   }
 
   override fun globals(globals: CfnGlobalsNode) {
@@ -702,6 +710,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   companion object {
     private val ANALYZED_KEY = Key.create<InspectionResult>("CFN_ANALYZED_FILE")
+
+    @TestOnly
+    var customMaxMetadataOutputs: Int = -1
 
     fun inspectFile(parsed: CloudFormationParsedFile): InspectionResult {
       val cached = parsed.psiFile.getUserData(ANALYZED_KEY)

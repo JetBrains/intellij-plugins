@@ -51,22 +51,26 @@
 
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
 
+    <!--suppress PluginXmlCapitalization -->
     <localInspection language="JSON" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
                      hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.JsonFormatViolationInspection"/>
+    <!--suppress PluginXmlCapitalization -->
     <localInspection language="JSON" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
                      hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection"/>
 
+    <!--suppress PluginXmlCapitalization -->
     <localInspection language="yaml" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
                      hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.YamlFormatViolationInspection"/>
+    <!--suppress PluginXmlCapitalization -->
     <localInspection language="yaml" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"

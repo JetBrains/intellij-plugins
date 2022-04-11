@@ -19,5 +19,15 @@
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="library" scope="TEST" name="Velocity" level="project" />
+    <orderEntry type="module-library">
+      <library name="intellij.aws.cloudformation.meta" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.intellij.aws:cloudformation-meta:2022.2.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/intellij/aws/cloudformation-meta/2022.2.0/cloudformation-meta-2022.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

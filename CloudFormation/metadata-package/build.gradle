@@ -1,0 +1,57 @@
+// Here we build AWS Metadata JAR and publish it to Maven repository https://jetbrains.team/p/ij/packages/maven/intellij-dependencies
+
+plugins {
+  id('maven-publish')
+}
+
+configurations {
+  archives
+}
+
+task jar(type: Jar) {
+  group = "build"
+  from "$buildDir/jar"
+  destinationDirectory = layout.buildDirectory.dir("$buildDir/dist")
+  archiveFileName = 'cloudformation-metadata.jar'
+}
+
+def jarArtifact = artifacts.add('archives', jar) {
+  type = 'jar'
+}
+
+def spaceUsername = rootProject.getProperty('spaceUsername')
+def spacePassword = rootProject.getProperty('spacePassword')
+
+println("Username: " + spaceUsername)
+println("Pwd: " + spacePassword)
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      groupId = 'com.intellij.aws'
+      artifactId = 'cloudformation-meta'
+      version = '1.0.0'
+      artifact(jarArtifact)
+      pom {
+        name = 'AWS CloudFormation Metadata'
+        description = 'Contains XML metadata for AWS CloudFormation plugin for IntelliJ IDEA'
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'https://www.apache.org/licenses/LICENSE-2.0.html'
+          }
+        }
+      }
+    }
+  }
+
+  repositories {
+    maven {
+      url 'https://packages.jetbrains.team/maven/p/ij/intellij-dependencies'
+      credentials {
+        username = spaceUsername
+        password = spacePassword
+      }
+    }
+  }
+}

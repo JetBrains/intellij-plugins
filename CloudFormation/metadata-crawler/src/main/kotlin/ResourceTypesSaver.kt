@@ -40,6 +40,8 @@ object ResourceTypesSaver {
   }
 
   fun saveResourceTypes() {
+    TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta").mkdirs()
+
     awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceType() }
     awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceTypeDescription() }
 
@@ -86,9 +88,9 @@ object ResourceTypesSaver {
         resourceTypes = allBuilders.map { Pair(it.name, it.toResourceTypeDescription()) }.toMap()
     )
 
-    TestUtil.getTestDataFile("../src/main/resources/cloudformation-metadata.xml")
+    TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta/cloudformation-metadata.xml")
       .outputStream().use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
-    TestUtil.getTestDataFile("../src/main/resources/cloudformation-descriptions.xml")
+    TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta/cloudformation-descriptions.xml")
       .outputStream().use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
   }
 

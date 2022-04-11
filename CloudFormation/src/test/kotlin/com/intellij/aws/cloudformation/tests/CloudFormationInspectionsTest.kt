@@ -8,7 +8,15 @@ import java.io.File
 
 class CloudFormationInspectionsTest : LightPlatformCodeInsightTestCase() {
   fun testNoOutputs() = inspectionsTest("noOutputs.template")
-  fun testMaxOutputs() = inspectionsTest("maxOutputs.template")
+  fun testMaxOutputs() {
+    CloudFormationInspections.customMaxMetadataOutputs = 60
+    try {
+      inspectionsTest("maxOutputs.template")
+    } finally {
+      CloudFormationInspections.customMaxMetadataOutputs = -1
+    }
+  }
+
   fun testNoResourcesSection() = inspectionsTest("noResourcesSection.template")
   fun testNoResources() = inspectionsTest("noResources.template")
 

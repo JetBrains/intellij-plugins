@@ -92,18 +92,8 @@
   </problem>
   <problem>
     <file>maxParameters.template</file>
-    <line>4</line>
-    <description>Exceeded a maximum of 60 parameters in template</description>
-  </problem>
-  <problem>
-    <file>maxParameters.template</file>
     <line>74</line>
     <description>Resources section should declare at least one resource</description>
-  </problem>
-  <problem>
-    <file>maxMappings.template</file>
-    <line>4</line>
-    <description>Exceeded a maximum of 100 mappings in template</description>
   </problem>
   <problem>
     <file>maxMappings.template</file>
