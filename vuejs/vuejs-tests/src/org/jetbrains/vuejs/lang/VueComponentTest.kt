@@ -65,6 +65,8 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefinePropsRuntimeDeclarationArrayTS() = doTest()
 
+  fun testDefinePropsTypeDeclarationTS() = doTest()
+
   fun testBothScriptsJS() = doTest()
 
   /**

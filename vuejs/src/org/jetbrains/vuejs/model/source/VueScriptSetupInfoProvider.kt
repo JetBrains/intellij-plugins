@@ -6,11 +6,8 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptObjectType
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
-import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService.NULL_CHECKS
-import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
@@ -18,7 +15,6 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
-import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
@@ -106,7 +102,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
               val arg = typeArgs[0]
               if (arg is TypeScriptObjectType) {
                 props = arg.typeMembers.asSequence()
-                  .filterIsInstance<TypeScriptPropertySignature>()
+                  .filterIsInstance<JSRecordType.PropertySignature>()
                   .map { VueScriptSetupInputProperty(it) }
                   .toList()
               }
@@ -180,9 +176,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
   }
 
-  private class VueScriptSetupInputProperty(private val propertySignature: TypeScriptPropertySignature) : VueInputProperty {
-
-    private val context = ProcessingContext().also { it.put(NULL_CHECKS, true) }
+  private class VueScriptSetupInputProperty(private val propertySignature: JSRecordType.PropertySignature) : VueInputProperty {
 
     override val name: String
       get() = propertySignature.memberName
@@ -190,13 +184,13 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     override val source: PsiElement?
       get() = propertySignature.memberSource.singleElement
 
+    override val required: Boolean
+      get() {
+        return !propertySignature.isOptional
+      }
+
     override val jsType: JSType?
       get() = propertySignature.jsTypeWithOptionality
-
-    override val required: Boolean
-      get() = propertySignature.jsTypeWithOptionality?.let {
-        it.isDirectlyAssignableType(JSUndefinedType(it.source), context)
-      } == false
 
     override fun toString(): String {
       return "VueScriptSetupInputProperty(name='$name', required=$required, jsType=$jsType)"
