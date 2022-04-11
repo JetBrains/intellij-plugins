@@ -6,7 +6,7 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.UsefulTestCase
 import java.io.File
 
-class CloudFormationInspectionsTests : LightPlatformCodeInsightTestCase() {
+class CloudFormationInspectionsTest : LightPlatformCodeInsightTestCase() {
   fun testNoOutputs() = inspectionsTest("noOutputs.template")
   fun testMaxOutputs() = inspectionsTest("maxOutputs.template")
   fun testNoResourcesSection() = inspectionsTest("noResourcesSection.template")
