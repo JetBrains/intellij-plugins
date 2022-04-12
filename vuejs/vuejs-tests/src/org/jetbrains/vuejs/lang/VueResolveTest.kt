@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -2028,10 +2029,12 @@ export default class UsageComponent extends Vue {
       return
     }
 
+    TestCase.assertNull((mixinJsPsiFile as PsiFileImpl).treeElement)
     val mixinsViaStubs = VueModelManager.getGlobal(mixinJsPsiFile).mixins
 
     myFixture.openFileInEditor(mixinJsFile)
     PsiManager.getInstance(project).dropPsiCaches()
+    TestCase.assertNotNull(mixinJsPsiFile.treeElement)
     val mixinsViaPsi = VueModelManager.getGlobal(mixinJsPsiFile).mixins
 
     assertSameElements(mixinsViaStubs, mixinsViaPsi)
