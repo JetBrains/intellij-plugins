@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.javascript.web.*
@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -2018,6 +2019,23 @@ export default class UsageComponent extends Vue {
     }
   }
 
+  fun testSameMixinsViaStubsAndViaPsi() {
+    val dir = myFixture.copyDirectoryToProject("../sameMixinsViaStubsAndViaPsi", ".")
+    val mixinJsFile = dir.findChild("mixin.spec.js")
+    val mixinJsPsiFile = mixinJsFile?.let { PsiManager.getInstance(project).findFile(mixinJsFile) }
+    if (mixinJsPsiFile == null) {
+      fail("broken test data")
+      return
+    }
+
+    val mixinsViaStubs = VueModelManager.getGlobal(mixinJsPsiFile).mixins
+
+    myFixture.openFileInEditor(mixinJsFile)
+    PsiManager.getInstance(project).dropPsiCaches()
+    val mixinsViaPsi = VueModelManager.getGlobal(mixinJsPsiFile).mixins
+
+    assertSameElements(mixinsViaStubs, mixinsViaPsi)
+  }
 }
 
 fun globalMixinText(): String {
