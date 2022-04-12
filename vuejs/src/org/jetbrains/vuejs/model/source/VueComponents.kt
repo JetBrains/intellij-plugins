@@ -17,7 +17,10 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
-import com.intellij.psi.util.*
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
@@ -66,17 +69,13 @@ class VueComponents {
     }
 
     fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueEntityDescriptor? {
-      val scope = createLocalResolveScope(element)
+      val context = (element as? JSImplicitElement)?.parent ?: element
 
-      return JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
+      return JSStubBasedPsiTreeUtil.resolveLocally(reference, context)
                ?.let { getVueComponentFromResolve(listOf(it)) }
                ?.let { return it }
-             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(scope).resolveQualifiedName(reference))
+             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(context).resolveQualifiedName(reference))
     }
-
-    private fun createLocalResolveScope(element: PsiElement): PsiElement =
-      PsiTreeUtil.getContextOfType(element, JSCatchBlock::class.java, JSClass::class.java, JSExecutionScope::class.java)
-      ?: element.containingFile
 
     private fun getVueComponentFromResolve(result: Collection<PsiElement>): VueEntityDescriptor? {
       return result.firstNotNullOfOrNull(::getComponentDescriptor)
