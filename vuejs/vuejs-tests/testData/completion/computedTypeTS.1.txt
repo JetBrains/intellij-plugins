@@ -83,8 +83,10 @@ onpointerleave#(this:Window, ev: PointerEvent) => any
 onpopstate#(this:Window, ev: PopStateEvent) => any
 onratechange#(this:Window, ev: Event) => any
 onrejectionhandled#null
+onsecuritypolicyviolation#(this:Window, ev: SecurityPolicyViolationEvent) => any
 onselectionchange#(this:Window, ev: Event) => any
 onselectstart#(this:Window, ev: Event) => any
+onslotchange#(this:Window, ev: Event) => any
 onstalled#(this:Window, ev: Event) => any
 onstorage#(this:Window, ev: StorageEvent) => any
 ontimeupdate#(this:Window, ev: Event) => any
