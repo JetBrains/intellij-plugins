@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -53,6 +54,11 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
     val substitute = substitute()
     if (substitute != this) {
       substitute.buildTypeText(format, builder)
+    }
+    else {
+      builder.append(UNWRAP_REF_TYPE).append("<")
+      typeToUnwrap.buildTypeText(format, builder)
+      builder.append(">")
     }
   }
 
@@ -144,7 +150,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
   }
 
   private fun JSType.substituteUnwrapRecursively() =
-    transformTypeHierarchy(object : JSCacheableTypeTransformerResolvedIdBase() {
+    transformTypeHierarchy(object : JSCacheableTypeTransformerBase() {
       override fun `fun`(type: JSType): JSType {
         var result = type.unwrapAliases()
           .let { JSCompositeTypeImpl.optimizeTypeIfComposite(it, JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE) }
@@ -165,7 +171,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
           result.transformTypeHierarchy {
             // JSLookupUtilImpl.isTypeAcceptableForLookupElement
             t -> if (t is JSGenericTypeImpl || t is JSRecordType && t != result)
-              JSNamedTypeFactory.createType("\u2026", t.source, JSContext.STATIC) else t
+              JSNamedTypeFactory.createType(StringUtil.ELLIPSIS, t.source, JSContext.STATIC) else t
           }
         }
         else if (result != type && !JSTypeUtils.hasTypes(result, TypeScriptConditionalTypeJSTypeImpl::class.java)) {
