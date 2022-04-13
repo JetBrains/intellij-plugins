@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
-import com.intellij.psi.stubs.StubTreeLoader
 import com.intellij.psi.util.descendantsOfType
 import com.intellij.psi.xml.XmlComment
 import com.intellij.rt.execution.junit.FileComparisonFailure
@@ -103,7 +102,9 @@ class VueComponentTest : BasePlatformTestCase() {
   /**
    * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
    */
-  private fun doTestInner(file: PsiFileImpl, expectedCommentContent: String, strictNullChecks: Boolean): PsiFileImpl {
+  private fun doTestInner(_file: PsiFileImpl, expectedCommentContent: String, strictNullChecks: Boolean): PsiFileImpl {
+    var file = _file
+
     file.node // ensure that the AST is loaded
     assertNull(file.stub)
 
@@ -131,13 +132,14 @@ class VueComponentTest : BasePlatformTestCase() {
     }
 
     assertNull(file.stub)
-    val reloadedFile = unloadAst(file) as PsiFileImpl
-    assertNotNull(reloadedFile.stub)
+    file = unloadAst(file)
+    assertNotNull(file.stub)
 
     PsiManagerEx.getInstanceEx(project).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, testRootDisposable)
-    val stubBasedComponentModel = buildComponentModel(reloadedFile)
-    assertNotNull(reloadedFile.stub)
+    val stubBasedComponentModel = buildComponentModel(file)
+    assertNotNull(file.stub)
     PsiManagerEx.getInstanceEx(project).setAssertOnFileLoadingFilter(VirtualFileFilter.NONE, testRootDisposable)
+    // serialization is not always stub safe, but that's fine: those operations don't run as often as component model building
     val stubBasedCommentContent = serializeComponentModel(stubBasedComponentModel)
 
     assertEquals(
@@ -146,14 +148,12 @@ class VueComponentTest : BasePlatformTestCase() {
       stubBasedCommentContent
     )
 
-    return reloadedFile
+    return file
   }
 
   private fun buildComponentModel(file: PsiFile): ComponentModel {
     val component = VueModelManager.findEnclosingContainer(file) as? VueSourceComponent
-    if (component == null) {
-      throw AssertionError("VueSourceComponent not found")
-    }
+                    ?: throw AssertionError("VueSourceComponent not found")
 
     val model = ComponentModel(
       props = component.props.sortedBy { it.name }.map {
@@ -203,13 +203,13 @@ class VueComponentTest : BasePlatformTestCase() {
   /**
    * Inspired by SqlModelBuilderTest.unloadAst
    */
-  private fun unloadAst(file: PsiFile): PsiFile {
+  private fun unloadAst(file: PsiFile): PsiFileImpl {
     val vFile = file.viewProvider.virtualFile
-    assertNotNull(vFile)
-    val tree = StubTreeLoader.getInstance().readOrBuild(project, vFile, file)
-    assertNotNull(tree)
     (psiManager as PsiManagerImpl).cleanupForNextTest()
-    return psiManager.findFile(vFile)!!
+    val newFile = psiManager.findFile(vFile) as PsiFileImpl
+    assertNull(newFile.treeElement)
+    assertFalse(file.isValid)
+    return newFile
   }
 }
 
