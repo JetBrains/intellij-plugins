@@ -40,7 +40,7 @@ class Test::Unit::UI::TeamCity::TestRunner
   def initialize(*args)
     arity = args.size
 
-    output_level = (defined? Test::Unit::UI::NORMAL) ? Test::Unit::UI::NORMAL : 2
+    @output_level = (defined? Test::Unit::UI::NORMAL) ? Test::Unit::UI::NORMAL : 2
     @options = {}
 
     if arity == 2
@@ -49,7 +49,7 @@ class Test::Unit::UI::TeamCity::TestRunner
       if Hash === second_arg
         @options = second_arg
       elsif Numeric === second_arg
-        output_level = second_arg
+        @output_level = second_arg
       else
         msg = "Unsupported Test::Unit version: Unkown API, 2nd arg is #{second_arg.class.name}"
         raise Rake::TeamCity::InnerException, msg, caller
