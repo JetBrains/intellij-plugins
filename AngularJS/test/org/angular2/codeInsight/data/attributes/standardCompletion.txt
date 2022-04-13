@@ -86,6 +86,7 @@
 (select)%null#Event#50
 (selectionchange)%null#Event#50
 (selectstart)%null#Event#50
+(slotchange)%null#Event#50
 (stalled)%null#Event#50
 (submit)%null#SubmitEvent#50
 (suspend)%null#Event#50
@@ -111,7 +112,6 @@
 (webkitfullscreenerror)%null#null#50
 (webkittransitionend)%null#Event#50
 (wheel)%null#WheelEvent#50
-(slotchange)%null#null#50
 (pan)%null#HammerInput#50
 (pancancel)%null#HammerInput#50
 (pandown)%null#HammerInput#50
