@@ -61,7 +61,7 @@ class Test::Unit::UI::TestRunnerMediator
       # let's check if it is fake test method
       if ::Rake::TeamCity::RunnerUtils.fake_default_test_for_empty_suite?(first_test)
          return 0
-       end
+      end
     end
 
     tests.each do |suite_or_test|
