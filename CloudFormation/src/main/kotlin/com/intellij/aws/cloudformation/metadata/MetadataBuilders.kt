@@ -1,7 +1,5 @@
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypeDescription
+import com.intellij.aws.cloudformation.CloudFormationConstants
+import com.intellij.aws.cloudformation.metadata.*
 
 private val nameRegex = Regex("^[a-zA-Z0-9.]+$")
 
@@ -76,4 +74,28 @@ class ResourceTypeBuilder(val name: String, val url: String) {
           properties = properties.mapValues { it.value.description ?: error("'description' is not set in property ${it.value.name} of resource type $name") },
           attributes = attributes.mapValues { it.value.description ?: error("'description' is not set in attribute ${it.value.name} of resource type $name") }
       )
+}
+
+fun CloudFormationManualResourceType.toResourceTypeBuilder(): ResourceTypeBuilder {
+  val builder = ResourceTypeBuilder(name, url)
+  builder.description = description
+  builder.transform = CloudFormationConstants.awsServerless20161031TransformName
+
+  for (attribute in attributes) {
+    builder.addAttribute(attribute.name).apply {
+      description = attribute.description
+    }
+  }
+
+  for (property in properties) {
+    builder.addProperty(property.name).apply {
+      description = property.description
+      type = property.type
+      required = property.required
+      url = property.url ?: builder.url
+      updateRequires = property.updateRequires ?: ""
+    }
+  }
+
+  return builder
 }
