@@ -1,7 +1,6 @@
 @file:Suppress("LoopToCallChain", "Destructure")
 
 import com.google.gson.JsonParser
-import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.metadata.*
 import com.intellij.aws.cloudformation.tests.TestUtil
 import org.jsoup.Jsoup
@@ -15,35 +14,8 @@ import java.util.zip.GZIPInputStream
 object ResourceTypesSaver {
   private const val FETCH_TIMEOUT_MS = 10000
 
-  private fun CloudFormationManualResourceType.toResourceTypeBuilder(): ResourceTypeBuilder {
-    val builder = ResourceTypeBuilder(name, url)
-    builder.description = description
-    builder.transform = CloudFormationConstants.awsServerless20161031TransformName
-
-    attributes.forEach { attribute ->
-      builder.addAttribute(attribute.name).apply {
-        description = attribute.description
-      }
-    }
-
-    properties.forEach { property ->
-      builder.addProperty(property.name).apply {
-        description = property.description
-        type = property.type
-        required = property.required
-        url = property.url ?: builder.url
-        updateRequires = property.updateRequires ?: ""
-      }
-    }
-
-    return builder
-  }
-
   fun saveResourceTypes() {
     TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta").mkdirs()
-
-    awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceType() }
-    awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder().toResourceTypeDescription() }
 
     val limits = fetchLimits()
     val resourceTypeLocations = fetchResourceTypeLocations()
@@ -74,18 +46,14 @@ object ResourceTypesSaver {
       }
     }
 
-    val allBuilders = resourceTypes + awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder() }
-
     val metadata = CloudFormationMetadata(
-        resourceTypes = TreeMap(allBuilders
-            .map { Pair(it.name, it.toResourceType()) }
-            .toMap()),
-        predefinedParameters = predefinedParameters,
-        limits = limits
+      resourceTypes = TreeMap(resourceTypes.associate { Pair(it.name, it.toResourceType()) }),
+      predefinedParameters = predefinedParameters,
+      limits = limits
     )
 
     val descriptions = CloudFormationResourceTypesDescription(
-        resourceTypes = allBuilders.map { Pair(it.name, it.toResourceTypeDescription()) }.toMap()
+        resourceTypes = resourceTypes.associate { Pair(it.name, it.toResourceTypeDescription()) }
     )
 
     TestUtil.getTestDataFile("../metadata-package/build/jar/com/intellij/aws/meta/cloudformation-metadata.xml")

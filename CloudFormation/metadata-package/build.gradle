@@ -22,15 +22,12 @@ def jarArtifact = artifacts.add('archives', jar) {
 def spaceUsername = rootProject.getProperty('spaceUsername')
 def spacePassword = rootProject.getProperty('spacePassword')
 
-println("Username: " + spaceUsername)
-println("Pwd: " + spacePassword)
-
 publishing {
   publications {
     maven(MavenPublication) {
       groupId = 'com.intellij.aws'
       artifactId = 'cloudformation-meta'
-      version = '1.0.0'
+      version = '2022.2.1'
       artifact(jarArtifact)
       pom {
         name = 'AWS CloudFormation Metadata'
