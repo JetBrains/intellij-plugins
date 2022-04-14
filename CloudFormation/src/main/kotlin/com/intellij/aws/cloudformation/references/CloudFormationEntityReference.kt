@@ -4,13 +4,13 @@ import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.aws.cloudformation.CloudFormationParser
 import com.intellij.aws.cloudformation.CloudFormationResolve
 import com.intellij.aws.cloudformation.CloudFormationSection
+import com.intellij.codeInsight.highlighting.HighlightedReference
 import com.intellij.psi.PsiElement
 
 class CloudFormationEntityReference(element: PsiElement,
                                     private val myPossibleSections: Collection<CloudFormationSection>,
                                     private val myExcludeFromVariants: Collection<String>?,
-                                    private val referenceValue: String? = null) : CloudFormationReferenceBase(element) {
-
+                                    private val referenceValue: String? = null) : CloudFormationReferenceBase(element), HighlightedReference {
   init {
     assert(myPossibleSections.isNotEmpty())
   }

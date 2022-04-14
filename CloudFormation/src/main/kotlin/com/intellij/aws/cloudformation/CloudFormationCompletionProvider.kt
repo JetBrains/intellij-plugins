@@ -70,13 +70,13 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
               val typeName = resourcePropertyNameMatch.resource.typeName ?: ""
               val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) ?: return
               @Suppress("LoopToCallChain")
-              for ((propertyName) in resourceTypeMetadata.properties.values) {
+              for ((propertyName, type) in resourceTypeMetadata.properties.values) {
                 if (resourcePropertyNameMatch.resource.properties != null &&
                     resourcePropertyNameMatch.resource.properties.properties.any { it.name?.value == propertyName }) {
                   continue
                 }
 
-                rs.addElement(createLookupElement(propertyName, quote))
+                rs.addElement(createLookupElement(propertyName, quote, convertTypeFromHtml(type)))
               }
             }
 
@@ -153,7 +153,25 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
 
   private fun createLookupElement(value: String, quote: String): LookupElement {
     val id = "$quote$value$quote"
+    return LookupElementBuilder.create(id).withIcon(CloudFormationIcons.Aws)
+  }
+
+  private fun createLookupElement(value: String, quote: String, type: String?): LookupElement {
+    val id = "$quote$value$quote"
     return LookupElementBuilder.create(id)
+      .withTypeText(type)
+      .withIcon(CloudFormationIcons.Aws)
+  }
+
+  private fun convertTypeFromHtml(type: String): String? {
+    return when (type) {
+      "<p><em>Type</em>: String</p>" -> "String"
+      "<p><em>Type</em>: Boolean</p>" -> "Boolean"
+      "<p><em>Type</em>: List of String</p>" -> "List of String"
+      "<p><em>Type</em>: Integer</p>" -> "Integer"
+      "<p><em>Type</em>: Long</p>" -> "Long"
+      else -> null
+    }
   }
 }
 
