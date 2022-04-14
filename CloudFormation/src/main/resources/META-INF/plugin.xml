@@ -5,8 +5,7 @@
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
-    <p>Amazon AWS CloudFormation language support
-    <p>
+    <p>Amazon AWS CloudFormation language support.
     <p>Open any *.template, *.json or *.yaml file with CloudFormation language inside. There should be number of features available:
     <ul>
       <li>Template validation
