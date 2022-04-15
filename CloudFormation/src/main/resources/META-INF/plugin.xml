@@ -92,5 +92,7 @@
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
 
     <fileTypeStatisticProvider implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeStatisticProvider"/>
+
+    <iconProvider implementation="com.intellij.aws.cloudformation.CloudFormationIconProvider"/>
   </extensions>
 </idea-plugin>

@@ -14,4 +14,5 @@ public final class CloudFormationIcons {
     return IconManager.getInstance().loadRasterizedIcon(path, CloudFormationIcons.class.getClassLoader(), cacheKey, flags);
   }
   /** 16x16 */ public static final @NotNull Icon Aws = load("icons/aws.svg", -607101785, 0);
+  /** 16x16 */ public static final @NotNull Icon AwsFile = load("icons/awsFile.svg", -1754241652, 0);
 }
