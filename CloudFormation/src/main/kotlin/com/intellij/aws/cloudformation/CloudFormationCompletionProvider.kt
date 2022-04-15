@@ -6,11 +6,7 @@ import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnNamedNode
 import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnScalarValueNode
-import com.intellij.codeInsight.completion.CompletionContributor
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.json.JsonLanguage
@@ -25,6 +21,11 @@ import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
 
 class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters>() {
+
+  private val objectTypeRegex: Regex = Regex("<p><em>Type</em>: <a href=\"(.+)\">([\\w\\d]+)</a></p>")
+  private val objectListTypeRegex: Regex = Regex("<p><em>Type</em>: List of <a href=\"(.+)\">([\\w\\d]+)</a></p>")
+  private val stringOrObjectTypeRegex: Regex = Regex("<p><em>Type</em>: String \\| <a href=\"(.+)\">([\\w\\d]+)</a></p>")
+
           public override fun addCompletions(parameters: CompletionParameters,
                                              context: ProcessingContext,
                                              rsParent: CompletionResultSet) {
@@ -167,10 +168,32 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
     return when (type) {
       "<p><em>Type</em>: String</p>" -> "String"
       "<p><em>Type</em>: Boolean</p>" -> "Boolean"
-      "<p><em>Type</em>: List of String</p>" -> "List of String"
       "<p><em>Type</em>: Integer</p>" -> "Integer"
       "<p><em>Type</em>: Long</p>" -> "Long"
-      else -> null
+      "<p><em>Type</em>: Map</p>" -> "Map"
+      "<p><em>Type</em>: List</p>" -> "List"
+      "<p><em>Type</em>: List of String</p>" -> "List of String"
+      else -> {
+        var matchResult = objectTypeRegex.matchEntire(type)
+        if (matchResult != null && matchResult.groupValues.size == 3) {
+          val objectType = matchResult.groupValues.last()
+          return "Object $objectType"
+        }
+
+        matchResult = objectListTypeRegex.matchEntire(type)
+        if (matchResult != null && matchResult.groupValues.size == 3) {
+          val objectType = matchResult.groupValues.last()
+          return "List of $objectType"
+        }
+
+        matchResult = stringOrObjectTypeRegex.matchEntire(type)
+        if (matchResult != null && matchResult.groupValues.size == 3) {
+          val objectType = matchResult.groupValues.last()
+          return "String | Object $objectType"
+        }
+
+        null
+      }
     }
   }
 }
