@@ -3,6 +3,8 @@ AWS CloudFormation plugin for IntelliJ-based IDEs
 
 This plugin was originally developed there: https://github.com/shalupov/idea-cloudformation
 
+Report issues to: [YouTrack](https://youtrack.jetbrains.com/issues/IDEA?q=%23%7BLang.%20CloudFormation%7D%20)
+
 Latest stable version
 ---------------------
 

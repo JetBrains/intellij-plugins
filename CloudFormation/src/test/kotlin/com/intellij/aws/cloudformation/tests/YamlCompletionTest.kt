@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.ModuleFixture
 import java.util.Arrays
 
 class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
-  val predefinedAndECSCluster = (CloudFormationMetadataProvider.METADATA.predefinedParameters + "ECSCluster").toTypedArray()
+  private val predefinedAndECSCluster = (CloudFormationMetadataProvider.METADATA.predefinedParameters + "ECSCluster").toTypedArray()
   private fun Array<String>.withQuotes(quote: String): Array<String> = this.map { "$quote$it$quote" }.toTypedArray()
 
   fun testRefNoQuotes() = checkBasicCompletion("ref_no_quotes.yaml", *predefinedAndECSCluster)
@@ -43,16 +43,25 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
   fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
   fun testServerless1() {
-    checkBasicCompletion("serverless_1.yaml", "AutoPublishAlias", "CodeUri", "DeadLetterQueue",
-                         "DeploymentPreference", "Description", "Environment", "Events", "FunctionName", "InlineCode",
-                         "KmsKeyArn", "Layers", "MemorySize", "PermissionsBoundary", "Policies",
-                         "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "Tags", "Timeout",
-                         "Tracing", "VersionDescription", "VpcConfig")
+    val properties = arrayOf(
+      "Architectures", "AssumeRolePolicyDocument", "AutoPublishAlias", "AutoPublishCodeSha256", "CodeSigningConfigArn",
+      "CodeUri", "DeadLetterQueue", "DeploymentPreference", "Description", "Environment", "EphemeralStorage",
+      "EventInvokeConfig", "Events", "FileSystemConfigs", "FunctionName", "FunctionUrlConfig", "ImageConfig", "ImageUri",
+      "InlineCode", "KmsKeyArn", "Layers", "MemorySize", "PackageType", "PermissionsBoundary", "Policies",
+      "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "Tags", "Timeout", "Tracing",
+      "VersionDescription", "VpcConfig"
+    )
+
+    checkBasicCompletion("serverless_1.yaml", *properties)
   }
 
   fun testServerless2() {
-    checkBasicCompletion("serverless_2.yaml", "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable",
-                         "AWS::Serverless::Application", "AWS::Serverless::LayerVersion")
+    val types = arrayOf(
+      "AWS::Serverless::Api", "AWS::Serverless::Application", "AWS::Serverless::Function", "AWS::Serverless::HttpApi",
+      "AWS::Serverless::LayerVersion", "AWS::Serverless::SimpleTable", "AWS::Serverless::StateMachine"
+    )
+
+    checkBasicCompletion("serverless_2.yaml", *types)
   }
 
   fun testServerless3() = checkBasicCompletion("serverless_3.yaml")

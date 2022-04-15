@@ -132,4 +132,11 @@ val awsServerlessSimpleTable = CloudFormationManualResourceType(
     )
 )
 
-val awsServerless20161031ResourceTypes = listOf(awsServerlessFunction, awsServerlessApi, awsServerlessApplication, awsServerlessSimpleTable, awsServerlessLayerVersion)
+// Now Serverless metadata is collected in ResourceTypesSaver::fetchResourceTypeLocations
+// val awsServerless20161031ResourceTypes = listOf(
+//   awsServerlessFunction,
+//   awsServerlessApi,
+//   awsServerlessApplication,
+//   awsServerlessSimpleTable,
+//   awsServerlessLayerVersion
+// )
