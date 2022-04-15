@@ -1,6 +1,7 @@
 @file:Suppress("LoopToCallChain", "Destructure")
 
 import com.google.gson.JsonParser
+import com.intellij.aws.cloudformation.CloudFormationConstants.awsServerless20161031TransformName
 import com.intellij.aws.cloudformation.metadata.*
 import com.intellij.aws.cloudformation.tests.TestUtil
 import org.jsoup.Jsoup
@@ -34,6 +35,7 @@ object ResourceTypesSaver {
 
       try {
         val builder = ResourceTypeBuilder(name = it.name, url = location)
+        builder.transform = it.transform
         fetchResourceType(builder)
 
         // Check everything is set
@@ -373,7 +375,11 @@ object ResourceTypesSaver {
     return result
   }
 
-  private data class ResourceTypeLocation(val name: String, val location: String)
+  private data class ResourceTypeLocation(
+    val name: String,
+    val location: String,
+    val transform: String? = null
+  )
 
   private fun fetchResourceTypeLocations(url: String): Map<String, ResourceTypeLocation> {
     val content = try {
@@ -412,10 +418,28 @@ object ResourceTypesSaver {
         "https://d201a2mn26r7lk.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json" //  US West (Oregon)
     )
 
-    return urls.map { fetchResourceTypeLocations(it) }
-        .fold(mapOf<String, ResourceTypeLocation>()) { acc, map -> acc + map }
-        .map { it.value }
+    val standardResourceLocations = urls
+      .map { fetchResourceTypeLocations(it) }
+      .fold(mapOf<String, ResourceTypeLocation>()) { acc, map -> acc + map }
+      .map { it.value }
+
+    val serverlessResourceLocations = listOf(
+      serverlessLocation("AWS::Serverless::Api", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html"),
+      serverlessLocation("AWS::Serverless::Application", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-application.html"),
+      serverlessLocation("AWS::Serverless::Function", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html"),
+      serverlessLocation("AWS::Serverless::HttpApi", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html"),
+      serverlessLocation("AWS::Serverless::LayerVersion", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-layerversion.html"),
+      serverlessLocation("AWS::Serverless::SimpleTable", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-simpletable.html"),
+      serverlessLocation("AWS::Serverless::StateMachine", "https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html")
+    )
+
+    return (standardResourceLocations + serverlessResourceLocations)
         .sortedBy { it.name }
+  }
+
+  private fun serverlessLocation(name: String, url: String): ResourceTypeLocation {
+    // Serverless types must have "Transform:" attribute
+    return ResourceTypeLocation(name, url, awsServerless20161031TransformName)
   }
 
   private fun fetchPredefinedParameters(): List<String> {

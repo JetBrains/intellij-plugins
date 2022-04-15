@@ -1,8 +1,6 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.aws.cloudformation.metadata.awsServerlessApi
-import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
-import com.intellij.aws.cloudformation.metadata.awsServerlessSimpleTable
+import com.intellij.aws.cloudformation.metadata.*
 
 object CloudFormationConstants {
   val SupportedTemplateFormatVersions = setOf("2010-09-09")
@@ -42,7 +40,7 @@ object CloudFormationConstants {
       "SimpleTable" to awsServerlessSimpleTable
   )
 
-  val AllTopLevelResourceProperties = listOf(
+  val AllTopLevelResourceProperties: Set<String> = listOf(
       ConditionPropertyName,
       TypePropertyName,
       PropertiesPropertyName,
