@@ -3,7 +3,7 @@
 let providerPromise: Promise<SchematicsProvider>;
 
 //find appropriate support
-for (let version of ["60", "62", "70", "80", "90"]) {
+for (let version of ["60", "62", "70", "80", "90", "140"]) {
   try {
     providerPromise = require("./schematicsProvider" + version);
     break;

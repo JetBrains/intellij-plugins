@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.javascript.nodejs.NodePackageVersionUtil
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
@@ -80,8 +81,12 @@ private fun loadBlueprintHelpOutput(configurator: NodeCommandLineConfigurator, c
   NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
 
   val module = modules.firstOrNull() ?: return ""
-  val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"
-  val commandLine = GeneralCommandLine("", moduleExe, "help", "generate")
+  val modulePath = module.virtualFile!!.path
+  val moduleExe = "$modulePath${File.separator}bin${File.separator}ng"
+  val isGt14 =
+    NodePackageVersionUtil.getPackageVersion(modulePath)?.semVer?.isGreaterOrEqualThan(14, 0, 0) ?: false
+  val commandLine =
+    if (isGt14) GeneralCommandLine("", moduleExe, "generate", "--help") else GeneralCommandLine("", moduleExe, "help", "generate")
   configurator.configure(commandLine)
   return grabCommandOutput(commandLine, cli.path)
 }
