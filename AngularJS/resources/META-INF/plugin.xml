@@ -122,8 +122,6 @@
 
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
-    <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
-
     <!-- Angular 2 contributions -->
     <javascript.web.framework id="angular" implementation="org.angular2.Angular2Framework"/>
     <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
@@ -170,7 +168,7 @@
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="WARNING"
                      key="angular.inspection.aot-inaccessible-member.name" bundle="messages.Angular2Bundle"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
-    <projectTemplatesFactory implementation="org.angular2.AngularAndAngularJSTemplateFactory"/>
+    <projectTemplatesFactory implementation="org.angular2.AngularProjectTemplatesFactory"/>
     <!-- works in new IDEA wizard -->
     <moduleBuilder builderClass="org.angular2.AngularCLIModuleBuilder" />
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
