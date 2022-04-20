@@ -297,8 +297,16 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
                                        @NotNull final PsiElement dartComponentOrOperatorDeclaration) {
     final DartFunctionBody functionBody = PsiTreeUtil.getChildOfType(dartComponentOrOperatorDeclaration, DartFunctionBody.class);
     final IDartBlock block = functionBody == null ? null : functionBody.getBlock();
+    // Handle bodies defined with {...}
     if (block != null && block.getTextLength() > 2) {
       descriptors.add(new FoldingDescriptor(functionBody, block.getTextRange()));
+    }
+    // Handle bodies defined with the fat arrow: =>
+    // A text length of 5 is used for cases as short at "=> 0;"
+    else if (functionBody != null &&
+             functionBody.getTextLength() > 5 &&
+             functionBody.getFirstChild().getText().equals("=>")) {
+      descriptors.add(new FoldingDescriptor(functionBody, functionBody.getTextRange()));
     }
   }
 

@@ -10,7 +10,7 @@ class Foo <fold text='{...}' expand='true'>{
   Foo.fromJSON(String jsonString) {}
   //</editor-fold></fold>
 
-  String toString() => "";
+  String toString() <fold text='{...}' expand='true'>=> "";</fold>
 
   <fold text='3' expand='true'>//<editor-fold desc="3">
   main() <fold text='{...}' expand='true'>{
