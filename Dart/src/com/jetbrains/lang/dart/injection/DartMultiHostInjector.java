@@ -46,13 +46,17 @@ public class DartMultiHostInjector implements MultiHostInjector {
   }
 
   private static boolean isRegExp(@NotNull final DartStringLiteralExpression element) {
-    // new RegExp(r'\d+')
+    // new RegExp(r'\d+'); RegExp(r'\d+')
     final PsiElement parent1 = element.getParent();
     final PsiElement parentParent2 = parent1 instanceof DartArgumentList && parent1.getFirstChild() == element ? parent1.getParent() : null;
     final PsiElement parent3 = parentParent2 instanceof DartArguments ? parentParent2.getParent() : null;
     if (parent3 instanceof DartNewExpression) {
       final DartType type = ((DartNewExpression)parent3).getType();
       return type != null && "RegExp".equals(type.getText());
+    }
+    if (parent3 instanceof DartCallExpression) {
+      final DartExpression expression = ((DartCallExpression)parent3).getExpression();
+      return expression != null && "RegExp".equals(expression.getText());
     }
     return false;
   }
