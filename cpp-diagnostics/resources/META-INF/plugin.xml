@@ -14,6 +14,7 @@
   <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
+    <troubleInfoCollector implementation="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction"/>
     <registryKey key="cpp.diagnostics.track.events" description="Track various events to dump them in the diagnostics info"
                  defaultValue="false" restartRequired="true"/>
     <registryKey key="cpp.diagnostics.also.open.in.editor" description="Show C/C++ diagnostic results in editor"
