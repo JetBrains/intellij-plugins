@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -141,7 +142,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             is JSCallExpression -> sequenceOf(psi)
             is JSStatement -> {
               stub.childrenStubs.asSequence()
-                .filter { it.stubType == JSStubElementTypes.VARIABLE }
+                .filter { it.stubType == JSStubElementTypes.VARIABLE || it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE }
                 .flatMap { it.childrenStubs.asSequence() }
                 .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
                 .mapNotNull { it.psi as? JSCallExpression }

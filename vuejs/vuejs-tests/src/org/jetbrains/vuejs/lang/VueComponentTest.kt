@@ -63,9 +63,13 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefinePropsRuntimeDeclarationTS() = doTest()
 
+  fun testDefinePropsRuntimeDeclarationWithAssignmentTS() = doTest()
+
   fun testDefinePropsRuntimeDeclarationArrayTS() = doTest()
 
   fun testDefinePropsTypeDeclarationTS() = doTest()
+
+  fun testDefinePropsTypeDeclarationWithAssignmentTS() = doTest()
 
   fun testDefinePropsTypeDeclarationInterfaceTS() = doTest()
 
