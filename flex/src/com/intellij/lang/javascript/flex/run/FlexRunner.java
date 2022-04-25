@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -116,7 +116,7 @@ public class FlexRunner extends FlexBaseRunner {
                 ToolWindowManager.getInstance(module.getProject())
                   .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message, null, new HyperlinkAdapter() {
                     @Override
-                    protected void hyperlinkActivated(final HyperlinkEvent e) {
+                    protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
                       RevealFileAction.openFile(new File(outputFolder + "/" + ipaName));
                     }
                   });

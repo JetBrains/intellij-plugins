@@ -720,7 +720,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     if (!FlexSdkUtils.isAirSdkWithoutFlex(sdk) && StringUtil.compareVersionNumbers(sdkForDebugger.getVersionString(), "4") < 0) {
       final HyperlinkListener listener = new HyperlinkAdapter() {
         @Override
-        protected void hyperlinkActivated(final HyperlinkEvent e) {
+        protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
           if ("RunConfiguration".equals(e.getDescription())) {
             for (RunnerAndConfigurationSettings configuration : RunManager.getInstance(project).getConfigurationSettingsList(((RunConfiguration)runProfile).getType())) {
               if (configuration.getConfiguration() == runProfile) {

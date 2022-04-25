@@ -33,14 +33,14 @@ public class DartAnalysisServerSettingsForm {
     myDartSettingsHyperlink = new HoverHyperlinkLabel(DartBundle.message("open.dart.plugin.settings"));
     myDartSettingsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
+      protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
         DartConfigurable.openDartSettings(myProject);
       }
     });
     myAnalysisDiagnosticsHyperlink = new HoverHyperlinkLabel(DartBundle.message("analysis.server.settings.diagnostics"));
     myAnalysisDiagnosticsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
+      protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
         new AnalysisServerDiagnosticsAction().run(myProject);
       }
     });

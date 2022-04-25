@@ -43,7 +43,7 @@ public class DartProblemsFilterForm {
     myResetFilterHyperlink = new HoverHyperlinkLabel(DartBundle.message("dart.problems.filter.popup.link.reset.filter"));
     myResetFilterHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
+      protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
         myListeners.forEach(FilterListener::filtersResetRequested);
       }
     });

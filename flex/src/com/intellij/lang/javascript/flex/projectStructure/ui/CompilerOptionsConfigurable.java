@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
@@ -197,7 +197,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     });
     myResourcePatternsHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
       @Override
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
+      protected void hyperlinkActivated(final @NotNull HyperlinkEvent e) {
         ShowSettingsUtil.getInstance().editConfigurable(project, new CompilerUIConfigurable(module.getProject()));
       }
     });

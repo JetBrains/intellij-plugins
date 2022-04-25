@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
@@ -495,7 +495,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       if (editor != null) {
         HyperlinkListener listener = onLinkClick == null ? null : new HyperlinkAdapter() {
           @Override
-          protected void hyperlinkActivated(HyperlinkEvent e) {
+          protected void hyperlinkActivated(@NotNull HyperlinkEvent e) {
             onLinkClick.run();
           }
         };
