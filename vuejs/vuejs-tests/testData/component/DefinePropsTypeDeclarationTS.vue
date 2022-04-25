@@ -10,6 +10,8 @@ defineProps<{
   required: string,
   requiredNullish: string|undefined,
 }>();
+
+optional; // TODO Should be unresolved
 </script>
 
 <template>
