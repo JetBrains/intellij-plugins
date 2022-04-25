@@ -388,7 +388,7 @@ optionalFormalParameters ::= optionalPositionalFormalParameters (',' namedFormal
 private optionalPositionalFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
 private namedFormalParameters ::= '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
 
-defaultFormalNamedParameter ::= 'required'? normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
+defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
 private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
 
 normalFormalParameter ::= functionFormalParameter
@@ -405,9 +405,9 @@ functionFormalParameter ::= !functionTypeWrapper (metadata*                     
                             '?'?
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-simpleFormalParameter ::= declaredIdentifier | metadata* componentName | metadata* 'covariant' componentName
+simpleFormalParameter ::= declaredIdentifier | metadata* 'required'? componentName | metadata* 'required'? 'covariant' componentName
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private declaredIdentifier ::= metadata* finalConstVarOrTypeAndComponentName;
+private declaredIdentifier ::= metadata* 'required'? finalConstVarOrTypeAndComponentName;
 
 returnType ::= 'void' !untypedFunctionType | type // TODO returnType is now equivalent to type and removed from spec, we could remove it as well
 

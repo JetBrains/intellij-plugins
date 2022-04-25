@@ -55,7 +55,7 @@ class WithNamedArguments {
   late int a;
   int a;
 
-  // covariant and late are not a keywords here
+  // covariant and late are not keywords here
   covariant late;
   covariant a;
   late covariant;
@@ -68,3 +68,12 @@ class WithNamedArguments {
 
 void Function({required int a}) g() => throw '';
 void Function({required int a, required b c}) h() => throw '';
+
+void foo({
+  required final Bar foo5,
+  @Deprecated('foo') required final Bar foo6,
+  required Bar required,
+  @Deprecated('foo') int? foo1,
+  @Deprecated('foo') required int? foo2,
+  // required @Deprecated('foo') int? foo3,
+}) {}
