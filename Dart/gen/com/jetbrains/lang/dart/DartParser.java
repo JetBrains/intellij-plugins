@@ -1071,12 +1071,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* finalConstVarOrTypeAndComponentName
+  // metadata* 'required'? finalConstVarOrTypeAndComponentName
   static boolean declaredIdentifier(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "declaredIdentifier")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = declaredIdentifier_0(b, l + 1);
+    r = r && declaredIdentifier_1(b, l + 1);
     r = r && finalConstVarOrTypeAndComponentName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1090,6 +1091,13 @@ public class DartParser implements PsiParser, LightPsiParser {
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "declaredIdentifier_0", c)) break;
     }
+    return true;
+  }
+
+  // 'required'?
+  private static boolean declaredIdentifier_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "declaredIdentifier_1")) return false;
+    consumeToken(b, REQUIRED);
     return true;
   }
 
@@ -1119,46 +1127,38 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'required'? normalFormalParameter (('=' | ':') expression)?
+  // normalFormalParameter (('=' | ':') expression)?
   public static boolean defaultFormalNamedParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultFormalNamedParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, DEFAULT_FORMAL_NAMED_PARAMETER, "<default formal named parameter>");
-    r = defaultFormalNamedParameter_0(b, l + 1);
-    r = r && normalFormalParameter(b, l + 1);
-    r = r && defaultFormalNamedParameter_2(b, l + 1);
+    r = normalFormalParameter(b, l + 1);
+    r = r && defaultFormalNamedParameter_1(b, l + 1);
     exit_section_(b, l, m, r, false, DartParser::default_formal_parameter_recover);
     return r;
   }
 
-  // 'required'?
-  private static boolean defaultFormalNamedParameter_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_0")) return false;
-    consumeToken(b, REQUIRED);
-    return true;
-  }
-
   // (('=' | ':') expression)?
-  private static boolean defaultFormalNamedParameter_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_2")) return false;
-    defaultFormalNamedParameter_2_0(b, l + 1);
+  private static boolean defaultFormalNamedParameter_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_1")) return false;
+    defaultFormalNamedParameter_1_0(b, l + 1);
     return true;
   }
 
   // ('=' | ':') expression
-  private static boolean defaultFormalNamedParameter_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_2_0")) return false;
+  private static boolean defaultFormalNamedParameter_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = defaultFormalNamedParameter_2_0_0(b, l + 1);
+    r = defaultFormalNamedParameter_1_0_0(b, l + 1);
     r = r && expression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // '=' | ':'
-  private static boolean defaultFormalNamedParameter_2_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_2_0_0")) return false;
+  private static boolean defaultFormalNamedParameter_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_1_0_0")) return false;
     boolean r;
     r = consumeToken(b, EQ);
     if (!r) r = consumeToken(b, COLON);
@@ -5808,7 +5808,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // declaredIdentifier | metadata* componentName | metadata* 'covariant' componentName
+  // declaredIdentifier | metadata* 'required'? componentName | metadata* 'required'? 'covariant' componentName
   public static boolean simpleFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleFormalParameter")) return false;
     boolean r;
@@ -5820,12 +5820,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // metadata* componentName
+  // metadata* 'required'? componentName
   private static boolean simpleFormalParameter_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleFormalParameter_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = simpleFormalParameter_1_0(b, l + 1);
+    r = r && simpleFormalParameter_1_1(b, l + 1);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -5842,12 +5843,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // metadata* 'covariant' componentName
+  // 'required'?
+  private static boolean simpleFormalParameter_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleFormalParameter_1_1")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
+  // metadata* 'required'? 'covariant' componentName
   private static boolean simpleFormalParameter_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleFormalParameter_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = simpleFormalParameter_2_0(b, l + 1);
+    r = r && simpleFormalParameter_2_1(b, l + 1);
     r = r && consumeToken(b, COVARIANT);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
@@ -5862,6 +5871,13 @@ public class DartParser implements PsiParser, LightPsiParser {
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "simpleFormalParameter_2_0", c)) break;
     }
+    return true;
+  }
+
+  // 'required'?
+  private static boolean simpleFormalParameter_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleFormalParameter_2_1")) return false;
+    consumeToken(b, REQUIRED);
     return true;
   }
 
