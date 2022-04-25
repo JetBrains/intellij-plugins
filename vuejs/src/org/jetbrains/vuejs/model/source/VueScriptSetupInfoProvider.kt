@@ -89,9 +89,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       var rawBindings: List<VueNamedSymbol> = emptyList()
 
       module.getStubSafeDefineCalls().forEach { call ->
-        val functionName = call.indexingData
-          ?.implicitElements?.find { it.userString == VueFrameworkHandler.METHOD_NAME_USER_STRING }
-          ?.name
+        val functionName = VueFrameworkHandler.getSignificantFunctionName(call)
 
         when (functionName) {
           DEFINE_PROPS_FUN -> {
