@@ -75,6 +75,14 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest()
 
+  fun testWithDefaultsTypeDeclarationTS() = doTest()
+
+  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doTest()
+
+  fun testWithDefaultsTypeDeclarationPartialTS() = doTest()
+
+  fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest()
+
   fun testBothScriptsJS() = doTest()
 
   /**

@@ -204,16 +204,26 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
 
   class VueSourceInputProperty(override val name: String,
-                               sourceElement: PsiElement) : VueInputProperty {
+                               sourceElement: PsiElement,
+                               hasOuterDefault: Boolean = false) : VueInputProperty {
 
-    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
+    override val required: Boolean = isRequired(hasOuterDefault, sourceElement as? JSProperty)
+
     override val source: VueImplicitElement =
       VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(!required),
                          sourceElement, JSImplicitElement.Type.Property, true)
+
     override val jsType: JSType? = source.jsType
 
     override fun toString(): String {
       return "VueSourceInputProperty(name='$name', required=$required, jsType=$jsType)"
+    }
+
+    private fun isRequired(hasOuterDefault: Boolean, sourceElement: JSProperty?): Boolean {
+      // script setup defineProps runtime declarations rely on this class (see VueScriptSetupInfoProvider)
+      // withDefaults call is incompatible, but defaults from props destructure should work
+      if (hasOuterDefault) return false
+      return getRequiredFromPropOptions((sourceElement)?.initializerOrStub)
     }
 
   }
