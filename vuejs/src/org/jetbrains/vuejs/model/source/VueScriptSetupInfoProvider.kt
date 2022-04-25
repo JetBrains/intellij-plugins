@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -16,6 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.castSafelyTo
+import com.intellij.util.containers.sequenceOfNotNull
 import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -94,26 +96,17 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
         when (functionName) {
           DEFINE_PROPS_FUN -> {
-            val arguments = call.stubSafeCallArguments
-            val typeArgs = call.typeArguments
-            if (typeArgs.size == 1) {
-              val typeArg = typeArgs[0]
-              val recordType = typeArg.jsType.asRecordType()
+            props = analyzeDefineProps(call, listOf())
+          }
+          WITH_DEFAULTS_FUN -> {
+            val definePropsCall = call.getInnerDefineProps().firstOrNull()
+            if (definePropsCall != null) {
+              // Vue can throw Error: [@vue/compiler-sfc] The 2nd argument of withDefaults must be an object literal.
+              // Let's be more forgiving here and try to interpret props without defaults
+              val withDefaultsObjectLiteral = call.stubSafeCallArguments.getOrNull(1) as? JSObjectLiteralExpression
+              val defaults = withDefaultsObjectLiteral?.properties?.mapNotNull { it.name } ?: listOf()
 
-              props = recordType.properties
-                .map { VueScriptSetupInputProperty(it) }
-                .toList()
-            }
-            else if (arguments.size == 1) {
-              val arg = arguments[0]
-              if (arg is JSObjectLiteralExpression) {
-                props = collectPropertiesRecursively(arg)
-                  .map { (name, property) -> VueDefaultContainerInfoProvider.VueSourceInputProperty(name, property) }
-              }
-              else if (arg is JSArrayLiteralExpression) {
-                props = getStringLiteralsFromInitializerArray(arg)
-                  .map { VueDefaultContainerInfoProvider.VueSourceInputProperty(getTextIfLiteral(it) ?: "", it) }
-              }
+              props = analyzeDefineProps(definePropsCall, defaults)
             }
           }
           DEFINE_EMITS_FUN -> {
@@ -133,6 +126,49 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       this.props = props
       this.emits = emits
       this.rawBindings = rawBindings
+    }
+
+    private fun analyzeDefineProps(call: JSCallExpression, defaults: List<@NlsSafe String>): List<VueInputProperty> {
+      val typeArgs = call.typeArguments
+      val arguments = call.stubSafeCallArguments
+      val props: List<VueInputProperty>
+
+      // scriptSetup type declaration
+      if (typeArgs.size == 1) {
+        val typeArg = typeArgs[0]
+        val recordType = typeArg.jsType.asRecordType()
+
+        props = recordType.properties
+          .map { VueScriptSetupInputProperty(it, defaults.contains(it.memberName)) }
+          .toList()
+      }
+      // scriptSetup runtime declaration
+      else if (arguments.size == 1) {
+        val arg = arguments[0]
+        when (arg) {
+          is JSObjectLiteralExpression -> {
+            props = collectPropertiesRecursively(arg)
+              .map { (name, property) ->
+                VueDefaultContainerInfoProvider.VueSourceInputProperty(name, property, defaults.contains(name))
+              }
+          }
+          is JSArrayLiteralExpression -> {
+            props = getStringLiteralsFromInitializerArray(arg)
+              .map { literal ->
+                val name = getTextIfLiteral(literal) ?: ""
+                VueDefaultContainerInfoProvider.VueSourceInputProperty(name, literal, defaults.contains(name))
+              }
+          }
+          else -> {
+            props = emptyList()
+          }
+        }
+      }
+      else {
+        props = emptyList()
+      }
+
+      return props
     }
 
     private fun JSEmbeddedContent.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
@@ -158,12 +194,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         .filterIsInstance<JSCallExpression>()
         .mapNotNull { call ->
           when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {
-            WITH_DEFAULTS_FUN -> {
-              call.arguments.getOrNull(0)
-                .castSafelyTo<JSCallExpression>()
-                ?.takeIf { (it.methodExpression as? JSReferenceExpression)?.referenceName == DEFINE_PROPS_FUN }
-            }
-            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN -> {
+            DEFINE_PROPS_FUN, DEFINE_EMITS_FUN, DEFINE_EXPOSE_FUN, WITH_DEFAULTS_FUN -> {
               call
             }
             else -> null
@@ -171,10 +202,24 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         }
     }
 
+    private fun JSCallExpression.getInnerDefineProps(): Sequence<JSCallExpression> {
+      (this as? JSStubElementImpl<*>)?.stub?.let { callStub ->
+        return callStub.childrenStubs.asSequence()
+          .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
+          .mapNotNull { it.psi as? JSCallExpression }
+          .filter { innerCall -> VueFrameworkHandler.getSignificantFunctionName(innerCall) == DEFINE_PROPS_FUN }
+      }
+
+      return sequenceOfNotNull(this.arguments.getOrNull(0)
+                                 .castSafelyTo<JSCallExpression>()
+                                 ?.takeIf { (it.methodExpression as? JSReferenceExpression)?.referenceName == DEFINE_PROPS_FUN }
+      )
+    }
+
   }
 
-  private class VueScriptSetupInputProperty(private val propertySignature: JSRecordType.PropertySignature) : VueInputProperty {
-
+  private class VueScriptSetupInputProperty(private val propertySignature: JSRecordType.PropertySignature,
+                                            private val hasOuterDefault: Boolean) : VueInputProperty {
     override val name: String
       get() = propertySignature.memberName
 
@@ -183,6 +228,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
     override val required: Boolean
       get() {
+        // modifying required by hasOuterDefault is controversial, Vue compiler will still raise a warning in the dev mode,
+        // but for editors, it makes more sense to treat such prop as optional.
+        if (hasOuterDefault) return false
         return !propertySignature.isOptional
       }
 

@@ -88,12 +88,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     //region JSCallExpression stubbed reference names
 
-    private val SCRIPT_SETUP_DEFINE_FUNS = setOf(DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_PROPS_FUN)
+    private val SCRIPT_SETUP_MACROS = setOf(DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_PROPS_FUN, WITH_DEFAULTS_FUN)
 
     private const val METHOD_NAME_USER_STRING = "vmn"
 
     private fun isCallExpressionWithSignificantName(callNode: ASTNode, referenceName: String?): Boolean {
-      return referenceName in SCRIPT_SETUP_DEFINE_FUNS && isDescendantOfStubbedScriptTag(callNode)
+      return referenceName in SCRIPT_SETUP_MACROS && isDescendantOfStubbedScriptTag(callNode)
     }
 
     private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =
@@ -287,6 +287,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     node.treeParent.takeIf { it.elementType == JSElementTypes.ARGUMENT_LIST }
       ?.treeParent?.takeIf {
         val reference = (it.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression
+        // isCallExpressionWithSignificantName will also match withDefaults,
+        // which is redundant, but arrays won't occur inside valid withDefaults, so it's fine
         reference != null && isCallExpressionWithSignificantName(it, reference.referenceName)
       } != null
 
