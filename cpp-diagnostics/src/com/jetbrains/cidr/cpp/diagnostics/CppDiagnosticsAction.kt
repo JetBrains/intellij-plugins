@@ -154,4 +154,7 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
 
     private val NOTIFICATION_GROUP = NotificationGroup("C/C++ Diagnostics", NotificationDisplayType.BALLOON, true)
   }
+
+  // will show "Issue type: CLion"
+  override fun toString(): String = CppDiagnosticsBundle.message("cpp.diagnostic.issue.title")
 }
