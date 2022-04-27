@@ -36,9 +36,7 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
   }
 
   override fun collectInfo(project: Project): String {
-    val indicator = ProgressManager.getGlobalProgressIndicator()
-
-    return collectData(indicator, project).fold(StringBuilder("=====CLION SUMMARY=====").appendLine()) { acc, fileWithContents ->
+    return collectData(ProgressManager.getGlobalProgressIndicator(), project).fold(StringBuilder("=====CLION SUMMARY=====").appendLine()) { acc, fileWithContents ->
       acc.append(fileWithContents.filename).appendLine().append(fileWithContents.contents).appendLine()
     }.toString()
   }
@@ -66,7 +64,7 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
     ProgressManager.getInstance().run(task)
   }
 
-  private fun collectData(indicator: ProgressIndicator,
+  private fun collectData(indicator: ProgressIndicator?,
                           project: Project): List<FilenameAndContent> {
     val toolchains = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.toolchains")) {
       collectToolchains(project)
@@ -141,14 +139,14 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
     }
 
 
-    private fun <R> readActionWithText(indicator: ProgressIndicator, @NlsContexts.ProgressText text : String, block: () -> R): R {
-      val oldText = indicator.text
-      indicator.text = text
+    private fun <R> readActionWithText(indicator: ProgressIndicator?, @NlsContexts.ProgressText text : String, block: () -> R): R {
+      val oldText = indicator?.text
+      indicator?.text = text
       try {
         return runReadAction(block);
       }
       finally {
-        indicator.text = oldText
+        indicator?.text = oldText
       }
     }
 
