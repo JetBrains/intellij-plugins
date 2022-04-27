@@ -13,6 +13,10 @@ get topGetter2 <fold text='{...}' expand='true'>{
 set topSetter(p) <fold text='{...}' expand='true'>{
 }</fold>
 
+get topGetter3 =><fold text='...' expand='true'> true ||
+    false ||
+    true;</fold>
+
 class A <fold text='{...}' expand='true'>{
   A()
   <fold text='{...}' expand='true'>{
@@ -22,6 +26,12 @@ class A <fold text='{...}' expand='true'>{
 
   factory A.factory() <fold text='{...}' expand='true'>{
   }</fold>
+
+  bool returnBool() =><fold text='...' expand='true'> true ||
+    false ||
+    true;</fold>
+
+  bool returnBool1() => true || false || true;
 }</fold>
 
 abstract class B <fold text='{...}' expand='true'>{

@@ -98,7 +98,14 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiElement instanceof DartClassBody || psiElement instanceof DartEnumDefinition || psiElement instanceof DartMixinDeclaration) {
       return BRACE_DOTS;                                                                         // 5.   Class body
     }
-    if (psiElement instanceof DartFunctionBody) return BRACE_DOTS;                               // 6.   Function body
+    if (psiElement instanceof DartFunctionBody) {                                                // 6.   Function body
+      if (((DartFunctionBody)psiElement).getBlock() != null) {
+        return BRACE_DOTS;
+      }
+      else {
+        return DOT_DOT_DOT;
+      }
+    }
     if (psiElement instanceof DartTypeArguments) return SMILEY;                                  // 7.   Type arguments
     if (psiElement instanceof DartStringLiteralExpression) {
       return multilineStringPlaceholder(node);                                                   // 8.   Multi-line strings
@@ -296,9 +303,22 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static void foldFunctionBody(@NotNull final List<FoldingDescriptor> descriptors,
                                        @NotNull final PsiElement dartComponentOrOperatorDeclaration) {
     final DartFunctionBody functionBody = PsiTreeUtil.getChildOfType(dartComponentOrOperatorDeclaration, DartFunctionBody.class);
-    final IDartBlock block = functionBody == null ? null : functionBody.getBlock();
+    if (functionBody == null) return;
+
+    // Handle bodies defined with {...}
+    final IDartBlock block = functionBody.getBlock();
     if (block != null && block.getTextLength() > 2) {
       descriptors.add(new FoldingDescriptor(functionBody, block.getTextRange()));
+      return;
+    }
+
+    // Handle bodies defined with the fat arrow: =>
+    // A text length of 5 is used for cases as short at "=> 0;"
+    PsiElement firstChild = functionBody.getFirstChild();
+    if (firstChild.getText().equals("=>") && functionBody.textContains('\n')) {
+      descriptors.add(new FoldingDescriptor(functionBody,
+                                            TextRange.create(firstChild.getTextRange().getEndOffset(),
+                                                             functionBody.getTextRange().getEndOffset())));
     }
   }
 
