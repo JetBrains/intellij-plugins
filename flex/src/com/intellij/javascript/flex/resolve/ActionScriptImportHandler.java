@@ -64,7 +64,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
     final String name1 = name;
     ActionScriptResolveUtil.walkOverStructure(context, context1 -> {
-      JSImportedElementResolveResult resolved = null;
+      JSImportedElementResolveResult resolved;
 
       if (context1 instanceof XmlBackedJSClassImpl) { // reference list in mxml
         XmlTag rootTag = ((XmlBackedJSClassImpl)context1).getParent();
@@ -112,7 +112,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
                                        : null;
 
           if (clazz != null) {
-            SinkResolveProcessor r = new SinkResolveProcessor(name1, new ResolveResultSink(null, name1));
+            SinkResolveProcessor<ResolveResultSink> r = new SinkResolveProcessor<>(name1, new ResolveResultSink(null, name1));
             r.setForceImportsForPlace(true);
             boolean b = clazz.doImportFromScripts(r, clazz);
 
@@ -142,11 +142,8 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
     if (genericSignature != null && result != null) {
       // TODO: more than one type parameter
-      StringBuilder genericSignatureBuffer = new StringBuilder();
-      genericSignatureBuffer.append(".<");
-      genericSignatureBuffer.append(resolveTypeName(genericSignature.genericType, context).getQualifiedName());
-      genericSignatureBuffer.append(">");
-      result = result.appendSignature(genericSignatureBuffer.toString());
+      String genericSignatureBuffer = ".<" + resolveTypeName(genericSignature.genericType, context).getQualifiedName() + ">";
+      result = result.appendSignature(genericSignatureBuffer);
     }
     return result;
   }

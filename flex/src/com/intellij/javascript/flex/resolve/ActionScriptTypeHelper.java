@@ -34,8 +34,8 @@ public final class ActionScriptTypeHelper extends JSTypeHelper {
 
   @Override
   public boolean isAssignableToNamedType(@NotNull JSTypeImpl lOpType, @NotNull JSType rOpType, @NotNull ProcessingContext processingContext) {
-    //noinspection unchecked
-    Map<Key, PsiElement> cachesMap = (Map<Key, PsiElement>)processingContext.get(this);
+    @SuppressWarnings("unchecked")
+    Map<Key<PsiElement>, PsiElement> cachesMap = (Map<Key<PsiElement>, PsiElement>)processingContext.get(this);
 
     PsiElement type = cachesMap == null ? null : cachesMap.get(ourResolvedTypeKey);
     JSClass clazz = null;
