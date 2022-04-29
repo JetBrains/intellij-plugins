@@ -49,7 +49,7 @@
                      implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberMissedExamplesInspection"/>
 
     <localInspection language="Gherkin" shortName="CucumberTableInspection" bundle="messages.CucumberBundle"
-                     key="inspection.table.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
+                     key="inspection.table.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" editorAttributes="NOT_USED_ELEMENT_ATTRIBUTES"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberTableInspection"/>
 
     <localInspection  language="Gherkin" shortName="GherkinBrokenTableInspection" bundle="messages.CucumberBundle"

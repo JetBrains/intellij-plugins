@@ -1,7 +1,6 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -75,7 +74,7 @@ public final class CucumberTableInspection extends GherkinInspection {
     final GherkinTable table = (GherkinTable) row.getParent();
     for (int i : unusedIndices.toIntArray()) {
       if (i < cellsCount && cells.get(i).getTextLength() > 0) {
-        holder.registerProblem(cells.get(i), CucumberBundle.message("unused.table.column"), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new RemoveTableColumnFix(table, i));
+        holder.registerProblem(cells.get(i), CucumberBundle.message("unused.table.column"), new RemoveTableColumnFix(table, i));
       }
     }
   }
