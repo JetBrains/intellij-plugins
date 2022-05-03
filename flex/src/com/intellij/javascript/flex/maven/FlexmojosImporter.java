@@ -120,11 +120,6 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   @Override
-  public void preProcess(Module module, MavenProject mavenProject, MavenProjectChanges changes,
-                         IdeModifiableModelsProvider modifiableModelsProvider) {
-  }
-
-  @Override
   public void process(final IdeModifiableModelsProvider modelsProvider,
                       final Module module,
                       final MavenRootModelAdapter modelAdapter,
