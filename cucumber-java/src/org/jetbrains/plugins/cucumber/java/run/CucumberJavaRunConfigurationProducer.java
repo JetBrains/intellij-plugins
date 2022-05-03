@@ -7,6 +7,7 @@ import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.junit.JavaRunConfigurationProducerBase;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -30,9 +31,13 @@ import java.util.Set;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberMainClass;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.*;
 
-public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
-  public static final String FORMATTER_OPTIONS_1_0 = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
-  public static final String FORMATTER_OPTIONS_1_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
+public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> {
+  private static final Logger LOG = Logger.getInstance(CucumberJavaRunConfigurationProducer.class);
+
+  public static final String FORMATTER_OPTIONS_1_0 =
+    " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
+  public static final String FORMATTER_OPTIONS_1_2 =
+    " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_3 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter";
   public static final String FORMATTER_OPTIONS_4 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter";
@@ -80,6 +85,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
                                                   @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile virtualFile = getFileToRun(context);
     if (virtualFile == null) {
+      LOG.debug("No file to run.");
       return false;
     }
 
@@ -87,52 +93,46 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     final PsiElement element = context.getPsiLocation();
 
     if (element == null) {
+      LOG.debug("PSI locations is null.");
       return false;
     }
 
     final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
-    if (module == null) return false;
+    if (module == null) {
+      LOG.debug("Module is null.");
+      return false;
+    }
 
     if (virtualFile.isDirectory()) {
       if (!FileTypeIndex.containsFileOfType(GherkinFileType.INSTANCE, GlobalSearchScopesCore.directoryScope(project, virtualFile, true))) {
+        LOG.debug("No '*.feature' files to run inside directory: ", virtualFile.getCanonicalPath());
         return false;
       }
     }
 
-    String mainClassName = null;
-    String formatterOptions = null;
-    String cucumberCoreVersion;
     final Location location = context.getLocation();
-    if (location != null) {
-      cucumberCoreVersion = getCucumberCoreVersion(module, module.getProject());
-      mainClassName = getCucumberMainClass(cucumberCoreVersion);
-
-      configuration.setCucumberCoreVersion(cucumberCoreVersion);
-      formatterOptions = getSMFormatterOptions(cucumberCoreVersion);
-    }
-    if (mainClassName == null) {
+    if (location == null) {
+      LOG.debug("Location is null.");
       return false;
     }
 
-    final VirtualFile file = getFileToRun(context);
-    if (file == null) {
+    configuration.setCucumberCoreVersion(getCucumberCoreVersion(module, module.getProject()));
+
+    if (configuration.getMainClassName() == null) {
+      configuration.setMainClassName(getCucumberMainClass(configuration.getCucumberCoreVersion()));
+    }
+    if (JavaPsiFacade.getInstance(project).findClass(configuration.getMainClassName(), GlobalSearchScope.allScope(project)) == null) {
+      LOG.debug("Failed to find main cucumber class: ", configuration.getMainClassName());
       return false;
     }
     if (StringUtil.isEmpty(configuration.getGlue())) {
       configuration.setGlueProvider(getGlueProvider(element));
     }
     configuration.setNameFilter(getNameFilter(context));
-    configuration.setFilePath(file.getPath());
+    configuration.setFilePath(virtualFile.getPath());
     String programParametersFromDefaultConfiguration = StringUtil.defaultIfEmpty(configuration.getProgramParameters(), "");
     if (StringUtil.isEmpty(programParametersFromDefaultConfiguration)) {
-      configuration.setProgramParameters(formatterOptions);
-    }
-
-    if (configuration.getMainClassName() == null) {
-      configuration.setMainClassName(mainClassName);
-    }
-    if (JavaPsiFacade.getInstance(project).findClass(configuration.getMainClassName(), GlobalSearchScope.allScope(project)) == null) {
-      return false;
+      configuration.setProgramParameters(getSMFormatterOptions(configuration.getCucumberCoreVersion()));
     }
 
     if (configuration.getNameFilter() != null && configuration.getNameFilter().length() > 0) {
