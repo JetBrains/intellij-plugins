@@ -14,8 +14,10 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.VersionComparatorUtil;
@@ -128,6 +130,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
     if (configuration.getMainClassName() == null) {
       configuration.setMainClassName(mainClassName);
+    }
+    if (JavaPsiFacade.getInstance(project).findClass(configuration.getMainClassName(), GlobalSearchScope.allScope(project)) == null) {
+      return false;
     }
 
     if (configuration.getNameFilter() != null && configuration.getNameFilter().length() > 0) {
