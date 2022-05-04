@@ -1,8 +1,14 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.lang.javascript.BaseJSCompletionTestCase;
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
+import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
@@ -11,11 +17,6 @@ public class NgForTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "ngFor";
-  }
-
-  @Override
-  protected boolean isWriteActionRequired() {
-    return getTestName(true).contains("Completion");
   }
 
   public void testNgFor() {
@@ -48,5 +49,16 @@ public class NgForTest extends Angular2CodeInsightFixtureTestCase {
     assertTrue(variants.size() >= 2);
     assertEquals("created_at", variants.get(0));
     assertEquals("email", variants.get(1));
+  }
+
+  public void testNgForWithPipe() { // WEB-51209
+    myFixture.enableInspections(JSDaemonAnalyzerLightTestCase.configureDefaultLocalInspectionTools().toArray(LocalInspectionTool[]::new));
+    myFixture.configureByFiles("NgForWithPipeHTML.html", "NgForWithPipe.ts", "package.json");
+    Angular2TestModule.configure(myFixture, false, null, Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5);
+    myFixture.checkHighlighting();
+    myFixture.type('.');
+    LookupElement[] elements = myFixture.complete(CompletionType.BASIC);
+    BaseJSCompletionTestCase.assertStartsWith(elements, 2, "key", "value");
+    assertEquals("string", BaseJSCompletionTestCase.typeText(elements[0]));
   }
 }
