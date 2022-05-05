@@ -30,4 +30,9 @@ internal class SwiftSupport : AbstractLangSupport() {
   override fun checkSdk(sdk: Sdk?, project: Project) {}
 
   override fun getToolWindowAnchor() = ToolWindowAnchor.RIGHT
+
+  // Now this method is used to check whether we can open a scratch file lesson in the user project.
+  // Also, I'm not aware about other JetBrains IDE (except AppCode) which can open Swift project.
+  // So in combination of these 2 factors it is unlikely this code ever be performed.
+  override fun isSdkConfigured(project: Project): Boolean = true
 }

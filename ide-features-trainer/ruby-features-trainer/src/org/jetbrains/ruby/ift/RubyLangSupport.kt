@@ -125,4 +125,6 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
 
   override val sampleFilePath = "src/sandbox.rb"
+
+  override fun isSdkConfigured(project: Project): Boolean = ProjectRootManager.getInstance(project).projectSdk?.sdkType is RubySdkType
 }
