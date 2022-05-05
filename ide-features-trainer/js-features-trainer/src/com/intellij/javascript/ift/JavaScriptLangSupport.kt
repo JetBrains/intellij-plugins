@@ -61,4 +61,8 @@ $feedbackRequest
 """ // do not use trim because derived implementations will need to follow the current indent
   }
 
+  // Now this method is used to check whether we can open a scratch file lesson in the user project.
+  // JavaScript course has no scratch lesson.
+  // But it is likely they will not require a specific JavaScript JDK (scratch lessons are usually pretty simple)
+  override fun isSdkConfigured(project: Project): Boolean = true
 }
