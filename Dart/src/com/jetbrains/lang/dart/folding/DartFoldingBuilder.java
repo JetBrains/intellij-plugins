@@ -111,8 +111,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       return multilineStringPlaceholder(node);                                                   // 8.   Multi-line strings
     }
     if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.   Set or Map literals
-    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10.1 Constructor invocations
-    if (psiElement instanceof DartExpression) return DOT_DOT_DOT;                                // 10.2 Second arg in test methods
+    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10.1. Constructor invocations
+    if (psiElement instanceof DartExpression) return DOT_DOT_DOT;                                // 10.2. Second arg in test methods
 
     if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  If statements
 
@@ -133,7 +133,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT ||                                  // 4.1. Multiline doc comments
         elementType ==
         DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {                                                // 4.3. Consequent single line doc comments
-      return settings.COLLAPSE_DOC_COMMENTS;                                                         // 4.2 and 4.4 never collapsed by default
+      return settings.COLLAPSE_DOC_COMMENTS;                                                         // 4.2. and 4.4. never collapsed by default
     }
     //                                                                                                  5. Class body never collapsed by default
     if (psiElement instanceof DartFunctionBody) return settings.COLLAPSE_METHODS;                    // 6. Function body
