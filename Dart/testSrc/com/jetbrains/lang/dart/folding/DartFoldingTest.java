@@ -102,6 +102,10 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testFunctionExpressionBody() {
+    doTest();
+  }
+
   public void testFunctionBodyCollapsedByDefault() {
     doTestWithSpecificSettings(settings -> settings.COLLAPSE_METHODS = true);
   }

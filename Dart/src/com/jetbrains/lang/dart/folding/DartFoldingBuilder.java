@@ -60,6 +60,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       DartComponent.class,
       DartTypeArguments.class,
       PsiComment.class,
+      DartFunctionExpression.class,
       DartStringLiteralExpression.class,
       DartSetOrMapLiteralExpression.class,
       DartNewExpression.class,
@@ -97,8 +98,16 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiElement instanceof DartClassBody || psiElement instanceof DartEnumDefinition || psiElement instanceof DartMixinDeclaration) {
       return BRACE_DOTS;                                                                         // 5.   Class body
     }
-    if (psiElement instanceof DartFunctionBody) {                                                // 6.   Function body
+    if (psiElement instanceof DartFunctionBody) {                                                // 6.1.   Function body
       if (((DartFunctionBody)psiElement).getBlock() != null) {
+        return BRACE_DOTS;
+      }
+      else {
+        return DOT_DOT_DOT;
+      }
+    }
+    if (psiElement instanceof DartFunctionExpressionBody) {                                      // 6.2.   Function expression body
+      if (PsiTreeUtil.getChildOfType(psiElement, DartLazyParseableBlock.class) != null) {
         return BRACE_DOTS;
       }
       else {
@@ -300,23 +309,35 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
   private static void foldFunctionBody(@NotNull final List<FoldingDescriptor> descriptors,
                                        @NotNull final PsiElement dartComponentOrOperatorDeclaration) {
-    final DartFunctionBody functionBody = PsiTreeUtil.getChildOfType(dartComponentOrOperatorDeclaration, DartFunctionBody.class);
-    if (functionBody == null) return;
+    final DartPsiCompositeElement psiCompositeElement =
+      PsiTreeUtil.getChildOfAnyType(dartComponentOrOperatorDeclaration, DartFunctionBody.class, DartFunctionExpressionBody.class);
+    if (psiCompositeElement == null) return;
+
+    final IDartBlock block;
+    if (psiCompositeElement instanceof DartFunctionBody) {
+      // Regular functions
+      final DartFunctionBody functionBody = (DartFunctionBody)psiCompositeElement;
+      block = functionBody.getBlock();
+    }
+    else {
+      // Anonymous functions
+      final DartFunctionExpressionBody functionExpressionBody = (DartFunctionExpressionBody)psiCompositeElement;
+      block = PsiTreeUtil.getChildOfType(functionExpressionBody, DartLazyParseableBlock.class);
+    }
 
     // Handle bodies defined with {...}
-    final IDartBlock block = functionBody.getBlock();
     if (block != null && block.getTextLength() > 2) {
-      descriptors.add(new FoldingDescriptor(functionBody, block.getTextRange()));
+      descriptors.add(new FoldingDescriptor(psiCompositeElement, block.getTextRange()));
       return;
     }
 
     // Handle bodies defined with the fat arrow: =>
     // A text length of 5 is used for cases as short at "=> 0;"
-    PsiElement firstChild = functionBody.getFirstChild();
-    if (firstChild.getText().equals("=>") && functionBody.textContains('\n')) {
-      descriptors.add(new FoldingDescriptor(functionBody,
+    PsiElement firstChild = psiCompositeElement.getFirstChild();
+    if (firstChild.getText().equals("=>") && psiCompositeElement.textContains('\n')) {
+      descriptors.add(new FoldingDescriptor(psiCompositeElement,
                                             TextRange.create(firstChild.getTextRange().getEndOffset(),
-                                                             functionBody.getTextRange().getEndOffset())));
+                                                             psiCompositeElement.getTextRange().getEndOffset())));
     }
   }
 
