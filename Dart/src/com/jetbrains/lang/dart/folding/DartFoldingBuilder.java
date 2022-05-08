@@ -68,7 +68,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       DartNewExpression.class,
       DartCallExpression.class,
       DartAssertStatement.class,
-      DartIfStatement.class);
+      DartIfStatement.class,
+      DartForStatement.class);
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class bodies
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function bodies
@@ -77,7 +78,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
     foldSomeDartCallExpressions(descriptors, psiElements);                             // 10. Constructor, "test", "group" invocations
     foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
-    foldIfStatements(descriptors, psiElements);                                        // 12. If statements
+    foldIfStatements(descriptors, psiElements);                                        // 12.1. If statements
+    foldForStatements(descriptors, psiElements);                                       // 12.2. For statements
   }
 
   @Override
@@ -114,7 +116,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10.1. Constructor invocations
     if (psiElement instanceof DartExpression) return DOT_DOT_DOT;                                // 10.2. Second arg in test methods
 
-    if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  If statements
+    if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  For and if statements
 
     return DOT_DOT_DOT;
   }
@@ -403,6 +405,19 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         final DartIfStatement dartIfStatement = (DartIfStatement)psiElement;
         final List<DartBlock> dartBlockList = dartIfStatement.getBlockList();
         for (DartBlock dartBlock : dartBlockList) {
+          descriptors.add(new FoldingDescriptor(dartBlock, dartBlock.getTextRange()));
+        }
+      }
+    }
+  }
+
+  private static void foldForStatements(@NotNull final List<FoldingDescriptor> descriptors,
+                                        @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartForStatement) {
+        final DartForStatement dartForStatement = (DartForStatement) psiElement;
+        final DartBlock dartBlock = dartForStatement.getBlock();
+        if(dartBlock != null) {
           descriptors.add(new FoldingDescriptor(dartBlock, dartBlock.getTextRange()));
         }
       }
