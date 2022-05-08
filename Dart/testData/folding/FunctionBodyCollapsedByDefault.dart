@@ -46,13 +46,3 @@ abstract class B <fold text='{...}' expand='true'>{
     }</fold>
   }</fold>
 }</fold>
-
-var a = {};
-var b = const
-<K, V>
-{1: 2};
-var c = const
-    <K, V>
-    <fold text='{...}' expand='true'>{
-      1: 2,
-    }</fold>;

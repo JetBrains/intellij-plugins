@@ -32,6 +32,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static final String DOT_DOT_DOT = "...";
   private static final String BRACE_DOTS = "{...}";
   private static final String PAREN_DOTS = "(...)";
+  private static final String BRACKET_DOTS = "[...]";
   private static final String FILE_HEADER = "/.../";
   private static final String MULTI_LINE_DOC_COMMENT = "/**...*/";
   private static final String MULTI_LINE_COMMENT = "/*...*/";
@@ -63,6 +64,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       DartFunctionExpression.class,
       DartStringLiteralExpression.class,
       DartSetOrMapLiteralExpression.class,
+      DartListLiteralExpression.class,
       DartNewExpression.class,
       DartCallExpression.class,
       DartAssertStatement.class,
@@ -73,7 +75,14 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function bodies
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
-    foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
+    foldLiterals(descriptors, psiElements,                                             // 9.1. Set or Map literals
+                 DartTokenTypes.LBRACE,
+                 DartTokenTypes.RBRACE,
+                 DartSetOrMapLiteralExpression.class);
+    foldLiterals(descriptors, psiElements,                                             // 9.2. Array literals
+                 DartTokenTypes.LBRACKET,
+                 DartTokenTypes.RBRACKET,
+                 DartListLiteralExpression.class);
     foldConstructorInvocationExpressions(descriptors, psiElements);                    // 10. Constructor invocations
     foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
     foldIfStatements(descriptors, psiElements);                                        // 12.1. If statements
@@ -118,8 +127,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiElement instanceof DartStringLiteralExpression) {
       return multilineStringPlaceholder(node);                                                   // 8.   Multi-line strings
     }
-    if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.   Set or Map literals
-    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10. Constructor invocations
+    if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.1.   Set or Map literals
+    if (psiElement instanceof DartListLiteralExpression) return BRACKET_DOTS;                    // 9.2.   Set or Map literals
+    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                 // 10.2. Second arg in test methods
 
     if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  For and if statements
 
@@ -467,19 +477,22 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     return DOT_DOT_DOT;
   }
 
-  private static void foldSetOrMapLiterals(@NotNull final List<FoldingDescriptor> descriptors,
-                                           @NotNull final Collection<PsiElement> psiElements) {
+  private static <T extends PsiElement> void foldLiterals(@NotNull final List<FoldingDescriptor> descriptors,
+                                                          @NotNull final Collection<PsiElement> psiElements,
+                                                          @NotNull IElementType leftBracket,
+                                                          @NotNull IElementType rightBracket,
+                                                          @NotNull final Class<T> aClass) {
     for (PsiElement psiElement : psiElements) {
-      if (psiElement instanceof DartSetOrMapLiteralExpression) {
+      if (aClass.isInstance(psiElement)) {
         final ASTNode node = psiElement.getNode();
-        final ASTNode lBrace = node.findChildByType(DartTokenTypes.LBRACE);
-        final ASTNode rBrace = lBrace == null ? null : node.findChildByType(DartTokenTypes.RBRACE, lBrace);
-        if (lBrace != null && rBrace != null) {
+        final ASTNode lBracket = node.findChildByType(leftBracket);
+        final ASTNode rBracket = lBracket == null ? null : node.findChildByType(rightBracket, lBracket);
+        if (lBracket != null && rBracket != null) {
           final String text =
-            node.getText().substring(lBrace.getStartOffset() - node.getStartOffset(), rBrace.getStartOffset() - node.getStartOffset());
+            node.getText().substring(lBracket.getStartOffset() - node.getStartOffset(), rBracket.getStartOffset() - node.getStartOffset());
           if (text.contains("\n")) {
-            descriptors.add(new FoldingDescriptor(psiElement, TextRange.create(lBrace.getStartOffset(),
-                                                                               rBrace.getStartOffset() + rBrace.getTextLength())));
+            descriptors.add(new FoldingDescriptor(psiElement, TextRange.create(lBracket.getStartOffset(),
+                                                                               rBracket.getStartOffset() + rBracket.getTextLength())));
           }
         }
       }
