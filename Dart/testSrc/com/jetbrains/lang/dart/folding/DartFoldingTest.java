@@ -146,7 +146,7 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testForStatements() {
+  public void testLoopStatements() {
     doTest();
   }
 
