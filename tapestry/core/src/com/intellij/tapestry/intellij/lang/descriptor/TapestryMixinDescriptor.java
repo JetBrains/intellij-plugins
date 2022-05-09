@@ -3,7 +3,7 @@ package com.intellij.tapestry.intellij.lang.descriptor;
 import com.intellij.psi.PsiElement;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class TapestryMixinDescriptor extends BasicTapestryAttributeDescriptor {
   @Override

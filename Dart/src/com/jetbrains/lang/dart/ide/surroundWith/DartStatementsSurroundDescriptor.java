@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.util.DartRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class DartStatementsSurroundDescriptor implements SurroundDescriptor {
   @Override

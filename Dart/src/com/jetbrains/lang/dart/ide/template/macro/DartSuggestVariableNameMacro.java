@@ -7,7 +7,7 @@ import com.intellij.codeInsight.template.Result;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class DartSuggestVariableNameMacro extends Macro {
   @Override

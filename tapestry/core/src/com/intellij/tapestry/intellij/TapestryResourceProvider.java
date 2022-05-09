@@ -5,7 +5,7 @@ import com.intellij.javaee.StandardResourceProvider;
 import com.intellij.tapestry.core.TapestryConstants;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class TapestryResourceProvider implements StandardResourceProvider {
 

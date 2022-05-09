@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author: vnikolaenko
+ * @author vnikolaenko
  */
 public class CfmlTagLoopImpl extends CfmlTagImpl {
 

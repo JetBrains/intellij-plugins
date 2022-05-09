@@ -4,7 +4,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class DartListVariableMacro extends DartFilterByClassMacro {
   @Override

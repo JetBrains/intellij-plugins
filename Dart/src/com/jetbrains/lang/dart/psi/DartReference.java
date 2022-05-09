@@ -5,7 +5,7 @@ import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public interface DartReference extends DartExpression, PsiReference {
   @NotNull

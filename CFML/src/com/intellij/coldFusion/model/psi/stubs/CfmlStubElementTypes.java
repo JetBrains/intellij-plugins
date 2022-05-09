@@ -20,7 +20,7 @@ import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.psi.tree.IStubFileElementType;
 
 /**
- * @author: vnikolaenko
+ * @author vnikolaenko
  */
 public interface CfmlStubElementTypes {
   CfmlStubElementType<CfmlComponentStub, CfmlComponent>

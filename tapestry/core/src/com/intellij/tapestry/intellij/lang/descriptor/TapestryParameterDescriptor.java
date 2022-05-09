@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class TapestryParameterDescriptor extends BasicTapestryTagDescriptor {
   private final TapestryComponent myComponent;
