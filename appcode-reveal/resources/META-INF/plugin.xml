@@ -15,7 +15,7 @@
   <depends>com.intellij.modules.appcode</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <statistics.counterUsagesCollector groupId="appcode.reveal" version="1"/>
+    <statistics.counterUsagesCollector implementationClass="org.jetbrains.appcode.reveal.RevealUsageTriggerCollector"/>
   </extensions>
 
   <extensions defaultExtensionNs="appcode">

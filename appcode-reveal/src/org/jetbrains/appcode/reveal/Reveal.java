@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -156,7 +156,7 @@ public final class Reveal {
   }
 
   public static void refreshReveal(@NotNull Project project, @NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
-    RevealUsageTriggerCollector.trigger(project, "showInReveal");
+    RevealUsageTriggerCollector.SHOW_IN_REVEAL.log(project);
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
       refreshRevealPostOnePointSix(revealBundle, bundleID, deviceName);
