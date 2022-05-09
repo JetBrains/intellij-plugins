@@ -4,6 +4,19 @@ final topLevel1 = ()<fold text='{...}' expand='true'>{
 final topLevel2 = () =><fold text='...' expand='true'>
 null</fold>;
 
+/// Async
+final topLevel3 = () async <fold text='{...}' expand='true'>{
+}</fold>;
+
+// Fat arrow, async
+final topLevel4 = () async =><fold text='...' expand='true'> false ||
+    true</fold>;
+
+// Fat arrow, async, no white space
+final topLevel4 = ()async=><fold text='...' expand='true'>false||
+    true</fold>;
+
+/// Classes
 class A <fold text='{...}' expand='true'>{
   A()
   <fold text='{...}' expand='true'>{
@@ -24,6 +37,7 @@ abstract class B <fold text='{...}' expand='true'>{
   final fun3 = () => 1;
 }</fold>
 
+/// Anonymous function as parameter
 void main() <fold text='{...}' expand='true'>{
 
   final arr = [1, 2, 3];

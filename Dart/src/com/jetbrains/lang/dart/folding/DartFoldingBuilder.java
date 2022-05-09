@@ -13,6 +13,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -346,10 +347,25 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     // Handle bodies defined with the fat arrow: =>
     // A text length of 5 is used for cases as short at "=> 0;"
     PsiElement firstChild = psiCompositeElement.getFirstChild();
-    if (firstChild.getText().equals("=>") && psiCompositeElement.textContains('\n')) {
-      descriptors.add(new FoldingDescriptor(psiCompositeElement,
-                                            TextRange.create(firstChild.getTextRange().getEndOffset(),
-                                                             psiCompositeElement.getTextRange().getEndOffset())));
+    if (psiCompositeElement.textContains('\n')) {
+      if (firstChild.getText().equals("=>")) {
+        descriptors.add(new FoldingDescriptor(psiCompositeElement,
+                                              TextRange.create(firstChild.getTextRange().getEndOffset(),
+                                                               psiCompositeElement.getTextRange().getEndOffset())));
+      }
+      else if (firstChild.getText().equals("async")) {
+        // Handle, e.g.: "() async => true"
+        PsiElement psiElement = firstChild.getNextSibling();
+        while (psiElement != null) {
+          if (psiElement instanceof LeafPsiElement && psiElement.getText().equals("=>")) {
+            descriptors.add(new FoldingDescriptor(psiCompositeElement,
+                                                  TextRange.create(psiElement.getTextRange().getEndOffset(),
+                                                                   psiCompositeElement.getTextRange().getEndOffset())));
+            break;
+          }
+          psiElement = psiElement.getNextSibling();
+        }
+      }
     }
   }
 
