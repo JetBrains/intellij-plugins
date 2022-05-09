@@ -7,6 +7,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.OSAgnosticPathUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -115,7 +116,7 @@ public final class ReferenceSupport {
   private static RelativeToWhat relativeToWhat(final String path, final PsiElement psiElement, final LookupOptions lookupOptions) {
     if (lookupOptions.ABSOLUTE && (ALLOW_ABSOLUTE_REFERENCES_IN_TESTS || !ApplicationManager.getApplication().isUnitTestMode())) {
       if (SystemInfo.isWindows) {
-        if (path.length() > 2 && path.charAt(1) == ':' && Character.isLetter(path.charAt(0))) {
+        if (path.length() > 2 && OSAgnosticPathUtil.startsWithWindowsDrive(path)) {
           return RelativeToWhat.Absolute;
         }
       }

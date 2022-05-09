@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.OSAgnosticPathUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.io.URLUtil;
@@ -222,7 +223,7 @@ public final class DotPackagesFileUtil {
     if (uri.startsWith("file:/")) {
       final String pathAfterSlashes = StringUtil.trimEnd(StringUtil.trimLeading(StringUtil.trimStart(uri, "file:/"), '/'), "/");
       if (SystemInfo.isWindows && !ApplicationManager.getApplication().isUnitTestMode()) {
-        if (pathAfterSlashes.length() > 2 && Character.isLetter(pathAfterSlashes.charAt(0)) && ':' == pathAfterSlashes.charAt(1)) {
+        if (pathAfterSlashes.length() > 2 && OSAgnosticPathUtil.startsWithWindowsDrive(pathAfterSlashes)) {
           return pathAfterSlashes;
         }
       }

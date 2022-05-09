@@ -29,6 +29,7 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.OSAgnosticPathUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -502,7 +503,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myBCOutputRadioButton.setSelected(!params.isLaunchUrl());
     myUrlOrFileRadioButton.setSelected(params.isLaunchUrl());
     final String url = params.getUrl();
-    final boolean windowsLocalFile = SystemInfo.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
+    final boolean windowsLocalFile = SystemInfo.isWindows && OSAgnosticPathUtil.startsWithWindowsDrive(url);
     myUrlOrFileTextWithBrowse.setText(windowsLocalFile ? FileUtil.toSystemDependentName(url) : url);
 
     myRunTrustedCheckBox.setSelected(params.isRunTrusted());
@@ -581,7 +582,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     params.setLaunchUrl(myUrlOrFileRadioButton.isSelected());
     final String url = myUrlOrFileTextWithBrowse.getText().trim();
-    final boolean windowsLocalFile = SystemInfo.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
+    final boolean windowsLocalFile = SystemInfo.isWindows && OSAgnosticPathUtil.startsWithWindowsDrive(url);
     params.setUrl(windowsLocalFile ? FileUtil.toSystemIndependentName(url) : url);
 
     params.setLauncherParameters(myLauncherParameters);

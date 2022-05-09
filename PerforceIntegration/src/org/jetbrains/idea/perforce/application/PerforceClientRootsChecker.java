@@ -3,6 +3,7 @@ package org.jetbrains.idea.perforce.application;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.OSAgnosticPathUtil;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -98,7 +99,7 @@ public class PerforceClientRootsChecker implements P4RootsInformation {
     if (file.isDirectory()) return true;
     if (SystemInfo.isWindows) {
       String path = file.getPath();
-      if (path.length() == 2 && Character.isLetter(path.charAt(0)) && ':' == path.charAt(1)) {
+      if (path.length() == 2 && OSAgnosticPathUtil.startsWithWindowsDrive(path)) {
         return true;
       }
     }
