@@ -503,14 +503,14 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
   private static <T extends PsiElement> void foldLiterals(@NotNull final List<FoldingDescriptor> descriptors,
                                                           @NotNull final Collection<PsiElement> psiElements,
-                                                          @NotNull IElementType leftBracket,
-                                                          @NotNull IElementType rightBracket,
+                                                          @NotNull IElementType lBracketType,
+                                                          @NotNull IElementType rBracketType,
                                                           @NotNull final Class<T> aClass) {
     for (PsiElement psiElement : psiElements) {
       if (aClass.isInstance(psiElement)) {
         final ASTNode node = psiElement.getNode();
-        final ASTNode lBracket = node.findChildByType(leftBracket);
-        final ASTNode rBracket = lBracket == null ? null : node.findChildByType(rightBracket, lBracket);
+        final ASTNode lBracket = node.findChildByType(lBracketType);
+        final ASTNode rBracket = lBracket == null ? null : node.findChildByType(rBracketType, lBracket);
         if (lBracket != null && rBracket != null) {
           final String text =
             node.getText().substring(lBracket.getStartOffset() - node.getStartOffset(), rBracket.getStartOffset() - node.getStartOffset());
