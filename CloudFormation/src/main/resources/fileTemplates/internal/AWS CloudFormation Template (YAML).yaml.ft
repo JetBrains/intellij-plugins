@@ -1,7 +1,66 @@
+# More Cloudformation templates at: https://github.com/awslabs/aws-cloudformation-templates
+---
 AWSTemplateFormatVersion: "2010-09-09"
-Description:
-Resources:
-  DummyServer:
-    Type: "AWS::EC2::Instance"
+Description: 'AWS CloudFormation Sample Template S3_Bucket_With_Encryption_and_Retain_On_Delete:
+  Sample template showing how to create a protected for public access and encryption configured
+  it also includes a deletion policy of retain on delete. **WARNING** This
+  template creates an S3 bucket that will NOT be deleted when the stack is deleted.
+  You will be billed for the AWS resources used if you create a stack from this template.'
+
+Metadata: # Optional
+  License: Apache-2.0
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Tags applied to the provisioned bucket"
+        Parameters:
+          - ProjectName
+          - OwnerName
+    ParameterLabels:
+      -
+        ProjectName:
+          default: "What is the name of this project?"
+      -
+        OwnerName:
+          default: "Who is responsible for this project?"
+
+Parameters: # Optional
+  ProjectName:
+    Type: String
+    Description: A value for the tag Project
+
+  OwnerName:
+    Type: String
+    Description: A value for the tag Owner
+
+Resources: # Required
+  DummyBucket:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: Retain
     Properties:
-      ImageId: ""
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        -
+          Key: Project
+          Value: !Ref ProjectName
+        -
+          Key: Owner
+          Value: !Ref OwnerName
+
+Outputs: # Optional
+  DummyBucketName:
+    Description: Dummy Bucket's name
+    Value: !Ref DummyBucket
+
+  DummyBucketArn:
+    Description: Dummy Bucket's ARN
+    Value: !GetAtt 'DummyBucket.Arn'
