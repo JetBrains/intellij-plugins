@@ -13,7 +13,7 @@
   "scripts": {
     "build:clean": "npm run clean && npm run build",
     "build": "npm run build:node-modules && npm run build:plugin",
-    "clean": "rm -Rf ../gen/vue-service",
+    "clean": "rm -rf ../gen/vue-service",
     "build:plugin": "tsc && cp ./package.json ../gen/vue-service/node_modules/ws-typescript-vue-plugin",
     "build:node-modules": "mkdir -p ../gen/vue-service/node_modules && cp -Rf ./node_modules/htmlparser2 ./node_modules/entities ../gen/vue-service/node_modules/ && rm -Rf ../gen/vue-service/node_modules/**/*.ts ../gen/vue-service/node_modules/**/*.map ../gen/vue-service/node_modules/**/**/*.ts ../gen/vue-service/node_modules/**/**/*.map"
   }
