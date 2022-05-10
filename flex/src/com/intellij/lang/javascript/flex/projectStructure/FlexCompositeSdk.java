@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, CompositeRootCollection {
 
@@ -112,53 +113,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   @Override
   @NotNull
   public RootProvider getRootProvider() {
-    return new RootProvider() {
-      @Override
-      public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
-        final Collection<String> result = new HashSet<>();
-        forAllSdks(sdk -> {
-          result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
-          return true;
-        });
-        return ArrayUtilRt.toStringArray(result);
-      }
-
-      @Override
-      public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
-        final Collection<VirtualFile> result = new HashSet<>();
-        forAllSdks(sdk -> {
-          result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
-          return true;
-        });
-        return result.toArray(VirtualFile.EMPTY_ARRAY);
-      }
-
-      @Override
-      public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
-        forAllSdks(sdk -> {
-          final RootProvider rootProvider = sdk.getRootProvider();
-          rootProvider.removeRootSetChangedListener(listener);
-          rootProvider.addRootSetChangedListener(listener);
-          return true;
-        });
-      }
-
-      @Override
-      public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener, @NotNull final Disposable parentDisposable) {
-        forAllSdks(sdk -> {
-          sdk.getRootProvider().addRootSetChangedListener(listener, parentDisposable);
-          return true;
-        });
-      }
-
-      @Override
-      public void removeRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
-        forAllSdks(sdk -> {
-          sdk.getRootProvider().removeRootSetChangedListener(listener);
-          return true;
-        });
-      }
-    };
+    return new MyRootProvider();
   }
 
   private void forAllSdks(Processor<Sdk> processor) {
@@ -299,4 +254,57 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       return getName();
     }
   };
+
+  private class MyRootProvider implements RootProvider, Supplier<Sdk> {
+    @Override
+    public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
+      final Collection<String> result = new HashSet<>();
+      forAllSdks(sdk -> {
+        result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
+        return true;
+      });
+      return ArrayUtilRt.toStringArray(result);
+    }
+
+    @Override
+    public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
+      final Collection<VirtualFile> result = new HashSet<>();
+      forAllSdks(sdk -> {
+        result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
+        return true;
+      });
+      return result.toArray(VirtualFile.EMPTY_ARRAY);
+    }
+
+    @Override
+    public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
+      forAllSdks(sdk -> {
+        final RootProvider rootProvider = sdk.getRootProvider();
+        rootProvider.removeRootSetChangedListener(listener);
+        rootProvider.addRootSetChangedListener(listener);
+        return true;
+      });
+    }
+
+    @Override
+    public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener, @NotNull final Disposable parentDisposable) {
+      forAllSdks(sdk -> {
+        sdk.getRootProvider().addRootSetChangedListener(listener, parentDisposable);
+        return true;
+      });
+    }
+
+    @Override
+    public void removeRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
+      forAllSdks(sdk -> {
+        sdk.getRootProvider().removeRootSetChangedListener(listener);
+        return true;
+      });
+    }
+
+    @Override
+    public Sdk get() {
+      return FlexCompositeSdk.this;
+    }
+  }
 }
