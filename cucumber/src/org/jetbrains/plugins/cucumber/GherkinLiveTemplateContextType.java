@@ -11,7 +11,6 @@ import org.jetbrains.plugins.cucumber.psi.impl.GherkinFileImpl;
 
 /**
  * @author Roman.Chernyatchik
- * @date Jun 24, 2009
  */
 public class GherkinLiveTemplateContextType extends TemplateContextType {
   @NonNls

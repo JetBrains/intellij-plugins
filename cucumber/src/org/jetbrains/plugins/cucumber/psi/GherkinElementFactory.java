@@ -10,7 +10,6 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 /**
  * @author Roman.Chernyatchik
- * @date Sep 5, 2009
  */
 public final class GherkinElementFactory {
   private static final Logger LOG = Logger.getInstance(GherkinElementFactory.class.getName());

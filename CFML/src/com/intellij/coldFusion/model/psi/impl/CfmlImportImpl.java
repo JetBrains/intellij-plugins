@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
- * @date 16.02.11
  */
 public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
   public CfmlImportImpl(ASTNode astNode) {

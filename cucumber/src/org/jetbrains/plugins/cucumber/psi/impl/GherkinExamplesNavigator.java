@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Roman.Chernyatchik
- * @date Sep 11, 2009
  */
 public final class GherkinExamplesNavigator {
   @Nullable

@@ -32,7 +32,6 @@ import java.util.Map;
 
 /**
  * @author vnikolaenko
- * @date 30.01.11
  */
 public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
 

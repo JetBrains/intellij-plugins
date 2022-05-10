@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
- * @date 16.02.11
  */
 public class CfmlNewExpression extends CfmlCompositeElement implements CfmlTypedElement, CfmlExpression {
   public CfmlNewExpression(@NotNull ASTNode node) {

@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 /**
  * @author Roman.Chernyatchik
- * @date May 21, 2009
  */
 public final class GherkinPsiUtil {
   private GherkinPsiUtil() {

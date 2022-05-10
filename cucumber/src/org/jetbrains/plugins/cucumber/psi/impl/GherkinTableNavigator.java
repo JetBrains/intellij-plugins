@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 
 /**
  * @author Roman.Chernyatchik
- * @date Sep 10, 2009
  */
 public final class GherkinTableNavigator {
   private GherkinTableNavigator() {

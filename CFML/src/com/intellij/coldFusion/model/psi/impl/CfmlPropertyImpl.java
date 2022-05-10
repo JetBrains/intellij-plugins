@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
- * @date 09.02.11
  */
 public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProperty {
   public CfmlPropertyImpl(@NotNull ASTNode node) {

@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author vnikolaenko
- * @date 28.01.11
  */
 public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
   private final Tokenizer<LeafPsiElement> myCfmlCommentTokenizer = TokenizerBase.create(CfmlCommentSplitter.INSTANCE);

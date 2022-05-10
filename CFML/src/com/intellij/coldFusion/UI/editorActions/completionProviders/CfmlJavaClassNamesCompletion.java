@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
- * @date 23.01.11
  */
 public class CfmlJavaClassNamesCompletion extends CompletionProvider<CompletionParameters> {
   @Override

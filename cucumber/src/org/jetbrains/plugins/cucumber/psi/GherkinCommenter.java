@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Roman.Chernyatchik
- * @date May 16, 2009
  */
 public class GherkinCommenter implements CodeDocumentationAwareCommenter {
   @NonNls

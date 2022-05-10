@@ -28,7 +28,6 @@ import java.util.List;
 
 /**
  * @author vnikolaenko
- * @date 21.02.11
  */
 public class CfmlComponentConstructorCall extends CfmlFunctionCallExpression implements CfmlFunctionCall {
   public CfmlComponentConstructorCall(@NotNull ASTNode node) {

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author vnikolaenko
- * @date 07.02.11
  */
 public class CfmlThisComponentReference extends CfmlCompositeElement implements CfmlReference {
   public CfmlThisComponentReference(@NotNull ASTNode node) {

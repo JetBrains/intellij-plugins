@@ -19,7 +19,6 @@ import com.intellij.codeInsight.folding.CodeFoldingSettings;
 
 /**
  * @author vnikolaenko
- * @date 14.02.11
  */
 public class CfmlFoldingTest extends CfmlCodeInsightFixtureTestCase {
   @Override

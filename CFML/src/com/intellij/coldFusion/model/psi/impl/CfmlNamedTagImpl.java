@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
- * @date 09.02.11
  */
 public class CfmlNamedTagImpl extends CfmlTagImpl implements PsiNameIdentifierOwner {
   public CfmlNamedTagImpl(ASTNode astNode) {

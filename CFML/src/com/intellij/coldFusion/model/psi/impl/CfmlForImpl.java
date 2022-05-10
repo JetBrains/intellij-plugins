@@ -32,7 +32,6 @@ import java.util.List;
 
 /**
  * @author vnikolaenko
- * @date 11.02.11
  */
 public class CfmlForImpl extends CfmlCompositeElement {
 

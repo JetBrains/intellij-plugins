@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * @author vnikolaenko
- * @date 16.02.11
  */
 public class CfmlScriptImportImpl extends CfmlCompositeElement implements CfmlImport {
   public CfmlScriptImportImpl(@NotNull ASTNode node) {
