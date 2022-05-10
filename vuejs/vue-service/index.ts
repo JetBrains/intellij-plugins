@@ -62,7 +62,7 @@ module.exports = function init(
             }
           }
         }
-        // Do not reuse old program structure if any of Vue scripts have changed it's script kind
+        // Do not reuse old program structure if any of Vue scripts have changed its script kind
         if (scriptKindChanged.size > 0) {
           // TODO TS <4.3  - forcing shouldCreateNewSourceFile is causing leaks in the document registry,
           //                 as documents with changed script kind are acquired again
@@ -151,9 +151,14 @@ module.exports = function init(
           }
           return ts_impl.sys.fileExists(path)
         }
-      }
-      let moduleResolutionCache = ts_impl.createModuleResolutionCache(project.getCurrentDirectory(),
-        (x: any) => (compilerHost.getCanonicalFileName ?? getCanonicalFileName)(x), project.getCompilerOptions());
+      };
+
+      let moduleResolutionCache = ts_impl.createModuleResolutionCache(
+        project.getCurrentDirectory(),
+        (x: any) => (compilerHost.getCanonicalFileName ?? getCanonicalFileName)(x),
+        project.getCompilerOptions()
+      );
+
       const loader = (moduleName: string, containingFile: string, redirectedReference: any) => {
         const tsResolvedModule = ts_impl.resolveModuleName(moduleName, containingFile, project.getCompilerOptions(),
           vue_sys, moduleResolutionCache, redirectedReference).resolvedModule!;
@@ -165,18 +170,22 @@ module.exports = function init(
           }
         }
         return tsResolvedModule
-      }
-      tsLsHost.resolveModuleNames = (moduleNames: any, containingFile: any, _reusedNames: any, redirectedReference: any) =>
-        ((<any>ts_impl).loadWithLocalCache || myLoadWithLocalCache)(moduleNames, containingFile, redirectedReference, loader);
+      };
+
+      tsLsHost.resolveModuleNames = (moduleNames: any, containingFile: any, _reusedNames: any, redirectedReference: any) => {
+          return ((<any>ts_impl).loadWithLocalCache || myLoadWithLocalCache)(moduleNames, containingFile, redirectedReference, loader)
+      };
 
       // Avoid double-patching
       if (!(tsLsHost as any)["__getScriptSnapshot__patched"]) {
         (tsLsHost as any)["__getScriptSnapshot__patched"] = true
         // Strip non-TS content from the script
         const _getScriptSnapshot = tsLsHost.getScriptSnapshot;
-        const vueScriptCache = new VueScriptCache(ts_impl,
+        const vueScriptCache = new VueScriptCache(
+          ts_impl,
           fileName => _getScriptSnapshot.call(tsLsHost, fileName),
-          fileName => tsLsHost.getScriptVersion(fileName))
+          fileName => tsLsHost.getScriptVersion(fileName)
+        );
         tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot {
           if (fileName.endsWith(".vue")) {
             return vueScriptCache.getScriptSnapshot(fileName)
