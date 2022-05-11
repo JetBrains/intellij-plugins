@@ -24,9 +24,9 @@ module.exports = function init(
     // Detect whether script kind has changed and if so, drop the whole program and patch compiler host
     const _createProgram = ts_impl.createProgram
     ts_impl.createProgram = function createProgram(rootNamesOrOptions: any): ts.Program {
-      let oldProgram: ts.Program
+      let oldProgram: ts.Program | undefined
       let compilerOptions: ts.CompilerOptions
-      let compilerHost: ts.CompilerHost
+      let compilerHost: ts.CompilerHost | undefined
       if ((<any>ts_impl).isArray(rootNamesOrOptions)) {
         compilerOptions = arguments[1]
         compilerHost = arguments[2]
@@ -45,7 +45,7 @@ module.exports = function init(
           if (sourceFile.fileName.endsWith(".vue")) {
             try {
               // Check if we can safely acquire source code
-              const file = compilerHost.getSourceFileByPath(sourceFile.fileName, (<any>sourceFile).resolvedPath, compilerOptions.target,
+              const file = compilerHost.getSourceFileByPath!(sourceFile.fileName, (<any>sourceFile).resolvedPath, compilerOptions.target!,
                 undefined, false)
               // In TS 4.3+ the above code won't fail
               // The registry will drop the old version of the file, so we need to alter old sourceFile scriptKind
@@ -68,7 +68,8 @@ module.exports = function init(
           //                 as documents with changed script kind are acquired again
 
           // Patch compiler host to not fall into fail condition
-          const _getSourceFileByPath = compilerHost.getSourceFileByPath
+          // TODO investigate possibly uncaught undefined issues and get rid of "!" assertions
+          const _getSourceFileByPath = compilerHost.getSourceFileByPath!
           compilerHost.getSourceFileByPath = function (fileName: string, path: ts.Path, languageVersion: ts.ScriptTarget,
                                                        onError?: (message: string) => void, shouldCreateNewSourceFile?: boolean): ts.SourceFile | undefined {
             // shouldCreateNewSourceFile
@@ -186,7 +187,7 @@ module.exports = function init(
           fileName => _getScriptSnapshot.call(tsLsHost, fileName),
           fileName => tsLsHost.getScriptVersion(fileName)
         );
-        tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot {
+        tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot | undefined {
           if (fileName.endsWith(".vue")) {
             return vueScriptCache.getScriptSnapshot(fileName)
           }
@@ -195,11 +196,12 @@ module.exports = function init(
 
         // Provide script kind based on `lang` attribute
         const _getScriptKind = tsLsHost.getScriptKind
+        // TODO investigate possibly uncaught undefined issues and get rid of "!" assertions
         tsLsHost.getScriptKind = function (fileName): ts.ScriptKind {
           if (fileName.endsWith(".vue")) {
-            return vueScriptCache.getScriptKind(fileName)
+            return vueScriptCache.getScriptKind(fileName)!
           }
-          return _getScriptKind.call(this, fileName)
+          return _getScriptKind!.call(this, fileName)
         }
       }
 

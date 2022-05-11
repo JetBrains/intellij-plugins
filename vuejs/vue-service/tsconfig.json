@@ -6,6 +6,7 @@
     "outDir": "../gen/vue-service/node_modules/ws-typescript-vue-plugin",
     "declaration": false,
     "module": "commonjs",
+    "strictNullChecks": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
     "noImplicitReturns": true
