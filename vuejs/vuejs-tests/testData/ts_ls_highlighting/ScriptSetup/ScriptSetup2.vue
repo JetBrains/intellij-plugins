@@ -7,6 +7,7 @@ export default defineComponent({
   }
 })
 <error descr="TS2304: Cannot find name 'bar'.">bar</error> = 234;
+const <error>await</error> = "expect error";
 </script>
 
 <script setup lang='ts'>
@@ -18,7 +19,7 @@ import MyComponent2 from "./my-component2.vue"
 let bar = 123;
 
 <error descr="TS2588: Cannot assign to 'foo' because it is a constant.">foo</error> = 12
-
+const <error>await</error> = "expect error";
 </script>
 <template>
   <MyComponent :count="12" :bar="'foo'"/>

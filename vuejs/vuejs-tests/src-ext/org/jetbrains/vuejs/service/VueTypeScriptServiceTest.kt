@@ -18,6 +18,7 @@ import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.refactoring.rename.PsiElementRenameHandler.DEFAULT_NAME
 import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
@@ -37,14 +38,6 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   override fun getExtension(): String {
     return "vue"
-  }
-
-  private fun completeTsLangAndAssert() {
-    doTestWithCopyDirectory()
-    myFixture.type(" lang=\"\bts\"")
-    FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.file))
-    UIUtil.dispatchAllInvocationEvents()
-    checkAfterFile("vue")
   }
 
   override fun getBasePath(): String {
@@ -145,18 +138,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     copyDirectory()
-    myFixture.configureFromTempProjectFile("ScriptSetup1.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureFromTempProjectFile("ScriptSetup2.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureFromTempProjectFile("ScriptSetup3.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureFromTempProjectFile("ScriptSetup4.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureFromTempProjectFile("ScriptSetup5.vue")
-    myFixture.checkHighlighting()
-    myFixture.configureFromTempProjectFile("ScriptSetupSkippedErrors.vue")
-    myFixture.checkHighlighting()
+    myFixture.configureFileAndCheckHighlighting("ScriptSetup1.vue")
+    myFixture.configureFileAndCheckHighlighting("ScriptSetup2.vue")
+    myFixture.configureFileAndCheckHighlighting("ScriptSetup3.vue")
+    myFixture.configureFileAndCheckHighlighting("ScriptSetup4.vue")
+    myFixture.configureFileAndCheckHighlighting("ScriptSetup5.vue")
+    myFixture.configureFileAndCheckHighlighting("ScriptSetupSkippedErrors.vue")
+    myFixture.configureFileAndCheckHighlighting("ScriptSetupAwait.vue") // WEB-52317
+    myFixture.configureFileAndCheckHighlighting("ScriptSetupAwaitTwoScripts.vue") // WEB-52317
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -265,6 +254,20 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
         "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
         files)
     }
+  }
+
+  private fun completeTsLangAndAssert() {
+    doTestWithCopyDirectory()
+    myFixture.type(" lang=\"\bts\"")
+    FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.file))
+    UIUtil.dispatchAllInvocationEvents()
+    checkAfterFile("vue")
+  }
+
+  private fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
+    val myFixture = this
+    myFixture.configureFromTempProjectFile(filePath)
+    myFixture.checkHighlighting()
   }
 
   companion object {

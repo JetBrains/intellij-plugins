@@ -5,7 +5,7 @@ import {Parser} from "htmlparser2/lib/Parser"
 
 type TS = typeof import("typescript/lib/tsserverlibrary");
 
-const prefix = ";(()=>{";
+const prefix = ";(async ()=>{";
 const suffix = "})();";
 const prefixLength = prefix.length;
 const suffixLength = suffix.length;
@@ -83,19 +83,21 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
     scriptKind = ts.ScriptKind.TS;
   }
   // Support <script setup> syntax
-  else if (hadScriptSetup && !hadScriptNormal) {
-    result = `${result}; ${componentShim}`
+  else if (hadScriptSetup) {
+    if (!hadScriptNormal) {
+      result = `${result}; ${componentShim}`
+    }
 
-    // Remove wrapper for imports to work properly
-    if (scriptSetupStartLoc >= 0) {
-      result = result.substring(0, scriptSetupStartLoc) + " ".repeat(prefixLength) + result.substring(scriptSetupStartLoc + prefixLength)
-    }
-    if (scriptSetupEndLoc >= 0) {
-      result = result.substring(0, scriptSetupEndLoc) + " ".repeat(suffixLength) + result.substring(scriptSetupEndLoc + suffixLength)
-    }
-  }
-  else if (hadScriptSetup && hadScriptNormal) {
-    // Add imports at the end of the file
+    // Imports handling is confusing:
+    // * Vue Compiler hoists imports out of script setup, to module scope
+    // * WS needs those imports preserved as is inside script setup, in order to report errors in them (it's a fixable limitation)
+    // * TS compiler will raise e.g. TS2307: Cannot find module 'vue' or its corresponding type declarations.
+    //   for imports inside functions, but only if there's no equivalent import in module scope.
+    // * script setup imports are visible from normal setup, which is also hoisted to module scope.
+    // Therefore, WS duplicates the imports.
+    // This can be considered a hack, import statements inside functions make no sense, but we skip TS1232 in VueTypeScriptService,
+    // and our transformation does not need to be correct at runtime.
+    // We also skip errors in stuff added below because VueTypeScriptService filters ranges.
     result += "\n;"
     const r = /import[^'"]*['"]([^'"]*)['"]/g;
     const fragmentToMatch = result.substring(scriptSetupStartLoc, scriptSetupEndLoc)
