@@ -5,6 +5,12 @@ import {Parser} from "htmlparser2/lib/Parser"
 
 type TS = typeof import("typescript/lib/tsserverlibrary");
 
+const prefix = ";(()=>{";
+const suffix = "})();";
+const prefixLength = prefix.length;
+const suffixLength = suffix.length;
+const componentShim = "import componentDefinition from '*.vue'; export default componentDefinition;";
+
 export function transformVueSfcFile(ts: TS, contents: string): { result: string, scriptKind: ScriptKind } {
   let result = "";
 
@@ -47,8 +53,8 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
         if (inScriptSetup && !addedScriptSetupPrefix) {
           addedScriptSetupPrefix = true
           scriptSetupStartLoc = result.length
-          result += ";(()=>{"
-          charsCount -= 7
+          result += prefix
+          charsCount -= prefixLength
         }
         result += " ".repeat(charsCount) + "\n".repeat(lineCount) + data
         lastIndex = parser.endIndex! + 1 // TODO handle null assertion
@@ -57,9 +63,9 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
     onclosetag(name: string) {
       if (inScriptSetup) {
         scriptSetupEndLoc = result.length
-        result += "})();"
+        result += suffix
         inScriptSetup = false
-        lastIndex += 5
+        lastIndex += suffixLength
       }
       isScript = false;
       level--
@@ -73,19 +79,19 @@ export function transformVueSfcFile(ts: TS, contents: string): { result: string,
 
   // Support empty <script> tag
   if (result.trim() === "") {
-    result = "import componentDefinition from '*.vue'; export default componentDefinition;"
+    result = componentShim;
     scriptKind = ts.ScriptKind.TS;
   }
   // Support <script setup> syntax
   else if (hadScriptSetup && !hadScriptNormal) {
-    result = result + "; import __componentDefinition from '*.vue'; export default __componentDefinition;"
+    result = `${result}; ${componentShim}`
 
     // Remove wrapper for imports to work properly
     if (scriptSetupStartLoc >= 0) {
-      result = result.substring(0, scriptSetupStartLoc) + " ".repeat(7) + result.substring(scriptSetupStartLoc + 7)
+      result = result.substring(0, scriptSetupStartLoc) + " ".repeat(prefixLength) + result.substring(scriptSetupStartLoc + prefixLength)
     }
     if (scriptSetupEndLoc >= 0) {
-      result = result.substring(0, scriptSetupEndLoc) + " ".repeat(5) + result.substring(scriptSetupEndLoc + 5)
+      result = result.substring(0, scriptSetupEndLoc) + " ".repeat(suffixLength) + result.substring(scriptSetupEndLoc + suffixLength)
     }
   }
   else if (hadScriptSetup && hadScriptNormal) {
