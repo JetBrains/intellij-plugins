@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.psi.PsiFile;
@@ -185,31 +185,31 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
 
   public void testFunctionSig11() {
     doTest(
-      "<code><b>test.dart</b><br>List<String>&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;List<String>&nbsp;c})<br><br></code>",
+      "<code><b>test.dart</b><br>List&lt;String&gt;&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;List&lt;String&gt;&nbsp;c})<br><br></code>",
       "List<String> <caret>x({bool b= true, List<String> c}){}");
   }
 
   public void testFunctionSig12() {
     doTest(
-      "<code><b>test.dart</b><br>List<String>&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;Map<String,&nbsp;String>&nbsp;c})<br><br></code>",
+      "<code><b>test.dart</b><br>List&lt;String&gt;&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;Map&lt;String,&nbsp;String&gt;&nbsp;c})<br><br></code>",
       "List<String> <caret>x({bool b= true, Map<String, String> c}){}");
   }
 
   public void testFunctionSig13() {
     doTest(
-      "<code><b>test.dart</b><br>Map<String,&nbsp;String>&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;List<String>&nbsp;c})<br><br></code>",
+      "<code><b>test.dart</b><br>Map&lt;String,&nbsp;String&gt;&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;List&lt;String&gt;&nbsp;c})<br><br></code>",
       "Map<String, String> <caret>x({bool b= true, List<String> c}){}");
   }
 
   public void testFunctionSig14() {
     doTest(
-      "<code><b>test.dart</b><br>Map<String,&nbsp;String>&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;Map<String,&nbsp;String>&nbsp;c})<br><br></code>",
+      "<code><b>test.dart</b><br>Map&lt;String,&nbsp;String&gt;&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;Map&lt;String,&nbsp;String&gt;&nbsp;c})<br><br></code>",
       "Map<String, String> <caret>x({bool b= true, Map<String, String> c}){}");
   }
 
   public void testFunctionSig15() {
     doTest(
-      "<code><b>test.dart</b><br>Map<String,&nbsp;Map<String,&nbsp;String>>&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;Map<String,&nbsp;Map<String,&nbsp;String>>&nbsp;c})<br><br></code>",
+      "<code><b>test.dart</b><br>Map&lt;String,&nbsp;Map&lt;String,&nbsp;String&gt;&gt;&nbsp;x({bool&nbsp;b&nbsp;=&nbsp;true,&nbsp;Map&lt;String,&nbsp;Map&lt;String,&nbsp;String&gt;&gt;&nbsp;c})<br><br></code>",
       "Map<String, Map<String, String>> <caret>x({bool b= true, Map<String, Map<String, String>> c}){}");
   }
 
@@ -236,7 +236,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig5() {
-    doTest("<code><b>test.dart</b><br>dynamic&nbsp;x(List<dynamic>&nbsp;e)<br><br></code>", "E <caret>x(List<E> e) { }");
+    doTest("<code><b>test.dart</b><br>dynamic&nbsp;x(List&lt;dynamic&gt;&nbsp;e)<br><br></code>", "E <caret>x(List<E> e) { }");
   }
 
   public void testFunctionSig6() {
@@ -244,7 +244,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig7() {
-    doTest("<code><b>test.dart</b><br>Map<String,&nbsp;int>&nbsp;foo(Map<int,&nbsp;String>&nbsp;p)<br><br></code>",
+    doTest("<code><b>test.dart</b><br>Map&lt;String,&nbsp;int&gt;&nbsp;foo(Map&lt;int,&nbsp;String&gt;&nbsp;p)<br><br></code>",
            "Map<String, int> <caret>foo(Map<int, String> p) => null;");
   }
 
@@ -331,11 +331,11 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig() {
-    doTest("<code><b>test.dart</b><br>class&nbsp;Foo<T><br><br></code>", "class <caret>Foo<T>{ }");
+    doTest("<code><b>test.dart</b><br>class&nbsp;Foo&lt;T&gt;<br><br></code>", "class <caret>Foo<T>{ }");
   }
 
   public void testParamClassSig2() {
-    doTest("<code><b>test.dart</b><br>class&nbsp;Foo<T,&nbsp;Z><br><br></code>",
+    doTest("<code><b>test.dart</b><br>class&nbsp;Foo&lt;T,&nbsp;Z&gt;<br><br></code>",
            "class <caret>Foo<T,Z>{ }");
   }
 
@@ -350,25 +350,25 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig5() {
-    doTest("<code><b>test.dart</b><br>class&nbsp;Foo<A,&nbsp;B>&nbsp;extends&nbsp;Bar<A,&nbsp;B><br><br></code>",
+    doTest("<code><b>test.dart</b><br>class&nbsp;Foo&lt;A,&nbsp;B&gt;&nbsp;extends&nbsp;Bar&lt;A,&nbsp;B&gt;<br><br></code>",
            "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
   }
 
   public void testParamClassSig6() {
-    doTest("<code>List<String>&nbsp;ids<br><br><b>Type:</b> List&lt;String&gt;<br><br></code>",
+    doTest("<code>List&lt;String&gt;&nbsp;ids<br><br><b>Type:</b> List&lt;String&gt;<br><br></code>",
            "class A { foo() { List<String> <caret>ids; }}");
   }
 
   public void testParamClassSig7() {
     doTest(
-      "<code>List<Map<String,&nbsp;int>>&nbsp;ids<br><br><b>Type:</b> List&lt;Map&lt;String, int&gt;&gt;<br><br></code>",
+      "<code>List&lt;Map&lt;String,&nbsp;int&gt;&gt;&nbsp;ids<br><br><b>Type:</b> List&lt;Map&lt;String, int&gt;&gt;<br><br></code>",
       "class A { foo() { List<Map<String, int>> <caret>ids; }}");
   }
 
   public void testParamClassSig8() {
-    doTest("<code>List<List<Map<String,&nbsp;List<Object>>>>&nbsp;list<br><br>" +
-           "<b>Type:</b> List&lt;List&lt;Map&lt;String, List&lt;Object&gt;&gt;&gt;&gt;<br><br></code>",
-           "class A { foo() { List<List<Map<String, List<Object>>>> <caret>list; }}");
+    doTest(
+      "<code>List&lt;List&lt;Map&lt;String,&nbsp;List&lt;Object&gt;&gt;&gt;&gt;&nbsp;list<br><br><b>Type:</b> List&lt;List&lt;Map&lt;String, List&lt;Object&gt;&gt;&gt;&gt;<br><br></code>",
+      "class A { foo() { List<List<Map<String, List<Object>>>> <caret>list; }}");
   }
 
   public void testSetterSig() {
