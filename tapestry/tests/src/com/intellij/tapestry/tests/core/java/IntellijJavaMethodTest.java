@@ -53,7 +53,7 @@ public class IntellijJavaMethodTest extends BaseTestCase {
 
         assert method2.getAnnotations().size() == 0;
 
-        assert method2.getDocumentation().equals("");
+        assert method2.getDocumentation().isEmpty();
 
         assert method2.getParameters().size() == 0;
 
@@ -64,7 +64,7 @@ public class IntellijJavaMethodTest extends BaseTestCase {
 
         assert method3.getAnnotations().size() == 0;
 
-        assert method3.getDocumentation().equals("");
+        assert method3.getDocumentation().isEmpty();
 
         assert method3.getParameters().size() == 0;
 

@@ -67,7 +67,7 @@ public class ComponentParameterTest {
 
     @Test
     public void getDefaultValue_default() {
-        assert new TapestryParameter(null, _fieldMock).getDefaultValue().equals("");
+        assert new TapestryParameter(null, _fieldMock).getDefaultValue().isEmpty();
     }
 
     @Test

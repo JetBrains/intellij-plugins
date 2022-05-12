@@ -77,7 +77,7 @@ public class ReferenceSearchHelper {
 
   private String getConceptStepText(ConceptStepImpl element) {
     String text = element.getStepValue().getStepText().trim();
-    return !text.equals("") && text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
+    return !text.isEmpty() && text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
   }
 
   private String getStepText(SpecStep elementToSearch) {

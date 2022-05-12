@@ -27,7 +27,7 @@ public class AbstractValueResolverTest {
 
     @Test
     public void getCleanValue_defined_prefix() {
-        assert AbstractValueResolver.getCleanValue("prefix:").equals("");
+        assert AbstractValueResolver.getCleanValue("prefix:").isEmpty();
 
         assert AbstractValueResolver.getCleanValue("prefix: value ").equals("value");
 

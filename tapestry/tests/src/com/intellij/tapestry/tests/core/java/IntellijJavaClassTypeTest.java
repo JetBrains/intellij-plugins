@@ -186,7 +186,7 @@ public class IntellijJavaClassTypeTest extends BaseTestCase {
         PsiClass class1 = getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleRuntimeScope(fixture.getModule(), false));
         IntellijJavaClassType intellijJavaClassType = new IntellijJavaClassType(fixture.getModule(), class1.getContainingFile());
 
-        assert intellijJavaClassType.getDocumentation().equals("");
+        assert intellijJavaClassType.getDocumentation().isEmpty();
 
         IntellijResourceFinder resourceFinder = new IntellijResourceFinder(fixture.getModule());
         _notJavaClassType = new IntellijJavaClassType(fixture.getModule(), ((IntellijResource) resourceFinder.findClasspathResource("/com/app/util/Home.tml", false).toArray()[0]).getPsiFile());

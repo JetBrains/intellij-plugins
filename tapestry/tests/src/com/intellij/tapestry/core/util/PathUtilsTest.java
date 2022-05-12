@@ -15,11 +15,11 @@ public class PathUtilsTest {
 
     @Test
     public void packageIntoPath_empty() {
-        assert PathUtils.packageIntoPath(null, true).equals("");
-        assert PathUtils.packageIntoPath(null, false).equals("");
+        assert PathUtils.packageIntoPath(null, true).isEmpty();
+        assert PathUtils.packageIntoPath(null, false).isEmpty();
 
-        assert PathUtils.packageIntoPath("", true).equals("");
-        assert PathUtils.packageIntoPath("", false).equals("");
+        assert PathUtils.packageIntoPath("", true).isEmpty();
+        assert PathUtils.packageIntoPath("", false).isEmpty();
     }
 
     @Test
@@ -33,11 +33,11 @@ public class PathUtilsTest {
 
     @Test
     public void pathIntoPackage_empty() {
-        assert PathUtils.pathIntoPackage(null, true).equals("");
-        assert PathUtils.pathIntoPackage(null, false).equals("");
+        assert PathUtils.pathIntoPackage(null, true).isEmpty();
+        assert PathUtils.pathIntoPackage(null, false).isEmpty();
 
-        assert PathUtils.pathIntoPackage("", true).equals("");
-        assert PathUtils.pathIntoPackage("", false).equals("");
+        assert PathUtils.pathIntoPackage("", true).isEmpty();
+        assert PathUtils.pathIntoPackage("", false).isEmpty();
     }
 
     @Test
@@ -59,10 +59,10 @@ public class PathUtilsTest {
 
     @Test
     public void getFullComponentPackage_empty() {
-        assert PathUtils.getFullComponentPackage(null, null).equals("");
-        assert PathUtils.getFullComponentPackage("", "").equals("");
-        assert PathUtils.getFullComponentPackage(null, "").equals("");
-        assert PathUtils.getFullComponentPackage("", null).equals("");
+        assert PathUtils.getFullComponentPackage(null, null).isEmpty();
+        assert PathUtils.getFullComponentPackage("", "").isEmpty();
+        assert PathUtils.getFullComponentPackage(null, "").isEmpty();
+        assert PathUtils.getFullComponentPackage("", null).isEmpty();
     }
 
     @Test
@@ -73,8 +73,8 @@ public class PathUtilsTest {
 
     @Test
     public void getLastPathElement_empty() {
-        assert PathUtils.getLastPathElement(null).equals("");
-        assert PathUtils.getLastPathElement("").equals("");
+        assert PathUtils.getLastPathElement(null).isEmpty();
+        assert PathUtils.getLastPathElement("").isEmpty();
     }
 
     @Test
@@ -85,8 +85,8 @@ public class PathUtilsTest {
 
     @Test
     public void getFirstPathElement_empty() {
-        assert PathUtils.getFirstPathElement(null).equals("");
-        assert PathUtils.getFirstPathElement("").equals("");
+        assert PathUtils.getFirstPathElement(null).isEmpty();
+        assert PathUtils.getFirstPathElement("").isEmpty();
     }
 
     @Test
@@ -98,8 +98,8 @@ public class PathUtilsTest {
 
     @Test
     public void removeLastPathElement_empty() {
-        assert PathUtils.removeLastFilePathElement(null, true).equals("");
-        assert PathUtils.removeLastFilePathElement("", true).equals("");
+        assert PathUtils.removeLastFilePathElement(null, true).isEmpty();
+        assert PathUtils.removeLastFilePathElement("", true).isEmpty();
     }
 
     @Test
@@ -114,13 +114,13 @@ public class PathUtilsTest {
 
         assert PathUtils.removeLastFilePathElement("Login", false).equals("Login");
 
-        assert PathUtils.removeLastFilePathElement("Login", true).equals("");
+        assert PathUtils.removeLastFilePathElement("Login", true).isEmpty();
     }
 
     @Test
     public void getComponentFileName_empty() {
-        assert PathUtils.getComponentFileName(null).equals("");
-        assert PathUtils.getComponentFileName("").equals("");
+        assert PathUtils.getComponentFileName(null).isEmpty();
+        assert PathUtils.getComponentFileName("").isEmpty();
     }
 
     @Test
