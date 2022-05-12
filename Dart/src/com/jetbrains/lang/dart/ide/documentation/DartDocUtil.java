@@ -164,7 +164,7 @@ public final class DartDocUtil {
       else {
         DartSdk sdk = DartSdk.getDartSdk(project);
         if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), FORMATTED_HOVER_SDK_VERSION) >= 0) {
-          builder.append(StringUtil.replace(StringUtil.replace(signature, "\n", "<br/>"), " ", NBSP));
+          builder.append(StringUtil.replace(StringUtil.replace(StringUtil.escapeXmlEntities(signature), "\n", "<br/>"), " ", NBSP));
         }
         else {
           builder.append(formatSignature(signature));
