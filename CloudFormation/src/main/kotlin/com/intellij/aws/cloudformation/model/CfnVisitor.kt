@@ -1,6 +1,6 @@
 package com.intellij.aws.cloudformation.model
 
-@Suppress("unused", "UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER")
 abstract class CfnVisitor {
   open fun root(root: CfnRootNode) {
     root.conditionsNode?.let { conditions(it) }

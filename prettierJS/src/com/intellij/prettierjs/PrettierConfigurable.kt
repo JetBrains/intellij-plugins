@@ -117,7 +117,6 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private class PrettierOnSaveActionInfo(actionOnSaveContext: ActionOnSaveContext)
     : ActionOnSaveBackedByOwnConfigurable<PrettierConfigurable>(actionOnSaveContext, CONFIGURABLE_ID, PrettierConfigurable::class.java) {
 
-    @Suppress("DialogTitleCapitalization")
     override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
 
     override fun getCommentAccordingToStoredState() =

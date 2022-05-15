@@ -1,4 +1,4 @@
-@file:Suppress("IfThenToSafeAccess", "RedundantUnitExpression")
+@file:Suppress("RedundantUnitExpression")
 
 package com.intellij.aws.cloudformation
 

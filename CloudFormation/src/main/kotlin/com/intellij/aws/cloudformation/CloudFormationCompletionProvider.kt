@@ -70,7 +70,6 @@ class CloudFormationCompletionProvider : CompletionProvider<CompletionParameters
             if (resourcePropertyNameMatch != null) {
               val typeName = resourcePropertyNameMatch.resource.typeName ?: ""
               val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) ?: return
-              @Suppress("LoopToCallChain")
               for ((propertyName, type) in resourceTypeMetadata.properties.values) {
                 if (resourcePropertyNameMatch.resource.properties != null &&
                     resourcePropertyNameMatch.resource.properties.properties.any { it.name?.value == propertyName }) {

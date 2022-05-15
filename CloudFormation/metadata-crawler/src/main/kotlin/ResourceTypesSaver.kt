@@ -1,8 +1,11 @@
-@file:Suppress("LoopToCallChain", "Destructure")
+@file:Suppress("LoopToCallChain")
 
 import com.google.gson.JsonParser
 import com.intellij.aws.cloudformation.CloudFormationConstants.awsServerless20161031TransformName
-import com.intellij.aws.cloudformation.metadata.*
+import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
+import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
+import com.intellij.aws.cloudformation.metadata.MetadataSerializer
 import com.intellij.aws.cloudformation.tests.TestUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

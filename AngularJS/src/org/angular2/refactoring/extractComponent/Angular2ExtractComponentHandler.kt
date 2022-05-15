@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.refactoring.extractComponent
 
 import com.intellij.application.options.CodeStyle
@@ -29,7 +29,10 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.*
+import com.intellij.openapi.util.ActionCallback
+import com.intellij.openapi.util.Conditions
+import com.intellij.openapi.util.NlsContexts
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -242,7 +245,6 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     for (attribute in extractedComponent.attributes) {
       val name = attribute.name
       val type = attribute.jsType.getTypeText(JSType.TypeTextFormat.CODE)
-      @Suppress("HardCodedStringLiteral") 
       val texts = when (attribute.attributeType) {
         Angular2AttributeType.PROPERTY_BINDING -> {
           seenInput = true

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.index
 
 import com.intellij.javascript.nodejs.PackageJsonData
@@ -30,7 +30,6 @@ const val SHARDS_VUE_MODULE: String = "shards-vue"
 const val VUE_CLASS_COMPONENT_MODULE: String = "vue-class-component"
 const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
 
-@Suppress("PropertyName")
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
