@@ -1,7 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable;
-import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableProvider;
 import com.intellij.openapi.project.Project;
@@ -28,6 +29,6 @@ public class PhoneGapConfigurationProvider extends ConfigurableProvider {
 
   @Override
   public boolean canCreateConfigurable() {
-    return Language.findLanguageByID("JavaScript") == null;
+    return FileTypeManager.getInstance().getStdFileType("JavaScript") == PlainTextFileType.INSTANCE;
   }
 }
