@@ -535,7 +535,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
         String propName = attributeListOwner.getName();
         if (grandParent instanceof JSClass && propName != null) {
-          final SinkResolveProcessor processor = new SinkResolveProcessor(propName, new ResolveResultSink(null, propName));
+          final var processor = new SinkResolveProcessor<>(propName, new ResolveResultSink(null, propName));
           processor.setToProcessHierarchy(false);
           grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
 
@@ -544,17 +544,17 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
             final PsiElement firstElement = elementList.get(0);
             final PsiElement secondElement = elementList.get(1);
 
-            JSAttributeListOwner chosedElement = null;
+            JSAttributeListOwner chosenElement = null;
 
             if (firstElement instanceof JSFunction && ((JSFunction)firstElement).isGetProperty()) {
-              chosedElement = (JSAttributeListOwner)firstElement;
+              chosenElement = (JSAttributeListOwner)firstElement;
             }
             else if (secondElement instanceof JSFunction && ((JSFunction)secondElement).isGetProperty()) {
-              chosedElement = (JSAttributeListOwner)secondElement;
+              chosenElement = (JSAttributeListOwner)secondElement;
             }
 
-            if (chosedElement != null) {
-              return findAttr(chosedElement, name);
+            if (chosenElement != null) {
+              return findAttr(chosenElement, name);
             }
           }
         }
@@ -622,7 +622,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     else if ("Number".equals(type)) {
       try {
         boolean startWithSharp;
-        if (value != null && ((startWithSharp = value.startsWith("#")) || value.startsWith("0x"))) {
+        if ((startWithSharp = value.startsWith("#")) || value.startsWith("0x")) {
           Integer.parseInt(value.substring(startWithSharp ? 1 : 2), 16);
         }
         else {

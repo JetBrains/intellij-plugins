@@ -57,7 +57,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
   }
 
   @Override
-  protected boolean acceptsForMembersVisibility(@NotNull JSPsiElementBase element, @NotNull SinkResolveProcessor resolveProcessor) {
+  protected boolean acceptsForMembersVisibility(@NotNull JSPsiElementBase element, @NotNull SinkResolveProcessor<?> resolveProcessor) {
     if (!(element instanceof JSAttributeListOwner)) return true;
     final JSAttributeList attributeList = ((JSAttributeListOwner)element).getAttributeList();
 
@@ -163,7 +163,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
   }
 
   @Override
-  protected boolean checkConstructorWithNew(@NotNull PsiElement element, @NotNull SinkResolveProcessor resolveProcessor) {
+  protected boolean checkConstructorWithNew(@NotNull PsiElement element, @NotNull SinkResolveProcessor<?> resolveProcessor) {
     return true;
   }
 }
