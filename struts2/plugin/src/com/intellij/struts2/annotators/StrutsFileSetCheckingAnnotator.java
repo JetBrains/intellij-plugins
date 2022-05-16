@@ -26,6 +26,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -45,6 +46,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.indexing.BuildableRootsChangeRescanningInfo;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -191,7 +193,15 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
           public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
             selectedValue.addFile(file.getVirtualFile());
             ApplicationManager.getApplication()
-              .runWriteAction(() -> ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true));
+              .runWriteAction(() -> {
+                Module module = strutsFacet.getModule();
+                BuildableRootsChangeRescanningInfo info = BuildableRootsChangeRescanningInfo.newInstance().addModule(module);
+                Module[] dependencies = ModuleRootManager.getInstance(module).getDependencies();
+                for (Module dependency : dependencies) {
+                  info.addModule(dependency);
+                }
+                ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), info);
+              });
 
             // re-highlight (remove annotation)
             DaemonCodeAnalyzer.getInstance(project).restart();
