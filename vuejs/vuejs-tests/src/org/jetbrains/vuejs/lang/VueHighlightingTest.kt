@@ -24,6 +24,10 @@ import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspecti
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.lang.html.VueFileType
 
+/**
+ * @see VueComponentTest
+ * @see VueControlFlowTest
+ */
 class VueHighlightingTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
 

@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -10,7 +11,10 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
-import com.intellij.lang.javascript.psi.resolve.*
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor
+import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
@@ -26,7 +30,7 @@ import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
 class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
                                        ignorePerformanceLimits: Boolean) :
-  JSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) {
+  TypeScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) {
 
   companion object {
     fun resolveFiltersFromReferenceExpression(expression: VueJSFilterReferenceExpression): List<VueFilter> {

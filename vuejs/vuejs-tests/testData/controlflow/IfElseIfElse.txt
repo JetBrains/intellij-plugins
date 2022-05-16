@@ -1,0 +1,92 @@
+0(1) element: null
+1(2) element: VueJSEmbeddedExpression
+2(3) element: JSReferenceExpression Read(union)
+3(4) element: JSReferenceExpression Read(toFixed)
+4(5) element: JSCallExpression
+5(6) element: VueJSEmbeddedExpression
+6(7) element: JSReferenceExpression Read(union)
+7(8) element: JSReferenceExpression Read(toUpperCase)
+8(9) element: JSCallExpression
+9(10) element: VueJSEmbeddedExpression
+10(11) element: JSReferenceExpression Read(union)
+11(12) element: JSReferenceExpression Read(join)
+12(13) element: JSCallExpression
+13(14) element: XmlText
+14(15) element: JSFile:IfElseIfElse.vue.int
+15(16) element: XmlText
+16(17) element: JSFile:IfElseIfElse.vue.int
+17(18) element: XmlText
+18(19) element: JSFile:IfElseIfElse.vue.int
+19(20) element: HtmlTag:div
+20(21,22) element: JSReferenceExpression Read(union)
+21(23) element: JSBinaryExpression condition: true, reachable
+22(42) element: JSBinaryExpression condition: false, reachable
+23(24) element: HtmlTag:div IF (branch) true
+24(25) element: VueJSEmbeddedExpression
+25(26) element: JSReferenceExpression Read(union)
+26(27) element: JSReferenceExpression Read(toFixed)
+27(28) element: JSCallExpression
+28(29) element: VueJSEmbeddedExpression
+29(30) element: JSReferenceExpression Read(union)
+30(31) element: JSReferenceExpression Read(toUpperCase)
+31(32) element: JSCallExpression
+32(33) element: VueJSEmbeddedExpression
+33(34) element: JSReferenceExpression Read(union)
+34(35) element: JSReferenceExpression Read(join)
+35(36) element: JSCallExpression
+36(37) element: XmlText
+37(38) element: JSFile:IfElseIfElse.vue.int
+38(39) element: XmlText
+39(40) element: JSFile:IfElseIfElse.vue.int
+40(41) element: XmlText
+41(89) element: JSFile:IfElseIfElse.vue.int
+42(43) element: HtmlTag:div IF (branch) false
+43(44) element: HtmlTag:div
+44(45,46) element: JSReferenceExpression Read(union)
+45(47) element: JSBinaryExpression condition: true, reachable
+46(66) element: JSBinaryExpression condition: false, reachable
+47(48) element: HtmlTag:div IF (branch) true
+48(49) element: VueJSEmbeddedExpression
+49(50) element: JSReferenceExpression Read(union)
+50(51) element: JSReferenceExpression Read(toFixed)
+51(52) element: JSCallExpression
+52(53) element: VueJSEmbeddedExpression
+53(54) element: JSReferenceExpression Read(union)
+54(55) element: JSReferenceExpression Read(toUpperCase)
+55(56) element: JSCallExpression
+56(57) element: VueJSEmbeddedExpression
+57(58) element: JSReferenceExpression Read(union)
+58(59) element: JSReferenceExpression Read(join)
+59(60) element: JSCallExpression
+60(61) element: XmlText
+61(62) element: JSFile:IfElseIfElse.vue.int
+62(63) element: XmlText
+63(64) element: JSFile:IfElseIfElse.vue.int
+64(65) element: XmlText
+65(89) element: JSFile:IfElseIfElse.vue.int
+66(67) element: HtmlTag:div IF (branch) false
+67(68) element: VueJSEmbeddedExpression
+68(69) element: JSReferenceExpression Read(union)
+69(70) element: JSReferenceExpression Read(join)
+70(71) element: JSCallExpression
+71(72) element: VueJSEmbeddedExpression
+72(73) element: JSReferenceExpression Read(union)
+73(74) element: JSReferenceExpression Read(toFixed)
+74(75) element: JSCallExpression
+75(76) element: VueJSEmbeddedExpression
+76(77) element: JSReferenceExpression Read(union)
+77(78) element: JSReferenceExpression Read(toUpperCase)
+78(79) element: JSCallExpression
+79(80) element: VueJSEmbeddedExpression
+80(81) element: JSReferenceExpression Read(union)
+81(82) element: JSReferenceExpression Read(join)
+82(83) element: JSCallExpression
+83(84) element: XmlText
+84(85) element: JSFile:IfElseIfElse.vue.int
+85(86) element: XmlText
+86(87) element: JSFile:IfElseIfElse.vue.int
+87(88) element: XmlText
+88(89) element: JSFile:IfElseIfElse.vue.int
+89(90) element: VueJSEmbeddedExpression
+90(91) element: JSReferenceExpression Read(union)
+91() element: null

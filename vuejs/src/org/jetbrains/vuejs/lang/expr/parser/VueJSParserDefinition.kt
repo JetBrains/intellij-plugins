@@ -7,12 +7,15 @@ import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.types.guard.markAsCfgAwareInjectedFile
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.psi.FileViewProvider
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -76,5 +79,13 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
 
   override fun getFileNodeType(): IFileElementType {
     return FILE
+  }
+
+  override fun createFile(viewProvider: FileViewProvider): JSFile {
+    val file = super.createFile(viewProvider)
+    if (file.name.endsWith(INTERPOLATION)) {
+      file.markAsCfgAwareInjectedFile()
+    }
+    return file
   }
 }

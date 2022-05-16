@@ -1,0 +1,55 @@
+0(1) element: null
+1(2) element: XmlText
+2(3) element: JSFile:For.vue.int
+3(4) element: VueJSEmbeddedExpression
+4(5) element: JSVarStatement
+5(6) element: VueJSVForVariable Write(item)
+6(7) element: JSReferenceExpression Read(union)
+7(8) element: XmlText
+8(9) element: JSFile:For.vue.int
+9(10) element: HtmlTag:div
+10(11,12) element: JSReferenceExpression Read(union)
+11(13) element: JSBinaryExpression condition: true, reachable
+12(20) element: JSBinaryExpression condition: false, reachable
+13(14) element: HtmlTag:div IF (branch) true
+14(15) element: VueJSEmbeddedExpression
+15(16) element: JSVarStatement
+16(17) element: VueJSVForVariable Write(item)
+17(18) element: JSReferenceExpression Read(union)
+18(19) element: XmlText
+19(39) element: JSFile:For.vue.int
+20(21) element: HtmlTag:div IF (branch) false
+21(22) element: HtmlTag:div
+22(23,24) element: JSReferenceExpression Read(union)
+23(25) element: JSBinaryExpression condition: true, reachable
+24(32) element: JSBinaryExpression condition: false, reachable
+25(26) element: HtmlTag:div IF (branch) true
+26(27) element: VueJSEmbeddedExpression
+27(28) element: JSVarStatement
+28(29) element: VueJSVForVariable Write(item)
+29(30) element: JSReferenceExpression Read(union)
+30(31) element: XmlText
+31(39) element: JSFile:For.vue.int
+32(33) element: HtmlTag:div IF (branch) false
+33(34) element: VueJSEmbeddedExpression
+34(35) element: JSVarStatement
+35(36) element: VueJSVForVariable Write(item)
+36(37) element: JSReferenceExpression Read(union)
+37(38) element: XmlText
+38(39) element: JSFile:For.vue.int
+39(40) element: HtmlTag:aside
+40(41) element: JSReferenceExpression Read(Array)
+41(42) element: JSReferenceExpression Read(isArray)
+42(43) element: JSReferenceExpression Read(union)
+43(44,45) element: JSCallExpression
+44(46) element: JSCallExpression condition: true, reachable
+45(53) element: JSCallExpression condition: false, reachable
+46(47) element: HtmlTag:aside IF (branch) true
+47(48) element: VueJSEmbeddedExpression
+48(49) element: JSVarStatement
+49(50) element: VueJSVForVariable Write(item)
+50(51) element: JSReferenceExpression Read(union)
+51(52) element: XmlText
+52(54) element: JSFile:For.vue.int
+53(54) element: HtmlTag:aside IF (branch) false
+54() element: null
