@@ -49,6 +49,10 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
   @Override
   public PsiElement @Nullable [] getGotoDeclarationTargets(
       @Nullable PsiElement sourceElement, int i, Editor editor) {
+    return findProtoDeclarationForJavaElement(sourceElement);
+  }
+
+  public static PsiElement @Nullable [] findProtoDeclarationForJavaElement(@Nullable PsiElement sourceElement) {
     if (!(sourceElement instanceof PsiIdentifier)) {
       return null;
     }

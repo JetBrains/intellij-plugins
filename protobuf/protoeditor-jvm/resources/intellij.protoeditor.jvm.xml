@@ -4,6 +4,7 @@
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
+    <protobuf.codeImplementationSearcher implementation="com.intellij.protobuf.jvm.gutter.PbJavaImplementationSearcher"/>
     <!-- Java -> proto goto -->
     <gotoDeclarationHandler
       implementation="com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler"/>

@@ -79,7 +79,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 }
 
-internal interface PbCodeImplementationSearcher {
+interface PbCodeImplementationSearcher {
   fun findImplementationsForProtoElement(pbElement: PbElement): Sequence<NavigatablePsiElement>
   fun findDeclarationsForCodeElement(psiElement: PsiElement): Sequence<PbElement>
 }

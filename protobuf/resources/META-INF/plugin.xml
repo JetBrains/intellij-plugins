@@ -112,7 +112,7 @@
                      groupKey="protobuf.inspections.group.name"
                      enabledByDefault="true"
                      implementationClass="com.intellij.protobuf.lang.inspection.PbDuplicatedImportsInspection"/>
-    <codeInsight.lineMarkerProvider implementationClass="com.intellij.protobuf.ide.gutter.PbCodeImplementationLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="" implementationClass="com.intellij.protobuf.ide.gutter.PbCodeImplementationLineMarkerProvider"/>
 
     <!-- Navigation -->
     <lang.findUsagesProvider language="protobuf" implementationClass="com.intellij.protobuf.lang.findusages.PbFindUsagesProvider"/>
