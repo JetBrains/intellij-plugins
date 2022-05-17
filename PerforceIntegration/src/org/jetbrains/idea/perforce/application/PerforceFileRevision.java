@@ -75,7 +75,7 @@ public class PerforceFileRevision implements VcsFileRevision {
   @Override
   public byte[] loadContent() throws IOException, VcsException {
     return ContentRevisionCache.getOrLoadAsBytes(myProject,
-                                                 VcsContextFactory.SERVICE.getInstance().createFilePathOnNonLocal(myP4Revision.getDepotPath(), false),
+                                                 VcsContextFactory.getInstance().createFilePathOnNonLocal(myP4Revision.getDepotPath(), false),
                                                  myNumber, PerforceVcs.getKey(), ContentRevisionCache.UniqueType.REMOTE_CONTENT,
                                                  () -> loadRevisionContent());
   }

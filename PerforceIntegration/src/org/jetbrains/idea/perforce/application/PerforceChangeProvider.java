@@ -245,7 +245,7 @@ public class PerforceChangeProvider implements ChangeProvider {
     long revision = myRunner.haveRevision(P4File.create(file));
     if (revision > 0) {
       // todo: future optimization point
-      final FilePath filePath = VcsContextFactory.SERVICE.getInstance().createFilePathOn(file);
+      final FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(file);
       builder.processChange(changeCreator.createEditedFileChange(filePath, revision, false), PerforceVcs.getKey());
     }
   }

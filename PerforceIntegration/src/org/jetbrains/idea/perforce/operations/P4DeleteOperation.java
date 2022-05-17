@@ -37,7 +37,7 @@ public class P4DeleteOperation extends VcsOperationOnPath {
 
   @Override
   public Change getChange(final Project project, ChangeListManagerGate addGate) {
-    FilePath path = VcsContextFactory.SERVICE.getInstance().createFilePathOn(new File(myPath));
+    FilePath path = VcsContextFactory.getInstance().createFilePathOn(new File(myPath));
     ContentRevision beforeRevision = PerforceCachingContentRevision.createOffline(project, path, path);
     return new Change(beforeRevision, null);
   }

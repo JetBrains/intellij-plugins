@@ -150,7 +150,7 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     submitDefaultList("comment3")
     refreshChanges()
 
-    final VcsHistorySession session = PerforceVcs.getInstance(myProject).getVcsHistoryProvider().createSessionFor(VcsContextFactory.SERVICE.instance.createFilePathOn(file))
+    final VcsHistorySession session = PerforceVcs.getInstance(myProject).getVcsHistoryProvider().createSessionFor(VcsContextFactory.instance.createFilePathOn(file))
     assert session != null
     assertNotNull(session.getCurrentRevisionNumber())
     assertOrderedCollection(session.getRevisionList(), new Consumer<VcsFileRevision>() {

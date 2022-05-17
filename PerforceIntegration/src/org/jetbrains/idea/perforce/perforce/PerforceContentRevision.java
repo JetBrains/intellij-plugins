@@ -102,11 +102,11 @@ public class PerforceContentRevision implements ByteBackedContentRevision {
           file = null;
         }
         if (file != null) {
-          myFilePath = VcsContextFactory.SERVICE.getInstance().createFilePathOn(file);
+          myFilePath = VcsContextFactory.getInstance().createFilePathOn(file);
         }
       }
       if (myFilePath == null) {
-        myFilePath = VcsContextFactory.SERVICE.getInstance().createFilePathOnNonLocal(myDepotPath, false);
+        myFilePath = VcsContextFactory.getInstance().createFilePathOnNonLocal(myDepotPath, false);
       }
     }
     return myFilePath;

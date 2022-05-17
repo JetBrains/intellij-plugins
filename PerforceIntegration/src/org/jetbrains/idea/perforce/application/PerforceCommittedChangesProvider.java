@@ -323,7 +323,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
       if (pos >= 0) {
         final File localFile = new File(line.substring(pos));
         LOG.debug("Incoming file: " + line.substring(pos));
-        files.add(VcsContextFactory.SERVICE.getInstance().createFilePathOn(localFile));
+        files.add(VcsContextFactory.getInstance().createFilePathOn(localFile));
       }
       else if (line.contains(IS_OPENED_SIGNATURE)) {
         pos = line.indexOf(" - ");
@@ -331,7 +331,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
           String depotPath = line.substring(0, pos);
           final File localPath = PerforceManager.getFileByDepotName(depotPath, client);
           if (localPath != null) {
-            files.add(VcsContextFactory.SERVICE.getInstance().createFilePathOn(localPath));
+            files.add(VcsContextFactory.getInstance().createFilePathOn(localPath));
           }
         }
       }
@@ -341,7 +341,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
           String depotPath = line.substring(0, pos);
           final File localPath = PerforceManager.getFileByDepotName(depotPath, client);
           if (localPath != null) {
-            files.add(VcsContextFactory.SERVICE.getInstance().createFilePathOn(localPath));
+            files.add(VcsContextFactory.getInstance().createFilePathOn(localPath));
           }
         }
       }
@@ -352,11 +352,11 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
           final String depotPath = line.substring(pos, pathEnd).trim();
           final File localPath = PerforceManager.getFileByDepotName(depotPath, client);
           if (localPath != null) {
-            files.add(VcsContextFactory.SERVICE.getInstance().createFilePathOn(localPath));
+            files.add(VcsContextFactory.getInstance().createFilePathOn(localPath));
           }
           /*try {
             final P4WhereResult whereResult = myRunner.where(depotPath, connection);
-            files.add(VcsContextFactory.SERVICE.getInstance().createFilePathOn(new File(whereResult.getLocal())));
+            files.add(VcsContextFactory.getInstance().createFilePathOn(new File(whereResult.getLocal())));
           }
           catch (VcsException e) {
             LOG.info("Cannot parse 'must resolve': " + line);

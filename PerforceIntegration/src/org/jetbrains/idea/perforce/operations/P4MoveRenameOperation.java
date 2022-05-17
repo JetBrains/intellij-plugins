@@ -380,7 +380,7 @@ public class P4MoveRenameOperation extends VcsOperation {
       LOG.debug("newPath = " + newPath);
     }
 
-    final VcsContextFactory factory = VcsContextFactory.SERVICE.getInstance();
+    final VcsContextFactory factory = VcsContextFactory.getInstance();
     FilePath beforePath = factory.createFilePathOn(new File(oldPath), false);
     FilePath afterPath = factory.createFilePathOn(new File(newPath), false);
     ContentRevision beforeRevision = PerforceCachingContentRevision.createOffline(project, beforePath, afterPath);

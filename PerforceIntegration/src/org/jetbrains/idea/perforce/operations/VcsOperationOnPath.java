@@ -42,7 +42,7 @@ public abstract class VcsOperationOnPath extends VcsOperation {
   }
 
   protected FilePath getFilePath() {
-    return VcsContextFactory.SERVICE.getInstance().createFilePathOn(new File(myPath), false);
+    return VcsContextFactory.getInstance().createFilePathOn(new File(myPath), false);
   }
 
   @Override

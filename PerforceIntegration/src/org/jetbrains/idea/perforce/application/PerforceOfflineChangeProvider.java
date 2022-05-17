@@ -135,7 +135,7 @@ public class PerforceOfflineChangeProvider implements ChangeProvider {
   @Nullable
   private static FilePath createFilePath(final String beforePath) {
     if (beforePath == null) return null;
-    return VcsContextFactory.SERVICE.getInstance().createFilePathOn(new File(beforePath), false);
+    return VcsContextFactory.getInstance().createFilePathOn(new File(beforePath), false);
   }
 
   @Override

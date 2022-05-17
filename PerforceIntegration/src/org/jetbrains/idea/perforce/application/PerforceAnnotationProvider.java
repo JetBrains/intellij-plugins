@@ -51,7 +51,7 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
   @NotNull
   @Override
   public FileAnnotation annotate(@NotNull VirtualFile file) throws VcsException {
-    FilePath filePath = VcsContextFactory.SERVICE.getInstance().createFilePathOn(file);
+    FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(file);
     return doAnnotate(file, ChangesUtil.getCommittedPath(myProject, filePath), -1);
   }
 
@@ -100,7 +100,7 @@ public class PerforceAnnotationProvider implements AnnotationProviderEx {
   @Override
   public FileAnnotation annotate(@NotNull VirtualFile file, VcsFileRevision revision) throws VcsException {
     PerforceVcsRevisionNumber number = (PerforceVcsRevisionNumber) revision.getRevisionNumber();
-    FilePath filePath = VcsContextFactory.SERVICE.getInstance().createFilePathOn(file);
+    FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(file);
     return doAnnotate(file, filePath, number.getChangeNumber());
   }
 

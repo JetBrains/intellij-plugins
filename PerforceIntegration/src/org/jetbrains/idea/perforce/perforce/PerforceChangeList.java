@@ -238,7 +238,7 @@ public class PerforceChangeList implements CommittedChangeList {
     int count = stream.readInt();
     myIdeaChanges = new ArrayList<>(count);
 
-    final VcsContextFactory pathService = VcsContextFactory.SERVICE.getInstance();
+    final VcsContextFactory pathService = VcsContextFactory.getInstance();
     for(int i=0; i<count; i++) {
       byte type = stream.readByte();
       long revision = stream.readLong();

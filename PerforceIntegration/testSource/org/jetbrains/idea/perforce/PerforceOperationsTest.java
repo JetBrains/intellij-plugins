@@ -91,7 +91,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     enableSilentOperation(VcsConfiguration.StandardConfirmation.REMOVE);
     VirtualFile fileToEdit = createFileInCommand("a.txt", null);
-    FilePath filePath = VcsContextFactory.SERVICE.getInstance().createFilePathOn(fileToEdit);
+    FilePath filePath = VcsContextFactory.getInstance().createFilePathOn(fileToEdit);
     submitFile("//depot/a.txt");
     new P4DeleteOperation("Default", filePath).execute(myProject);
     verifyOpened("a.txt", "delete");
