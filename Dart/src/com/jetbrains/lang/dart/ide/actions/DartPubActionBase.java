@@ -273,7 +273,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
       content.putUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY, info);
       Disposer.register(content, console);
 
-      final ContentManager contentManager = MessageView.SERVICE.getInstance(module.getProject()).getContentManager();
+      final ContentManager contentManager = MessageView.getInstance(module.getProject()).getContentManager();
       removeOldTabs(contentManager);
       contentManager.addContent(content);
       contentManager.setSelectedContent(content);
@@ -300,7 +300,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
 
   private static @Nullable PubToolWindowContentInfo findExistingInfoForCommand(final Project project,
                                                                                final @NotNull GeneralCommandLine command) {
-    for (Content content : MessageView.SERVICE.getInstance(project).getContentManager().getContents()) {
+    for (Content content : MessageView.getInstance(project).getContentManager().getContents()) {
       final PubToolWindowContentInfo info = content.getUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY);
       if (info != null && info.command == command) {
         return info;
