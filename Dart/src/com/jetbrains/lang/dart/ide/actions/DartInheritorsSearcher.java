@@ -74,7 +74,7 @@ public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, 
 
   @NotNull
   private List<TypeHierarchyItem> getHierarchyItems(Project project, VirtualFile file, int offset) {
-    long modCount = PsiModificationTracker.SERVICE.getInstance(project).getModificationCount();
+    long modCount = PsiModificationTracker.getInstance(project).getModificationCount();
     if (myLastResult != null) {
       HierarchyInfo info = myLastResult.get();
       if (info != null) {
