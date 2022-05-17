@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.*;
@@ -213,7 +213,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
           for (String path : data.getClasses().keySet()) {
             VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
             if (file != null && file.isValid()) {
-              ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+              ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
               VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
               if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
                 return contentRoot;

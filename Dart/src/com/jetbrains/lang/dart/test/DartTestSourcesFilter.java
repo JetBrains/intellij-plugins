@@ -12,7 +12,7 @@ public class DartTestSourcesFilter extends TestSourcesFilter {
   public boolean isTestSource(@NotNull final VirtualFile file, @NotNull final Project project) {
     if (!file.isInLocalFileSystem()) return false;
 
-    final ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+    final ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
     if (!fileIndex.isInContent(file)) return false;
 
     if (DartIconProvider.isFolderNearPubspecYaml(file, "test")) return true;

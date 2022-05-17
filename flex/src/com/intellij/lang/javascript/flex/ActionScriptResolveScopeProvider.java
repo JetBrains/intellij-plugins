@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.injected.editor.VirtualFileWindow;
@@ -81,7 +82,7 @@ public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider imp
 
     final GlobalSearchScope scope = isApplicable(file) ? ResolveScopeManager.getInstance(project).getDefaultResolveScope(file) : null;
     if (scope != null) {
-      if (ProjectFileIndex.SERVICE.getInstance(project).isInLibraryClasses(file) && !scope.contains(file)) {
+      if (ProjectFileIndex.getInstance(project).isInLibraryClasses(file) && !scope.contains(file)) {
         // safe but not 100% correct fix for IDEA-157606
         // The problem happens when ModuleA -> ModuleB -> lib.swc and we calculate resolve scope for file from lib.swc. FlexOrderEnumerationHandler filters our 'ModuleB -> lib.swc' dependency because it is initialized with ModuleA. Oh, LibraryRuntimeClasspathScope computation is so complicated...
         return scope.union(GlobalSearchScope.fileScope(project, file));
