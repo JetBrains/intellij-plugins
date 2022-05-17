@@ -60,7 +60,7 @@ public abstract class DartStatementSurrounder implements Surrounder {
   }
 
   protected void afterAdd(PsiElement elementToAdd) {
-    final PsiElement newLineNode = PsiParserFacade.SERVICE.getInstance(elementToAdd.getProject()).createWhiteSpaceFromText("\n");
+    final PsiElement newLineNode = PsiParserFacade.getInstance(elementToAdd.getProject()).createWhiteSpaceFromText("\n");
     elementToAdd.add(newLineNode);
   }
 

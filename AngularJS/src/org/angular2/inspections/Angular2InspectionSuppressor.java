@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.inspections;
 
 import com.intellij.codeInsight.daemon.impl.actions.AbstractBatchSuppressByNoInspectionCommentFix;
@@ -86,7 +86,7 @@ public class Angular2InspectionSuppressor implements InspectionSuppressor {
     @Override
     protected void createSuppression(@NotNull Project project, @NotNull PsiElement element, @NotNull PsiElement container)
       throws IncorrectOperationException {
-      final PsiParserFacade parserFacade = PsiParserFacade.SERVICE.getInstance(project);
+      final PsiParserFacade parserFacade = PsiParserFacade.getInstance(project);
       PsiComment comment = parserFacade.createLineOrBlockCommentFromText(Angular2Language.INSTANCE, getSuppressText());
       container.getParent().addAfter(comment, container);
     }
