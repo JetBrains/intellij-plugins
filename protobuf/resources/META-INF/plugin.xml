@@ -47,6 +47,9 @@
                     interface="com.intellij.protobuf.lang.names.NameGeneratorContributor"
                     dynamic="true"
     />
+    <extensionPoint qualifiedName="com.intellij.protobuf.codeImplementationSearcher"
+                    interface="com.intellij.protobuf.ide.gutter.PbCodeImplementationSearcher"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij.protobuf">
@@ -109,6 +112,7 @@
                      groupKey="protobuf.inspections.group.name"
                      enabledByDefault="true"
                      implementationClass="com.intellij.protobuf.lang.inspection.PbDuplicatedImportsInspection"/>
+    <codeInsight.lineMarkerProvider implementationClass="com.intellij.protobuf.ide.gutter.PbCodeImplementationLineMarkerProvider"/>
 
     <!-- Navigation -->
     <lang.findUsagesProvider language="protobuf" implementationClass="com.intellij.protobuf.lang.findusages.PbFindUsagesProvider"/>
