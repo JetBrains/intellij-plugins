@@ -127,7 +127,7 @@ public class DartModuleBuilder extends ModuleBuilder {
       DartSdkUtil.updateKnownSdkPaths(project, wizardData.dartSdkPath);
 
       final LibraryTable.ModifiableModel libraryTableModifiableModel =
-        ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel(project);
+        ModifiableModelsProvider.getInstance().getLibraryTableModifiableModel(project);
 
       DartSdkLibUtil.ensureDartSdkConfigured(project, libraryTableModifiableModel, wizardData.dartSdkPath);
 
@@ -135,7 +135,7 @@ public class DartModuleBuilder extends ModuleBuilder {
         libraryTableModifiableModel.commit();
       }
       else {
-        ModifiableModelsProvider.SERVICE.getInstance().disposeLibraryTableModifiableModel(libraryTableModifiableModel);
+        ModifiableModelsProvider.getInstance().disposeLibraryTableModifiableModel(libraryTableModifiableModel);
       }
 
       modifiableRootModel.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
