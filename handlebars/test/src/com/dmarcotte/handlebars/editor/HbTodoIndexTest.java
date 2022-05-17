@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.dmarcotte.handlebars.editor;
 
 
@@ -28,7 +29,7 @@ public class HbTodoIndexTest extends LightPlatformCodeInsightTestCase {
 
   private void checkTodoCount(int expectedTodoCount) {
     configureByFile(getTestName(true) + ".hbs");
-    TodoItem[] items = PsiTodoSearchHelper.SERVICE.getInstance(getProject()).findTodoItems(getFile());
+    TodoItem[] items = PsiTodoSearchHelper.getInstance(getProject()).findTodoItems(getFile());
     assertEquals(expectedTodoCount, items.length);
   }
 }
