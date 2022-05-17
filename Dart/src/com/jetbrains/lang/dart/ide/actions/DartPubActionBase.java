@@ -269,7 +269,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
       toolWindowPanel.setContent(console.getComponent());
       toolWindowPanel.setToolbar(actionToolbar.getComponent());
 
-      final Content content = ContentFactory.SERVICE.getInstance().createContent(toolWindowPanel.getComponent(), actionTitle, true);
+      final Content content = ContentFactory.getInstance().createContent(toolWindowPanel.getComponent(), actionTitle, true);
       content.putUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY, info);
       Disposer.register(content, console);
 

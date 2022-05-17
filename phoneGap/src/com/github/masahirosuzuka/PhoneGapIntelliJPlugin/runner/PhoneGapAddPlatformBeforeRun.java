@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -168,7 +168,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
     CommandProcessor commandProcessor = CommandProcessor.getInstance();
     commandProcessor.executeCommand(myProject, () -> {
       final MessageView messageView = myProject.getService(MessageView.class);
-      final Content content = ContentFactory.SERVICE.getInstance().createContent(component, tabDisplayName, true);
+      final Content content = ContentFactory.getInstance().createContent(component, tabDisplayName, true);
       messageView.getContentManager().addContent(content);
       messageView.getContentManager().setSelectedContent(content);
       Disposer.register(content, console);

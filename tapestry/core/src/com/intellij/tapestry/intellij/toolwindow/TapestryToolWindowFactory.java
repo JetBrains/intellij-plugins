@@ -21,7 +21,7 @@ public class TapestryToolWindowFactory implements ToolWindowFactory {
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
     toolWindow.setAvailable(true);
     TapestryToolWindow tapestryToolWindow = new TapestryToolWindow(project);
-    Content content = ContentFactory.SERVICE.getInstance().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);
+    Content content = ContentFactory.getInstance().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);
     toolWindow.getContentManager().addContent(content);
     project.putUserData(TAPESTRY_TOOL_WINDOW_KEY, tapestryToolWindow);
   }
