@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.lang.dart.folding;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
@@ -102,6 +102,10 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testFunctionExpressionBody() {
+    doTest();
+  }
+
   public void testFunctionBodyCollapsedByDefault() {
     doTestWithSpecificSettings(settings -> settings.COLLAPSE_METHODS = true);
   }
@@ -134,15 +138,19 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testTestCallExpression() {
-    doTest();
-  }
-
   public void testAssertStatements() {
     doTest();
   }
 
   public void testIfStatements() {
+    doTest();
+  }
+
+  public void testLoopStatements() {
+    doTest();
+  }
+
+  public void testLiterals() {
     doTest();
   }
 

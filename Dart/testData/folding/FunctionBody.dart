@@ -4,6 +4,23 @@ b;
 topLevel()<fold text='{...}' expand='true'>{
 }</fold>
 
+topLevel2() =><fold text='...' expand='true'>
+true;</fold>
+
+/// Async
+topLevel3() async <fold text='{...}' expand='true'>{
+}</fold>
+
+// Fat arrow, async
+topLevel4() async => false;
+topLevel4() async =><fold text='...' expand='true'> false ||
+    true;</fold>
+
+// Fat arrow, async, no white space
+topLevel5()async=><fold text='...' expand='true'>false||
+    true;</fold>
+
+/// Getter and Setter
 get topGetter1 => 1;
 
 get topGetter2 <fold text='{...}' expand='true'>{
@@ -17,6 +34,7 @@ get topGetter3 =><fold text='...' expand='true'> true ||
     false ||
     true;</fold>
 
+/// Classes
 class A <fold text='{...}' expand='true'>{
   A()
   <fold text='{...}' expand='true'>{
