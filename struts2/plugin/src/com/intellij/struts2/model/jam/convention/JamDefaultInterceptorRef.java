@@ -15,30 +15,26 @@
 
 package com.intellij.struts2.model.jam.convention;
 
+import com.intellij.jam.JamCommonModelElement;
 import com.intellij.jam.JamConverter;
 import com.intellij.jam.JamElement;
 import com.intellij.jam.JamStringAttributeElement;
-import com.intellij.jam.annotations.JamPsiConnector;
-import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.JamAnnotationMeta;
 import com.intellij.jam.reflect.JamAttributeMeta;
 import com.intellij.jam.reflect.JamPackageMeta;
 import com.intellij.jam.reflect.JamStringAttributeMeta;
-import com.intellij.jam.model.common.CommonModelElement;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementRef;
 import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code org.apache.struts2.convention.annotation.DefaultInterceptorRef} (package-level only).
  *
  * @author Yann C&eacute;bron
  */
-public abstract class JamDefaultInterceptorRef extends CommonModelElement.PsiBase implements JamElement {
-
+public class JamDefaultInterceptorRef extends JamCommonModelElement<PsiPackage> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.DefaultInterceptorRef";
 
@@ -55,17 +51,8 @@ public abstract class JamDefaultInterceptorRef extends CommonModelElement.PsiBas
   public static final JamPackageMeta<JamDefaultInterceptorRef> META_PACKAGE =
     new JamPackageMeta<>(JamDefaultInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
 
-  @JamPsiConnector
-  public abstract PsiPackage getOwner();
-
-  @JamPsiValidity
-  @Override
-  public abstract boolean isValid();
-
-  @NotNull
-  @Override
-  public PsiElement getPsiElement() {
-    return getOwner();
+  public JamDefaultInterceptorRef(PsiElementRef<?> ref) {
+    super(ref);
   }
 
   /**
@@ -74,7 +61,6 @@ public abstract class JamDefaultInterceptorRef extends CommonModelElement.PsiBas
    * @return JAM-Attribute.
    */
   public JamStringAttributeElement<InterceptorOrStackBase> getValue() {
-    return INTERCEPTOR_REF_META.getAttribute(getOwner(), VALUE_ATTRIBUTE);
+    return INTERCEPTOR_REF_META.getAttribute(getPsiElement(), VALUE_ATTRIBUTE);
   }
-
 }

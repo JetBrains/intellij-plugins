@@ -15,21 +15,14 @@
 
 package com.intellij.struts2.model.jam.convention;
 
-import com.intellij.jam.JamConverter;
-import com.intellij.jam.JamElement;
-import com.intellij.jam.JamPomTarget;
-import com.intellij.jam.JamStringAttributeElement;
-import com.intellij.jam.annotations.JamPsiConnector;
-import com.intellij.jam.annotations.JamPsiValidity;
-import com.intellij.jam.model.common.CommonModelElement;
+import com.intellij.jam.*;
 import com.intellij.jam.reflect.*;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementRef;
 import com.intellij.psi.PsiMember;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -37,8 +30,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class JamInterceptorRef extends CommonModelElement.PsiBase implements JamElement {
-
+public class JamInterceptorRef extends JamCommonModelElement<PsiMember> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.InterceptorRef";
 
@@ -71,17 +63,8 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
   public static final JamClassMeta<JamInterceptorRef> META_CLASS_LIST =
     new JamClassMeta<>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REFS_META);
 
-  @JamPsiConnector
-  public abstract PsiMember getOwner();
-
-  @JamPsiValidity
-  @Override
-  public abstract boolean isValid();
-
-  @NotNull
-  @Override
-  public PsiElement getPsiElement() {
-    return getOwner();
+  public JamInterceptorRef(PsiElementRef<?> ref) {
+    super(ref);
   }
 
   @Nullable
@@ -99,7 +82,6 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
    * @return JAM-Attribute.
    */
   public JamStringAttributeElement<InterceptorOrStackBase> getValue() {
-    return INTERCEPTOR_REF_META.getAttribute(getOwner(), VALUE_ATTRIBUTE);
+    return INTERCEPTOR_REF_META.getAttribute(getPsiElement(), VALUE_ATTRIBUTE);
   }
-
 }

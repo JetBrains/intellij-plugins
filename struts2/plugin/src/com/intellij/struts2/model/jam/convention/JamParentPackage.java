@@ -16,21 +16,11 @@ package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.jam.JamConverter;
-import com.intellij.jam.JamElement;
-import com.intellij.jam.JamSimpleReferenceConverter;
-import com.intellij.jam.JamStringAttributeElement;
-import com.intellij.jam.annotations.JamPsiConnector;
-import com.intellij.jam.annotations.JamPsiValidity;
-import com.intellij.jam.model.common.CommonModelElement;
-import com.intellij.jam.reflect.JamAnnotationMeta;
-import com.intellij.jam.reflect.JamAttributeMeta;
-import com.intellij.jam.reflect.JamClassMeta;
-import com.intellij.jam.reflect.JamPackageMeta;
-import com.intellij.jam.reflect.JamStringAttributeMeta;
+import com.intellij.jam.*;
+import com.intellij.jam.reflect.*;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementRef;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -38,20 +28,20 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.jam.StrutsJamUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 /**
  * {@code @org.apache.struts2.convention.annotation.ParentPackage}.
  *
  * @author Yann C&eacute;bron
  */
-public abstract class JamParentPackage extends CommonModelElement.PsiBase implements JamElement {
-
+public class JamParentPackage extends JamCommonModelElement<PsiModifierListOwner> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.ParentPackage";
 
@@ -111,17 +101,8 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
     new JamPackageMeta<>(JamParentPackage.class)
       .addAnnotation(PARENT_PACKAGE_META);
 
-  @JamPsiConnector
-  public abstract PsiModifierListOwner getOwner();
-
-  @JamPsiValidity
-  @Override
-  public abstract boolean isValid();
-
-  @NotNull
-  @Override
-  public PsiElement getPsiElement() {
-    return getOwner();
+  public JamParentPackage(PsiElementRef<?> ref) {
+    super(ref);
   }
 
   /**
@@ -130,7 +111,6 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
    * @return JAM-Attribute.
    */
   public JamStringAttributeElement<StrutsPackage> getValue() {
-    return PARENT_PACKAGE_META.getAttribute(getOwner(), VALUE_ATTRIBUTE);
+    return PARENT_PACKAGE_META.getAttribute(getPsiElement(), VALUE_ATTRIBUTE);
   }
-
 }

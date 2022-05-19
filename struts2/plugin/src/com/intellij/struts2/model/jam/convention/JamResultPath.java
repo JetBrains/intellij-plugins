@@ -18,9 +18,6 @@ package com.intellij.struts2.model.jam.convention;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.jam.*;
-import com.intellij.jam.annotations.JamPsiConnector;
-import com.intellij.jam.annotations.JamPsiValidity;
-import com.intellij.jam.model.common.CommonModelElement;
 import com.intellij.jam.reflect.*;
 import com.intellij.javaee.web.WebDirectoryElement;
 import com.intellij.javaee.web.WebUtil;
@@ -32,7 +29,7 @@ import com.intellij.lang.properties.references.PropertiesCompletionContributor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementRef;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.containers.ContainerUtil;
@@ -50,8 +47,7 @@ import java.util.Objects;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class JamResultPath extends CommonModelElement.PsiBase implements JamElement {
-
+public class JamResultPath extends JamCommonModelElement<PsiModifierListOwner> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.ResultPath";
 
@@ -149,17 +145,8 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
     new JamPackageMeta<>(JamResultPath.class)
           .addAnnotation(RESULT_PATH_META);
 
-  @JamPsiConnector
-  public abstract PsiModifierListOwner getOwner();
-
-  @JamPsiValidity
-  @Override
-  public abstract boolean isValid();
-
-  @NotNull
-  @Override
-  public PsiElement getPsiElement() {
-    return getOwner();
+  public JamResultPath(PsiElementRef<?> ref) {
+    super(ref);
   }
 
   /**
@@ -168,7 +155,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
    * @return JAM-Attribute.
    */
   public JamStringAttributeElement<WebDirectoryElement> getValue() {
-    return RESULT_PATH_META.getAttribute(getOwner(), VALUE_ATTRIBUTE);
+    return RESULT_PATH_META.getAttribute(getPsiElement(), VALUE_ATTRIBUTE);
   }
 
   /**
@@ -177,7 +164,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
    * @return JAM-Attribute.
    */
   public JamStringAttributeElement<IProperty> getProperty() {
-    return RESULT_PATH_META.getAttribute(getOwner(), PROPERTY_ATTRIBUTE);
+    return RESULT_PATH_META.getAttribute(getPsiElement(), PROPERTY_ATTRIBUTE);
   }
 
 }
