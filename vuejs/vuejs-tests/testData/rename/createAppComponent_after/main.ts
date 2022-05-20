@@ -16,3 +16,5 @@ app.mixin({
   }
 })
 app.mount('#app')
+
+app.component("NonChain", {})

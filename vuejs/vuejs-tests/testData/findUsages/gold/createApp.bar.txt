@@ -4,5 +4,5 @@
 <TheComponent.vue:(0,132):(34,37)>	Bar
 <foo.vue:(0,143):(28,31)>	Bar
 <foo.vue:(0,143):(34,37)>	Bar
-<index.html:(0,555):(287,290)>	Bar
-<index.html:(0,555):(293,296)>	Bar
+<index.html:(0,612):(287,290)>	Bar
+<index.html:(0,612):(293,296)>	Bar

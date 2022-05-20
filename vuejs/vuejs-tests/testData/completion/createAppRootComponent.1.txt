@@ -6,10 +6,12 @@ Bar#null#50
 BarFoo#null#50
 Car#null#50
 FooBar#null#50
+NonChain#null#50
 bar#null#50
 bar-foo#null#50
 car#null#50
 foo-bar#null#50
+non-chain#null#50
 Component#vue#10
 KeepAlive#vue#10
 Suspense#vue#10

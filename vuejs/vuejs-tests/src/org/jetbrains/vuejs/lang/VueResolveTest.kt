@@ -2005,10 +2005,12 @@ export default class UsageComponent extends Vue {
       Triple("<B<caret>ar>", 128, "foo.vue"),
       Triple("<C<caret>ar>", 0, "TheComponent.vue"),
       Triple("v-f<caret>oo", 175, "main.ts"),
+      Triple("<NonCha<caret>in>", 379, "main.ts"),
       Triple("<B<caret>oo>", null, null),
       Triple("w<B<caret>ar>", null, null),
       Triple("w<C<caret>ar>", null, null),
-      Triple("w<div v-f<caret>oo", null, null)
+      Triple("w<div v-f<caret>oo", null, null),
+      Triple("w<NonCha<caret>in>", null, null),
     ).forEach { (signature, offset, expectedFileName) ->
       myFixture.configureFromTempProjectFile("index.html")
       if (offset == null) {

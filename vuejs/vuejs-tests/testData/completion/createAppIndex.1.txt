@@ -4,12 +4,14 @@
 !Car#null#100
 !FooBar#null#100
 !ImportedByRoot#null#100
+!NonChain#null#100
 !app#null#100
 !bar#null#100
 !bar-foo#null#100
 !car#null#100
 !foo-bar#null#100
 !imported-by-root#null#100
+!non-chain#null#100
 Component#vue#10
 KeepAlive#vue#10
 Suspense#vue#10
