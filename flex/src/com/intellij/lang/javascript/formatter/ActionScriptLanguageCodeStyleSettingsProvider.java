@@ -17,9 +17,6 @@ import java.util.List;
 
 import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.getInstance;
 
-/**
- * @author Rustam Vishnyakov
- */
 public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   public static final @NlsSafe String CONFIGURABLE_DISPLAY_NAME = "ActionScript";
 

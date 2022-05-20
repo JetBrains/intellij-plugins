@@ -5,9 +5,6 @@ import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Rustam Vishnyakov
- */
 public class ActionScriptCodeStyleSettingsConfigurable extends CodeStyleAbstractConfigurable {
 
   public ActionScriptCodeStyleSettingsConfigurable(@NotNull CodeStyleSettings settings,

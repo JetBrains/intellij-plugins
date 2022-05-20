@@ -9,9 +9,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Rustam Vishnyakov
- */
 public class ActionScriptCodeStyleMainPanel extends JSDerivedLanguageCodeStyleMainPanel {
 
   protected ActionScriptCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {

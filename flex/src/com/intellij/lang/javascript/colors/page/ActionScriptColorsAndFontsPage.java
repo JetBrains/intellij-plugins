@@ -16,9 +16,6 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Rustam Vishnyakov
- */
 public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRS =
