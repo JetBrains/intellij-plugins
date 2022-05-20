@@ -761,7 +761,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
       @Override
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
         MavenWorkspaceMap workspaceMap = new MavenWorkspaceMap();
-        for (MavenProject mavenProject : myProjectsTree.getProjects()) {
+        for (MavenProject mavenProject : getProjectsTree().getProjects()) {
           if (MavenConstants.TYPE_JAR.equalsIgnoreCase(mavenProject.getPackaging())) {
             workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()),
                                   new File(mavenProject.getMavenId().getArtifactId() + ".jar"));
@@ -789,7 +789,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
       }
     };
 
-    MavenProject appProject = myProjectsTree.findProject(new MavenId(TEST_GROUP_ID, "ttApp", TEST_VERSION));
+    MavenProject appProject = getProjectsTree().findProject(new MavenId(TEST_GROUP_ID, "ttApp", TEST_VERSION));
     assertNotNull(appProject);
     myProjectResolver.executeWithEmbedder(appProject, myProjectsManager.getEmbeddersManager(), MavenEmbeddersManager.FOR_POST_PROCESSING,
                                           NULL_MAVEN_CONSOLE, getMavenProgressIndicator(), task);
