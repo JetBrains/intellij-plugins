@@ -3,7 +3,6 @@ package com.intellij.coldFusion.model.psi;
 
 /*
   User: Nadya.Zabrodina
-  Date: 9/5/11
  */
 
 import com.intellij.coldFusion.model.files.CfmlFile;
