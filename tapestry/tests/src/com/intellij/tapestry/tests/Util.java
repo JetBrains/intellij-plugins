@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- *
  * @author Alexey Chmutov
  */
 public final class Util {
