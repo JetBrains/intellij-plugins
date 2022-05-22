@@ -1,6 +1,8 @@
 package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.psi.*
+import com.intellij.ui.ColoredTreeCellRenderer
+import com.intellij.ui.SimpleTextAttributes
 import icons.MakefileIcons
 import java.util.*
 import java.util.Collections.*
@@ -32,4 +34,9 @@ class MakefileFileNode(val psiFile: PsiFile, private val targets: List<MakefileT
   override fun getIndex(node: TreeNode) = targets.indexOf(node)
 
   override fun getAllowsChildren() = true
+
+  override fun renderName(renderer: ColoredTreeCellRenderer) {
+    super.renderName(renderer)
+    renderer.append("  ${psiFile.virtualFile.path}", SimpleTextAttributes.GRAYED_ITALIC_ATTRIBUTES, false)
+  }
 }
