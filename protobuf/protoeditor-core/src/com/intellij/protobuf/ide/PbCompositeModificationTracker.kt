@@ -1,5 +1,6 @@
 package com.intellij.protobuf.ide
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -12,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 
 @Service
-internal class PbCompositeModificationTracker(val project: Project) : ModificationTracker {
+internal class PbCompositeModificationTracker(val project: Project) : ModificationTracker, Disposable {
   companion object {
     @JvmStatic
     fun byElement(psiElement: PsiElement): PbCompositeModificationTracker {
@@ -31,4 +32,6 @@ internal class PbCompositeModificationTracker(val project: Project) : Modificati
   override fun getModificationCount(): Long {
     return relatedTrackers.sumOf { it.modificationCount }
   }
+
+  override fun dispose() {}
 }

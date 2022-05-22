@@ -1,12 +1,13 @@
 package com.intellij.protobuf.jvm.gutter
 
+import com.intellij.openapi.components.service
 import com.intellij.protobuf.ide.gutter.PbCodeImplementationSearcher
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler
 import com.intellij.protobuf.lang.psi.PbElement
-import com.intellij.psi.NavigatablePsiElement
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
+import com.intellij.protobuf.lang.stub.ProtoFileAccessor
+import com.intellij.psi.*
+import com.intellij.psi.util.InheritanceUtil
+import com.intellij.util.CommonProcessors
 
 internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   override fun findImplementationsForProtoElement(pbElement: PbElement): Sequence<NavigatablePsiElement> {
@@ -23,26 +24,49 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   }
 
   private fun handleModel(psiElement: PsiElement): Sequence<PbElement> {
-    return PbJavaGotoDeclarationHandler.findProtoDeclarationForJavaElement(psiElement)
+    return PbJavaGotoDeclarationHandler.findProtoDeclarationForResolvedJavaElement(psiElement)
       ?.asSequence()
       .orEmpty()
       .filterIsInstance<PbElement>()
   }
 
   private fun handleService(psiClass: PsiClass): Sequence<PbElement> {
-    return emptySequence() //todo
+    val generatedBaseClass = findGeneratedServiceSuperclass(psiClass) ?: return emptySequence()
+    val protoServiceFqn = protoNameForClass(generatedBaseClass) ?: return emptySequence()
+    return psiClass.project.service<ProtoFileAccessor>().findServicesByFqn(protoServiceFqn, true)
   }
 
   private fun handleMethod(psiMethod: PsiMethod): Sequence<PbElement> {
-    return emptySequence() //todo
+    val containingClass = psiMethod.containingClass ?: return emptySequence()
+    val generatedBaseClass = findGeneratedServiceSuperclass(containingClass) ?: return emptySequence()
+    val protoNameForMethod = protoNameForMethod(psiMethod, generatedBaseClass) ?: return emptySequence()
+    return psiMethod.project.service<ProtoFileAccessor>().findAllMethodsWithFqnPrefix(protoNameForMethod)
+  }
+
+  private fun protoNameForClass(psiClass: PsiClass): String? {
+    return psiClass.qualifiedName?.substringBefore("Grpc") //todo: should be extendable mechanism (not only grpc might be generated)
+  }
+
+  private fun protoNameForMethod(psiMethod: PsiMethod, generatedBaseClass: PsiClass): String? {
+    val protoNameForClass = protoNameForClass(generatedBaseClass) ?: return null
+    val methodName = psiMethod.name
+    return "$protoNameForClass.$methodName"
+  }
+
+  private fun findGeneratedServiceSuperclass(psiClass: PsiClass): PsiClass? {
+    val findFirstProcessor = object : CommonProcessors.FindFirstProcessor<PsiClass>() {
+      override fun accept(psiClass: PsiClass): Boolean {
+        val bindableServiceClass = JavaPsiFacade.getInstance(psiClass.project).findClass(BINDABLE_SERVICE_FQN, psiClass.resolveScope)
+        return InheritanceUtil.isInheritorOrSelf(psiClass, bindableServiceClass, false)
+      }
+    }
+    InheritanceUtil.processSupers(psiClass, true, findFirstProcessor)
+    return findFirstProcessor.foundValue
   }
 
   private fun hasServiceSuperclass(psiClass: PsiClass): Boolean {
-    return psiClass.supers.any(::isServiceSuperclass)
-  }
-
-  private fun isServiceSuperclass(psiClass: PsiClass): Boolean {
-    // todo
-    return psiClass.qualifiedName == "io.grpc.BindableService"
+    return InheritanceUtil.isInheritor(psiClass, BINDABLE_SERVICE_FQN)
   }
 }
+
+private const val BINDABLE_SERVICE_FQN = "io.grpc.BindableService"

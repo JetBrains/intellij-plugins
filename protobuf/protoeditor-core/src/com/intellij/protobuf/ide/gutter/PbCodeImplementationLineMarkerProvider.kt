@@ -1,15 +1,31 @@
 package com.intellij.protobuf.ide.gutter
 
+import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
+import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.icons.AllIcons
+import com.intellij.ide.util.EditSourceUtil
+import com.intellij.navigation.GotoRelatedItem
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.NotNullFactory
+import com.intellij.pom.Navigatable
+import com.intellij.protobuf.ide.PbCompositeModificationTracker
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.lang.psi.PbElement
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNameIdentifierOwner
+import com.intellij.psi.util.parentOfType
+import com.intellij.ui.awt.RelativePoint
+import com.intellij.util.castSafelyTo
+import com.intellij.util.concurrency.AppExecutorUtil
+import java.awt.event.MouseEvent
+import java.util.concurrent.Callable
 import kotlin.streams.asSequence
 
 internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
@@ -22,27 +38,35 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<*>>) {
+    val identifier = element.identifierChild() ?: return
+
     val marker =
       when (element) {
         is PbElement ->
-          if (hasImplementations(element)) createOverriddenElementMarker(element) else null
+          if (hasImplementation(element)) createOverriddenElementMarker(identifier) else null
         else ->
-          if (hasProtoDefinition(element)) createImplementedElementMarker(element) else null
+          if (hasProtoDefinition(element)) createImplementedElementMarker(identifier) else null
       } ?: return
 
     result.add(marker)
   }
 
-  private fun createOverriddenElementMarker(protoElement: PbElement): RelatedItemLineMarkerInfo<PsiElement> {
+  private fun createOverriddenElementMarker(psiElement: PsiElement): RelatedItemLineMarkerInfo<PsiElement> {
     return object : RelatedItemLineMarkerInfo<PsiElement>(
-      protoElement,
-      protoElement.textRange,
+      psiElement,
+      psiElement.textRange,
       AllIcons.General.OverridenMethod,
       { null },
-      null,
+      { event: MouseEvent, psiElement: PsiElement ->
+        if (psiElement is PbElement) {
+          val gotoRelatedItems = GotoRelatedItem.createItems(findImplementations(psiElement).toList()).toMutableList()
+          NavigationUtil.getRelatedItemsPopup(gotoRelatedItems, PbIdeBundle.message("line.marker.navigate.to.implementation")).show(event.component)
+        }
+      },
       GutterIconRenderer.Alignment.LEFT,
       NotNullFactory {
-        mutableListOf()
+        if (psiElement !is PbElement) return@NotNullFactory emptyList()
+        GotoRelatedItem.createItems(findImplementations(psiElement).toList())
       }
     ) {}
   }
@@ -52,25 +76,64 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
       psiElement,
       psiElement.textRange,
       AllIcons.General.ImplementingMethod,
-      { null },
-      null,
+      { PbIdeBundle.message("line.marker.navigate.to.declaration") },
+      GutterIconNavigationHandler { event, element ->
+        val project = element.project
+        ReadAction.nonBlocking(Callable {
+          val identifierOwner = element.parentIdentifierOwner() ?: return@Callable emptyList()
+          findProtoDefinitions(identifierOwner).toList()
+        })
+          .expireWith(project.service<PbCompositeModificationTracker>())
+          .withDocumentsCommitted(project)
+          .coalesceBy(this@PbCodeImplementationLineMarkerProvider)
+          .finishOnUiThread(ModalityState.NON_MODAL) { targets ->
+            when (targets.size) {
+              0 -> return@finishOnUiThread
+              1 -> {
+                val singleTarget = targets.singleOrNull() ?: return@finishOnUiThread
+                EditSourceUtil.getDescriptor(singleTarget)?.takeIf(Navigatable::canNavigate)?.navigate(true)
+              }
+              else -> {
+                NavigationUtil.getPsiElementPopup(
+                  targets.toTypedArray(),
+                  PbIdeBundle.message("line.marker.navigate.to.declaration")
+                ).show(RelativePoint(event))
+              }
+            }
+          }
+          .submit(AppExecutorUtil.getAppExecutorService())
+      },
       GutterIconRenderer.Alignment.LEFT,
       NotNullFactory {
-        mutableListOf()
+        GotoRelatedItem.createItems(findProtoDefinitions(psiElement).toList())
       }
     ) {}
   }
 
-  private fun hasImplementations(pbElement: PbElement): Boolean {
+  private fun hasImplementation(pbElement: PbElement): Boolean {
+    return findImplementations(pbElement).any()
+  }
+
+  private fun findImplementations(pbElement: PbElement): Sequence<PsiElement> {
     return EP_NAME.extensions().asSequence()
       .flatMap { it.findImplementationsForProtoElement(pbElement) }
-      .any()
   }
 
   private fun hasProtoDefinition(psiElement: PsiElement): Boolean {
+    return findProtoDefinitions(psiElement).any()
+  }
+
+  private fun findProtoDefinitions(psiElement: PsiElement): Sequence<PbElement> {
     return EP_NAME.extensions().asSequence()
       .flatMap { it.findDeclarationsForCodeElement(psiElement) }
-      .any()
+  }
+
+  private fun PsiElement.identifierChild(): PsiElement? {
+    return this.castSafelyTo<PsiNameIdentifierOwner>()?.identifyingElement
+  }
+
+  private fun PsiElement.parentIdentifierOwner(): PsiElement? {
+    return this.parentOfType<PsiNameIdentifierOwner>(true)
   }
 
   companion object {

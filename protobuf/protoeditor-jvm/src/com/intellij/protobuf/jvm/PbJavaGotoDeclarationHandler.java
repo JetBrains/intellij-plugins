@@ -37,7 +37,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/** Handles goto declaration from java generated code -> .proto files. */
+/**
+ * Handles goto declaration from java generated code -> .proto files.
+ */
 public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
 
   @Nullable
@@ -48,7 +50,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
 
   @Override
   public PsiElement @Nullable [] getGotoDeclarationTargets(
-      @Nullable PsiElement sourceElement, int i, Editor editor) {
+    @Nullable PsiElement sourceElement, int i, Editor editor) {
     return findProtoDeclarationForJavaElement(sourceElement);
   }
 
@@ -57,7 +59,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
       return null;
     }
     PsiJavaCodeReferenceElement javaRef =
-        PsiTreeUtil.getParentOfType(sourceElement, PsiJavaCodeReferenceElement.class);
+      PsiTreeUtil.getParentOfType(sourceElement, PsiJavaCodeReferenceElement.class);
     if (javaRef == null) {
       return null;
     }
@@ -65,14 +67,18 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
     if (resolved == null) {
       return null;
     }
+    return findProtoDeclarationForResolvedJavaElement(resolved);
+  }
+
+  public static PsiElement @Nullable [] findProtoDeclarationForResolvedJavaElement(@NotNull PsiElement resolved) {
     PbJavaGotoDeclarationContext context = PbJavaGotoReferenceMatch.isFromProto(resolved);
     if (context == null) {
       return null;
     }
-    Project project = javaRef.getProject();
+    Project project = resolved.getProject();
     Collection<PbFile> matchedFiles =
-        PbJavaOuterClassIndex.getFilesWithOuterClass(
-            project, context.outerClass.getQualifiedName(), GlobalSearchScope.allScope(project));
+      PbJavaOuterClassIndex.getFilesWithOuterClass(
+        project, context.outerClass.getQualifiedName(), GlobalSearchScope.allScope(project));
     if (matchedFiles.isEmpty()) {
       // Try looking for the .proto file through source comments (ideally an annotation) if we
       // didn't index the .proto file so PbJavaOuterClassIndex doesn't know about it.
@@ -126,7 +132,8 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
                         generator -> generator.toNameMatcher(context));
     if (context.javaClass.isEnum()) {
       findMatchingEnumElement(file, context, nameMatchers, results, matchedTypeElements);
-    } else {
+    }
+    else {
       findMatchingClassElement(file, context, nameMatchers, results, matchedTypeElements);
     }
     if (results.isEmpty()) {
@@ -136,20 +143,21 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
   }
 
   private static void findMatchingEnumElement(
-      PbFile file,
-      PbJavaGotoDeclarationContext context,
-      List<NameMatcher> nameMatchers,
-      List<PsiElement> results,
-      List<PsiElement> matchedTypeElements) {
+    PbFile file,
+    PbJavaGotoDeclarationContext context,
+    List<NameMatcher> nameMatchers,
+    List<PsiElement> results,
+    List<PsiElement> matchedTypeElements) {
     boolean searchEnumValues = context.resolvedElement instanceof PsiEnumConstant;
     for (PbSymbol symbol : file.getLocalQualifiedSymbolMap().values()) {
       if (PbPsiUtil.isEnumElement(symbol)) {
-        PbEnumDefinition enumDefinition = (PbEnumDefinition) symbol;
+        PbEnumDefinition enumDefinition = (PbEnumDefinition)symbol;
         for (NameMatcher matcher : nameMatchers) {
           if (matcher.matchesEnum(enumDefinition)) {
             if (!searchEnumValues) {
               results.add(enumDefinition);
-            } else {
+            }
+            else {
               matchedTypeElements.add(enumDefinition);
               for (PbEnumValue enumValue : enumDefinition.getEnumValues()) {
                 if (matcher.matchesEnumValue(enumValue)) {
@@ -159,20 +167,23 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
             }
           }
         }
-      } else if (PbPsiUtil.isOneofElement(symbol)) {
-        PbOneofDefinition oneof = (PbOneofDefinition) symbol;
+      }
+      else if (PbPsiUtil.isOneofElement(symbol)) {
+        PbOneofDefinition oneof = (PbOneofDefinition)symbol;
         for (NameMatcher matcher : nameMatchers) {
           if (matcher.matchesOneofEnum(oneof)) {
             if (!searchEnumValues) {
               results.add(oneof);
-            } else {
+            }
+            else {
               matchedTypeElements.add(oneof);
               if (matcher.matchesOneofNotSetEnumValue(oneof)) {
                 results.add(oneof);
-              } else {
+              }
+              else {
                 for (PbStatement statement : oneof.getStatements()) {
                   if (statement instanceof PbField) {
-                    PbField oneofField = (PbField) statement;
+                    PbField oneofField = (PbField)statement;
                     if (matcher.matchesOneofEnumValue(oneofField)) {
                       results.add(oneofField);
                     }
@@ -187,20 +198,21 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
   }
 
   private static void findMatchingClassElement(
-      PbFile file,
-      PbJavaGotoDeclarationContext context,
-      List<NameMatcher> nameMatchers,
-      List<PsiElement> results,
-      List<PsiElement> matchedTypeElements) {
+    PbFile file,
+    PbJavaGotoDeclarationContext context,
+    List<NameMatcher> nameMatchers,
+    List<PsiElement> results,
+    List<PsiElement> matchedTypeElements) {
     boolean searchFields = context.resolvedElement instanceof PsiMember;
     for (PbSymbol symbol : file.getLocalQualifiedSymbolMap().values()) {
       if (PbPsiUtil.isMessageElement(symbol)) {
-        PbMessageType message = (PbMessageType) symbol;
+        PbMessageType message = (PbMessageType)symbol;
         for (NameMatcher matcher : nameMatchers) {
           if (matcher.matchesMessage(message)) {
             if (!searchFields) {
               results.add(message);
-            } else {
+            }
+            else {
               matchedTypeElements.add(message);
               for (PbField field : message.getSymbols(PbField.class)) {
                 if (matcher.matchesField(field)) {

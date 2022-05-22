@@ -28,7 +28,11 @@ class ProtoFileAccessor(private val project: Project) {
   }
 
   fun findServiceByFqn(exactFqn: String): PbServiceDefinition? {
-    return findPbStubElementsOfType<PbServiceDefinition>(exactFqn, true).firstOrNull()
+    return findServicesByFqn(exactFqn, true).firstOrNull()
+  }
+
+  fun findServicesByFqn(fqnOrPrefix: String, exactMatch: Boolean): Sequence<PbServiceDefinition> {
+    return findPbStubElementsOfType<PbServiceDefinition>(fqnOrPrefix, exactMatch)
   }
 
   fun findMessageByFqn(exactFqn: String): PbMessageDefinition? {
