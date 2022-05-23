@@ -57,9 +57,7 @@ class YamlCloudFormationParser private constructor () {
         return@mapNotNull null
       }
 
-      val section = CloudFormationSection.id2enum[name]
-
-      return@mapNotNull when (section) {
+      return@mapNotNull when (CloudFormationSection.id2enum[name]) {
         CloudFormationSection.FormatVersion -> { formatVersion(value); null }
         CloudFormationSection.Transform -> transform(property)
         CloudFormationSection.Description -> { checkAndGetStringValue(value); null }
@@ -300,8 +298,7 @@ class YamlCloudFormationParser private constructor () {
     val nameNode = keyName(single)!!
     val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
 
-    val yamlValueNode = single.value
-    when (yamlValueNode) {
+    when (val yamlValueNode = single.value) {
       is YAMLSequence -> {
         val shortFunctionCall = shortFunction(yamlValueNode) ?: return null
         return if (shortFunctionCall.isPresent) {
@@ -427,8 +424,7 @@ class YamlCloudFormationParser private constructor () {
   }
 
   private fun checkAndGetStringOrStringArray(property: CfnKeyValue): List<CfnScalarValueNode> {
-    val value = property.value
-    return when(value) {
+    return when(val value = property.value) {
       null -> emptyList()
       is YAMLSequence -> value.items.mapNotNull { checkAndGetStringElement(it.value) }
       is YAMLScalar -> checkAndGetStringElement(value)?.let { listOf(it) } ?: emptyList()

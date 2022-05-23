@@ -44,9 +44,7 @@ class JsonCloudFormationParser private constructor () {
         return@mapNotNull null
       }
 
-      val section = CloudFormationSection.id2enum[name]
-
-      return@mapNotNull when (section) {
+      return@mapNotNull when (CloudFormationSection.id2enum[name]) {
         CloudFormationSection.FormatVersion -> { formatVersion(value); null }
         CloudFormationSection.Transform -> transform(property)
         CloudFormationSection.Description -> { checkAndGetUnquotedStringText(value); null }
@@ -254,8 +252,7 @@ class JsonCloudFormationParser private constructor () {
           val nameNode = CfnScalarValueNode(single.name).registerNode(single.nameElement)
           val functionId = CloudFormationIntrinsicFunction.fullNames[single.name]!!
 
-          val jsonValueNode = single.value
-          when (jsonValueNode) {
+          when (val jsonValueNode = single.value) {
             is JsonArray -> {
               val items = jsonValueNode.valueList.map { expression(it, allowFunctions) }
               CfnFunctionNode(nameNode, functionId, items).registerNode(value)
@@ -294,8 +291,7 @@ class JsonCloudFormationParser private constructor () {
 
   private fun checkAndGetStringOrStringArray(property: JsonProperty?): List<CfnScalarValueNode> {
     val expectedMessage = CloudFormationBundle.message("expected.a.string.or.an.array.of.strings")
-    val value = property?.value
-    return when (value) {
+    return when (val value = property?.value) {
       null -> emptyList()
       is JsonArray -> value.valueList.mapNotNull { checkAndGetStringElement(it) }
       is JsonStringLiteral -> listOf(CfnScalarValueNode(value.value).registerNode(value))

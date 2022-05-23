@@ -92,9 +92,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       var rawBindings: List<VueNamedSymbol> = emptyList()
 
       module.getStubSafeDefineCalls().forEach { call ->
-        val functionName = VueFrameworkHandler.getSignificantFunctionName(call)
-
-        when (functionName) {
+        when (VueFrameworkHandler.getSignificantFunctionName(call)) {
           DEFINE_PROPS_FUN -> {
             props = analyzeDefineProps(call, listOf())
           }
@@ -144,8 +142,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       }
       // scriptSetup runtime declaration
       else if (arguments.size == 1) {
-        val arg = arguments[0]
-        when (arg) {
+        when (val arg = arguments[0]) {
           is JSObjectLiteralExpression -> {
             props = collectPropertiesRecursively(arg)
               .map { (name, property) ->
