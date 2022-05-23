@@ -17,7 +17,7 @@ import java.util.*
 
 fun getConnections(project: Project, list: LocalChangeList): Map<ConnectionKey, P4Connection> {
   val result = HashMap<ConnectionKey, P4Connection>()
-  val files = ChangesUtil.getIoFilesFromChanges(list.changes);
+  val files = ChangesUtil.getIoFilesFromChanges(list.changes)
   for (connection in PerforceConnectionManager.getInstance(project).allConnections.values) {
     val number = PerforceNumberNameSynchronizer.getInstance(project).getNumber(connection.connectionKey, list.name)
     if (number != null || files.any { connection.handlesFile(it) }) {

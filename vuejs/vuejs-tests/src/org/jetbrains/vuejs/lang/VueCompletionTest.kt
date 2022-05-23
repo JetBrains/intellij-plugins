@@ -1552,8 +1552,8 @@ export default class ComponentInsertion extends Vue {
       };
       </script>
     """.trimIndent())
-    myFixture.completeBasic();
-    myFixture.finishLookup('\t');
+    myFixture.completeBasic()
+    myFixture.finishLookup('\t')
     myFixture.checkResult("""
       <script lang="<caret>">
       export default {

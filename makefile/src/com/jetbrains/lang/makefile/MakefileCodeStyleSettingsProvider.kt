@@ -1,4 +1,4 @@
-package com.jetbrains.lang.makefile;
+package com.jetbrains.lang.makefile
 
 import com.intellij.application.options.*
 import com.intellij.lang.*

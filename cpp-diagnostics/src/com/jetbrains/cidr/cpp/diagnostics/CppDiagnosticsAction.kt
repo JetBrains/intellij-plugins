@@ -143,7 +143,7 @@ class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
       val oldText = indicator?.text
       indicator?.text = text
       try {
-        return runReadAction(block);
+        return runReadAction(block)
       }
       finally {
         indicator?.text = oldText
