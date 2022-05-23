@@ -17,7 +17,7 @@ abstract class MakefileTreeNode(@NlsSafe val name: String) : TreeNode {
   }
 
   protected open fun renderName(renderer: ColoredTreeCellRenderer) {
-    renderer.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES, true/*, name.length + 10, SwingConstants.LEFT*/)
+    renderer.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES, true)
   }
 
   open fun render(renderer: ColoredTreeCellRenderer) {
