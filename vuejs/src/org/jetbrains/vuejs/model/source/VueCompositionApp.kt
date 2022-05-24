@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.model.Pointer
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScopeUtil
 import com.intellij.psi.search.LocalSearchScope
@@ -157,7 +159,14 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
 
       val components = processCalls(COMPONENT_FUN, true) { name, el, nameLiteral ->
         VueModelManager.getComponent(getComponentDescriptor(el))?.let {
-          Pair(name, if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, nameLiteral!!) else it)
+          val component = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, nameLiteral!!) else it
+          var delegate: VueScopeElement? = component
+          while (true) {
+            if (delegate is UserDataHolder) delegate.putUserData(IS_COMPOSITION_APP_COMPONENT_KEY, true)
+            if (delegate is VueDelegatedEntitiesContainer<*>) delegate = delegate.delegate
+            else break
+          }
+          Pair(name, component)
         }
       }.toMap()
 
@@ -184,6 +193,10 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       return EntitiesAnalysis(components, directives, mixins, filters, element)
     }
 
+    private val IS_COMPOSITION_APP_COMPONENT_KEY = Key.create<Boolean>("vue.composition.app.component")
+
+    fun isCompositionAppComponent(component: VueComponent) =
+      component is UserDataHolder && component.getUserData(IS_COMPOSITION_APP_COMPONENT_KEY) == true
   }
 
   private data class EntitiesAnalysis(val components: Map<String, VueComponent>,

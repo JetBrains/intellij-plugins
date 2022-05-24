@@ -51,6 +51,8 @@ import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents
+import org.jetbrains.vuejs.model.source.VueCompositionApp
+import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import java.util.*
 
@@ -70,6 +72,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     const val PROP_VUE_MODEL_EVENT = "event"
 
     const val PROP_VUE_PROXIMITY = "x-vue-proximity"
+    const val PROP_VUE_COMPOSITION_COMPONENT = "x-vue-composition-component"
 
     private fun <T> List<T>.mapWithNameFilter(name: String?,
                                               params: WebSymbolsNameMatchQueryParams,
@@ -132,6 +135,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
         }
         containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
+      }
+
+      if (enclosingContainer is VueSourceComponent && containerToProximity.keys.none { it is VueApp }) {
+        enclosingContainer.global?.apps?.filterIsInstance<VueCompositionApp>()?.forEach {
+          containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
+        }
       }
 
       containerToProximity.forEach { (container, proximity) ->
@@ -469,6 +478,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class ComponentWrapper(matchedName: String, component: VueComponent, val vueProximity: VueModelVisitor.Proximity) :
     ScopeElementWrapper<VueComponent>(matchedName, component) {
 
+    private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
+
     override val kind: SymbolKind
       get() = KIND_VUE_COMPONENTS
 
@@ -494,7 +505,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       item.source?.let { listOf(ComponentSourceNavigationTarget(it)) } ?: emptyList()
 
     override val properties: Map<String, Any>
-      get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity))
+      get() = mapOf(Pair(PROP_VUE_PROXIMITY, vueProximity), Pair(PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
     override fun getSymbols(namespace: Namespace?,
                             kind: String,

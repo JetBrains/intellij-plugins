@@ -2014,12 +2014,19 @@ export default class UsageComponent extends Vue {
     ).forEach { (signature, offset, expectedFileName) ->
       myFixture.configureFromTempProjectFile("index.html")
       if (offset == null) {
-        assertEmpty(myFixture.multiResolveWebSymbolReference(signature))
+        assertEmpty("Expected empty for $signature", myFixture.multiResolveWebSymbolReference(signature))
       }
       else {
         myFixture.checkGotoDeclaration(signature, offset, expectedFileName)
       }
     }
+  }
+
+  fun testGlobalComponentCompositionApiFromUnlinkedTemplate() { // WEB-55665
+    myFixture.copyDirectoryToProject("../common/createApp", ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByText("AppUnlinked.vue", "<template>\n<Bar/>\n</template>")
+    myFixture.checkGotoDeclaration("<B<caret>ar/>", 128, "foo.vue")
   }
 
   fun testSameMixinsViaStubsAndViaPsi() {

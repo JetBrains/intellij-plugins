@@ -11,6 +11,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_COMPOSITION_COMPONENT
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_PROXIMITY
 
 class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
@@ -34,7 +35,8 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
     matches.filter { symbol ->
       if (namespace == WebSymbolsContainer.Namespace.HTML
           && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS)
-        symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE
+        symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
+        symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
       else true
     }
 
