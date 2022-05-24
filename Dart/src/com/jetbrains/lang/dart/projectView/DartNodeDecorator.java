@@ -24,8 +24,4 @@ public class DartNodeDecorator implements ProjectViewNodeDecorator {
       }
     }
   }
-
-  @Override
-  public void decorate(@NotNull final PackageDependenciesNode node, @NotNull final ColoredTreeCellRenderer cellRenderer) {
-  }
 }
