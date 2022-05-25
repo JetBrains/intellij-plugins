@@ -389,7 +389,8 @@
           "ng-reference-declaration": {
             "name": "Reference variable",
             "pattern": ".*",
-            "doc-hide-pattern": true
+            "doc-hide-pattern": true,
+            "ij-no-psi-refs": true
           },
           "value": {
             "required": false,
