@@ -18,6 +18,12 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "/findUsages";
   }
 
+  private void checkUsages(@NotNull String signature,
+                           String @NotNull ... usages) {
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.SU, signature);
+    assertEquals(Arrays.asList(usages), WebTestUtil.usagesAtCaret(myFixture) );
+  }
+
   public void testPrivateComponentField() {
     myFixture.configureByFiles("private.ts", "private.html", "package.json");
     checkUsages("f<caret>oo",
@@ -89,10 +95,9 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
                 "<slots.test.component.html:(0,187):(78,87)>\tattr-slot");
   }
 
-  private void checkUsages(@NotNull String signature,
-                           String @NotNull ... usages) {
-    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.SU, signature);
-    assertEquals(Arrays.asList(usages), WebTestUtil.usagesAtCaret(myFixture) );
-  }
+  public void testAttVariable() {
+    myFixture.configureByFiles("attr-variable.html", "attr-variable.ts", "package.json");
 
+    checkUsages("#so<caret>meText", "<attr-variable.ts:(362,372):(1,9)>\t('someText')");
+  }
 }
