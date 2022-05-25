@@ -1,7 +1,6 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/CloudFormation" package="com.intellij.aws.cloudformation">
   <id>AWSCloudFormation</id>
   <name>AWS CloudFormation</name>
-
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
@@ -92,5 +91,9 @@
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
 
     <fileTypeStatisticProvider implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeStatisticProvider"/>
+
+    <annotator language="yaml" implementationClass="com.intellij.aws.cloudformation.CloudFormationYamlAnnotator"/>
+    <iconProvider implementation="com.intellij.aws.cloudformation.CloudFormationIconProvider"/>
+    <colorSettingsPage implementation="com.intellij.aws.cloudformation.CloudFormationColorSettingsPage"/>
   </extensions>
 </idea-plugin>
