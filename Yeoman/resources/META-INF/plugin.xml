@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+  <name>Yeoman</name>
+  <id>com.jetbrains.plugins.yeoman</id>
+  <category>JavaScript Frameworks and Tools</category>
+  <vendor>JetBrains</vendor>
+  <description> <![CDATA[
+  Yeoman integration
+    ]]>
+  </description>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
+
+  <resource-bundle>messages.YeomanBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <moduleBuilder builderClass="jetbrains.plugins.yeoman.projectGenerator.builder.YeomanModuleBuilder"/>
+    <projectConfigurable
+        instance="jetbrains.plugins.yeoman.settings.YeomanConfigurable"
+        id="settings.yeoman"
+        key="settings.yeoman.name"
+        parentId="Settings.JavaScript"
+        bundle="messages.YeomanBundle"
+        order="after Settings.JavaScript.Linters"/>
+
+    <applicationService id="yeomanGlobalSettings" serviceImplementation="jetbrains.plugins.yeoman.settings.YeomanGlobalSettings"/>
+    <directoryProjectGenerator implementation="jetbrains.plugins.yeoman.projectGenerator.template.YeomanProjectGenerator"/>
+  </extensions>
+
+  <actions>
+  <action id="Yeoman.actions.start.generators.dialog" class="jetbrains.plugins.yeoman.actions.YeomanStartAction"/>
+  <action id="Yeoman.actions.run.generator" class="jetbrains.plugins.yeoman.actions.YeomanRunGeneratorByNameAction"/>
+  </actions>
+</idea-plugin>
