@@ -1,0 +1,12 @@
+<body>
+
+{{> unresolvedTemplate}}
+
+{{> resolvedTemplateName}}
+
+</body>
+
+<template name="resolvedTemplateName">
+  {{this}} {{>this}}
+</template>
+

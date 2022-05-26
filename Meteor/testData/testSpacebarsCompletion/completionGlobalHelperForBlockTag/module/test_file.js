@@ -1,0 +1,1 @@
+Template.registerHelper("globalHelperForBlock", function () {});

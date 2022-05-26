@@ -1,0 +1,3 @@
+Template.myTemplateForHelper.testProperty = function() {
+
+};

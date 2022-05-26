@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>UnresolvedTemplate.spacebars</file>
+    <line>3</line>
+    <problem_class severity="WARNING">Unresolved Meteor template or helper</problem_class>
+    <description>Unresolved Meteor template or helper</description>
+  </problem>
+</problems>
+

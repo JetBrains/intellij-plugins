@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<idea-plugin>
+  <name>Meteor</name>
+  <id>com.jetbrains.plugins.meteor</id>
+  <category>JavaScript Frameworks and Tools</category>
+  <description><![CDATA[
+    <h4>Support for Meteor framework</h4>
+    <br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
+    <b>Features:</b>
+    <p>* Meteor project generator</p>
+    <p>* Resolve for Meteor templates/helpers in Spacebars</p>
+    <p>* Navigate to Meteor Spacebars templates from *.js code </p>
+    <p>* JavaScript code completion for Meteor core methods</p>
+    <p>* Spacebars code completion for templates/helpers</p>
+    <p>* Server/Client debug, navigate to error from console</p>
+    <p>* Autoimport Meteor non-standard packages as external library for code completion (the action also available in the 'packages' file)</p>
+    <p>* Inspections for Spacebars</p>
+    <p>* Meteor-angular plugin support</p>
+    ]]>
+  </description>
+  <vendor>JetBrains</vendor>
+  <depends>JavaScript</depends>
+  <depends>JavaScriptDebugger</depends>
+  <depends>com.dmarcotte.handlebars</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="meteor-live-edit.xml">com.intellij.plugins.html.instantEditing</depends>
+  <depends optional="true" config-file="meteor-file-watcher.xml">com.intellij.plugins.watcher</depends>
+  <resource-bundle>messages.MeteorBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <backgroundPostStartupActivity implementation="com.jetbrains.plugins.meteor.MeteorProjectStartupActivity"/>
+    <editorNotificationProvider implementation="com.jetbrains.plugins.meteor.ide.action.MeteorPackagesEditNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.plugins.meteor.ide.action.MeteorHtmlFileTypeEditNotificationProvider"/>
+
+    <configurationType implementation="com.jetbrains.plugins.meteor.runner.MeteorConfigurationType"/>
+    <xml.elementDescriptorProvider implementation="com.jetbrains.plugins.meteor.spacebars.TemplateTagDescriptorProvider" order="first"/>
+    <applicationService id="meteorSettings" serviceImplementation="com.jetbrains.plugins.meteor.settings.MeteorSettings"/>
+    <projectService id="meteorPackageUpdater" serviceImplementation="com.jetbrains.plugins.meteor.ide.action.MeteorLibraryUpdater"/>
+
+    <projectConfigurable
+        instance="com.jetbrains.plugins.meteor.settings.ui.MeteorConfigurable"
+        id="settings.meteor"
+        key="settings.meteor.name"
+        parentId="Settings.JavaScript"
+        bundle="messages.MeteorBundle"
+        order="last, after settings.phonegap"
+    />
+    <fileBasedIndex implementation="com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplateIndex"/>
+
+    <directoryProjectGenerator implementation="com.jetbrains.plugins.meteor.projectGenerator.MeteorProjectTemplateGenerator"/>
+    <projectTemplatesFactory implementation="com.jetbrains.plugins.meteor.projectGenerator.MeteorTemplatesFactory"/>
+    <lang.parserDefinition language="Spacebars" implementationClass="com.jetbrains.plugins.meteor.spacebars.lang.SpacebarsParseDefinition"/>
+    <lang.substitutor order="first" language="HTML"
+                      implementationClass="com.jetbrains.plugins.meteor.spacebars.lang.SpacebarsLanguageSubstitutor"/>
+    <fileType name="Spacebars" implementationClass="com.jetbrains.plugins.meteor.spacebars.lang.SpacebarsFileType" fieldName="SPACEBARS_INSTANCE" language="Spacebars" extensions="spacebars"/>
+    <psi.referenceContributor language="Handlebars"
+        implementation="com.jetbrains.plugins.meteor.spacebars.templates.helpers.MeteorSpacebarsReferenceContributor"/>
+    <gotoSymbolContributor implementation="com.jetbrains.plugins.meteor.spacebars.templates.MeteorTemplatesSymbolContributor"/>
+    <defaultLiveTemplates file="liveTemplates/Meteor.xml"/>
+    <programRunner implementation="com.jetbrains.plugins.meteor.runner.MeteorDebugProcessRunner" order="first"/>
+    <localInspection bundle="messages.MeteorBundle"
+                     key="meteor.inspection.unresolved"
+                     groupBundle="messages.MeteorBundle"
+                     groupKey="inspections.group.name"
+                     language="Handlebars"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.jetbrains.plugins.meteor.spacebars.inspection.MeteorUnresolvedSymbolInspection"/>
+    <completion.contributor
+        language="Handlebars"
+        implementationClass="com.jetbrains.plugins.meteor.spacebars.templates.helpers.MeteorSpacebarsCompletionContributor"/>
+    <additionalLibraryRootsProvider implementation="com.jetbrains.plugins.meteor.ide.action.MeteorSyntheticLibraryProvider"/>
+    <editorHighlighterProvider filetype="Spacebars" implementationClass="com.dmarcotte.handlebars.file.HbHighlighterProvider"/>
+    <vfs.asyncListener implementation="com.jetbrains.plugins.meteor.MeteorAsyncFileListener"/>
+    <notificationGroup id="MeteorProject" displayType="BALLOON"/>
+    <notificationGroup id="Meteor JS Generator" displayType="BALLOON"/>
+  </extensions>
+
+
+  <extensions defaultExtensionNs="JavaScript">
+    <predefinedLibraryProvider implementation="com.jetbrains.plugins.meteor.MeteorJSPredefinedLibraryProvider"/>
+    <frameworkIndexingHandler implementation="com.jetbrains.plugins.meteor.spacebars.templates.MeteorHelpersFrameworkIndexingHandler" version="4"/>
+    <JSImplicitElementsIndexFileTypeProvider
+        implementation="com.jetbrains.plugins.meteor.spacebars.MeteorJSImplicitlyElementsFileTypeProvider"/>
+    <moduleReferenceContributor implementation="com.jetbrains.plugins.meteor.imports.MeteorReferenceContributor"/>
+  </extensions>
+
+  <actions>
+    <action id="Meteor.action.packages" class="com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLibAction"/>
+
+  </actions>
+
+  <projectListeners>
+    <listener class="com.jetbrains.plugins.meteor.MeteorRootListener" topic="com.intellij.openapi.roots.ModuleRootListener" />
+  </projectListeners>
+  
+</idea-plugin>

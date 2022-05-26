@@ -1,0 +1,12 @@
+<body>
+ {{testData}}
+</body>
+
+<<warning>template</warning>>
+  {{testData2}}
+</<warning>template</warning>>
+
+
+<template name="test1">
+  {{testData2}}
+</template>
