@@ -1,0 +1,783 @@
+---
+title: Atomic
+description: CSS classes for composing layouts.
+---
+
+import { graphql } from 'gatsby';
+import { InlineCode } from 'components/mdx';
+import Table from 'components/thumbprint-atomic/table';
+import getClasses from 'components/thumbprint-atomic/get-classes';
+import PackageTable from 'components/package-table';
+import { name, version } from '../../../../packages/thumbprint-atomic/package.json';
+
+export const pageQuery = graphql`
+    {
+        allThumbprintAtomicClasses(sort: { order: ASC, fields: [atomicFileName] }) {
+            edges {
+                node {
+                    atomicFileName
+                    atomicClasses {
+                        selectors
+                        declarations
+                    }
+                }
+            }
+        }
+    }
+`;
+
+<PackageTable
+    version={version}
+    deprecated={false}
+    packageName={name}
+    platform="web"
+    sourceDirectory="https://github.com/thumbtack/thumbprint/tree/master/packages/thumbprint-atomic"
+/>
+
+## Aspect Ratio
+
+-   Available ratios are `16:9`, `10:13`, `8:5`, `7:3`, and `1:1`.
+-   Used primarily to lock elements with background images in into a desired proportion.
+-   Also for fluid media embedded from third party sites like YouTube, Vimeo, etc.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="s_col-4 mb2 s_mb0">
+            <div
+                className="aspect-ratio aspect-ratio-1x1 bg-center mb1"
+                style={{ backgroundImage: 'url(https://picsum.photos/400/400)' }}
+            />
+            <InlineCode theme="plain">1:1</InlineCode>
+            <div
+                className="aspect-ratio aspect-ratio-7x3 bg-center mv2"
+                style={{ backgroundImage: 'url(https://picsum.photos/400/200)' }}
+            />
+            <InlineCode theme="plain">7:3</InlineCode>
+        </div>
+        <div className="s_col-4 mb2 s_mb0">
+            <div
+                className="aspect-ratio aspect-ratio-10x13 bg-center mb1"
+                style={{ backgroundImage: 'url(https://picsum.photos/400/600)' }}
+            />
+            <InlineCode theme="plain">10:13</InlineCode>
+        </div>
+        <div className="s_col-4">
+            <div
+                className="aspect-ratio aspect-ratio-8x5 bg-center mb1"
+                style={{ backgroundImage: 'url(https://picsum.photos/400/350)' }}
+            />
+            <InlineCode theme="plain">8:5</InlineCode>
+            <div
+                className="aspect-ratio aspect-ratio-16x9 bg-center mv2"
+                style={{ backgroundImage: 'url(https://picsum.photos/400/300)' }}
+            />
+            <InlineCode theme="plain">16:9</InlineCode>
+        </div>
+    </div>
+</div>
+
+#### Block-level elements
+
+```html shouldRender=false
+<div className="aspect-ratio aspect-ratio-8x5" style="background-image:url(...)"></div>
+```
+
+Don't use any additional CSS on the element that changes `height` or `padding`.
+
+#### Video embeds and iframes
+
+```html shouldRender=false
+<div className="aspect-ratio aspect-ratio-16x9">
+    <iframe className="aspect-ratio-object" src="https://player.vimeo.com/..."></iframe>
+</div>
+```
+
+When using `aspect-ratio-object` be sure the embedded content does not have conflicting `height` or `width` values.
+
+<Table atomicClasses={getClasses(props, 'aspect-ratio')} />
+
+## Background Position
+
+Sets location of a background image.
+
+<Table atomicClasses={getClasses(props, 'background-position')} />
+
+## Background Size
+
+-   Determines how an background image will fill the container.
+-   Use with [background-position](#section-background-position) classes to set image location.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="s_col-6 mb3 s_mb0">
+            <div
+                className="h5 contain ba b-gray"
+                style={{ background: 'url(https://placebear.com/420/320?image=2) no-repeat' }}
+            />
+            <div className="tp-body-2">
+                <InlineCode>contain</InlineCode> will ensure that the entire image is displayed
+                within the element, regardless of the elements dimensions.
+            </div>
+        </div>
+        <div className="s_col-6">
+            <div
+                className="h5 cover ba b-gray"
+                style={{ background: 'url(https://placebear.com/420/320?image=2) no-repeat' }}
+            />
+            <div className="tp-body-2">
+                <InlineCode>cover</InlineCode> will ensure the entire element is covered but won’t
+                guarantee that the entire image will be shown.
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'background-size')} />
+
+## Border
+
+-   Set border on all sides or individual sides.
+-   Use with [border-colors](#section-border-colors) classes.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="col-4">
+            <div>
+                <div className="h3 ba b-blue" />
+                <InlineCode theme="plain">ba b-blue</InlineCode>
+            </div>
+        </div>
+        <div className="col-4">
+            <div>
+                <div className="h3 bt b-blue" />
+                <InlineCode theme="plain">bt b-blue</InlineCode>
+            </div>
+        </div>
+        <div className="col-4">
+            <div>
+                <div className="h3 bb b-blue" />
+                <InlineCode theme="plain">bb b-blue</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'border')} />
+
+## Border Color
+
+Applies border color to any active border.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid mb3">
+        <div className="col-4">
+            <div>
+                <div className="pv3 ba b-gray" />
+                <InlineCode theme="plain">ba b-gray</InlineCode>
+            </div>
+        </div>
+        <div className="col-4">
+            <div>
+                <div className="pv3 ba b-black" />
+                <InlineCode theme="plain">ba b-black</InlineCode>
+            </div>
+        </div>
+        <div className="col-4">
+            <div>
+                <div className="pv3 ba b-blue" />
+                <InlineCode theme="plain">ba b-blue</InlineCode>
+            </div>
+        </div>
+    </div>
+    <div className="grid">
+        <div className="s_col-4">
+            <div className="mb3 s_mb0">
+                <div className="bg-gray-300 pv3 bb b-red" />
+                <InlineCode theme="plain">bb b-red</InlineCode>
+            </div>
+        </div>
+        <div className="s_col-4">
+            <div className="mb3 s_mb0">
+                <div className="bg-gray-300 pv3 bl b-red" />
+                <InlineCode theme="plain">bl b-red</InlineCode>
+            </div>
+        </div>
+        <div className="s_col-4">
+            <div>
+                <div className="bg-gray-300 pv3 bt b-red" />
+                <InlineCode theme="plain">bt b-red</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'border-color')} />
+
+## Border Radius
+
+Add rounded corners.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="s_col-4">
+            <div className="mb3 s_mb0">
+                <div className="ba b-blue h4 br2" />
+                <InlineCode theme="plain">br2</InlineCode>
+            </div>
+        </div>
+        <div className="s_col-4">
+            <div className="mb3 s_mb0">
+                <div className="ba b-blue h4 br3" />
+                <InlineCode theme="plain">br3</InlineCode>
+            </div>
+        </div>
+        <div className="s_col-4">
+            <div>
+                <div className="ba b-blue h4 br3 br-top" />
+                <InlineCode theme="plain">br3 br-top</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'border-radius')} />
+
+## Border Style
+
+Sets the style of the border.
+
+-   By default this sets the border style for all sides.
+-   Due to the way the CSS spec works if you want it to apply to only certain sides, you'll need to disable the sides you don't want.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="s_col-4">
+            <div className="mb3 s_mb0">
+                <div className="ba b-blue b-dotted h3" />
+                <InlineCode theme="plain">ba b-blue b-dotted</InlineCode>
+            </div>
+        </div>
+        <div className="s_col-8">
+            <div>
+                <div className="bt b-blue b-dashed br-0 bb-0 bl-0 h3" />
+                <InlineCode theme="plain">ba b-blue b-dashed br-0 bb-0 bl-0</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'border-style')} />
+
+## Border Width
+
+Border widths are set to `1px` by default, these classes increase border width.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="col-4">
+            <div>
+                <div className="h3 ba b-gray bw-2" />
+                <InlineCode theme="plain">ba b-gray bw-2</InlineCode>
+            </div>
+        </div>
+        <div className="col-4">
+            <div>
+                <div className="h3 ba b-gray bw-3" />
+                <InlineCode theme="plain">ba b-gray bw-3</InlineCode>
+            </div>
+        </div>
+        <div className="col-4">
+            <div>
+                <div className="h3 ba b-gray bw-4" />
+                <InlineCode theme="plain">ba b-gray bw-4</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'border-width')} />
+
+## Box Shadow
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="m_col-3 mb3 m_mb0">
+            <div className="h5 mb1 shadow-100" />
+            <InlineCode theme="plain">shadow-100</InlineCode>
+        </div>
+        <div className="m_col-3 mb3 m_mb0">
+            <div className="h5 mb1 shadow-200" />
+            <InlineCode theme="plain">shadow-200</InlineCode>
+        </div>
+        <div className="m_col-3 mb3 m_mb0">
+            <div className="h5 mb1 shadow-300" />
+            <InlineCode theme="plain">shadow-300</InlineCode>
+        </div>
+        <div className="m_col-3">
+            <div className="h5 mb1 shadow-400" />
+            <InlineCode theme="plain">shadow-400</InlineCode>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'box-shadow')} />
+
+## Color
+
+-   Colors for text, links, and backgrounds.
+-   Be sure to follow color usage guidelines.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid mb3">
+        <div className="col-6">
+            <div className="pa2 ba b-gray black">This is copy.</div>
+            <InlineCode theme="plain">black</InlineCode>
+        </div>
+        <div className="col-6">
+            <div className="pa2 ba b-gray black-300">This is copy</div>
+            <InlineCode theme="plain">black-300</InlineCode>
+        </div>
+    </div>
+    <div className="grid mb3">
+        <div className="col-6">
+            <div className="pa2 bg-black">&nbsp;</div>
+            <InlineCode theme="plain">bg-black</InlineCode>
+        </div>
+        <div className="col-6">
+            <div className="pa2 bg-gray-200">&nbsp;</div>
+            <InlineCode theme="plain">bg-gray-200</InlineCode>
+        </div>
+    </div>
+    <div className="grid">
+        <div>
+            <div className="pa2 pa2 ba b-gray">
+                <a href="#" className="color-inherit flex">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        width="28"
+                        height="28"
+                        viewBox="0 0 28 28"
+                        data-thumbprint-id="content-actions-check"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M21.5994,6.2001 C21.1604,5.8681 20.5324,5.9591 20.2014,6.4001 L11.8204,17.5751 L7.6244,14.2191 C7.1944,13.8741 6.5654,13.9451 6.2184,14.3751 C5.8734,14.8061 5.9454,15.4361 6.3744,15.7811 L12.1804,20.4251 L21.7994,7.6001 C22.1314,7.1581 22.0414,6.5311 21.5994,6.2001"
+                        />
+                    </svg>
+                    <div className="ml2">
+                        The svg icon and this text are inside an anchor element but they are not
+                        colored blue because they are inheriting their color from a parent.
+                    </div>
+                </a>
+            </div>
+            <InlineCode theme="plain">color-inherit</InlineCode>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'color')} />
+
+## Coordinates
+
+Use in combination with the [position](#section-position) module.
+
+<Table atomicClasses={getClasses(props, 'coordinates')} />
+
+## Cursor
+
+Use to change the mouse cursor style.
+
+<Table atomicClasses={getClasses(props, 'cursor')} />
+
+## Display
+
+Options for block, inline, and tables elements.
+
+<Table atomicClasses={getClasses(props, 'display')} />
+
+## Flexbox
+
+<Table atomicClasses={getClasses(props, 'flexbox')} />
+
+## Font Weight
+
+-   Our Mark font only supports two weights: `400` and `700`.
+-   Use only when [Type](https://thumbprint.design/components/type/react/) components are not adequate.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="col-6">
+            <div>
+                <div className="normal">I am the default weight.</div>
+                <InlineCode theme="plain">normal</InlineCode>
+            </div>
+        </div>
+        <div className="col-6">
+            <div>
+                <div className="b">I am the bold weight.</div>
+                <InlineCode theme="plain">b</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'font-weight')} />
+
+## Grid
+
+These classes should be used in place of the [SCSS `grid`](/components/grid/scss/). That has been deprecated.
+
+-   Columns should be divisible by 12.
+-   The immediate child of a `grid` will default to 100% width, which is common for mobile.
+-   Use `col-*` classes to declare width of column.
+-   A `grid` must wrap `col` as immediate children.
+
+<div className="pa3 ba b-gray mb4">
+    <InlineCode theme="plain">grid</InlineCode>
+    <div className="grid mb3">
+        <div className="s_col-3 mb3 s_mb0">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+        <div className="s_col-3 mb3 s_mb0">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+        <div className="s_col-6">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+    </div>
+    <InlineCode theme="plain">grid grid-wide</InlineCode>
+    <div className="grid grid-wide mb3">
+        <div className="s_col-3 mb3 s_mb0">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+        <div className="s_col-3 mb3 s_mb0">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+        <div className="s_col-6">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+    </div>
+    <InlineCode theme="plain">grid grid-flush</InlineCode>
+    <div className="grid grid-flush mb2">
+        <div className="s_col-3 mb3 s_mb0">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+        <div className="s_col-3 mb3 s_mb0">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+        <div className="s_col-6">
+            <div className="bg-gray-200 ba b-gray h3" />
+        </div>
+    </div>
+</div>
+
+-   In the examples the columns default to stacked, then side-by-side above the small breakpoint based on col widths.
+-   Note the margin-bottom classes that apply only below the small breakpoint when columns are stacked.
+
+```html shouldRender=false
+<div className="grid">
+    <div className="s_col-3 mb3 s_mb0">...content...</div>
+    <div className="s_col-3 mb3 s_mb0">...content...</div>
+    <div className="s_col-6">...content...</div>
+</div>
+
+<div className="grid grid-wide">
+    <div className="s_col-3 mb3 s_mb0">...content...</div>
+    <div className="s_col-3 mb3 s_mb0">...content...</div>
+    <div className="s_col-6">...content...</div>
+</div>
+
+<div className="grid grid-flush">
+    <div className="s_col-3 mb3 s_mb0">...content...</div>
+    <div className="s_col-3 mb3 s_mb0">...content...</div>
+    <div className="s_col-6">...content...</div>
+</div>
+```
+
+### Multi-row
+
+Using multiple columns with a combined width that exceeds `12` will automatically wrap into new rows. In this example the columns are stacked by default, two per row above the small breakpoint, and three per row above the medium breakpoint.
+
+```html
+<div class="grid">
+    <div class="s_col-6 m_col-4"><div class="bg-gray-200 ba b-gray h3 mb3"></div></div>
+    <div class="s_col-6 m_col-4"><div class="bg-gray-200 ba b-gray h3 mb3"></div></div>
+    <div class="s_col-6 m_col-4"><div class="bg-gray-200 ba b-gray h3 mb3"></div></div>
+    <div class="s_col-6 m_col-4"><div class="bg-gray-200 ba b-gray h3 mb3 m_mb0"></div></div>
+    <div class="s_col-6 m_col-4"><div class="bg-gray-200 ba b-gray h3 mb3 s_mb0"></div></div>
+    <div class="s_col-6 m_col-4"><div class="bg-gray-200 ba b-gray h3"></div></div>
+</div>
+```
+
+### Centered grid
+
+Though this design pattern is often built using grid classes, it is more easily solved by using `mw7 center tc`.
+
+```html
+<div class="mw7 center tc">
+    <div class="ba b-green">
+        “In our industry, you hear a lot of talk about the future of work. What I’ve come to believe
+        — because I see it every day — is that the entrepreneurial spirit of independent
+        professionals is the most precious resource we have as a society.”
+    </div>
+</div>
+```
+
+<Table atomicClasses={getClasses(props, 'grid')} />
+
+## Height
+
+Options for setting fixed heights.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="col-2">
+            <div>
+                <div className="h1 bg-gray bb b-blue" />
+                <InlineCode theme="plain">h1</InlineCode>
+            </div>
+        </div>
+        <div className="col-2">
+            <div>
+                <div className="h2 bg-gray bb b-blue" />
+                <InlineCode theme="plain">h2</InlineCode>
+            </div>
+        </div>
+        <div className="col-2">
+            <div>
+                <div className="h3 bg-gray bb b-blue" />
+                <InlineCode theme="plain">h3</InlineCode>
+            </div>
+        </div>
+        <div className="col-2">
+            <div>
+                <div className="h4 bg-gray bb b-blue" />
+                <InlineCode theme="plain">h4</InlineCode>
+            </div>
+        </div>
+        <div className="col-2">
+            <div>
+                <div className="h5 bg-gray bb b-blue" />
+                <InlineCode theme="plain">h5</InlineCode>
+            </div>
+        </div>
+        <div className="col-2">
+            <div>
+                <div className="h6 bg-gray bb b-blue" />
+                <InlineCode theme="plain">h6</InlineCode>
+            </div>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'height')} />
+
+## Margin
+
+-   For setting positive, negative, and auto margins.
+-   Spacing can be applied to individual sides, vertical, horizontal, or all sides.
+
+<Table atomicClasses={getClasses(props, 'margin')} />
+
+## Max Width
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="mb3">
+        <div className="h1 bg-gray br b-blue mw1" />
+        <InlineCode theme="plain">mw1</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray br b-blue mw2" />
+        <InlineCode theme="plain">mw2</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray br b-blue mw3" />
+        <InlineCode theme="plain">mw3</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray br b-blue mw4" />
+        <InlineCode theme="plain">mw4</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray br b-blue mw5" />
+        <InlineCode theme="plain">mw5</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray br b-blue mw6" />
+        <InlineCode theme="plain">mw6</InlineCode>
+    </div>
+    <div>
+        <div className="h1 bg-gray br b-blue mw7" />
+        <InlineCode theme="plain">mw7</InlineCode>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'max-width')} />
+
+## Overflow
+
+<Table atomicClasses={getClasses(props, 'overflow')} />
+
+## Padding
+
+-   For setting padding.
+-   Spacing can be applied to individual sides, vertical, horizontal, or all sides.
+
+<Table atomicClasses={getClasses(props, 'padding')} />
+
+## Position
+
+<Table atomicClasses={getClasses(props, 'position')} />
+
+## Text Align
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="m_col-4 mb3 m_mb0">
+            <div className="bg-gray-200 pa2 tl">I'm aligned left</div>
+            <InlineCode theme="plain">tl</InlineCode>
+        </div>
+        <div className="m_col-4 mb3 m_mb0">
+            <div className="bg-gray-200 pa2 tc">I'm aligned center</div>
+            <InlineCode theme="plain">tc</InlineCode>
+        </div>
+        <div className="m_col-4">
+            <div className="bg-gray-200 pa2 tr">I'm aligned right</div>
+            <InlineCode theme="plain">tr</InlineCode>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'text-align')} />
+
+## Text Decoration
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="m_col-6 mb3 m_mb0">
+            <div className="bg-gray-200 pa2 strike">Strikethrough</div>
+            <InlineCode theme="plain">strike</InlineCode>
+        </div>
+        <div className="m_col-6">
+            <div className="bg-gray-200 pa2 underline">Underlined</div>
+            <InlineCode theme="plain">underline</InlineCode>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'text-decoration')} />
+
+## Text Transform
+
+Manipulate case of text.
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="grid">
+        <div className="col-4 mb3 m_mb0">
+            <div className="bg-gray-200 pa2 ttc">capitalize</div>
+            <InlineCode theme="plain">ttc</InlineCode>
+        </div>
+        <div className="col-4 mb3 m_mb0">
+            <div className="bg-gray-200 pa2 ttl">Lowercase</div>
+            <InlineCode theme="plain">ttl</InlineCode>
+        </div>
+        <div className="col-4">
+            <div className="bg-gray-200 pa2 ttu">uppercase</div>
+            <InlineCode theme="plain">ttu</InlineCode>
+        </div>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'text-transform')} />
+
+## Truncate
+
+Single-line truncation.
+
+-   An ellipsis will show only on Webkit browsers, like Safari and Chrome.
+-   Truncating to two or more lines requires custom CSS.
+
+```html
+<div class="truncate mb3 b">
+    In the era of instant-everything, it’s crazy that you still have to waste an entire afternoon
+    researching, calling and comparing local pros whenever you need one.
+</div>
+<div class="flex">
+    <div class="truncate flex-auto">
+        Hi, good to meet you. When do you think we could set up the meeting to decide the needs of
+        the conference?
+    </div>
+    <div class="nowrap b ml2">Jun 21</div>
+</div>
+```
+
+In the second example the we use a flex container and a `nowrap` to prevent the date from wrapping.
+
+<Table atomicClasses={getClasses(props, 'truncate')} />
+
+## Vertical Align
+
+<Table atomicClasses={getClasses(props, 'vertical-align')} />
+
+## Visually Hidden
+
+Text that is hidden but accessible.
+
+<Table atomicClasses={getClasses(props, 'visually-hidden')} />
+
+## White Space
+
+Control how text wraps.
+
+-   `nowrap`: Sequences of whitespace will collapse into a single whitespace. Text will never wrap to the next line. The text continues on the same line until a `<br>` tag is encountered.
+-   `pre`: Whitespace is preserved by the browser. Text will only wrap on line breaks. Acts like the `<pre>` tag in HTML.
+
+<Table atomicClasses={getClasses(props, 'white-space')} />
+
+## Width
+
+-   Fixed and percentage widths.
+-   Use to set the column widths in [Columns](#columns).
+
+<div className="pa3 ba b-gray-300 mb4 tp-body-2">
+    <div className="mb3">
+        <div className="h1 bg-gray w1 br b-blue" />
+        <InlineCode theme="plain">w1</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray w2 br b-blue" />
+        <InlineCode theme="plain">w2</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray w3 br b-blue" />
+        <InlineCode theme="plain">w3</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray w4 br b-blue" />
+        <InlineCode theme="plain">w4</InlineCode>
+    </div>
+    <div className="mb3">
+        <div className="h1 bg-gray w5 br b-blue" />
+        <InlineCode theme="plain">w5</InlineCode>
+    </div>
+    <div>
+        <div className="h1 bg-gray w6 br b-blue" />
+        <InlineCode theme="plain">w6</InlineCode>
+    </div>
+</div>
+
+<Table atomicClasses={getClasses(props, 'width')} />
+
+## Word Break
+
+-   `word-wrap`: To prevent overflow, word may be broken at any character.
+-   `word-nowrap`: Word breaks should not be used for Chinese/Japanese/Korean (CJK) text. Non-CJK text behavior is the same as value "normal".
+
+<Table atomicClasses={getClasses(props, 'word-break')} />
+
+## Z-Index
+
+Use only in rare situations to change stacking order within components.
+
+<Table atomicClasses={getClasses(props, 'z-index')} />

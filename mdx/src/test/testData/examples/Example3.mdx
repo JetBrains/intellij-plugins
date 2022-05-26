@@ -1,0 +1,115 @@
+---
+title: Avatar
+description: Display user images and badges on Thumbtack.
+---
+
+import { graphql, Link } from 'gatsby';
+import {
+    ComponentHeader,
+    ComponentFooter,
+    DeprecatedComponentAlert,
+} from 'components/thumbprint-components';
+import { InlineCode } from 'components/mdx';
+import Alert from 'components/alert';
+
+<ComponentHeader data={props.data} />
+
+<Alert type="warning" title="Avatar component is out-of-date">
+    The sizes and styles available in the SCSS version of the <InlineCode>Avatar</InlineCode>{' '}
+    component{' '}
+    <a
+        href="https://github.com/thumbtack/thumbprint/issues/25"
+        title="Details about the recent changes"
+    >
+        are out-of-date
+    </a>
+    . <Link to="/components/avatar/react/">Use the React component</Link> if possible or <Link to="/help/">
+        reach out to the Design Systems team
+    </Link> if you are blocked.
+</Alert>
+
+## Avatar Sizes
+
+### Extra Large
+
+```html
+<div class="tp-avatar tp-avatar--xlarge">
+    <img src="https://www.placecage.com/130/130" class="tp-avatar__img" />
+</div>
+```
+
+### Large
+
+```html
+<div class="tp-avatar tp-avatar--large">
+    <img src="https://www.placecage.com/130/130" class="tp-avatar__img" />
+</div>
+```
+
+### Medium
+
+```html
+<div class="tp-avatar tp-avatar--medium">
+    <img src="https://www.placecage.com/130/130" class="tp-avatar__img" />
+</div>
+```
+
+### Small
+
+```html
+<div class="tp-avatar tp-avatar--small">
+    <img src="https://www.placecage.com/130/130" class="tp-avatar__img" />
+</div>
+```
+
+### Extra Small
+
+```html
+<div class="tp-avatar tp-avatar--xsmall">
+    <img src="https://www.placecage.com/130/130" class="tp-avatar__img" />
+</div>
+```
+
+## Avatar Badges
+
+<DeprecatedComponentAlert>
+    Avatar badges are deprecated. Status indicators such as "online" status, hired checkmarks, and
+    notification alerts should be implemented as separate elements placed next to the avatar.
+</DeprecatedComponentAlert>
+
+### Hired
+
+```html
+<div class="tp-avatar tp-avatar--xlarge">
+    <img src="//www.placecage.com/130/130" class="tp-avatar__img" />
+    <div class="tp-avatar__badge tp-avatar__badge--hired" />
+</div>
+```
+
+### Notification
+
+```html
+<div class="tp-avatar tp-avatar--xlarge">
+    <img src="//www.placecage.com/130/130" class="tp-avatar__img" />
+    <div class="tp-avatar__badge tp-avatar__badge--notification">99</div>
+</div>
+```
+
+<ComponentFooter data={props.data} />
+
+export const pageQuery = graphql`
+    {
+        # Get links to by path to display in the navbar.
+        platformNav: allSitePage(filter: { path: { glob: "/components/avatar/*/" } }) {
+            edges {
+                node {
+                    ...PlatformNavFragment
+                }
+            }
+        }
+        # Get package information by NPM package name.
+        packageTable: thumbprintComponent(name: { eq: "@thumbtack/thumbprint-scss" }) {
+            ...PackageTableFragment
+        }
+    }
+`;

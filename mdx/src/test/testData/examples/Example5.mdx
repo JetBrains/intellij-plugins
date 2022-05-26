@@ -1,0 +1,52 @@
+---
+title: Tokens
+description: Design variables that power Thumbtack’s UI.
+---
+
+import { graphql } from 'gatsby';
+import PackageTable from 'components/package-table';
+import TabNav from 'components/thumbprint-tokens/tab-nav';
+import TokenSection from 'components/thumbprint-tokens/token-section';
+
+export const pageQuery = graphql`
+    {
+        thumbprintToken {
+            version
+            categories(platform: "scss") {
+                name
+                description
+                tokens {
+                    platforms {
+                        scss {
+                            name
+                            value
+                            description
+                        }
+                        javascript {
+                            value
+                        }
+                    }
+                    format
+                    group
+                    deprecated
+                }
+            }
+        }
+    }
+`;
+
+<TabNav />
+
+<PackageTable
+    version={props.data.thumbprintToken.version}
+    packageName="@thumbtack/thumbprint-tokens"
+    sourceDirectory="https://github.com/thumbtack/thumbprint-tokens"
+    platform="web"
+    importStatement={`@import "@thumbtack/thumbprint-tokens/dist/scss/_index";`}
+/>
+
+<div>
+    {props.data.thumbprintToken.categories.map(section => (
+        <TokenSection section={section} key={section.name} platform="scss" />
+    ))}
+</div>
