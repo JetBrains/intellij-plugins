@@ -1,5 +1,7 @@
 package com.jetbrains.lang.makefile.toolWindow
 
+import com.intellij.openapi.application.AppUIExecutor
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.wm.RegisterToolWindowTask
@@ -14,17 +16,20 @@ private const val TOOLWINDOW_ID = "make" // the ID is unfortunate, but should be
 internal class MakefileToolWindowRegistrar : StartupActivity {
   override fun runActivity(project: Project) {
     val toolWindowManager = ToolWindowManager.getInstance(project)
-    val toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask(
-      id = TOOLWINDOW_ID,
-      stripeTitle = MakefileLangBundle.messagePointer("tool.window.title"),
-      icon = MakefileIcons.MakefileToolWindow,
-      contentFactory = MakeToolWindowFactory(),
-      anchor = ToolWindowAnchor.RIGHT,
-      sideTool = true))
+
+    toolWindowManager.invokeLater {
+      val toolWindow = toolWindowManager.registerToolWindow(RegisterToolWindowTask(
+        id = TOOLWINDOW_ID,
+        stripeTitle = MakefileLangBundle.messagePointer("tool.window.title"),
+        icon = MakefileIcons.MakefileToolWindow,
+        contentFactory = MakeToolWindowFactory(),
+        anchor = ToolWindowAnchor.RIGHT,
+        sideTool = true))
 
 
-    if (shouldDisableStripeButton(project, toolWindowManager)) {
-      toolWindow.isShowStripeButton = false
+      if (shouldDisableStripeButton(project, toolWindowManager)) {
+        toolWindow.isShowStripeButton = false
+      }
     }
   }
 
