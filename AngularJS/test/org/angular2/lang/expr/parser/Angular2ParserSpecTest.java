@@ -930,9 +930,9 @@ public class Angular2ParserSpecTest {
     public void visitJSConditionalExpression(JSConditionalExpression node) {
       printElement(node.getCondition());
       result.append(" ? ");
-      printElement(node.getThen());
+      printElement(node.getThenBranch());
       result.append(" : ");
-      printElement(node.getElse());
+      printElement(node.getElseBranch());
     }
 
     @Override

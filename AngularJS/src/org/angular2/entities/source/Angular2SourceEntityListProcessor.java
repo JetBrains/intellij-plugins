@@ -139,8 +139,8 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       @Override
       public void visitJSConditionalExpression(JSConditionalExpression node) {
         AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () -> {
-          addIfNotNull(result, node.getThen());
-          addIfNotNull(result, node.getElse());
+          addIfNotNull(result, node.getThenBranch());
+          addIfNotNull(result, node.getElseBranch());
         });
       }
 
