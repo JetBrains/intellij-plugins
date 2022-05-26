@@ -2,10 +2,8 @@ package org.intellij.plugin.mdx.completion
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.lang.javascript.completion.JSCompletionContributor
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
-import gnu.trove.THashSet
 import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
