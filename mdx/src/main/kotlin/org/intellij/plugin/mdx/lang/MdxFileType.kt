@@ -1,7 +1,6 @@
 package org.intellij.plugin.mdx.lang
 
 import com.intellij.openapi.fileTypes.LanguageFileType
-import org.intellij.plugin.mdx.ide.MDXIcons
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
@@ -20,8 +19,8 @@ class MdxFileType private constructor() : LanguageFileType(MdxLanguage) {
     return DEFAULT_EXTENSION
   }
 
-  override fun getIcon(): Icon? {
-    return MDXIcons.FILE
+  override fun getIcon(): Icon {
+    return icons.MdxIcons.Mdx
   }
 
   override fun isReadOnly(): Boolean {
