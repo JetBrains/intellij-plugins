@@ -8,9 +8,9 @@ import org.intellij.markdown.MarkdownElementType
 import org.intellij.plugin.mdx.lang.MdxLanguage
 
 class MdxElementTypes {
-    companion object {
-        @JvmField
-        val JSX_BLOCK: IElementType = MarkdownElementType("JSX_BLOCK")
-        val MDX_FILE_NODE_TYPE = IStubFileElementType<PsiFileStub<PsiFile>>("MDX", MdxLanguage)
-    }
+  companion object {
+    @JvmField
+    val JSX_BLOCK: IElementType = MarkdownElementType("JSX_BLOCK")
+    val MDX_FILE_NODE_TYPE = IStubFileElementType<PsiFileStub<PsiFile>>("MDX", MdxLanguage)
+  }
 }

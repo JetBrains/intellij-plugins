@@ -26,5 +26,7 @@
     <orderEntry type="module" module-name="intellij.markdown" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.html.tools" />
+    <orderEntry type="module" module-name="intellij.relaxng" />
   </component>
 </module>

@@ -7,11 +7,11 @@ import org.intellij.plugin.mdx.lang.MdxFileType
 import org.intellij.plugin.mdx.lang.MdxLanguage
 
 class MdxFile(viewProvider: FileViewProvider?) : PsiFileBase(viewProvider!!, MdxLanguage) {
-    override fun getFileType(): FileType {
-        return MdxFileType.INSTANCE
-    }
+  override fun getFileType(): FileType {
+    return MdxFileType.INSTANCE
+  }
 
-    override fun toString(): String {
-        return "MDX File"
-    }
+  override fun toString(): String {
+    return "MDX File"
+  }
 }

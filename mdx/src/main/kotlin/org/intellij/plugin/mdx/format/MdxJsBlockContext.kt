@@ -9,21 +9,21 @@ import com.intellij.lang.javascript.formatter.JSSpacingProcessor
 import com.intellij.lang.javascript.formatter.blocks.JSSpacingStrategy
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.util.ObjectUtils
-import java.util.function.BiFunction
 
 class MdxJsBlockContext(topSettings: CodeStyleSettings,
                         dialect: Language,
                         explicitSettings: JSCodeStyleSettings?,
                         formattingMode: FormattingMode) : JSBlockContext(topSettings, dialect, explicitSettings, formattingMode) {
-    val myDialectSettings = ObjectUtils.coalesce(explicitSettings, topSettings.getCustomSettings(JSCodeStyleSettings.getSettingsClass(dialect)))
+  val myDialectSettings = ObjectUtils.coalesce(explicitSettings,
+                                               topSettings.getCustomSettings(JSCodeStyleSettings.getSettingsClass(dialect)))
 
 
-    override fun createSpacingStrategy(node: ASTNode): JSSpacingStrategy {
-        return JSSpacingStrategy(myDialectSettings, commonSettings
-        ) { child1: ASTNode, child2: ASTNode -> createMdxSpacingProcessor(node, child1, child2).calcSpacing() }
-    }
+  override fun createSpacingStrategy(node: ASTNode): JSSpacingStrategy {
+    return JSSpacingStrategy(myDialectSettings, commonSettings
+    ) { child1: ASTNode, child2: ASTNode -> createMdxSpacingProcessor(node, child1, child2).calcSpacing() }
+  }
 
-    private fun createMdxSpacingProcessor(node: ASTNode, child1: ASTNode, child2: ASTNode): JSSpacingProcessor {
-        return MdxJsSpacingProcessor(node, child1, child2, topSettings, dialect, myDialectSettings)
-    }
+  private fun createMdxSpacingProcessor(node: ASTNode, child1: ASTNode, child2: ASTNode): JSSpacingProcessor {
+    return MdxJsSpacingProcessor(node, child1, child2, topSettings, dialect, myDialectSettings)
+  }
 }

@@ -18,44 +18,47 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IFileElementType
 
 class MdxJSParserDefinition : ECMA6ParserDefinition() {
-    companion object {
-        private val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
-    }
+  companion object {
+    private val FILE: IFileElementType = JSFileElementType.create(MdxJSLanguage.INSTANCE)
+  }
 
-    override fun getFileNodeType(): IFileElementType {
-        return FILE
-    }
+  override fun getFileNodeType(): IFileElementType {
+    return FILE
+  }
 
-    override fun createParser(project: Project?): PsiParser {
-        return PsiParser { root, builder ->
-            MdxJSLanguageParser(builder).parseJS(root)
-            return@PsiParser builder.treeBuilt
-        }
+  override fun createParser(project: Project?): PsiParser {
+    return PsiParser { root, builder ->
+      MdxJSLanguageParser(builder).parseJS(root)
+      return@PsiParser builder.treeBuilt
     }
+  }
 }
 
 
 class MdxJSLanguageParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>,
-        ES6StatementParser<*>,
-        ES6FunctionParser<*>,
-        JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(com.intellij.lang.javascript.JavaScriptSupportLoader.JSX_HARMONY, builder) {
-    init {
-        myStatementParser = object : ES6StatementParser<MdxJSLanguageParser>(this) {
-            override fun parseSourceElement() {
-                if (builder.tokenType == JSTokenTypes.XML_START_TAG_START) {
-                    val exprStatement = this.builder.mark()
-                    if (myJavaScriptParser.expressionParser.parseExpressionOptional()) {
-                        exprStatement.done(JSElementTypes.EXPRESSION_STATEMENT)
-                        exprStatement.setCustomEdgeTokenBinders(JavaScriptParserBase.INCLUDE_DOC_COMMENT_AT_LEFT_NO_EXTRA_LINEBREAK, WhitespacesBinders.DEFAULT_RIGHT_BINDER)
-                    } else {
-                        exprStatement.drop()
-                    }
-                } else {
-                    super.parseSourceElement()
-                }
-            }
-
+  ES6StatementParser<*>,
+  ES6FunctionParser<*>,
+  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(com.intellij.lang.javascript.JavaScriptSupportLoader.JSX_HARMONY, builder) {
+  init {
+    myStatementParser = object : ES6StatementParser<MdxJSLanguageParser>(this) {
+      override fun parseSourceElement() {
+        if (builder.tokenType == JSTokenTypes.XML_START_TAG_START) {
+          val exprStatement = this.builder.mark()
+          if (myJavaScriptParser.expressionParser.parseExpressionOptional()) {
+            exprStatement.done(JSElementTypes.EXPRESSION_STATEMENT)
+            exprStatement.setCustomEdgeTokenBinders(JavaScriptParserBase.INCLUDE_DOC_COMMENT_AT_LEFT_NO_EXTRA_LINEBREAK,
+                                                    WhitespacesBinders.DEFAULT_RIGHT_BINDER)
+          }
+          else {
+            exprStatement.drop()
+          }
         }
+        else {
+          super.parseSourceElement()
+        }
+      }
+
     }
+  }
 
 }

@@ -9,8 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class MdxEditorHighlighterProvider : EditorHighlighterProvider {
 
-    override fun getEditorHighlighter(project: Project?,
-                                      fileType: FileType,
-                                      virtualFile: VirtualFile?,
-                                      colors: EditorColorsScheme): EditorHighlighter = MdxEditorHighlighter(colors)
+  override fun getEditorHighlighter(project: Project?,
+                                    fileType: FileType,
+                                    virtualFile: VirtualFile?,
+                                    colors: EditorColorsScheme): EditorHighlighter = MdxEditorHighlighter(colors)
 }

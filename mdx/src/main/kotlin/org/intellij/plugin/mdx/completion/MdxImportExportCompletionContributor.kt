@@ -10,21 +10,21 @@ import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
 class MdxImportExportCompletionContributor : CompletionContributor() {
 
-    init {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(MarkdownTokenTypes.TEXT), object : CompletionProvider<CompletionParameters>() {
-            override fun addCompletions(parameters: CompletionParameters,
-                                        context: ProcessingContext,
-                                        result: CompletionResultSet) {
-                val node = parameters.position.node
-                val nodeParent = node.treeParent
-                if (nodeParent.psi.containingFile is MdxFile) {
-                    if (nodeParent.elementType == MarkdownElementTypes.PARAGRAPH &&
-                            (nodeParent.firstChildNode == node || nodeParent.text.trim().startsWith(node.text))) {
-                        result.addElement(LookupElementBuilder.create("export ").bold())
-                        result.addElement(LookupElementBuilder.create("import ").bold())
-                    }
-                }
-            }
-        })
-    }
+  init {
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement(MarkdownTokenTypes.TEXT), object : CompletionProvider<CompletionParameters>() {
+      override fun addCompletions(parameters: CompletionParameters,
+                                  context: ProcessingContext,
+                                  result: CompletionResultSet) {
+        val node = parameters.position.node
+        val nodeParent = node.treeParent
+        if (nodeParent.psi.containingFile is MdxFile) {
+          if (nodeParent.elementType == MarkdownElementTypes.PARAGRAPH &&
+              (nodeParent.firstChildNode == node || nodeParent.text.trim().startsWith(node.text))) {
+            result.addElement(LookupElementBuilder.create("export ").bold())
+            result.addElement(LookupElementBuilder.create("import ").bold())
+          }
+        }
+      }
+    })
+  }
 }

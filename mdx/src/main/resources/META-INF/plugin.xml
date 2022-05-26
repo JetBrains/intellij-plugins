@@ -1,8 +1,8 @@
 <idea-plugin>
-    <id>mdx.js</id>
-    <name>MDX</name>
-    <vendor>JetBrains</vendor>
-    <description><![CDATA[
+  <id>mdx.js</id>
+  <name>MDX</name>
+  <vendor>JetBrains</vendor>
+  <description><![CDATA[
 <p>Provides support for <a href="https://mdxjs.com/">MDX</a>, a language that blends Markdown and JSX syntax.</p>
 <p>Includes the following features:</p>
 <ul>
@@ -10,54 +10,54 @@
 <li>Code completion, auto imports and navigation to the definition for React components</li>
 <li>Coding assistance for JavaScript</li></ul>
     ]]>
-    </description>
+  </description>
 
 
-    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <depends>com.intellij.modules.platform</depends>
-    <depends>org.intellij.plugins.markdown</depends>
-    <depends>com.intellij.modules.lang</depends>
-    <depends>JavaScript</depends>
-    <applicationListeners>
-        <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyCommandListener"
-                  topic="com.intellij.openapi.command.CommandListener"/>
-        <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyDynamicPluginListener"
-                  topic="com.intellij.ide.plugins.DynamicPluginListener"/>
-    </applicationListeners>
-    <extensions defaultExtensionNs="com.intellij">
-        <fileType name="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxFileType"
-                  fieldName="INSTANCE" language="MDX" extensions="mdx"/>
-        <lang.fileViewProviderFactory language="MDX"
-                                      implementationClass="org.intellij.plugin.mdx.lang.psi.MdxFileViewProviderFactory"/>
-        <lang.parserDefinition language="MDX"
-                               implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
+  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <depends>com.intellij.modules.platform</depends>
+  <depends>org.intellij.plugins.markdown</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
+  <applicationListeners>
+    <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyCommandListener"
+              topic="com.intellij.openapi.command.CommandListener"/>
+    <listener class="org.intellij.plugin.mdx.js.MdxTagNameSynchronizer$MyDynamicPluginListener"
+              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+  </applicationListeners>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType name="MDX" implementationClass="org.intellij.plugin.mdx.lang.MdxFileType"
+              fieldName="INSTANCE" language="MDX" extensions="mdx"/>
+    <lang.fileViewProviderFactory language="MDX"
+                                  implementationClass="org.intellij.plugin.mdx.lang.psi.MdxFileViewProviderFactory"/>
+    <lang.parserDefinition language="MDX"
+                           implementationClass="org.intellij.plugin.mdx.lang.parse.MdxParserDefinition"/>
 
-        <editorHighlighterProvider filetype="MDX"
-                                   implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
-        <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
+    <editorHighlighterProvider filetype="MDX"
+                               implementationClass="org.intellij.plugin.mdx.highlighting.MdxEditorHighlighterProvider"/>
+    <colorSettingsPage implementation="org.intellij.plugin.mdx.highlighting.MdxColorSettingsPage"/>
 
-        <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
-        <outerLanguageRangePatcher language="MdxJS"
-                                   implementationClass="org.intellij.plugin.mdx.lang.psi.MdxOuterLanguagePatcher"/>
-        <lang.inspectionSuppressor language="MDX"
-                                   implementationClass="org.intellij.plugin.mdx.codeInspection.MdxInspectionSuppressor"/>
-        <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.js.MdxZenCodingGenerator"/>
-        <editorFactoryListener implementation="org.intellij.plugin.mdx.js.MdxEditorFactoryListener"/>
-        <lang.formatter language="MDX" implementationClass="org.intellij.plugin.mdx.format.MdxFormattingModelBuilder"/>
-        <lang.formatter language="MdxJS" implementationClass="org.intellij.plugin.mdx.format.MdxJsFormattingModelBuilder"/>
-        <fileIndentOptionsProvider implementation="org.intellij.plugin.mdx.format.MdxFileIndentOptionsProvider"/>
-        <completion.contributor language="Markdown"
-                                id="MdxImportExportCompletionContributor"
-                                implementationClass="org.intellij.plugin.mdx.completion.MdxImportExportCompletionContributor"
-        />
-    </extensions>
+    <lang.parserDefinition language="MdxJS" implementationClass="org.intellij.plugin.mdx.js.MdxJSParserDefinition"/>
+    <outerLanguageRangePatcher language="MdxJS"
+                               implementationClass="org.intellij.plugin.mdx.lang.psi.MdxOuterLanguagePatcher"/>
+    <lang.inspectionSuppressor language="MDX"
+                               implementationClass="org.intellij.plugin.mdx.codeInspection.MdxInspectionSuppressor"/>
+    <xml.zenCodingGenerator implementation="org.intellij.plugin.mdx.js.MdxZenCodingGenerator"/>
+    <editorFactoryListener implementation="org.intellij.plugin.mdx.js.MdxEditorFactoryListener"/>
+    <lang.formatter language="MDX" implementationClass="org.intellij.plugin.mdx.format.MdxFormattingModelBuilder"/>
+    <lang.formatter language="MdxJS" implementationClass="org.intellij.plugin.mdx.format.MdxJsFormattingModelBuilder"/>
+    <fileIndentOptionsProvider implementation="org.intellij.plugin.mdx.format.MdxFileIndentOptionsProvider"/>
+    <completion.contributor language="Markdown"
+                            id="MdxImportExportCompletionContributor"
+                            implementationClass="org.intellij.plugin.mdx.completion.MdxImportExportCompletionContributor"
+    />
+  </extensions>
 
-    <extensions defaultExtensionNs="JavaScript">
-        <moduleReferenceContributor implementation="org.intellij.plugin.mdx.js.MdxModuleReferenceContributor"/>
-    </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <moduleReferenceContributor implementation="org.intellij.plugin.mdx.js.MdxModuleReferenceContributor"/>
+  </extensions>
 
-    <actions>
-        <!-- Add your actions here -->
-    </actions>
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
 </idea-plugin>

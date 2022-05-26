@@ -22,93 +22,93 @@ import org.intellij.plugins.markdown.lang.parser.CommentAwareLinkReferenceDefini
 import java.net.URI
 
 object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
-    private val myGfmFlavourDescriptor: GFMFlavourDescriptor = GFMFlavourDescriptor()
+  private val myGfmFlavourDescriptor: GFMFlavourDescriptor = GFMFlavourDescriptor()
 
-    override val markerProcessorFactory: MarkerProcessorFactory get() = MdxProcessFactory
+  override val markerProcessorFactory: MarkerProcessorFactory get() = MdxProcessFactory
 
-    override val sequentialParserManager: SequentialParserManager get() = myGfmFlavourDescriptor.sequentialParserManager
+  override val sequentialParserManager: SequentialParserManager get() = myGfmFlavourDescriptor.sequentialParserManager
 
-    override fun createHtmlGeneratingProviders(linkMap: LinkMap, baseURI: URI?): Map<IElementType, GeneratingProvider> {
-        return myGfmFlavourDescriptor.createHtmlGeneratingProviders(linkMap, baseURI)
-    }
+  override fun createHtmlGeneratingProviders(linkMap: LinkMap, baseURI: URI?): Map<IElementType, GeneratingProvider> {
+    return myGfmFlavourDescriptor.createHtmlGeneratingProviders(linkMap, baseURI)
+  }
 
-    override fun createInlinesLexer(): MarkdownLexer {
-        return myGfmFlavourDescriptor.createInlinesLexer()
-    }
+  override fun createInlinesLexer(): MarkdownLexer {
+    return myGfmFlavourDescriptor.createInlinesLexer()
+  }
 }
 
 private object MdxProcessFactory : MarkerProcessorFactory {
-    override fun createMarkerProcessor(productionHolder: ProductionHolder): MarkerProcessor<*> {
-        return MdxMarkerProcessor(productionHolder, CommonMarkdownConstraints.BASE)
-    }
+  override fun createMarkerProcessor(productionHolder: ProductionHolder): MarkerProcessor<*> {
+    return MdxMarkerProcessor(productionHolder, CommonMarkdownConstraints.BASE)
+  }
 }
 
 private class MdxMarkerProcessor(
-    productionHolder: ProductionHolder,
-    constraints: MarkdownConstraints
+  productionHolder: ProductionHolder,
+  constraints: MarkdownConstraints
 ) :
-    CommonMarkMarkerProcessor(productionHolder, constraints) {
+  CommonMarkMarkerProcessor(productionHolder, constraints) {
 
 
-    private val markerBlockProviders =
-        listOf(
-            CodeBlockProvider(),
-            HorizontalRuleProvider(),
-            CodeFenceProvider(),
-            
-            SetextHeaderProvider(),
-            BlockQuoteProvider(),
-            ListMarkerProvider(),
-            JsxBlockProvider(),
-            HtmlBlockProvider(),
-            GitHubTableMarkerProvider(),
-            AtxHeaderProvider(),
-            CommentAwareLinkReferenceDefinitionProvider()
-        )
+  private val markerBlockProviders =
+    listOf(
+      CodeBlockProvider(),
+      HorizontalRuleProvider(),
+      CodeFenceProvider(),
 
-    override fun populateConstraintsTokens(
-        pos: LookaheadText.Position,
-        constraints: MarkdownConstraints,
-        productionHolder: ProductionHolder
-    ) {
-        if (constraints !is GFMConstraints || !constraints.hasCheckbox()) {
-            super.populateConstraintsTokens(pos, constraints, productionHolder)
-            return
-        }
+      SetextHeaderProvider(),
+      BlockQuoteProvider(),
+      ListMarkerProvider(),
+      JsxBlockProvider(),
+      HtmlBlockProvider(),
+      GitHubTableMarkerProvider(),
+      AtxHeaderProvider(),
+      CommentAwareLinkReferenceDefinitionProvider()
+    )
 
-        val line = pos.currentLine
-        var offset = pos.offsetInCurrentLine
-        while (offset < line.length && line[offset] != '[') {
-            offset++
-        }
-        if (offset == line.length) {
-            super.populateConstraintsTokens(pos, constraints, productionHolder)
-            return
-        }
-
-        val type = when (constraints.types.lastOrNull()) {
-            '>' ->
-                MarkdownTokenTypes.BLOCK_QUOTE
-            '.', ')' ->
-                MarkdownTokenTypes.LIST_NUMBER
-            else ->
-                MarkdownTokenTypes.LIST_BULLET
-        }
-        val middleOffset = pos.offset - pos.offsetInCurrentLine + offset
-        val endOffset = Math.min(
-            pos.offset - pos.offsetInCurrentLine + constraints.getCharsEaten(pos.currentLine),
-            pos.nextLineOrEofOffset
-        )
-
-        productionHolder.addProduction(
-            listOf(
-                SequentialParser.Node(pos.offset..middleOffset, type),
-                SequentialParser.Node(middleOffset..endOffset, GFMTokenTypes.CHECK_BOX)
-            )
-        )
+  override fun populateConstraintsTokens(
+    pos: LookaheadText.Position,
+    constraints: MarkdownConstraints,
+    productionHolder: ProductionHolder
+  ) {
+    if (constraints !is GFMConstraints || !constraints.hasCheckbox()) {
+      super.populateConstraintsTokens(pos, constraints, productionHolder)
+      return
     }
 
-    override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> {
-        return markerBlockProviders
+    val line = pos.currentLine
+    var offset = pos.offsetInCurrentLine
+    while (offset < line.length && line[offset] != '[') {
+      offset++
     }
+    if (offset == line.length) {
+      super.populateConstraintsTokens(pos, constraints, productionHolder)
+      return
+    }
+
+    val type = when (constraints.types.lastOrNull()) {
+      '>' ->
+        MarkdownTokenTypes.BLOCK_QUOTE
+      '.', ')' ->
+        MarkdownTokenTypes.LIST_NUMBER
+      else ->
+        MarkdownTokenTypes.LIST_BULLET
+    }
+    val middleOffset = pos.offset - pos.offsetInCurrentLine + offset
+    val endOffset = Math.min(
+      pos.offset - pos.offsetInCurrentLine + constraints.getCharsEaten(pos.currentLine),
+      pos.nextLineOrEofOffset
+    )
+
+    productionHolder.addProduction(
+      listOf(
+        SequentialParser.Node(pos.offset..middleOffset, type),
+        SequentialParser.Node(middleOffset..endOffset, GFMTokenTypes.CHECK_BOX)
+      )
+    )
+  }
+
+  override fun getMarkerBlockProviders(): List<MarkerBlockProvider<StateInfo>> {
+    return markerBlockProviders
+  }
 }
