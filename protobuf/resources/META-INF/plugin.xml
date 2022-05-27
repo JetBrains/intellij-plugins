@@ -50,6 +50,10 @@
     <extensionPoint qualifiedName="com.intellij.protobuf.codeImplementationSearcher"
                     interface="com.intellij.protobuf.ide.gutter.PbCodeImplementationSearcher"
                     dynamic="true"/>
+
+    <extensionPoint qualifiedName="com.intellij.protobuf.generatedCodeConverterProvider"
+                    interface="com.intellij.protobuf.ide.gutter.PbGeneratedCodeConverterProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij.protobuf">
@@ -70,7 +74,8 @@
     <lang.parserDefinition language="protobuf" implementationClass="com.intellij.protobuf.lang.PbParserDefinition"/>
 
     <!-- Syntax highlighting -->
-    <lang.syntaxHighlighterFactory language="protobuf" implementationClass="com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="protobuf"
+                                   implementationClass="com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighterFactory"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.ide.highlighter.PbHighlightingAnnotator" order="FIRST"/>
     <annotator language="protobuf" implementationClass="com.intellij.protobuf.ide.highlighter.PbTextHighlightingAnnotator" order="FIRST"/>
     <colorSettingsPage implementation="com.intellij.protobuf.ide.highlighter.PbColorSettingsPage"/>
@@ -88,13 +93,13 @@
     <lang.formatter language="protobuf" implementationClass="com.intellij.protobuf.ide.formatter.PbFormattingModelBuilder"/>
     <codeStyleSettingsProvider implementation="com.intellij.protobuf.ide.style.PbCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.protobuf.ide.style.PbLanguageCodeStyleSettingsProvider"/>
-    <lineIndentProvider implementation="com.intellij.protobuf.ide.editing.PbLineIndentProvider" />
+    <lineIndentProvider implementation="com.intellij.protobuf.ide.editing.PbLineIndentProvider"/>
 
     <!-- Editor sugar (folding, brace matching, completion, etc.) -->
-    <breadcrumbsInfoProvider implementation="com.intellij.protobuf.ide.views.PbBreadcrumbsInfoProvider" />
+    <breadcrumbsInfoProvider implementation="com.intellij.protobuf.ide.views.PbBreadcrumbsInfoProvider"/>
     <typedHandler implementation="com.intellij.protobuf.ide.editing.ProtoTypedHandler"/>
     <backspaceHandlerDelegate implementation="com.intellij.protobuf.ide.editing.ProtoBackspaceHandler"/>
-    <completion.confidence language="protobuf" implementationClass="com.intellij.protobuf.lang.completion.PbCompletionConfidence" />
+    <completion.confidence language="protobuf" implementationClass="com.intellij.protobuf.lang.completion.PbCompletionConfidence"/>
     <completion.contributor language="protobuf" implementationClass="com.intellij.protobuf.lang.completion.PbCompletionContributor"/>
     <enterBetweenBracesDelegate language="protobuf" implementationClass="com.intellij.protobuf.ide.editing.PbEnterBetweenBracesDelegate"/>
     <lang.braceMatcher language="protobuf" implementationClass="com.intellij.protobuf.ide.editing.ProtoBraceMatcher"/>
@@ -112,7 +117,8 @@
                      groupKey="protobuf.inspections.group.name"
                      enabledByDefault="true"
                      implementationClass="com.intellij.protobuf.lang.inspection.PbDuplicatedImportsInspection"/>
-    <codeInsight.lineMarkerProvider language="" implementationClass="com.intellij.protobuf.ide.gutter.PbCodeImplementationLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language=""
+                                    implementationClass="com.intellij.protobuf.ide.gutter.PbCodeImplementationLineMarkerProvider"/>
 
     <!-- Navigation -->
     <lang.findUsagesProvider language="protobuf" implementationClass="com.intellij.protobuf.lang.findusages.PbFindUsagesProvider"/>
@@ -131,14 +137,16 @@
     <stubIndex implementation="com.intellij.protobuf.lang.stub.index.ShortNameIndex"/>
 
     <!-- Settings -->
-    <postStartupActivity implementation="com.intellij.protobuf.ide.settings.BundledProtoResourcesMigrationPostStartupActivity" id="PbSettingsMigrationActivity"/>
+    <postStartupActivity implementation="com.intellij.protobuf.ide.settings.BundledProtoResourcesMigrationPostStartupActivity"
+                         id="PbSettingsMigrationActivity"/>
     <projectConfigurable instance="com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable" groupId="language">
       <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"/>
     </projectConfigurable>
     <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbProjectSettings"/>
     <projectService serviceImplementation="com.intellij.protobuf.ide.settings.PbTextLanguageSettings"/>
     <postStartupActivity
-      implementation="com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager$ProjectOpenedActivity" order="after PbSettingsMigrationActivity"/>
+      implementation="com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager$ProjectOpenedActivity"
+      order="after PbSettingsMigrationActivity"/>
 
     <!-- Enable usage highlights for non-project targets -->
     <useScopeEnlarger implementation="com.intellij.protobuf.lang.resolve.PbUseScopeEnlarger"/>
@@ -161,13 +169,15 @@
   <!-- Text format extensions -->
   <extensions defaultExtensionNs="com.intellij">
     <!-- Language -->
-    <fileType name="prototext" language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextFileType" extensions="pb;textproto"/>
+    <fileType name="prototext" language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextFileType"
+              extensions="pb;textproto"/>
 
     <lang.parserDefinition language="prototext" implementationClass="com.intellij.protobuf.lang.PbTextParserDefinition"/>
     <filetype.stubBuilder filetype="prototext" implementationClass="com.intellij.protobuf.lang.stub.PbTextFileStubBuilder"/>
 
     <!-- Syntax highlighting -->
-    <lang.syntaxHighlighterFactory language="prototext" implementationClass="com.intellij.protobuf.ide.highlighter.PbTextSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="prototext"
+                                   implementationClass="com.intellij.protobuf.ide.highlighter.PbTextSyntaxHighlighterFactory"/>
     <annotator language="prototext" implementationClass="com.intellij.protobuf.ide.highlighter.PbTextHighlightingAnnotator"/>
     <colorSettingsPage implementation="com.intellij.protobuf.ide.highlighter.PbTextColorSettingsPage"/>
 
@@ -192,7 +202,8 @@
                               implementation="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveReferenceContributor"/>
     <annotator language="prototext" implementationClass="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveAnnotator"/>
     <daemon.changeLocalityDetector implementation="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveChangeLocalityDetector"/>
-    <completion.contributor language="prototext" implementationClass="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveCompletionContributor"/>
+    <completion.contributor language="prototext"
+                            implementationClass="com.intellij.protobuf.lang.resolve.directive.SchemaDirectiveCompletionContributor"/>
     <editorNotificationProvider implementation="com.intellij.protobuf.ide.editing.MissingSchemaNotificationProvider"/>
     <templateCompletionProcessor implementation="com.intellij.protobuf.ide.template.ChildEntryTemplateCompletionProcessor"/>
     <templateCompletionProcessor implementation="com.intellij.protobuf.ide.template.SymbolTemplateCompletionProcessor"/>

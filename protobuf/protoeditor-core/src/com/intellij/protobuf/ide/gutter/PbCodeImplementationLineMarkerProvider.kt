@@ -27,6 +27,7 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import java.awt.event.MouseEvent
 import java.util.concurrent.Callable
 import kotlin.streams.asSequence
+import kotlin.streams.toList
 
 internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
   override fun getId(): String {
@@ -60,7 +61,8 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
       { event: MouseEvent, psiElement: PsiElement ->
         if (psiElement is PbElement) {
           val gotoRelatedItems = GotoRelatedItem.createItems(findImplementations(psiElement).toList()).toMutableList()
-          NavigationUtil.getRelatedItemsPopup(gotoRelatedItems, PbIdeBundle.message("line.marker.navigate.to.implementation")).show(event.component)
+          NavigationUtil.getRelatedItemsPopup(gotoRelatedItems, PbIdeBundle.message("line.marker.navigate.to.implementation")).show(
+            event.component)
         }
       },
       GutterIconRenderer.Alignment.LEFT,
@@ -115,8 +117,9 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   private fun findImplementations(pbElement: PbElement): Sequence<PsiElement> {
-    return EP_NAME.extensions().asSequence()
-      .flatMap { it.findImplementationsForProtoElement(pbElement) }
+    val converters = collectRpcConverters()
+    return IMPLEMENTATION_SEARCHER_EP_NAME.extensions().asSequence()
+      .flatMap { it.findImplementationsForProtoElement(pbElement, converters) }
   }
 
   private fun hasProtoDefinition(psiElement: PsiElement): Boolean {
@@ -124,8 +127,9 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   private fun findProtoDefinitions(psiElement: PsiElement): Sequence<PbElement> {
-    return EP_NAME.extensions().asSequence()
-      .flatMap { it.findDeclarationsForCodeElement(psiElement) }
+    val converters = collectRpcConverters()
+    return IMPLEMENTATION_SEARCHER_EP_NAME.extensions().asSequence()
+      .flatMap { it.findDeclarationsForCodeElement(psiElement, converters) }
   }
 
   private fun PsiElement.identifierChild(): PsiElement? {
@@ -136,13 +140,17 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return this.parentOfType<PsiNameIdentifierOwner>(true)
   }
 
-  companion object {
-    private val EP_NAME =
-      ExtensionPointName.create<PbCodeImplementationSearcher>("com.intellij.protobuf.codeImplementationSearcher")
+  private fun collectRpcConverters(): Collection<PbGeneratedCodeConverter> {
+    return CONVERTER_EP_NAME.extensions().map(PbGeneratedCodeConverterProvider::getProtoConverter).toList()
   }
 }
 
 interface PbCodeImplementationSearcher {
-  fun findImplementationsForProtoElement(pbElement: PbElement): Sequence<NavigatablePsiElement>
-  fun findDeclarationsForCodeElement(psiElement: PsiElement): Sequence<PbElement>
+  fun findImplementationsForProtoElement(pbElement: PbElement,
+                                         converters: Collection<PbGeneratedCodeConverter>): Sequence<NavigatablePsiElement>
+
+  fun findDeclarationsForCodeElement(psiElement: PsiElement, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement>
 }
+
+private val IMPLEMENTATION_SEARCHER_EP_NAME =
+  ExtensionPointName.create<PbCodeImplementationSearcher>("com.intellij.protobuf.codeImplementationSearcher")
