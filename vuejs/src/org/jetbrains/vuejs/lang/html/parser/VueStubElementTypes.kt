@@ -6,6 +6,7 @@ import com.intellij.psi.impl.source.html.HtmlStubBasedTagElementType
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStubImpl
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedElementType
+import com.intellij.psi.impl.source.xml.stub.XmlTagStubImpl
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -20,14 +21,21 @@ import org.jetbrains.vuejs.index.VueUrlIndex
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeImpl
 import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl
+import org.jetbrains.vuejs.lang.html.psi.impl.VueTemplateTagImpl
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.io.IOException
 
 object VueStubElementTypes {
 
-  const val VERSION = 5
+  const val VERSION = 6
 
-  val STUBBED_TAG = object : HtmlStubBasedTagElementType("STUBBED_TAG", VueLanguage.INSTANCE) {
+  val STUBBED_NON_TEMPLATE_TAG = VueStubBasedTagElementType("STUBBED_NON_TEMPLATE_TAG")
+  val STUBBED_TEMPLATE_TAG = object : VueStubBasedTagElementType("STUBBED_TEMPLATE_TAG") {
+    override fun createPsi(node: ASTNode) = VueTemplateTagImpl(node)
+    override fun createPsi(stub: XmlTagStubImpl) = VueTemplateTagImpl(stub, this)
+  }
+
+   open class VueStubBasedTagElementType(debugName: String) : HtmlStubBasedTagElementType(debugName, VueLanguage.INSTANCE) {
     override fun shouldCreateStub(node: ASTNode?): Boolean {
       return (node?.psi as? XmlTag)
                ?.let {

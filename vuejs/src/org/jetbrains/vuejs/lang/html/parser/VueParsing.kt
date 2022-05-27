@@ -88,15 +88,15 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
   override fun getHtmlTagElementType(): IElementType {
     val tagName = peekTagName().toLowerCase(Locale.US)
-    if (tagName in STUBBED_TAGS
+    if (tagName in ALWAYS_STUBBED_TAGS
         || (tagLevel() == 1 && tagName in TOP_LEVEL_TAGS)) {
-      return VueStubElementTypes.STUBBED_TAG
+      return if (tagName == TEMPLATE_TAG_NAME) VueStubElementTypes.STUBBED_TEMPLATE_TAG else VueStubElementTypes.STUBBED_NON_TEMPLATE_TAG
     }
     return super.getHtmlTagElementType()
   }
 
   companion object {
-    val STUBBED_TAGS: List<String> = listOf(SCRIPT_TAG_NAME, SLOT_TAG_NAME)
+    val ALWAYS_STUBBED_TAGS: List<String> = listOf(SCRIPT_TAG_NAME, SLOT_TAG_NAME)
     val TOP_LEVEL_TAGS: List<String> = listOf(TEMPLATE_TAG_NAME, STYLE_TAG_NAME)
   }
 }
