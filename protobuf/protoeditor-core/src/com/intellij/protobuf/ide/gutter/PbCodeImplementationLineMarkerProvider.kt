@@ -56,14 +56,11 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       psiElement,
       psiElement.textRange,
-      AllIcons.General.OverridenMethod,
-      { null },
-      { event: MouseEvent, psiElement: PsiElement ->
-        if (psiElement is PbElement) {
-          val gotoRelatedItems = GotoRelatedItem.createItems(findImplementations(psiElement).toList()).toMutableList()
-          NavigationUtil.getRelatedItemsPopup(gotoRelatedItems, PbIdeBundle.message("line.marker.navigate.to.implementation")).show(
-            event.component)
-        }
+      AllIcons.General.ImplementingMethod, //todo
+      { PbIdeBundle.message("line.marker.navigate.to.declaration") },
+      navigationHandler { identifierOwner ->
+        if (identifierOwner !is PbElement) return@navigationHandler emptyList()
+        findImplementations(identifierOwner).toList()
       },
       GutterIconRenderer.Alignment.LEFT,
       NotNullFactory {
@@ -77,39 +74,43 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       psiElement,
       psiElement.textRange,
-      AllIcons.General.ImplementingMethod,
+      AllIcons.General.ImplementingMethod, //todo
       { PbIdeBundle.message("line.marker.navigate.to.declaration") },
-      GutterIconNavigationHandler { event, element ->
-        val project = element.project
-        ReadAction.nonBlocking(Callable {
-          val identifierOwner = element.parentIdentifierOwner() ?: return@Callable emptyList()
-          findProtoDefinitions(identifierOwner).toList()
-        })
-          .expireWith(project.service<PbCompositeModificationTracker>())
-          .withDocumentsCommitted(project)
-          .coalesceBy(this@PbCodeImplementationLineMarkerProvider)
-          .finishOnUiThread(ModalityState.NON_MODAL) { targets ->
-            when (targets.size) {
-              0 -> return@finishOnUiThread
-              1 -> {
-                val singleTarget = targets.singleOrNull() ?: return@finishOnUiThread
-                EditSourceUtil.getDescriptor(singleTarget)?.takeIf(Navigatable::canNavigate)?.navigate(true)
-              }
-              else -> {
-                NavigationUtil.getPsiElementPopup(
-                  targets.toTypedArray(),
-                  PbIdeBundle.message("line.marker.navigate.to.declaration")
-                ).show(RelativePoint(event))
-              }
-            }
-          }
-          .submit(AppExecutorUtil.getAppExecutorService())
-      },
+      navigationHandler { identifierOwner -> findProtoDefinitions(identifierOwner).toList() },
       GutterIconRenderer.Alignment.LEFT,
-      NotNullFactory {
-        GotoRelatedItem.createItems(findProtoDefinitions(psiElement).toList())
-      }
+      NotNullFactory { GotoRelatedItem.createItems(findProtoDefinitions(psiElement).toList()) }
     ) {}
+  }
+
+  private fun navigationHandler(lazyTargets: (PsiNameIdentifierOwner) -> Collection<PsiElement>): GutterIconNavigationHandler<PsiElement> {
+    return GutterIconNavigationHandler<PsiElement> { event, element ->
+      val project = element.project
+      ReadAction.nonBlocking(Callable {
+        val identifierOwner = element.parentIdentifierOwner() ?: return@Callable emptyList()
+        lazyTargets(identifierOwner)
+      })
+        .expireWith(project.service<PbCompositeModificationTracker>())
+        .withDocumentsCommitted(project)
+        .coalesceBy(this@PbCodeImplementationLineMarkerProvider)
+        .finishOnUiThread(ModalityState.NON_MODAL) { targets -> navigateOrShowPopup(event, targets) }
+        .submit(AppExecutorUtil.getAppExecutorService())
+    }
+  }
+
+  private fun navigateOrShowPopup(event: MouseEvent, targets: Collection<PsiElement>) {
+    when (targets.size) {
+      0 -> return
+      1 -> {
+        val singleTarget = targets.singleOrNull() ?: return
+        EditSourceUtil.getDescriptor(singleTarget)?.takeIf(Navigatable::canNavigate)?.navigate(true)
+      }
+      else -> {
+        NavigationUtil.getPsiElementPopup(
+          targets.toTypedArray(),
+          PbIdeBundle.message("line.marker.navigate.to.declaration")
+        ).show(RelativePoint(event))
+      }
+    }
   }
 
   private fun hasImplementation(pbElement: PbElement): Boolean {
@@ -136,7 +137,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return this.castSafelyTo<PsiNameIdentifierOwner>()?.identifyingElement
   }
 
-  private fun PsiElement.parentIdentifierOwner(): PsiElement? {
+  private fun PsiElement.parentIdentifierOwner(): PsiNameIdentifierOwner? {
     return this.parentOfType<PsiNameIdentifierOwner>(true)
   }
 
