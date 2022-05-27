@@ -7,7 +7,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceExpressionResolver
 
 class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
-  override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
+  override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
                                                  ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
     VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
 }

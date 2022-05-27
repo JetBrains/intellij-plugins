@@ -24,9 +24,9 @@ import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
-class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
+class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
                                        ignorePerformanceLimits: Boolean) :
-  JSReferenceExpressionResolver(referenceExpression!!, ignorePerformanceLimits) {
+  JSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) {
 
   companion object {
     fun resolveFiltersFromReferenceExpression(expression: VueJSFilterReferenceExpression): List<VueFilter> {
@@ -49,8 +49,10 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
       myReferencedName == null -> ResolveResult.EMPTY_ARRAY
       myRef is VueJSFilterReferenceExpression -> resolveFilterNameReference(myRef, incompleteCode)
       myQualifier is JSThisExpression -> resolveTemplateVariable(expression)
-      myQualifier == null -> resolveTemplateVariable(expression)
-        .ifEmpty { super.resolve(expression, incompleteCode) }
+      myQualifier == null -> {
+        resolveTemplateVariable(expression)
+          .ifEmpty { super.resolve(expression, incompleteCode) }
+      }
       else -> super.resolve(expression, incompleteCode)
     }
 
