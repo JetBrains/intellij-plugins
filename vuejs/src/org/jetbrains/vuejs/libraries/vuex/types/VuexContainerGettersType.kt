@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.JSRecordType
@@ -22,7 +22,7 @@ class VuexContainerGettersType private constructor(source: JSTypeSource, element
     return VuexContainerGettersType(source, element, baseNamespace)
   }
 
-  override fun createStateRecord(context: VuexStoreContext, baseNamespace: String): JSRecordType? {
+  override fun createStateRecord(context: VuexStoreContext, baseNamespace: String): JSRecordType {
     val result = mutableListOf<JSRecordType.TypeMember>()
     context.visitSymbols(VuexContainer::getters) { qualifiedName, symbol ->
       if (qualifiedName.startsWith(baseNamespace)) {

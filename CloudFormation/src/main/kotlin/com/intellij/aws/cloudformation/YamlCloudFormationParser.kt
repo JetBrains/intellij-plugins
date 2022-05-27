@@ -177,7 +177,7 @@ class YamlCloudFormationParser private constructor () {
       { nameNode, list -> CfnSecondLevelMappingNode(nameNode, list) }
   )
 
-  private fun keyName(property: CfnKeyValue): CfnScalarValueNode? {
+  private fun keyName(property: CfnKeyValue): CfnScalarValueNode {
     return if (property.key != null) {
       CfnScalarValueNode(property.keyText).registerNode(property.key)
     } else {
@@ -295,7 +295,7 @@ class YamlCloudFormationParser private constructor () {
     }
 
     val single = cfnKeyValue.single()
-    val nameNode = keyName(single)!!
+    val nameNode = keyName(single)
     val functionId = CloudFormationIntrinsicFunction.fullNames[single.keyText]!!
 
     when (val yamlValueNode = single.value) {

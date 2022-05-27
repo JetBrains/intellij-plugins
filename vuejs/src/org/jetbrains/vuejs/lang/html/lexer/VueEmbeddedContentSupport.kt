@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.lexer
 
 import com.intellij.html.embedding.*
@@ -73,10 +73,10 @@ class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeE
 
   private class VueEmbeddedExpressionInfo(val attributeInfo: VueAttributeNameParser.VueAttributeInfo,
                                           val project: Project?) : HtmlEmbedmentInfo {
-    override fun getElementType(): IElementType? =
+    override fun getElementType(): IElementType =
       VueJSEmbeddedExprTokenType.createEmbeddedExpression(attributeInfo, project)
 
-    override fun createHighlightingLexer(): Lexer? =
+    override fun createHighlightingLexer(): Lexer =
       VueJSSyntaxHighlighter().highlightingLexer
   }
 }
@@ -116,8 +116,8 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     val provider = scriptContentProvider(lang)
     return when (val elementType = provider?.getElementType()) {
       HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
-        override fun getElementType(): IElementType? = VueElementTypes.VUE_EMBEDDED_CONTENT
-        override fun createHighlightingLexer(): Lexer? =
+        override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
+        override fun createHighlightingLexer(): Lexer =
           VueHighlightingLexer(languageLevel, project, interpolationConfig)
       }
       null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT

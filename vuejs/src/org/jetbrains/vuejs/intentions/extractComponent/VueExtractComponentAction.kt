@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.Language
@@ -33,7 +33,7 @@ class VueExtractComponentAction : BaseRefactoringAction() {
 
   override fun isAvailableForFile(file: PsiFile?): Boolean = VueFileType.INSTANCE == file?.fileType
 
-  override fun getHandler(dataContext: DataContext): RefactoringActionHandler? {
+  override fun getHandler(dataContext: DataContext): RefactoringActionHandler {
     return object : RefactoringActionHandler {
       override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         editor ?: return

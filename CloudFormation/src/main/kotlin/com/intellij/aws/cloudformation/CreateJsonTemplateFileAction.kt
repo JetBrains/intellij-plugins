@@ -12,7 +12,7 @@ class CreateJsonTemplateFileAction : CreateFileFromTemplateAction(
     CloudFormationBundle.message("aws.cloudformation.new.json.file.action.description"),
     JsonFileType.INSTANCE.icon), DumbAware {
 
-  override fun getDefaultTemplateProperty(): String? = "DefaultJsonCloudFormationTemplate"
+  override fun getDefaultTemplateProperty(): String = "DefaultJsonCloudFormationTemplate"
 
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
     builder

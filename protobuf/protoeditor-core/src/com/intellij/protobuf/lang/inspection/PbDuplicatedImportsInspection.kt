@@ -11,7 +11,7 @@ import com.intellij.protobuf.lang.refactoring.removeDuplicatedImports
 import com.intellij.psi.PsiFile
 
 internal class PbDuplicatedImportsInspection : LocalInspectionTool() {
-  override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+  override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor> {
     if (file !is PbFile || file.importStatements.isEmpty()) return emptyArray()
 
     return collectDuplicatedImportsIncludeOriginal(file)

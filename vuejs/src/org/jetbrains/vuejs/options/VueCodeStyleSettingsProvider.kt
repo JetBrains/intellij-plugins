@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.options
 
 import com.intellij.application.options.CodeStyleAbstractConfigurable
@@ -17,7 +17,7 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
 
   override fun getLanguage(): Language = VueLanguage.INSTANCE
 
-  override fun getCodeSample(settingsType: SettingsType): String? = """
+  override fun getCodeSample(settingsType: SettingsType): String = """
       <template>
         <div id="app">
               <img      alt="Vue logo"        
@@ -49,7 +49,7 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     PsiFileFactory.getInstance(project).createFileFromText(
       "a.{{.}}.#@injected@#.html", VueLanguage.INSTANCE, text, false, true)
 
-  override fun getIndentOptionsEditor(): IndentOptionsEditor? {
+  override fun getIndentOptionsEditor(): IndentOptionsEditor {
     return VueIndentOptionsEditor()
   }
 
@@ -59,7 +59,7 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
         return VueCodeStyleMainPanel(currentSettings, settings)
       }
 
-      override fun getHelpTopic(): String? {
+      override fun getHelpTopic(): String {
         return "reference.settingsdialog.IDE.vuecodestyle"
       }
     }
@@ -71,7 +71,7 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     indentOptions.CONTINUATION_INDENT_SIZE = 4
   }
 
-  override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
+  override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings {
     return VueCodeStyleSettings(settings)
   }
 

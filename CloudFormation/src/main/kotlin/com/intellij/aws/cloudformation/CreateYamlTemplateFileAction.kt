@@ -12,7 +12,7 @@ class CreateYamlTemplateFileAction : CreateFileFromTemplateAction(
     CloudFormationBundle.message("aws.cloudformation.new.yaml.file.action.description"),
     YAMLFileType.YML.icon), DumbAware {
 
-  override fun getDefaultTemplateProperty(): String? = "DefaultYamlCloudFormationTemplate"
+  override fun getDefaultTemplateProperty(): String = "DefaultYamlCloudFormationTemplate"
 
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
     builder

@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.psi.impl
 
 import com.intellij.javascript.web.types.WebJSTypesUtil
@@ -72,7 +72,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
               ?.map { it.thisType }
               ?.let { JSCompositeTypeFactory.createUnionType(source, it) }
             ?: WebJSTypesUtil.getHtmlElementClassType(source, containingTagName))
-      ?.let { if (isList) JSArrayTypeImpl(it, it.source) else it }
+      .let { if (isList) JSArrayTypeImpl(it, it.source) else it }
   }
 
   private fun findScriptSetupVar(refName: String): JSVariable? {

@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.codestyle.rules
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
@@ -110,7 +111,7 @@ class ForceQuotemarkRule : TsLintSimpleRule<Boolean>("quotemark") {
 }
 
 class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
-  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+  override fun getConfigValue(option: TslintJsonOption): Boolean {
     val stringValues = option.getStringValues()
     if (stringValues.contains("never")) return false
 
@@ -128,7 +129,7 @@ class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
 }
 
 class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
-  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+  override fun getConfigValue(option: TslintJsonOption): Boolean {
     val stringValues = option.getStringValues()
     if (stringValues.contains("never")) return true
 
@@ -531,13 +532,13 @@ class SortedImportPartsRule : TsLintSimpleRule<Boolean>("ordered-imports") {
     codeStyleSettings.IMPORT_SORT_MEMBERS = value
   }
 
-  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+  override fun getConfigValue(option: TslintJsonOption): Boolean {
     return option.getStringMapValue()["named-imports-order"] != "any"
   }
 }
 
 class SortedImportPathsRule : TsLintSimpleRule<Boolean>("ordered-imports") {
-  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+  override fun getConfigValue(option: TslintJsonOption): Boolean {
     return option.getStringMapValue()["import-sources-order"] != "any"
   }
 
@@ -572,7 +573,7 @@ class LinebreakStyleRule : TsLintSimpleRule<String>("linebreak-style") {
 }
 
 class NewlineAtEndOfFileRule : TsLintSimpleRule<Boolean>("eofline") {
-  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+  override fun getConfigValue(option: TslintJsonOption): Boolean {
     return true
   }
 
@@ -612,7 +613,7 @@ class AlignFunctionCallParametersRule : MergedArrayRule("align") {
 }
 
 class MaxBlankLinesRule : TsLintSimpleRule<Int>("no-consecutive-blank-lines") {
-  override fun getConfigValue(option: TslintJsonOption): Int? {
+  override fun getConfigValue(option: TslintJsonOption): Int {
     return option.getNumberValue() ?: 1
   }
 
@@ -626,7 +627,7 @@ class MaxBlankLinesRule : TsLintSimpleRule<Int>("no-consecutive-blank-lines") {
 }
 
 class WhitespaceAtEndOfLineRule : TsLintSimpleRule<Boolean>("no-trailing-whitespace") {
-  override fun getConfigValue(option: TslintJsonOption): Boolean? = true
+  override fun getConfigValue(option: TslintJsonOption): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return EditorSettingsExternalizable.getInstance().stripTrailingSpaces != EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE
@@ -655,7 +656,7 @@ class SpaceAtLineCommentStartRule : TsLintSimpleRule<Boolean>("comment-format") 
 }
 
 class MergeImportsFromSameModuleRule : TsLintSimpleRule<Boolean>("no-duplicate-imports") {
-  override fun getConfigValue(option: TslintJsonOption): Boolean? = true
+  override fun getConfigValue(option: TslintJsonOption): Boolean = true
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return codeStyleSettings.isMergeImports
   }
@@ -711,7 +712,7 @@ class ForceCurlyBracesRule : TsLintSimpleRule<Int>("curly") {
     languageSettings.DOWHILE_BRACE_FORCE = value
   }
 
-  override fun getConfigValue(option: TslintJsonOption): Int? {
+  override fun getConfigValue(option: TslintJsonOption): Int {
     val values = option.getStringValues()
     if (values.contains("as-needed")) {
       return CommonCodeStyleSettings.DO_NOT_FORCE

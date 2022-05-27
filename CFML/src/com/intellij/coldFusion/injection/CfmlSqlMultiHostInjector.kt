@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.injection
 
 import com.intellij.coldFusion.model.CfmlUtil
@@ -151,7 +152,7 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
     }?.joinToString()
   }
 
-  private fun getPrefixForCfIfTag(cfIfTag: PsiElement): String? {
+  private fun getPrefixForCfIfTag(cfIfTag: PsiElement): String {
     return cfIfTag.parent.firstChild.traverse(untilPsiElement = cfIfTag).map {
       if (it.isCfIfTag()) return@map getFirstCfIfValue(it as CfmlTagImpl)
       if (it.isCfQueryParamTag()) return@map CFQUERY_PARAM_DUMMY

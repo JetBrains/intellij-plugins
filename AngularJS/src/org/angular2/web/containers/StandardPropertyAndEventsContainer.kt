@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web.containers
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
@@ -23,7 +23,6 @@ import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.EVENT_ATTR_PREFIX
 import java.util.*
 
@@ -108,30 +107,28 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
         consumer(Angular2StandardProperty(name, project, source))
       }
 
-      if (tagClass != null) {
-        for (property in tagClass.asRecordType().properties) {
-          val propertyDeclaration = property.memberSource.singleElement
-          if (propertyDeclaration is TypeScriptPropertySignature) {
-            if (propertyDeclaration.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true) {
+      for (property in tagClass.asRecordType().properties) {
+        val propertyDeclaration = property.memberSource.singleElement
+        if (propertyDeclaration is TypeScriptPropertySignature) {
+          if (propertyDeclaration.attributeList?.hasModifier(JSAttributeList.ModifierType.READONLY) == true) {
+            continue
+          }
+          cacheDependencies.add(propertyDeclaration.containingFile)
+          val name: String
+          if (property.memberName.startsWith(EVENT_ATTR_PREFIX)) {
+            val eventName = property.memberName.substring(2)
+            eventNames.remove(eventName)
+            consumer(Angular2StandardEvent(eventName,
+                                           propertyDeclaration.project, propertyDeclaration,
+                                           elementEventMap?.findPropertySignature(eventName)
+                                             ?.memberSource?.singleElement as? TypeScriptPropertySignature))
+          }
+          else {
+            name = property.memberName
+            if (!allowedElementProperties.remove(name)) {
               continue
             }
-            cacheDependencies.add(propertyDeclaration.containingFile)
-            val name: String
-            if (property.memberName.startsWith(EVENT_ATTR_PREFIX)) {
-              val eventName = property.memberName.substring(2)
-              eventNames.remove(eventName)
-              consumer(Angular2StandardEvent(eventName,
-                                             propertyDeclaration.project, propertyDeclaration,
-                                             elementEventMap?.findPropertySignature(eventName)
-                                               ?.memberSource?.singleElement as? TypeScriptPropertySignature))
-            }
-            else {
-              name = property.memberName
-              if (!allowedElementProperties.remove(name)) {
-                continue
-              }
-              addStandardProperty(name, propertyDeclaration.project, propertyDeclaration)
-            }
+            addStandardProperty(name, propertyDeclaration.project, propertyDeclaration)
           }
         }
       }

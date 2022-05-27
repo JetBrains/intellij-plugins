@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor
@@ -61,7 +61,7 @@ class VueLoaderPathReferenceProvider : PathReferenceProviderBase() {
     val target = list[list.size - 1].resolve() ?: return null
 
     return object : PathReference(path, ResolveFunction.NULL_RESOLVE_FUNCTION) {
-      override fun resolve(): PsiElement? {
+      override fun resolve(): PsiElement {
         return target
       }
     }

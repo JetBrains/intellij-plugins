@@ -1,13 +1,14 @@
 package com.jetbrains.lang.makefile.psi
 
-import com.intellij.navigation.*
-import com.intellij.psi.*
-import com.intellij.psi.tree.*
-import com.intellij.psi.util.*
-import com.jetbrains.lang.makefile.*
+import com.intellij.navigation.ItemPresentation
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.lang.makefile.MakefileFile
 import com.jetbrains.lang.makefile.psi.MakefileTypes.*
-import com.jetbrains.lang.makefile.psi.impl.*
-import java.util.regex.*
+import com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl
+import java.util.regex.Pattern
 
 object MakefilePsiImplUtil {
   private val suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$")
@@ -125,7 +126,7 @@ object MakefilePsiImplUtil {
   }
 
   @JvmStatic
-  fun getValue(element: MakefileVariableAssignment): String? {
+  fun getValue(element: MakefileVariableAssignment): String {
     val value = element.variableValue ?: return ""
     val nodes = value.node.getChildren(TokenSet.ANY)
     return nodes.joinToString("\n") { it.text }
@@ -138,7 +139,7 @@ object MakefilePsiImplUtil {
   }
 
   @JvmStatic
-  fun getValue(element: MakefileDefine): String? {
+  fun getValue(element: MakefileDefine): String {
     val nodes = element.node.getChildren(TokenSet.ANY).asSequence()
     return nodes.dropWhile { it.elementType != EOL }.filter { it.elementType != KEYWORD_ENDEF }.joinToString("\n") { it.text }
   }

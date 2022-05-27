@@ -19,7 +19,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.Key
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
-import com.jetbrains.nodeJs.NodeChromeDebugProcess
 import com.jetbrains.plugins.meteor.settings.MeteorSettings
 import org.jetbrains.debugger.connection.RemoteVmConnection
 import java.net.InetSocketAddress
@@ -34,7 +33,7 @@ class MeteorDebugProcessRunner : GenericProgramRunner<RunnerSettings>() {
   }
 
   @Throws(ExecutionException::class)
-  override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
+  override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor {
     FileDocumentManager.getInstance().saveAllDocuments()
     val profileState = state as MeteorRunProfileState
     val configuration = environment.runProfile as MeteorRunConfiguration

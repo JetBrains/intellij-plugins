@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.symbols.*
@@ -42,7 +42,7 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
 
   override fun apply(item: WebSymbolCodeCompletionItem,
                      namespace: WebSymbolsContainer.Namespace?,
-                     kind: SymbolKind): WebSymbolCodeCompletionItem? {
+                     kind: SymbolKind): WebSymbolCodeCompletionItem {
     if (namespace == WebSymbolsContainer.Namespace.HTML
         && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)

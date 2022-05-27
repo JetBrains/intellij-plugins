@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.CommonBundle
@@ -14,8 +14,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.openapi.util.Pair
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -32,7 +30,6 @@ import com.intellij.ui.popup.mock.MockConfirmation
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
-import java.util.*
 
 class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                                     editor: Editor,
@@ -69,7 +66,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     return true
   }
 
-  override fun startRename(): StartMarkAction? {
+  override fun startRename(): StartMarkAction {
     return startMarkAction
   }
 

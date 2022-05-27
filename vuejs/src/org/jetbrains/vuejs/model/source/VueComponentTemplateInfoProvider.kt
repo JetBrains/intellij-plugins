@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
@@ -29,7 +29,7 @@ import org.jetbrains.vuejs.model.resolveTagSrcReference
 
 class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo? =
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo =
     VueComponentTemplateInfo(descriptor.initializer ?: descriptor.clazz ?: descriptor.source)
 
   private class VueComponentTemplateInfo(private val element: PsiElement) : VueContainerInfoProvider.VueContainerInfo {
