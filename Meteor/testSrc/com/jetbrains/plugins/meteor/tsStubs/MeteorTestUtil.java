@@ -13,7 +13,7 @@ public final class MeteorTestUtil {
   }
 
   public static String getShortPluginPath() {
-    return "/plugins/Meteor";
+    return "/contrib/Meteor";
   }
 
   public static String getShortTestPath() {
