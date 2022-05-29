@@ -17,6 +17,7 @@ import com.intellij.pom.Navigatable
 import com.intellij.protobuf.ide.PbCompositeModificationTracker
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.lang.psi.PbElement
+import com.intellij.protobuf.lang.psi.ProtoLeafElement
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
@@ -57,10 +58,10 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       identifier,
       identifier.textRange,
-      AllIcons.General.ImplementingMethod, //todo
+      AllIcons.General.OverridenMethod, //todo
       { PbIdeBundle.message("line.marker.navigate.to.declaration") },
       navigationHandler { element ->
-        if (element !is PbElement) return@navigationHandler emptyList()
+        if (element !is ProtoLeafElement) return@navigationHandler emptyList()
         findImplementations(element).toList()
       },
       GutterIconRenderer.Alignment.LEFT,
@@ -108,11 +109,11 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     }
   }
 
-  private fun hasImplementation(pbElement: PbElement): Boolean {
+  private fun hasImplementation(pbElement: PsiElement): Boolean {
     return findImplementations(pbElement).any()
   }
 
-  private fun findImplementations(pbElement: PbElement): Sequence<PsiElement> {
+  private fun findImplementations(pbElement: PsiElement): Sequence<PsiElement> {
     val identifierOwner = pbElement.parentIdentifierOwner()?.castSafelyTo<PbElement>() ?: return emptySequence()
     val converters = collectRpcConverters()
     return IMPLEMENTATION_SEARCHER_EP_NAME.extensions().asSequence()

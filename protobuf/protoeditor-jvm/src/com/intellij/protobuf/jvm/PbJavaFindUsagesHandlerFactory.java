@@ -86,7 +86,7 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   }
 
   /** A visitor that converts certain proto PsiElements to the java elements it generates. */
-  private static class ProtoToJavaConverter extends PbVisitor {
+  public static class ProtoToJavaConverter extends PbVisitor {
     PsiElement[] results;
     private final PbFile file;
 
@@ -97,7 +97,7 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
 
     private final NotNullLazyValue<List<JavaNameGenerator>> nameGenerators;
 
-    ProtoToJavaConverter(PbFile file) {
+    public ProtoToJavaConverter(PbFile file) {
       this.file = file;
       this.nameGenerators = NotNullLazyValue.createValue(() -> NameGeneratorSelector.selectForFile(file));
     }
@@ -106,6 +106,10 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       if (!javaElements.isEmpty()) {
         results = javaElements.stream().distinct().toArray(PsiElement[]::new);
       }
+    }
+
+    public PsiElement[] getResults() {
+      return results;
     }
 
     @Override
