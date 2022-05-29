@@ -62,7 +62,7 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
     val pbFile = messageDefinition.parentOfType<PbFile>() ?: return emptySequence()
     val dispatcher = ProtoToJavaConverter(pbFile)
     messageDefinition.accept(dispatcher)
-    return dispatcher.results.asSequence().filterIsInstance<PsiClass>()
+    return dispatcher.results?.asSequence().orEmpty().filterIsInstance<PsiClass>()
   }
 
   private fun handleModel(psiElement: PsiElement): Sequence<PbElement> {
