@@ -16,7 +16,7 @@ class MdxHighlightingLexerBase : MergingLexerAdapterBase(MarkdownToplevelLexer(M
       var lastTokenText: CharSequence? = null
       while (originalLexer.tokenType != null && originalLexer.tokenType === type) {
         val trim = originalLexer.tokenText.trim()
-        if (!trim.isNullOrEmpty() || lastTokenText?.endsWith("\n") != true) {
+        if (trim.isNotEmpty() || lastTokenText?.endsWith("\n") != true) {
           lastTokenText = originalLexer.tokenText
           originalLexer.advance()
         }
