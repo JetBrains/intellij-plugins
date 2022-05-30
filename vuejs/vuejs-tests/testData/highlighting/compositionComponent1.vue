@@ -17,7 +17,7 @@
 <script>
 import {reactive, computed, toRefs, defineComponent} from "@vue/composition-api";
 
-export default defineComponent(<weak_warning>{</weak_warning>
+export default defineComponent({
   name: "TreeItem", // necessary for self-reference
   props: {
     model: Object

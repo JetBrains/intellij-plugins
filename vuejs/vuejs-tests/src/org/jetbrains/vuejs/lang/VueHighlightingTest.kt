@@ -399,18 +399,18 @@ const props = {seeMe: {}}
   fun testMultipleScriptTagsInVue() = doTest("")
 
   fun testCompositionApiBasic_0_4_0() {
-    myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_0_4_0)
-    myFixture.configureByFile("compositeComponent1.vue")
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.COMPOSITION_API_0_4_0)
+    myFixture.configureByFile("compositionComponent1.vue")
     myFixture.checkHighlighting()
-    myFixture.configureByFile("compositeComponent2.vue")
+    myFixture.configureByFile("compositionComponent2.vue")
     myFixture.checkHighlighting()
   }
 
   fun testCompositionApiBasic_1_0_0() {
-    myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_1_0_0)
-    myFixture.configureByFile("compositeComponent1.vue")
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.COMPOSITION_API_1_0_0)
+    myFixture.configureByFile("compositionComponent1.vue")
     myFixture.checkHighlighting()
-    myFixture.configureByFile("compositeComponent2.vue")
+    myFixture.configureByFile("compositionComponent2.vue")
     myFixture.checkHighlighting()
   }
 

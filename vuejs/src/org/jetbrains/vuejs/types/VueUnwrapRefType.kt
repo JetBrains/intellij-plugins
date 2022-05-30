@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.types
 
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
@@ -9,6 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
@@ -68,6 +70,9 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
       val baseType = JSCodeBasedTypeFactory.getPsiBasedType(unrefFunction, JSEvaluateContext(unrefFunction.containingFile))
       return JSApplyCallType(baseType, mutableListOf(typeToUnwrap), source)
     }
+    else if (ApplicationManager.getApplication().isUnitTestMode) {
+      assertVuePackageResolved()
+    }
 
     // old vue-composite doesn't have unref(), see VueCompletionTest.testVue2CompositionApi
     return substituteManually()
@@ -123,6 +128,16 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
     val file = source.sourceElement?.containingFile ?: return null
     return resolveSymbolFromNodeModule(file, VUE_MODULE, "unref", TypeScriptFunction::class.java) ?:
            resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE, "unref", TypeScriptFunction::class.java)
+  }
+
+  private fun assertVuePackageResolved() {
+    val resolved = let {
+      val file = source.sourceElement?.containingFile ?: return@let false
+      JSFileReferencesUtil.resolveModuleReference(file, VUE_MODULE).isNotEmpty()
+    }
+    assert(resolved) {
+      "vue package is not found, make sure that test dependencies are set up (see configureVueDependencies)"
+    }
   }
 
   private fun getUnwrapRefType(): TypeScriptTypeAlias? =
