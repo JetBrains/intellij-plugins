@@ -59,7 +59,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
       identifier,
       identifier.textRange,
       AllIcons.General.OverridenMethod, //todo icon
-      { PbIdeBundle.message("line.marker.navigate.to.declaration") },
+      { PbIdeBundle.message("line.marker.navigate.to.implementation") },
       navigationHandler { element ->
         if (element !is ProtoLeafElement) return@navigationHandler emptyList()
         findImplementations(element).toList()
