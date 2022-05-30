@@ -64,7 +64,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
         if (element !is ProtoLeafElement) return@navigationHandler emptyList()
         findImplementations(element).toList()
       },
-      GutterIconRenderer.Alignment.LEFT,
+      GutterIconRenderer.Alignment.RIGHT,
       NotNullFactory { GotoRelatedItem.createItems(findImplementations(identifierOwner).toList()) }
     ) {}
   }
