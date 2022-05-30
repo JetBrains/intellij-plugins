@@ -5,12 +5,13 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 interface PbGeneratedCodeConverterProvider {
   fun getProtoConverter(): PbGeneratedCodeConverter
+  fun acceptsLanguage(language: Language): Boolean
 }
 
 interface PbGeneratedCodeConverter {
-  fun acceptsLanguage(language: Language): Boolean
   fun protoToCodeEntityName(protoName: String): String
   fun codeEntityNameToProtoName(codeEntityName: String): String
+  fun generatedFileNameHint(): String
 }
 
 internal val CONVERTER_EP_NAME =

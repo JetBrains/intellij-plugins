@@ -28,14 +28,13 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   override fun findDeclarationsForCodeElement(psiElement: PsiElement,
                                               converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
     return when {
-      psiElement is PsiClass && hasServiceSuperclass(psiElement) -> handleService(psiElement, converters)
+      psiElement is PsiClass && hasServiceSuperclass(psiElement, converters) -> handleService(psiElement, converters)
       psiElement is PsiClass -> handleModel(psiElement)
       psiElement is PsiMethod -> handleMethod(psiElement, converters)
       else -> emptySequence()
     }
   }
 
-  //todo pass only applicable converter -> add language ID to implementation searcher??
   private fun handleServiceImplementations(serviceDefinition: PbServiceDefinition,
                                            converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiClass> {
     val serviceFqn = serviceDefinition.qualifiedName?.toString() ?: return emptySequence()
@@ -73,46 +72,56 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   }
 
   private fun handleService(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
-    val generatedBaseClass = findGeneratedServiceSuperclass(psiClass) ?: return emptySequence()
-    val protoServiceFqn = protoNameForClass(generatedBaseClass, converters) ?: return emptySequence()
-    return psiClass.project.service<ProtoFileAccessor>().findServicesByFqn(protoServiceFqn, true)
+    val generatedBaseClass = findGeneratedServiceSuperclass(psiClass, converters) ?: return emptySequence()
+    val protoFileAccessor = psiClass.project.service<ProtoFileAccessor>()
+    return protoNamesForClass(generatedBaseClass, converters)
+      .flatMap { protoFileAccessor.findServicesByFqn(it, true) }
   }
 
   private fun handleMethod(psiMethod: PsiMethod, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
     val containingClass = psiMethod.containingClass ?: return emptySequence()
-    val generatedBaseClass = findGeneratedServiceSuperclass(containingClass) ?: return emptySequence()
-    val protoNameForMethod = protoNameForMethod(psiMethod, generatedBaseClass, converters) ?: return emptySequence()
-    return psiMethod.project.service<ProtoFileAccessor>().findAllMethodsWithFqnPrefix(protoNameForMethod)
+    val generatedBaseClass = findGeneratedServiceSuperclass(containingClass, converters) ?: return emptySequence()
+    val protoNamesForMethod = protoNamesForMethod(psiMethod, generatedBaseClass, converters)
+    val protoFileAccessor = psiMethod.project.service<ProtoFileAccessor>()
+    return protoNamesForMethod.flatMap { protoFileAccessor.findAllMethodsWithFqnPrefix(it) }
   }
 
-  private fun protoNameForClass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): String? {
-    val qualifiedName = psiClass.qualifiedName ?: return null
-    val languageConverter = converters.firstOrNull { it.acceptsLanguage(psiClass.language) } ?: return null
-    return languageConverter.codeEntityNameToProtoName(qualifiedName)
+  private fun protoNamesForClass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): Sequence<String> {
+    val qualifiedName = psiClass.qualifiedName ?: return emptySequence()
+    return converters.asSequence().map { it.codeEntityNameToProtoName(qualifiedName) }
   }
 
-  private fun protoNameForMethod(psiMethod: PsiMethod,
-                                 generatedBaseClass: PsiClass,
-                                 converters: Collection<PbGeneratedCodeConverter>): String? {
-    val protoNameForClass = protoNameForClass(generatedBaseClass, converters) ?: return null
+  private fun protoNamesForMethod(psiMethod: PsiMethod,
+                                  generatedBaseClass: PsiClass,
+                                  converters: Collection<PbGeneratedCodeConverter>): Sequence<String> {
     val methodName = psiMethod.name
-    return "$protoNameForClass.$methodName"
+    return protoNamesForClass(generatedBaseClass, converters)
+      .map { "$it.$methodName" }
   }
 
-  private fun findGeneratedServiceSuperclass(psiClass: PsiClass): PsiClass? {
-    val findFirstProcessor = object : CommonProcessors.FindFirstProcessor<PsiClass>() {
+  private fun findGeneratedServiceSuperclass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): PsiClass? {
+    val searchProcessor = classWithSuitableSuperSearcher(converters)
+    InheritanceUtil.processSupers(psiClass, true, searchProcessor)
+    return searchProcessor.foundValue
+  }
+
+  private fun classWithSuitableSuperSearcher(converters: Collection<PbGeneratedCodeConverter>): CommonProcessors.FindFirstProcessor<PsiClass> {
+    return object : CommonProcessors.FindFirstProcessor<PsiClass>() {
       override fun accept(psiClass: PsiClass): Boolean {
-        val bindableServiceClass = JavaPsiFacade.getInstance(psiClass.project).findClass(BINDABLE_SERVICE_FQN, psiClass.resolveScope)
+        return converters.any { checkJavaClassHierarchy(psiClass, it) }
+      }
+
+      private fun checkJavaClassHierarchy(psiClass: PsiClass, converter: PbGeneratedCodeConverter): Boolean {
+        val bindableServiceClass = JavaPsiFacade.getInstance(psiClass.project).findClass(converter.generatedFileNameHint(),
+                                                                                         psiClass.resolveScope)
         return InheritanceUtil.isInheritorOrSelf(psiClass, bindableServiceClass, false)
       }
     }
-    InheritanceUtil.processSupers(psiClass, true, findFirstProcessor)
-    return findFirstProcessor.foundValue
   }
 
-  private fun hasServiceSuperclass(psiClass: PsiClass): Boolean {
-    return InheritanceUtil.isInheritor(psiClass, BINDABLE_SERVICE_FQN)
+  private fun hasServiceSuperclass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): Boolean {
+    return converters
+      .map(PbGeneratedCodeConverter::generatedFileNameHint)
+      .any { InheritanceUtil.isInheritor(psiClass, it) }
   }
 }
-
-private const val BINDABLE_SERVICE_FQN = "io.grpc.BindableService"

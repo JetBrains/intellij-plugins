@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.icons.AllIcons
 import com.intellij.ide.util.EditSourceUtil
+import com.intellij.lang.Language
 import com.intellij.navigation.GotoRelatedItem
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
@@ -28,7 +29,6 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import java.awt.event.MouseEvent
 import java.util.concurrent.Callable
 import kotlin.streams.asSequence
-import kotlin.streams.toList
 
 internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
   override fun getId(): String {
@@ -58,7 +58,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       identifier,
       identifier.textRange,
-      AllIcons.General.OverridenMethod, //todo
+      AllIcons.General.OverridenMethod, //todo icon
       { PbIdeBundle.message("line.marker.navigate.to.declaration") },
       navigationHandler { element ->
         if (element !is ProtoLeafElement) return@navigationHandler emptyList()
@@ -74,7 +74,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       identifier,
       identifier.textRange,
-      AllIcons.General.ImplementingMethod, //todo
+      AllIcons.General.ImplementingMethod, //todo icon
       { PbIdeBundle.message("line.marker.navigate.to.declaration") },
       navigationHandler { element -> findProtoDefinitions(element).toList() },
       GutterIconRenderer.Alignment.LEFT,
@@ -126,7 +126,9 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
 
   private fun findProtoDefinitions(psiElement: PsiElement): Sequence<PbElement> {
     val identifierOwner = psiElement.parentIdentifierOwner() ?: return emptySequence()
-    val converters = collectRpcConverters()
+    val converters = collectRpcConvertersForLanguage(psiElement.language)
+                       .takeIf(Collection<PbGeneratedCodeConverter>::isNotEmpty)
+                     ?: return emptySequence()
     return IMPLEMENTATION_SEARCHER_EP_NAME.extensions().asSequence()
       .flatMap { it.findDeclarationsForCodeElement(identifierOwner, converters) }
   }
@@ -136,7 +138,20 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   private fun collectRpcConverters(): Collection<PbGeneratedCodeConverter> {
-    return CONVERTER_EP_NAME.extensions().map(PbGeneratedCodeConverterProvider::getProtoConverter).toList()
+    return fetchConverters()
+      .map(PbGeneratedCodeConverterProvider::getProtoConverter)
+      .toList()
+  }
+
+  private fun collectRpcConvertersForLanguage(language: Language): Collection<PbGeneratedCodeConverter> {
+    return fetchConverters()
+      .filter { it.acceptsLanguage(language) }
+      .map(PbGeneratedCodeConverterProvider::getProtoConverter)
+      .toList()
+  }
+
+  private fun fetchConverters(): Sequence<PbGeneratedCodeConverterProvider> {
+    return CONVERTER_EP_NAME.extensions().asSequence()
   }
 }
 
