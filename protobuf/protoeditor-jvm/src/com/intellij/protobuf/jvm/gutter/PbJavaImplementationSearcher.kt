@@ -13,6 +13,7 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.CommonProcessors
+import com.intellij.util.castSafelyTo
 
 internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   override fun findImplementationsForProtoElement(pbElement: PbElement,
@@ -37,9 +38,8 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
 
   private fun handleServiceImplementations(serviceDefinition: PbServiceDefinition,
                                            converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiClass> {
-    val serviceFqn = serviceDefinition.qualifiedName?.toString() ?: return emptySequence()
+    val serviceFqn = effectiveServiceFqn(serviceDefinition) ?: return emptySequence()
     val project = serviceDefinition.project
-    // todo consider java_package option?
     return converters.asSequence()
       .map { converter -> converter.protoToCodeEntityName(serviceFqn) }
       .mapNotNull { maybeExistingCodeEntity ->
@@ -86,6 +86,19 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
     return protoNamesForMethod.flatMap { protoFileAccessor.findAllMethodsWithFqnPrefix(it) }
   }
 
+  private fun effectiveServiceFqn(serviceDefinition: PbServiceDefinition): String? {
+    val pbFile = serviceDefinition.containingFile.castSafelyTo<PbFile>() ?: return null
+    val javaPackageOrNull = pbFile.options
+      .firstOrNull { it.optionName.text == PB_JAVA_PACKAGE_OPTION }
+      ?.stringValue
+      ?.asString
+
+    return if (javaPackageOrNull == null)
+      serviceDefinition.qualifiedName?.toString()
+    else
+      "$javaPackageOrNull.${serviceDefinition.name.orEmpty()}"
+  }
+
   private fun protoNamesForClass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): Sequence<String> {
     val qualifiedName = psiClass.qualifiedName ?: return emptySequence()
     return converters.asSequence().map { it.codeEntityNameToProtoName(qualifiedName) }
@@ -125,3 +138,5 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
       .any { InheritanceUtil.isInheritor(psiClass, it) }
   }
 }
+
+private const val PB_JAVA_PACKAGE_OPTION = "java_package"
