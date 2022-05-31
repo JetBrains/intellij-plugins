@@ -2,10 +2,7 @@
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -36,7 +33,7 @@ import javax.swing.event.HyperlinkEvent;
 
 public class DartEditorNotificationsProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
   private static final Key<EditorNotificationPanel> KEY = Key.create("DartEditorNotificationsProvider");
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Dart Support");
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Support");
 
   @Override
   @NotNull

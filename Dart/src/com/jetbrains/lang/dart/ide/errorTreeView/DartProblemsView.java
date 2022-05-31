@@ -48,8 +48,7 @@ import java.util.Map;
 public final class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
   @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
-  private static final NotificationGroup NOTIFICATION_GROUP =
-    NotificationGroup.toolWindowGroup(TOOLWINDOW_ID, TOOLWINDOW_ID, false);
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Analysis");
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 

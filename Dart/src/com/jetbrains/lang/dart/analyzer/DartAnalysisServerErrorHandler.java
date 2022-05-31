@@ -34,7 +34,7 @@ public class DartAnalysisServerErrorHandler {
 
   // NOTIFICATION_GROUP is used to add an error to Event Log tool window.
   private static final NotificationGroup NOTIFICATION_GROUP =
-    new NotificationGroup("Dart analysis issue", NotificationDisplayType.NONE, true);
+    NotificationGroupManager.getInstance().getNotificationGroup("Dart analysis issue");
 
   @NotNull private final Project myProject;
   private int issueCount = 0;

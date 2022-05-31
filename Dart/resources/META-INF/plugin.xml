@@ -245,13 +245,18 @@
 
     <lang.syntaxHighlighter language="Dart in Html" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
     <lang.parserDefinition language="Dart in Html" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
-    <notificationGroup id="Dart Support" displayType="BALLOON"/>
-    <notificationGroup id="Dart Analysis" displayType="TOOL_WINDOW" toolWindowId="Dart Analysis" isLogByDefault="false"/>
-    <notificationGroup id="Dart Webdev" displayType="TOOL_WINDOW" toolWindowId="Dart Webdev" isLogByDefault="false"/>
-    <notificationGroup id="Dart Analysis Server" displayType="BALLOON"/>
-    <notificationGroup id="Dart Pub Tool" displayType="BALLOON"/>
-    <notificationGroup id="pubspec.yaml inspection" displayType="BALLOON"/>
-    <notificationGroup id="Dart analysis issue" displayType="NONE"/>
+    <notificationGroup id="Dart Support" displayType="BALLOON"
+                       bundle="messages.DartBundle" key="notification.group.dart.support"/>
+    <notificationGroup id="Dart Analysis" displayType="TOOL_WINDOW" toolWindowId="Dart Analysis" isLogByDefault="false"
+                       bundle="messages.DartBundle" key="notification.group.dart.analysis"/>
+    <notificationGroup id="Dart Webdev" displayType="TOOL_WINDOW" toolWindowId="Dart Webdev" isLogByDefault="false"
+                       bundle="messages.DartBundle" key="notification.group.dart.webdev"/>
+    <notificationGroup id="Dart Analysis Server" displayType="BALLOON"
+                       bundle="messages.DartBundle" key="notification.group.dart.analysis.server"/>
+    <notificationGroup id="Dart Pub Tool" displayType="BALLOON"
+                       bundle="messages.DartBundle" key="notification.group.dart.pub.tool"/>
+    <notificationGroup id="Dart analysis issue" displayType="NONE"
+                       bundle="messages.DartBundle" key="notification.group.dart.analysis.issue"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

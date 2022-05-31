@@ -9,10 +9,7 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -68,7 +65,7 @@ final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
 
   private static final String DART_WEBDEV = "Dart Webdev";
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(DART_WEBDEV, DART_WEBDEV, false);
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroupManager.getInstance().getNotificationGroup("Dart Webdev");
 
   private volatile VirtualFile firstServedDir;
 
