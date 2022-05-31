@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
   @Override
-  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+  public CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
     return new PbCodeStyleSettings(settings);
   }
 
@@ -49,7 +49,7 @@ public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("plugin.name")) {
       @Override
-      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+      protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new ProtoCodeStyleMainPanel(getCurrentSettings(), settings);
       }
 
@@ -67,7 +67,7 @@ public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     }
 
     @Override
-    protected EditorHighlighter createHighlighter(EditorColorsScheme scheme) {
+    protected EditorHighlighter createHighlighter(@NotNull EditorColorsScheme scheme) {
       return EditorHighlighterFactory.getInstance()
           .createEditorHighlighter(new PbSyntaxHighlighter(true), scheme);
     }

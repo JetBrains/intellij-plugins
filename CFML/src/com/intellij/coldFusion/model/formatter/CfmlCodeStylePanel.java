@@ -43,7 +43,7 @@ public class CfmlCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  protected EditorHighlighter createHighlighter(EditorColorsScheme scheme) {
+  protected EditorHighlighter createHighlighter(@NotNull EditorColorsScheme scheme) {
     return EditorHighlighterFactory.getInstance().createEditorHighlighter(new LightVirtualFile("a.cfml"), scheme, null);
   }
 
@@ -77,7 +77,7 @@ public class CfmlCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  public void apply(CodeStyleSettings settings) {
+  public void apply(@NotNull CodeStyleSettings settings) {
     final CfmlCodeStyleSettings cfmlCodeStyleSettings = settings.getCustomSettings(CfmlCodeStyleSettings.class);
     //cfmlCodeStyleSettings.INDENT_CODE_IN_CFML_TAGS = myIndentCodeBox.isSelected();
     cfmlCodeStyleSettings.ALIGN_KEY_VALUE_PAIRS = myAlignKeyValuePairsBox.isSelected();
@@ -98,7 +98,7 @@ public class CfmlCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  protected void resetImpl(CodeStyleSettings settings) {
+  protected void resetImpl(@NotNull CodeStyleSettings settings) {
     final CfmlCodeStyleSettings cfmlCodeStyleSettings = settings.getCustomSettings(CfmlCodeStyleSettings.class);
     //myIndentCodeBox.setSelected(cfmlCodeStyleSettings.INDENT_CODE_IN_CFML_TAGS);
     myAlignKeyValuePairsBox.setSelected(cfmlCodeStyleSettings.ALIGN_KEY_VALUE_PAIRS);

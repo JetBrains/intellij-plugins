@@ -49,7 +49,7 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
   public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings baseSettings, @NotNull CodeStyleSettings modelSettings) {
     return new CodeStyleAbstractConfigurable(baseSettings, modelSettings, getConfigurableDisplayName()) {
       @Override
-      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+      protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new DartCodeStylePanel(getCurrentSettings(), settings);
       }
 

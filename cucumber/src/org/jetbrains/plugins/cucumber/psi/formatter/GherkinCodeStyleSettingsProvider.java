@@ -14,10 +14,10 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 public class GherkinCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @NotNull
   @Override
-  public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
+  public Configurable createSettingsPage(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, CucumberBundle.message("configurable.name.gherkin")) {
       @Override
-      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+      protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new GherkinCodeStylePanel(getCurrentSettings(), settings);
       }
 

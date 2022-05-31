@@ -27,7 +27,7 @@ public class CfmlCodeStyleConfigurable extends CodeStyleAbstractConfigurable {
   }
 
   @Override
-  protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+  protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
     return new CfmlCodeStyleMainPanel(getCurrentSettings(), settings);
   }
 

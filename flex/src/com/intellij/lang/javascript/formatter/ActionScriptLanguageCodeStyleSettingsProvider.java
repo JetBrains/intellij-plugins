@@ -39,7 +39,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @Nullable
   @Override
-  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+  public CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
     return new ECMA4CodeStyleSettings(settings);
   }
 

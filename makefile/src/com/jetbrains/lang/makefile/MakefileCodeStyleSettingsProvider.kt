@@ -19,5 +19,5 @@ class MakefileCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   }
 
   override fun getLanguage(): Language = MakefileLanguage
-  override fun createCustomSettings(settings: CodeStyleSettings?): CustomCodeStyleSettings = MakefileCodeStyleSettings(settings)
+  override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings = MakefileCodeStyleSettings(settings)
 }

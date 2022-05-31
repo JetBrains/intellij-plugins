@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
   @Override
-  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+  public CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
     return new PbTextCodeStyleSettings(settings);
   }
 
@@ -46,7 +46,7 @@ public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("prototext.name")) {
       @Override
-      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+      protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new ProtoTextCodeStyleMainPanel(getCurrentSettings(), settings);
       }
 

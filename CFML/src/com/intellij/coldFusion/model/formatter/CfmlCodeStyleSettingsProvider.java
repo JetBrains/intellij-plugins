@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
 public class CfmlCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @NotNull
   @Override
-  public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
+  public Configurable createSettingsPage(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
     return new CfmlCodeStyleConfigurable(settings, originalSettings);
   }
 
   @Override
-  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+  public CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
     return new CfmlCodeStyleSettings(settings);
   }
 

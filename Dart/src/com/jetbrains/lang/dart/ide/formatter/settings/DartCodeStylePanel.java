@@ -33,7 +33,7 @@ public class DartCodeStylePanel extends CodeStyleAbstractPanel {
 
   @Nullable
   @Override
-  protected EditorHighlighter createHighlighter(EditorColorsScheme scheme) {
+  protected EditorHighlighter createHighlighter(@NotNull EditorColorsScheme scheme) {
     return null;
   }
 
