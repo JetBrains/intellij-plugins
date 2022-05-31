@@ -57,7 +57,7 @@
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
     <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
                                id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
-    <notificationGroup id="PlatformIO plugin" displayType="BALLOON"/>
+    <notificationGroup id="PlatformIO plugin" displayType="BALLOON" bundle="messages.ClionEmbeddedPlatformioBundle" key="notification.group.platformio"/>
     <directoryIndexExcludePolicy implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExcludePolicy"/>
     <vfs.asyncListener implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
     <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
