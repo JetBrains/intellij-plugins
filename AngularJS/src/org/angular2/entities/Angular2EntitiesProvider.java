@@ -211,8 +211,7 @@ public final class Angular2EntitiesProvider {
           return true;
         });
       processIvyEntities(project, NG_MODULE_INDEX_NAME, Angular2IvyModuleIndex.KEY, Angular2Module.class, result::add);
-      processMetadataEntities(project, NG_MODULE_INDEX_NAME, Angular2MetadataModule.class,
-                              Angular2MetadataModuleIndex.KEY, result::add);
+      processMetadataEntities(project, NG_MODULE_INDEX_NAME, Angular2MetadataModule.class, Angular2MetadataModuleIndex.KEY, result::add);
       return create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
   }

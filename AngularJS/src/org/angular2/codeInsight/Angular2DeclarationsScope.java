@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.openapi.util.Trinity.create;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.exists;
 import static com.intellij.util.containers.ContainerUtil.filter;
@@ -42,14 +41,14 @@ public class Angular2DeclarationsScope {
     myScope = NotNullLazyValue.createValue(() -> {
       PsiFile file = element.getContainingFile();
       if (file == null) {
-        return create(null, null, false);
+        return Trinity.create(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
         Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file)),
                                             c -> selectModule(c, file));
         return CachedValueProvider.Result.create(
-          module != null ? create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
-                         : create(null, null, false),
+          module != null ? Trinity.create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
+                         : Trinity.create(null, null, false),
           PsiModificationTracker.MODIFICATION_COUNT);
       });
     });
@@ -97,7 +96,7 @@ public class Angular2DeclarationsScope {
       if (!isInSource(declaration)) {
         return DeclarationProximity.NOT_REACHABLE;
       }
-      return declaration.getAllModules().isEmpty()
+      return declaration.getAllDeclaringModules().isEmpty()
              ? DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE
              : DeclarationProximity.NOT_EXPORTED_BY_MODULE;
     }
@@ -147,7 +146,7 @@ public class Angular2DeclarationsScope {
   }
 
   private static @Nullable Angular2Module selectModule(@NotNull Angular2Component component, @NotNull PsiFile context) {
-    Collection<Angular2Module> modules = component.getAllModules();
+    Collection<Angular2Module> modules = component.getAllDeclaringModules();
     if (modules.size() > 1) {
       for (Angular2FrameworkHandler handler : Angular2FrameworkHandler.EP_NAME.getExtensionList()) {
         Angular2Module result = handler.selectModuleForDeclarationsScope(modules, component, context);

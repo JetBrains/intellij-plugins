@@ -247,7 +247,7 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
     Angular2Declaration declaration = (Angular2Declaration)Angular2EntitiesProvider.getEntity(declarationClass);
     assert declaration != null;
     assertEquals(ContainerUtil.sorted(Arrays.asList(modules), String::compareToIgnoreCase),
-                 StreamEx.of(declaration.getAllModules())
+                 StreamEx.of(declaration.getAllDeclaringModules())
                    .map(m -> m.getName())
                    .sorted(String::compareToIgnoreCase)
                    .toList());
