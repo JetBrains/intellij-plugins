@@ -62,7 +62,7 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
     if (declaration == null) {
       return Collections.emptyList();
     }
-    return StreamEx.of(AddNgModuleDeclarationQuickFix.getCandidates(getContext()))
+    return StreamEx.of(AddNgModuleDeclarationQuickFix.getCandidateModules(getContext()))
       .map(Angular2Entity::getTypeScriptClass)
       .select(JSElement.class)
       .map(el -> new ES6ImportCandidate(myName, el, getContext()))

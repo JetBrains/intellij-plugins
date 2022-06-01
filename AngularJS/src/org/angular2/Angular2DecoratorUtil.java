@@ -110,8 +110,11 @@ public final class Angular2DecoratorUtil {
     return false;
   }
 
+  /**
+   * Returns null for all literals other than string, supports string concatenation.
+   */
   @StubUnsafe
-  public static @Nullable String getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
+  public static @Nullable String getPropertyStringValue(@Nullable ES6Decorator decorator, @NotNull String name) {
     return getExpressionStringValue(doIfNotNull(getProperty(decorator, name), JSProperty::getValue));
   }
 

@@ -115,7 +115,7 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   private @NotNull <U extends Angular2Entity> ResolvedEntitiesList<U> getResolvedModuleList(@NotNull Key<CachedValue<ResolvedEntitiesList<U>>> key,
                                                                                             @NotNull Class<U> entityClass) {
     final T source = mySourceSupplier.get();
-    @SuppressWarnings("UnnecessaryLocalVariable") final SymbolCollector<T> symbolCollector = mySymbolCollector;
+    final SymbolCollector<T> symbolCollector = mySymbolCollector;
     return CachedValuesManager.getCachedValue(source, key, () -> symbolCollector.collect(
       source,
       StringUtil.trimStart(key.toString(), KEYS_PREFIX),

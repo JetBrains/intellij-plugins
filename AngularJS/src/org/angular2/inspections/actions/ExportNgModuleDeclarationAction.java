@@ -94,7 +94,7 @@ public class ExportNgModuleDeclarationAction implements QuestionAction {
         return false;
       }
       Angular2SourceModule module = Angular2EntityUtils.defaultChooseModule(
-        StreamEx.of(declaration.getAllModules()).select(Angular2SourceModule.class));
+        StreamEx.of(declaration.getAllDeclaringModules()).select(Angular2SourceModule.class));
       if (module == null) {
         return false;
       }

@@ -49,7 +49,7 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
     myDeclarationName = Objects.requireNonNull(declaration.getTypeScriptClass().getName());
     myDeclarationDecorator = SmartPointerManager.createPointer(declaration.getDecorator());
 
-    List<Angular2Module> candidates = getCandidates(context);
+    List<Angular2Module> candidates = getCandidateModules(context);
     if (candidates.size() == 1) {
       myModuleName = candidates.get(0).getName();
     }
@@ -85,7 +85,7 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
     }
   }
 
-  public static @NotNull List<Angular2Module> getCandidates(@NotNull PsiElement context) {
+  public static @NotNull List<Angular2Module> getCandidateModules(@NotNull PsiElement context) {
     Deque<Angular2Module> processingQueue = new ArrayDeque<>(20);
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(context);
     Angular2Module contextModule = scope.getModule();

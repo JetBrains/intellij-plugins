@@ -158,14 +158,14 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        addPipe(enclosingClass, data::addImplicitElement, getPropertyValue(decorator, NAME_PROP));
+        addPipe(enclosingClass, data::addImplicitElement, getPropertyStringValue(decorator, NAME_PROP));
       }
       else if (DIRECTIVE_DEC.equals(decoratorName)
                || (isComponent = COMPONENT_DEC.equals(decoratorName))) {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        String selector = getPropertyValue(decorator, SELECTOR_PROP);
+        String selector = getPropertyStringValue(decorator, SELECTOR_PROP);
         addDirective(enclosingClass, data::addImplicitElement, selector);
         if (isComponent) {
           addComponentExternalFilesRefs(decorator, "", data::addImplicitElement,
@@ -315,7 +315,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static @Nullable String getTemplateFileUrl(@NotNull ES6Decorator decorator) {
-    String templateUrl = getPropertyValue(decorator, TEMPLATE_URL_PROP);
+    String templateUrl = getPropertyStringValue(decorator, TEMPLATE_URL_PROP);
     if (templateUrl != null) {
       return templateUrl;
     }

@@ -111,7 +111,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                                                                     cssFiles.size() == 1 ? "" : " " + count++)));
     }
     first = true;
-    for (TypeScriptClass moduleClass : mapNotNull(component.getAllModules(), Angular2Module::getTypeScriptClass)) {
+    for (TypeScriptClass moduleClass : mapNotNull(component.getAllDeclaringModules(), Angular2Module::getTypeScriptClass)) {
       if (moduleClass.getName() != null) {
         result.add(new Angular2GoToRelatedItem(moduleClass, first ? MODULE_INDEX : -1, false,
                                                Angular2Bundle.message("angular.action.goto-related.module")));
