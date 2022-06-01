@@ -126,8 +126,8 @@
 
     <moduleBuilder builderClass="com.thoughtworks.gauge.wizard.GaugeModuleBuilder"/>
 
-    <notificationGroup id="Gauge Error" displayType="BALLOON"/>
-    <notificationGroup id="Gauge" displayType="BALLOON"/>
+    <notificationGroup id="Gauge Error" displayType="BALLOON" bundle="messages.GaugeBundle" key="notification.group.gauge.error"/>
+    <notificationGroup id="Gauge" displayType="BALLOON" bundle="messages.GaugeBundle" key="notification.group.gauge"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
