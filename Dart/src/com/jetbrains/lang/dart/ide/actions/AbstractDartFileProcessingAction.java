@@ -39,7 +39,12 @@ import java.util.List;
  * An abstract {@link AnAction} for processing a single Dart file open in the editor,
  * or a group of selected Dart files.
  */
-public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware, UpdateInBackground {
+public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware {
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {
