@@ -19,24 +19,24 @@ import com.intellij.util.Processor
 class ProtoFileAccessor(private val project: Project) {
 
   fun findMethodByFqn(exactFqn: String): PbServiceMethod? {
-    return findPbStubElementsOfType<PbServiceMethod>(exactFqn, true).firstOrNull()
+    return findPbStubElementsOfType<PbServiceMethod>(exactFqn, PbSearchParameters.EXACT_MATCH).firstOrNull()
   }
 
   fun findAllMethodsWithFqnPrefix(fqnPrefix: String): Sequence<PbServiceMethod> {
     val effectivePrefix = fqnPrefix.takeIf { it.contains('.') }
-    return findPbStubElementsOfType<PbServiceMethod>(effectivePrefix, false)
+    return findPbStubElementsOfType<PbServiceMethod>(effectivePrefix, PbSearchParameters.PREFIX)
   }
 
   fun findServiceByFqn(exactFqn: String): PbServiceDefinition? {
-    return findServicesByFqn(exactFqn, true).firstOrNull()
+    return findServicesByFqn(exactFqn, PbSearchParameters.EXACT_MATCH).firstOrNull()
   }
 
-  fun findServicesByFqn(fqnOrPrefix: String, exactMatch: Boolean): Sequence<PbServiceDefinition> {
-    return findPbStubElementsOfType<PbServiceDefinition>(fqnOrPrefix, exactMatch)
+  fun findServicesByFqn(fqnOrPrefix: String, searchParameters: PbSearchParameters): Sequence<PbServiceDefinition> {
+    return findPbStubElementsOfType<PbServiceDefinition>(fqnOrPrefix, searchParameters)
   }
 
   fun findMessageByFqn(exactFqn: String): PbMessageDefinition? {
-    return findPbStubElementsOfType<PbMessageDefinition>(exactFqn, true).firstOrNull()
+    return findPbStubElementsOfType<PbMessageDefinition>(exactFqn, PbSearchParameters.EXACT_MATCH).firstOrNull()
   }
 
   fun findAllServices(): Sequence<PbServiceDefinition> {
@@ -45,13 +45,13 @@ class ProtoFileAccessor(private val project: Project) {
 
   private inline fun <reified Type : PbNamedElement> findPbStubElementsOfType(
     namePrefix: String? = null,
-    exactMatch: Boolean = namePrefix != null): Sequence<Type> {
+    searchParameters: PbSearchParameters = PbSearchParameters.EXACT_MATCH): Sequence<Type> {
 
-    return findAllPbStubElements(namePrefix, exactMatch).filterIsInstance<Type>()
+    return findAllPbStubElements(namePrefix, searchParameters).filterIsInstance<Type>()
   }
 
-  private fun findAllPbStubElements(fqnPrefix: String?, exactMatch: Boolean): Sequence<PbNamedElement> {
-    val collector = fqnAwareCollector(fqnPrefix, exactMatch)
+  private fun findAllPbStubElements(fqnPrefix: String?, searchParameters: PbSearchParameters): Sequence<PbNamedElement> {
+    val collector = fqnAwareCollector(fqnPrefix, searchParameters)
     collectStringsForKey(QualifiedNameIndex.KEY, project, collector)
     collectStringsForKey(ShortNameIndex.KEY, project, collector)
 
@@ -66,14 +66,16 @@ class ProtoFileAccessor(private val project: Project) {
       }
   }
 
-  private fun fqnAwareCollector(fqnPrefix: String?, exactMatch: Boolean): CommonProcessors.CollectProcessor<String> {
+  private fun fqnAwareCollector(fqnSegment: String?, searchParameters: PbSearchParameters): CommonProcessors.CollectProcessor<String> {
     return object : CommonProcessors.CollectProcessor<String>() {
       override fun accept(value: String?): Boolean {
         return when {
           value.isNullOrBlank() -> false
-          fqnPrefix.isNullOrBlank() -> true
-          !exactMatch && value.startsWith(fqnPrefix) -> true
-          exactMatch && value == fqnPrefix -> true
+          fqnSegment.isNullOrBlank() -> true
+          searchParameters == PbSearchParameters.PREFIX && value.startsWith(fqnSegment) -> true
+          searchParameters == PbSearchParameters.SUFFIX && value.endsWith(fqnSegment) -> true
+          searchParameters == PbSearchParameters.EXACT_MATCH && value == fqnSegment -> true
+          searchParameters == PbSearchParameters.CONTAINS && value.contains(fqnSegment) -> true
           else -> false
         }
       }
@@ -95,4 +97,11 @@ class ProtoFileAccessor(private val project: Project) {
       PbNamedElement::class.java
     ).asSequence()
   }
+}
+
+enum class PbSearchParameters {
+  EXACT_MATCH,
+  PREFIX,
+  SUFFIX,
+  CONTAINS
 }

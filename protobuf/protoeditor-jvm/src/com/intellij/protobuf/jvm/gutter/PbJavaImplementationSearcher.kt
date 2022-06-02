@@ -6,6 +6,7 @@ import com.intellij.protobuf.ide.gutter.PbGeneratedCodeConverter
 import com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory.ProtoToJavaConverter
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler
 import com.intellij.protobuf.lang.psi.*
+import com.intellij.protobuf.lang.stub.PbSearchParameters
 import com.intellij.protobuf.lang.stub.ProtoFileAccessor
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -75,7 +76,7 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
     val generatedBaseClass = findGeneratedServiceSuperclass(psiClass, converters) ?: return emptySequence()
     val protoFileAccessor = psiClass.project.service<ProtoFileAccessor>()
     return protoNamesForClass(generatedBaseClass, converters)
-      .flatMap { protoFileAccessor.findServicesByFqn(it, true) }
+      .flatMap { protoFileAccessor.findServicesByFqn(it, PbSearchParameters.CONTAINS) }
   }
 
   private fun handleMethod(psiMethod: PsiMethod, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
