@@ -25,7 +25,7 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
         <HelloWorld  
      msg =  "Welcome to Your Vue.js App"/></div>
      <span>{{descr    }}</span>
-     <span>{{ (function (){ alert("Vue is great!")   } return "Really great!")() }}</span>
+     <span>{{ (function (){ alert("Vue is great!"); return "Really great!"} )() }}</span>
     </template>
     
      <script>
