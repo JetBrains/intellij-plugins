@@ -64,6 +64,7 @@ class ProtoFileAccessor(private val project: Project) {
           collectElementsWithText(elementName, QualifiedNameIndex.KEY)
             .plus(collectElementsWithText(elementName, ShortNameIndex.KEY))
       }
+      .distinct()
   }
 
   private fun fqnAwareCollector(fqnSegment: String?, searchParameters: PbSearchParameters): CommonProcessors.CollectProcessor<String> {
