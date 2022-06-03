@@ -30,6 +30,8 @@ public class DartPositionInfo {
   public final int line;
   public final int column;
 
+  public static final String PACKAGE_WITH_SLASH = "packages/";
+
   public DartPositionInfo(final @NotNull Type type,
                           final @NotNull String path,
                           final int highlightingStartIndex,
@@ -61,6 +63,10 @@ public class DartPositionInfo {
   */
   @Nullable
   public static DartPositionInfo parsePositionInfo(final @NotNull String text) {
+    if (text.startsWith(PACKAGE_WITH_SLASH)) {
+      return parsePositionInfoWithSlash(text);
+    }
+
     Couple<Integer> pathStartAndEnd = parseUrlStartAndEnd(text, "package:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "dart:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "file:");
@@ -88,6 +94,24 @@ public class DartPositionInfo {
     final int line = lineAndColumn == null ? -1 : lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first;
     final int column = lineAndColumn == null ? -1 : lineAndColumn.second >= 0 ? lineAndColumn.second - 1 : lineAndColumn.second;
     return new DartPositionInfo(type, FileUtil.toSystemIndependentName(path), urlStartIndex, urlEndIndex, line, column);
+  }
+
+  @Nullable
+  public static DartPositionInfo parsePositionInfoWithSlash(final @NotNull String text) {
+    final String[] parts = text.split("\\s+");
+    if (parts.length < 2) {
+      return null;
+    }
+
+    final String path = parts[0].substring(PACKAGE_WITH_SLASH.length());
+    final Couple<Integer> lineAndColumn = parseLineAndColumnInColonFormat(parts[1]);
+    if (lineAndColumn == null) {
+      return null;
+    }
+
+    return new DartPositionInfo(Type.PACKAGE, FileUtil.toSystemIndependentName(path), 0, path.length() + PACKAGE_WITH_SLASH.length(),
+                                lineAndColumn.first - 1,
+                                lineAndColumn.second - 1);
   }
 
   @Nullable
