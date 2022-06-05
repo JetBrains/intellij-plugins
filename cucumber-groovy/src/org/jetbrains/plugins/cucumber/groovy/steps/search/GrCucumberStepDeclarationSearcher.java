@@ -18,7 +18,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 public class GrCucumberStepDeclarationSearcher extends PomDeclarationSearcher {
 
   @Override
-  public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<PomTarget> consumer) {
+  public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<? super PomTarget> consumer) {
     PsiLanguageInjectionHost host = InjectedLanguageManager.getInstance(element.getProject()).getInjectionHost(element);
     if (host != null) {
       element = host;

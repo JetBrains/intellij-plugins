@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
 class VuePomDeclarationSearcher : PomDeclarationSearcher() {
 
-  override fun findDeclarationsAt(element: PsiElement, offsetInElement: Int, consumer: Consumer<PomTarget>) {
+  override fun findDeclarationsAt(element: PsiElement, offsetInElement: Int, consumer: Consumer<in PomTarget>) {
     if (element is XmlAttributeValue && element.parent is VueRefAttribute
         && ElementManipulators.getValueTextRange(element).contains(offsetInElement)) {
       (element.parent as VueRefAttribute).implicitElement

@@ -48,7 +48,7 @@ public class FlexModuleInsight extends ModuleInsight {
   }
 
   @Override
-  protected void scanSourceFileForImportedPackages(final CharSequence chars, final Consumer<String> result) {
+  protected void scanSourceFileForImportedPackages(final CharSequence chars, final Consumer<? super String> result) {
     Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
     lexer.start(chars);
 
@@ -81,7 +81,7 @@ public class FlexModuleInsight extends ModuleInsight {
   }
 
   @Override
-  protected void scanLibraryForDeclaredPackages(final File file, final Consumer<String> result) throws IOException {
+  protected void scanLibraryForDeclaredPackages(final File file, final Consumer<? super String> result) throws IOException {
     try (FileInputStream in = new FileInputStream(file)) {
       ZipInputStream zip = new ZipInputStream(in);
       ZipEntry e;

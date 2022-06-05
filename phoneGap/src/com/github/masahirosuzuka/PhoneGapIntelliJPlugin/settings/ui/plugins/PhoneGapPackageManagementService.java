@@ -116,7 +116,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public void uninstallPackages(final List<InstalledPackage> installedPackages, final Listener listener) {
+  public void uninstallPackages(final List<? extends InstalledPackage> installedPackages, final Listener listener) {
     ApplicationManager.getApplication().executeOnPooledThread((Runnable)() -> ContainerUtil.process(installedPackages, aPackage -> {
       listener.operationStarted(aPackage.getName());
       final Ref<@NlsSafe String> errorMessage = new Ref<>();
@@ -137,7 +137,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public void fetchPackageVersions(String packageName, CatchingConsumer<List<String>, Exception> consumer) {
+  public void fetchPackageVersions(String packageName, CatchingConsumer<? super List<String>, ? super Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(packageName);
     if (aPackage == null) {
       consumer.consume(ContainerUtil.emptyList());
@@ -147,7 +147,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public void fetchPackageDetails(String packageName, CatchingConsumer<@Nls String, Exception> consumer) {
+  public void fetchPackageDetails(String packageName, CatchingConsumer<? super @Nls String, ? super Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(packageName);
     consumer.consume(aPackage != null ? aPackage.getDesc() : "");
   }
@@ -165,7 +165,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public void fetchLatestVersion(@NotNull InstalledPackage pkg, @NotNull CatchingConsumer<String, Exception> consumer) {
+  public void fetchLatestVersion(@NotNull InstalledPackage pkg, @NotNull CatchingConsumer<? super String, ? super Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(pkg.getName());
 
     consumer.consume(aPackage == null ? null : aPackage.getLatestVersion());

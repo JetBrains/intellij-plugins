@@ -87,7 +87,7 @@ public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
 
   private static class MyBeforeCheckinDialogHandler extends BeforeCheckinDialogHandler {
     @Override
-    public boolean beforeCommitDialogShown(@NotNull Project project, @NotNull List<Change> changes, @NotNull Iterable<CommitExecutor> executors, boolean showVcsCommit) {
+    public boolean beforeCommitDialogShown(@NotNull Project project, @NotNull List<? extends Change> changes, @NotNull Iterable<? extends CommitExecutor> executors, boolean showVcsCommit) {
       if (showVcsCommit) {
         return beforeRemoteOperationCheck(project, "Commit");
       }
