@@ -26,9 +26,6 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
 
     private static final AnAction[] EMPTY_ACTION_ARRAY = AnAction.EMPTY_ARRAY;
 
-    private PresentationLibraryElement tapestryElement;
-    private final ClassTemplateNavigation classTemplateNavigation = new ClassTemplateNavigation();
-
     /**
      * {@inheritDoc}
      */
@@ -58,7 +55,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
             TemplateNavigate templateNavigate;
 
             DefaultActionGroup actions = DefaultActionGroup.createPopupGroup(() -> "TemplatesGroup");
-
+            PresentationLibraryElement tapestryElement;
             try {
                 PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
 
@@ -75,9 +72,9 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
                 return EMPTY_ACTION_ARRAY;
             }
 
-            if (tapestryElement.allowsTemplate()) {
+            if (tapestryElement != null && tapestryElement.allowsTemplate()) {
                 for (int i = 0; i < tapestryElement.getTemplate().length; i++) {
-                    templateNavigate = new TemplateNavigate(tapestryElement.getTemplate()[i]);
+                    templateNavigate = new TemplateNavigate(tapestryElement, tapestryElement.getTemplate()[i]);
                     actions.add(templateNavigate);
                 }
             }
@@ -91,15 +88,19 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
         return EMPTY_ACTION_ARRAY;
     }
 
-    private class TemplateNavigate extends AnAction {
+    private static class TemplateNavigate extends AnAction {
 
-        TemplateNavigate(IResource template) {
+      final PresentationLibraryElement tapestryElement;
+
+      TemplateNavigate(PresentationLibraryElement tapestryElement, IResource template) {
             super(template.getName().replace("_", "__"), template.getName(), null);
-        }
+        this.tapestryElement = tapestryElement;
+      }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent event) {
             Project project = event.getData(CommonDataKeys.PROJECT);
+            if (project == null) return;
 
             for (int i = 0; i < tapestryElement.getTemplate().length; i++) {
                 IResource template = tapestryElement.getTemplate()[i];

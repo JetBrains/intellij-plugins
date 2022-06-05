@@ -92,7 +92,7 @@ public class ClassTemplateNavigation extends AnAction {
 
       PresentationLibraryElement tapestryElement =
         PresentationLibraryElement.createProjectElementInstance(new IntellijJavaClassType(module, psiClass.getContainingFile()), project);
-      if (!tapestryElement.allowsTemplate()) return null;
+      if (tapestryElement == null || !tapestryElement.allowsTemplate()) return null;
       IResource[] templates = tapestryElement.getTemplateConsiderSuperClass();
       return templates.length != 0 && templates[0] != null ? ((IntellijResource)templates[0]).getPsiFile().getVirtualFile() : null;
     }

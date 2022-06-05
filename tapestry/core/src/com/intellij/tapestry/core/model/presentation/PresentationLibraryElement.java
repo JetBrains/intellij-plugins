@@ -19,6 +19,7 @@ import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,9 +114,10 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * @return the instance of the presentation element.
    * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
    */
-  public static PresentationLibraryElement createProjectElementInstance(IJavaClassType elementClass, TapestryProject project)
+  public static @Nullable PresentationLibraryElement createProjectElementInstance(IJavaClassType elementClass, TapestryProject project)
     throws NotTapestryElementException {
-    return createElementInstance(project.getApplicationLibrary(), elementClass, project);
+    TapestryLibrary library = project == null ? null : project.getApplicationLibrary();
+    return library == null ? null : createElementInstance(library, elementClass, project);
   }
 
   /**
