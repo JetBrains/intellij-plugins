@@ -30,6 +30,7 @@ import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.perforce.*;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class PerforceDiffProvider extends DiffProviderEx implements DiffMixin {
   }
 
   @Override
-  public Map<VirtualFile, VcsRevisionNumber> getCurrentRevisions(Iterable<VirtualFile> files) {
+  public Map<VirtualFile, VcsRevisionNumber> getCurrentRevisions(@NotNull Iterable<? extends VirtualFile> files) {
     Map<VirtualFile, P4File> p4Files = new LinkedHashMap<>();
     for (VirtualFile file : files) {
       p4Files.put(file, P4File.create(getOriginalIfMoved(file)));

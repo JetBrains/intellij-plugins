@@ -225,7 +225,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
     @Override
     protected CallerChooserBase<JSFunction> createCallerChooser(String title,
                                                                 Tree treeToReuse,
-                                                                Consumer<Set<JSFunction>> callback) {
+                                                                Consumer<? super Set<JSFunction>> callback) {
       return new MyCallerChooser(myMethod.getMethod(), title, treeToReuse, callback);
     }
 
@@ -242,7 +242,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   }
 
   private class MyCallerChooser extends JSCallerChooser {
-    MyCallerChooser(JSFunction method, @NlsContexts.DialogTitle String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
+    MyCallerChooser(JSFunction method, @NlsContexts.DialogTitle String title, Tree treeToReuse, Consumer<? super Set<JSFunction>> callback) {
       super(method, method.getProject(), title, treeToReuse, callback);
     }
 
