@@ -2,7 +2,6 @@
 package com.intellij.flex.uml;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
-import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
 import com.intellij.flex.util.FlexTestUtils;
@@ -18,7 +17,6 @@ import com.intellij.lang.javascript.uml.FlashUmlDependenciesSettingsOption;
 import com.intellij.lang.javascript.uml.FlashUmlProvider;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
@@ -78,21 +76,9 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  @Override
-  public Object getData(@NotNull String dataId) {
-    if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
-      return TargetElementUtil.findTargetElement(getEditor(), TargetElementUtil.getInstance().getReferenceSearchFlags());
-    }
-    if (CommonDataKeys.PSI_FILE.is(dataId)) {
-      return getFile();
-    }
-    return super.getData(dataId);
-  }
-
   private void doTest(String file) throws Exception {
     doTest(new String[]{file}, ArrayUtilRt.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
   }
-
 
   private void doTest(String[] files,
                       String[] additionalClasses,
