@@ -18,8 +18,8 @@
   </node>
   <node id="mx.core.IUIComponent" nodeName="Class mx.core.IUIComponent" name="&lt;html&gt;&lt;b&gt;mx.core.IUIComponent&lt;/b&gt;&lt;/html&gt;" />
   <node id="mx.core.UIComponent" nodeName="Class mx.core.UIComponent" name="&lt;html&gt;&lt;b&gt;mx.core.UIComponent&lt;/b&gt;&lt;/html&gt;">
-    <element name="resourceManager" type="IResourceManager" category="Fields" visibility="PUBLIC" />
     <element name="UIComponent()" category="Constructors" visibility="PUBLIC" />
+    <element name="resourceManager" type="IResourceManager" category="Fields" visibility="PUBLIC" />
     <element name="id" type="String" category="Properties" visibility="PUBLIC" />
     <element name="height" type="uint" category="Properties" visibility="PUBLIC" />
     <element name="fakePrivateProperty" type="uint" category="Properties" visibility="PRIVATE" />
