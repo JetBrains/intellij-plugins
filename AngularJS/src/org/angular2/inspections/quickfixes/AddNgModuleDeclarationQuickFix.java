@@ -25,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Adds Component/Directive/Pipe to NgModule's declarations array.
+ */
 public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
 
   public static void add(@NotNull PsiElement context,

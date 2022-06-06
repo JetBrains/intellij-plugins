@@ -218,7 +218,8 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       if (type.getSourceElement() != null) {
         processCacheDependency(type.getSourceElement());
       }
-      if (lookingForModule) {
+      if (lookingForModule) { // see https://angular.io/guide/migration-module-with-providers
+        // Ivy syntax
         if (type instanceof JSGenericTypeImpl
             && ((JSGenericTypeImpl)type).getType() instanceof JSTypeImpl
             && MODULE_WITH_PROVIDERS_CLASS.equals(((JSGenericTypeImpl)type).getType().getTypeText())) {
@@ -229,6 +230,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
             continue;
           }
         }
+        // pre-Ivy syntax
         if ((ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
           type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
           lookingForModule = false;
