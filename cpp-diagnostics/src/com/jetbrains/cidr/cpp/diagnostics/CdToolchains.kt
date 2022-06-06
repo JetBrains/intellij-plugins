@@ -153,11 +153,10 @@ private fun testRemoteHost(log: CdIndenter, remoteHost: HostMachine) {
     test(log, remoteHost, "run remote process", ::processCheck)
     test(log, remoteHost, "remote FS", ::checkRemoteFS)
     test(log, remoteHost, "tar", ::checkRemoteTar)
-    if (SystemInfo.isUnix) {
-      test(log, remoteHost, "rsync local", { RSyncUtil.canUseRSync() })
-      test(log, remoteHost, "rsync remote", ::checkRemoteRsync)
-      test(log, remoteHost, "rsync download", ::checkRsyncDownload)
-    }
+
+    test(log, remoteHost, "rsync local", { CidrRSyncUtil.canUseRSync(remoteHost.hostId) }, "[NOT CONFIGURED]")
+    test(log, remoteHost, "rsync remote", ::checkRemoteRsync)
+    test(log, remoteHost, "rsync download", ::checkRsyncDownload)
   }
 }
 
@@ -217,12 +216,16 @@ private fun checkRsyncDownload(remoteHost: HostMachine): Boolean {
   }
 }
 
-private fun test(log: CdIndenter, host: HostMachine, @NonNls testName: String, check: (host: HostMachine) -> Boolean): Boolean {
+private fun test(log: CdIndenter,
+                 host: HostMachine,
+                 @NonNls testName: String,
+                 check: (host: HostMachine) -> Boolean,
+                 failStatusMsg: String = "[FAILED]"): Boolean {
   ProgressManager.checkCanceled()
   var status = false
   try {
     status = check(host)
-    val statusStr = if (status) "[OK]" else "[FAILED]"
+    val statusStr = if (status) "[OK]" else failStatusMsg
     log.put("${statusStr} ${testName}")
   }
   catch (t: Throwable) {
