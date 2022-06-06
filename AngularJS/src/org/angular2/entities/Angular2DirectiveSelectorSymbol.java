@@ -130,7 +130,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
   }
 
   public boolean isDeclaration() {
-    return !ContainerUtil.exists(getReferencedSymbols(), symbol -> !(symbol instanceof Angular2Symbol));
+    return ContainerUtil.and(getReferencedSymbols(), symbol -> symbol instanceof Angular2Symbol);
   }
 
   public List<WebSymbol> getReferencedSymbols() {

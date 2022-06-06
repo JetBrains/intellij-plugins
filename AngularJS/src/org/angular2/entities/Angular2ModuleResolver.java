@@ -65,15 +65,14 @@ public class Angular2ModuleResolver<T extends PsiElement> {
     }
     ResolvedEntitiesList<Angular2Module> imports = getResolvedModuleList(IMPORTS_KEY, Angular2Module.class);
     return imports.isFullyResolved
-           && !ContainerUtil.exists(imports.entities, m -> !m.areExportsFullyResolved())
+           && ContainerUtil.and(imports.entities, m -> m.areExportsFullyResolved())
            && areExportsFullyResolved();
   }
 
   public boolean areExportsFullyResolved() {
     ResolvedEntitiesList<Angular2Entity> exports = getResolvedModuleList(EXPORTS_KEY, Angular2Entity.class);
-    return exports.isFullyResolved
-           && !ContainerUtil.exists(exports.entities, m -> m instanceof Angular2Module
-                                                           && !((Angular2Module)m).areExportsFullyResolved());
+    return exports.isFullyResolved &&
+           ContainerUtil.and(exports.entities, e -> !(e instanceof Angular2Module) || ((Angular2Module)e).areExportsFullyResolved());
   }
 
   public boolean areDeclarationsFullyResolved() {

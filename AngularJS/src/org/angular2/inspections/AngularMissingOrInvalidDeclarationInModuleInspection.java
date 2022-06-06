@@ -18,6 +18,7 @@ import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -62,8 +63,7 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
 
 
   private static boolean allSourceDeclarationsResolved(@NotNull Project project) {
-    return !ContainerUtil.exists(Angular2EntitiesProvider.getAllModules(project),
-                                 module -> module instanceof Angular2SourceModule
-                                           && !module.areDeclarationsFullyResolved());
+    List<Angular2Module> modules = Angular2EntitiesProvider.getAllModules(project);
+    return ContainerUtil.and(modules, m -> !(m instanceof Angular2SourceModule) || m.areDeclarationsFullyResolved());
   }
 }

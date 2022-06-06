@@ -25,8 +25,6 @@ import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.containers.ContainerUtil.exists;
-import static com.intellij.util.containers.ContainerUtil.filter;
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
@@ -77,11 +75,11 @@ public class Angular2DeclarationsScope {
   }
 
   public List<Angular2Module> getPublicModulesExporting(@NotNull Angular2Declaration declaration) {
-    return filter(myExport2NgModuleMap
-                    .computeIfAbsent(declaration.getSourceElement().getProject(),
-                                     p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
-                    .get(declaration),
-                  module -> module.isPublic() && module.getTypeScriptClass() != null);
+    return ContainerUtil.filter(myExport2NgModuleMap
+                                  .computeIfAbsent(declaration.getSourceElement().getProject(),
+                                                   p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
+                                  .get(declaration),
+                                module -> module.isPublic() && module.getTypeScriptClass() != null);
   }
 
   public @NotNull DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
@@ -100,7 +98,7 @@ public class Angular2DeclarationsScope {
              ? DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE
              : DeclarationProximity.NOT_EXPORTED_BY_MODULE;
     }
-    else if (exists(modules, Angular2Module::isPublic)) {
+    else if (ContainerUtil.exists(modules, Angular2Module::isPublic)) {
       return DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE;
     }
     return DeclarationProximity.NOT_REACHABLE;
