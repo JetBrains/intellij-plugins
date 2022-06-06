@@ -23,6 +23,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
@@ -38,7 +39,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
 import static org.angular2.entities.Angular2EntityUtils.*;
 import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
@@ -303,9 +303,9 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
           .map(type -> type.getTypeText())
           .toList();
         result.set(Angular2DirectiveKind.get(
-          exists(types, t -> t.contains(ELEMENT_REF)),
-          exists(types, t -> t.contains(TEMPLATE_REF)),
-          exists(types, t -> t.contains(VIEW_CONTAINER_REF))
+          ContainerUtil.exists(types, t -> t.contains(ELEMENT_REF)),
+          ContainerUtil.exists(types, t -> t.contains(TEMPLATE_REF)),
+          ContainerUtil.exists(types, t -> t.contains(VIEW_CONTAINER_REF))
         ));
       }
       return result.isNull();

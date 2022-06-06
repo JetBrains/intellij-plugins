@@ -23,6 +23,7 @@ import com.intellij.platform.ProjectGeneratorPeer;
 import com.intellij.ui.TextAccessor;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -41,7 +42,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
@@ -92,7 +92,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     }
 
     if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.myUseDefaults) {
-      if (!exists(result, param -> param.equals("--defaults") || param.startsWith("--defaults="))) {
+      if (!ContainerUtil.exists(result, param -> param.equals("--defaults") || param.startsWith("--defaults="))) {
         result.add("--defaults");
       }
     }
