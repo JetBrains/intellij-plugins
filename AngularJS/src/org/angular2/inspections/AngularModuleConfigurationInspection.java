@@ -85,7 +85,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
 
     @Override
-    protected void processNonEntityClass(@NotNull JSClass aClass) {
+    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
                       Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-declarable", aClass.getName()));
     }
@@ -146,13 +146,13 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
 
     @Override
-    protected void processNonEntityClass(@NotNull JSClass aClass) {
+    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
                       Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-a-module", aClass.getName()));
     }
 
     @Override
-    protected void processEntity(@NotNull Angular2Module module) {
+    protected void processAcceptableEntity(@NotNull Angular2Module module) {
       if (module.equals(myModule)) {
         registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
                         Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-import", module.getName()));
@@ -170,7 +170,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
 
     @Override
-    protected void processNonEntityClass(@NotNull JSClass aClass) {
+    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
                       Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-entity", aClass.getName()),
                       Objects.requireNonNull(myModule).isScopeFullyResolved()
@@ -179,7 +179,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
 
     @Override
-    protected void processEntity(@NotNull Angular2Entity entity) {
+    protected void processAcceptableEntity(@NotNull Angular2Entity entity) {
       if (entity instanceof Angular2Module) {
         if (entity.equals(myModule)) {
           registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,

@@ -47,17 +47,17 @@ import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
 public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity> {
 
-  private final Class<T> myEntityClass;
+  private final Class<T> myAcceptableEntityClass;
   private final boolean myAcceptNgModuleWithProviders;
   private final JSElementVisitor myResultsVisitor = new JSElementVisitor() {
     @Override
     public void visitJSClass(JSClass aClass) {
-      T entity = getEntity(aClass);
+      T entity = getAcceptableEntity(aClass);
       if (entity != null) {
-        processEntity(entity);
+        processAcceptableEntity(entity);
       }
       else {
-        processNonEntityClass(aClass);
+        processNonAcceptableEntityClass(aClass);
       }
     }
 
@@ -82,9 +82,9 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     }
   };
 
-  public Angular2SourceEntityListProcessor(@NotNull Class<T> entityClass) {
-    myEntityClass = entityClass;
-    myAcceptNgModuleWithProviders = entityClass.isAssignableFrom(Angular2Module.class);
+  public Angular2SourceEntityListProcessor(@NotNull Class<T> acceptableEntityClass) {
+    myAcceptableEntityClass = acceptableEntityClass;
+    myAcceptNgModuleWithProviders = myAcceptableEntityClass.isAssignableFrom(Angular2Module.class);
   }
 
   protected final List<PsiElement> resolve(PsiElement t) {
@@ -185,11 +185,17 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     return myResultsVisitor;
   }
 
-  protected void processNonEntityClass(@NotNull JSClass aClass) {
+  /**
+   * @see #getAcceptableEntity
+   */
+  protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
 
   }
 
-  protected void processEntity(@NotNull T entity) {
+  /**
+   * @see #getAcceptableEntity
+   */
+  protected void processAcceptableEntity(@NotNull T entity) {
 
   }
 
@@ -201,13 +207,20 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
 
   }
 
+  /**
+   * Implementations can store the {@code element} and pass it later to {@link CachedValueProvider.Result#create(Object, Collection)}
+   */
   protected void processCacheDependency(PsiElement element) {
 
   }
 
+  private T getAcceptableEntity(@Nullable JSClass aClass) {
+    return tryCast(Angular2EntitiesProvider.getEntity(aClass), myAcceptableEntityClass);
+  }
+
   private void resolveFunctionReturnType(@NotNull JSFunction function) {
     Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
-    boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
+    boolean lookingForModule = myAcceptNgModuleWithProviders;
     JSClass resolvedClazz = null;
     JSType type = function.getReturnType();
     while (type != null
@@ -243,20 +256,20 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
           sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
         if (expression != null) {
           resolvedClazz = tryCast(expression.resolve(), JSClass.class);
-          T entity = getEntity(resolvedClazz);
+          T entity = getAcceptableEntity(resolvedClazz);
           if (entity != null) {
             processCacheDependency(resolvedClazz);
-            processEntity(entity);
+            processAcceptableEntity(entity);
             return;
           }
         }
       }
       else if (sourceElement instanceof TypeScriptClass) {
         resolvedClazz = (JSClass)sourceElement;
-        T entity = getEntity(resolvedClazz);
+        T entity = getAcceptableEntity(resolvedClazz);
         if (entity != null) {
           processCacheDependency(resolvedClazz);
-          processEntity(entity);
+          processAcceptableEntity(entity);
           return;
         }
       }
@@ -265,7 +278,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
     }
     // Fallback to search in metadata
-    if (myEntityClass.isAssignableFrom(Angular2Module.class)) {
+    if (myAcceptNgModuleWithProviders) {
       Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
       Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
       if (metadataModule != null) {
@@ -278,17 +291,17 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
           if (ivyModule != null) {
             processCacheDependency(tsClass);
             //noinspection unchecked
-            processEntity((T)ivyModule);
+            processAcceptableEntity((T)ivyModule);
             return;
           }
         }
         //noinspection unchecked
-        processEntity((T)metadataModule);
+        processAcceptableEntity((T)metadataModule);
         return;
       }
     }
     if (resolvedClazz != null && !(type instanceof JSAnyType)) {
-      processNonEntityClass(resolvedClazz);
+      processNonAcceptableEntityClass(resolvedClazz);
     }
     else {
       processAnyType();
@@ -331,9 +344,5 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       .map(value -> tryCast(value.findMember(NG_MODULE_PROP), Angular2MetadataReference.class))
       .map(reference -> tryCast(reference.resolve(), Angular2MetadataModule.class))
       .orElse(null);
-  }
-
-  private T getEntity(@Nullable JSClass aClass) {
-    return tryCast(Angular2EntitiesProvider.getEntity(aClass), myEntityClass);
   }
 }

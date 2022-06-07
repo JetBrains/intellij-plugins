@@ -45,7 +45,7 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
     }
 
     @Override
-    protected void processNonEntityClass(@NotNull JSClass aClass) {
+    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
                       Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-component",
                                              aClass.getName()));
@@ -59,7 +59,7 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
     }
 
     @Override
-    protected void processNonEntityClass(@NotNull JSClass aClass) {
+    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
                       Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-component",
                                              aClass.getName()));
