@@ -15,10 +15,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.*;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,6 +83,15 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
 
     @Override
+    protected void processAcceptableEntity(@NotNull Angular2Declaration entity) {
+      var aClass = entity.getTypeScriptClass();
+      if (entity.isStandalone() && aClass != null) {
+        registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
+                        Angular2Bundle.message("angular.inspection.wrong-entity-type.message.standalone-declarable", aClass.getName()));
+      }
+    }
+
+    @Override
     protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
                       Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-declarable", aClass.getName()));
@@ -136,27 +142,37 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
   }
 
-  private static final class ImportsValidator extends ImportExportValidator<Angular2Module> {
+  private static final class ImportsValidator extends ImportExportValidator<Angular2Entity> {
 
     private ImportsValidator(@NotNull Angular2Module module) {
-      super(Angular2Module.class, IMPORTS_PROP, module);
+      super(Angular2Entity.class, IMPORTS_PROP, module);
     }
 
     @Override
     protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
-      registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-a-module", aClass.getName()));
+      reportMismatchedType(aClass);
     }
 
     @Override
-    protected void processAcceptableEntity(@NotNull Angular2Module module) {
-      if (module.equals(myModule)) {
+    protected void processAcceptableEntity(@NotNull Angular2Entity entity) {
+      if (entity.equals(myModule)) {
         registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                        Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-import", module.getName()));
+                        Angular2Bundle.message("angular.inspection.cyclic-module-dependency.message.self-import", entity.getName()));
       }
-      else {
-        checkCyclicDependencies(module);
+      else if (entity instanceof Angular2Module) {
+        checkCyclicDependencies((Angular2Module)entity);
       }
+      else if (!Angular2EntityUtils.isImportableEntity(entity)) {
+        var aClass = entity.getTypeScriptClass();
+        if (aClass != null) {
+          reportMismatchedType(aClass);
+        }
+      }
+    }
+
+    private void reportMismatchedType(@NotNull JSClass aClass) {
+      registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
+                      Angular2Bundle.message("angular.inspection.wrong-entity-type.message.not-importable", aClass.getName()));
     }
   }
 

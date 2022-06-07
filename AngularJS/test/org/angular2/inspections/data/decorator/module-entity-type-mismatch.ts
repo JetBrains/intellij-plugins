@@ -46,19 +46,37 @@ class MyClass2 {
 
 }
 
+@Component({ standalone: true })
+class ComponentStandalone {
+}
+
+@Directive({ standalone: true })
+class DirectiveStandalone {
+}
+
+@Pipe({ standalone: true })
+class PipeStandalone {
+}
+
 @NgModule({
     imports: [
-        <error descr="Class Component1 is not an Angular module">Component1</error>,
-        <error descr="Class Directive1 is not an Angular module">Directive1</error>,
-        <error descr="Class Pipe1 is not an Angular module">Pipe1</error>,
+        <error descr="Class Component1 cannot be imported (neither an Angular module nor a standalone declarable)">Component1</error>,
+        <error descr="Class Directive1 cannot be imported (neither an Angular module nor a standalone declarable)">Directive1</error>,
+        <error descr="Class Pipe1 cannot be imported (neither an Angular module nor a standalone declarable)">Pipe1</error>,
         Module2,
-        <error descr="Class MyClass is not an Angular module">MyClass</error>,
-        <error descr="Class MyClass2 is not an Angular module">MyClass2</error>,
+        ComponentStandalone,
+        DirectiveStandalone,
+        PipeStandalone,
+        <error descr="Class MyClass cannot be imported (neither an Angular module nor a standalone declarable)">MyClass</error>,
+        <error descr="Class MyClass2 cannot be imported (neither an Angular module nor a standalone declarable)">MyClass2</error>,
     ],
     declarations: [
         Component1,
         Directive1,
         Pipe1,
+        <error descr="Class ComponentStandalone is standalone, and cannot be declared in an Angular module. Did you mean to import it instead?">ComponentStandalone</error>,
+        <error descr="Class DirectiveStandalone is standalone, and cannot be declared in an Angular module. Did you mean to import it instead?">DirectiveStandalone</error>,
+        <error descr="Class PipeStandalone is standalone, and cannot be declared in an Angular module. Did you mean to import it instead?">PipeStandalone</error>,
         <error descr="Class Module2 is neither an Angular component nor directive nor pipe">Module2</error>,
         <error descr="Class MyClass is neither an Angular component nor directive nor pipe">MyClass</error>,
         <error descr="Class MyClass2 is neither an Angular component nor directive nor pipe">MyClass2</error>,

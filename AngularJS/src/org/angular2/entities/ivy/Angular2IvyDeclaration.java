@@ -9,4 +9,9 @@ public abstract class Angular2IvyDeclaration<T extends Angular2IvySymbolDef.Enti
   public Angular2IvyDeclaration(@NotNull T entityDef) {
     super(entityDef);
   }
+
+  @Override
+  public boolean isStandalone() {
+    return false; // todo support Ivy libraries
+  }
 }

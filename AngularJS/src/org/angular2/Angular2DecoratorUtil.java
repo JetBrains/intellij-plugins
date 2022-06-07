@@ -53,6 +53,7 @@ public final class Angular2DecoratorUtil {
   @NonNls public static final String EXPORT_AS_PROP = "exportAs";
   @NonNls public static final String INPUTS_PROP = "inputs";
   @NonNls public static final String OUTPUTS_PROP = "outputs";
+  @NonNls public static final String STANDALONE_PROP = "standalone";
   @NonNls public static final String IMPORTS_PROP = "imports";
   @NonNls public static final String EXPORTS_PROP = "exports";
   @NonNls public static final String DECLARATIONS_PROP = "declarations";
@@ -173,6 +174,11 @@ public final class Angular2DecoratorUtil {
   public static @Nullable JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
     return doIfNotNull(getObjectLiteralInitializer(decorator),
                        expr -> expr.findProperty(name));
+  }
+
+  @StubUnsafe
+  public static @Nullable JSExpression getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
+    return doIfNotNull(getProperty(decorator, name), JSProperty::getValue);
   }
 
   public static boolean isAngularEntityDecorator(@NotNull ES6Decorator decorator, String @NotNull ... names) {

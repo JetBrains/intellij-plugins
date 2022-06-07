@@ -15,7 +15,13 @@ import static org.angular2.entities.Angular2EntitiesProvider.getDeclarationToMod
  */
 public interface Angular2Declaration extends Angular2Entity {
 
+  boolean isStandalone();
+
   default @NotNull Collection<Angular2Module> getAllDeclaringModules() {
+    if (isStandalone()) {
+      return Collections.emptyList();
+    }
+
     var map = getDeclarationToModuleMap(getSourceElement().getProject());
     return Collections.unmodifiableCollection(map.get(this));
   }
