@@ -81,11 +81,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
       Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes);
     }
     quickFixes.add(new RemoveAttributeIntentionFix(attribute.getName()));
-    ProblemHighlightType severity;
-    // TODO take into account 'CUSTOM_ELEMENTS_SCHEMA' and 'NO_ERRORS_SCHEMA' value of '@NgModule.schemas'
-    severity = scope.isFullyResolved()
-               ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-               : ProblemHighlightType.WEAK_WARNING;
+    ProblemHighlightType severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope);
     @PropertyKey(resourceBundle = BUNDLE) final String messageKey;
     switch (info.type) {
       case EVENT:
@@ -158,8 +154,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
           holder.registerProblem(element,
                                  Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.property-not-provided",
                                                         binding.getKey()),
-                                 scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                                         : ProblemHighlightType.WEAK_WARNING,
+                                 Angular2InspectionUtils.getBaseProblemHighlightType(scope),
                                  fixes.toArray(LocalQuickFix.EMPTY_ARRAY));
         }
       }

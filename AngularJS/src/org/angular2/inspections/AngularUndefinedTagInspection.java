@@ -2,7 +2,6 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
@@ -47,8 +46,7 @@ public class AngularUndefinedTagInspection extends AngularHtmlLikeTemplateLocalI
     }
     holder.registerProblem(tagName,
                            Angular2Bundle.message("angular.inspection.undefined-tag.message.out-of-scope", tagName.getText()),
-                           scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                                   : ProblemHighlightType.WEAK_WARNING,
+                           Angular2InspectionUtils.getBaseProblemHighlightType(scope),
                            quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
   }
 }

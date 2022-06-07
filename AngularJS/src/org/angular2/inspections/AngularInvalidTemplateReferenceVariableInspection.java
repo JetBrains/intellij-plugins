@@ -3,7 +3,6 @@ package org.angular2.inspections;
 
 import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix;
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.xml.XmlAttribute;
@@ -47,9 +46,7 @@ public class AngularInvalidTemplateReferenceVariableInspection extends AngularHt
           quickFixes.add(new RemoveAttributeIntentionFix(attribute.getName()));
           holder.registerProblem(attribute.getNameElement(),
                                  Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.unbound", exportName),
-                                 scope.isFullyResolved()
-                                 ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                 : ProblemHighlightType.WEAK_WARNING,
+                                 Angular2InspectionUtils.getBaseProblemHighlightType(scope),
                                  range,
                                  quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
         }
