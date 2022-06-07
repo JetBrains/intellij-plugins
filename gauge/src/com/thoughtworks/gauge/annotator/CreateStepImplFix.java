@@ -22,16 +22,20 @@ import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.DataManager;
+import com.intellij.ide.IdeView;
+import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -54,6 +58,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -112,7 +117,7 @@ public final class CreateStepImplFix extends BaseIntentionAction {
             public PopupStep<?> onChosen(final PsiFile selectedValue, boolean finalChoice) {
               return doFinalStep(() -> {
                 if (selectedValue == NEW_FILE_HOLDER) {
-                  createFileAndAddImpl(editor);
+                  createFileAndAddImpl(project, editor);
                 }
                 else {
                   addImpl(project, selectedValue.getVirtualFile());
@@ -144,12 +149,34 @@ public final class CreateStepImplFix extends BaseIntentionAction {
     });
   }
 
-  private void createFileAndAddImpl(Editor editor) {
+  private void createFileAndAddImpl(@NotNull Project project, Editor editor) {
     ActionManager instance = ActionManager.getInstance();
-    DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
-    GaugeDataContext gaugeDataContext = new GaugeDataContext(dataContext);
+    DataContext dataContext = SimpleDataContext.builder()
+      .setParent(EditorUtil.getEditorDataContext(editor))
+      .add(CommonDataKeys.PROJECT, project)
+      .add(LangDataKeys.IDE_VIEW, new IdeView() {
+        @Override
+        public PsiDirectory @NotNull [] getDirectories() {
+          List<PsiDirectory> psiDirectories = new ArrayList<>();
+          PsiManager psiManager = PsiManager.getInstance(project);
+          for (VirtualFile root : ProjectRootManager.getInstance(psiManager.getProject()).getContentSourceRoots()) {
+            PsiDirectory directory = psiManager.findDirectory(root);
+            if (directory != null) {
+              psiDirectories.add(directory);
+            }
+          }
+          return psiDirectories.toArray(PsiDirectory.EMPTY_ARRAY);
+        }
+
+        @Override
+        public @Nullable PsiDirectory getOrChooseDirectory() {
+          return DirectoryChooserUtil.getOrChooseDirectory(this);
+        }
+      })
+      .build();
+
     AnActionEvent anActionEvent =
-      new AnActionEvent(null, gaugeDataContext, ActionPlaces.UNKNOWN, new Presentation(
+      new AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, new Presentation(
         GaugeBundle.message("action.create.class.text")), instance, 0);
 
     GaugeCreateClassAction createClassAction = new GaugeCreateClassAction();
