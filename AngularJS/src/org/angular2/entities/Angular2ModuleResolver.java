@@ -34,7 +34,7 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   @NonNls private static final String KEYS_PREFIX = "angular.moduleResolver.";
   private static final Key<CachedValue<ResolvedEntitiesList<Angular2Declaration>>> DECLARATIONS_KEY =
     new Key<>(KEYS_PREFIX + DECLARATIONS_PROP);
-  private static final Key<CachedValue<ResolvedEntitiesList<Angular2Module>>> IMPORTS_KEY =
+  private static final Key<CachedValue<ResolvedEntitiesList<Angular2Entity>>> IMPORTS_KEY =
     new Key<>(KEYS_PREFIX + IMPORTS_PROP);
   private static final Key<CachedValue<ResolvedEntitiesList<Angular2Entity>>> EXPORTS_KEY =
     new Key<>(KEYS_PREFIX + EXPORTS_PROP);
@@ -52,8 +52,8 @@ public class Angular2ModuleResolver<T extends PsiElement> {
     return getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).entities;
   }
 
-  public @NotNull Set<Angular2Module> getImports() {
-    return getResolvedModuleList(IMPORTS_KEY, Angular2Module.class).entities;
+  public @NotNull Set<Angular2Entity> getImports() {
+    return getResolvedModuleList(IMPORTS_KEY, Angular2Entity.class).entities;
   }
 
   public @NotNull Set<Angular2Entity> getExports() {
@@ -64,10 +64,10 @@ public class Angular2ModuleResolver<T extends PsiElement> {
     if (!getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).isFullyResolved) {
       return false;
     }
-    ResolvedEntitiesList<Angular2Module> imports = getResolvedModuleList(IMPORTS_KEY, Angular2Module.class);
-    return imports.isFullyResolved
-           && ContainerUtil.and(imports.entities, m -> m.areExportsFullyResolved())
-           && areExportsFullyResolved();
+    ResolvedEntitiesList<Angular2Entity> imports = getResolvedModuleList(IMPORTS_KEY, Angular2Entity.class);
+    return imports.isFullyResolved &&
+           ContainerUtil.and(imports.entities, e -> !(e instanceof Angular2Module) || ((Angular2Module)e).areExportsFullyResolved()) &&
+           areExportsFullyResolved();
   }
 
   public boolean areExportsFullyResolved() {

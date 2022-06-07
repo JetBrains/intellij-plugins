@@ -45,7 +45,7 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
   }
 
   @Override
-  public @NotNull Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Entity> getImports() {
     return myModuleResolver.getImports();
   }
 

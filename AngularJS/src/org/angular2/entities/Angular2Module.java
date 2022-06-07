@@ -16,7 +16,7 @@ public interface Angular2Module extends Angular2Entity {
   boolean areDeclarationsFullyResolved();
 
   @NotNull
-  Set<Angular2Module> getImports();
+  Set<Angular2Entity> getImports();
 
   @NotNull
   Set<Angular2Entity> getExports();
