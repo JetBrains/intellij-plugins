@@ -23,7 +23,7 @@
   <error descr="Event otherEvent is not emitted by any applicable directive on an embedded template">(otherEvent)</error>="yup"
   <error descr="Event badEvent is not emitted by any applicable directive on an embedded template">(<warning descr="Unrecognized event">badEvent</warning>)</error>="fff"
 ></ng-template>
-<ng-template <warning descr="Directive that provides attribute myTemplate is out of the current Angular module's scope">myTemplate</warning>="foo" <error descr="Property myTemplateFor is not provided by any applicable directive on an embedded template">[myTemplateFor]</error>="nope" <error descr="Event otherEvent is not emitted by any applicable directive on an embedded template">(otherEvent)</error>="yup"></ng-template>
+<ng-template <warning descr="Directive that provides attribute myTemplate is out of scope of the current template">myTemplate</warning>="foo" <error descr="Property myTemplateFor is not provided by any applicable directive on an embedded template">[myTemplateFor]</error>="nope" <error descr="Event otherEvent is not emitted by any applicable directive on an embedded template">(otherEvent)</error>="yup"></ng-template>
 
 <ng-template *ngFor="t"></ng-template>
 

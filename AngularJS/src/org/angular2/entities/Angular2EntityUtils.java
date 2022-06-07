@@ -267,6 +267,10 @@ public final class Angular2EntityUtils {
     return getEntityClassName(entity);
   }
 
+  public static boolean isImportableEntity(@NotNull Angular2Entity entity) {
+    return entity instanceof Angular2Module || (entity instanceof Angular2Declaration && ((Angular2Declaration)entity).isStandalone());
+  }
+
   public static @NotNull String unquote(@NotNull String s) {
     return s.length() > 1 && ("'\"`".indexOf(s.charAt(0)) >= 0) && s.charAt(0) == s.charAt(s.length() - 1) ?
            s.substring(1, s.length() - 1) : s;

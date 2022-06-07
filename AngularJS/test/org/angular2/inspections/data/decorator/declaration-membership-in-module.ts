@@ -91,3 +91,15 @@ class Module1 {
 })
 class Module2 {
 }
+
+@Component({ standalone: true })
+class ComponentStandalone {
+}
+
+@Directive({ standalone: true })
+class DirectiveStandalone {
+}
+
+@Pipe({ standalone: true })
+class PipeStandalone {
+}

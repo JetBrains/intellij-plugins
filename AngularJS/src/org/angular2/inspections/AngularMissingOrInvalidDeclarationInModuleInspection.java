@@ -35,6 +35,10 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
         if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, PIPE_DEC) && !TestFinderHelper.isTest(decorator)) {
           Angular2Declaration declaration = tryCast(Angular2EntitiesProvider.getEntity(decorator), Angular2Declaration.class);
           if (declaration != null) {
+            if (declaration.isStandalone()) {
+              return;
+            }
+
             Collection<Angular2Module> modules = declaration.getAllDeclaringModules();
             if (Angular2FrameworkHandler.EP_NAME.extensions().anyMatch(h -> h.suppressModuleInspectionErrors(modules, declaration))) {
               return;

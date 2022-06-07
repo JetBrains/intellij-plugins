@@ -37,9 +37,24 @@ class Pipe2 {
 class Pipe3 {
 }
 
+@Component({ standalone: true })
+class ComponentStandalone {
+}
+
+@Directive({ standalone: true })
+class DirectiveStandalone {
+}
+
+@Pipe({ standalone: true })
+class PipeStandalone {
+}
+
 @NgModule({
     imports: [
         Module3,
+        ComponentStandalone,
+        DirectiveStandalone,
+        PipeStandalone,
     ],
     declarations: [
         Component1,
@@ -56,6 +71,9 @@ class Pipe3 {
         Pipe1,
         <error descr="Cannot export Pipe2 from Module1 as it is neither declared nor imported in it">Pipe2</error>,
         Pipe3,
+        ComponentStandalone,
+        DirectiveStandalone,
+        PipeStandalone,
     ]
 })
 class Module1 {
@@ -70,6 +88,9 @@ class Module1 {
         Component3,
         <error descr="Cannot export Directive3 from Module2 as it is neither declared nor imported in it">Directive3</error>,
         Pipe3,
+        <error descr="Cannot export ComponentStandalone from Module2 as it is neither declared nor imported in it">ComponentStandalone</error>,
+        <error descr="Cannot export DirectiveStandalone from Module2 as it is neither declared nor imported in it">DirectiveStandalone</error>,
+        <error descr="Cannot export PipeStandalone from Module2 as it is neither declared nor imported in it">PipeStandalone</error>,
     ]
 })
 class Module2 {

@@ -1,0 +1,16 @@
+<h1>This component is NOT standalone</h1>
+<div>
+  <app-standalone></app-standalone>
+  <p appStandaloneDirective>Hello Standalone</p>
+  <p>Exponent: {{2 | standalonePipe: 10}}</p>
+</div>
+<section>
+  <<weak_warning descr="Component or directive matching app-standalone-not-imported element is out of scope of the current template">app-standalone-not-imported</weak_warning>></app-standalone-not-imported>
+  <div <warning descr="Directive that provides attribute appStandaloneNotImportedDirective is out of scope of the current template">appStandaloneNotImportedDirective</warning>>Hello Standalone</div>
+  <div>Exponent: {{2 | <error descr="Unresolved pipe standaloneNotImportedPipe">standaloneNotImportedPipe</error>: 10}}</div>
+</section>
+<aside>
+  <<warning descr="Unknown html tag app-unknown">app-unknown</warning>></<warning descr="Unknown html tag app-unknown">app-unknown</warning>>
+  <div <warning descr="Attribute appUnknownDirective is not allowed here">appUnknownDirective</warning>>Error</div>
+  <div>Error: {{2 | <error descr="Unresolved pipe unknownPipe">unknownPipe</error>: 10}}</div>
+</aside>

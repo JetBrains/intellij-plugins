@@ -11,4 +11,10 @@ public abstract class Angular2MetadataDeclaration<Stub extends Angular2MetadataE
   public Angular2MetadataDeclaration(@NotNull Stub element) {
     super(element);
   }
+
+  @Override
+  public boolean isStandalone() {
+    // Standalone Components are a post-Ivy addition
+    return false;
+  }
 }
