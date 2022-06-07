@@ -32,7 +32,7 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
   }
 
   @Override
-  public @NotNull Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Entity> getImports() {
     return myModuleResolver.getImports();
   }
 

@@ -34,7 +34,7 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
   }
 
   @Override
-  public @NotNull Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Entity> getImports() {
     return myModuleResolver.getImports();
   }
 

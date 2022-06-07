@@ -206,7 +206,7 @@ public final class Angular2EntityUtils {
              " <" +
              sourceKind +
              " module>: imports=[" +
-             StreamEx.of(module.getImports()).map(Angular2Module::getName).sorted().joining(", ") +
+             StreamEx.of(module.getImports()).map(Angular2Entity::getName).sorted().joining(", ") +
              "]; declarations=[" +
              StreamEx.of(module.getDeclarations()).map(Angular2Entity::getName).sorted().joining(", ") +
              "]; exports=[" +
