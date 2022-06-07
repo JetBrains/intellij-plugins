@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.angular2.entities.Angular2EntityUtils.forEachModule;
+
 public interface Angular2Module extends Angular2Entity {
 
   @NotNull
@@ -30,14 +32,8 @@ public interface Angular2Module extends Angular2Entity {
 
   default @NotNull Set<Angular2Declaration> getDeclarationsInScope() {
     Set<Angular2Declaration> result = new HashSet<>(getDeclarations());
-    for (Angular2Module imported : getImports()) {
-      result.addAll(imported.getAllExportedDeclarations());
-    }
-    for (Angular2Entity entity : getExports()) {
-      if (entity instanceof Angular2Module) {
-        result.addAll(((Angular2Module)entity).getAllExportedDeclarations());
-      }
-    }
+    forEachModule(getImports(), module -> result.addAll(module.getAllExportedDeclarations()));
+    forEachModule(getExports(), module -> result.addAll(module.getAllExportedDeclarations()));
     return result;
   }
 

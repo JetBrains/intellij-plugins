@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.Angular2EntityUtils.forEachEntity;
 
 public class Angular2ModuleResolver<T extends PsiElement> {
 
@@ -92,18 +93,11 @@ public class Angular2ModuleResolver<T extends PsiElement> {
         while (!moduleQueue.empty()) {
           Angular2Module current = moduleQueue.pop();
           if (processedModules.add(current)) {
-            for (Angular2Entity export : current.getExports()) {
-              if (export instanceof Angular2Module) {
-                moduleQueue.push((Angular2Module)export);
-              }
-              else if (export instanceof Angular2Declaration) {
-                result.add((Angular2Declaration)export);
-              }
-              else {
-                throw new IllegalArgumentException(
-                  "Class " + export.getClass() + " extends neither Angular2Module nor Angular2Declaration");
-              }
-            }
+            forEachEntity(
+              current.getExports(),
+              m -> moduleQueue.push(m),
+              declaration -> result.add(declaration)
+            );
           }
         }
       }

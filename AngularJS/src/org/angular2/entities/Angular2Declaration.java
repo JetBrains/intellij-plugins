@@ -8,6 +8,11 @@ import java.util.Collections;
 
 import static org.angular2.entities.Angular2EntitiesProvider.getDeclarationToModuleMap;
 
+/**
+ * Also known as <a href="https://angular.io/guide/glossary#declarable">Declarable</a>.
+ * <p>
+ *  Common interface of entities that can be added to {@code @NgModule.declarations} array (only if not standalone).
+ */
 public interface Angular2Declaration extends Angular2Entity {
 
   default @NotNull Collection<Angular2Module> getAllDeclaringModules() {

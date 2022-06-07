@@ -13,7 +13,6 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.inspections.actions.AddNgModuleDeclarationAction;
@@ -24,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static org.angular2.entities.Angular2EntityUtils.forEachModule;
 
 /**
  * Adds Component/Directive/Pipe to NgModule's declarations array.
@@ -99,12 +100,8 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
       Angular2Module module = processingQueue.removeFirst();
       if (processed.add(module) && scope.isInSource(module)) {
         result.add(module);
-        module.getImports().forEach(processingQueue::addLast);
-        for (Angular2Entity entity : module.getExports()) {
-          if (entity instanceof Angular2Module) {
-            processingQueue.addLast((Angular2Module)entity);
-          }
-        }
+        forEachModule(module.getImports(), processingQueue::addLast);
+        forEachModule(module.getExports(), processingQueue::addLast);
       }
     }
     return result;

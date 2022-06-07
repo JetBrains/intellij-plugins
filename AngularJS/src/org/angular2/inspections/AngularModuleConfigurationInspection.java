@@ -28,6 +28,7 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 import static java.util.Arrays.asList;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.Angular2EntityUtils.forEachModule;
 import static org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults;
 
 public abstract class AngularModuleConfigurationInspection extends LocalInspectionTool {
@@ -126,12 +127,8 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
           if (processedModules.add(toProcess)) {
             cycleTrack.push(toProcess);
             List<Angular2Module> dependencies = new ArrayList<>();
-            for (Angular2Entity child : toProcess.getExports()) {
-              if (child instanceof Angular2Module) {
-                dependencies.add((Angular2Module)child);
-              }
-            }
-            dependencies.addAll(toProcess.getImports());
+            forEachModule(toProcess.getExports(), dependencies::add);
+            forEachModule(toProcess.getImports(), dependencies::add);
             dfsStack.push(dependencies);
           }
         }

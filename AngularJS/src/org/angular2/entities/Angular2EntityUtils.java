@@ -271,4 +271,32 @@ public final class Angular2EntityUtils {
     return s.length() > 1 && ("'\"`".indexOf(s.charAt(0)) >= 0) && s.charAt(0) == s.charAt(s.length() - 1) ?
            s.substring(1, s.length() - 1) : s;
   }
+
+  /**
+   * Calls {@code moduleConsumer} for each NgModule, ignoring Components, Directives & Pipes.
+   *
+   * @see #forEachEntity
+   */
+  public static void forEachModule(@NotNull Iterable<@Nullable Angular2Entity> entities,
+                                   @NotNull Consumer<@NotNull Angular2Module> moduleConsumer) {
+    forEachEntity(entities, moduleConsumer, null);
+  }
+
+  /**
+   * Calls {@code moduleConsumer} for each NgModule, or {@code declarationConsumer} for each Component, Directive, or Pipe.
+   *
+   * @see #forEachModule
+   */
+  public static void forEachEntity(@NotNull Iterable<@Nullable Angular2Entity> entities,
+                                   @NotNull Consumer<@NotNull Angular2Module> moduleConsumer,
+                                   @Nullable Consumer<@NotNull Angular2Declaration> declarationConsumer) {
+    entities.forEach(entity -> {
+      if (entity instanceof Angular2Module) {
+        moduleConsumer.accept((Angular2Module)entity);
+      }
+      else if (entity instanceof Angular2Declaration && declarationConsumer != null) {
+        declarationConsumer.accept((Angular2Declaration)entity);
+      }
+    });
+  }
 }
