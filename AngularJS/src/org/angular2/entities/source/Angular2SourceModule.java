@@ -141,12 +141,12 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
     }
 
     @Override
-    protected void processNonEntityClass(@NotNull JSClass aClass) {
+    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
       myIsFullyResolved = false;
     }
 
     @Override
-    protected void processEntity(@NotNull T entity) {
+    protected void processAcceptableEntity(@NotNull T entity) {
       myResult.add(entity);
     }
 
