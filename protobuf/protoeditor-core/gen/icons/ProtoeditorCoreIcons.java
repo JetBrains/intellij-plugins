@@ -13,6 +13,8 @@ public final class ProtoeditorCoreIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, ProtoeditorCoreIcons.class.getClassLoader(), cacheKey, flags);
   }
+  /** 12x12 */ public static final @NotNull Icon GoToDeclaration = load("goToDeclaration.svg", 2035757707, 0);
+  /** 12x12 */ public static final @NotNull Icon GoToImplementation = load("goToImplementation.svg", 2011679697, 0);
   /** 16x16 */ public static final @NotNull Icon ProtoFile = load("protoFile.png", 0, 1);
   /** 16x16 */ public static final @NotNull Icon ProtoMessage = load("protoMessage.png", 0, 1);
 }
