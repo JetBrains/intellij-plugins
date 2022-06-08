@@ -13,7 +13,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.util.QualifiedName
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 
@@ -67,16 +66,19 @@ class ProtoFileAccessor(private val project: Project) {
           collectElementsWithText(elementName, ShortNameIndex.KEY)
             .plus(collectElementsWithText(elementName, QualifiedNameIndex.KEY))
       }
-      .groupingBy { it.qualifiedName }
-      .aggregate { _: QualifiedName?, accumulator: MutableList<PbNamedElement>?, candidateElement: PbNamedElement, _: Boolean ->
-        if (accumulator == null) return@aggregate mutableListOf()
-
-        val hasDuplicates = accumulator.any { sameFqnElement -> psiManager.areElementsEquivalent(sameFqnElement, candidateElement) }
-        if (!hasDuplicates) accumulator.add(candidateElement)
-        accumulator
-      }
+      .groupBy { it.qualifiedName?.toString() ?: it.name }
       .asSequence()
-      .flatMap { it.value }
+      .map { possiblyDuplicates -> selectUnique(possiblyDuplicates, psiManager) }
+      .flatten()
+  }
+
+  private fun selectUnique(it: Map.Entry<String?, List<PbNamedElement>>,
+                           psiManager: PsiManager): MutableList<PbNamedElement> {
+    return it.value.fold(mutableListOf()) { accumulator, candidateElement ->
+      val noDuplicates = accumulator.none { uniqueElement -> psiManager.areElementsEquivalent(uniqueElement, candidateElement) }
+      if (noDuplicates) accumulator.add(candidateElement)
+      accumulator
+    }
   }
 
   private fun fqnAwareCollector(fqnSegment: String?, searchParameters: PbSearchParameters): CommonProcessors.CollectProcessor<String> {
