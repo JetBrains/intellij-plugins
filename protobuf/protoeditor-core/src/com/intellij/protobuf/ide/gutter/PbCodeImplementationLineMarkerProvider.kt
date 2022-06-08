@@ -4,7 +4,6 @@ import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationUtil
-import com.intellij.icons.AllIcons
 import com.intellij.ide.util.EditSourceUtil
 import com.intellij.lang.Language
 import com.intellij.navigation.GotoRelatedItem
@@ -26,6 +25,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.castSafelyTo
 import com.intellij.util.concurrency.AppExecutorUtil
+import icons.ProtoeditorCoreIcons
 import java.awt.event.MouseEvent
 import java.util.concurrent.Callable
 import kotlin.streams.asSequence
@@ -47,6 +47,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
       when (element) {
         is PbElement ->
           if (hasImplementation(element)) createOverriddenElementMarker(anchor, element) else null
+
         else ->
           if (hasProtoDefinition(element)) createImplementedElementMarker(anchor, element) else null
       } ?: return
@@ -58,7 +59,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       identifier,
       identifier.textRange,
-      AllIcons.General.OverridenMethod, //todo icon
+      ProtoeditorCoreIcons.GoToImplementation,
       { PbIdeBundle.message("line.marker.navigate.to.implementation") },
       navigationHandler { element ->
         if (element !is ProtoLeafElement) return@navigationHandler emptyList()
@@ -74,7 +75,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     return object : RelatedItemLineMarkerInfo<PsiElement>(
       identifier,
       identifier.textRange,
-      AllIcons.General.ImplementingMethod, //todo icon
+      ProtoeditorCoreIcons.GoToDeclaration,
       { PbIdeBundle.message("line.marker.navigate.to.declaration") },
       navigationHandler { element -> findProtoDefinitions(element).toList() },
       GutterIconRenderer.Alignment.LEFT,
@@ -100,6 +101,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
         val singleTarget = targets.singleOrNull() ?: return
         EditSourceUtil.getDescriptor(singleTarget)?.takeIf(Navigatable::canNavigate)?.navigate(true)
       }
+
       else -> {
         NavigationUtil.getPsiElementPopup(
           targets.toTypedArray(),
