@@ -44,12 +44,10 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     val anchor = element.identifyingElement ?: return
 
     val marker =
-      when (element) {
-        is PbElement ->
-          if (hasImplementation(element)) createOverriddenElementMarker(anchor, element) else null
-
-        else ->
-          if (hasProtoDefinition(element)) createImplementedElementMarker(anchor, element) else null
+      when {
+        element is PbElement && hasImplementation(element) -> createOverriddenElementMarker(anchor, element)
+        element !is PbElement && hasProtoDefinition(element) -> createImplementedElementMarker(anchor, element)
+        else -> null
       } ?: return
 
     result.add(marker)
