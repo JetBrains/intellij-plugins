@@ -9,9 +9,11 @@ import com.intellij.protobuf.lang.psi.PbServiceDefinition
 import com.intellij.protobuf.lang.psi.PbServiceMethod
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex
 import com.intellij.protobuf.lang.stub.index.ShortNameIndex
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
+import com.intellij.psi.util.QualifiedName
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 
@@ -54,6 +56,7 @@ class ProtoFileAccessor(private val project: Project) {
     val collector = fqnAwareCollector(fqnPrefix, searchParameters)
     collectStringsForKey(QualifiedNameIndex.KEY, project, collector)
     collectStringsForKey(ShortNameIndex.KEY, project, collector)
+    val psiManager = PsiManager.getInstance(project)
 
     return collector.results
       .asSequence()
@@ -61,16 +64,28 @@ class ProtoFileAccessor(private val project: Project) {
         return@flatMap if (elementName.contains('.'))
           collectElementsWithText(elementName, QualifiedNameIndex.KEY)
         else
-          collectElementsWithText(elementName, QualifiedNameIndex.KEY)
-            .plus(collectElementsWithText(elementName, ShortNameIndex.KEY))
+          collectElementsWithText(elementName, ShortNameIndex.KEY)
+            .plus(collectElementsWithText(elementName, QualifiedNameIndex.KEY))
       }
-      .distinct()
+      .groupingBy { it.qualifiedName }
+      .aggregate { _: QualifiedName?, accumulator: MutableList<PbNamedElement>?, candidateElement: PbNamedElement, _: Boolean ->
+        if (accumulator == null) return@aggregate mutableListOf()
+
+        val hasDuplicates = accumulator.any { sameFqnElement -> psiManager.areElementsEquivalent(sameFqnElement, candidateElement) }
+        if (!hasDuplicates) accumulator.add(candidateElement)
+        accumulator
+      }
+      .asSequence()
+      .flatMap { it.value }
   }
 
   private fun fqnAwareCollector(fqnSegment: String?, searchParameters: PbSearchParameters): CommonProcessors.CollectProcessor<String> {
     return object : CommonProcessors.CollectProcessor<String>() {
+      private val knownValues = mutableSetOf<String?>()
+
       override fun accept(value: String?): Boolean {
-        return when {
+        val isAccepted = when {
+          knownValues.contains(value) -> false
           value.isNullOrBlank() -> false
           fqnSegment.isNullOrBlank() -> true
           searchParameters == PbSearchParameters.PREFIX && value.startsWith(fqnSegment) -> true
@@ -79,6 +94,11 @@ class ProtoFileAccessor(private val project: Project) {
           searchParameters == PbSearchParameters.CONTAINS && value.contains(fqnSegment) -> true
           else -> false
         }
+
+        if (isAccepted) {
+          knownValues.add(value)
+        }
+        return isAccepted
       }
     }
   }
