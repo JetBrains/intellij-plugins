@@ -7,10 +7,15 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.codeInsight.InspectionsTest;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @see InspectionsTest
+ * @see Angular2DecoratorInspectionsTest
+ */
 public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override

@@ -9,11 +9,17 @@ import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2DecoratorInspectionsTest;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
+import org.angular2.inspections.Angular2TemplateInspectionsTest;
 import org.angularjs.AngularTestUtil;
 
 import static java.util.Arrays.asList;
 
+/**
+ * @see Angular2DecoratorInspectionsTest
+ * @see Angular2TemplateInspectionsTest
+ */
 public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
