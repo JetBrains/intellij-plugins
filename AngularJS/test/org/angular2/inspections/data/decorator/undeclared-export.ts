@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component, Directive, Input, NgModule, Pipe} from "@angular/core";
+import {Component, Directive, NgModule, Pipe} from "@angular/core";
 
 @Component({})
 class Component1 {
@@ -38,41 +38,13 @@ class Pipe3 {
 }
 
 @NgModule({
-    declarations: [
-        Component3,
-        Pipe3,
-    ],
-    exports: [
-        Component3,
-        <error descr="Cannot export Directive3 from Module2 as it is neither declared nor imported in it">Directive3</error>,
-        Pipe3
-    ]
-})
-class Module2 {
-}
-
-
-@NgModule({
-    declarations: [
-        Component2,
-        Directive2,
-        Pipe2
-    ],
-    exports: [
-        Module2
-    ]
-})
-class Module3 {
-}
-
-@NgModule({
     imports: [
-        Module3
+        Module3,
     ],
     declarations: [
         Component1,
         Directive1,
-        Pipe1
+        Pipe1,
     ],
     exports: [
         Component1,
@@ -87,6 +59,33 @@ class Module3 {
     ]
 })
 class Module1 {
+}
+
+@NgModule({
+    declarations: [
+        Component3,
+        Pipe3,
+    ],
+    exports: [
+        Component3,
+        <error descr="Cannot export Directive3 from Module2 as it is neither declared nor imported in it">Directive3</error>,
+        Pipe3,
+    ]
+})
+class Module2 {
+}
+
+@NgModule({
+    declarations: [
+        Component2,
+        Directive2,
+        Pipe2,
+    ],
+    exports: [
+        Module2
+    ]
+})
+class Module3 {
 }
 
 @NgModule({

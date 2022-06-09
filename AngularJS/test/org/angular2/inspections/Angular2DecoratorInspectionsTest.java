@@ -3,10 +3,15 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.codeInsight.InspectionsTest;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @see InspectionsTest
+ * @see Angular2TemplateInspectionsTest
+ */
 public class Angular2DecoratorInspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
