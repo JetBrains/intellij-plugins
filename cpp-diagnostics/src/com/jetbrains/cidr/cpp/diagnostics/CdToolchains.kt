@@ -66,7 +66,6 @@ private fun processDevOptions(log: CdIndenter) {
   log.put("Options:")
   log.scope {
     // Note: keep default values in sync with actual values
-    logOption("clion.remote.use.rsync", defaultValue = true)
     logOption("clion.remote.compress.tar", defaultValue = true)
     logIntOption("clion.remote.tar.timeout", defaultValue = 240000)
     logOption("clion.remote.resync.system.cache", defaultValue = false)
