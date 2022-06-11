@@ -33,7 +33,7 @@ public final class MappingDataCache {
     }
     file.accept(new JavaRecursiveElementVisitor() {
       @Override
-      public void visitNewExpression(PsiNewExpression expression) {
+      public void visitNewExpression(@NotNull PsiNewExpression expression) {
         final PsiJavaCodeReferenceElement classReference = expression.getClassReference();
 
         final String classReferenceQualifiedName = classReference != null ? classReference.getQualifiedName() : null;

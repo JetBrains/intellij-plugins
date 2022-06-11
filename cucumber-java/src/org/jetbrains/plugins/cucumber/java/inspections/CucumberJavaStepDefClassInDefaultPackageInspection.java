@@ -31,7 +31,7 @@ public class CucumberJavaStepDefClassInDefaultPackageInspection extends Abstract
     }
 
     @Override
-    public void visitClass(PsiClass aClass) {
+    public void visitClass(@NotNull PsiClass aClass) {
       if (!CucumberJavaUtil.isStepDefinitionClass(aClass)) {
         return;
       }
