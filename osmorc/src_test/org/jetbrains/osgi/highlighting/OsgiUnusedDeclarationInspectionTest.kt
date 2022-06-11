@@ -16,9 +16,10 @@
 package org.jetbrains.osgi.highlighting
 
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
+import org.intellij.lang.annotations.Language
 import org.osmorc.LightOsgiFixtureTestCase
 
-class UnusedDeclarationInspectionTest : LightOsgiFixtureTestCase() {
+class OsgiUnusedDeclarationInspectionTest : LightOsgiFixtureTestCase() {
   fun testActivator() {
     doTest("""
         package pkg;
@@ -29,7 +30,7 @@ class UnusedDeclarationInspectionTest : LightOsgiFixtureTestCase() {
         }""")
   }
 
-  private fun doTest(text: String) {
+  private fun doTest(@Language("JAVA") text: String) {
     myFixture.enableInspections(UnusedDeclarationInspection(true))
     myFixture.configureByText("C.java", text)
     myFixture.checkHighlighting()
