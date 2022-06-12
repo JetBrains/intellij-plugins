@@ -240,6 +240,9 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       if (visitor instanceof JavaElementVisitor) {
         ((JavaElementVisitor)visitor).visitParameter(this);
       }
+      else {
+        visitor.visitElement(this);
+      }
     }
 
     @Override
@@ -287,6 +290,9 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     public void accept(@NotNull PsiElementVisitor visitor) {
       if (visitor instanceof JavaElementVisitor) {
         ((JavaElementVisitor)visitor).visitParameterList(this);
+      }
+      else {
+        visitor.visitElement(this);
       }
     }
 
