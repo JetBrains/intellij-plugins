@@ -22,9 +22,7 @@ import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.SmartList;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2DirectiveKind;
-import org.angular2.entities.Angular2DirectiveSelector;
+import org.angular2.entities.*;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
 import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
@@ -33,12 +31,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
 
 public class Angular2SourceComponent extends Angular2SourceDirective implements Angular2Component {
+
+  private Angular2ModuleResolver<ES6Decorator> myModuleResolver = null;
 
   public Angular2SourceComponent(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
     super(decorator, implicitElement);
@@ -47,6 +48,16 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   @Override
   public @NotNull Pointer<? extends Angular2Component> createPointer() {
     return createPointer(Angular2SourceComponent::new);
+  }
+
+  @Override
+  public @NotNull Set<Angular2Entity> getImports() {
+    if (!isStandalone()) return Set.of();
+
+    if (myModuleResolver == null) {
+      myModuleResolver = new Angular2ModuleResolver<>(this::getDecorator, Angular2SourceModule::collectSymbols);
+    }
+    return myModuleResolver.getImports();
   }
 
   @Override

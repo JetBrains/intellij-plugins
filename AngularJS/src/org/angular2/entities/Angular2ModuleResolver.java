@@ -22,6 +22,11 @@ import java.util.function.Supplier;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.forEachEntity;
 
+/**
+ * Also used for standalone declarables
+ * <p>
+ * TODO rename
+ */
 public class Angular2ModuleResolver<T extends PsiElement> {
 
   @NonNls public static final String NG_MODULE_PROP = "ngModule";

@@ -6,7 +6,11 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.angular2.entities.Angular2EntityUtils.forEachEntity;
 
 public interface Angular2Component extends Angular2Directive {
 
@@ -25,5 +29,26 @@ public interface Angular2Component extends Angular2Directive {
   @Override
   default boolean isComponent() {
     return true;
+  }
+
+  @NotNull
+  default Set<Angular2Entity> getImports() {
+    return Set.of();
+  }
+
+  /**
+   * @see Angular2Module#getDeclarationsInScope()
+   */
+  default @NotNull Set<Angular2Declaration> getDeclarationsInScope() {
+    Set<Angular2Declaration> result = new HashSet<>();
+    result.add(this); // for self-reference
+    forEachEntity(
+      getImports(),
+      module -> result.addAll(module.getAllExportedDeclarations()),
+      declaration -> {
+        if (declaration.isStandalone()) result.add(declaration);
+      }
+    );
+    return result;
   }
 }

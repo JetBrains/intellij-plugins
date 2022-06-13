@@ -31,6 +31,9 @@ public interface Angular2Module extends Angular2Entity {
   @NotNull
   Set<Angular2Declaration> getAllExportedDeclarations();
 
+  /**
+   * @see Angular2Component#getDeclarationsInScope()
+   */
   default @NotNull Set<Angular2Declaration> getDeclarationsInScope() {
     Set<Angular2Declaration> result = new HashSet<>(getDeclarations());
     forEachEntity(
