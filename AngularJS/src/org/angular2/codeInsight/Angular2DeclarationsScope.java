@@ -6,7 +6,6 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -31,7 +30,7 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
  */
 public class Angular2DeclarationsScope {
 
-  private final NotNullLazyValue<Trinity<Angular2Module, Set<Angular2Declaration>, Boolean>> myScope;
+  private final NotNullLazyValue<ScopeResult> myScope;
   private final Map<Project, MultiMap<Angular2Declaration, Angular2Module>> myExport2NgModuleMap = new HashMap<>();
   private final NotNullLazyValue<ProjectFileIndex> myFileIndex;
 
@@ -39,14 +38,14 @@ public class Angular2DeclarationsScope {
     myScope = NotNullLazyValue.createValue(() -> {
       PsiFile file = element.getContainingFile();
       if (file == null) {
-        return Trinity.create(null, null, false);
+        return new ScopeResult(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
         Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file)),
                                             c -> selectModule(c, file));
         return CachedValueProvider.Result.create(
-          module != null ? Trinity.create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
-                         : Trinity.create(null, null, false),
+          module != null ? new ScopeResult(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
+                         : new ScopeResult(null, null, false),
           PsiModificationTracker.MODIFICATION_COUNT);
       });
     });
@@ -62,16 +61,16 @@ public class Angular2DeclarationsScope {
   }
 
   public @Nullable Angular2Module getModule() {
-    return myScope.getValue().first;
+    return myScope.getValue().module;
   }
 
   public boolean isFullyResolved() {
-    return myScope.getValue().third;
+    return myScope.getValue().fullyResolved;
   }
 
   public boolean contains(@NotNull Angular2Declaration declaration) {
-    Set<Angular2Declaration> scope = myScope.getValue().second;
-    return scope == null || scope.contains(declaration);
+    Set<Angular2Declaration> declarations = myScope.getValue().declarations;
+    return declarations == null || declarations.contains(declaration);
   }
 
   public List<Angular2Module> getPublicModulesExporting(@NotNull Angular2Declaration declaration) {
@@ -155,5 +154,41 @@ public class Angular2DeclarationsScope {
       return Angular2EntityUtils.defaultChooseModule(modules.stream());
     }
     return ContainerUtil.getFirstItem(modules);
+  }
+
+  private static class ScopeResult {
+    public final @Nullable Angular2Module module;
+    public final @Nullable Set<Angular2Declaration> declarations;
+    public final boolean fullyResolved;
+
+    private ScopeResult(@Nullable Angular2Module module, @Nullable Set<Angular2Declaration> declarations, boolean fullyResolved) {
+      this.module = module;
+      this.declarations = declarations;
+      this.fullyResolved = fullyResolved;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      ScopeResult result = (ScopeResult)o;
+      return fullyResolved == result.fullyResolved &&
+             Objects.equals(module, result.module) &&
+             Objects.equals(declarations, result.declarations);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(module, declarations, fullyResolved);
+    }
+
+    @Override
+    public String toString() {
+      return "ScopeResult{" +
+             "module=" + module +
+             ", declarations=" + declarations +
+             ", fullyResolved=" + fullyResolved +
+             '}';
+    }
   }
 }
