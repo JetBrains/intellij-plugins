@@ -80,7 +80,7 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
     return !getName().startsWith("ɵ");
   }
 
-  private static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull ES6Decorator decorator,
+  public static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull ES6Decorator decorator,
                                                                                            @NotNull String propertyName,
                                                                                            @NotNull Class<T> symbolClazz) {
     JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);

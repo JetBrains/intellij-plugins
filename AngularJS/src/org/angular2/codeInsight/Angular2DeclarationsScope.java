@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
@@ -41,12 +40,27 @@ public class Angular2DeclarationsScope {
         return new ScopeResult(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
-        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file)),
-                                            c -> selectModule(c, file));
-        return CachedValueProvider.Result.create(
-          module != null ? new ScopeResult(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
-                         : new ScopeResult(null, null, false),
-          PsiModificationTracker.MODIFICATION_COUNT);
+        Angular2Module module = null;
+        Set<Angular2Declaration> declarations = null;
+        boolean fullyResolved = false;
+
+        var currentComponent = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));
+        if (currentComponent != null) {
+          if (currentComponent.isStandalone()) {
+            declarations = currentComponent.getDeclarationsInScope();
+            fullyResolved = true;
+          }
+          else {
+            module = selectModule(currentComponent, file);
+            if (module != null) {
+              declarations = module.getDeclarationsInScope();
+              fullyResolved = module.isScopeFullyResolved();
+            }
+          }
+        }
+
+        ScopeResult result = new ScopeResult(module, declarations, fullyResolved);
+        return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
       });
     });
     myFileIndex = NotNullLazyValue.createValue(
@@ -85,6 +99,11 @@ public class Angular2DeclarationsScope {
     if (contains(declaration)) {
       return DeclarationProximity.IN_SCOPE;
     }
+
+    if (declaration.isStandalone()) {
+      return DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE;
+    }
+
     Collection<Angular2Module> modules = myExport2NgModuleMap
       .computeIfAbsent(declaration.getSourceElement().getProject(),
                        p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
@@ -136,7 +155,7 @@ public class Angular2DeclarationsScope {
 
   public enum DeclarationProximity {
     IN_SCOPE,
-    EXPORTED_BY_PUBLIC_MODULE,
+    EXPORTED_BY_PUBLIC_MODULE, // or standalone // TODO rename
     NOT_DECLARED_IN_ANY_MODULE,
     NOT_EXPORTED_BY_MODULE,
     NOT_REACHABLE
