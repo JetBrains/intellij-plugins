@@ -15,7 +15,9 @@ internal class CloudFormationYamlAnnotator : Annotator {
       val keyValue = element.parent as YAMLKeyValue
       if (keyValue.keyText == "Type") {
         val resourcesParent = (keyValue.parentMapping?.parent as? YAMLKeyValue)?.parentMapping?.parent
-        if (resourcesParent is YAMLKeyValue && resourcesParent.keyText == "Resources") {
+        if (resourcesParent is YAMLKeyValue
+            && resourcesParent.keyText == "Resources"
+            && isCloudFormationYaml(resourcesParent.containingFile)) {
           holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .textAttributes(AWS_RESOURCE_TYPE)
             .create()
