@@ -1,0 +1,38 @@
+plugins {
+  id 'org.jetbrains.intellij' version '1.5.0'
+  id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+  id 'java'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation ('io.github.java-native:jssc:2.9.4')  {
+    exclude group: 'org.slf4j', module: 'slf4j-api'
+  }
+}
+
+sourceCompatibility = '1.11'
+targetCompatibility = '1.11'
+
+compileKotlin {
+  kotlinOptions.jvmTarget = '11'
+}
+
+intellij {
+  version = 'IC-LATEST-EAP-SNAPSHOT'
+  downloadSources = false
+}
+
+
+patchPluginXml {
+  changeNotes = """
+<ul>
+ <li>Original version by Dmitry Cherkas is forked</li>
+ <li>Bunch of fixes</li>
+ <li>Multiple serial connections are supported</li>
+ <li>Apple M1 support</li>
+</ul>"""
+}
