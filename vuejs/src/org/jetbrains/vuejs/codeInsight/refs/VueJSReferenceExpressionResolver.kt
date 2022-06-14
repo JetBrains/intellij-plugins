@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
@@ -48,10 +48,11 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     }
   }
 
-  override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> =
-    when {
+  override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
+    val ref = myRef
+    return when {
       myReferencedName == null -> ResolveResult.EMPTY_ARRAY
-      myRef is VueJSFilterReferenceExpression -> resolveFilterNameReference(myRef, incompleteCode)
+      ref is VueJSFilterReferenceExpression -> resolveFilterNameReference(ref, incompleteCode)
       myQualifier is JSThisExpression -> resolveTemplateVariable(expression)
       myQualifier == null -> {
         resolveTemplateVariable(expression)
@@ -59,6 +60,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
       }
       else -> super.resolve(expression, incompleteCode)
     }
+  }
 
   override fun resolveFromIndices(localProcessor: SinkResolveProcessor<ResolveResultSink>,
                                   excludeGlobalTypeScript: Boolean,
