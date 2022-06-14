@@ -1,0 +1,52 @@
+<idea-plugin url="https://bitbucket.org/dmitry_cherkas/intellij-serial-monitor">
+  <id>SerialPortMonitor</id>
+  <name>Serial Port Monitor</name>
+  <category>Embedded Development</category>
+  <vendor>JetBrains</vendor>
+  <description><![CDATA[
+      This plugin provides Serial Monitor Tool Window. It allows you to communicate to your serial device like
+      Arduino without via IDE window. Functionality is pretty similar to those, available in Arduino IDE through "Serial Monitor Tool".
+      <br/><br/>
+
+      <b>Features:</b>
+      <ul>
+       <li>Serial Monitor Tool Window with project-based persistent settings</li>
+       <li>Status widget</li>
+       <li>Duplex Console View (Regular view + HEX)</li>
+      </ul>
+      <br/>
+      <b>Note:</b> Only COM port (both hardware and virtual) is currently supported. In order to use
+      virtual COM port please make sure to install all necessary drivers.
+      <br/><br/>
+
+      Initial version by <a href="https://github.com/dmitry-cherkas">Dmitry Cherkas</a>
+
+      Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+    ]]></description>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html on how to target different products -->
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.OpenSerial"
+                doNotActivateOnStart="true"
+                factoryClass="com.intellij.plugins.serialmonitor.SerialMonitorToolWindowFactory"
+                canCloseContents="true" secondary="false"/>
+
+    <notificationGroup id="Serial Monitor Notification" toolWindowId="Serial Monitor" displayType="TOOL_WINDOW"/>
+
+    <applicationService serviceImplementation="com.intellij.plugins.serialmonitor.service.JsscSerialService"/>
+    <applicationConfigurable groupId="tools" id="serialmonitor.settings"
+                             provider="com.intellij.plugins.serialmonitor.ui.SerialSettingsConfigurableProvider"
+                             bundle="messages.SerialMonitorBundle" key="settings.display.name"/>
+
+
+  </extensions>
+  <actions>
+    <group id="com.intellij.plugins.serialmonitor.connect" class="com.intellij.plugins.serialmonitor.ui.actions.ConnectActionGroup"
+           searchable="true" popup="true" icon="SerialMonitorIcons.OpenSerial">
+      <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="RemoteExternalToolsGroup"/>
+    </group>
+  </actions>
+  <resource-bundle>messages.SerialMonitorBundle</resource-bundle>
+</idea-plugin>
