@@ -214,7 +214,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
   @Nullable
   @Override
   public ProblemHighlightType getUnresolvedReferenceHighlightType(@NotNull JSReferenceExpression node) {
-    JSExpression qualifier = ((JSReferenceExpressionImpl)node).getResolveQualifier();
+    JSExpression qualifier = node.getQualifier();
 
     if (qualifier != null) {
       final PsiFile containingFile = node.getContainingFile();
