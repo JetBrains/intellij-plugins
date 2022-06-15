@@ -22,6 +22,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.psi.PsiFile;
@@ -70,8 +71,15 @@ public class PbJavaFindUsagesHandlerFactoryTest extends LightJavaCodeInsightFixt
 
   @Override
   protected void tearDown() throws Exception {
-    Disposer.dispose(testDisposable);
-    super.tearDown();
+    try {
+      Disposer.dispose(testDisposable);
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   @Override

@@ -26,6 +26,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.gencodeutils.GotoExpectationMarker;
 import com.intellij.protobuf.gencodeutils.ReferenceGotoExpectation;
+import com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
@@ -68,8 +69,15 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
 
   @Override
   protected void tearDown() throws Exception {
-    Disposer.dispose(testDisposable);
-    super.tearDown();
+    try {
+      Disposer.dispose(testDisposable);
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   @Override

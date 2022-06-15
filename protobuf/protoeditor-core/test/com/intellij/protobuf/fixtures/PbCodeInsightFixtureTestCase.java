@@ -34,8 +34,15 @@ public abstract class PbCodeInsightFixtureTestCase extends BasePlatformTestCase 
 
   @Override
   protected void tearDown() throws Exception {
-    Disposer.dispose(testDisposable);
-    super.tearDown();
+    try {
+      Disposer.dispose(testDisposable);
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   public Editor getEditor() {

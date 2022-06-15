@@ -40,10 +40,17 @@ public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCas
 
   @Override
   public void tearDown() throws Exception {
-    // Reset settings state
-    PbProjectSettings.getInstance(getProject()).loadState(new PbProjectSettings.State());
-    FileUtil.delete(tempDir);
-    super.tearDown();
+    try {
+      // Reset settings state
+      PbProjectSettings.getInstance(getProject()).loadState(new PbProjectSettings.State());
+      FileUtil.delete(tempDir);
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   public void testFindFileWithNoSettingsReturnsNull() {

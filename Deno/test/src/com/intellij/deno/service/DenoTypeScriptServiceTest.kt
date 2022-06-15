@@ -32,8 +32,15 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   override fun tearDown() {
-    DenoSettings.getService(project).setUseDenoAndReload(before)
-    super.tearDown()
+    try {
+      DenoSettings.getService(project).setUseDenoAndReload(before)
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   fun testSimpleDeno() {

@@ -28,8 +28,8 @@ open class DenoTestBase : BasePlatformTestCase() {
     }
     catch (e: Exception) {
       addSuppressedException(e)
+    } finally {
+      super.tearDown()
     }
-
-    super.tearDown()
   }
 }

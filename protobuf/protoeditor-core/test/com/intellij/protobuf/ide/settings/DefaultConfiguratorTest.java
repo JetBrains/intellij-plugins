@@ -55,8 +55,9 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
     }
     catch (Exception exception) {
       Logger.getInstance(DefaultConfiguratorTest.class).warn(exception);
+    } finally {
+      super.tearDown();
     }
-    super.tearDown();
   }
 
   @Override
