@@ -7,6 +7,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts
@@ -61,14 +62,17 @@ class SerialMonitor(private val project: Project, private val myStatusIcon: Cons
       s += portProfile.newLine.value
     }
 
-    myConsoleView?.apply {
-      try {
-        if (s.isNotEmpty()) {
-          mySerialService.write(portProfile.portName, s.toByteArray(this.charset))
+    if (s.isNotEmpty()) {
+      myConsoleView?.apply {
+        val bytes = s.toByteArray(this.charset)
+        ApplicationManager.getApplication().executeOnPooledThread {
+          try {
+            mySerialService.write(portProfile.portName, bytes)
+          }
+          catch (sme: SerialMonitorException) {
+            errorNotification((sme.message)!!, project)
+          }
         }
-      }
-      catch (sme: SerialMonitorException) {
-        errorNotification((sme.message)!!, project)
       }
     }
   }
