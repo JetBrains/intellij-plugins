@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -17,6 +18,11 @@ public class RestartDartAnalysisServerAction extends DumbAwareAction {
     super(DartBundle.messagePointer("dart.restart.server.action.name"),
           DartBundle.messagePointer("dart.restart.server.action.name"),
           AllIcons.Actions.ForceRefresh);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

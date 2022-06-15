@@ -110,6 +110,11 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
+  @Override
   public void update(final @NotNull AnActionEvent e) {
     final Pair<Module, VirtualFile> moduleAndPubspec = getModuleAndPubspecYamlFile(e);
     // Defer to the Flutter plugin if appropriate.
