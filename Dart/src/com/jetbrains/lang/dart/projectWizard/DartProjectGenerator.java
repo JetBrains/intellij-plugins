@@ -13,7 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
+import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
+
 public class DartProjectGenerator extends WebProjectTemplate<DartProjectWizardData> implements Comparable<DartProjectGenerator> {
+
+  @Override
+  public String getId() {
+    return Generators.DART;
+  }
 
   @Override
   @NotNull

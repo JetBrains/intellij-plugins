@@ -39,6 +39,8 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.Collection;
 
+import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
+
 public class DartModuleBuilder extends ModuleBuilder {
   private static final Key<Boolean> PUB_GET_SCHEDULED_KEY = Key.create("PUB_GET_SCHEDULED_KEY");
 
@@ -46,7 +48,7 @@ public class DartModuleBuilder extends ModuleBuilder {
 
   @Override
   public @Nullable @NonNls String getBuilderId() {
-    return "DartModuleBuilder";
+    return Generators.LEGACY_DART;
   }
 
   @Override

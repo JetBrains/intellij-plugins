@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
@@ -51,6 +52,11 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   private static final Pattern NPX_PACKAGE_PATTERN =
     Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng");
   private static final Pattern VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*");
+
+  @Override
+  public String getId() {
+    return Generators.ANGULAR_CLI;
+  }
 
   @Override
   public @Nls @NotNull String getName() {

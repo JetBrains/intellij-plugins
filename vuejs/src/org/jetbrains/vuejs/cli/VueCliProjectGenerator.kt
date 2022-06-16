@@ -5,6 +5,7 @@ import com.intellij.execution.filters.Filter
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.javascript.CreateRunConfigurationUtil
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
@@ -36,6 +37,10 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   private val PACKAGE_NAME = "@vue/cli"
   private val VUE_EXECUTABLE = "vue"
   private val CREATE_COMMAND = "create"
+
+  override fun getId(): String {
+    return Generators.VUE_JS
+  }
 
   override fun getName(): String {
     return VueBundle.message("vue.project.generator.name")

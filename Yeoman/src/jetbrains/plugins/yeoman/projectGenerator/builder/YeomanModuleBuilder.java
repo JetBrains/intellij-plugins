@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
+
 
 public class YeomanModuleBuilder extends ModuleBuilder {
   private final YeomanProjectGenerator.Settings mySettings = new YeomanProjectGenerator.Settings();
@@ -63,7 +65,7 @@ public class YeomanModuleBuilder extends ModuleBuilder {
   @Nullable
   @Override
   public @NonNls String getBuilderId() {
-    return "Yeoman";
+    return Generators.YEOMAN;
   }
 
   @Override
