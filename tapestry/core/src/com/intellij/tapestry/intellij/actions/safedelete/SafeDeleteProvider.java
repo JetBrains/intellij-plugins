@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.actions.safedelete;
 
 import com.intellij.ide.DeleteProvider;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
@@ -31,6 +32,10 @@ import java.util.List;
  * Safe Delete action provider.
  */
 public class SafeDeleteProvider implements DeleteProvider {
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.EDT;
+  }
 
     /**
      * {@inheritDoc}
