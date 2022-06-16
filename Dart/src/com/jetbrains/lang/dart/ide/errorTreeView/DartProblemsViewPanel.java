@@ -337,6 +337,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.EDT;
+  }
+
+  @Override
   public boolean isCopyVisible(@NotNull DataContext dataContext) {
     return true;
   }
