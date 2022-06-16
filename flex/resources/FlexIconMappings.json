@@ -1,0 +1,9 @@
+{
+  "images": {
+    "expui": {
+      "build": {
+        "mavenFlex.svg": "images/flex/sdk/mavenFlex.svg"
+      }
+    }
+  }
+}

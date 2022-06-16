@@ -281,6 +281,8 @@
     <notificationGroup id="Flash app not compiled before launch" displayType="TOOL_WINDOW" toolWindowId="Run" bundle="messages.FlexBundle" key="check.flash.app.compiled.before.launch.notification.group" isLogByDefault="false"/>
     <notificationGroup id="Flash Compiler" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.flash.compiler"/>
     <notificationGroup id="Debugger" displayType="BALLOON" bundle="messages.FlexBundle" key="notification.group.debugger"/>
+
+    <iconMapper mappingFile="FlexIconMappings.json"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
