@@ -116,7 +116,7 @@ public class DependencyInjectionTest extends BasePlatformTestCase {
   public void testParameterNavigation() {
     myFixture.copyFileToProject("angular.js");
     myFixture.configureByFile(getTestName(false) + ".js");
-    PsiElement target = JSTestUtils.getGotoDeclarationTarget(myFixture, myFixture.getFile());
+    PsiElement target = JSTestUtils.getGotoDeclarationTarget(myFixture);
     if (target instanceof LeafElement) target = target.getParent();
     assertInstanceOf(target, JSLiteralExpression.class);
   }
