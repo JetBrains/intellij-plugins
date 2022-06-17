@@ -13,7 +13,6 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
 <li>Code completion for event types </li>
 <li>PhoneGap support </li>
 </ul>
-<p>WebStorm comes with this plugin bundled, so Cordova support is available by default in it.
 <p>For more information, check out our <a href="https://www.jetbrains.com/help/webstorm/using-phonegap-cordova.html">documentation</a>.
     ]]></description>
 
