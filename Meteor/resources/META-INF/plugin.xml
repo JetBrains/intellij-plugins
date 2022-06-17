@@ -5,7 +5,6 @@
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
     <h4>Support for Meteor framework</h4>
-    <br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
     <b>Features:</b>
     <p>* Meteor project generator</p>
     <p>* Resolve for Meteor templates/helpers in Spacebars</p>
