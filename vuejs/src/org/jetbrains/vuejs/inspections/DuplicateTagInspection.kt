@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.inspections
 
 import com.intellij.codeInsight.daemon.impl.analysis.RemoveTagIntentionFix
@@ -8,7 +8,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
@@ -30,7 +30,7 @@ class DuplicateTagInspection : LocalInspectionTool() {
         if (!templateTag && !scriptTag) return
         val parent = tag.parent as? XmlDocument ?: return
         val isScriptSetup = scriptTag && tag.getAttribute(SETUP_ATTRIBUTE_NAME) != null
-        if (PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java).any {
+        if (parent.childrenOfType<XmlTag>().any {
             it != tag && ((scriptTag && HtmlUtil.isScriptTag(it) && isScriptSetup == (it.getAttribute(SETUP_ATTRIBUTE_NAME) != null))
                           || (templateTag && it.name == TEMPLATE_TAG_NAME))
           }) {
