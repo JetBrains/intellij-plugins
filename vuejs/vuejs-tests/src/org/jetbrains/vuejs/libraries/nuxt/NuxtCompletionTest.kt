@@ -1,10 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt
 
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfig
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerConfig
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigPath
-import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -58,7 +58,8 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtComponents() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
-    WebPackConfigManager.getInstance(project).setConfig(WebPackConfig(WebPackResolve(mapOf("@" to WebPackConfigPath("/src"), "~" to WebPackConfigPath("/src")))))
+    WebPackConfigManager.getInstance(project).setConfig(
+      WebBundlerConfig(WebBundlerResolve(WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "/src", "~" to "/src")))))
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")
     myFixture.completeBasic()
@@ -78,7 +79,8 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtComponentsWithDirsProperty() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
-    WebPackConfigManager.getInstance(project).setConfig(WebPackConfig(WebPackResolve(mapOf("@" to WebPackConfigPath("/src"), "~" to WebPackConfigPath("/src")))))
+    WebPackConfigManager.getInstance(project).setConfig(
+      WebBundlerConfig(WebBundlerResolve(WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "/src", "~" to "/src")))))
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")
     myFixture.completeBasic()
@@ -98,7 +100,8 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtComponents2_15() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUE_2_6_10)
-    WebPackConfigManager.getInstance(project).setConfig(WebPackConfig(WebPackResolve(mapOf("@" to WebPackConfigPath("/src"), "~" to WebPackConfigPath("/src")))))
+    WebPackConfigManager.getInstance(project).setConfig(
+      WebBundlerConfig(WebBundlerResolve(WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "/src", "~" to "/src")))))
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")
     myFixture.completeBasic()

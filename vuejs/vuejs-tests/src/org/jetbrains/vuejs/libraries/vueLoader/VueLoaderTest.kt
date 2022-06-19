@@ -5,13 +5,15 @@ import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.javascript.web.assertUnresolvedReference
 import com.intellij.javascript.web.resolveReference
 import com.intellij.lang.javascript.JSTestUtils.setWebpack
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigPath
-import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.lang.*
+import org.jetbrains.vuejs.lang.VueTestModule
+import org.jetbrains.vuejs.lang.configureVueDependencies
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VueLoaderTest  : BasePlatformTestCase() {
 
@@ -20,9 +22,9 @@ class VueLoaderTest  : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    val resolve = WebPackResolve(
-      mapOf(Pair("@", WebPackConfigPath("src")), Pair("foo", WebPackConfigPath("src"))),
-      mutableListOf(WebPackConfigPath(myFixture.tempDirFixture.getFile(".")!!.path))
+    val resolve = WebBundlerResolve(
+      WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "src", "foo" to "src")),
+      mutableListOf(myFixture.tempDirFixture.getFile(".")!!.path)
     )
     setWebpack(project, resolve, testRootDisposable)
   }
