@@ -368,11 +368,11 @@ object ResourceTypesSaver {
         continue
       }
 
-      val row = tr.children()
-          .filter { it.tagName() == "td" }
-          .map { it.text() }
-
-      result.add(row)
+      result.add(tr.children()
+                   .asSequence()
+                   .filter { it.tagName() == "td" }
+                   .map { it.text() }
+                   .toList())
     }
 
     return result
@@ -448,7 +448,7 @@ object ResourceTypesSaver {
   private fun fetchPredefinedParameters(): List<String> {
     val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html")
     val doc = getDocumentFromUrl(url)
-    return doc.select("h2").filter { it.attr("id").startsWith("cfn-pseudo-param") }.map { it.text() }.sorted().toList()
+    return doc.select("h2").asSequence().filter { it.attr("id").startsWith("cfn-pseudo-param") }.map { it.text() }.sorted().toList()
   }
 
   private fun fetchLimits(): CloudFormationLimits {
@@ -459,7 +459,7 @@ object ResourceTypesSaver {
 
     val table = parseTable(tableElement)
 
-    val limits = table.filter { it.size == 4 }.map { it[0] to it[2] }.toMap()
+    val limits = table.filter { it.size == 4 }.associate { it[0] to it[2] }
 
     return CloudFormationLimits(
         maxMappings = Integer.parseInt(limits.getValue("Mappings").replace(" mappings", "")),
