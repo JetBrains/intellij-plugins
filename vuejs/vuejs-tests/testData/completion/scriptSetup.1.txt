@@ -140,6 +140,7 @@ Element#Element
 ElementInternals#ElementInternals
 ErrorEvent#ErrorEvent
 Event#Event
+EventCounts#EventCounts
 EventSource#EventSource
 EventTarget#EventTarget
 External#External
@@ -183,6 +184,7 @@ HTMLDListElement#HTMLDListElement
 HTMLDataElement#HTMLDataElement
 HTMLDataListElement#HTMLDataListElement
 HTMLDetailsElement#HTMLDetailsElement
+HTMLDialogElement#HTMLDialogElement
 HTMLDirectoryElement#HTMLDirectoryElement
 HTMLDivElement#HTMLDivElement
 HTMLDocument#HTMLDocument
@@ -272,6 +274,14 @@ KeyframeEffect#null
 Location#Location
 Lock#Lock
 LockManager#LockManager
+MIDIAccess#MIDIAccess
+MIDIConnectionEvent#MIDIConnectionEvent
+MIDIInput#MIDIInput
+MIDIInputMap#MIDIInputMap
+MIDIMessageEvent#MIDIMessageEvent
+MIDIOutput#MIDIOutput
+MIDIOutputMap#MIDIOutputMap
+MIDIPort#MIDIPort
 MathMLElement#MathMLElement
 MediaCapabilities#MediaCapabilities
 MediaDeviceInfo#MediaDeviceInfo
@@ -307,6 +317,7 @@ MutationEvent#MutationEvent
 MutationObserver#MutationObserver
 MutationRecord#MutationRecord
 NamedNodeMap#NamedNodeMap
+NavigationPreloadManager#NavigationPreloadManager
 Navigator#Navigator
 NetworkInformation#NetworkInformation
 Node#Node
@@ -359,6 +370,10 @@ RTCDTMFToneChangeEvent#RTCDTMFToneChangeEvent
 RTCDataChannel#RTCDataChannel
 RTCDataChannelEvent#RTCDataChannelEvent
 RTCDtlsTransport#RTCDtlsTransport
+RTCEncodedAudioFrame#RTCEncodedAudioFrame
+RTCEncodedVideoFrame#RTCEncodedVideoFrame
+RTCError#RTCError
+RTCErrorEvent#RTCErrorEvent
 RTCIceCandidate#RTCIceCandidate
 RTCIceTransport#RTCIceTransport
 RTCPeerConnection#RTCPeerConnection
@@ -367,6 +382,7 @@ RTCPeerConnectionIceEvent#RTCPeerConnectionIceEvent
 RTCRtpReceiver#RTCRtpReceiver
 RTCRtpSender#RTCRtpSender
 RTCRtpTransceiver#RTCRtpTransceiver
+RTCSctpTransport#RTCSctpTransport
 RTCSessionDescription#RTCSessionDescription
 RTCStatsReport#RTCStatsReport
 RTCTrackEvent#RTCTrackEvent
@@ -518,20 +534,4 @@ TextTrackCue#TextTrackCue
 TextTrackCueList#TextTrackCueList
 TextTrackList#TextTrackList
 TimeRanges#TimeRanges
-Touch#Touch
-TouchEvent#TouchEvent
-TouchList#TouchList
-TrackEvent#TrackEvent
-TransformStream#TransformStream<I, O>
-TransformStreamDefaultController#TransformStreamDefaultController<any>
-TransitionEvent#TransitionEvent
-TreeWalker#TreeWalker
-UIEvent#UIEvent
-URL#URL
-URLSearchParams#URLSearchParams
-VTTCue#VTTCue
-VTTRegion#VTTRegion
-ValidityState#ValidityState
-VideoPlaybackQuality#VideoPlaybackQuality
 WebKitCSSMatrix#DOMMatrix
-webkitURL#URL

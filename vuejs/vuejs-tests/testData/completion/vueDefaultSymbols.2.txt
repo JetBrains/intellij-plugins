@@ -143,6 +143,7 @@
 !ElementInternals#ElementInternals#1
 !ErrorEvent#ErrorEvent#1
 !Event#Event#1
+!EventCounts#EventCounts#1
 !EventSource#EventSource#1
 !EventTarget#EventTarget#1
 !~External#External#1
@@ -186,6 +187,7 @@
 !HTMLDataElement#HTMLDataElement#1
 !HTMLDataListElement#HTMLDataListElement#1
 !HTMLDetailsElement#HTMLDetailsElement#1
+!HTMLDialogElement#HTMLDialogElement#1
 !~HTMLDirectoryElement#HTMLDirectoryElement#1
 !HTMLDivElement#HTMLDivElement#1
 !~HTMLDocument#HTMLDocument#1
@@ -275,6 +277,14 @@
 !Location#Location#1
 !Lock#Lock#1
 !LockManager#LockManager#1
+!MIDIAccess#MIDIAccess#1
+!MIDIConnectionEvent#MIDIConnectionEvent#1
+!MIDIInput#MIDIInput#1
+!MIDIInputMap#MIDIInputMap#1
+!MIDIMessageEvent#MIDIMessageEvent#1
+!MIDIOutput#MIDIOutput#1
+!MIDIOutputMap#MIDIOutputMap#1
+!MIDIPort#MIDIPort#1
 !MathMLElement#MathMLElement#1
 !MediaCapabilities#MediaCapabilities#1
 !MediaDeviceInfo#MediaDeviceInfo#1
@@ -310,6 +320,7 @@
 !MutationObserver#MutationObserver#1
 !MutationRecord#MutationRecord#1
 !NamedNodeMap#NamedNodeMap#1
+!NavigationPreloadManager#NavigationPreloadManager#1
 !Navigator#Navigator#1
 !NetworkInformation#NetworkInformation#1
 !Node#Node#1
@@ -362,6 +373,10 @@
 !RTCDataChannel#RTCDataChannel#1
 !RTCDataChannelEvent#RTCDataChannelEvent#1
 !RTCDtlsTransport#RTCDtlsTransport#1
+!RTCEncodedAudioFrame#RTCEncodedAudioFrame#1
+!RTCEncodedVideoFrame#RTCEncodedVideoFrame#1
+!RTCError#RTCError#1
+!RTCErrorEvent#RTCErrorEvent#1
 !RTCIceCandidate#RTCIceCandidate#1
 !RTCIceTransport#RTCIceTransport#1
 !RTCPeerConnection#RTCPeerConnection#1
@@ -370,6 +385,7 @@
 !RTCRtpReceiver#RTCRtpReceiver#1
 !RTCRtpSender#RTCRtpSender#1
 !RTCRtpTransceiver#RTCRtpTransceiver#1
+!RTCSctpTransport#RTCSctpTransport#1
 !RTCSessionDescription#RTCSessionDescription#1
 !RTCStatsReport#RTCStatsReport#1
 !RTCTrackEvent#RTCTrackEvent#1
@@ -521,20 +537,4 @@
 !TextTrackCueList#TextTrackCueList#1
 !TextTrackList#TextTrackList#1
 !TimeRanges#TimeRanges#1
-!Touch#Touch#1
-!TouchEvent#TouchEvent#1
-!TouchList#TouchList#1
-!TrackEvent#TrackEvent#1
-!TransformStream#TransformStream<I, O>#1
-!TransformStreamDefaultController#TransformStreamDefaultController<any>#1
-!TransitionEvent#TransitionEvent#1
-!TreeWalker#TreeWalker#1
-!UIEvent#UIEvent#1
-!URL#URL#1
-!URLSearchParams#URLSearchParams#1
-!VTTCue#VTTCue#1
-!VTTRegion#VTTRegion#1
-!ValidityState#ValidityState#1
-!VideoPlaybackQuality#VideoPlaybackQuality#1
 !WebKitCSSMatrix#DOMMatrix#1
-!webkitURL#URL#1
