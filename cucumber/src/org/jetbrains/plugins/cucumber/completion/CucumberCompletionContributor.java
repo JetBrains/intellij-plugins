@@ -287,7 +287,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
      *     "^he do something$"
      *     "^ do something$"
      * }
-     * @return list of steps accepted by step definition regexp
+     * @return set of steps accepted by step definition regexp
      */
     private static Set<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
       List<Pair<String, List<String>>> insertions = new ArrayList<>();
