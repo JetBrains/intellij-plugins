@@ -35,7 +35,6 @@ import java.util.List;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity.EXCLUDED_WWW_DIRECTORY;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.isIonicPath;
-import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
 
 public class CordovaProjectGenerator extends NpmPackageProjectGenerator {
   @Override
@@ -74,7 +73,7 @@ public class CordovaProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   public String getId() {
-    return Generators.CORDOVA;
+    return "Cordova";
   }
 
   @Nls

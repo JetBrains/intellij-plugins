@@ -71,7 +71,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
 import static com.thoughtworks.gauge.GaugeConstants.MIN_GAUGE_VERSION;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
@@ -85,7 +84,7 @@ final class GaugeModuleBuilder extends ModuleBuilder {
 
   @Override
   public @NonNls String getBuilderId() {
-    return Generators.GAUGE;
+    return "gauge";
   }
 
   @Override

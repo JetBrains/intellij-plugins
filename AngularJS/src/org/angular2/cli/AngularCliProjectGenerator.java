@@ -42,7 +42,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
@@ -55,7 +54,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
   @Override
   public String getId() {
-    return Generators.ANGULAR_CLI;
+    return "AngularCLI";
   }
 
   @Override

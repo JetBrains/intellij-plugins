@@ -45,8 +45,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intellij.ide.projectWizard.NewProjectWizardConstants.Generators;
-
 public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProjectTemplateGenerator.MeteorProjectSettings> {
 
 
@@ -55,7 +53,7 @@ public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorPro
 
   @Override
   public String getId() {
-    return Generators.METEOR;
+    return "Meteor";
   }
 
   @Nls
