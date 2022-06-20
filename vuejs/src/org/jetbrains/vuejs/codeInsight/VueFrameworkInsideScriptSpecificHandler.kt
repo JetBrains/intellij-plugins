@@ -76,6 +76,4 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
         else it
       }
   }
-
-  override fun useMoreAccurateEvaluation(context: PsiElement): Boolean = isInsideScript(context)
 }

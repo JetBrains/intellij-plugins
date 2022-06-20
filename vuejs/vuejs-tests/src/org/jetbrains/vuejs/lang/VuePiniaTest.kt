@@ -10,5 +10,7 @@ class VuePiniaTest : JSTempDirWithNodeInterpreterTest() {
 
   fun testDefineStoreInJSFile() {
     doCopyDirectoryWithNpmInstallHighlightingTest(".vue")
+    myFixture.configureFromTempProjectFile(getTestName(false) + "_2.js")
+    myFixture.checkHighlighting()
   }
 }
