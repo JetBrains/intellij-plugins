@@ -18,7 +18,10 @@ import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
 
 class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
-  override fun getAdditionalContext(project: Project, element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
+  override fun getAdditionalContext(project: Project,
+                                    element: PsiElement?,
+                                    framework: String?,
+                                    allowResolve: Boolean): List<WebSymbolsContainer> =
     if (framework == VueFramework.ID
         && element is HtmlTag
         && element.name == "i18n"

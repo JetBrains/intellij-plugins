@@ -15,7 +15,10 @@ import org.angular2.web.containers.*
 
 class Angular2WebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
-  override fun getAdditionalContext(project: Project, element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
+  override fun getAdditionalContext(project: Project,
+                                    element: PsiElement?,
+                                    framework: String?,
+                                    allowResolve: Boolean): List<WebSymbolsContainer> =
     if (framework == Angular2Framework.ID && element != null) {
       val result = mutableListOf(DirectiveElementSelectorsContainer(element.project),
                                  DirectiveAttributeSelectorsContainer(element.project))

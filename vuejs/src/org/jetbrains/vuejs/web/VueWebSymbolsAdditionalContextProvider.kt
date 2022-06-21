@@ -108,57 +108,63 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   }
 
-  override fun getAdditionalContext(project: Project, element: PsiElement?, framework: String?): List<WebSymbolsContainer> {
+  override fun getAdditionalContext(project: Project,
+                                    element: PsiElement?,
+                                    framework: String?,
+                                    allowResolve: Boolean): List<WebSymbolsContainer> {
     if (framework != VueFramework.ID || element == null) return emptyList()
     val result = SmartList<WebSymbolsContainer>()
     val tag = (element as? XmlAttribute)?.parent ?: element as? XmlTag
     val fileContext = element.containingFile.originalFile
 
-    // Entity containers
-    VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
-      val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
+    if (allowResolve) {
 
-      containerToProximity[enclosingContainer] = VueModelVisitor.Proximity.LOCAL
+      // Entity containers
+      VueModelManager.findEnclosingContainer(element).let { enclosingContainer ->
+        val containerToProximity = mutableMapOf<VueEntitiesContainer, VueModelVisitor.Proximity>()
 
-      enclosingContainer.parents.forEach { parent ->
-        when (parent) {
-          is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
-          is VuePlugin -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
-        }
-      }
+        containerToProximity[enclosingContainer] = VueModelVisitor.Proximity.LOCAL
 
-      enclosingContainer.global?.let { global ->
-        val apps = containerToProximity.keys.filterIsInstance<VueApp>()
-        global.plugins.forEach { plugin ->
-          containerToProximity.computeIfAbsent(plugin) {
-            apps.maxOfOrNull { it.getProximity(plugin) } ?: plugin.defaultProximity
+        enclosingContainer.parents.forEach { parent ->
+          when (parent) {
+            is VueApp -> containerToProximity[parent] = VueModelVisitor.Proximity.APP
+            is VuePlugin -> containerToProximity[parent] = VueModelVisitor.Proximity.PLUGIN
           }
         }
-        containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
-      }
 
-      if (enclosingContainer is VueSourceComponent && containerToProximity.keys.none { it is VueApp }) {
-        enclosingContainer.global?.apps?.filterIsInstance<VueCompositionApp>()?.forEach {
-          containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
-        }
-      }
-
-      containerToProximity.forEach { (container, proximity) ->
-        EntityContainerWrapper.create(container, proximity)
-          ?.let {
-            if (container == enclosingContainer || container is VueGlobal) {
-              IncorrectlySelfReferredComponentFilteringContainer(it, fileContext)
+        enclosingContainer.global?.let { global ->
+          val apps = containerToProximity.keys.filterIsInstance<VueApp>()
+          global.plugins.forEach { plugin ->
+            containerToProximity.computeIfAbsent(plugin) {
+              apps.maxOfOrNull { it.getProximity(plugin) } ?: plugin.defaultProximity
             }
-            else it
           }
-          ?.let {
-            result.add(it)
-          }
-      }
-    }
+          containerToProximity[global] = VueModelVisitor.Proximity.GLOBAL
+        }
 
-    // Slots container
-    tag?.let { result.add(AvailableSlotsContainer(it)) }
+        if (enclosingContainer is VueSourceComponent && containerToProximity.keys.none { it is VueApp }) {
+          enclosingContainer.global?.apps?.filterIsInstance<VueCompositionApp>()?.forEach {
+            containerToProximity[it] = VueModelVisitor.Proximity.OUT_OF_SCOPE
+          }
+        }
+
+        containerToProximity.forEach { (container, proximity) ->
+          EntityContainerWrapper.create(container, proximity)
+            ?.let {
+              if (container == enclosingContainer || container is VueGlobal) {
+                IncorrectlySelfReferredComponentFilteringContainer(it, fileContext)
+              }
+              else it
+            }
+            ?.let {
+              result.add(it)
+            }
+        }
+      }
+
+      // Slots container
+      tag?.let { result.add(AvailableSlotsContainer(it)) }
+    }
 
     // Top level tags
     if (tag != null && tag.parentTag == null && fileContext.virtualFile?.fileType == VueFileType.INSTANCE) {
