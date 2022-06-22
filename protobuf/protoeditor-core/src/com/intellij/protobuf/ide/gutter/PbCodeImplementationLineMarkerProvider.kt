@@ -1,33 +1,20 @@
 package com.intellij.protobuf.ide.gutter
 
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
-import com.intellij.codeInsight.navigation.NavigationUtil
-import com.intellij.ide.util.EditSourceUtil
+import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.lang.Language
-import com.intellij.navigation.GotoRelatedItem
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.util.NotNullFactory
-import com.intellij.pom.Navigatable
-import com.intellij.protobuf.ide.PbCompositeModificationTracker
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.lang.psi.PbElement
-import com.intellij.protobuf.lang.psi.ProtoLeafElement
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.parentOfType
-import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.castSafelyTo
-import com.intellij.util.concurrency.AppExecutorUtil
 import icons.ProtoeditorCoreIcons
-import java.awt.event.MouseEvent
-import java.util.concurrent.Callable
 import kotlin.streams.asSequence
 
 internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
@@ -54,59 +41,22 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   private fun createOverriddenElementMarker(identifier: PsiElement, identifierOwner: PbElement): RelatedItemLineMarkerInfo<PsiElement> {
-    return object : RelatedItemLineMarkerInfo<PsiElement>(
-      identifier,
-      identifier.textRange,
-      ProtoeditorCoreIcons.GoToImplementation,
-      { PbIdeBundle.message("line.marker.navigate.to.implementation") },
-      navigationHandler { element ->
-        if (element !is ProtoLeafElement) return@navigationHandler emptyList()
-        findImplementations(element).toList()
-      },
-      GutterIconRenderer.Alignment.RIGHT,
-      NotNullFactory { GotoRelatedItem.createItems(findImplementations(identifierOwner).toList()) }
-    ) {}
+    return NavigationGutterIconBuilder.create(ProtoeditorCoreIcons.GoToImplementation)
+      .setAlignment(GutterIconRenderer.Alignment.LEFT)
+      .setTooltipText(PbIdeBundle.message("line.marker.navigate.to.implementation"))
+      .setEmptyPopupText(PbIdeBundle.message("line.marker.no.implementations.found"))
+      .setTargets(NotNullLazyValue.lazy { findImplementations(identifierOwner).toList() })
+      .createLineMarkerInfo(identifier)
   }
 
   private fun createImplementedElementMarker(identifier: PsiElement,
                                              identifierOwner: PsiNameIdentifierOwner): RelatedItemLineMarkerInfo<PsiElement> {
-    return object : RelatedItemLineMarkerInfo<PsiElement>(
-      identifier,
-      identifier.textRange,
-      ProtoeditorCoreIcons.GoToDeclaration,
-      { PbIdeBundle.message("line.marker.navigate.to.declaration") },
-      navigationHandler { element -> findProtoDefinitions(element).toList() },
-      GutterIconRenderer.Alignment.LEFT,
-      NotNullFactory { GotoRelatedItem.createItems(findProtoDefinitions(identifierOwner).toList()) }
-    ) {}
-  }
-
-  private fun navigationHandler(lazyTargets: (PsiElement) -> Collection<PsiElement>): GutterIconNavigationHandler<PsiElement> {
-    return GutterIconNavigationHandler<PsiElement> { event, element ->
-      ReadAction.nonBlocking(Callable { lazyTargets(element) })
-        .expireWith(element.project.service<PbCompositeModificationTracker>())
-        .withDocumentsCommitted(element.project)
-        .coalesceBy(this@PbCodeImplementationLineMarkerProvider)
-        .finishOnUiThread(ModalityState.NON_MODAL) { targets -> navigateOrShowPopup(event, targets) }
-        .submit(AppExecutorUtil.getAppExecutorService())
-    }
-  }
-
-  private fun navigateOrShowPopup(event: MouseEvent, targets: Collection<PsiElement>) {
-    when (targets.size) {
-      0 -> return
-      1 -> {
-        val singleTarget = targets.singleOrNull() ?: return
-        EditSourceUtil.getDescriptor(singleTarget)?.takeIf(Navigatable::canNavigate)?.navigate(true)
-      }
-
-      else -> {
-        NavigationUtil.getPsiElementPopup(
-          targets.toTypedArray(),
-          PbIdeBundle.message("line.marker.navigate.to.declaration")
-        ).show(RelativePoint(event))
-      }
-    }
+    return NavigationGutterIconBuilder.create(ProtoeditorCoreIcons.GoToDeclaration)
+      .setAlignment(GutterIconRenderer.Alignment.LEFT)
+      .setTooltipText(PbIdeBundle.message("line.marker.navigate.to.declaration"))
+      .setEmptyPopupText(PbIdeBundle.message("line.marker.no.declarations.found"))
+      .setTargets(NotNullLazyValue.lazy { findProtoDefinitions(identifierOwner).toList() })
+      .createLineMarkerInfo(identifier)
   }
 
   private fun hasImplementation(pbElement: PsiElement): Boolean {
