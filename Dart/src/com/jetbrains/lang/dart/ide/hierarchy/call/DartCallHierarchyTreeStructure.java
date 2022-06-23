@@ -8,6 +8,7 @@ import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -35,7 +36,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
     return new DartServerFindUsagesHandler(element);
   }
 
-  public static void collectDeclarations(@Nullable final PsiElement element, @NotNull final List<? super PsiElement> results) {
+  public static void collectDeclarations(@Nullable final PsiElement element, @NotNull final List<DartCallChild> results) {
     if (element != null) {
       Condition<PsiElement> isExecutable = object -> {
         if (object == null) return false;
@@ -43,13 +44,13 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       };
       PsiElement ref = PsiTreeUtil.findFirstParent(element, isExecutable);
       if (ref != null) {
-        results.add(ref);
+        results.add(new DartCallChild(ref, element));
       }
     }
   }
 
   @NotNull
-  protected abstract List<PsiElement> getChildren(@NotNull PsiElement element);
+  protected abstract List<DartCallChild> getChildren(@NotNull PsiElement element);
 
   @Override
   protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
@@ -70,17 +71,20 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       }
 
-      final List<PsiElement> children = getChildren(name);
+      final List<DartCallChild> children = getChildren(name);
       final HashMap<PsiElement, DartCallHierarchyNodeDescriptor> callerToDescriptorMap = new HashMap<>();
       PsiElement baseClass = element instanceof DartMethodDeclaration ? PsiTreeUtil.getParentOfType(name, DartClass.class) : null;
 
-      for (PsiElement caller : children) {
-        if (isInScope(baseClass, caller, myScopeType)) {
-          DartCallHierarchyNodeDescriptor callerDescriptor = callerToDescriptorMap.get(caller);
+      for (DartCallChild caller : children) {
+        if (isInScope(baseClass, caller.getElement(), myScopeType)) {
+          DartCallHierarchyNodeDescriptor callerDescriptor = callerToDescriptorMap.get(caller.getElement());
           if (callerDescriptor == null) {
-            callerDescriptor = new DartCallHierarchyNodeDescriptor(descriptor, caller, false);
-            callerToDescriptorMap.put(caller, callerDescriptor);
+            callerDescriptor = new DartCallHierarchyNodeDescriptor(descriptor, caller.getElement(), false);
+            callerToDescriptorMap.put(caller.getElement(), callerDescriptor);
             descriptors.add(callerDescriptor);
+          }
+          if (caller.getReference() instanceof PsiReference) {
+            callerDescriptor.addReference((PsiReference)caller.getReference());
           }
         }
       }
