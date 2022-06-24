@@ -246,7 +246,7 @@
     <ognl.variableReferencesContributor id="s2jsp"
                                         implementation="com.intellij.struts2.jsp.ognl.OgnlStruts2JspVariableReferencesContributor"/>
 
-    <notificationGroup id="Struts 2" displayType="BALLOON"/>
+    <notificationGroup id="Struts 2" displayType="BALLOON" bundle="messages.Struts2Bundle" key="notification.group.struts2"/>
   </extensions>
 
   <actions>
