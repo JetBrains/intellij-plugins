@@ -14,14 +14,17 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.EMPTY_LABEL
+import com.intellij.ui.dsl.builder.MutableProperty
+import com.intellij.ui.dsl.builder.bindSelected
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
 import javax.swing.JCheckBox
-import javax.swing.JLabel
 import javax.swing.text.JTextComponent
 
 private const val CONFIGURABLE_ID = "settings.javascript.prettier"
@@ -29,9 +32,9 @@ private const val CONFIGURABLE_ID = "settings.javascript.prettier"
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
   PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", CONFIGURABLE_ID) {
 
-  private var packageField: NodePackageField? = null
-  private var runForFilesField: JBTextField? = null
-  private var runOnSaveCheckBox: JCheckBox? = null
+  private lateinit var packageField: NodePackageField
+  private lateinit var runForFilesField: JBTextField
+  private lateinit var runOnSaveCheckBox: JCheckBox
 
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
@@ -39,66 +42,53 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     return panel {
       packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME) { NodeJsInterpreterManager.getInstance(project).interpreter }
 
-      row(JLabel(PrettierBundle.message("prettier.package.label")).apply { labelFor = packageField }) {
-        packageField!!().withBinding(
-          { it.selectedRef },
-          { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
-          PropertyBinding({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
-        )
+      row(PrettierBundle.message("prettier.package.label")) {
+        cell(packageField)
+          .horizontalAlign(HorizontalAlign.FILL)
+          .bind({ it.selectedRef }, { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
+                MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
+          )
       }
 
-      row {
-        val runForFilesLabel = JLabel(PrettierBundle.message("run.for.files.label"))
-        runForFilesLabel()
-
-        cell(isFullWidth = true) {
-          runForFilesField = JBTextField()
-          component(runForFilesField!!)
-            .withBinding({ textField -> textField.text.trim() },
-                         JTextComponent::setText,
-                         PropertyBinding({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it }))
-            .withValidationOnInput {
-              try {
-                FileSystems.getDefault().getPathMatcher("glob:" + it.text)
-                null
-              }
-              catch (e: PatternSyntaxException) {
-                @NlsSafe val firstLine = e.localizedMessage?.lines()?.firstOrNull()
-                ValidationInfo(firstLine ?: PrettierBundle.message("invalid.pattern"), it)
-              }
+      row(PrettierBundle.message("run.for.files.label")) {
+        runForFilesField = textField()
+          .comment(PrettierBundle.message("files.pattern.comment"))
+          .horizontalAlign(HorizontalAlign.FILL)
+          .bind({ textField -> textField.text.trim() },
+                JTextComponent::setText,
+                MutableProperty({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it }))
+          .validationOnInput {
+            try {
+              FileSystems.getDefault().getPathMatcher("glob:" + it.text)
+              null
             }
-            .component.apply { runForFilesLabel.labelFor = this }
-
-          comment(PrettierBundle.message("files.pattern.comment"))
-        }
+            catch (e: PatternSyntaxException) {
+              @NlsSafe val firstLine = e.localizedMessage?.lines()?.firstOrNull()
+              ValidationInfo(firstLine ?: PrettierBundle.message("invalid.pattern"), it)
+            }
+          }
+          .component
       }
 
-      // empty label - to have the check box below the file patterns field
-      row("") {
-        cell {
-          checkBox(PrettierBundle.message("on.code.reformat.label"),
-                   { prettierConfiguration.isRunOnReformat },
-                   { prettierConfiguration.isRunOnReformat = it })
+      row(EMPTY_LABEL) {
+        checkBox(PrettierBundle.message("on.code.reformat.label"))
+          .bindSelected(
+            { prettierConfiguration.isRunOnReformat },
+            { prettierConfiguration.isRunOnReformat = it })
 
-          val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
-          shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
-        }
+        val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
+        shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
       }
 
-      // empty label - to have the check box below the file patterns field
-      row("") {
-        cell {
-          runOnSaveCheckBox = checkBox(PrettierBundle.message("on.save.label"),
-                                       { prettierConfiguration.isRunOnSave },
-                                       { prettierConfiguration.isRunOnSave = it })
-            .component
+      row(EMPTY_LABEL) {
+        runOnSaveCheckBox = checkBox(PrettierBundle.message("on.save.label"))
+          .bindSelected(
+            { prettierConfiguration.isRunOnSave },
+            { prettierConfiguration.isRunOnSave = it })
+          .component
 
-          //val shortcut = ActionManager.getInstance().getKeyboardShortcut("SaveAll")
-          //shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
-
-          val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
-          link().withLargeLeftGap()
-        }
+        val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
+        cell(link)
       }
     }
   }
@@ -123,8 +113,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       PrettierConfiguration.getInstance(project).let { getComment(it.`package`.getVersion(project), it.filesPattern) }
 
     override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) =
-      getComment(configurable.packageField!!.selectedRef.constantPackage?.getVersion(project),
-                 configurable.runForFilesField!!.text.trim())
+      getComment(configurable.packageField.selectedRef.constantPackage?.getVersion(project),
+                 configurable.runForFilesField.text.trim())
 
     private fun getComment(prettierVersion: @Nullable SemVer?, filesPattern: @NotNull String): ActionOnSaveComment? {
       if (prettierVersion == null) {
@@ -140,10 +130,10 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
     override fun isActionOnSaveEnabledAccordingToStoredState() = PrettierConfiguration.getInstance(project).isRunOnSave
 
-    override fun isActionOnSaveEnabledAccordingToUiState(configurable: PrettierConfigurable) = configurable.runOnSaveCheckBox!!.isSelected
+    override fun isActionOnSaveEnabledAccordingToUiState(configurable: PrettierConfigurable) = configurable.runOnSaveCheckBox.isSelected
 
     override fun setActionOnSaveEnabled(configurable: PrettierConfigurable, enabled: Boolean) {
-      configurable.runOnSaveCheckBox!!.isSelected = enabled
+      configurable.runOnSaveCheckBox.isSelected = enabled
     }
 
     override fun getActionLinks() = listOf(createGoToPageInSettingsLink(CONFIGURABLE_ID))
