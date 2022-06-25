@@ -77,6 +77,7 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testAsyncPipeResolution() {
+    TypeScriptTestUtil.forceConfig(getProject(), null, getTestRootDisposable());
     configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
 
@@ -100,6 +101,7 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testAsyncNgIfAsObjType() {
+    TypeScriptTestUtil.forceConfig(getProject(), null, getTestRootDisposable());
     configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("ngIfAsObj.ts");
     assertEquals("{foo: Person}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());

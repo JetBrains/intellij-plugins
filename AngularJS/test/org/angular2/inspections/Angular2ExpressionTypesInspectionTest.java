@@ -38,6 +38,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   }
 
   public void testExpressions() {
+    TypeScriptTestUtil.forceConfig(getProject(), null, getTestRootDisposable());
     configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14, ANGULAR_FORMS_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("expressions.html", "expressions.ts", "componentWithTypes.ts");
     myFixture.checkHighlighting();
