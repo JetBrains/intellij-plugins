@@ -917,7 +917,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testRefsInIncludes() {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".js2");
-    findAndInvokeIntentionAction(infos, "Create File RefsInIncludesz.js2", myEditor, myFile);
+    findAndInvokeIntentionAction(infos, "Create file RefsInIncludesz.js2", myEditor, myFile);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
