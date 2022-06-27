@@ -332,10 +332,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     else if (VueStaticMethod.Filter.matches(reference)) {
       val filterName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && !filterName.isNullOrBlank()) {
-        val functionDef = arguments[1]
-        val nameType = (functionDef as? JSReferenceExpression)?.referenceName
         outData.addImplicitElement(createImplicitElement(
-          filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, nameType,
+          filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, null,
           arguments[1], true))
       }
     }

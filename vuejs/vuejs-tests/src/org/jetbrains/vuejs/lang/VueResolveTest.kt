@@ -1900,10 +1900,13 @@ export default class UsageComponent extends Vue {
     for ((filterName, resolvedItemText) in listOf(
       Pair("localFilter", "localFilter: function (arg1, arg2, arg3) { return true }"),
       Pair("globalFilter", "function (value) { return 12 }"),
-      Pair("appFilter", "appFilter: function (value, param) { return \"\" }")
+      Pair("globalReferencedFilter", "filterDefinition = function (value) { return 42 }"),
+      Pair("globalQualifiedReferencedFilter", """Vue.filter("globalQualifiedReferencedFilter", danger.filterDefinition)"""),
+      Pair("appFilter", """appFilter: function (value, param) { return "" }"""),
     )) {
       val element = myFixture.resolveReference("<caret>${filterName}")
-      TestCase.assertEquals(filterName, resolvedItemText, element.text)
+      val text = if (element is JSImplicitElement) element.parent.text else element.text
+      TestCase.assertEquals(filterName, resolvedItemText, text)
     }
     myFixture.assertUnresolvedReference("<caret>wrongFilter")
   }

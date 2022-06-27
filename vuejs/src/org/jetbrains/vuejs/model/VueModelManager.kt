@@ -334,14 +334,16 @@ class VueModelManager {
                                                          it), declaration)
       }
 
-    fun getFilter(it: JSImplicitElement): VueFilter? {
-      if (it.userString == VueGlobalFiltersIndex.JS_KEY) {
-        val call = it.context ?: return null
-        var filterMethod: PsiElement = it
-        val data = getVueIndexData(it)
-        if (data != null && !data.nameRef.isNullOrBlank()) {
-          resolveFilterReference(call, data.nameRef)
-            ?.let { filterMethod = it }
+    fun getFilter(implicitElement: JSImplicitElement): VueFilter? {
+      if (implicitElement.userString == VueGlobalFiltersIndex.JS_KEY) {
+        val call = implicitElement.context ?: return null
+        var filterMethod: PsiElement = implicitElement
+        val functionReference = getVueIndexData(implicitElement)?.descriptorRef
+        if (!functionReference.isNullOrBlank()) {
+          val resolved = resolveFilterReference(call, functionReference)
+          if (resolved != null) {
+            filterMethod = resolved
+          }
         }
         else if (call is JSCallExpression) {
           val stub = (call as? StubBasedPsiElement<*>)?.stub
@@ -356,7 +358,7 @@ class VueModelManager {
               ?.let { filterMethod = it }
           }
         }
-        return VueSourceFilter(toAsset(it.name), filterMethod)
+        return VueSourceFilter(toAsset(implicitElement.name), filterMethod)
       }
       return null
     }
