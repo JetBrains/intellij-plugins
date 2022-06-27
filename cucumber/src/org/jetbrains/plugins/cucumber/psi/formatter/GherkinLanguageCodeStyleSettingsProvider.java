@@ -8,9 +8,6 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinLanguage;
 
-/**
- * @author Rustam Vishnyakov
- */
 public class GherkinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   @NotNull
   @Override

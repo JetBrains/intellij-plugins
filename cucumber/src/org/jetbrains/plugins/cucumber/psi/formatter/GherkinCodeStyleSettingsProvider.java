@@ -8,9 +8,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 
-/**
- * @author Rustam Vishnyakov
- */
 public class GherkinCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
   @NotNull
   @Override
