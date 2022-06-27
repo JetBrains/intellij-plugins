@@ -73,11 +73,11 @@ class VueComponentsCalculation {
       Pair<JSObjectLiteralExpression, Boolean>? {
       val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
-      val reference = indexData?.descriptorRef ?: return null
+      val qualifiedReference = indexData?.descriptorQualifiedReference ?: return null
 
-      var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, context) ?: return null
+      var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(qualifiedReference, context) ?: return null
 
-      var indexedAccessUsed = indexData.groupRegistration
+      var indexedAccessUsed = indexData.indexedAccessUsed
 
       resolved = (resolved as? JSVariable)?.jsType?.castSafelyTo<JSApplyIndexedAccessType>()
                    ?.qualifierType?.castSafelyTo<JSReferenceType>()
@@ -97,27 +97,27 @@ class VueComponentsCalculation {
                                            descriptor: JSObjectLiteralExpression?): SingleGlobalRegistration? {
       val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
-      val reference = indexData?.nameRef ?: return null
+      val nameReference = indexData?.nameQualifiedReference ?: return null
 
-      val parts = reference.split('.')
-      if (parts.size > 2) return null
-      if (parts.size == 2) {
+      val nameReferenceParts = nameReference.split('.')
+      if (nameReferenceParts.size > 2) return null
+      if (nameReferenceParts.size == 2) {
         // allow only Vue.component(SomeComp.name, SomeComp) form
-        if (parts[0] != indexData.descriptorRef) return null
+        if (nameReferenceParts[0] != indexData.descriptorQualifiedReference) return null
         // for functional components style, where there is no descriptor - heuristics (vuetify)
-        if (descriptor == null) return SingleGlobalRegistration(parts[0], parts[0], context)
+        if (descriptor == null) return SingleGlobalRegistration(nameReferenceParts[0], nameReferenceParts[0], context)
 
         if (!descriptor.isValid) return null
-        val property = descriptor.findProperty(parts[1])
+        val property = descriptor.findProperty(nameReferenceParts[1])
         if (property != null) {
           val alias = property.jsType.castSafelyTo<JSStringLiteralTypeImpl>()?.literal ?: ""
-          val realName = if ("name" == parts[1]) alias else getNameFromDescriptor(descriptor) ?: alias
+          val realName = if ("name" == nameReferenceParts[1]) alias else getNameFromDescriptor(descriptor) ?: alias
           return SingleGlobalRegistration(realName, alias, descriptor)
         }
         return null
       }
       if (descriptor == null) return null
-      return (JSStubBasedPsiTreeUtil.resolveLocally(reference, context) as? JSVariable)
+      return (JSStubBasedPsiTreeUtil.resolveLocally(nameReference, context) as? JSVariable)
         ?.jsType.castSafelyTo<JSStringLiteralTypeImpl>()
         ?.literal
         ?.let {
