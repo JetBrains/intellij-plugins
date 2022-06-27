@@ -97,5 +97,8 @@ fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
   return VueIndexData(originalName, nameRef, descriptor, isIndexed, isGlobal)
 }
 
-class VueIndexData(val originalName: String,
-                   val nameRef: String?, val descriptorRef: String?, val groupRegistration: Boolean, val isGlobal: Boolean)
+data class VueIndexData(val originalName: String,
+                        val nameQualifiedReference: String,
+                        val descriptorQualifiedReference: String,
+                        val indexedAccessUsed: Boolean,
+                        val isGlobal: Boolean)

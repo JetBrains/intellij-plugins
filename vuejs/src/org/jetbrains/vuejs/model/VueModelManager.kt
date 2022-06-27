@@ -129,7 +129,7 @@ class VueModelManager {
         if (context is JSCallExpression
             || (context is JSProperty && context.name != "name")) {
           getVueIndexData(element)
-            ?.descriptorRef
+            ?.descriptorQualifiedReference
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
             ?.castSafelyTo<VueSourceEntityDescriptor>()
             ?.initializer
@@ -338,7 +338,7 @@ class VueModelManager {
       if (implicitElement.userString == VueGlobalFiltersIndex.JS_KEY) {
         val call = implicitElement.context ?: return null
         var filterMethod: PsiElement = implicitElement
-        val functionReference = getVueIndexData(implicitElement)?.descriptorRef
+        val functionReference = getVueIndexData(implicitElement)?.descriptorQualifiedReference
         if (!functionReference.isNullOrBlank()) {
           val resolved = resolveFilterReference(call, functionReference)
           if (resolved != null) {
