@@ -2,10 +2,7 @@
 package com.intellij.lang.javascript.linter.tslint.codestyle;
 
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorNotifications;
@@ -22,6 +19,11 @@ public class TsLintImportCodeStyleAction extends AnAction {
                                       && psiFile != null
                                       && TslintUtil.isConfigFile(psiFile.getVirtualFile());
     e.getPresentation().setEnabledAndVisible(enabledAndVisible);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

@@ -6,6 +6,7 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -27,6 +28,11 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
     final Project project = e.getProject();
     final DartAnalysisServerService service = project == null ? null : DartAnalysisServerService.getInstance(project);
     e.getPresentation().setEnabledAndVisible(service != null && service.isServerProcessActive());
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

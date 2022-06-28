@@ -48,6 +48,11 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
     }
   }
 
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   private static boolean isEnabled(final DataContext dataContext) {
     Module module = PlatformCoreDataKeys.MODULE.getData(dataContext);
     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();

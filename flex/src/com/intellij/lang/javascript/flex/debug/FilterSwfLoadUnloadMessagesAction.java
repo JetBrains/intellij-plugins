@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
@@ -24,5 +25,10 @@ public class FilterSwfLoadUnloadMessagesAction extends ToggleAction implements D
 
   public static boolean isFilterEnabled(final @NotNull Project project) {
     return PropertiesComponent.getInstance(project).getBoolean(FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY, true);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 }

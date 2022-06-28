@@ -23,6 +23,7 @@ import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -222,6 +223,11 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     e.getPresentation().setEnabledAndVisible(project != null
                                              && file != null
                                              && AngularCliUtil.findAngularCliFolder(project, file) != null);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   private static void runAndShowConsole(@NotNull Project project, @NotNull VirtualFile cli,

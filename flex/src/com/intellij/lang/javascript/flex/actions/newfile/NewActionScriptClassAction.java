@@ -29,6 +29,11 @@ public class NewActionScriptClassAction extends AnAction {
     presentation.setEnabledAndVisible(enabled);
   }
 
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   private boolean isAvailable(DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     final IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);

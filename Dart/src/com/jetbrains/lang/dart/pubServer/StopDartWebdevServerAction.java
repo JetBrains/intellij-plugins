@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.jetbrains.lang.dart.DartBundle;
@@ -19,6 +20,11 @@ public class StopDartWebdevServerAction extends DumbAwareAction {
   @Override
   public void update(@NotNull final AnActionEvent e) {
     e.getPresentation().setEnabled(e.getProject() != null && PubServerManager.getInstance(e.getProject()).hasAlivePubServerProcesses());
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override
