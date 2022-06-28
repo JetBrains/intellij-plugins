@@ -47,6 +47,10 @@ class VueTestCommons : UsefulTestCase() {
   fun testIndexDataSerialization() {
     doTestSerialization(VueIndexData("""""", """""", """""", false, false))
     doTestSerialization(VueIndexData("""Hello""", """hello.world""", """hello.world""", false, true))
+    doTestSerialization(VueIndexData("""#Hello""", """hello.#world""", """hello.#world""", false, true))
+    doTestSerialization(VueIndexData("""\Hello""", """hello.\world""", """hello.\world""", false, true))
+    doTestSerialization(VueIndexData("""Hello,W""", """hello.world""", """hello.world""", false, true))
+    doTestSerialization(VueIndexData("""Hello"W"world""", """hello."w".world""", """hello."w".world""", false, true))
   }
 
   private fun doTestSerialization(data: VueIndexData) {
