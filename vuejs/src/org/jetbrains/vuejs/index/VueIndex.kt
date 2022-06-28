@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
@@ -33,7 +34,8 @@ const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
 private const val INDEXED_ACCESS_HINT = "[]"
-private const val DELIMITER = '#'
+private const val DELIMITER = ','
+private val DELIMITER_SPLIT_PATTERN = Regex("(?<!\\\\)$DELIMITER") // ignore \-escaped delimiters
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
@@ -88,17 +90,17 @@ data class VueIndexData(val originalName: String,
 
 fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
   val userStringData = element.userStringData ?: return null
-  val parts = userStringData.split(DELIMITER)
+  val parts = userStringData.split(DELIMITER_SPLIT_PATTERN)
 
   assert(parts.size == 4) {
     "Error with $element [name = ${element.name}, userString = ${element.userString}, userStringData = $userStringData, parts=$parts]"
   }
 
-  val isGlobal = parts[0] == "1"
-  val nameQualifiedReference = parts[1]
-  val descriptorQualifiedReference = parts[2].substringBefore(INDEXED_ACCESS_HINT)
+  val originalName = unescapePart(parts[0])
+  val nameQualifiedReference = unescapePart(parts[1])
+  val descriptorQualifiedReference = unescapePart(parts[2].substringBefore(INDEXED_ACCESS_HINT))
   val indexedAccessUsed = parts[2].endsWith(INDEXED_ACCESS_HINT)
-  val originalName = parts[3]
+  val isGlobal = parts[3] == "1"
 
   return VueIndexData(originalName, nameQualifiedReference, descriptorQualifiedReference, indexedAccessUsed, isGlobal)
 }
@@ -108,7 +110,22 @@ fun serializeUserStringData(originalName: String,
                             descriptorQualifiedReference: String,
                             indexedAccessUsed: Boolean,
                             isGlobal: Boolean): String {
-  val globalFlag = if (isGlobal) 1 else 0
-  val descriptorPart = descriptorQualifiedReference + if (indexedAccessUsed) INDEXED_ACCESS_HINT else ""
-  return "$globalFlag$DELIMITER$nameQualifiedReference$DELIMITER$descriptorPart$DELIMITER$originalName"
+  return buildString {
+    append(escapePart(originalName))
+    append(DELIMITER)
+    append(escapePart(nameQualifiedReference))
+    append(DELIMITER)
+    append(escapePart(descriptorQualifiedReference))
+    if (indexedAccessUsed) append(INDEXED_ACCESS_HINT)
+    append(DELIMITER)
+    append(if (isGlobal) "1" else "0")
+  }
+}
+
+private fun escapePart(part: String): String {
+  return StringUtil.escapeChar(part, DELIMITER)
+}
+
+private fun unescapePart(part: String): String {
+  return StringUtil.unescapeChar(part, DELIMITER)
 }
