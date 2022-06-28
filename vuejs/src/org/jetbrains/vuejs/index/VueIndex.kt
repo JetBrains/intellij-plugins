@@ -22,7 +22,6 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE_MODULE: String = "vue"
-const val VUE_CLI_SERVICE_MODULE: String = "@vue/cli-service"
 const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
@@ -33,8 +32,8 @@ const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
-internal const val INDEXED_ACCESS_HINT = "[]"
-const val DELIMITER = "#"
+private const val INDEXED_ACCESS_HINT = "[]"
+private const val DELIMITER = '#'
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
@@ -81,24 +80,35 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
 
 internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
-fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
-  val typeStr = element.userStringData ?: return null
-  val originalName = typeStr.substringAfterLast(DELIMITER)
-  val s = typeStr.substringBeforeLast(DELIMITER)
-  val parts = s.split(DELIMITER)
-  assert(parts.size == 3) {
-    "Error with $element [name = ${element.name}, userString = ${element.userString}, typeString = $typeStr]"
-  }
-
-  val isGlobal = "1" == parts[0]
-  val nameRef = parts[1]
-  val descriptor = parts[2].substringBefore(INDEXED_ACCESS_HINT)
-  val isIndexed = parts[2].endsWith(INDEXED_ACCESS_HINT)
-  return VueIndexData(originalName, nameRef, descriptor, isIndexed, isGlobal)
-}
-
 data class VueIndexData(val originalName: String,
                         val nameQualifiedReference: String,
                         val descriptorQualifiedReference: String,
                         val indexedAccessUsed: Boolean,
                         val isGlobal: Boolean)
+
+fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
+  val userStringData = element.userStringData ?: return null
+  val parts = userStringData.split(DELIMITER)
+
+  assert(parts.size == 4) {
+    "Error with $element [name = ${element.name}, userString = ${element.userString}, userStringData = $userStringData, parts=$parts]"
+  }
+
+  val isGlobal = parts[0] == "1"
+  val nameQualifiedReference = parts[1]
+  val descriptorQualifiedReference = parts[2].substringBefore(INDEXED_ACCESS_HINT)
+  val indexedAccessUsed = parts[2].endsWith(INDEXED_ACCESS_HINT)
+  val originalName = parts[3]
+
+  return VueIndexData(originalName, nameQualifiedReference, descriptorQualifiedReference, indexedAccessUsed, isGlobal)
+}
+
+fun serializeUserStringData(originalName: String,
+                            nameQualifiedReference: String,
+                            descriptorQualifiedReference: String,
+                            indexedAccessUsed: Boolean,
+                            isGlobal: Boolean): String {
+  val globalFlag = if (isGlobal) 1 else 0
+  val descriptorPart = descriptorQualifiedReference + if (indexedAccessUsed) INDEXED_ACCESS_HINT else ""
+  return "$globalFlag$DELIMITER$nameQualifiedReference$DELIMITER$descriptorPart$DELIMITER$originalName"
+}

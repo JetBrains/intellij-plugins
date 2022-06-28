@@ -306,16 +306,21 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     if (VueStaticMethod.Component.matches(reference)) {
       if (arguments.size >= 2) {
-        var componentName = getTextIfLiteral(arguments[0])
-        var nameRefString: String? = null
+        val name = arguments[0] // // called "id" in Vue 2 docs
+        val descriptor = arguments[1] // called "definition" in Vue 2 docs
+
+        var componentName = getTextIfLiteral(name)
+        var nameQualifiedReference: String? = null
+
         if (componentName == null) {
-          val nameRef = arguments[0] as? JSReferenceExpression ?: return
-          nameRefString = nameRef.text
-          val qualifierRef = nameRef.qualifier as? JSReferenceExpression
-          componentName = (qualifierRef?.referenceName ?: nameRef.referenceName) + GLOBAL_BINDING_MARK
+          val nameReferenceExpression = name as? JSReferenceExpression ?: return
+          nameQualifiedReference = nameReferenceExpression.text
+          val qualifierReferenceExpression = nameReferenceExpression.qualifier as? JSReferenceExpression
+          componentName = (qualifierReferenceExpression?.referenceName ?: nameReferenceExpression.referenceName) + GLOBAL_BINDING_MARK
         }
+
         outData.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, callExpression,
-                                                         nameRefString, arguments[1], true))
+                                                         nameQualifiedReference, descriptor, true))
       }
     }
     else if (VueStaticMethod.Mixin.matches(reference)) {
@@ -482,16 +487,19 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun createImplicitElement(indexKey: String,
                                     name: String,
                                     provider: PsiElement,
-                                    nameType: String? = null,
+                                    nameQualifiedReference: String? = null,
                                     descriptor: PsiElement? = null,
                                     isGlobal: Boolean = false): JSImplicitElementImpl {
-    val normalized = normalizeNameForIndex(name)
-    val nameTypeRecord = nameType ?: ""
-    val asIndexed = descriptor as? JSIndexedPropertyAccessExpression
-    var descriptorRef = asIndexed?.qualifier?.text ?: (descriptor as? JSReferenceExpression)?.text ?: ""
-    if (asIndexed != null) descriptorRef += INDEXED_ACCESS_HINT
-    return JSImplicitElementImpl.Builder(normalized, provider)
-      .setUserStringWithData(this, indexKey, "${if (isGlobal) 1 else 0}$DELIMITER$nameTypeRecord$DELIMITER$descriptorRef$DELIMITER$name")
+    val normalizedName = normalizeNameForIndex(name)
+    val descriptorAsIndexed = descriptor as? JSIndexedPropertyAccessExpression
+    val descriptorQualifiedRef = descriptorAsIndexed?.qualifier?.text
+                                 ?: (descriptor as? JSReferenceExpression)?.text
+                                 ?: ""
+    val indexedAccessUsed = descriptorAsIndexed != null
+
+    val userStringData = serializeUserStringData(name, nameQualifiedReference ?: "", descriptorQualifiedRef, indexedAccessUsed, isGlobal)
+    return JSImplicitElementImpl.Builder(normalizedName, provider)
+      .setUserStringWithData(this, indexKey, userStringData)
       .toImplicitElement()
   }
 
