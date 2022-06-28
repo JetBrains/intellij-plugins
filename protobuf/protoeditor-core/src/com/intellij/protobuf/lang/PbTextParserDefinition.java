@@ -20,27 +20,21 @@ import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.protobuf.lang.lexer.ProtoLexer;
 import com.intellij.protobuf.lang.parser.PbTextParser;
 import com.intellij.protobuf.lang.psi.PbTextTypes;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.protobuf.lang.psi.impl.PbTextFileImpl;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 /** A {@link ParserDefinition} for prototext files. */
 public class PbTextParserDefinition implements ParserDefinition {
   public static final PbTextParserDefinition INSTANCE = new PbTextParserDefinition();
-
-  public static final TokenSet WHITE_SPACE = TokenSet.create(TokenType.WHITE_SPACE);
-  public static final TokenSet COMMENTS =
-      TokenSet.create(ProtoTokenTypes.LINE_COMMENT, ProtoTokenTypes.BLOCK_COMMENT);
-  public static final TokenSet STRINGS = TokenSet.create(ProtoTokenTypes.STRING_LITERAL);
 
   public static final IFileElementType FILE = new IFileElementType(PbTextLanguage.INSTANCE);
 
@@ -53,40 +47,40 @@ public class PbTextParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiParser createParser(final Project project) {
+  public @NotNull PsiParser createParser(final Project project) {
     return new PbTextParser();
   }
 
   @NotNull
   @Override
   public TokenSet getWhitespaceTokens() {
-    return WHITE_SPACE;
+    return ProtoTokenTypes.WHITE_SPACE;
   }
 
   @NotNull
   @Override
   public TokenSet getCommentTokens() {
-    return COMMENTS;
+    return ProtoTokenTypes.COMMENTS;
   }
 
   @NotNull
   @Override
   public TokenSet getStringLiteralElements() {
-    return STRINGS;
+    return ProtoTokenTypes.STRINGS;
   }
 
   @Override
-  public IFileElementType getFileNodeType() {
+  public @NotNull IFileElementType getFileNodeType() {
     return FILE;
   }
 
   @Override
-  public PsiFile createFile(FileViewProvider viewProvider) {
+  public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
     return new PbTextFileImpl(viewProvider, PbTextLanguage.INSTANCE);
   }
 
   @Override
-  public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+  public @NotNull SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     return SpaceRequirements.MAY;
   }
 
