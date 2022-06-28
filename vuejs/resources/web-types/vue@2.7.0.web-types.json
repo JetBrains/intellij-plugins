@@ -2,7 +2,7 @@
   "$schema": "../../../../plugins/JavaScriptLanguage/web-platform/web-types-gen/resources/web-types.json",
   "framework": "vue",
   "name": "vue",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "js-types-syntax": "typescript",
   "description-markup": "markdown",
   "default-icon": "icons/vue.svg",
