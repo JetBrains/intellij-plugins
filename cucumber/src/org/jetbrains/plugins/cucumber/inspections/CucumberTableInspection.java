@@ -71,10 +71,9 @@ public final class CucumberTableInspection extends GherkinInspection {
     final List<GherkinTableCell> cells = row.getPsiCells();
     final int cellsCount = cells.size();
 
-    final GherkinTable table = (GherkinTable) row.getParent();
     for (int i : unusedIndices.toIntArray()) {
       if (i < cellsCount && cells.get(i).getTextLength() > 0) {
-        holder.registerProblem(cells.get(i), CucumberBundle.message("unused.table.column"), new RemoveTableColumnFix(table, i));
+        holder.registerProblem(cells.get(i), CucumberBundle.message("unused.table.column"), new RemoveTableColumnFix(i));
       }
     }
   }
