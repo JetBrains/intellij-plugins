@@ -393,6 +393,13 @@
             },
             {
               "name": "src"
+            },
+            {
+              "name": "setup",
+              "value": {
+                "kind": "expression",
+                "required": false
+              }
             }
           ]
         },
