@@ -23,7 +23,7 @@ import static com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil.findDartCl
 import static com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil.getTypeHierarchyItems;
 
 public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
-  private final SmartPsiElementPointer myMethod;
+  private final SmartPsiElementPointer<DartComponent> myMethod;
 
   public DartMethodHierarchyTreeStructure(Project project, DartComponent element) {
     super(project, null);
@@ -105,10 +105,10 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
     finally {
       stackItems.remove(item);
     }
-    descriptor.setCachedChildren(subDescriptors.toArray(new HierarchyNodeDescriptor[0]));
+    descriptor.setCachedChildren(subDescriptors.toArray(HierarchyNodeDescriptor.EMPTY_ARRAY));
   }
 
   private DartComponent getBaseMethod() {
-    return (DartComponent)myMethod.getElement();
+    return myMethod.getElement();
   }
 }

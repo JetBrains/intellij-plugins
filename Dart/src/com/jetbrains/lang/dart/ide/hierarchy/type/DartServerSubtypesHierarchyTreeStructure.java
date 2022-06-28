@@ -67,6 +67,6 @@ public class DartServerSubtypesHierarchyTreeStructure extends HierarchyTreeStruc
     finally {
       stackItems.remove(item);
     }
-    descriptor.setCachedChildren(subDescriptors.toArray(new HierarchyNodeDescriptor[0]));
+    descriptor.setCachedChildren(subDescriptors.toArray(HierarchyNodeDescriptor.EMPTY_ARRAY));
   }
 }
