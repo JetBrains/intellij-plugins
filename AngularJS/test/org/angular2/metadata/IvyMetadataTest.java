@@ -96,4 +96,10 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testStandaloneDeclarables() {
+    myFixture.copyDirectoryToProject("standalone-declarables", ".");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureFromTempProjectFile("app.component.ts");
+    myFixture.checkHighlighting();
+  }
 }

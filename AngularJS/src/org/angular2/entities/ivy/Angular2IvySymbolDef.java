@@ -29,7 +29,7 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
 
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({"SameParameterValue", "NonAsciiCharacters"})
 public abstract class Angular2IvySymbolDef {
 
   public static @Nullable Entity get(@NotNull TypeScriptClass typeScriptClass, boolean allowAbstractClass) {
@@ -57,6 +57,7 @@ public abstract class Angular2IvySymbolDef {
 
     public abstract Angular2IvyEntity<?> createEntity();
 
+    public abstract boolean isStandalone();
   }
 
   public static final class Module extends Entity {
@@ -85,6 +86,11 @@ public abstract class Angular2IvySymbolDef {
     }
 
     @Override
+    public boolean isStandalone() {
+      return false;
+    }
+
+    @Override
     protected @NotNull List<String> getDefTypeNames() {
       return TYPE_MODULE_DEFS;
     }
@@ -104,6 +110,12 @@ public abstract class Angular2IvySymbolDef {
     @Override
     public Angular2IvyDirective createEntity() {
       return new Angular2IvyDirective(this);
+    }
+
+    @Override
+    public boolean isStandalone() {
+      var type = getDefFieldArgument(7);
+      return type instanceof TypeScriptBooleanLiteralType && ((TypeScriptBooleanLiteralType)type).getValue();
     }
 
     public @Nullable String getSelector() {
@@ -145,6 +157,7 @@ public abstract class Angular2IvySymbolDef {
 
     private Component(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
+    @Override
     public Pointer<Component> createPointer() {
       var fieldPtr = createSmartPointer(getField());
       return () -> {
@@ -159,7 +172,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     /**
-     * Returns null if type doesn't contain the argument and logic should fallback to metadata.json
+     * Returns null if the type doesn't contain the argument and logic should fall back to metadata.json
      */
     public @Nullable Collection<TypeScriptStringLiteralType> getNgContentSelectors() {
       return processTupleArgument(6, TypeScriptStringLiteralType.class,
@@ -174,11 +187,17 @@ public abstract class Angular2IvySymbolDef {
 
   public static final class Pipe extends Entity {
 
-    private Pipe(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+    private Pipe(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
 
     @Override
     public Angular2IvyPipe createEntity() {
       return new Angular2IvyPipe(this);
+    }
+
+    @Override
+    public boolean isStandalone() {
+      var type = getDefFieldArgument(2);
+      return type instanceof TypeScriptBooleanLiteralType && ((TypeScriptBooleanLiteralType)type).getValue();
     }
 
     public @Nullable String getName() {
@@ -201,7 +220,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     /**
-     * Returns null if type doesn't contain the argument and logic should fallback to metadata.json
+     * Returns null if the type doesn't contain the argument and logic should fall back to metadata.json
      */
     public @Nullable Map<String, JSTypeDeclaration> getAttributeNames() {
       Map<String, JSTypeDeclaration> result = new HashMap<>();
