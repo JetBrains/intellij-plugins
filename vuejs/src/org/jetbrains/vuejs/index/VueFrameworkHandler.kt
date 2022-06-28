@@ -185,7 +185,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       val obj = property.parent as JSObjectLiteralExpression
       if (componentName != null && obj.containingFile.name.contains(toAsset(componentName),
                                                                     true) && obj.containingFile.fileType is TypeScriptFileType) {
-        out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
+        out.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, property))
       }
     }
     else if (TEMPLATE_PROP == name) {
@@ -232,7 +232,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (parent != null) {
         val componentName = property.name ?: ""
         if (out == null) out = JSElementIndexingDataImpl()
-        out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
+        out.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, property))
       }
     }
 
@@ -245,7 +245,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.let { isDefineComponentOrVueExtendCall(it) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
-          val element = createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY)
+          val element = createImplicitElement(VueComponentsIndex.JS_KEY, getComponentNameFromDescriptor(obj), property)
           if (parent is JSArgumentList && parent.parent?.castSafelyTo<JSCallExpression>()
               ?.let { isStrictDefineComponentOrVueExtendCall(it) } == false) {
             out.setAddUnderlyingElementToSymbolIndex(true)
@@ -256,7 +256,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty(EL_PROP)?.value as? JSLiteralExpression)?.stringValue
         if (out == null) out = JSElementIndexingDataImpl()
-        out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
+        out.addImplicitElement(createImplicitElement(VueOptionsIndex.JS_KEY, binding ?: "", property))
       }
     }
 
@@ -272,7 +272,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty(NAME_PROP)
     val name = getTextIfLiteral(nameProperty?.value) ?: FileUtil.getNameWithoutExtension(decorator.containingFile.name)
     val outData = data ?: JSElementIndexingDataImpl()
-    outData.addImplicitElement(createImplicitElement(name, decorator, VueComponentsIndex.JS_KEY, null, null, false))
+    outData.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, name, decorator))
     return outData
   }
 
@@ -314,7 +314,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           val qualifierRef = nameRef.qualifier as? JSReferenceExpression
           componentName = (qualifierRef?.referenceName ?: nameRef.referenceName) + GLOBAL_BINDING_MARK
         }
-        outData.addImplicitElement(createImplicitElement(componentName, callExpression, VueComponentsIndex.JS_KEY,
+        outData.addImplicitElement(createImplicitElement(VueComponentsIndex.JS_KEY, componentName, callExpression,
                                                          nameRefString, arguments[1], true))
       }
     }
@@ -324,17 +324,20 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
     else if (VueStaticMethod.Directive.matches(reference)) {
-      val directiveName = getTextIfLiteral(arguments[0])
-      if (arguments.size >= 2 && !directiveName.isNullOrBlank()) {
-        recordDirective(outData, callExpression, directiveName, arguments[1])
+      if (arguments.size >= 2) {
+        val directiveName = getTextIfLiteral(arguments[0])
+        if (!directiveName.isNullOrBlank()) {
+          recordDirective(outData, callExpression, directiveName, arguments[1])
+        }
       }
     }
     else if (VueStaticMethod.Filter.matches(reference)) {
-      val filterName = getTextIfLiteral(arguments[0])
-      if (arguments.size >= 2 && !filterName.isNullOrBlank()) {
-        outData.addImplicitElement(createImplicitElement(
-          filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, null,
-          arguments[1], true))
+      if (arguments.size >= 2) {
+        val filterName = getTextIfLiteral(arguments[0])
+        if (!filterName.isNullOrBlank()) {
+          outData.addImplicitElement(createImplicitElement(VueGlobalFiltersIndex.JS_KEY, filterName, callExpression, null,
+                                                           arguments[1], true))
+        }
       }
     }
     else if (referenceName == EXTEND_FUN) {
@@ -383,7 +386,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                               provider: JSImplicitElementProvider,
                               directiveName: String,
                               descriptorRef: PsiElement?) {
-    outData.addImplicitElement(createImplicitElement(directiveName, provider, VueGlobalDirectivesIndex.JS_KEY,
+    outData.addImplicitElement(createImplicitElement(VueGlobalDirectivesIndex.JS_KEY, directiveName, provider,
                                                      null, descriptorRef, true))
   }
 
@@ -391,14 +394,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                           provider: JSImplicitElementProvider,
                           descriptorRef: PsiElement?,
                           isGlobal: Boolean) {
-    outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueMixinBindingIndex.JS_KEY, null,
+    outData.addImplicitElement(createImplicitElement(VueMixinBindingIndex.JS_KEY, if (isGlobal) GLOBAL else LOCAL, provider, null,
                                                      descriptorRef, isGlobal))
   }
 
   private fun recordExtends(outData: JSElementIndexingData,
                             provider: JSImplicitElementProvider,
                             descriptorRef: PsiElement?) {
-    outData.addImplicitElement(createImplicitElement(LOCAL, provider, VueExtendsBindingIndex.JS_KEY, null,
+    outData.addImplicitElement(createImplicitElement(VueExtendsBindingIndex.JS_KEY, LOCAL, provider, null,
                                                      descriptorRef, false))
   }
 
@@ -476,7 +479,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return index == VueUrlIndex.KEY
   }
 
-  private fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
+  private fun createImplicitElement(indexKey: String,
+                                    name: String,
+                                    provider: PsiElement,
                                     nameType: String? = null,
                                     descriptor: PsiElement? = null,
                                     isGlobal: Boolean = false): JSImplicitElementImpl {
