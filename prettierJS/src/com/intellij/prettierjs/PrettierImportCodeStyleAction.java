@@ -3,10 +3,7 @@ package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -25,6 +22,11 @@ public class PrettierImportCodeStyleAction extends AnAction {
                                       psiFile != null
                                       && isConfigOrPackageJsonWithSection(psiFile);
     e.getPresentation().setEnabledAndVisible(enabledAndVisible);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   private static boolean isConfigOrPackageJsonWithSection(@NotNull PsiFile psiFile) {

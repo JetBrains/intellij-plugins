@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.notification.*;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
@@ -70,6 +71,11 @@ public class AirPackageAction extends DumbAwareAction {
     e.getPresentation().setEnabled(airAppPresent &&
                                    !CompilerManager.getInstance(project).isCompilationActive() &&
                                    !AirPackageProjectParameters.getInstance(project).isPackagingInProgress());
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

@@ -23,6 +23,7 @@ import com.intellij.lang.javascript.service.protocol.LocalFilePath;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -92,6 +93,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
     e.getPresentation().setEnabledAndVisible(!nodePackage.isEmptyPath() && isAcceptableFileContext(e));
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   private static boolean isAcceptableFileContext(@NotNull AnActionEvent e) {

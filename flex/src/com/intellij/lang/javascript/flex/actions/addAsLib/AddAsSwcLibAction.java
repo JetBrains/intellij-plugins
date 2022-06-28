@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.actions.addAsLib;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -45,6 +46,11 @@ public class AddAsSwcLibAction extends AnAction {
 
     e.getPresentation().setText(FlexBundle.messagePointer("add.as.library.title") + "...");
     e.getPresentation().setEnabledAndVisible(enabled);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @NotNull
