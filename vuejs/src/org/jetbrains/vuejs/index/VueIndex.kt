@@ -34,8 +34,9 @@ const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
 private const val INDEXED_ACCESS_HINT = "[]"
-private const val DELIMITER = ','
-private val DELIMITER_SPLIT_PATTERN = Regex("(?<!\\\\)$DELIMITER") // ignore \-escaped delimiters
+private const val DELIMITER = ';'
+@Suppress("ConvertToStringTemplate")
+private val DELIMITER_SPLIT_PATTERN = Regex("""(?<!\\{3})(?<=[^\\]|\\{2}|\A)""" + DELIMITER) // ignore \-escaped delimiters
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
@@ -123,9 +124,9 @@ fun serializeUserStringData(originalName: String,
 }
 
 private fun escapePart(part: String): String {
-  return StringUtil.escapeChar(part, DELIMITER)
+  return StringUtil.escapeChars(part, '\\', DELIMITER)
 }
 
 private fun unescapePart(part: String): String {
-  return StringUtil.unescapeChar(part, DELIMITER)
+  return StringUtil.unescapeChar(StringUtil.unescapeChar(part, DELIMITER), '\\')
 }
