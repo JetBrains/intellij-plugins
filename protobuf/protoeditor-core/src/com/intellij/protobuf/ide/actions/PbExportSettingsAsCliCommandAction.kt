@@ -1,6 +1,7 @@
 package com.intellij.protobuf.ide.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
@@ -19,6 +20,10 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     CopyPasteManager.getInstance().setContents(StringSelection(joinImportPathsIntoCliArgument(project, PROTOC_PATH_ARGUMENT)))
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread {
+    return ActionUpdateThread.BGT
   }
 
   companion object {
