@@ -40,7 +40,7 @@ public final class Angular2CodeInsightUtils {
                                                                                 @NotNull List<? extends Angular2Declaration> declarations,
                                                                                 @NotNull DeclarationProximity proximity,
                                                                                 @NotNull Angular2DeclarationsScope moduleScope) {
-    if (proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE || proximity == DeclarationProximity.IN_SCOPE) {
+    if (proximity == DeclarationProximity.IMPORTABLE || proximity == DeclarationProximity.IN_SCOPE) {
       List<Angular2Module> modules = StreamEx.of(declarations)
         .flatCollection(declaration -> {
           List<Angular2Module> sources = moduleScope.getPublicModulesExporting(declaration);
@@ -94,7 +94,7 @@ public final class Angular2CodeInsightUtils {
                                                                                     @NotNull List<? extends Angular2Declaration> declarations,
                                                                                     @NotNull DeclarationProximity proximity,
                                                                                     @NotNull Angular2DeclarationsScope moduleScope) {
-    if (proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE) {
+    if (proximity == DeclarationProximity.IMPORTABLE) {
       List<Angular2Module> modules = StreamEx.of(declarations)
         .flatCollection(declaration -> {
           List<Angular2Module> sources = moduleScope.getPublicModulesExporting(declaration);

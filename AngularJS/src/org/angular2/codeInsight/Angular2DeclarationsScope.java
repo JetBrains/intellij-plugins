@@ -101,7 +101,7 @@ public class Angular2DeclarationsScope {
     }
 
     if (declaration.isStandalone()) {
-      return DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE;
+      return DeclarationProximity.IMPORTABLE;
     }
 
     Collection<Angular2Module> modules = myExport2NgModuleMap
@@ -117,7 +117,7 @@ public class Angular2DeclarationsScope {
              : DeclarationProximity.NOT_EXPORTED_BY_MODULE;
     }
     else if (ContainerUtil.exists(modules, Angular2Module::isPublic)) {
-      return DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE;
+      return DeclarationProximity.IMPORTABLE;
     }
     return DeclarationProximity.NOT_REACHABLE;
   }
@@ -155,7 +155,7 @@ public class Angular2DeclarationsScope {
 
   public enum DeclarationProximity {
     IN_SCOPE,
-    EXPORTED_BY_PUBLIC_MODULE, // or standalone // TODO rename
+    IMPORTABLE, // standalone or exported by public module
     NOT_DECLARED_IN_ANY_MODULE,
     NOT_EXPORTED_BY_MODULE,
     NOT_REACHABLE
