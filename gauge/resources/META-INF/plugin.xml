@@ -10,6 +10,7 @@
 
   <depends optional="true" config-file="with-gradle.xml">org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="with-maven.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="with-kotlin.xml">org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
     Plugin for writing <a href="https://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).

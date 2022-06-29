@@ -16,14 +16,13 @@
 
 package com.thoughtworks.gauge;
 
+import java.util.function.Supplier;
+
 import com.intellij.DynamicBundle;
 import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
-
-import java.util.function.Supplier;
 
 public final class GaugeBundle extends DynamicBundle {
   public static final @NlsSafe String GAUGE = "Gauge";
@@ -41,7 +40,7 @@ public final class GaugeBundle extends DynamicBundle {
   }
 
   @NotNull
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
+  public static Supplier<String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
                                                      Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }

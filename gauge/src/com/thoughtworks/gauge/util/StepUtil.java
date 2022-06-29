@@ -163,7 +163,7 @@ public final class StepUtil {
     return values;
   }
 
-  private static List<String> getGaugeStepAnnotationValues(PsiAnnotation annotation) {
+  static List<String> getGaugeStepAnnotationValues(PsiAnnotation annotation) {
     List<String> values = new ArrayList<>();
     if (!isGaugeAnnotation(annotation)) {
       return values;
