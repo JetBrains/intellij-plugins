@@ -17,6 +17,7 @@ package com.intellij.protobuf.ide.actions;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -31,6 +32,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.protobuf.lang.resolve.directive.SchemaComment;
 import com.intellij.protobuf.lang.resolve.directive.SchemaDirective;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
@@ -89,6 +91,11 @@ public class InsertSchemaDirectiveAction extends AnAction {
     }
 
     event.getPresentation().setEnabledAndVisible(true);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   private static void insertFileAnnotation(Project project, PbTextFile file, Editor editor) {
