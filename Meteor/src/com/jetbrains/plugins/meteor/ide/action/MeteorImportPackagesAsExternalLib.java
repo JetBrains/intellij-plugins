@@ -6,39 +6,32 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.settings.MeteorSettings;
-import icons.MeteorIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class MeteorImportPackagesAsExternalLibAction extends AnAction {
+public class MeteorImportPackagesAsExternalLib {
 
   public static final String METEOR_PACKAGES_LIB_NAME = "meteor-packages-auto-import";
   public static final String PACKAGES_FILE = "packages";
 
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("MeteorProject");
 
-  public MeteorImportPackagesAsExternalLibAction() {
-    super(MeteorIcons.Meteor2);
+  public MeteorImportPackagesAsExternalLib() {
   }
 
   public enum CodeType {
@@ -103,28 +96,11 @@ public class MeteorImportPackagesAsExternalLibAction extends AnAction {
     public abstract String getNameEnd();
   }
 
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent event) {
+  public void run(@NotNull VirtualFile virtualFile, Project project) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    Project project = event.getData(PlatformCoreDataKeys.PROJECT_CONTEXT);
-    final PsiFile baseFile = event.getData(CommonDataKeys.PSI_FILE);
-    if (project == null) {
-      final Module module = event.getData(PlatformCoreDataKeys.MODULE);
-      if (module != null) {
-        project = module.getProject();
-      }
-
-      if (module == null && baseFile != null) {
-        project = baseFile.getProject();
-      }
-    }
-
-    if (project == null) {
-      Messages.showErrorDialog(MeteorBundle.message("cannot.find.project"), MeteorBundle.message("meteor.import.packages"));
-      return;
-    }
-
+    PsiFile baseFile = PsiManager.getInstance(project).findFile(virtualFile);
+    if (baseFile == null) return;
     final VirtualFile dotMeteorVirtualFile = MeteorPackagesUtil.getDotMeteorVirtualFile(project, baseFile);
 
     updateVersionList(dotMeteorVirtualFile, project);

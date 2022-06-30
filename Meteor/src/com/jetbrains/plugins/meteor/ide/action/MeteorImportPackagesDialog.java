@@ -11,7 +11,7 @@ import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.MeteorUIUtil;
-import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLibAction.CodeType;
+import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLib.CodeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

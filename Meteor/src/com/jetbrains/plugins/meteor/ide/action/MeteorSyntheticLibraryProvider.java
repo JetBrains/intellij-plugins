@@ -137,7 +137,7 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
 
   @NotNull
   public static Collection<SyntheticLibrary> getLibraries(@NotNull Project project) {
-    final Collection<MeteorImportPackagesAsExternalLibAction.CodeType> codes = MeteorPackagesUtil.getCodes(project);
+    final Collection<MeteorImportPackagesAsExternalLib.CodeType> codes = MeteorPackagesUtil.getCodes(project);
     if (codes.isEmpty()) return ContainerUtil.emptyList();
 
     try {
@@ -148,7 +148,7 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
       for (MeteorPackagesUtil.PackageWrapper wrapper : wrappers) {
         VirtualFile versionedPackage = MeteorPackagesUtil.getVersionPackage(packagesFolder, wrapper);
         List<VirtualFile> roots = new SmartList<>();
-        for (MeteorImportPackagesAsExternalLibAction.CodeType type : codes) {
+        for (MeteorImportPackagesAsExternalLib.CodeType type : codes) {
           if (versionedPackage == null) continue;
 
           ContainerUtil.addIfNotNull(roots, getRootForPackage(versionedPackage, type));
@@ -226,12 +226,12 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
 
   @Nullable
   private static VirtualFile getRootForPackage(@NotNull VirtualFile folder,
-                                               @NotNull MeteorImportPackagesAsExternalLibAction.CodeType type) {
+                                               @NotNull MeteorImportPackagesAsExternalLib.CodeType type) {
     if (!folder.isValid()) return null;
     VirtualFile requiredFolder = folder.findChild(type.getFolder());
     if (requiredFolder == null || !requiredFolder.isValid()) return null;
 
-    if (type == MeteorImportPackagesAsExternalLibAction.CodeType.NPM) {
+    if (type == MeteorImportPackagesAsExternalLib.CodeType.NPM) {
       return requiredFolder.findChild("node_modules");
     }
 

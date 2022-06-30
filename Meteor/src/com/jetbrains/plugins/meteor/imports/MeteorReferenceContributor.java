@@ -28,7 +28,7 @@ import com.intellij.util.gist.GistManager;
 import com.intellij.util.gist.VirtualFileGist;
 import com.intellij.util.io.ByteSequenceDataExternalizer;
 import com.jetbrains.plugins.meteor.MeteorFacade;
-import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLibAction.CodeType;
+import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLib.CodeType;
 import com.jetbrains.plugins.meteor.ide.action.MeteorPackagesUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
