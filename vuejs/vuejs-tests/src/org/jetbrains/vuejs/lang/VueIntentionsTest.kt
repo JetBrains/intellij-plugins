@@ -67,7 +67,9 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.configureByFile("expandVModel.vue")
     for (signature in listOf("v-<caret>model=","v-<caret>model.lazy","v-<caret>model.number","v-<caret>model.trim")) {
       myFixture.moveToOffsetBySignature(signature)
-      myFixture.findSingleIntention("Expand v-model").invoke(project, myFixture.editor, myFixture.file)
+      val intention = myFixture.findSingleIntention("Expand v-model")
+      TestCase.assertTrue(intention.startInWriteAction())
+      WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
     }
     myFixture.checkResultByFile("expandVModel.after.vue")
   }
