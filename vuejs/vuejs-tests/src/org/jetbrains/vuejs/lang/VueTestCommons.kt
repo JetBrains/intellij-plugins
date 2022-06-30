@@ -50,6 +50,7 @@ class VueTestCommons : UsefulTestCase() {
     doTestSerialization(VueIndexData("""#Hello""", """hello.#world""", """hello.#world""", false, true))
     doTestSerialization(VueIndexData("""\Hello""", """hello.\world""", """hello.\world""", false, true))
     doTestSerialization(VueIndexData("""Hello\""", """a""", """""", false, true))
+    doTestSerialization(VueIndexData("""Hello\\""", """a""", """""", false, true))
     doTestSerialization(VueIndexData("""Hello\;""", """a""", """""", false, true))
     doTestSerialization(VueIndexData(""";Hello;W""", """a""", """""", false, true))
     doTestSerialization(VueIndexData("""\;Hello;W""", """a""", """""", false, true))
