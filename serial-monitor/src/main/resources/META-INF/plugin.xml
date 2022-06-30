@@ -28,7 +28,7 @@
   <depends>com.intellij.modules.lang</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.OpenSerial"
+    <toolWindow id="Serial Monitor" anchor="bottom" icon="SerialMonitorIcons.DisconnectedSerial"
                 doNotActivateOnStart="true"
                 factoryClass="com.intellij.plugins.serialmonitor.SerialMonitorToolWindowFactory"
                 canCloseContents="true" secondary="false"/>
@@ -44,7 +44,7 @@
   </extensions>
   <actions>
     <group id="com.intellij.plugins.serialmonitor.connect" class="com.intellij.plugins.serialmonitor.ui.actions.ConnectActionGroup"
-           searchable="true" popup="true" icon="SerialMonitorIcons.OpenSerial">
+           searchable="true" popup="true" icon="AllIcons.Nodes.Plugin">
       <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="RemoteExternalToolsGroup"/>
     </group>
   </actions>
