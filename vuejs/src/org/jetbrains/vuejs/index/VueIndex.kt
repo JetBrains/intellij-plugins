@@ -35,8 +35,6 @@ const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
 private const val INDEXED_ACCESS_HINT = "[]"
 private const val DELIMITER = ';'
-@Suppress("ConvertToStringTemplate")
-private val DELIMITER_SPLIT_PATTERN = Regex("""(?<!\\{3})(?<=[^\\]|\\{2}|\A)""" + DELIMITER) // ignore \-escaped delimiters
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
@@ -89,17 +87,42 @@ data class VueIndexData(val originalName: String,
                         val indexedAccessUsed: Boolean,
                         val isGlobal: Boolean)
 
+private fun splitAndUnescape(s: String): List<String> {
+  val result = ArrayList<String>(4)
+  val builder = StringBuilder()
+  var prevIsEscape = false
+  for (i in s.indices) {
+    val c = s[i]
+    if (prevIsEscape) {
+      builder.append(c)
+      prevIsEscape = false
+    }
+    else if (c == '\\') {
+      prevIsEscape = true
+    }
+    else if (c == DELIMITER) {
+      result.add(builder.toString())
+      builder.clear()
+    }
+    else {
+      builder.append(c)
+    }
+  }
+  result.add(builder.toString())
+  return result
+}
+
 fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
   val userStringData = element.userStringData ?: return null
-  val parts = userStringData.split(DELIMITER_SPLIT_PATTERN)
+  val parts = splitAndUnescape(userStringData)
 
   assert(parts.size == 4) {
     "Error with $element [name = ${element.name}, userString = ${element.userString}, userStringData = $userStringData, parts=$parts]"
   }
 
-  val originalName = unescapePart(parts[0])
-  val nameQualifiedReference = unescapePart(parts[1])
-  val descriptorQualifiedReference = unescapePart(parts[2].substringBefore(INDEXED_ACCESS_HINT))
+  val originalName = parts[0]
+  val nameQualifiedReference = parts[1]
+  val descriptorQualifiedReference = parts[2].substringBefore(INDEXED_ACCESS_HINT)
   val indexedAccessUsed = parts[2].endsWith(INDEXED_ACCESS_HINT)
   val isGlobal = parts[3] == "1"
 
@@ -127,6 +150,3 @@ private fun escapePart(part: String): String {
   return StringUtil.escapeChars(part, '\\', DELIMITER)
 }
 
-private fun unescapePart(part: String): String {
-  return StringUtil.unescapeChar(StringUtil.unescapeChar(part, DELIMITER), '\\')
-}
