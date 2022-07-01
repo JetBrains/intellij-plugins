@@ -27,7 +27,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,9 +60,8 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
     return getInstance(project).state;
   }
 
-  @Nullable
   @Override
-  public State getState() {
+  public @NotNull State getState() {
     // If the settings are autoconfigured, just return the default state so that there's no
     // need to serialize/persist it. It will be modified by autoconfiguration on restart anyway.
     if (state.autoConfigEnabled) {

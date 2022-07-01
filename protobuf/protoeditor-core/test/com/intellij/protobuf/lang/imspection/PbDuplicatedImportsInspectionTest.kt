@@ -81,9 +81,9 @@ class PbDuplicatedImportsInspectionTest : BasePlatformTestCase() {
     myFixture.configureByText("main.proto", """
       syntax = "proto3";
 
-      import <error descr="Duplicated import statements">"directory1/importMe1.proto"</error>;
-      import "directory2/importMe2.proto";
-      import <error descr="Duplicated import statements">"directory1/importMe1.proto"</error>;
+      import <error descr="Duplicated import statements">"importMe1.proto"</error>;
+      import "importMe2.proto";
+      import <error descr="Duplicated import statements">"importMe1.proto"</error>;
 
       message MainMessage {}
     """.trimIndent())
