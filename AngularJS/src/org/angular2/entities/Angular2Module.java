@@ -9,15 +9,12 @@ import java.util.Set;
 import static org.angular2.entities.Angular2EntityUtils.forEachEntity;
 import static org.angular2.entities.Angular2EntityUtils.forEachModule;
 
-public interface Angular2Module extends Angular2Entity {
+public interface Angular2Module extends Angular2Entity, Angular2ImportsOwner {
 
   @NotNull
   Set<Angular2Declaration> getDeclarations();
 
   boolean areDeclarationsFullyResolved();
-
-  @NotNull
-  Set<Angular2Entity> getImports();
 
   @NotNull
   Set<Angular2Entity> getExports();

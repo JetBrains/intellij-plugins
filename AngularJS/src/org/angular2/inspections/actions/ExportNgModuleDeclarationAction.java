@@ -99,7 +99,7 @@ public class ExportNgModuleDeclarationAction implements QuestionAction {
         return false;
       }
       ES6ImportPsiUtil.insertJSImport(module.getDecorator(), className, declaration.getTypeScriptClass(), myEditor);
-      return Angular2FixesPsiUtil.insertNgModuleMember(module, EXPORTS_PROP, className);
+      return Angular2FixesPsiUtil.insertEntityDecoratorMember(module, EXPORTS_PROP, className);
     }) == Boolean.TRUE;
   }
 }

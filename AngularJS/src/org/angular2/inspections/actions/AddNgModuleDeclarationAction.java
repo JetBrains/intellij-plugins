@@ -89,16 +89,16 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
                                                     Angular2SourceDeclaration.class);
 
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(context);
-    Angular2Module contextModule = scope.getModule();
+    Angular2Module contextModule = tryCast(scope.getImportsOwner(), Angular2Module.class);
     if (module == null || declaration == null || contextModule == null) {
       return;
     }
 
     WriteAction.run(() -> {
       ES6ImportPsiUtil.insertJSImport(module.getTypeScriptClass(), myDeclarationName, declaration.getTypeScriptClass(), editor);
-      Angular2FixesPsiUtil.insertNgModuleMember(module, DECLARATIONS_PROP, myDeclarationName);
+      Angular2FixesPsiUtil.insertEntityDecoratorMember(module, DECLARATIONS_PROP, myDeclarationName);
       if (contextModule != module) {
-        Angular2FixesPsiUtil.insertNgModuleMember(module, EXPORTS_PROP, myDeclarationName);
+        Angular2FixesPsiUtil.insertEntityDecoratorMember(module, EXPORTS_PROP, myDeclarationName);
       }
     });
   }

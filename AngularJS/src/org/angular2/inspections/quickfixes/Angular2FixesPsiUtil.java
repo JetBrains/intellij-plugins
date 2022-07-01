@@ -14,7 +14,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.Angular2InjectionUtils;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.Angular2ImportsOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +26,7 @@ import static com.intellij.util.ObjectUtils.notNull;
 
 public final class Angular2FixesPsiUtil {
 
-  public static boolean insertNgModuleMember(Angular2Module module, String propertyName, String name) {
+  public static boolean insertEntityDecoratorMember(Angular2ImportsOwner module, String propertyName, String name) {
     ES6Decorator decorator = module.getDecorator();
     if (decorator == null) {
       return false;
