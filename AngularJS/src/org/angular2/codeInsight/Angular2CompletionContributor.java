@@ -116,7 +116,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           }
           Consumer<LookupElementBuilder> addResult = el ->
             result.consume(PrioritizedLookupElement.withPriority(el, bestMatch.second == DeclarationProximity.IN_SCOPE
-                                                                     || bestMatch.second == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE
+                                                                     || bestMatch.second == DeclarationProximity.IMPORTABLE
                                                                      ? NG_VARIABLE_PRIORITY.getPriorityValue()
                                                                      : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
           List<TypeScriptFunction> transformMethods = new ArrayList<>(match.getTransformMethods());

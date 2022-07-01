@@ -9,7 +9,6 @@ import com.intellij.model.Symbol
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
@@ -187,7 +186,7 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     }
 
     override val priority: WebSymbol.Priority?
-      get() = if (scopeProximity == DeclarationProximity.IN_SCOPE || scopeProximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE)
+      get() = if (scopeProximity == DeclarationProximity.IN_SCOPE || scopeProximity == DeclarationProximity.IMPORTABLE)
         super.priority
       else
         WebSymbol.Priority.LOWEST

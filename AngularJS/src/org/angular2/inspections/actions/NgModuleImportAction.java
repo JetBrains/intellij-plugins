@@ -56,7 +56,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
     }
 
     MultiMap<Angular2Module, Integer> distancesToDirectives = new MultiMap<>();
-    StreamEx.of(candidates.get(Angular2DeclarationsScope.DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE))
+    StreamEx.of(candidates.get(Angular2DeclarationsScope.DeclarationProximity.IMPORTABLE))
       .flatMap(declaration ->
                  StreamEx.of(scope.getPublicModulesExporting(declaration))
                    .distinct()

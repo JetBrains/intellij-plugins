@@ -16,7 +16,7 @@ import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import com.jetbrains.plugins.meteor.MeteorProjectStartupActivity;
-import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLibAction.CodeType;
+import com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLib.CodeType;
 import com.jetbrains.plugins.meteor.settings.MeteorSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

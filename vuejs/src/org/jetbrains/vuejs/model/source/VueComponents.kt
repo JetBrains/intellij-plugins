@@ -50,7 +50,7 @@ class VueComponents {
     }
 
     fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): VueSourceEntityDescriptor? {
-      getVueIndexData(implicitElement)?.descriptorRef
+      getVueIndexData(implicitElement)?.descriptorQualifiedReference
         ?.takeIf { it.isNotBlank() }
         ?.let { resolveReferenceToVueComponent(implicitElement, it) }
         ?.castSafelyTo<VueSourceEntityDescriptor>()

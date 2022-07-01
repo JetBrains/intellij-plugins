@@ -12,7 +12,7 @@ import com.jetbrains.plugins.meteor.MeteorFacade;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLibAction.PACKAGES_FILE;
+import static com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLib.PACKAGES_FILE;
 import static com.jetbrains.plugins.meteor.ide.action.MeteorPackagesUtil.VERSIONS_FILE_NAME;
 
 public final class MeteorPackagesEditNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
@@ -29,7 +29,8 @@ public final class MeteorPackagesEditNotificationProvider extends EditorNotifica
   public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     if (file.isInLocalFileSystem() && (file.getName().equals(VERSIONS_FILE_NAME) || file.getName().equals(PACKAGES_FILE))) {
       if (MeteorFacade.getInstance().isMeteorProject(project)) {
-        return new ImportPackagesPanel();
+
+        return new ImportPackagesPanel(fileEditor, project);
       }
     }
 
@@ -37,9 +38,11 @@ public final class MeteorPackagesEditNotificationProvider extends EditorNotifica
   }
 
   private static final class ImportPackagesPanel extends EditorNotificationPanel {
-    private ImportPackagesPanel() {
-      super(EditorColors.GUTTER_BACKGROUND);
-      createActionLabel(MeteorBundle.message("link.label.import.packages.as.library"), "Meteor.action.packages");
+    private ImportPackagesPanel(@NotNull FileEditor editor, @NotNull Project project) {
+      super(editor, null, EditorColors.GUTTER_BACKGROUND);
+      createActionLabel(MeteorBundle.message("link.label.import.packages.as.library"), () -> {
+        new MeteorImportPackagesAsExternalLib().run(editor.getFile(), project);
+      });
     }
   }
 }

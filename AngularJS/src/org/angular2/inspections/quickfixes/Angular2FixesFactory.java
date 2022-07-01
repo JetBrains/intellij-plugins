@@ -53,7 +53,6 @@ import java.util.function.Supplier;
 
 import static com.intellij.util.ObjectUtils.*;
 import static com.intellij.util.containers.ContainerUtil.*;
-import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.*;
 
 public final class Angular2FixesFactory {
 
@@ -62,35 +61,35 @@ public final class Angular2FixesFactory {
 
   public static void ensureDeclarationResolvedAfterCodeCompletion(@NotNull PsiElement element, @NotNull Editor editor) {
     MultiMap<DeclarationProximity, Angular2Declaration> candidates = getCandidatesForResolution(element, true);
-    if (!candidates.get(EXPORTED_BY_PUBLIC_MODULE).isEmpty()) {
+    if (!candidates.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
       Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute();
     }
-    else if (!candidates.get(NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
+    else if (!candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
       selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
-                                                  getCommonNameForDeclarations(candidates.get(NOT_EXPORTED_BY_MODULE))),
-                   candidates.get(NOT_DECLARED_IN_ANY_MODULE), candidate ->
+                                                  getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
+                   candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE), candidate ->
                      Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true));
     }
-    else if (!candidates.get(NOT_EXPORTED_BY_MODULE).isEmpty()) {
+    else if (!candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).isEmpty()) {
       selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
-                                                  getCommonNameForDeclarations(candidates.get(NOT_EXPORTED_BY_MODULE))),
-                   candidates.get(NOT_EXPORTED_BY_MODULE), candidate ->
+                                                  getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
+                   candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE), candidate ->
                      Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true));
     }
   }
 
   public static void addUnresolvedDeclarationFixes(@NotNull PsiElement element, @NotNull List<LocalQuickFix> fixes) {
     MultiMap<DeclarationProximity, Angular2Declaration> candidates = getCandidatesForResolution(element, false);
-    if (candidates.containsKey(IN_SCOPE)) {
+    if (candidates.containsKey(DeclarationProximity.IN_SCOPE)) {
       return;
     }
-    if (!candidates.get(EXPORTED_BY_PUBLIC_MODULE).isEmpty()) {
-      fixes.add(new AddNgModuleImportQuickFix(element, candidates.get(EXPORTED_BY_PUBLIC_MODULE)));
+    if (!candidates.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
+      fixes.add(new AddNgModuleImportQuickFix(element, candidates.get(DeclarationProximity.IMPORTABLE)));
     }
-    for (Angular2Declaration declaration : candidates.get(NOT_DECLARED_IN_ANY_MODULE)) {
+    for (Angular2Declaration declaration : candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE)) {
       AddNgModuleDeclarationQuickFix.add(element, declaration, fixes);
     }
-    for (Angular2Declaration declaration : candidates.get(NOT_EXPORTED_BY_MODULE)) {
+    for (Angular2Declaration declaration : candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)) {
       ExportNgModuleDeclarationQuickFix.add(element, declaration, fixes);
     }
   }

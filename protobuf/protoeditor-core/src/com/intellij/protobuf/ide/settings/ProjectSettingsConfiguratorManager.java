@@ -19,11 +19,15 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.workspaceModel.ide.WorkspaceModelChangeListener;
+import com.intellij.workspaceModel.ide.WorkspaceModelTopics;
+import com.intellij.workspaceModel.storage.EntityChange;
+import com.intellij.workspaceModel.storage.VersionedStorageChange;
+import com.intellij.workspaceModel.storage.bridgeEntities.api.ContentRootEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,15 +45,16 @@ import java.util.TreeSet;
  */
 @Service
 public final class ProjectSettingsConfiguratorManager implements Disposable {
+  private final @NotNull Project project;
 
-  private final Project project;
-
-  public ProjectSettingsConfiguratorManager(Project project) {
+  public ProjectSettingsConfiguratorManager(@NotNull Project project) {
     this.project = project;
+    MessageBusConnection connection = project.getMessageBus().connect(this);
+    WorkspaceModelTopics.getInstance(project).subscribeAfterModuleLoading(connection, new ProjectRootsListener(project));
   }
 
   public static ProjectSettingsConfiguratorManager getInstance(Project project) {
-    return ServiceManager.getService(project, ProjectSettingsConfiguratorManager.class);
+    return project.getService(ProjectSettingsConfiguratorManager.class);
   }
 
   /**
@@ -116,10 +121,18 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
   public void dispose() {
   }
 
-  static final class ProjectRootsListener implements ModuleRootListener {
+  static final class ProjectRootsListener implements WorkspaceModelChangeListener {
+    private final Project myProject;
+
+    ProjectRootsListener(Project project) {
+      myProject = project;
+    }
+
     @Override
-    public void rootsChanged(@NotNull ModuleRootEvent event) {
-      getInstance(event.getProject()).configureSettingsIfNecessary();
+    public void changed(@NotNull VersionedStorageChange event) {
+      EntityChange<ContentRootEntity> entityChange = ContainerUtil.getFirstItem(event.getChanges(ContentRootEntity.class));
+      if (entityChange == null) return;
+      getInstance(myProject).configureSettingsIfNecessary();
     }
   }
 

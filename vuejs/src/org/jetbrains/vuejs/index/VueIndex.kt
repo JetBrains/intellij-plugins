@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
@@ -22,7 +23,6 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE_MODULE: String = "vue"
-const val VUE_CLI_SERVICE_MODULE: String = "@vue/cli-service"
 const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
@@ -33,8 +33,8 @@ const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
-internal const val INDEXED_ACCESS_HINT = "[]"
-const val DELIMITER = "#"
+private const val INDEXED_ACCESS_HINT = "[]"
+private const val DELIMITER = ';'
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
@@ -81,21 +81,72 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
 
 internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
-fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
-  val typeStr = element.userStringData ?: return null
-  val originalName = typeStr.substringAfterLast(DELIMITER)
-  val s = typeStr.substringBeforeLast(DELIMITER)
-  val parts = s.split(DELIMITER)
-  assert(parts.size == 3) {
-    "Error with $element [name = ${element.name}, userString = ${element.userString}, typeString = $typeStr]"
-  }
+data class VueIndexData(val originalName: String,
+                        val nameQualifiedReference: String,
+                        val descriptorQualifiedReference: String,
+                        val indexedAccessUsed: Boolean,
+                        val isGlobal: Boolean)
 
-  val isGlobal = "1" == parts[0]
-  val nameRef = parts[1]
-  val descriptor = parts[2].substringBefore(INDEXED_ACCESS_HINT)
-  val isIndexed = parts[2].endsWith(INDEXED_ACCESS_HINT)
-  return VueIndexData(originalName, nameRef, descriptor, isIndexed, isGlobal)
+private fun splitAndUnescape(s: String): List<String> {
+  val result = ArrayList<String>(4)
+  val builder = StringBuilder()
+  var prevIsEscape = false
+  for (i in s.indices) {
+    val c = s[i]
+    if (prevIsEscape) {
+      builder.append(c)
+      prevIsEscape = false
+    }
+    else if (c == '\\') {
+      prevIsEscape = true
+    }
+    else if (c == DELIMITER) {
+      result.add(builder.toString())
+      builder.clear()
+    }
+    else {
+      builder.append(c)
+    }
+  }
+  result.add(builder.toString())
+  return result
 }
 
-class VueIndexData(val originalName: String,
-                   val nameRef: String?, val descriptorRef: String?, val groupRegistration: Boolean, val isGlobal: Boolean)
+fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
+  val userStringData = element.userStringData ?: return null
+  val parts = splitAndUnescape(userStringData)
+
+  assert(parts.size == 4) {
+    "Error with $element [name = ${element.name}, userString = ${element.userString}, userStringData = $userStringData, parts=$parts]"
+  }
+
+  val originalName = parts[0]
+  val nameQualifiedReference = parts[1]
+  val descriptorQualifiedReference = parts[2].substringBefore(INDEXED_ACCESS_HINT)
+  val indexedAccessUsed = parts[2].endsWith(INDEXED_ACCESS_HINT)
+  val isGlobal = parts[3] == "1"
+
+  return VueIndexData(originalName, nameQualifiedReference, descriptorQualifiedReference, indexedAccessUsed, isGlobal)
+}
+
+fun serializeUserStringData(originalName: String,
+                            nameQualifiedReference: String,
+                            descriptorQualifiedReference: String,
+                            indexedAccessUsed: Boolean,
+                            isGlobal: Boolean): String {
+  return buildString {
+    append(escapePart(originalName))
+    append(DELIMITER)
+    append(escapePart(nameQualifiedReference))
+    append(DELIMITER)
+    append(escapePart(descriptorQualifiedReference))
+    if (indexedAccessUsed) append(INDEXED_ACCESS_HINT)
+    append(DELIMITER)
+    append(if (isGlobal) "1" else "0")
+  }
+}
+
+private fun escapePart(part: String): String {
+  return StringUtil.escapeChars(part, '\\', DELIMITER)
+}
+

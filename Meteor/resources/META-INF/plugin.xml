@@ -85,7 +85,6 @@
   </extensions>
 
   <actions>
-    <action id="Meteor.action.packages" class="com.jetbrains.plugins.meteor.ide.action.MeteorImportPackagesAsExternalLibAction"/>
 
   </actions>
 

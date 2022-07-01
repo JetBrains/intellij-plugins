@@ -151,7 +151,6 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
   companion object {
     private fun buildDirectives(searchScope: GlobalSearchScope): Map<String, VueDirective> =
       getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY)
-        .asSequence()
         .map { Pair(it.name, VueSourceDirective(it.name, it.parent)) }
         // TODO properly support multiple directives with the same name
         .distinctBy { it.first }
@@ -166,7 +165,6 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =
       getForAllKeys(scope, VueOptionsIndex.KEY)
-        .asSequence()
         .filter(VueComponents.Companion::isNotInLibrary)
         .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
@@ -181,10 +179,10 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
 
     private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> =
       getForAllKeys(scope, VueGlobalFiltersIndex.KEY)
-        .asSequence()
         .mapNotNull { element ->
-          VueModelManager.getFilter(element)
-            ?.let { Pair(toAsset(element.name), it) }
+          VueModelManager.getFilter(element)?.let {
+            Pair(toAsset(element.name), it)
+          }
         }
         // TODO properly support multiple filters with the same name
         .distinctBy { it.first }

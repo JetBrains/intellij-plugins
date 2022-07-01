@@ -88,7 +88,7 @@ public final class MeteorLibraryUpdater implements Disposable {
   public static void updateLibraryIfRequired(@NotNull Project project) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
-    final Collection<MeteorImportPackagesAsExternalLibAction.CodeType> codes = MeteorPackagesUtil.getCodes(project);
+    final Collection<MeteorImportPackagesAsExternalLib.CodeType> codes = MeteorPackagesUtil.getCodes(project);
 
     final String pathToMeteorGlobal = MeteorPackagesUtil.getPathToGlobalMeteorRoot(project);
     if (StringUtil.isEmpty(pathToMeteorGlobal)) return;
@@ -136,8 +136,8 @@ public final class MeteorLibraryUpdater implements Disposable {
   }
 
   private static void removeDeprecatedLibraries(@NotNull JSLibraryManager libraryManager) {
-    for (MeteorImportPackagesAsExternalLibAction.CodeType value : MeteorImportPackagesAsExternalLibAction.CodeType.values()) {
-      String name = MeteorImportPackagesAsExternalLibAction.getLibraryName(value);
+    for (MeteorImportPackagesAsExternalLib.CodeType value : MeteorImportPackagesAsExternalLib.CodeType.values()) {
+      String name = MeteorImportPackagesAsExternalLib.getLibraryName(value);
       ScriptingLibraryModel model = libraryManager.getLibraryByName(name);
       if (model != null) {
         libraryManager.removeLibrary(model);
