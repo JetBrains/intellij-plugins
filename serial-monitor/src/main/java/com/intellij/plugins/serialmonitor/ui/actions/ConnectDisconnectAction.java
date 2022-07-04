@@ -1,9 +1,6 @@
 package com.intellij.plugins.serialmonitor.ui.actions;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.actionSystem.UpdateInBackground;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
@@ -14,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dmitry_Cherkas
  */
-public class ConnectDisconnectAction extends ToggleAction implements DumbAware, UpdateInBackground {
+public class ConnectDisconnectAction extends ToggleAction implements DumbAware, ActionUpdateThreadAware {
 
   private final @NotNull SerialMonitorDuplexConsoleView mySerialConsoleView;
 

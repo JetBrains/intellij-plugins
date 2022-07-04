@@ -176,11 +176,6 @@ public final class Angular2DecoratorUtil {
                        expr -> expr.findProperty(name));
   }
 
-  @StubUnsafe
-  public static @Nullable JSExpression getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
-    return doIfNotNull(getProperty(decorator, name), JSProperty::getValue);
-  }
-
   public static boolean isAngularEntityDecorator(@NotNull ES6Decorator decorator, String @NotNull ... names) {
     String decoratorName = decorator.getDecoratorName();
     return decoratorName != null

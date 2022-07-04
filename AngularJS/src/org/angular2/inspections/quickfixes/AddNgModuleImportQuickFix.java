@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.Angular2Entity;
 import org.angular2.inspections.actions.Angular2ActionFactory;
 import org.angular2.inspections.actions.NgModuleImportAction;
 import org.angular2.lang.Angular2Bundle;
@@ -26,12 +26,19 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
   private final @Nullable String myModuleName;
 
   public AddNgModuleImportQuickFix(@NotNull PsiElement context,
-                                   @NotNull Collection<Angular2Declaration> declarations) {
+                                   @NotNull Collection<Angular2Declaration> importableDeclarations) {
     super(context);
-    List<String> names = StreamEx.of(declarations)
-      .flatCollection(new Angular2DeclarationsScope(context)::getPublicModulesExporting)
+    List<String> names = StreamEx.of(importableDeclarations)
+      .flatCollection(declaration -> {
+        if (declaration.isStandalone()) {
+          return List.of(declaration);
+        }
+        else {
+          return new Angular2DeclarationsScope(context).getPublicModulesExporting(declaration);
+        }
+      })
       .distinct()
-      .map(Angular2Module::getName)
+      .map(Angular2Entity::getClassName)
       .distinct()
       .toList();
     if (names.size() == 1) {

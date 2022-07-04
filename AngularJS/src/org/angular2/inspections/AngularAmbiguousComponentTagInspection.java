@@ -27,7 +27,7 @@ public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTempl
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(tag);
-    if (scope.getModule() == null) {
+    if (scope.getImportsOwner() == null) {
       return;
     }
     List<Angular2Directive> components = ContainerUtil.filter(

@@ -51,7 +51,7 @@ public class SerialMonitorToolWindowFactory implements ToolWindowFactory, DumbAw
                             @NotNull @NlsSafe String name,
                             @NotNull SerialPortProfile portProfile) {
     SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
-    Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", true);
+    Content content = ContentFactory.getInstance().createContent(panel, "", true);
     content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
     SerialMonitor serialMonitor = new SerialMonitor(project, icon -> content.setIcon(icon), name, portProfile);
     panel.setContent(serialMonitor.getComponent());

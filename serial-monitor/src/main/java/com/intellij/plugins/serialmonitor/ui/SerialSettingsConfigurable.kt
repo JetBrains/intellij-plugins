@@ -1,5 +1,6 @@
 package com.intellij.plugins.serialmonitor.ui
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.*
 import com.intellij.openapi.ui.*
@@ -19,7 +20,6 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.builder.toNullableProperty
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.UIUtil
-import icons.SerialMonitorIcons
 import java.nio.charset.Charset
 import java.util.function.BiPredicate
 import javax.swing.*
@@ -145,7 +145,7 @@ internal class SerialSettingsConfigurable(private val helper: Helper) :
     portName =
       Messages.showEditableChooseDialog(SerialMonitorBundle.message("dialog.message.port"),
                                         SerialMonitorBundle.message("dialog.title.create.serial.connection.profile"),
-                                        SerialMonitorIcons.OpenSerial,
+                                        AllIcons.Nodes.Plugin,
                                         portNames, portName, null)
     if (portName.isNullOrBlank()) return null
     var profileName = portName
@@ -218,7 +218,7 @@ internal class SerialSettingsConfigurable(private val helper: Helper) :
       private val myPanel: DialogPanel = createSettingsPanel(namedProfile.serialPortProfile, defaultProfile, true)
 
 
-      override fun getIcon(flags: Int): Icon = SerialMonitorIcons.OpenSerial
+      override fun getIcon(flags: Int): Icon = AllIcons.Nodes.Plugin
 
       override fun createComponent(): JComponent = myPanel
       override fun apply() = myPanel.apply()

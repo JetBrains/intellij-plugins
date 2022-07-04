@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.util.ObjectUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Module;
@@ -89,7 +90,7 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
   public static @NotNull List<Angular2Module> getCandidateModules(@NotNull PsiElement context) {
     Deque<Angular2Module> processingQueue = new ArrayDeque<>(20);
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(context);
-    Angular2Module contextModule = scope.getModule();
+    Angular2Module contextModule = ObjectUtils.tryCast(scope.getImportsOwner(), Angular2Module.class);
     if (contextModule == null || !scope.isInSource(contextModule)) {
       return Collections.emptyList();
     }

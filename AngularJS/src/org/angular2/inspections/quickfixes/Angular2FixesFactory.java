@@ -97,7 +97,7 @@ public final class Angular2FixesFactory {
   public static @NotNull MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
                                                                                                         boolean codeCompletion) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(element);
-    if (scope.getModule() == null || !scope.isInSource(scope.getModule())) {
+    if (scope.getImportsOwner() == null || !scope.isInSource(scope.getImportsOwner())) {
       return MultiMap.empty();
     }
     Ref<Predicate<Angular2Declaration>> filter = new Ref<>(declaration -> true);

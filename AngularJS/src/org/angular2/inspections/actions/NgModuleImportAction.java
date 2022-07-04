@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
 import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.NlsContexts;
@@ -20,6 +19,7 @@ import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
@@ -49,29 +49,44 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
     DistanceCalculator distanceCalculator = new DistanceCalculator();
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(getContext());
 
-    MultiMap<Angular2DeclarationsScope.DeclarationProximity, Angular2Declaration>
-      candidates = Angular2FixesFactory.getCandidatesForResolution(getContext(), myCodeCompletion);
+    var candidates = Angular2FixesFactory.getCandidatesForResolution(getContext(), myCodeCompletion);
     if (!candidates.get(Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE).isEmpty()) {
       return Collections.emptyList();
     }
 
-    MultiMap<Angular2Module, Integer> distancesToDirectives = new MultiMap<>();
-    StreamEx.of(candidates.get(Angular2DeclarationsScope.DeclarationProximity.IMPORTABLE))
-      .flatMap(declaration ->
-                 StreamEx.of(scope.getPublicModulesExporting(declaration))
-                   .distinct()
-                   .map(module -> pair(module, distanceCalculator.get(module, declaration))))
-      .forEach(pair -> distancesToDirectives.putValue(pair.first, pair.second));
+    Collection<Angular2Declaration> importableDeclarations = candidates.get(Angular2DeclarationsScope.DeclarationProximity.IMPORTABLE);
 
-    Map<Angular2Module, Double> averageDistances = new HashMap<>();
-    distancesToDirectives.entrySet().forEach(
-      entry -> averageDistances.put(entry.getKey(), IntStreamEx.of(entry.getValue()).average().orElse(0)));
+    MultiMap<Angular2Module, Integer> moduleToDeclarationDistances = new MultiMap<>();
+    StreamEx.of(importableDeclarations)
+      .flatMap(declaration -> {
+        if (declaration.isStandalone()) {
+          return StreamEx.of();
+        }
+        else {
+          return StreamEx.of(scope.getPublicModulesExporting(declaration))
+            .distinct()
+            .map(module -> pair(module, distanceCalculator.get(module, declaration)));
+        }
+      })
+      .forEach(pair -> moduleToDeclarationDistances.putValue(pair.first, pair.second));
+
+    Map<Angular2Entity, Double> averageDistances = new HashMap<>();
+    for (var entry : moduleToDeclarationDistances.entrySet()) {
+      averageDistances.put(entry.getKey(), IntStreamEx.of(entry.getValue()).average().orElse(0));
+    }
+
+    for (var declaration : importableDeclarations) {
+      if (declaration.isStandalone()) {
+         averageDistances.put(declaration, 0.0);
+      }
+
+    }
 
     return StreamEx.of(averageDistances.keySet())
       .sorted(Comparator.comparingDouble(averageDistances::get))
-      .map(Angular2Module::getTypeScriptClass)
+      .map(Angular2Entity::getTypeScriptClass)
       .select(JSElement.class)
-      .map(el -> new ES6ImportCandidate(myName, el, getContext()))
+      .map(element -> new ES6ImportCandidate(myName, element, getContext())) // TODO  myName is wrong here, it results in "X as NgModule" popup
       .toList();
   }
 
@@ -88,33 +103,34 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
   protected void runAction(@Nullable Editor editor,
                            @NotNull JSImportCandidateWithExecutor candidate,
                            @NotNull PsiElement place) {
-    JSElement element = candidate.getElement();
+    var element = candidate.getElement();
     if (element == null) return;
 
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(getContext());
-    if (scope.getModule() == null || !scope.isInSource(scope.getModule())) {
+    var scope = new Angular2DeclarationsScope(getContext());
+    var importsOwner = scope.getImportsOwner();
+    if (importsOwner == null || !scope.isInSource(importsOwner)) {
       return;
     }
-    TypeScriptClass destinationModuleClass = scope.getModule().getTypeScriptClass();
-    Angular2Module moduleToImport = Angular2EntitiesProvider.getModule(element);
+    var destinationModuleClass = importsOwner.getTypeScriptClass();
+    var entityToImport = Angular2EntitiesProvider.getEntity(element);
 
     if (destinationModuleClass == null
-        || scope.getModule().getDecorator() == null
-        || moduleToImport == null) {
+        || importsOwner.getDecorator() == null
+        || entityToImport == null) {
       return;
     }
     String name;
-    if (moduleToImport instanceof Angular2MetadataModule) {
-      name = ObjectUtils.notNull(((Angular2MetadataModule)moduleToImport).getStub().getMemberName(),
-                                 moduleToImport.getName());
+    if (entityToImport instanceof Angular2MetadataModule) { // metadata does not support standalone declarations
+      name = ObjectUtils.notNull(((Angular2MetadataModule)entityToImport).getStub().getMemberName(),
+                                 entityToImport.getName());
     }
     else {
-      name = moduleToImport.getName();
+      name = entityToImport.getClassName();
     }
 
     WriteAction.run(() -> {
       ES6ImportPsiUtil.insertJSImport(destinationModuleClass, name, element, editor);
-      Angular2FixesPsiUtil.insertNgModuleMember(scope.getModule(), IMPORTS_PROP, name);
+      Angular2FixesPsiUtil.insertEntityDecoratorMember(importsOwner, IMPORTS_PROP, name);
       // TODO support NgModuleWithProviders static methods
     });
   }

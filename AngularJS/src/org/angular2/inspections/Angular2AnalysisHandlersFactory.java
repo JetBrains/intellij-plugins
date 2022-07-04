@@ -80,6 +80,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                                boolean inTypeContext) {
         if (referenceExpression instanceof Angular2PipeReferenceExpression) {
           Angular2FixesFactory.addUnresolvedDeclarationFixes(referenceExpression, quickFixes);
+          // todo reject core TS quickFixes
         }
         super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction, inTypeContext);
       }

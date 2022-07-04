@@ -17,6 +17,9 @@ import java.io.IOException;
 import static com.intellij.lang.javascript.modules.imports.JSImportAction.NAME_TO_IMPORT;
 import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 
+/**
+ * Also tests completion InsertHandlers.
+ */
 public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtureTestCase {
 
   @Override
@@ -34,7 +37,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("angular-commons",
                     "test.html",
                     "*ng<caret>For",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "CommonModule - \"@angular/common\"");
   }
 
@@ -50,7 +53,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("angular-commons",
                     "test.html",
                     "[ng<caret>Class]",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "CommonModule - \"@angular/common\"");
   }
 
@@ -66,7 +69,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("angular-commons",
                     "test.html",
                     "lower<caret>case",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "CommonModule - \"@angular/common\"");
   }
 
@@ -149,7 +152,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("formsModule",
                     "test.html",
                     "[ngValue<caret>]",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "FormsModule - \"@angular/forms\"",
                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
@@ -158,7 +161,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("formsModule",
                     "test.html",
                     "ng<caret>Model",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "FormsModule - \"@angular/forms\"",
                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
@@ -221,7 +224,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
                     "[ngValue<caret>]",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "ReactiveFormsModule - \"@angular/forms\"",
                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
@@ -230,7 +233,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
                     "ng<caret>Model",
-                    "Import Angular module...",
+                    "Import Angular entity...",
                     "ReactiveFormsModule - \"@angular/forms\"",
                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
@@ -262,6 +265,38 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
                      "MyLibModule - \"../../dist/my-lib\"");
+  }
+
+  public void testImportStandaloneComponentToStandaloneComponent() {
+    doMultiFileTest("standaloneComponent",
+                    "test.ts",
+                    "app-<caret>standalone",
+                    "Import StandaloneComponent",
+                    "StandaloneComponent - \"./standalone.component\"");
+  }
+
+  public void testImportStandalonePipeToStandaloneComponent() {
+    doMultiFileTest("standalonePipe",
+                    "test.ts",
+                    "stand<caret>alone",
+                    "Import StandalonePipe",
+                    "StandalonePipe - \"./standalone.pipe\"");
+  }
+
+  public void testImportStandaloneComponentToModule() {
+    doMultiFileTest("standaloneComponentToModule",
+                    "test.ts",
+                    "app-<caret>standalone",
+                    "Import StandaloneComponent",
+                    "StandaloneComponent - \"./standalone.component\"");
+  }
+
+  public void testImportStandaloneComponentImportModule() {
+    doMultiFileTest("standaloneComponentImportModule",
+                    "test.ts",
+                    "app-<caret>classic",
+                    "Import ClassicModule",
+                    "ClassicModule - \"./classic\"");
   }
 
   private void doMultiFileTest(@NotNull String mainFile,

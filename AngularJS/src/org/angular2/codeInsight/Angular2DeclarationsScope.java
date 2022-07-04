@@ -40,26 +40,28 @@ public class Angular2DeclarationsScope {
         return new ScopeResult(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
-        Angular2Module module = null;
+        Angular2ImportsOwner importsOwner = null;
         Set<Angular2Declaration> declarations = null;
         boolean fullyResolved = false;
 
         var currentComponent = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));
         if (currentComponent != null) {
           if (currentComponent.isStandalone()) {
+            importsOwner = currentComponent;
             declarations = currentComponent.getDeclarationsInScope();
             fullyResolved = true;
           }
           else {
-            module = selectModule(currentComponent, file);
+            var module = selectModule(currentComponent, file);
             if (module != null) {
+              importsOwner = module;
               declarations = module.getDeclarationsInScope();
               fullyResolved = module.isScopeFullyResolved();
             }
           }
         }
 
-        ScopeResult result = new ScopeResult(module, declarations, fullyResolved);
+        ScopeResult result = new ScopeResult(importsOwner, declarations, fullyResolved);
         return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
       });
     });
@@ -74,8 +76,8 @@ public class Angular2DeclarationsScope {
       .orElse(null);
   }
 
-  public @Nullable Angular2Module getModule() {
-    return myScope.getValue().module;
+  public @Nullable Angular2ImportsOwner getImportsOwner() {
+    return myScope.getValue().owner;
   }
 
   public boolean isFullyResolved() {
@@ -176,12 +178,12 @@ public class Angular2DeclarationsScope {
   }
 
   private static class ScopeResult {
-    public final @Nullable Angular2Module module;
+    public final @Nullable Angular2ImportsOwner owner;
     public final @Nullable Set<Angular2Declaration> declarations;
     public final boolean fullyResolved;
 
-    private ScopeResult(@Nullable Angular2Module module, @Nullable Set<Angular2Declaration> declarations, boolean fullyResolved) {
-      this.module = module;
+    private ScopeResult(@Nullable Angular2ImportsOwner owner, @Nullable Set<Angular2Declaration> declarations, boolean fullyResolved) {
+      this.owner = owner;
       this.declarations = declarations;
       this.fullyResolved = fullyResolved;
     }
@@ -192,19 +194,19 @@ public class Angular2DeclarationsScope {
       if (o == null || getClass() != o.getClass()) return false;
       ScopeResult result = (ScopeResult)o;
       return fullyResolved == result.fullyResolved &&
-             Objects.equals(module, result.module) &&
+             Objects.equals(owner, result.owner) &&
              Objects.equals(declarations, result.declarations);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(module, declarations, fullyResolved);
+      return Objects.hash(owner, declarations, fullyResolved);
     }
 
     @Override
     public String toString() {
       return "ScopeResult{" +
-             "module=" + module +
+             "owner=" + owner +
              ", declarations=" + declarations +
              ", fullyResolved=" + fullyResolved +
              '}';
