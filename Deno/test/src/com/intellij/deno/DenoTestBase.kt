@@ -1,6 +1,7 @@
 package com.intellij.deno
 
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -23,7 +24,7 @@ open class DenoTestBase : BasePlatformTestCase() {
       //required to reset deno libs
       WriteAction.run<RuntimeException> {
         ProjectRootManagerEx.getInstanceEx(myFixture.project).makeRootsChange(
-          EmptyRunnable.getInstance(), false, true)
+          EmptyRunnable.getInstance(), RootsChangeRescanningInfo.TOTAL_RESCAN)
       }
     }
     catch (e: Exception) {
