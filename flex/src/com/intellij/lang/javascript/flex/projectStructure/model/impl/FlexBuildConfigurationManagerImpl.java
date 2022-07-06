@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.ProjectTopics;
@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.RootsChangeRescanningInfo;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -174,7 +175,8 @@ public final class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurat
   }
 
   static void resetHighlighting(Project project) {
-    ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+    ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(),
+                                                                RootsChangeRescanningInfo.NO_RESCAN_NEEDED);
   }
 
   private FlexBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexBuildConfigurationImpl> configurations) {
