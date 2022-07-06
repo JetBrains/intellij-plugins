@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.RootsChangeRescanningInfo;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
@@ -103,7 +104,7 @@ public final class MeteorLibraryUpdater implements Disposable {
 
     Collection<VirtualFile> roots = MeteorSyntheticLibraryProvider.getRoots(project);
     ProjectFileIndex index = ProjectFileIndex.getInstance(project);
-    boolean needToUpdateLibrary = roots.stream().anyMatch(el -> !index.isInLibrary(el));
+    boolean needToUpdateLibrary = ContainerUtil.exists(roots, el -> !index.isInLibrary(el));
     if (needToUpdateLibrary) {
       refreshLibraries(project, false);
     }
@@ -116,7 +117,7 @@ public final class MeteorLibraryUpdater implements Disposable {
         removeDeprecatedLibraries(libraryManager);
       }
 
-      libraryManager.commitChanges();
+      libraryManager.commitChanges(RootsChangeRescanningInfo.RESCAN_DEPENDENCIES_IF_NEEDED);
     }), project.getDisposed());
   }
 

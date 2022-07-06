@@ -10,6 +10,7 @@ import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.RootsChangeRescanningInfo;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -98,7 +99,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
       Runnable runnable = () -> {
         JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
         //reload predefined libraries
-        libraryManager.commitChanges();
+        libraryManager.commitChanges(RootsChangeRescanningInfo.RESCAN_DEPENDENCIES_IF_NEEDED);
         libraryManager.getLibraryMappings().associate(null, METEOR_LIBRARY_NAME, true);
         setMeteorLibraryWasEnabled(project);
         updateLibrariesFiles(project);
@@ -135,7 +136,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
                                        VirtualFile.EMPTY_ARRAY,
                                        ArrayUtilRt.EMPTY_STRING_ARRAY);
 
-          libraryManager.commitChanges();
+          libraryManager.commitChanges(RootsChangeRescanningInfo.RESCAN_DEPENDENCIES_IF_NEEDED);
         });
       }
     });
