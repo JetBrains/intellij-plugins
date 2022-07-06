@@ -284,7 +284,7 @@ public class SerialMonitorDuplexConsoleView extends DuplexConsoleView<ConsoleVie
   @Override
   public void settingsChanged() {
     SerialPortProfile savedProfile = SerialProfileService.getInstance().getProfiles().get(myName);
-    if(!myPortProfile.equals(savedProfile)) {
+    if (savedProfile != null && !myPortProfile.equals(savedProfile)) {
       myPortProfile = savedProfile;
       reconnect();
     }

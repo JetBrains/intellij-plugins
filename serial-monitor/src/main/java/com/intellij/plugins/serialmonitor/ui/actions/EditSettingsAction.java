@@ -4,7 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.plugins.serialmonitor.ui.SerialSettingsConfigurable;
+import com.intellij.plugins.serialmonitor.ui.SerialProfileConfigurable;
 import com.intellij.plugins.serialmonitor.ui.console.SerialMonitorDuplexConsoleView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ public class EditSettingsAction extends DumbAwareAction {
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
-      return SerialSettingsConfigurable.Companion.createSettingsPanel(myConsoleView.getPortProfile(), false, false);
+      return SerialProfileConfigurable.Companion.createSettingsPanel(myConsoleView.getPortProfile(), false, false);
     }
   }
 }
