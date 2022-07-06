@@ -62,4 +62,9 @@
     [model]="<error descr="Type FormControl is not assignable to type NgModel">model.control</error>"
 ></my-comp>
 
+<my-comp
+  [plainNumber]="1!"
+  [plainBoolean]="<error descr="Type 1 is not assignable to type boolean">1!</error>"
+></my-comp>
+
 <input [ngModel]="true" #model="ngModel"/>
