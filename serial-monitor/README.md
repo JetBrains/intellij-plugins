@@ -1,19 +1,16 @@
 # Serial Monitor plugin for IntelliJ IDEA Platform #
 
-This plugin aims to leverage Arduino development with CLion by providing Serial Monitor Tool Window. It allows you to communicate to your
-Arduino device without leaving the IDE. Functionality is pretty similar to those, available in Arduino IDE through "Serial Monitor Tool".
-**Note:** Only COM port (both hardware and virtual) is currently supported. In order to use virtual COM port please make sure to install all
-necessary drivers.
+
+This plugin provides the Serial Monitor Tool Window, which allows you to communicate to serial devices like Arduino via the CLion window.
 
 ## Features ##
 
-- Serial Monitor Tool Window with project-based persistent settings
-- Multiple serial port profiles
-- Duplex Console View (Regular view + HEX)
+- Multiple serial port connections
+- Duplex Console view (Regular view + HEX)
 
 ## Change Notes ##
 
-- **2022.1** 
+- **2022.2** 
   - Original [version by Dmitry Cherkas](https://bitbucket.org/dmitry_cherkas/intellij-serial-monitor) is forked and imported into contrib repository 
   - Bunch of fixes and refactorings
   - Multiple serial connections are supported

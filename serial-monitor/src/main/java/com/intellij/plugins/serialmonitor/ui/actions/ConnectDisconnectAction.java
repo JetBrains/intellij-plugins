@@ -35,6 +35,7 @@ public class ConnectDisconnectAction extends ToggleAction implements DumbAware, 
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
     Presentation presentation = e.getPresentation();
+
     if (mySerialConsoleView.isLoading()) {
       presentation.setEnabled(false);
       return;
@@ -50,8 +51,10 @@ public class ConnectDisconnectAction extends ToggleAction implements DumbAware, 
     if (mySerialConsoleView.isConnected()) {
       // validate disconnect action
       presentation.setText(SerialMonitorBundle.messagePointer("disconnect.title"));
+      presentation.setIcon(SerialMonitorIcons.ConnectedSerial);
     }
     else {
+      presentation.setIcon(SerialMonitorIcons.DisconnectedSerial);
       // validate Connect action
       if (mySerialConsoleView.isPortValid()) {
         presentation.setText(SerialMonitorBundle.messagePointer("connect.title"));

@@ -4,24 +4,19 @@
   <category>Embedded Development</category>
   <vendor>JetBrains</vendor>
   <description><![CDATA[
-      This plugin provides Serial Monitor Tool Window. It allows you to communicate to your serial device like
-      Arduino without via IDE window. Functionality is pretty similar to those, available in Arduino IDE through "Serial Monitor Tool".
-      <br/><br/>
-
+      This plugin provides the Serial Monitor Tool Window,
+      which allows you to communicate to serial devices like Arduino via the CLion window.
+      <br/>
       <b>Features:</b>
       <ul>
-       <li>Serial Monitor Tool Window with project-based persistent settings</li>
-       <li>Status widget</li>
+       <li>Multiple serial port connections</li>
        <li>Duplex Console View (Regular view + HEX)</li>
       </ul>
       <br/>
-      <b>Note:</b> Only COM port (both hardware and virtual) is currently supported. In order to use
-      virtual COM port please make sure to install all necessary drivers.
-      <br/><br/>
+      <br/>
 
-      Initial version by <a href="https://github.com/dmitry-cherkas">Dmitry Cherkas</a>
+      Initial release by <a href="https://github.com/dmitry-cherkas">Dmitry Cherkas</a>
 
-      Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
     ]]></description>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html on how to target different products -->
