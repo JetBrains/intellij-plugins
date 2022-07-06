@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.refactoring.extractComponent
 
-import com.intellij.execution.process.CapturingProcessAdapter
+import com.intellij.execution.process.CapturingAnsiEscapesAwareProcessHandler
 import com.intellij.ide.actions.CreateFileAction
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
@@ -182,19 +182,14 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     }
     configurator.configure(commandLine)
 
-    val processHandler = NodeCommandLineUtil.createProcessHandler(commandLine, false)
+    val processHandler = CapturingAnsiEscapesAwareProcessHandler(commandLine)
+    val output = processHandler.runProcess()
 
-    val listener = CapturingProcessAdapter()
-
-    processHandler.addProcessListener(listener)
-    processHandler.startNotify()
-    processHandler.waitFor()
-
-    if (listener.output.exitCode != 0 || listener.output.stdout.isEmpty()) {
-      throw Exception("Node error:s\n" + listener.output.stderr)
+    if (output.exitCode != 0 || output.stdout.isEmpty()) {
+      throw Exception("Node error:s\n" + output.stderr)
     }
 
-    return listener.output.stdout
+    return output.stdout
   }
 }
 
