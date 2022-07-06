@@ -165,7 +165,7 @@ export default {
 import OtherComp from './OtherComp'
 export default {
     name: 'current-comp',
-    components: { OtherComp },
+    components: {OtherComp},
     props: ['prop']
 }
 </script>
@@ -213,7 +213,7 @@ export default {
 import OtherComp from './OtherComp'
 export default {
     name: 'current-comp',
-    components: { OtherComp },
+    components: {OtherComp},
     props: ['prop']
 }
 </script>
@@ -513,7 +513,7 @@ export default {
 <script>
 import CoolStuck from './OtherName'
 export default {
-  components: { CoolStuck }
+  components: {CoolStuck}
 }
 </script>
 """,
@@ -557,7 +557,7 @@ export default {
 <script>
 import CoolStuck from './OtherName'
 export default {
-  components: { CoolStuck }
+  components: {CoolStuck}
 }
 </script>
 """,
