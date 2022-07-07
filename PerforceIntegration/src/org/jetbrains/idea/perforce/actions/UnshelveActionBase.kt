@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
@@ -17,6 +18,9 @@ open class UnshelveActionBase(val delete: Boolean,
                               dynamicText: Supplier<@NlsActions.ActionText String>,
                               dynamicDescription: Supplier<@NlsActions.ActionDescription String>,
                               icon: Icon?) : DumbAwareAction(dynamicText, dynamicDescription, icon) {
+  override fun getActionUpdateThread(): ActionUpdateThread {
+    return ActionUpdateThread.BGT
+  }
 
   override fun update(e: AnActionEvent) {
     val project = e.project
