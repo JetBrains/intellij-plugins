@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "vue": "^2.5.17",
+    "@types/meteor": ""
+  }
+}
