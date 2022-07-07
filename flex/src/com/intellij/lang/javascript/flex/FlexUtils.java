@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -121,16 +121,15 @@ public final class FlexUtils {
     assert stream != null : helloWorldTemplate;
     final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream,
                                                                                      StandardCharsets.UTF_8)).replace("${class.name}", sampleClassName);
-    final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
-    if (sampleApplicationFile != null) {
-      final Runnable runnable = () -> FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
-
-      if (project.isInitialized()) {
-        runnable.run();
-      }
-      else {
-        StartupManager.getInstance(project).registerPostStartupActivity(runnable);
-      }
+    VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
+    Runnable runnable = () -> FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
+    if (project.isInitialized()) {
+      runnable.run();
+    }
+    else {
+      StartupManager.getInstance(project).runAfterOpened(() -> {
+        ApplicationManager.getApplication().invokeLater(runnable);
+      });
     }
   }
 
@@ -146,7 +145,7 @@ public final class FlexUtils {
     file.setBinaryContent(fileContent);
     return file;
   }
-  public static VirtualFile addFileWithContent(@NonNls final String fileName, @NonNls final String fileContent, final VirtualFile dir)
+  public static @NotNull VirtualFile addFileWithContent(@NonNls final String fileName, @NonNls final String fileContent, final VirtualFile dir)
     throws IOException {
     VirtualFile data = dir.findChild(fileName);
     if (data == null) {

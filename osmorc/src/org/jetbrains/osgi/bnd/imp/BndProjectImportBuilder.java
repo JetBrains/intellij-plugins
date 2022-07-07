@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Project;
@@ -91,11 +91,11 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
     }
 
     if (myWorkspace != null) {
-      List<Project> toImport = ContainerUtil.filter(myProjects, project1 -> isMarked(project1));
+      List<Project> toImport = ContainerUtil.filter(myProjects, this::isMarked);
       final BndProjectImporter importer = new BndProjectImporter(project, myWorkspace, toImport);
       Module rootModule = importer.createRootModule(model);
       importer.setupProject();
-      StartupManager.getInstance(project).registerPostStartupActivity(() -> importer.resolve(false));
+      StartupManager.getInstance(project).runAfterOpened(() -> importer.resolve(false));
       return Collections.singletonList(rootModule);
     }
     else {
