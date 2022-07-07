@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.actions;
 
 import com.intellij.ide.SaveAndSyncHandler;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -60,6 +61,11 @@ public class SyncToRevisionAction extends DumbAwareAction {
         VfsUtil.markDirtyAndRefresh(true, true, true, roots.toArray(VirtualFile.EMPTY_ARRAY));
       }
     });
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

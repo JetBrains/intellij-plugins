@@ -16,6 +16,7 @@
 
 package org.jetbrains.idea.perforce.actions;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,6 +28,11 @@ public class TimeLapseViewAction extends RevisionGraphAction {
   @Override @NonNls
   protected String getCommandName() {
     return "annotate";
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

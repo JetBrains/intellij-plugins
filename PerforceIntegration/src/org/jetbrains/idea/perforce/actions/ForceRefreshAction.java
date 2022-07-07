@@ -2,6 +2,7 @@ package org.jetbrains.idea.perforce.actions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -19,6 +20,11 @@ public class ForceRefreshAction extends DumbAwareAction {
     super(ActionsBundle.messagePointer("action.ForceRefresh.text"),
           PerforceBundle.messagePointer("refresh.force.description"),
           AllIcons.Actions.ForceRefresh);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override
