@@ -50,4 +50,4 @@ public final class AngularUiRouterDiagramColorManager extends DiagramColorManage
     }
     return Objects.requireNonNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
   }
-};
+}
