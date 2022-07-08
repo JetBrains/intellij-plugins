@@ -10,6 +10,7 @@ import aQute.bnd.properties.IDocument;
 import biz.aQute.resolve.ProjectResolver;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
@@ -106,9 +107,15 @@ public class ResolveAction extends DumbAwareAction {
   }
 
   @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
+  @Override
   public void update(@NotNull AnActionEvent event) {
     VirtualFile virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE);
-    event.getPresentation().setEnabledAndVisible(virtualFile != null && BndFileType.BND_RUN_EXT.equals(virtualFile.getExtension()));
+    event.getPresentation().setEnabledAndVisible(event.getProject() != null &&
+                                                 virtualFile != null && BndFileType.BND_RUN_EXT.equals(virtualFile.getExtension()));
   }
 
   private static final class WrappingException extends RuntimeException {
