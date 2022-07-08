@@ -25,9 +25,11 @@ import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.
 
 public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSupport {
 
-  public static final EnumSet<Angular2AttributeType> NG_EL_ATTRIBUTES = EnumSet.of(
-    Angular2AttributeType.EVENT, Angular2AttributeType.BANANA_BOX_BINDING,
-    Angular2AttributeType.PROPERTY_BINDING, Angular2AttributeType.TEMPLATE_BINDINGS);
+  public static class Holder {
+    public static final EnumSet<Angular2AttributeType> NG_EL_ATTRIBUTES = EnumSet.of(
+      Angular2AttributeType.EVENT, Angular2AttributeType.BANANA_BOX_BINDING,
+      Angular2AttributeType.PROPERTY_BINDING, Angular2AttributeType.TEMPLATE_BINDINGS);
+  }
 
   @Override
   public boolean isEnabled(@NotNull BaseHtmlLexer lexer) {
@@ -56,7 +58,7 @@ public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSu
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
         attributeName.toString(), Objects.requireNonNull(getTagName()).toString());
       if (info.type != Angular2AttributeType.REGULAR
-          && NG_EL_ATTRIBUTES.contains(info.type)) {
+          && Holder.NG_EL_ATTRIBUTES.contains(info.type)) {
         return new HtmlEmbedmentInfo() {
           @Override
           public Lexer createHighlightingLexer() { return new Angular2EmbeddedHighlightingLexer(); }
