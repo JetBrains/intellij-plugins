@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.cli;
 
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
@@ -29,10 +29,8 @@ public final class AngularJSProjectConfigurator implements DirectoryProjectConfi
     final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
     if (entry != null && cliJson != null) {
       excludeDefault(baseDir, entry);
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        model.commit();
-        project.save();
-      });
+      ApplicationManager.getApplication().runWriteAction(model::commit);
+      project.save();
       AngularCliUtil.createRunConfigurations(project, baseDir);
     }
     else {
