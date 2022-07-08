@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -18,10 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 
-
 public class GherkinParserDefinition implements ParserDefinition {
-  private static final TokenSet WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE);
-  private static final TokenSet COMMENTS = TokenSet.create(GherkinTokenTypes.COMMENT);
+  private static final TokenSet WHITESPACE = TokenSet.WHITE_SPACE;
 
   @Override
   @NotNull
@@ -48,7 +45,7 @@ public class GherkinParserDefinition implements ParserDefinition {
   @Override
   @NotNull
   public TokenSet getCommentTokens() {
-    return COMMENTS;
+    return GherkinTokenTypes.COMMENTS;
   }
 
   @Override
