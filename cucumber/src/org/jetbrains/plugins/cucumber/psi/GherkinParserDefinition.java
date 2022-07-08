@@ -19,6 +19,7 @@ import org.jetbrains.plugins.cucumber.psi.impl.*;
 
 public class GherkinParserDefinition implements ParserDefinition {
   private static final TokenSet WHITESPACE = TokenSet.WHITE_SPACE;
+  public static final IFileElementType GHERKIN_FILE = new IFileElementType(GherkinLanguage.INSTANCE);
 
   @Override
   @NotNull
@@ -33,7 +34,7 @@ public class GherkinParserDefinition implements ParserDefinition {
 
   @Override
   public @NotNull IFileElementType getFileNodeType() {
-    return GherkinElementTypes.GHERKIN_FILE;
+    return GHERKIN_FILE;
   }
 
   @Override
