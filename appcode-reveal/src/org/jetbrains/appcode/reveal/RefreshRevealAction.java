@@ -15,7 +15,7 @@ import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.MacOSBuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
-import com.jetbrains.cidr.xcode.XcodeBase;
+import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.xcode.model.XCBuildSettings;
 import com.jetbrains.cidr.xcode.model.XcodeMetaData;
 import icons.AppcodeRevealIcons;
@@ -53,7 +53,8 @@ public class RefreshRevealAction extends DumbAwareAction {
 
     e.getPresentation().setIcon(ICON);
 
-    XCBuildSettings buildSettings = XcodeMetaData.getBuildSettings(myConfiguration.getResolveConfiguration(myDestination));
+    OCResolveConfiguration configuration = myConfiguration.getResolveConfiguration(myDestination);
+    XCBuildSettings buildSettings = configuration != null ? XcodeMetaData.getInstance(configuration).getBuildSettings(configuration) : null;
 
     File lib = null;
     boolean compatible = false;
