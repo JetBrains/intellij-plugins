@@ -20,18 +20,14 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.EmptyHttpHeaders
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.HttpHeaders
+import io.netty.handler.codec.http.HttpResponseStatus
 import org.jetbrains.builtInWebServer.*
+import org.jetbrains.io.send
 
 private val LOG = logger<PubServerPathHandler>()
 
 private class PubServerPathHandler : WebServerPathHandlerAdapter() {
-  override fun process(path: String, project: Project, request: FullHttpRequest, context: ChannelHandlerContext): Boolean {
-    val sdk = DartSdk.getDartSdk(project)
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.version, "1.6") < 0) {
-      return false
-    }
-
-    val servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path) ?: return false
+  override fun process(path: String, project: Project?, request: FullHttpRequest, context: ChannelHandlerContext): Boolean {
     val isSignedRequest = request.isSignedRequest()
     var validateResult: HttpHeaders? = null
     val userAgent = (request).userAgent
@@ -48,13 +44,22 @@ private class PubServerPathHandler : WebServerPathHandlerAdapter() {
     }
 
     if (validateResult == null) {
-      validateResult = validateToken(request, context.channel(), isSignedRequest)
+      validateResult = validateToken(request, context.channel(), isSignedRequest) ?: return true
     }
 
-    if (validateResult != null) {
-      PubServerManager.getInstance(project).send(context.channel(), request, validateResult, servedDirAndPathForPubServer.first,
-                                                 servedDirAndPathForPubServer.second)
+    if (project == null) {
+      HttpResponseStatus.NOT_FOUND.send(context.channel(), request)
+      return true
     }
+
+    val sdk = DartSdk.getDartSdk(project)
+    if (sdk == null || StringUtil.compareVersionNumbers(sdk.version, "1.6") < 0) {
+      return false
+    }
+
+    val servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path) ?: return false
+    PubServerManager.getInstance(project).send(context.channel(), request, validateResult, servedDirAndPathForPubServer.first,
+                                               servedDirAndPathForPubServer.second)
     return true
   }
 }
