@@ -20,7 +20,7 @@ public class GherkinParser implements PsiParser {
   public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
     final PsiBuilder.Marker marker = builder.mark();
     parseFileTopLevel(builder);
-    marker.done(GherkinElementTypes.GHERKIN_FILE);
+    marker.done(GherkinParserDefinition.GHERKIN_FILE);
     return builder.getTreeBuilt();
   }
 

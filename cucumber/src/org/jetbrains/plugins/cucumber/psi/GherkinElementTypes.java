@@ -2,13 +2,9 @@
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 
-
 public interface GherkinElementTypes {
-  IFileElementType GHERKIN_FILE = new IFileElementType(GherkinLanguage.INSTANCE);
-
   IElementType FEATURE = new GherkinElementType("feature");
   IElementType FEATURE_HEADER = new GherkinElementType("feature header");
   IElementType SCENARIO = new GherkinElementType("scenario");

@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.psi.tree.TokenSet;
 
-
 public interface GherkinTokenTypes {
   GherkinElementType COMMENT = new GherkinElementType("COMMENT");
   GherkinElementType TEXT = new GherkinElementType("TEXT");
@@ -30,4 +29,6 @@ public interface GherkinTokenTypes {
                                       STEP_KEYWORD);
 
   TokenSet SCENARIOS_KEYWORDS = TokenSet.create(SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD, EXAMPLE_KEYWORD);
+
+  TokenSet COMMENTS = TokenSet.create(GherkinTokenTypes.COMMENT);
 }

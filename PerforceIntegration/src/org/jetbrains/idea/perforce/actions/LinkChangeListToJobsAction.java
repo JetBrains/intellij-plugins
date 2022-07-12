@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.actions;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -22,6 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 public class LinkChangeListToJobsAction extends AnAction {
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   @Override
   public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setText(PerforceBundle.messagePointer("action.link.changelist.to.jobs"));

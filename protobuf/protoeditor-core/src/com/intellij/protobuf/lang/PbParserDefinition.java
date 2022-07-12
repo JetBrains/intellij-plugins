@@ -20,12 +20,6 @@ import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.protobuf.lang.lexer.ProtoLexer;
 import com.intellij.protobuf.lang.parser.PbParser;
 import com.intellij.protobuf.lang.psi.PbTextElementType;
@@ -34,15 +28,23 @@ import com.intellij.protobuf.lang.psi.PbTypes;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.protobuf.lang.psi.impl.PbFileImpl;
 import com.intellij.protobuf.lang.stub.type.PbFileElementType;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 public class PbParserDefinition implements ParserDefinition {
-  private static final TokenSet WHITE_SPACE = TokenSet.create(TokenType.WHITE_SPACE);
-  private static final TokenSet COMMENTS =
-      TokenSet.create(ProtoTokenTypes.LINE_COMMENT, ProtoTokenTypes.BLOCK_COMMENT);
-  private static final TokenSet STRINGS = TokenSet.create(ProtoTokenTypes.STRING_LITERAL);
 
   private static final IFileElementType FILE = new PbFileElementType(PbLanguage.INSTANCE);
+
+  private static class PbParserTokenSets {
+    private static final TokenSet WHITE_SPACE = TokenSet.WHITE_SPACE;
+    private static final TokenSet COMMENTS =
+      TokenSet.create(ProtoTokenTypes.LINE_COMMENT, ProtoTokenTypes.BLOCK_COMMENT);
+    private static final TokenSet STRINGS = TokenSet.create(ProtoTokenTypes.STRING_LITERAL);
+  }
 
   public PbParserDefinition() {}
 
@@ -53,40 +55,40 @@ public class PbParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiParser createParser(final Project project) {
+  public @NotNull PsiParser createParser(final Project project) {
     return new PbParser();
   }
 
   @NotNull
   @Override
   public TokenSet getWhitespaceTokens() {
-    return WHITE_SPACE;
+    return PbParserTokenSets.WHITE_SPACE;
   }
 
   @NotNull
   @Override
   public TokenSet getCommentTokens() {
-    return COMMENTS;
+    return PbParserTokenSets.COMMENTS;
   }
 
   @NotNull
   @Override
   public TokenSet getStringLiteralElements() {
-    return STRINGS;
+    return PbParserTokenSets.STRINGS;
   }
 
   @Override
-  public IFileElementType getFileNodeType() {
+  public @NotNull IFileElementType getFileNodeType() {
     return FILE;
   }
 
   @Override
-  public PsiFile createFile(FileViewProvider viewProvider) {
+  public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
     return new PbFileImpl(viewProvider);
   }
 
   @Override
-  public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
+  public @NotNull SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
     return SpaceRequirements.MAY;
   }
 

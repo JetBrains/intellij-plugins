@@ -2,6 +2,7 @@
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Workspace;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -15,6 +16,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ReimportProjectsAction extends AnAction {
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   @Override
   public void update(@NotNull AnActionEvent e) {
     Workspace workspace = BndProjectImporter.getWorkspace(e.getProject());

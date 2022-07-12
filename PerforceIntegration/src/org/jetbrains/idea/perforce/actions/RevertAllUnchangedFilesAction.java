@@ -15,6 +15,7 @@
  */
 package org.jetbrains.idea.perforce.actions;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -46,6 +47,10 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.util.*;
 
 public class RevertAllUnchangedFilesAction extends DumbAwareAction {
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
 
   @Override
   public void update(@NotNull AnActionEvent e) {

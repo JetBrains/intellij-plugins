@@ -31,6 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.cidr.execution.*;
+import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames;
 import com.jetbrains.cidr.xcode.model.*;
@@ -134,7 +135,9 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
       BuildDestination destination = ContainerUtil.getFirstItem(config.getDestinations());
       if (destination == null) return null;
 
-      return XcodeMetaData.getBuildSettings(config.getResolveConfiguration(destination));
+      OCResolveConfiguration configuration = config.getResolveConfiguration(destination);
+      if (configuration == null) return null;
+      return XcodeMetaData.getInstance(configuration).getBuildSettings(configuration);
     });
   }
 

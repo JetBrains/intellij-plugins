@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,6 +102,10 @@ public final class ProtoTokenTypes {
   public static final IElementType TO = put("to", new ProtoKeywordTokenType("to"));
   public static final IElementType TRUE = put("true", new ProtoKeywordTokenType("true"));
   public static final IElementType WEAK = put("weak", new ProtoKeywordTokenType("weak"));
+
+  public static final TokenSet WHITE_SPACE = TokenSet.WHITE_SPACE;
+  public static final TokenSet COMMENTS = TokenSet.create(ProtoTokenTypes.LINE_COMMENT, ProtoTokenTypes.BLOCK_COMMENT);
+  public static final TokenSet STRINGS = TokenSet.create(ProtoTokenTypes.STRING_LITERAL);
 
   static IElementType get(String token) {
     IElementType type = TOKEN_TYPES.get(token);

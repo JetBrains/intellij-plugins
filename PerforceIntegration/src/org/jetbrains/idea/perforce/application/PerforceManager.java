@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
@@ -174,11 +175,11 @@ public final class PerforceManager  {
     VirtualFileManager.getInstance().addVirtualFileListener(myListener, parentDisposable);
     myLoginManager.startListening(parentDisposable);
     myPerforceBaseInfoWorker.start();
-  }
 
-  public void stopListening() {
-    myActive = false;
-    myPerforceBaseInfoWorker.stop();
+    Disposer.register(parentDisposable, () -> {
+      myActive = false;
+      myPerforceBaseInfoWorker.stop();
+    });
   }
 
   @NotNull Map<String, List<String>> getCachedInfo(P4Connection connection) throws VcsException {

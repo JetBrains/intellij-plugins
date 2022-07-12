@@ -17,6 +17,7 @@ package org.jetbrains.idea.perforce.application;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.notification.impl.NotificationsConfigurationImpl;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -91,8 +92,9 @@ public final class PerforceVcs extends AbstractVcs {
   private final PerforceSettings mySettings;
 
   private final VirtualFileListener myAnnotationsVfsListener;
-  private PerforceVFSListener myVFSListener;
   private MergeProvider myMergeProvider;
+
+  private Disposable myDisposable;
 
   private final Set<VirtualFile> myAsyncEditFiles = new HashSet<>();
 
@@ -384,29 +386,28 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Override
   public void activate() {
-    if (myVFSListener == null) {
-      myVFSListener = PerforceVFSListener.createInstance(myProject);
-    }
-    PerforceManager.getInstance(myProject).startListening(myVFSListener);
-    ((PerforceConnectionManager) PerforceConnectionManager.getInstance(myProject)).startListening(myVFSListener);
-    PerforceNumberNameSynchronizer.getInstance(myProject).startListening(myVFSListener);
+    Disposable disposable = Disposer.newDisposable();
+    myDisposable = disposable;
+
+    Disposer.register(disposable, PerforceVFSListener.createInstance(myProject));
+
+    PerforceManager.getInstance(myProject).startListening(disposable);
+    ((PerforceConnectionManager)PerforceConnectionManager.getInstance(myProject)).startListening(disposable);
+    PerforceNumberNameSynchronizer.getInstance(myProject).startListening(disposable);
     PerforceSettings.getSettings(myProject).ensureOfflineNotify();
 
     ReadonlyStatusIsVisibleActivationCheck.check(myProject, NAME);
     initChangeProvider();
-    myChangeProvider.activate(myVFSListener);
-    VirtualFileManager.getInstance().addVirtualFileListener(myAnnotationsVfsListener);
+    myChangeProvider.activate(disposable);
+    VirtualFileManager.getInstance().addVirtualFileListener(myAnnotationsVfsListener, disposable);
   }
 
   @Override
   public void deactivate() {
-    if (myVFSListener != null) {
-      Disposer.dispose(myVFSListener);
-      myVFSListener = null;
+    if (myDisposable != null) {
+      Disposer.dispose(myDisposable);
+      myDisposable = null;
     }
-    PerforceManager.getInstance(myProject).stopListening();
-    myChangeProvider.deactivate();
-    VirtualFileManager.getInstance().removeVirtualFileListener(myAnnotationsVfsListener);
   }
 
   @Override

@@ -16,6 +16,7 @@
 package org.jetbrains.idea.perforce.actions;
 
 import com.intellij.CommonBundle;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -51,6 +52,11 @@ public abstract class ActionBaseFile extends DumbAwareAction {
 
   protected static void log(@NonNls final String msg) {
     LOG.debug(msg);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

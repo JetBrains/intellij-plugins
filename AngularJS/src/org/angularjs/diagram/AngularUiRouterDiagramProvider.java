@@ -24,11 +24,12 @@ import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.ui.*;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.SimpleColoredText;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.uml.UmlGraphBuilder;
 import com.intellij.uml.core.renderers.DefaultUmlRenderer;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
@@ -53,43 +54,15 @@ import java.util.*;
 
 final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
-  public static final JBColor VIEW_COLOR = new JBColor(new Color(0xE1FFFC), new Color(0x589df6));
   public static final BasicStroke DOTTED_STROKE =
     new BasicStroke(0.7f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{2, 2}, 0.0f);
   public static final StrokeBorder WARNING_BORDER = new StrokeBorder(DOTTED_STROKE, JBColor.red);
   public static final Border ERROR_BORDER = JBUI.Borders.customLine(JBColor.red);
   public static final Border NORMAL_BORDER = JBUI.Borders.customLine(Gray._190);
-  private final DiagramVfsResolver<DiagramObject> myResolver;
+
   private final AbstractDiagramElementManager<DiagramObject> myElementManager;
-  private final DiagramColorManagerBase myColorManager;
 
   public AngularUiRouterDiagramProvider() {
-    myResolver = new DiagramVfsResolver<>() {
-      @Override
-      public String getQualifiedName(DiagramObject element) {
-        if ((Type.template.equals(element.getType()) || Type.topLevelTemplate.equals(element.getType())) &&
-            element.getNavigationTarget() != null) {
-          final PsiFile psiFile = element.getNavigationTarget().getContainingFile();
-          return psiFile == null ? "" : psiFile.getVirtualFile().getPath();
-        }
-        else {
-          return "";
-        }
-      }
-
-      @Override
-      public @Nullable DiagramObject resolveElementByFQN(@NotNull String fqn, @NotNull Project project) {
-        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fqn);
-        if (file == null) {
-          return null;
-        }
-        else {
-          AngularUiRouterGraphBuilder.GraphNodesBuilder builder =
-            AngularUiRouterProviderContext.getInstance(project).getBuilder(file);
-          return builder == null ? null : builder.getRootNode().getIdentifyingElement();
-        }
-      }
-    };
     myElementManager = new AbstractDiagramElementManager<>() {
       @Override
       public Object @NotNull [] getNodeItems(DiagramObject parent) {
@@ -156,44 +129,11 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         return null; //do not show icons
       }
     };
-    myColorManager = new DiagramColorManagerBase() {
-      @Override
-      public @NotNull Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
-        return getColor(builder, element);
-      }
-
-      @Override
-      public @NotNull Color getNodeBackground(@NotNull DiagramBuilder builder,
-                                              @NotNull DiagramNode node,
-                                              Object element,
-                                              boolean selected) {
-        return getColor(builder, element);
-      }
-
-      private @NotNull Color getColor(DiagramBuilder builder, Object nodeElement) {
-        if (nodeElement instanceof DiagramObject) {
-          DiagramObject element = ((DiagramObject)nodeElement);
-          if (Type.state.equals(element.getType())) {
-            return LightColors.YELLOW;
-          }
-          else if (Type.view.equals(element.getType())) {
-            return VIEW_COLOR;
-          }
-          else if (Type.template.equals(element.getType())) {
-            return LightColors.GREEN;
-          }
-          else if (Type.templatePlaceholder.equals(element.getType())) {
-            return LightColors.SLIGHTLY_GREEN;
-          }
-        }
-        return Objects.requireNonNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
-      }
-    };
   }
 
   @Override
   public @NotNull DiagramColorManager getColorManager() {
-    return myColorManager;
+    return ApplicationManager.getApplication().getService(AngularUiRouterDiagramColorManager.class);
   }
 
   @Pattern("[a-zA-Z0-9_-]*")
@@ -209,7 +149,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
   @Override
   public @NotNull DiagramVfsResolver<DiagramObject> getVfsResolver() {
-    return myResolver;
+    return ApplicationManager.getApplication().getService(AngularUiRouterDiagramVfsResolver.class);
   }
 
   @Override

@@ -90,4 +90,10 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     myFixture.configureFromTempProjectFile("src/${getTestName(false)}.vue")
     myFixture.testHighlighting()
   }
+
+  @JSTestOptions(selectLookupItem = 0)
+  fun testVueFileNameCompletion() {
+    doTestWithCopyDirectory()
+    checkAfterFile(extension)
+  }
 }

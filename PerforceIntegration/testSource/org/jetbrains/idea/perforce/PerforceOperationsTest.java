@@ -31,6 +31,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.testFramework.UsefulTestCase.*;
@@ -52,30 +53,6 @@ public class PerforceOperationsTest extends PerforceTestCase {
     new P4AddOperation("Default", file).execute(myProject);
     verifyOpened("a.txt", "add");
   }
-
- /* @Test
-  public void testHashInHave() throws Exception {
-    enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
-    final VirtualFile fileToEdit = createFileInCommand("a.txt", null);
-    submitFile("//depot/a.txt");
-    final File wrongFile = new File(myWorkingCopyDir.getPath(), ".net.2009-09-04T09-52-03.#6244-498293954811245.log.debug.txt");
-    final boolean created = wrongFile.createNewFile();
-    Assert.assertTrue(created);
-
-    final P4Connection connection = PerforceConnectionManager.getInstance(myProject).getConnectionForFile(fileToEdit);
-    Assert.assertNotNull(connection);
-
-    try {
-      PerforceRunner.getInstance(myProject).have(P4File.create(wrongFile), connection, true, new Consumer<String>() {
-        public void consume(final String s) {
-          System.out.println("received: " + s);
-        }
-      });
-    }
-    catch (VcsException e) {
-      Assert.assertTrue(false);
-    }
-  } */
 
   @Test
   public void testEditOperation() throws Exception {
@@ -193,7 +170,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
     final VirtualFile file = createFileInCommand("a.txt", "foo: foo\nbar: bar");
     addFile("a.txt");
-    createChangeList("xxx", Arrays.asList("//depot/a.txt"));
+    createChangeList("xxx", List.of("//depot/a.txt"));
     refreshChanges();
 
     assertEquals("xxx", assertOneElement(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection())).getName());
@@ -239,7 +216,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("A")).keySet());
     assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("B")).keySet());
 
-    getChangeListManager().moveChangesTo(listA, getChangeListManager().findChangeList("B").getChanges().toArray(new Change[0]));
+    getChangeListManager().moveChangesTo(listA, getChangeListManager().findChangeList("B").getChanges().toArray(Change.EMPTY_CHANGE_ARRAY));
     getChangeListManager().waitUntilRefreshed();
     refreshChanges();
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("A", getChangeListManager(), file1, file2);
@@ -248,7 +225,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
     assertSize(2, PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection()));
     assertSize(1, ConnectionSelector.getConnections(myProject, getChangeListManager().findChangeList("A")).keySet());
 
-    getChangeListManager().moveChangesTo(listB, getChangeListManager().findChangeList("A").getChanges().toArray(new Change[0]));
+    getChangeListManager().moveChangesTo(listB, getChangeListManager().findChangeList("A").getChanges().toArray(Change.EMPTY_CHANGE_ARRAY));
     getChangeListManager().waitUntilRefreshed();
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("A", getChangeListManager());
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("B", getChangeListManager(), file1, file2);
@@ -268,7 +245,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
   @Test public void testCommitRestrictedChangeList() throws VcsException {
     createFileInCommand("a.txt", "");
     addFile("a.txt");
-    String spec = PerforceChangeListHelper.createSpecification("aaa", -1, Arrays.asList("//depot/a.txt"), null, null, false, true);
+    String spec = PerforceChangeListHelper.createSpecification("aaa", -1, List.of("//depot/a.txt"), null, null, false, true);
     verify(runP4(new String[]{"-c", "test", "change", "-i"}, spec));
 
     refreshChanges();
@@ -285,7 +262,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     refreshChanges();
     Change change = getSingleChange();
-    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(Arrays.asList(change), "aaa"));
+    assertEmpty(PerforceVcs.getInstance(myProject).getCheckinEnvironment().commit(List.of(change), "aaa"));
     refreshChanges();
     assertEmpty(getChangeListManager().getAllChanges());
 
@@ -389,7 +366,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     openForEdit(file);
     assertTrue(VfsUtilCore.virtualToIoFile(file).canWrite());
-    EdtTestUtil.runInEdtAndWait(() -> RevertAllUnchangedFilesAction.revertUnchanged(myProject, Arrays.asList(myWorkingCopyDir), null, null));
+    EdtTestUtil.runInEdtAndWait(() -> RevertAllUnchangedFilesAction.revertUnchanged(myProject, Collections.singletonList(myWorkingCopyDir), null, null));
     waitForAsyncRefresh();
     assertFalse(VfsUtilCore.virtualToIoFile(file).canWrite());
     getChangeListManager().waitUntilRefreshed();

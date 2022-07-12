@@ -38,11 +38,8 @@ public final class PerforceReadOnlyFileStateManager {
   };
   private final Set<VirtualFile> myPreviousAddedSnapshot = new HashSet<>();
 
-  private MessageBusConnection myConnection;
-
   private volatile boolean myPreviousRescanProblem;
   private volatile boolean myHasLostFocus;
-  private Disposable frameStateListenerDisposable;
 
   public PerforceReadOnlyFileStateManager(Project project) {
     myProject = project;
@@ -55,32 +52,26 @@ public final class PerforceReadOnlyFileStateManager {
   }
 
   public void activate(@NotNull Disposable parentDisposable) {
+    Disposer.register(parentDisposable, () -> deactivate());
+
     final Runnable scheduleTotalRescan = () -> {
       myUnversionedTracker.isActive = false;
       myUnversionedTracker.totalRescan();
     };
 
-    myConnection = myProject.getMessageBus().connect();
-    myConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> scheduleTotalRescan.run());
+    MessageBusConnection connection = myProject.getMessageBus().connect(parentDisposable);
+    connection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> scheduleTotalRescan.run());
+
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVfsListener(), parentDisposable);
 
-    frameStateListenerDisposable = Disposer.newDisposable();
-    Disposer.register(parentDisposable, frameStateListenerDisposable);
-    Disposer.register(frameStateListenerDisposable, () -> {
-      frameStateListenerDisposable = null;
-    });
-    ApplicationManager.getApplication().getMessageBus().connect(frameStateListenerDisposable).subscribe(FrameStateListener.TOPIC, myFrameStateListener);
+    MessageBusConnection appConnection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
+    appConnection.subscribe(FrameStateListener.TOPIC, myFrameStateListener);
 
-    myConnection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, scheduleTotalRescan);
+    connection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, scheduleTotalRescan);
   }
 
-  public void deactivate() {
+  private void deactivate() {
     myUnversionedTracker.isActive = false;
-    myConnection.disconnect();
-    if (frameStateListenerDisposable != null) {
-      Disposer.dispose(frameStateListenerDisposable);
-      frameStateListenerDisposable = null;
-    }
     myHasLostFocus = true;
   }
 
@@ -132,7 +123,8 @@ public final class PerforceReadOnlyFileStateManager {
     return status != null;
   }
 
-  private UnversionedScopeScanner.ScanResult rescan(final ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> scanner) throws VcsException {
+  private UnversionedScopeScanner.ScanResult rescan(final ThrowableComputable<UnversionedScopeScanner.ScanResult, VcsException> scanner)
+    throws VcsException {
     myUnversionedTracker.isActive = true;
     myPreviousRescanProblem = false;
     try {
@@ -218,7 +210,7 @@ public final class PerforceReadOnlyFileStateManager {
 
     @Override
     public void fileCreated(@NotNull final VirtualFileEvent event) {
-      if (! fileIsUnderP4Root(event.getFile())) return;
+      if (!fileIsUnderP4Root(event.getFile())) return;
       processCreated(event.getFile());
     }
 
@@ -228,25 +220,25 @@ public final class PerforceReadOnlyFileStateManager {
 
     @Override
     public void fileMoved(@NotNull VirtualFileMoveEvent event) {
-      if (! fileIsUnderP4Root(event.getFile())) return;
+      if (!fileIsUnderP4Root(event.getFile())) return;
       processCreated(event.getFile());
     }
 
     @Override
     public void fileCopied(@NotNull VirtualFileCopyEvent event) {
-      if (! fileIsUnderP4Root(event.getFile())) return;
+      if (!fileIsUnderP4Root(event.getFile())) return;
       processCreated(event.getFile());
     }
 
     @Override
     public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
-      if (! fileIsUnderP4Root(event.getFile())) return;
+      if (!fileIsUnderP4Root(event.getFile())) return;
       myUnversionedTracker.reportDelete(event.getFile());
     }
 
     @Override
     public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
-      if (! fileIsUnderP4Root(event.getFile())) return;
+      if (!fileIsUnderP4Root(event.getFile())) return;
       myUnversionedTracker.reportDelete(event.getFile());
     }
   }

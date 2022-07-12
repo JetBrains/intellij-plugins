@@ -91,8 +91,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(LocalChangeList.getDefaultName(), clManager, refA.get(), refB.get());
 
     final String descr = "123";
-    final long listNumber = createChangeList(descr, Arrays.asList("//depot/a.txt"));
-    final long listNumber2 = createChangeList(descr, Arrays.asList("//depot/b.txt"));
+    final long listNumber = createChangeList(descr, List.of("//depot/a.txt"));
+    final long listNumber2 = createChangeList(descr, List.of("//depot/b.txt"));
 
     refreshChanges();
 
@@ -118,8 +118,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(LocalChangeList.getDefaultName(), clManager, refA.get(), refB.get());
 
     final String descr = "123";
-    final long listNumber = createChangeList(descr, Arrays.asList("//depot/a.txt"));
-    final long listNumber2 = createChangeList(descr, Arrays.asList("//depot/b.txt"));
+    final long listNumber = createChangeList(descr, List.of("//depot/a.txt"));
+    final long listNumber2 = createChangeList(descr, List.of("//depot/b.txt"));
 
     refreshChanges();
 
@@ -152,8 +152,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(LocalChangeList.getDefaultName(), clManager, refA.get(), refB.get());
 
     final String descr = "123";
-    final long listNumber = createChangeList(descr, Arrays.asList("//depot/a.txt"));
-    final long listNumber2 = createChangeList(descr, Arrays.asList("//depot/b.txt"));
+    final long listNumber = createChangeList(descr, List.of("//depot/a.txt"));
+    final long listNumber2 = createChangeList(descr, List.of("//depot/b.txt"));
 
     refreshChanges();
 
@@ -179,7 +179,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
   @Test public void testRenameChangelist() throws Exception {
     VirtualFile file = createFileInCommand("a.txt", "foo");
     addFile("a.txt");
-    final long listNumber = createChangeList("descr1", Arrays.asList("//depot/a.txt"));
+    final long listNumber = createChangeList("descr1", List.of("//depot/a.txt"));
     refreshChanges();
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("descr1", getChangeListManager(), file);
@@ -213,8 +213,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(LocalChangeList.getDefaultName(), clManager, refA.get(), refB.get());
 
     final String descr = "123";
-    final long listNumber = createChangeList(descr, Arrays.asList("//depot/a.txt"));
-    final long listNumber2 = createChangeList(descr, Arrays.asList("//depot/b.txt"));
+    final long listNumber = createChangeList(descr, List.of("//depot/a.txt"));
+    final long listNumber2 = createChangeList(descr, List.of("//depot/b.txt"));
 
     refreshChanges();
 
@@ -251,8 +251,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     final String descr = "123";
     final String descr2 = "123->";
-    final long listNumber = createChangeList(descr, Arrays.asList("//depot/a.txt"));
-    final long listNumber2 = createChangeList(descr2, Arrays.asList("//depot/b.txt"));
+    final long listNumber = createChangeList(descr, List.of("//depot/a.txt"));
+    final long listNumber2 = createChangeList(descr2, List.of("//depot/b.txt"));
 
     refreshChanges();
 
@@ -334,7 +334,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     final LocalChangeList defaultList = clManager.getDefaultChangeList();
     final Collection<Change> changeCollection = defaultList.getChanges();
-    final Change[] changeArr = changeCollection.toArray(new Change[0]);
+    final Change[] changeArr = changeCollection.toArray(Change.EMPTY_CHANGE_ARRAY);
 
     LocalChangeList l1 = clManager.addChangeList(descr, null);
     LocalChangeList l2 = clManager.addChangeList(descr2, null);
@@ -394,8 +394,8 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     final String descr1 = "123\n456\n789";
     final String descr2 = "123\nabc\ndef";
-    final long listNumber = createChangeList(descr1, Arrays.asList("//depot/a.txt"));
-    final long listNumber2 = createChangeList(descr2, Arrays.asList("//depot/b.txt"));
+    final long listNumber = createChangeList(descr1, List.of("//depot/a.txt"));
+    final long listNumber2 = createChangeList(descr2, List.of("//depot/b.txt"));
 
     refreshChanges();
 
@@ -409,7 +409,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     addFile("a.txt");
 
     String title = "title...";
-    long listNumber = createChangeList("title\n1", Arrays.asList("//depot/a.txt"));
+    long listNumber = createChangeList("title\n1", List.of("//depot/a.txt"));
 
     refreshChanges();
 
@@ -433,7 +433,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     createChangeList("title\n0", Collections.emptyList());
 
     String title = "title... (2)";
-    long listNumber = createChangeList("title\n1", Arrays.asList("//depot/a.txt"));
+    long listNumber = createChangeList("title\n1", List.of("//depot/a.txt"));
 
     refreshChanges();
 
@@ -471,7 +471,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     VirtualFile file2 = createFileInCommand("b.txt", "");
     addFile("dir1/a.txt");
     addFile("b.txt");
-    createChangeList("xxx", Arrays.asList("//depot/b.txt"));
+    createChangeList("xxx", List.of("//depot/b.txt"));
 
     setVcsMappings(new VcsDirectoryMapping(dir1.getPath(), PerforceVcs.getInstance(myProject).getName()));
     refreshChanges();
@@ -485,7 +485,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
   public void testHideEmptyChangelistsRemovedFromIdea() {
     VirtualFile file = createFileInCommand("b.txt", "");
     addFile("b.txt");
-    long num = createChangeList("xxx", Arrays.asList("//depot/b.txt"));
+    long num = createChangeList("xxx", List.of("//depot/b.txt"));
     runP4WithClient("shelve", "-r", "-c", String.valueOf(num)); // prevent changelist from being deleted automatically
 
     refreshChanges();

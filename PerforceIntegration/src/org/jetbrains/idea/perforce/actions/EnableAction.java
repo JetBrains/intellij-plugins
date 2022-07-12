@@ -15,6 +15,7 @@
  */
 package org.jetbrains.idea.perforce.actions;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.ToggleAction;
@@ -24,6 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 public class EnableAction extends ToggleAction implements DumbAware {
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   @Override
   public boolean isSelected(@NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);

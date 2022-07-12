@@ -10,6 +10,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementTypes;
+import org.jetbrains.plugins.cucumber.psi.GherkinParserDefinition;
 import org.jetbrains.plugins.cucumber.psi.GherkinTable;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
@@ -32,7 +33,7 @@ public class GherkinBlock implements ASTBlock {
                                                                    GherkinElementTypes.TABLE,
                                                                    GherkinElementTypes.EXAMPLES_BLOCK);
 
-  private static final TokenSet BLOCKS_TO_INDENT_CHILDREN = TokenSet.create(GherkinElementTypes.GHERKIN_FILE,
+  private static final TokenSet BLOCKS_TO_INDENT_CHILDREN = TokenSet.create(GherkinParserDefinition.GHERKIN_FILE,
                                                                             GherkinElementTypes.FEATURE,
                                                                             GherkinElementTypes.SCENARIO,
                                                                             GherkinElementTypes.RULE,

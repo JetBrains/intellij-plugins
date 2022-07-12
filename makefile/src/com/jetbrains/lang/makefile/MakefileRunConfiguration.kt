@@ -301,7 +301,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     return try {
       LocalTerminalCustomizer.EP_NAME.extensions.fold(command) { acc, customizer ->
         try {
-          customizer.customizeCommandAndEnvironment(project, acc, environment)
+          customizer.customizeCommandAndEnvironment(project, null, acc, environment)
         }
         catch (_: Throwable) {
           acc
