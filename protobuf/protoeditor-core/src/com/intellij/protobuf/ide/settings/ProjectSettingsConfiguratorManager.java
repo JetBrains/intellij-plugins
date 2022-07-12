@@ -136,7 +136,7 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
     }
   }
 
-  static final class ProjectOpenedActivity implements StartupActivity {
+  static final class ProjectOpenedActivity implements StartupActivity.DumbAware {
     @Override
     public void runActivity(@NotNull Project project) {
       ProjectSettingsConfiguratorManager instance = getInstance(project);
