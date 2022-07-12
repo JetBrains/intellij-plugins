@@ -90,7 +90,8 @@
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
     <lang.syntaxHighlighter language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighter"/>
-    <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
+    <psi.referenceContributor language="JavaScript" implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
+    <psi.referenceContributor language="HtmlCompatible" implementation="org.angularjs.codeInsight.refs.AngularJSXmlReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter"/>
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>

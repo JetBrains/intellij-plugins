@@ -33,8 +33,6 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
   public static final PsiElementPattern.Capture<PsiElement> UI_VIEW_PATTERN = uiViewPattern();
-  public static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("uiSref");
-  public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ngApp");
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_DEPENDENCY_PATTERN = moduleDependencyPattern();
 
@@ -86,8 +84,6 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(CONTROLLER_PATTERN, new AngularJSControllerReferencesProvider());
     registrar.registerReferenceProvider(DI_PATTERN, new AngularJSDIReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_PATTERN, new AngularJSUiRouterViewReferencesProvider());
-    registrar.registerReferenceProvider(UI_VIEW_REF, new AngularJSUiRouterStatesReferencesProvider());
-    registrar.registerReferenceProvider(NG_APP_REF, new AngularJSNgAppReferencesProvider());
     registrar.registerReferenceProvider(MODULE_PATTERN, new AngularJSModuleReferencesProvider());
   }
 
@@ -218,25 +214,6 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             // by now will not go further todo other cases
             return true;
           }
-        }
-        return false;
-      }
-
-      @Override
-      public boolean isClassAcceptable(Class hintClass) {
-        return true;
-      }
-    }));
-  }
-
-  private static PsiElementPattern.Capture<XmlAttributeValue> xmlAttributePattern(final @NotNull String directiveName) {
-    return PlatformPatterns.psiElement(XmlAttributeValue.class).and(new FilterPattern(new ElementFilter() {
-      @Override
-      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        final XmlAttributeValue attributeValue = (XmlAttributeValue)element;
-        final PsiElement parent = attributeValue.getParent();
-        if (parent instanceof XmlAttribute && directiveName.equals(normalizeAttributeName(((XmlAttribute)parent).getName()))) {
-          return AngularIndexUtil.hasAngularJS(attributeValue.getProject());
         }
         return false;
       }
