@@ -7,19 +7,17 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.roots.SyntheticLibrary
-import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
-class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation {
-
-  override fun getExcludeFileCondition(): Condition<VirtualFile> = Condition {
-    !it.isDirectory
-    && !TypeScriptUtil.isDefinitionFile(it)
-    && FileUtil.getExtension(it.nameSequence).isNotEmpty()
-  }
+class DenoLibrary(private val libs: List<VirtualFile>) :
+  SyntheticLibrary("DenoLib",
+                   ExcludeFileCondition { isDir, filename, _, _, _ ->
+                     !isDir && !TypeScriptUtil.isDefinitionFile(
+                       filename) && FileUtilRt.getExtension(filename).isNotEmpty()
+                   }), ItemPresentation {
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

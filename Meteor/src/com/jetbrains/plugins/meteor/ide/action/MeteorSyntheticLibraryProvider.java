@@ -7,9 +7,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectLocator;
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider;
 import com.intellij.openapi.roots.SyntheticLibrary;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,6 +28,7 @@ import org.jetbrains.io.LocalFileFinder;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.plugins.meteor.ide.action.MeteorPackagesUtil.PACKAGES_FOLDER;
@@ -46,14 +47,21 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
   }
 
   @NotNull
-  public static Condition<VirtualFile> createExcludeConditions(@NotNull Collection<VirtualFile> roots) {
-    return el -> {
-      if (el.isDirectory()) {
-        return MeteorPackagesUtil.EXCLUDED_FOLDERS.contains(el.getName()) && !roots.contains(el);
-      }
+  public static SyntheticLibrary.ExcludeFileCondition createExcludeConditions() {
+    return new SyntheticLibrary.ExcludeFileCondition() {
+      @Override
+      public boolean shouldExclude(boolean isDir,
+                                   @NotNull String filename,
+                                   @NotNull BooleanSupplier isRoot,
+                                   @NotNull BooleanSupplier isStrictRootChild,
+                                   @NotNull BooleanSupplier hasParentNotGrandparent) {
+        if (isDir) {
+          return MeteorPackagesUtil.EXCLUDED_FOLDERS.contains(filename) && !isRoot.getAsBoolean();
+        }
 
-      String extension = el.getExtension();
-      return !ArrayUtil.contains("." + extension, MeteorPackagesUtil.EXTENSIONS);
+        String extension = FileUtilRt.getExtension(filename);
+        return !ArrayUtil.contains("." + extension, MeteorPackagesUtil.EXTENSIONS);
+      }
     };
   }
 
@@ -71,18 +79,15 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
   }
 
   private static class MeteorSyntheticLibrary extends SyntheticLibrary implements ItemPresentation {
-
     @NlsSafe
     private final String myLibName;
     @NotNull
     private final Collection<VirtualFile> myRoots;
-    @Nullable
-    private final Condition<VirtualFile> myCondition;
 
     MeteorSyntheticLibrary(@NlsSafe String libName, @NotNull Collection<VirtualFile> sourceRoots) {
+      super("MeteorSyntheticLibrary::" + libName, createExcludeConditions());
       myLibName = libName;
       myRoots = sourceRoots;
-      myCondition = createExcludeConditions(sourceRoots);
     }
 
     @NotNull
@@ -95,12 +100,6 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     @Override
     public Set<VirtualFile> getExcludedRoots() {
       return Collections.emptySet();
-    }
-
-    @Nullable
-    @Override
-    public Condition<VirtualFile> getExcludeFileCondition() {
-      return myCondition;
     }
 
     @Override
@@ -191,7 +190,7 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
       // force project because load text can lead to SOE because of the recursive project calc
       String text;
       try {
-        text = ProjectLocator.computeWithPreferredProject(versionsFile, project, ()-> VfsUtilCore.loadText(versionsFile));
+        text = ProjectLocator.computeWithPreferredProject(versionsFile, project, () -> VfsUtilCore.loadText(versionsFile));
       }
       catch (IOException e) {
         //ignore
