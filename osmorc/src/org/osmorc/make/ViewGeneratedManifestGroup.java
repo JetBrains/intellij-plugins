@@ -25,6 +25,7 @@
 package org.osmorc.make;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
@@ -44,6 +45,12 @@ import java.util.List;
  * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
  */
 public class ViewGeneratedManifestGroup extends ActionGroup {
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   @Override
   public void update(@NotNull AnActionEvent e) {
     boolean enabled = false;
@@ -58,7 +65,7 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
       }
     }
 
-    e.getPresentation().setVisible(enabled);
+    e.getPresentation().setEnabledAndVisible(enabled);
   }
 
   @Override
