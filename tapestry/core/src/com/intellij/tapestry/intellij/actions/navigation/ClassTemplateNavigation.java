@@ -62,6 +62,11 @@ public class ClassTemplateNavigation extends AnAction {
     presentation.setEnabledAndVisible(true);
   }
 
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
   /**
    * {@inheritDoc}
    */
