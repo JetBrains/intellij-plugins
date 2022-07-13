@@ -36,6 +36,11 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
         presentation.setEnabledAndVisible(isTapestryModule);
     }
 
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.BGT;
+    }
+
     /**
      * {@inheritDoc}
      */
