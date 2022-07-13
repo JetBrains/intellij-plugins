@@ -5,6 +5,7 @@ import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.Utils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.JavaPsiFacade;
@@ -16,7 +17,6 @@ import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
-import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
 import com.intellij.tapestry.intellij.view.nodes.LibrariesNode;
 import com.intellij.tapestry.intellij.view.nodes.PackageNode;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.File;
+
+import static com.intellij.openapi.actionSystem.PlatformCoreDataKeys.SELECTED_ITEM;
 
 public abstract class AddNewElementAction<T extends PackageNode> extends AnAction {
 
@@ -48,9 +50,8 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
       return;
     }
 
-    final TapestryProjectViewPane pane = TapestryProjectViewPane.getInstance(module.getProject());
-    final DefaultMutableTreeNode element = pane != null ? pane.getSelectedNode() : null;
-
+    Object data = event.getData(SELECTED_ITEM);
+    final DefaultMutableTreeNode element = data instanceof DefaultMutableTreeNode ? (DefaultMutableTreeNode)data : null;
     // it's the project view
     if (element == null) {
       PsiElement eventPsiElement = event.getData(CommonDataKeys.PSI_ELEMENT);
@@ -92,17 +93,22 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
       }
 
     }
-    // it's the Tapestry view
-    else {
-      // it's a folder
-      if (element.getUserObject() instanceof PackageNode &&
-          (IdeaUtils.findFirstParent(element, nodeClass) != null || nodeClass.isInstance(element.getUserObject())) &&
-          IdeaUtils.findFirstParent(element, LibrariesNode.class) == null) {
+    // it's the Tapestry view | folder
+    else if (element.getUserObject() instanceof PackageNode) {
+      UpdateSession session = Utils.getOrCreateUpdateSession(event);
+      if (session.compute(this, "findParent", ActionUpdateThread.EDT, () ->
+        (IdeaUtils.findFirstParent(element, nodeClass) != null || nodeClass.isInstance(element.getUserObject())) &&
+        IdeaUtils.findFirstParent(element, LibrariesNode.class) == null)) {
         enabled = true;
       }
     }
     presentation.setVisible(true);
     presentation.setEnabled(enabled);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Nullable

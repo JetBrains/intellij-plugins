@@ -401,7 +401,9 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
       return new SafeDeleteProvider();
     }
-
+    if (PlatformCoreDataKeys.SELECTED_ITEM.is(dataId)) {
+      return getSelectedNode();
+    }
     return null;
   }//getData
 
