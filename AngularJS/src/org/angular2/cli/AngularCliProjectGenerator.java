@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.filters.Filter;
 import com.intellij.ide.util.projectWizard.ModuleNameLocationSettings;
 import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
@@ -51,6 +52,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   private static final Pattern NPX_PACKAGE_PATTERN =
     Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng");
   private static final Pattern VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*");
+  private static final SemVer UNKNOWN_VERSION = new SemVer("0.0.0", 0, 0, 0);
 
   @Override
   public String getId() {
@@ -200,7 +202,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       final JPanel panel = super.createPanel();
 
       myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
-                                                         Collections.emptyList());
+                                                         Collections.emptyList(), UNKNOWN_VERSION);
       myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
 
       LabeledComponent component = LabeledComponent.create(
@@ -264,6 +266,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     private void nodePackageChanged(NodePackage nodePackage) {
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
         List<Option> options = Collections.emptyList();
+        SemVer cliVersion = UNKNOWN_VERSION;
         if (nodePackage.getSystemIndependentPath().endsWith("/node_modules/@angular/cli")) {
           VirtualFile localFile = StandardFileSystems.local().findFileByPath(
             nodePackage.getSystemDependentPath());
@@ -287,9 +290,15 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
             catch (Exception e) {
               LOG.error("Failed to load schematics", e);
             }
+
+            var packageVersion = NodePackageVersionUtil.getPackageVersion(nodePackage.getSystemIndependentPath());
+            if (packageVersion != null && packageVersion.getSemVer() != null) {
+              cliVersion = packageVersion.getSemVer();
+            }
           }
         }
-        myOptionsTextField.setVariants(options);
+
+        myOptionsTextField.setVariants(options, cliVersion);
       });
     }
 

@@ -6,13 +6,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.ui.EditorTextField
+import com.intellij.util.text.SemVer
 import org.angular2.lang.Angular2Bundle
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class AngularCliGenerateOptionsDialogs(val project: Project, val schematic: Schematic) : DialogWrapper(project, true) {
+class AngularCliGenerateOptionsDialogs(val project: Project, val schematic: Schematic, private val cliVersion: SemVer) :
+  DialogWrapper(project, true) {
   private lateinit var editor: EditorTextField
 
   init {
@@ -23,7 +25,7 @@ class AngularCliGenerateOptionsDialogs(val project: Project, val schematic: Sche
   override fun createCenterPanel(): JComponent {
     val panel = JPanel(BorderLayout(0, 4))
     panel.add(JLabel(schematic.description), BorderLayout.NORTH)
-    editor = SchematicOptionsTextField(project, schematic.options)
+    editor = SchematicOptionsTextField(project, schematic.options, cliVersion)
     editor.setPreferredWidth(250)
     panel.add(LabeledComponent.create(
       editor, Angular2Bundle.message("angular.action.ng-generate.label.parameters", paramsDesc(schematic))), BorderLayout.SOUTH)

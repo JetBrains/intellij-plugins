@@ -23,6 +23,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.Function
+import com.intellij.util.text.SemVer
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBScalableIcon
 import com.intellij.util.ui.JBUI
@@ -46,8 +47,9 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
     val editor = e.getData(PlatformCoreDataKeys.FILE_EDITOR)
     val cli = AngularCliUtil.findAngularCliFolder(project, file) ?: return
+    val cliVersion = AngularCliUtil.getAngularCliPackageVersion(cli)
 
-    if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
+    if (cliVersion == null) {
       AngularCliUtil.notifyAngularCliNotInstalled(project, cli, Angular2Bundle.message("angular.action.ng-generate.cant-generate-code"))
       return
     }
@@ -137,14 +139,14 @@ class AngularCliGenerateAction : DumbAwareAction() {
         if (list.selectedValue == null) return
         if (e?.keyCode == KeyEvent.VK_ENTER) {
           e.consume()
-          askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file))
+          askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file), cliVersion)
         }
       }
     })
     object : DoubleClickListener() {
       override fun onDoubleClick(event: MouseEvent): Boolean {
         if (list.selectedValue == null) return true
-        askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file))
+        askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file), cliVersion)
         return true
       }
     }.installOn(list)
@@ -176,13 +178,18 @@ class AngularCliGenerateAction : DumbAwareAction() {
     }
   }
 
-  private fun askOptions(project: Project, popup: JBPopup, schematic: Schematic, cli: VirtualFile, workingDir: VirtualFile?) {
+  private fun askOptions(project: Project,
+                         popup: JBPopup,
+                         schematic: Schematic,
+                         cli: VirtualFile,
+                         workingDir: VirtualFile?,
+                         cliVersion: SemVer) {
     if (schematic.error != null) {
       return
     }
     popup.closeOk(null)
 
-    val dialog = AngularCliGenerateOptionsDialogs(project, schematic)
+    val dialog = AngularCliGenerateOptionsDialogs(project, schematic, cliVersion)
     if (dialog.showAndGet()) {
       runGenerator(project, schematic, dialog.arguments(), cli, workingDir)
     }

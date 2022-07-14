@@ -3,26 +3,39 @@ package org.angular2.cli
 
 import com.intellij.codeInsight.lookup.CharFilter
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.TextFieldWithAutoCompletion
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider
+import com.intellij.util.text.SemVer
 
 
 class SchematicOptionsTextField(project: Project?,
-                                options: List<Option>) : TextFieldWithAutoCompletion<Option>(
-  project, SchematicOptionsCompletionProvider(options), false, null)
+                                options: List<Option>,
+                                cliVersion: SemVer) : TextFieldWithAutoCompletion<Option>(
+  project, SchematicOptionsCompletionProvider(options, cliVersion), false, null) {
+
+  fun setVariants(options: List<Option>, version: SemVer) {
+    installProvider(SchematicOptionsCompletionProvider(options, version))
+  }
+}
 
 
-private class SchematicOptionsCompletionProvider(options: List<Option>) : TextFieldWithAutoCompletionListProvider<Option>(
-  options) {
+private class SchematicOptionsCompletionProvider(options: List<Option>, private val cliVersion: SemVer) :
+  TextFieldWithAutoCompletionListProvider<Option>(options) {
 
   override fun getLookupString(item: Option): String {
-    return "--" + item.name
+    val toKebabCase = cliVersion.isGreaterOrEqualThan(14, 0, 0)
+    var name = item.name ?: return ""
+    if (toKebabCase) {
+      name = JSStringUtil.toKebabCase(name, true, true, false)
+    }
+    return "--$name"
   }
 
   override fun setItems(variants: MutableCollection<Option>?) {
-    super.setItems(variants?.filter { it -> it.isVisible })
+    super.setItems(variants?.filter { it.isVisible })
   }
 
   override fun getTypeText(item: Option): String? {

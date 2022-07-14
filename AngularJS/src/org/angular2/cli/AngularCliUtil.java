@@ -6,6 +6,8 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.javascript.JSRunConfigurationBuilder;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.NodePackageVersion;
+import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
@@ -18,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.SemVer;
 import one.util.streamex.StreamEx;
 import org.angular2.cli.config.AngularConfig;
 import org.angular2.cli.config.AngularConfigProvider;
@@ -70,9 +73,23 @@ public final class AngularCliUtil {
   }
 
   public static boolean hasAngularCLIPackageInstalled(@NotNull Project project, @NotNull VirtualFile cli) {
+    return findAngularCliModuleInfo(cli) != null;
+  }
+
+  public static @Nullable SemVer getAngularCliPackageVersion(@NotNull VirtualFile cli) {
+    CompletionModuleInfo moduleInfo = findAngularCliModuleInfo(cli);
+    if (moduleInfo == null) return null;
+
+    NodePackageVersion nodePackageVersion = NodePackageVersionUtil.getPackageVersion(moduleInfo.getVirtualFile().getPath());
+    return nodePackageVersion != null ? nodePackageVersion.getSemVer() : null;
+  }
+
+
+  private static @Nullable CompletionModuleInfo findAngularCliModuleInfo(@NotNull VirtualFile cli) {
     List<CompletionModuleInfo> modules = new ArrayList<>();
     NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
-    return !modules.isEmpty() && modules.get(0).getVirtualFile() != null;
+    CompletionModuleInfo moduleInfo = ContainerUtil.getFirstItem(modules);
+    return moduleInfo != null && moduleInfo.getVirtualFile() != null ? moduleInfo : null;
   }
 
   public static boolean isAngularJsonFile(@NotNull String fileName) {
