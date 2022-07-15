@@ -5,7 +5,6 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
 import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
-import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.WriteAction;
@@ -44,7 +43,7 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
                                @NotNull String declarationName,
                                @NotNull @NlsContexts.Command String actionName,
                                boolean codeCompletion) {
-    super(editor, context, "", JSPlaceElementFilter.DEFAULT_FILTER, actionName, codeCompletion);
+    super(editor, context, "", actionName, codeCompletion);
     myDeclarationName = declarationName;
     myDecorator = declarationDecorator;
   }

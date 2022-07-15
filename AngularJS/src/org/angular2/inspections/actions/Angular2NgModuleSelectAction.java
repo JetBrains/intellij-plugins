@@ -1,7 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.actions;
 
-import com.intellij.lang.javascript.modules.imports.*;
+import com.intellij.lang.javascript.modules.imports.ES6ImportExecutorFactory;
+import com.intellij.lang.javascript.modules.imports.JSImportAction;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.NlsContexts;
@@ -20,10 +23,9 @@ public class Angular2NgModuleSelectAction extends JSImportAction {
   public Angular2NgModuleSelectAction(@Nullable Editor editor,
                                       @NotNull PsiElement context,
                                       @NotNull String name,
-                                      @NotNull JSImportElementFilter filter,
                                       @NotNull @NlsContexts.Command String actionName,
                                       boolean codeCompletion) {
-    super(editor, context, name, filter);
+    super(editor, context, name);
     myActionName = actionName;
     myCodeCompletion = codeCompletion;
   }

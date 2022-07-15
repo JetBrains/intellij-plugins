@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.modules.JSModuleNameInfo;
 import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
-import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
@@ -35,8 +34,11 @@ import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
 
 public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
-  NgModuleImportAction(@Nullable Editor editor, @NotNull PsiElement element, @NotNull @NlsContexts.Command String actionName, boolean codeCompletion) {
-    super(editor, element, "NgModule", JSPlaceElementFilter.DEFAULT_FILTER, actionName, codeCompletion); //NON-NLS
+  NgModuleImportAction(@Nullable Editor editor,
+                       @NotNull PsiElement element,
+                       @NotNull @NlsContexts.Command String actionName,
+                       boolean codeCompletion) {
+    super(editor, element, "NgModule", actionName, codeCompletion); //NON-NLS
   }
 
   @Override
@@ -77,16 +79,16 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
     for (var declaration : importableDeclarations) {
       if (declaration.isStandalone()) {
-         averageDistances.put(declaration, 0.0);
+        averageDistances.put(declaration, 0.0);
       }
-
     }
 
     return StreamEx.of(averageDistances.keySet())
       .sorted(Comparator.comparingDouble(averageDistances::get))
       .map(Angular2Entity::getTypeScriptClass)
       .select(JSElement.class)
-      .map(element -> new ES6ImportCandidate(myName, element, getContext())) // TODO  myName is wrong here, it results in "X as NgModule" popup
+      .map(
+        element -> new ES6ImportCandidate(myName, element, getContext())) // TODO  myName is wrong here, it results in "X as NgModule" popup
       .toList();
   }
 
