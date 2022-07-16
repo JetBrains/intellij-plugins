@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
@@ -42,9 +42,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
-public class ActiveBuildConfigurationWidget {
-
+public final class ActiveBuildConfigurationWidget {
   private final Project myProject;
 
   @Nullable
@@ -55,7 +55,7 @@ public class ActiveBuildConfigurationWidget {
 
     myProject.getMessageBus().connect(myProject).subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
-      public void moduleAdded(@NotNull final Project project, @NotNull final Module module) {
+      public void modulesAdded(@NotNull Project project, @NotNull List<Module> modules) {
         showOrHideWidget(false);
       }
 
