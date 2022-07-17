@@ -287,6 +287,8 @@
 
   <extensions defaultExtensionNs="JavaScript">
     <resolveHelper implementation="com.intellij.javascript.flex.resolve.FlexResolveHelper"/>
+    <completionPlaceFilter order="before asCommon" implementation="com.intellij.javascript.flex.completion.ActionScriptReferenceListFilterProvider" />
+    <completionPlaceFilter id="asCommon" implementation="com.intellij.javascript.flex.completion.ActionScriptCompletionPlaceFilterProvider" />
     <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
     <conditionalCompilationDefinitionsProvider
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
