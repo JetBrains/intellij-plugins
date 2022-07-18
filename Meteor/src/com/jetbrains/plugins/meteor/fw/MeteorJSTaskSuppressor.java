@@ -17,7 +17,7 @@ final class MeteorJSTaskSuppressor extends BackgroundTaskSuppressor {
     }
 
     final DialectOptionHolder dialect = DialectDetector.dialectOfElement(file);
-    if (dialect != DialectOptionHolder.ECMA_6) {
+    if (dialect != DialectOptionHolder.JS_WITH_JSX) {
       return false;
     }
 
