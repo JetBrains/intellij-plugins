@@ -33,7 +33,8 @@ public class Angular2NgModuleSelectAction extends JSImportAction {
   @Override
   protected @NotNull List<JSImportCandidateWithExecutor> filterAndSort(@NotNull List<? extends JSImportCandidate> candidates,
                                                                        @NotNull PsiElement place) {
-    return ContainerUtil.map(candidates, el -> new JSImportCandidateWithExecutor(el, ES6ImportExecutorFactory.FACTORY));
+    return ContainerUtil.map(candidates,
+                             el -> new JSImportCandidateWithExecutor(el, ES6ImportExecutorFactory.FACTORY.createExecutor(place)));
   }
 
   @Override
@@ -52,7 +53,7 @@ public class Angular2NgModuleSelectAction extends JSImportAction {
   }
 
   @Override
-  protected boolean shouldShowPopup(@NotNull List<? extends JSImportCandidateWithExecutor> candidates) {
+  protected boolean shouldShowPopup(@NotNull List<JSImportCandidateWithExecutor> candidates) {
     return myCodeCompletion || super.shouldShowPopup(candidates);
   }
 }
