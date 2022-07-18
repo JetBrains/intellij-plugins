@@ -118,7 +118,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
       val scriptSetup = findScriptTag(file, true)?.children?.find { it is JSEmbeddedContent }
       if (scriptSetup != null) {
-        ES6ImportPsiUtil.insertJSImport(scriptSetup, info, elementToImport, editor)
+        ES6ImportPsiUtil.insertJSImport(scriptSetup, info, elementToImport)
         return
       }
 
@@ -142,7 +142,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val newProperty = JSPsiElementFactory.createJSExpression("{ $capitalizedName }", obj,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
       forReformat(addProperty(newProperty, components, false))
-      ES6ImportPsiUtil.insertJSImport(defaultExport.parent, info, elementToImport, editor)
+      ES6ImportPsiUtil.insertJSImport(defaultExport.parent, info, elementToImport)
       if (toReformat != null) {
         reformatElement(toReformat)
       }

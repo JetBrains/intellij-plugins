@@ -302,7 +302,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     val input = JSResolveResult.toElements(ES6PsiUtil.resolveSymbolInModule(name, targetFile, coreModule)).firstOrNull() ?: return
     val createInfo = ES6ImportPsiUtil.CreateImportExportInfo(name, ES6ImportPsiUtil.ImportExportType.SPECIFIER)
 
-    ES6ImportPsiUtil.insertJSImport(targetFile, createInfo, input, null)
+    ES6ImportPsiUtil.insertJSImport(targetFile, createInfo, input)
   }
 
   private fun showErrorHint(project: Project, editor: Editor, @NlsContexts.DialogMessage message: String) {
