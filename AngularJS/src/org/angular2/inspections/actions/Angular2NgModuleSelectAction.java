@@ -31,7 +31,8 @@ public class Angular2NgModuleSelectAction extends JSImportAction {
   }
 
   @Override
-  protected @NotNull List<? extends JSImportCandidateWithExecutor> filterAndSort(@NotNull List<? extends JSImportCandidate> candidates) {
+  protected @NotNull List<JSImportCandidateWithExecutor> filterAndSort(@NotNull List<? extends JSImportCandidate> candidates,
+                                                                       @NotNull PsiElement place) {
     return ContainerUtil.map(candidates, el -> new JSImportCandidateWithExecutor(el, ES6ImportExecutorFactory.FACTORY));
   }
 
