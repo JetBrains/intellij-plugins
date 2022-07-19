@@ -9,6 +9,7 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodePackageVersion;
 import com.intellij.javascript.nodejs.NodePackageVersionUtil;
 import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction;
+import com.intellij.lang.javascript.JSStringUtil;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroupManager;
@@ -185,5 +186,13 @@ public final class AngularCliUtil {
         builder.findSimilarRunConfiguration(baseDir, configPath, options),
         () -> builder.createRunConfiguration(label, baseDir, configPath, options))
     );
+  }
+
+  public static @NotNull String getCliParamText(@NotNull String name, @NotNull SemVer cliVersion) {
+    boolean toKebabCase = cliVersion.isGreaterOrEqualThan(12, 0, 0);
+    String paramText = toKebabCase
+                       ? JSStringUtil.toKebabCase(name, true, true, false)
+                       : name;
+    return "--" + paramText;
   }
 }
