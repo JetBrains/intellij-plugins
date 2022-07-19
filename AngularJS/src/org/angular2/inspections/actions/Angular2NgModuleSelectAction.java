@@ -44,12 +44,12 @@ public class Angular2NgModuleSelectAction extends JSImportAction {
 
   @Override
   protected @NotNull String getDebugNameForElement(@NotNull JSImportCandidateWithExecutor element) {
-    JSElement psiElement = element.getElement();
-    if (psiElement == null) return super.getDebugNameForElement(element);
+    PsiElement psiElement = element.getElement();
+    if (!(psiElement instanceof JSElement)) return super.getDebugNameForElement(element);
     JSImportCandidate candidate = element.getCandidate();
     String text = candidate.getContainerText();
 
-    return psiElement.getName() + " - " + text;
+    return ((JSElement)psiElement).getName() + " - " + text;
   }
 
   @Override

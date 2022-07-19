@@ -81,7 +81,7 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
     if (!context.isValid()) {
       return;
     }
-    JSElement element = candidate.getElement();
+    PsiElement element = candidate.getElement();
     Angular2SourceModule module = tryCast(Angular2EntitiesProvider.getModule(element),
                                           Angular2SourceModule.class);
     Angular2SourceDeclaration declaration = tryCast(Angular2EntitiesProvider.getDeclaration(myDecorator.getElement()),
