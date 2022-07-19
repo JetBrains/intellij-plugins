@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<html>
-
-<body>
-<div data-toggle="modal"
-     data-target="#popupCreateCompany"></div>
-</body>
-
-</html>

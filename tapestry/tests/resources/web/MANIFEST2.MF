@@ -1,1 +1,0 @@
-Tapestry-Module-Classes: org.example.mylib.LibModule

@@ -1,5 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-    <head>
-      <a t:type="count" end="3" e:s<caret>tart="44"/>
-    </head>
-</html>

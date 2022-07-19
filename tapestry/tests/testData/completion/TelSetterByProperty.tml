@@ -1,5 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-    <body>
-    ${setSo<caret>}
-    </body>
-</html>

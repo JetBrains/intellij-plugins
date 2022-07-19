@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij">
-    <css.embeddedCssProvider implementation="com.intellij.tapestry.intellij.TapestryEmbeddedCssProvider"/>
-  </extensions>
-</idea-plugin>
