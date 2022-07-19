@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.actions;
 
-import com.intellij.lang.javascript.modules.imports.ES6ImportExecutorFactory;
 import com.intellij.lang.javascript.modules.imports.JSImportAction;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
@@ -14,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.intellij.lang.javascript.modules.imports.ES6ImportExecutorFactory.FACTORY;
 
 public class Angular2NgModuleSelectAction extends JSImportAction {
 
@@ -33,8 +34,7 @@ public class Angular2NgModuleSelectAction extends JSImportAction {
   @Override
   protected @NotNull List<JSImportCandidateWithExecutor> filterAndSort(@NotNull List<? extends JSImportCandidate> candidates,
                                                                        @NotNull PsiElement place) {
-    return ContainerUtil.map(candidates,
-                             el -> new JSImportCandidateWithExecutor(el, ES6ImportExecutorFactory.FACTORY.createExecutor(place)));
+    return ContainerUtil.map(filter(candidates), el -> new JSImportCandidateWithExecutor(el, FACTORY.createExecutor(place)));
   }
 
   @Override

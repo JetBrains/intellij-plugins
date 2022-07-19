@@ -2,7 +2,6 @@
 package org.angular2.inspections.actions;
 
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
-import com.intellij.lang.javascript.modules.JSModuleNameInfo;
 import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
@@ -87,49 +86,45 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
       .sorted(Comparator.comparingDouble(averageDistances::get))
       .map(Angular2Entity::getTypeScriptClass)
       .select(JSElement.class)
-      .map(
-        element -> new ES6ImportCandidate(myName, element, getContext())) // TODO  myName is wrong here, it results in "X as NgModule" popup
+      .map(element -> {
+        String name = detectName(element);
+        if (name == null) return null;
+        return new ES6ImportCandidate(name, element, getContext());
+      })
+      .nonNull()
       .toList();
   }
 
-  @Override
-  protected @NotNull List<? extends JSImportCandidate> filter(@NotNull List<? extends JSImportCandidate> candidates) {
-    Collection<? extends JSImportCandidate> elementsFromLibraries = getElementsFromLibraries(candidates);
-    Map<JSImportCandidate, JSModuleNameInfo> renderedTexts = new HashMap<>();
-    candidates = removeMergedElements(candidates, elementsFromLibraries);
-    candidates = fillModuleNamesAndFilterByBlacklist(renderedTexts, candidates);
-    return removeSrcAndMinifiedLibraryFiles(candidates, createLibraryModulesInfos(elementsFromLibraries, renderedTexts));
+  private static String detectName(PsiElement element) {
+    if (element == null) return null;
+    var entityToImport = Angular2EntitiesProvider.getEntity(element);
+
+    if (entityToImport == null) return null;
+    if (entityToImport instanceof Angular2MetadataModule) { // metadata does not support standalone declarations
+      return ObjectUtils.notNull(((Angular2MetadataModule)entityToImport).getStub().getMemberName(),
+                                 entityToImport.getName());
+    }
+    return entityToImport.getClassName();
   }
 
   @Override
   protected void runAction(@Nullable Editor editor,
                            @NotNull JSImportCandidateWithExecutor candidate,
                            @NotNull PsiElement place) {
-    var element = candidate.getElement();
+    PsiElement element = candidate.getElement();
     if (element == null) return;
-
     var scope = new Angular2DeclarationsScope(getContext());
     var importsOwner = scope.getImportsOwner();
     if (importsOwner == null || !scope.isInSource(importsOwner)) {
       return;
     }
     var destinationModuleClass = importsOwner.getTypeScriptClass();
-    var entityToImport = Angular2EntitiesProvider.getEntity(element);
 
-    if (destinationModuleClass == null
-        || importsOwner.getDecorator() == null
-        || entityToImport == null) {
+    if (destinationModuleClass == null || importsOwner.getDecorator() == null) {
       return;
     }
-    String name;
-    if (entityToImport instanceof Angular2MetadataModule) { // metadata does not support standalone declarations
-      name = ObjectUtils.notNull(((Angular2MetadataModule)entityToImport).getStub().getMemberName(),
-                                 entityToImport.getName());
-    }
-    else {
-      name = entityToImport.getClassName();
-    }
 
+    String name = candidate.getName();
     WriteAction.run(() -> {
       ES6ImportPsiUtil.insertJSImport(destinationModuleClass, name, element, editor);
       Angular2FixesPsiUtil.insertEntityDecoratorMember(importsOwner, IMPORTS_PROP, name);

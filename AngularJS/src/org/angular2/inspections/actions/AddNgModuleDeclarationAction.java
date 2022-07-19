@@ -69,11 +69,6 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
   }
 
   @Override
-  protected @NotNull List<? extends JSImportCandidate> filter(@NotNull List<? extends JSImportCandidate> candidates) {
-    return candidates;
-  }
-
-  @Override
   protected void runAction(@Nullable Editor editor,
                            @NotNull JSImportCandidateWithExecutor candidate,
                            @NotNull PsiElement place) {
