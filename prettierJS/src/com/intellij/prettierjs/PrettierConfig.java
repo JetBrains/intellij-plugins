@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.prettierjs;
 
 import com.intellij.application.options.CodeStyle;
@@ -73,14 +73,15 @@ public class PrettierConfig {
   public void install(@NotNull Project project) {
     JSCodeStyleUtil.updateProjectCodeStyle(project, newSettings -> {
       newSettings.LINE_SEPARATOR = this.lineSeparator;
-      PrettierCodeStyleInstaller.EP_NAME.extensions().forEach(installer -> installer.install(project, this, newSettings));
+      PrettierCodeStyleInstaller.EP_NAME.getExtensionList().stream().forEach(installer -> installer.install(project, this, newSettings));
     });
   }
 
   public boolean isInstalled(@NotNull Project project) {
     CodeStyleSettings settings = CodeStyle.getSettings(project);
-    return StringUtil.equals(settings.LINE_SEPARATOR, this.lineSeparator)
-           && PrettierCodeStyleInstaller.EP_NAME.extensions().allMatch(installer -> installer.isInstalled(project, this, settings));
+    if (!StringUtil.equals(settings.LINE_SEPARATOR, this.lineSeparator)) return false;
+    return PrettierCodeStyleInstaller.EP_NAME.getExtensionList().stream()
+      .allMatch(installer -> installer.isInstalled(project, this, settings));
   }
 
   public PrettierConfig mergeWith(@Nullable Map<String, Object> map) {
