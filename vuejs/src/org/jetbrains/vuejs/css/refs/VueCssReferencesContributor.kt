@@ -20,11 +20,9 @@ import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCaching
 import com.intellij.util.ProcessingContext
 import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider.Companion.isVBindClassAttribute
-import org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
-import org.jetbrains.vuejs.model.VueModelManager
 
 class VueCssReferencesContributor : PsiReferenceContributor() {
 
@@ -35,11 +33,14 @@ class VueCssReferencesContributor : PsiReferenceContributor() {
                                         VBindIdentifierReferenceProvider())
   }
 
-  private class VBindIdentifierReferenceProvider() : PsiReferenceProvider() {
+  private class VBindIdentifierReferenceProvider : PsiReferenceProvider() {
 
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
       val term = element.parent as? CssTerm ?: return PsiReference.EMPTY_ARRAY
-      val termList = term.parent as? CssTermList ?: return PsiReference.EMPTY_ARRAY
+      var termList = term.parent as? CssTermList ?: return PsiReference.EMPTY_ARRAY
+      (termList.parent as? CssTermList)?.let { parent ->
+        termList = parent // in SCSS CssTermList exists twice in AST
+      }
       val function = termList.parent as? CssFunction ?: return PsiReference.EMPTY_ARRAY
 
       return if (function.name == "v-bind")

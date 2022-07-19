@@ -1,15 +1,12 @@
-<script setup >
-
+<script setup>
 import {ref} from "vue"
 
-let count = 12
-let foo = ref("test")
-
+let aaaCount = 12
+let aaaFoo = ref("test")
 </script>
 
 <style>
 div {
   color: v-bind(<caret>)
 }
-
 </style>
