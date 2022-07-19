@@ -21,17 +21,11 @@ class SchematicOptionsTextField(project: Project?,
   }
 }
 
-
 private class SchematicOptionsCompletionProvider(options: List<Option>, private val cliVersion: SemVer) :
   TextFieldWithAutoCompletionListProvider<Option>(options) {
 
   override fun getLookupString(item: Option): String {
-    val toKebabCase = cliVersion.isGreaterOrEqualThan(14, 0, 0)
-    var name = item.name ?: return ""
-    if (toKebabCase) {
-      name = JSStringUtil.toKebabCase(name, true, true, false)
-    }
-    return "--$name"
+    return item.name?.let { AngularCliUtil.getCliParamText(it, cliVersion) } ?: ""
   }
 
   override fun setItems(variants: MutableCollection<Option>?) {
