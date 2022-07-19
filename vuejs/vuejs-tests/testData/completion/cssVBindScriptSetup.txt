@@ -1,2 +1,0 @@
-count#number
-foo#string

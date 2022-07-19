@@ -1817,11 +1817,23 @@ export default {
                  fileContents = """<template><<caret></template>""", lookupFilter = nonHtmlLookupFilter)
   }
 
-  fun testCssVBind() {
+  fun testStyleVBind() {
     doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = false)
   }
 
-  fun testCssVBindScriptSetup() {
+  fun testStyleVBindScriptSetupCss() {
+    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+  }
+
+  fun testStyleVBindScriptSetupScss() {
+    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+  }
+
+  fun testStyleVBindScriptSetupSass() {
+    doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
+  }
+
+  fun testStyleVBindScriptSetupLess() {
     doLookupTest(VueTestModule.VUE_3_2_2, renderPriority = false, renderTypeText = true)
   }
 
