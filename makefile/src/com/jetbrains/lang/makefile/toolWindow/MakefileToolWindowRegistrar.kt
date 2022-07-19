@@ -1,7 +1,5 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.intellij.openapi.application.AppUIExecutor
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.wm.RegisterToolWindowTask
@@ -41,7 +39,7 @@ internal class MakefileToolWindowRegistrar : StartupActivity {
     }
 
     // any extension reported that it's desired to hide it by default (i.e. it's CLion's non-Makefile project) - hide it
-    if (MakefileToolWindowStripeController.EP_NAME.extensions().anyMatch { it.shouldHideStripeIconFor(project) }) {
+    if (MakefileToolWindowStripeController.EP_NAME.extensionList.any { it.shouldHideStripeIconFor(project) }) {
       return true
     }
 

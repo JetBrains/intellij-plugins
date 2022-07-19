@@ -1,21 +1,21 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.context
 
+import com.intellij.javascript.web.context.WebFrameworkContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.javascript.web.context.WebFrameworkContext
 
 @Suppress("DEPRECATION")
-class VueLegacyContext : WebFrameworkContext {
-
-  override fun isEnabled(file: PsiFile): Boolean =
-    VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensions().anyMatch {
+internal class VueLegacyContext : WebFrameworkContext {
+  override fun isEnabled(file: PsiFile): Boolean {
+    return VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensionList.any {
       it.isVueContextEnabled(file)
     }
+  }
 
   override fun isEnabled(directory: PsiDirectory): CachedValueProvider.Result<Int?> {
     val dependencies = mutableSetOf<Any>()
@@ -32,8 +32,9 @@ class VueLegacyContext : WebFrameworkContext {
     return CachedValueProvider.Result(null, *dependencies.toTypedArray())
   }
 
-  override fun isForbidden(contextFile: VirtualFile, project: Project): Boolean =
-    VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensions().anyMatch {
+  override fun isForbidden(contextFile: VirtualFile, project: Project): Boolean {
+    return VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensionList.any {
       it.isVueContextForbidden(contextFile, project)
     }
+  }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -24,8 +24,7 @@ import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.renderEntityList;
 
-public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalInspectionTool {
-
+public final class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalInspectionTool {
   @Override
   public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
@@ -40,7 +39,8 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
             }
 
             Collection<Angular2Module> modules = declaration.getAllDeclaringModules();
-            if (Angular2FrameworkHandler.EP_NAME.extensions().anyMatch(h -> h.suppressModuleInspectionErrors(modules, declaration))) {
+            if (ContainerUtil.exists(Angular2FrameworkHandler.EP_NAME.getExtensionList(),
+                                     h -> h.suppressModuleInspectionErrors(modules, declaration))) {
               return;
             }
             PsiElement classIdentifier = notNull(doIfNotNull(getClassForDecoratorElement(decorator),

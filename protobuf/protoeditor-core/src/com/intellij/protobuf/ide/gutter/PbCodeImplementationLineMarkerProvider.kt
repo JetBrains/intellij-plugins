@@ -15,7 +15,6 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.castSafelyTo
 import icons.ProtoeditorCoreIcons
-import kotlin.streams.asSequence
 
 internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
   override fun getId(): String {
@@ -66,7 +65,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   private fun findImplementations(pbElement: PsiElement): Sequence<PsiElement> {
     val identifierOwner = pbElement.parentIdentifierOwner()?.castSafelyTo<PbElement>() ?: return emptySequence()
     val converters = collectRpcConverters()
-    return IMPLEMENTATION_SEARCHER_EP_NAME.extensions().asSequence()
+    return IMPLEMENTATION_SEARCHER_EP_NAME.extensionList.asSequence()
       .flatMap { it.findImplementationsForProtoElement(identifierOwner, converters) }
   }
 
@@ -79,12 +78,12 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
     val converters = collectRpcConvertersForLanguage(psiElement.language)
                        .takeIf(Collection<PbGeneratedCodeConverter>::isNotEmpty)
                      ?: return emptySequence()
-    return IMPLEMENTATION_SEARCHER_EP_NAME.extensions().asSequence()
+    return IMPLEMENTATION_SEARCHER_EP_NAME.extensionList.asSequence()
       .flatMap { it.findDeclarationsForCodeElement(identifierOwner, converters) }
   }
 
   private fun PsiElement.parentIdentifierOwner(): PsiNameIdentifierOwner? {
-    return this.parentOfType<PsiNameIdentifierOwner>(true)
+    return this.parentOfType(true)
   }
 
   private fun collectRpcConverters(): Collection<PbGeneratedCodeConverter> {
@@ -101,7 +100,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   private fun fetchConverters(): Sequence<PbGeneratedCodeConverterProvider> {
-    return CONVERTER_EP_NAME.extensions().asSequence()
+    return CONVERTER_EP_NAME.extensionList.asSequence()
   }
 }
 
@@ -113,4 +112,4 @@ interface PbCodeImplementationSearcher {
 }
 
 private val IMPLEMENTATION_SEARCHER_EP_NAME =
-  ExtensionPointName.create<PbCodeImplementationSearcher>("com.intellij.protobuf.codeImplementationSearcher")
+  ExtensionPointName<PbCodeImplementationSearcher>("com.intellij.protobuf.codeImplementationSearcher")
