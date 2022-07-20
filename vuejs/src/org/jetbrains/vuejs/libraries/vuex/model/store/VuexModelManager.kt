@@ -40,15 +40,17 @@ object VuexModelManager {
 
   private fun getAllVuexStores(project: Project): List<VuexStore> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
-      CachedValueProvider.Result.create(
-        StubIndex.getElements(VuexStoreIndex.KEY, STORE, project,
-                              GlobalSearchScope.projectScope(project),
-                              JSImplicitElementProvider::class.java)
-          .asSequence()
-          .filterIsInstance<JSCallExpression>()
-          .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY } != null }
-          .map { VuexStoreImpl(it) }
-          .toList(), PsiModificationTracker.MODIFICATION_COUNT)
+      val elements = StubIndex.getElements(VuexStoreIndex.KEY, STORE, project,
+                                           GlobalSearchScope.projectScope(project),
+                                           JSImplicitElementProvider::class.java)
+      val result = elements
+        .asSequence()
+        .filterIsInstance<JSCallExpression>()
+        .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY } != null }
+        .map { VuexStoreImpl(it) }
+        .toList()
+
+      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
 

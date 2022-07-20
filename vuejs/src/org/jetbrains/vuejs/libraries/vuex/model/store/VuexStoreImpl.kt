@@ -6,11 +6,10 @@ import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
@@ -70,8 +69,8 @@ class VuexModuleImpl(override val name: String,
       if (initializerElement is JSFile) return initializerElement
       return CachedValuesManager.getCachedValue(initializerElement) {
         resolveElementTo(initializerElement, JSObjectLiteralExpression::class, JSFile::class)
-          ?.let { create(it, initializerElement, it) }
-        ?: create(null as JSElement?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)
+          ?.let { Result.create(it, initializerElement, it) }
+        ?: Result.create(null as JSElement?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)
       }
     }
 }
@@ -82,8 +81,8 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
       val storeCreationCall = this.source
       return CachedValuesManager.getCachedValue(storeCreationCall) {
         readLiteralFromParams(storeCreationCall)
-          ?.let { create(it, storeCreationCall, it) }
-        ?: create(null as JSObjectLiteralExpression?, storeCreationCall, VFS_STRUCTURE_MODIFICATIONS)
+          ?.let { Result.create(it, storeCreationCall, it) }
+        ?: Result.create(null as JSObjectLiteralExpression?, storeCreationCall, VFS_STRUCTURE_MODIFICATIONS)
       }
     }
 
@@ -93,7 +92,7 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
         ?.stub
         ?.let {
           @Suppress("USELESS_CAST")
-          return it.findChildStubByType<JSObjectLiteralExpression, JSObjectLiteralExpressionStub>(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
+          return it.findChildStubByType(JSElementTypes.OBJECT_LITERAL_EXPRESSION)
             ?.psi as JSObjectLiteralExpression?
         }
       return call.arguments.getOrNull(0) as? JSObjectLiteralExpression
@@ -120,8 +119,8 @@ class VuexActionImpl(name: String, source: PsiElement)
     get() {
       val initializerHolder = source
       return CachedValuesManager.getCachedValue(initializerHolder) {
-        objectLiteralFor(initializerHolder)?.let { create(it, initializerHolder, it) }
-        ?: create(null as JSObjectLiteralExpression?, initializerHolder, VFS_STRUCTURE_MODIFICATIONS)
+        objectLiteralFor(initializerHolder)?.let { Result.create(it, initializerHolder, it) }
+        ?: Result.create(null as JSObjectLiteralExpression?, initializerHolder, VFS_STRUCTURE_MODIFICATIONS)
       }
     }
 
