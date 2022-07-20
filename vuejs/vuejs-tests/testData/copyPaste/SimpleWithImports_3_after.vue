@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Component from "./SimpleWithImports_2";
+import Component from "./SimpleWithImports_2.vue";
 
 export default {
   name: 'list3',

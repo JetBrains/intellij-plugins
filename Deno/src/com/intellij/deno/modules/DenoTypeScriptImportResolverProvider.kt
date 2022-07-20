@@ -13,7 +13,6 @@ import com.intellij.util.Processor
 
 class DenoTypeScriptImportResolverProvider : TypeScriptImportsResolverProvider {
   override fun getExtensions(): Array<String> = emptyArray()
-  override fun useExplicitExtension(extensionWithDot: String): Boolean = false
   override fun contributeResolver(project: Project, config: TypeScriptConfig) = createDenoTypeScriptImportResolver(project)
 
   override fun contributeResolver(project: Project,

@@ -7,6 +7,9 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.javascript.web.*
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavaScriptFormatterTestBase
+import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.xml.XmlAttribute
@@ -74,6 +77,31 @@ import compUI from 'compUI.vue'
   }
 
   fun testCompleteWithImport() {
+    configureTextsForCompleteLocalComponent()
+
+    noAutoComplete {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<to-import<caret>
+</template>
+<script>
+import ToImport from "./toImport.vue";
+export default {
+  components: {ToImport}
+}
+</script>
+""")
+    }
+  }
+
+
+  fun testCompleteWithImportNoExtension() {
+    JavaScriptFormatterTestBase.setTempSettings<JSCodeStyleSettings>(project, JavascriptLanguage.INSTANCE) {
+      it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.FALSE
+    }
     configureTextsForCompleteLocalComponent()
 
     noAutoComplete {
@@ -192,7 +220,7 @@ export default {
 <ToImport<caret>></ToImport>
 </template>
 <script>
-import ToImport from "./toImport";
+import ToImport from "./toImport.vue";
 export default {
   components: {ToImport}
 }
@@ -224,7 +252,7 @@ export default {
 <to-import
 </template>
 <script>
-import ToImport from "./toImport";
+import ToImport from "./toImport.vue";
 export default {
   components: {ToImport}
 }
@@ -250,7 +278,7 @@ export default {
 <to-import
 </template>
 <script>
-import ToImport from "./toImport";
+import ToImport from "./toImport.vue";
 export default {
   components: {ToImport}
 }
@@ -949,7 +977,7 @@ $script""")
 <script>
 import Vue from "vue";
 import {Component} from "vue-class-component";
-import ShortComponent from "./ShortComponent";
+import ShortComponent from "./ShortComponent.vue";
 @Component({
   components: {ShortComponent}
 })
@@ -966,7 +994,7 @@ export default class ComponentInsertion extends Vue {
 <script>
 import Vue from "vue";
 import {Component} from "vue-class-component";
-import ShortComponent from "./ShortComponent";
+import ShortComponent from "./ShortComponent.vue";
 @Component({
   components: {ShortComponent}
 })
@@ -986,7 +1014,7 @@ import Vue from "vue";
 <script>
 import Vue from "vue";
 import {Component} from "vue-class-component";
-import ShortComponent from "./ShortComponent";
+import ShortComponent from "./ShortComponent.vue";
 @Component({
   components: {ShortComponent}
 })
@@ -1007,7 +1035,7 @@ import {Component} from "vue-class-component";
 <script>
 import {Component} from "vue-class-component";
 import Vue from "vue";
-import ShortComponent from "./ShortComponent";
+import ShortComponent from "./ShortComponent.vue";
 @Component({
   components: {ShortComponent}
 })
@@ -1034,7 +1062,7 @@ export default class ComponentInsertion extends Vue {
 <script>
 import Vue from "vue";
 import {Component} from "vue-class-component";
-import ShortComponent from "./ShortComponent";
+import ShortComponent from "./ShortComponent.vue";
 @Component({
   name: "a123",
   components: {ShortComponent}
@@ -1681,7 +1709,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.type("foo-\n")
     myFixture.checkResult("""<template><foo-bar</template>
 <script>
-import FooBar from "./FooBar";
+import FooBar from "./FooBar.vue";
 export default {
   components: {FooBar}
 }
@@ -1695,7 +1723,7 @@ export default {
     myFixture.type("foo-\n")
     myFixture.checkResult("""<template><foo-bar</template>
 <script>
-import FooBar from "./FooBar";
+import FooBar from "./FooBar.vue";
 export default {
   components: {FooBar}
 }

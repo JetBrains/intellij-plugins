@@ -21,7 +21,7 @@ class VueExtractComponentTest : BasePlatformTestCase() {
     <NewComponent/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent}
 }
@@ -51,7 +51,7 @@ export default {
     <NewComponent/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: 'Hello',
     components: {NewComponent}
@@ -86,7 +86,7 @@ export default {
     <NewComponent :one="one"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: 'existing',
     components: {NewComponent},
@@ -128,7 +128,7 @@ export default {
     <NewComponent :comp-method="compMethod()" :one="one"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent},
     props: {
@@ -175,7 +175,7 @@ export default {
     <NewComponent :prop="prop"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: 'current-comp',
     components: {NewComponent},
@@ -276,7 +276,7 @@ export default {
 </template>
 
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: "test-v-for",
     components: {NewComponent},
@@ -325,7 +325,7 @@ export default {
 </template>
 
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: "test-v-for",
     components: {NewComponent},
@@ -372,7 +372,7 @@ export default {
     <NewComponent :one-more="oneMore"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent},
     methods: {
@@ -415,7 +415,7 @@ export default {
     <NewComponent :prop-with-camel="propWithCamel"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent},
     props: {
@@ -522,7 +522,7 @@ export default {
     <NewComponent/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
   components: {NewComponent}
 }
@@ -566,7 +566,7 @@ export default {
     <NewComponent/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
   components: {NewComponent}
 }
@@ -609,7 +609,7 @@ export default {
     <NewComponent :item="item"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent},
     props: { item: {} }
@@ -665,7 +665,7 @@ export default {
 </template>
 
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: "styled",
     components: {NewComponent}
@@ -758,7 +758,7 @@ ${'$'}duration = 1.4s
 </template>
 
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     name: 'spinner',
     components: {NewComponent},
@@ -916,7 +916,7 @@ export default {
     <NewComponent :show-tools="showTools"/>
 </template>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent},
     methods: {
@@ -1043,7 +1043,7 @@ header {
   @import './stylus/main'
 </style>
 <script>
-import NewComponent from "./NewComponent";
+import NewComponent from "./NewComponent.vue";
 export default {
     components: {NewComponent}
 }

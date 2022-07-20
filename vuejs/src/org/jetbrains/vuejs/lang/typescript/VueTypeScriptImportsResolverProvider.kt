@@ -19,7 +19,7 @@ const val vueExtension = ".vue"
 val defaultExtensionsWithDot = arrayOf(vueExtension)
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
-  override fun isDynamicFile(project: Project, file: VirtualFile): Boolean {
+  override fun isImplicitTypeScriptFile(project: Project, file: VirtualFile): Boolean {
     if (!FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)) return false
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
@@ -28,7 +28,6 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
            findModule(psiFile, false)?.let { DialectDetector.isTypeScript(it) } == true
   }
 
-  override fun useExplicitExtension(extensionWithDot: String): Boolean = extensionWithDot == vueExtension
   override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
   override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver {
