@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.types
 
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
+import com.intellij.lang.javascript.psi.types.guard.JSTypeGuardUtil
 
 fun JSType.optionalIf(value: Boolean): JSType =
   if (value && this.source.isTypeScript)
-    TypeScriptTypeGuard.wrapWithUndefined(this, this.source) ?: this
+    JSTypeGuardUtil.wrapWithUndefined(this, this.source) ?: this
   else this

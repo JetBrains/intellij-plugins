@@ -17,11 +17,11 @@ let union = createUnion();
     <div v-else-if="Array.isArray(union)">
       <span v-text="union.<weak_warning descr="Unresolved function or method toFixed()">toFixed</weak_warning>()"></span>
       <span v-text="union.join(`, `)"></span>
-      <span v-text="union.toUpperCase()"></span>  <!-- TODO Unresolved -->
+      <span v-text="union.<weak_warning descr="Unresolved function or method toUpperCase()">toUpperCase</weak_warning>()"></span>
     </div>
     <div v-else>
       <span v-text="union.<weak_warning descr="Unresolved function or method toFixed()">toFixed</weak_warning>()"></span>
-      <span v-text="union.join(`, `)"></span> <!-- TODO Unresolved -->
+      <span v-text="union.<weak_warning descr="Unresolved function or method join()">join</weak_warning>(`, `)"></span>
       <span v-text="union.toUpperCase()"></span>
     </div>
   </section>
