@@ -24,6 +24,8 @@ class VueControlFlowTest : BaseJSControlFlowTest() {
 
   fun testFor() = doTest()
 
+  fun testIfDiscriminator() = doTest()
+
   override fun getControlFlowBuilder(scope: JSExecutionScope): ControlFlowBuilder {
     return VueControlFlowBuilder(scope).getControlFlowBuilder()
   }

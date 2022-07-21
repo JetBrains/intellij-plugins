@@ -1,0 +1,45 @@
+0(1) element: null
+1(2) element: VueJSEmbeddedExpression
+2(3) element: JSVarStatement
+3(4) element: VueJSVForVariable Write(item)
+4(5) element: VueJSVForVariable Write(i)
+5(6) element: JSReferenceExpression Read(items)
+6(7) element: VueJSEmbeddedExpression
+7(8) element: JSReferenceExpression Read(i)
+8(9) element: HtmlTag:div
+9(10) element: JSReferenceExpression Read(item)
+10(11,12) element: JSReferenceExpression Read(type)
+11(13) element: JSBinaryExpression condition: true, reachable
+12(16) element: JSBinaryExpression condition: false, reachable
+13(14) element: HtmlTag:div IF (branch) true
+14(15) element: XmlText
+15(17) element: JSFile:IfDiscriminator.vue.int
+16(17) element: HtmlTag:div IF (branch) false
+17(18) element: HtmlTag:div
+18(19) element: JSReferenceExpression Read(item)
+19(20,21) element: JSReferenceExpression Read(type)
+20(22) element: JSBinaryExpression condition: true, reachable
+21(25) element: JSBinaryExpression condition: false, reachable
+22(23) element: HtmlTag:div IF (branch) true
+23(24) element: XmlText
+24(26) element: JSFile:IfDiscriminator.vue.int
+25(26) element: HtmlTag:div IF (branch) false
+26(27) element: HtmlTag:div
+27(28) element: JSReferenceExpression Read(item)
+28(29,30) element: JSReferenceExpression Read(type)
+29(31) element: JSBinaryExpression condition: true, reachable
+30(34) element: JSBinaryExpression condition: false, reachable
+31(32) element: HtmlTag:div IF (branch) true
+32(33) element: XmlText
+33(35) element: JSFile:IfDiscriminator.vue.int
+34(35) element: HtmlTag:div IF (branch) false
+35(36) element: HtmlTag:div
+36(37) element: JSReferenceExpression Read(item)
+37(38,39) element: JSReferenceExpression Read(type)
+38(40) element: JSBinaryExpression condition: true, reachable
+39(43) element: JSBinaryExpression condition: false, reachable
+40(41) element: HtmlTag:div IF (branch) true
+41(42) element: XmlText
+42(44) element: JSFile:IfDiscriminator.vue.int
+43(44) element: HtmlTag:div IF (branch) false
+44() element: null
