@@ -51,7 +51,7 @@ public class InsertSchemaDirectiveAction extends AnAction {
   public static final String ACTION_ID = "prototext.InsertSchemaDirective";
 
   @Override
-  public void actionPerformed(AnActionEvent event) {
+  public void actionPerformed(@NotNull AnActionEvent event) {
     Project project = event.getData(CommonDataKeys.PROJECT);
     if (project == null) {
       return;

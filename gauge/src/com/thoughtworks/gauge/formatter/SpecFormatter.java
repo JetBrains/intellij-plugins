@@ -63,7 +63,7 @@ public final class SpecFormatter extends AnAction {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent anActionEvent) {
+  public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
     Project project = anActionEvent.getData(CommonDataKeys.PROJECT);
     if (project == null) {
       return;
