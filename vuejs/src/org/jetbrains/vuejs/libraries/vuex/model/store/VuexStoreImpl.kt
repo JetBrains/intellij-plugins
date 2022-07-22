@@ -7,10 +7,10 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
-import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
@@ -70,7 +70,7 @@ class VuexModuleImpl(override val name: String,
       return CachedValuesManager.getCachedValue(initializerElement) {
         resolveElementTo(initializerElement, JSObjectLiteralExpression::class, JSFile::class)
           ?.let { Result.create(it, initializerElement, it) }
-        ?: Result.create(null as JSElement?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)
+        ?: Result.create(null as JSElement?, initializerElement, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
 }
@@ -82,7 +82,7 @@ class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl()
       return CachedValuesManager.getCachedValue(storeCreationCall) {
         readLiteralFromParams(storeCreationCall)
           ?.let { Result.create(it, storeCreationCall, it) }
-        ?: Result.create(null as JSObjectLiteralExpression?, storeCreationCall, VFS_STRUCTURE_MODIFICATIONS)
+        ?: Result.create(null as JSObjectLiteralExpression?, storeCreationCall, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
 
@@ -120,7 +120,7 @@ class VuexActionImpl(name: String, source: PsiElement)
       val initializerHolder = source
       return CachedValuesManager.getCachedValue(initializerHolder) {
         objectLiteralFor(initializerHolder)?.let { Result.create(it, initializerHolder, it) }
-        ?: Result.create(null as JSObjectLiteralExpression?, initializerHolder, VFS_STRUCTURE_MODIFICATIONS)
+        ?: Result.create(null as JSObjectLiteralExpression?, initializerHolder, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
 

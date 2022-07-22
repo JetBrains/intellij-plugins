@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.libraries.vuex
 import com.intellij.javascript.web.assertUnresolvedReference
 import com.intellij.javascript.web.resolveReference
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -430,6 +432,34 @@ class VuexResolveTest : BasePlatformTestCase() {
       "store.dispatch('inc<caret>rement')" to "store/store.js:635:JSProperty",
       "@click=\"inc<caret>rement\"" to "src/composition-counter.vue:572:JSProperty",
     )
+  }
+
+  fun testStoreModuleCaching() {
+    val constFragment = "const counterModule"
+
+    val storeModuleFile = myFixture.configureByFile("storeModuleCaching/store/counter/index.js")
+    myFixture.configureByFile("storeModuleCaching/store/index.js")
+    val appFile = myFixture.configureByFile("storeModuleCaching/App.vue")
+
+    TestCase.assertNotNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
+
+    WriteCommandAction.runWriteCommandAction(project) {
+      PsiDocumentManager.getInstance(project).getDocument(storeModuleFile)?.let { document ->
+        document.replaceString(0, constFragment.length, "") // remove const
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+      }
+    }
+
+    TestCase.assertNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
+
+    WriteCommandAction.runWriteCommandAction(project) {
+      PsiDocumentManager.getInstance(project).getDocument(storeModuleFile)?.let { document ->
+        document.replaceString(0, 0, constFragment) // restore const
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+      }
+    }
+
+    TestCase.assertNotNull(appFile.findReferenceAt(myFixture.caretOffset)?.resolve()?.parent)
   }
 
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
