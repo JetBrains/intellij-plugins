@@ -4,8 +4,12 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 
 class VuePiniaTest : JSTempDirWithNodeInterpreterTest() {
   override fun getBasePath(): String {
@@ -33,5 +37,22 @@ class VuePiniaTest : JSTempDirWithNodeInterpreterTest() {
     val resolveJs = JSTestUtils.getGotoDeclarationTarget(myFixture)!!
     UsefulTestCase.assertInstanceOf(resolveJs, JSProperty::class.java)
     TestCase.assertEquals("user.js", resolveJs.containingFile.name)
+  }
+
+  fun testUseStore() {
+    myFixture.copyDirectoryToProject(getTestName(false), "")
+    performNpmInstallForPackageJson("package.json")
+
+    myFixture.configureFromTempProjectFile("Settings.vue")
+    myFixture.checkHighlighting()
+
+    val element = JSTestUtils.getGotoDeclarationTarget(myFixture)
+    TestCase.assertTrue(
+      PsiTreeUtil
+        .findChildrenOfType(element?.containingFile, VueJSEmbeddedExpression::class.java)
+        .mapNotNull { TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(JSResolveUtil.getElementJSType(it.firstChild)) }
+        .also { TestCase.assertEquals(3, it.size) }
+        .all { it.typeText == "boolean" }
+    )
   }
 }
