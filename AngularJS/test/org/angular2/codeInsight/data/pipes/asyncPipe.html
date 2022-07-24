@@ -2,4 +2,5 @@
 
 <div *ngFor="let contact of makeObservable() | async">
   {{contact.created_at}}
+  {{(makeObservable() | async)?.length}}
 </div>

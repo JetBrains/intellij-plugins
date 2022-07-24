@@ -2,11 +2,14 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory;
+import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
+import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType;
 import com.intellij.lang.javascript.psi.types.evaluable.JSQualifiedReferenceType;
@@ -115,7 +118,8 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl
 
     var typeSource = JSTypeSourceFactory.createTypeSource(this, true);
     var instanceMethod = new JSQualifiedReferenceType(Angular2EntitiesProvider.TRANSFORM_METHOD, jsClass.getJSType(), typeSource);
-    var type = new JSApplyCallType(instanceMethod, typeSource);
+    JSExpressionTypeFactory factory = JSPsiBasedTypeOfType.getArgumentTypeFactory(evaluateContext.isContextualOverloadEvaluation());
+    var type = new JSApplyCallType(instanceMethod, getArgumentTypes(factory), typeSource);
     typeProcessor.process(type, evaluateContext);
     return true;
   }

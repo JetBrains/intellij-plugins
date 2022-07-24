@@ -7,6 +7,10 @@ interface MiniContact {
     is_hidden: boolean;
 }
 
+interface Unrelated {
+  something: string;
+}
+
 interface Contact extends MiniContact {
     email: string;
     created_at: string;

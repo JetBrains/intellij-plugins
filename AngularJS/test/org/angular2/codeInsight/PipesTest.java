@@ -25,6 +25,25 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "pipes";
   }
 
+  private void doTestAsyncPipeResolution() {
+    configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
+
+    PsiElement transformMethod = resolveReference("makeObservable() | as<caret>ync", myFixture);
+    assertEquals("common.d.ts", transformMethod.getContainingFile().getName());
+    assertEquals("transform<T>(obj: Observable<T> | null | undefined): T | null;", transformMethod.getText());
+
+    transformMethod = resolveReference("makePromise() | as<caret>ync", myFixture);
+    assertEquals("common.d.ts", transformMethod.getContainingFile().getName());
+    assertEquals("transform<T>(obj: Promise<T> | null | undefined): T | null;", transformMethod.getText());
+
+    PsiElement contactField = resolveReference("contact.crea<caret>ted_at", myFixture);
+    assertEquals("asyncPipe.ts", contactField.getContainingFile().getName());
+
+    PsiElement contactFieldOptional = resolveReference("(makeObservable() | async)?.leng<caret>th", myFixture);
+    assertEquals("lib.es5.d.ts", contactFieldOptional.getContainingFile().getName());
+  }
+
   public void testPipeCompletion() {
     myFixture.configureByFiles("pipe.html", "package.json", "custom.ts");
     myFixture.completeBasic();
@@ -76,21 +95,14 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(variants, "username", "is_hidden", "email", "created_at", "updated_at");
   }
 
+  public void testAsyncPipeResolutionStrict() {
+    TypeScriptTestUtil.setStrictNullChecks(getProject(), getTestRootDisposable());
+    doTestAsyncPipeResolution();
+  }
+
   public void testAsyncPipeResolution() {
-    TypeScriptTestUtil.forceConfig(getProject(), null, getTestRootDisposable());
-    configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
-    myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
-
-    PsiElement transformMethod = resolveReference("makeObservable() | as<caret>ync", myFixture);
-    assertEquals("common.d.ts", transformMethod.getContainingFile().getName());
-    assertEquals("transform<T>(obj: Observable<T> | null | undefined): T | null;", transformMethod.getText());
-
-    transformMethod = resolveReference("makePromise() | as<caret>ync", myFixture);
-    assertEquals("common.d.ts", transformMethod.getContainingFile().getName());
-    assertEquals("transform<T>(obj: Promise<T> | null | undefined): T | null;", transformMethod.getText());
-
-    PsiElement contactField = resolveReference("contact.crea<caret>ted_at", myFixture);
-    assertEquals("asyncPipe.ts", contactField.getContainingFile().getName());
+    TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
+    doTestAsyncPipeResolution();
   }
 
   public void testAsyncNgIfAsContentAssist() {
