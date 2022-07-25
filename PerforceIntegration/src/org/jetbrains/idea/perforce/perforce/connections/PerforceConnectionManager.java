@@ -1,20 +1,18 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
-import com.intellij.ProjectTopics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.AdditionalLibraryRootsListener;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.impl.ContentRootChangeListener;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.workspaceModel.ide.WorkspaceModelTopics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.application.PerforceManager;
@@ -22,6 +20,7 @@ import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,7 +51,8 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
     PerforceConnectionMapper mapper;
     if (isSingletonConnectionUsed()) {
       mapper = SingletonConnection.getInstance(myProject);
-    } else {
+    }
+    else {
       P4ConnectionCalculator calculator = new P4ConnectionCalculator(myProject);
       calculator.execute();
       mapper = calculator.getMultipleConnections();
@@ -72,7 +72,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   @Nullable
   public PerforceMultipleConnections getMultipleConnectionObject() {
     final PerforceConnectionMapper mapper = getConnectionMapper();
-    return mapper instanceof PerforceMultipleConnections ? (PerforceMultipleConnections) mapper : null;
+    return mapper instanceof PerforceMultipleConnections ? (PerforceMultipleConnections)mapper : null;
   }
 
   public static PerforceConnectionManagerI getInstance(Project project) {
@@ -137,16 +137,9 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   }
 
   public void startListening(@NotNull Disposable parentDisposable) {
-    MessageBusConnection myMessageBusConnection = getProject().getMessageBus().connect(parentDisposable);
-    myMessageBusConnection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      @Override
-      public void rootsChanged(@NotNull ModuleRootEvent event) {
-        updateConnections();
-      }
-    });
-    myMessageBusConnection.subscribe(AdditionalLibraryRootsListener.TOPIC,
-                                     (presentableLibraryName, oldRoots, newRoots, libraryNameForDebug) -> updateConnections());
-    myMessageBusConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this::updateConnections);
+    MessageBusConnection busConnection = getProject().getMessageBus().connect(parentDisposable);
+    WorkspaceModelTopics.getInstance(getProject()).subscribeAfterModuleLoading(busConnection, new MyContentRootChangeListener());
+    busConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this::updateConnections);
 
     VirtualFileManager.getInstance().addVirtualFileListener(new PerforceP4ConfigVirtualFileListener(this, myProject), parentDisposable);
     updateConnections();
@@ -165,5 +158,16 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   public boolean isUnderProjectConnections(@NotNull final File file) {
     Set<VirtualFile> allRoots = getConnectionMapper().getAllConnections().keySet();
     return ContainerUtil.or(allRoots, root -> FileUtil.isAncestor(VfsUtilCore.virtualToIoFile(root), file, false));
+  }
+
+  private class MyContentRootChangeListener extends ContentRootChangeListener {
+    private MyContentRootChangeListener() {
+      super(/* skipFileChanges */ false);
+    }
+
+    @Override
+    public void contentRootsChanged(@NotNull List<? extends VirtualFile> removed, @NotNull List<? extends VirtualFile> added) {
+      updateConnections();
+    }
   }
 }
