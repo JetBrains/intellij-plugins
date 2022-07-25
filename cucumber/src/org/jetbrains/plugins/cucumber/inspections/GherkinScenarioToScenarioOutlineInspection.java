@@ -20,7 +20,10 @@ import java.util.stream.Stream;
 import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.EXAMPLES_BLOCK;
 
 public class GherkinScenarioToScenarioOutlineInspection extends GherkinInspection {
-  private static final ConvertScenarioToOutlineFix CONVERT_SCENARIO_TO_OUTLINE_FIX = new ConvertScenarioToOutlineFix();
+
+  private static class Holder {
+    static final LocalQuickFix CONVERT_SCENARIO_TO_OUTLINE_FIX = new ConvertScenarioToOutlineFix();
+  }
 
   @NotNull
   @Override
@@ -37,7 +40,7 @@ public class GherkinScenarioToScenarioOutlineInspection extends GherkinInspectio
         if (Stream.of(scenario.getChildren()).anyMatch(p -> PsiUtilCore.getElementType(p) == EXAMPLES_BLOCK)) {
           holder.registerProblem(scenario, scenario.getFirstChild().getTextRangeInParent(),
                                  CucumberBundle.message("inspection.gherkin.scenario.with.examples.section.error.message"),
-                                 CONVERT_SCENARIO_TO_OUTLINE_FIX);
+                                 Holder.CONVERT_SCENARIO_TO_OUTLINE_FIX);
         }
       }
     };
