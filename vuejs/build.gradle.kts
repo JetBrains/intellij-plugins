@@ -1,24 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-buildscript {
-  repositories {
-    mavenCentral()
-  }
+plugins {
+  // Java support
+  id("java")
+  // Kotlin support
+  id("org.jetbrains.kotlin.jvm") version "1.7.10"
+  // Gradle IntelliJ Plugin
+  id("org.jetbrains.intellij") version "1.5.2"
 }
 
 repositories {
   mavenCentral()
-  maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-}
-
-plugins {
-  id("org.jetbrains.intellij") version "0.5.0"
-  java
-  kotlin("jvm") version "1.4.0"
-}
-
-dependencies {
-  implementation(kotlin("stdlib-jdk8"))
-  testImplementation("junit", "junit", "4.12")
 }
 
 sourceSets {
@@ -37,46 +28,24 @@ sourceSets {
   }
 }
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
-}
+val ideVersion = "LATEST-EAP-SNAPSHOT"
+val buildVersion = "222.3345.108"
 
-val ideVersion = "203-SNAPSHOT"
+kotlin {
+  jvmToolchain {
+    this.languageVersion.set(JavaLanguageVersion.of(11))
+  }
+}
 
 intellij {
-  version = "IU-${ideVersion}"
-  pluginName = "Vue.js"
-  downloadSources = true
-  updateSinceUntilBuild = false
-  pluginsRepo {
-    custom("https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_master_Idea_Installers/${buildVersion}/IU-plugins/plugins.xml")
-  }
+  version.set("IU-${ideVersion}")
+  pluginName.set("Vue.js")
+  downloadSources.set(true)
+  updateSinceUntilBuild.set(false)
 
-  setPlugins("JavaScriptLanguage", "JSIntentionPowerPack", "JavaScriptDebugger", "CSS", "HtmlTools",
-             "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "org.jetbrains.plugins.stylus",
-             "org.intellij.plugins.postcss:${buildVersion}",
-             "com.jetbrains.plugins.Jade:${buildVersion}",
-             "intellij.prettierJS:${buildVersion}")
-}
-
-dependencies {
-  testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:${ideVersion}")
-  testImplementation("com.jetbrains.intellij.copyright:copyright:${ideVersion}")
-}
-
-tasks {
-  withType(JavaCompile::class.java) {
-    options.encoding = "UTF-8"
-  }
-  withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
-    kotlinOptions.jvmTarget = "11"
-    kotlinOptions.freeCompilerArgs = listOf("-Xjvm-default=compatibility")
-  }
-  test {
-    systemProperty("idea.home.path", File("${projectDir}/../").absolutePath)
-  }
-  wrapper {
-    gradleVersion = "6.6.1"
-  }
+  plugins.set(listOf("JavaScriptLanguage", "JSIntentionPowerPack", "JavaScriptDebugger", "CSS", "HtmlTools",
+                      "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "org.jetbrains.plugins.stylus",
+                      "org.intellij.plugins.postcss:${buildVersion}",
+                      "com.jetbrains.plugins.Jade:${buildVersion}",
+                      "intellij.prettierJS:${buildVersion}"))
 }
