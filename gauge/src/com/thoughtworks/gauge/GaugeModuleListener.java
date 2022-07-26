@@ -23,15 +23,21 @@ import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static com.thoughtworks.gauge.util.GaugeUtil.isGaugeProjectDir;
 import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
 
 public final class GaugeModuleListener implements ModuleListener {
   @Override
-  public void moduleAdded(@NotNull Project project, @NotNull Module module) {
-    if (module.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != null) return;
+  public void modulesAdded(@NotNull Project project, @NotNull List<Module> modules) {
+    for (Module module : modules) {
+      if (module.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != null) {
+        continue;
+      }
 
-    GaugeBootstrapService.getInstance(project).moduleAdded(module);
+      GaugeBootstrapService.getInstance(project).moduleAdded(module);
+    }
   }
 
   @Override
