@@ -18,7 +18,6 @@ import org.jetbrains.idea.perforce.operations.RefreshForVcs
 import org.jetbrains.idea.perforce.perforce.P4File
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
-import javax.swing.JComponent
 
 /**
  * @author peter
@@ -43,9 +42,6 @@ class ShelveAction : AbstractCommitChangesAction() {
 
       override fun createCommitSession(commitContext: CommitContext): CommitSession {
         return object : CommitSession {
-          override fun getAdditionalConfigurationUI(changes: Collection<Change>, commitMessage: String?): JComponent? = null
-          override fun canExecute(changes: Collection<Change>, commitMessage: String): Boolean = true
-
           override fun execute(changes: Collection<Change>, commitMessage: String?) {
             shelveChanges(project, commitMessage, changes)
           }
