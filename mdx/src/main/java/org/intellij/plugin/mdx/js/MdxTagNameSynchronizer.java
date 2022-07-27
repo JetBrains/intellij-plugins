@@ -304,9 +304,9 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
           if (document.getTextLength() < leader.getEndOffset()) {
             return;
           }
-          final String name = document.getText(new TextRange(leader.getStartOffset(), leader.getEndOffset()));
+          final String name = document.getText(leader.getTextRange());
           if (document.getTextLength() >= support.getEndOffset() &&
-              !name.equals(document.getText(new TextRange(support.getStartOffset(), support.getEndOffset())))) {
+              !name.equals(document.getText(support.getTextRange()))) {
             document.replaceString(support.getStartOffset(), support.getEndOffset(), name);
           }
         };
@@ -335,7 +335,7 @@ public final class MdxTagNameSynchronizer implements EditorFactoryListener {
     }
 
     private RangeMarker findSupport(RangeMarker leader, PsiFile file, Document document) {
-      final TextRange leaderRange = new TextRange(leader.getStartOffset(), leader.getEndOffset());
+      final TextRange leaderRange = leader.getTextRange();
       final int offset = leader.getStartOffset();
       PsiElement element = findNameElement(InjectedLanguageUtil.findElementAtNoCommit(file, offset));
       TextRange support = findSupportRange(element);
