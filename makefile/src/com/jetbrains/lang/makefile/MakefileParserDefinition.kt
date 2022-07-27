@@ -8,15 +8,17 @@ import com.jetbrains.lang.makefile.psi.*
 
 class MakefileParserDefinition : ParserDefinition {
   companion object {
-    val WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE)
-    val COMMENTS = TokenSet.create(MakefileTypes.COMMENT, MakefileTypes.DOC_COMMENT)
+    val FILE: IFileElementType = MakefileStubFileElementType()
+  }
 
-    val FILE = MakefileStubFileElementType()
+  private object TokenSets {
+    val WHITE_SPACES: TokenSet = TokenSet.WHITE_SPACE
+    val COMMENTS: TokenSet = TokenSet.create(MakefileTypes.COMMENT, MakefileTypes.DOC_COMMENT)
   }
 
   override fun getFileNodeType() = FILE
-  override fun getWhitespaceTokens() = WHITE_SPACES
-  override fun getCommentTokens() = COMMENTS
+  override fun getWhitespaceTokens() = TokenSets.WHITE_SPACES
+  override fun getCommentTokens() = TokenSets.COMMENTS
   override fun getStringLiteralElements(): TokenSet = TokenSet.EMPTY
 
   override fun createFile(viewProvider: FileViewProvider) = MakefileFile(viewProvider)
