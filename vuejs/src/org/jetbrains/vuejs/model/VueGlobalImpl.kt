@@ -51,6 +51,11 @@ internal class VueGlobalImpl(override val project: Project, override val package
                     VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     } ?: MultiMap.empty()
 
+  /**
+   * Because of VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
+   * we don't support scenarios in which you modify the `Vue.use` calls in main.js file
+   * and go back to editing an already existing Vue component
+   */
   private fun buildPluginsList(): Result<List<VuePlugin>> {
     val result = mutableListOf<VuePlugin>()
     val dependencies = mutableListOf<Any>(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
