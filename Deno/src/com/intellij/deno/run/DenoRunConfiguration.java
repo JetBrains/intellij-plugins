@@ -21,7 +21,6 @@ import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.util.PathUtilRt;
-import com.intellij.util.net.NetUtils;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
@@ -31,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Objects;
 
@@ -162,17 +160,12 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
   @NotNull
   @Override
   public InetSocketAddress computeDebugAddress(RunProfileState state) throws ExecutionException {
-    int debugPort = NodeCommandLineUtil.findDebugPort(getProgramParameters());
-    if (debugPort == -1) {
-      try {
-        debugPort = NetUtils.findAvailableSocketPort();
-      }
-      catch (IOException e) {
-        throw new ExecutionException(DenoBundle.message("dialog.message.cannot.find.available.port"), e);
-      }
-    }
+    return NodeDebugProgramRunnerKt.computeDebugAddress(this);
+  }
 
-    return new InetSocketAddress(NodeCommandLineUtil.getNodeLoopbackAddress(), debugPort);
+  @Override
+  public int getConfiguredDebugPort() {
+    return NodeCommandLineUtil.findDebugPort(getProgramParameters());
   }
 
   @Override

@@ -24,6 +24,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.jetbrains.nodeJs.NodeDebugProgramRunnerKt;
 import com.jetbrains.nodeJs.NodeJSDebuggableConfiguration;
+import com.jetbrains.nodeJs.NodeJsDebugProcess;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import com.jetbrains.plugins.meteor.MeteorProjectStartupActivity;
@@ -84,7 +85,11 @@ public class MeteorRunConfiguration extends DebuggableProcessRunConfigurationBas
                                           @NotNull XDebugSession session,
                                           @Nullable ExecutionResult executionResult,
                                           @NotNull ExecutionEnvironment environment) {
-    return NodeDebugProgramRunnerKt.createNodeJsDebugProcess(socketAddress, session, executionResult, createFileFinder(session.getProject()));
+    var connection = NodeDebugProgramRunnerKt.createRemoteConnection();
+    DebuggableFileFinder fileFinder = createFileFinder(session.getProject());
+    var process = new NodeJsDebugProcess(session, connection, fileFinder, true, executionResult);
+    connection.open(socketAddress);
+    return process;
   }
 
   @NotNull
