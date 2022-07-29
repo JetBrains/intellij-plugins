@@ -15,6 +15,7 @@
  */
 package com.intellij.protobuf.ide.settings;
 
+import com.intellij.ide.impl.ProjectUtilKt;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -101,20 +102,18 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
     if (!settings.isAutoConfigEnabled()) {
       return;
     }
-    ApplicationManager.getApplication()
-        .executeOnPooledThread(
-            () -> {
-              if (project.isDisposed()) return;
-              PbProjectSettings newSettings = configure(settings);
-              if (newSettings != null && !settings.equals(newSettings)) {
-                settings.copyState(newSettings);
-                // Using ModalityState.NON_MODAL here ensures the caches are invalidated in a
-                // write-safe context, regardless of what context we were invoked from.
-                ApplicationManager.getApplication()
-                    .invokeLater(
-                        () -> PbProjectSettings.notifyUpdated(project), ModalityState.NON_MODAL, project.getDisposed());
-              }
-            });
+    ProjectUtilKt.executeOnPooledThread(project, () -> {
+      if (project.isDisposed()) return;
+      PbProjectSettings newSettings = configure(settings);
+      if (newSettings != null && !settings.equals(newSettings)) {
+        settings.copyState(newSettings);
+        // Using ModalityState.NON_MODAL here ensures the caches are invalidated in a
+        // write-safe context, regardless of what context we were invoked from.
+        ApplicationManager.getApplication().invokeLater(() -> {
+          PbProjectSettings.notifyUpdated(project);
+        }, ModalityState.NON_MODAL, project.getDisposed());
+      }
+    });
   }
 
   @Override
