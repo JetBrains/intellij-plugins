@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 /**
  * @see JSControlFlowBuilder
  */
-class VueControlFlowBuilder(val scope: JSElement) : JSControlFlowBuilder(scope) {
+class VueControlFlowBuilder : JSControlFlowBuilder() {
   companion object {
     private const val V_IF = "v-if"
     private const val V_ELSE_IF = "v-else-if"
@@ -57,12 +57,8 @@ class VueControlFlowBuilder(val scope: JSElement) : JSControlFlowBuilder(scope) 
     addDelayedPendingEdge(owner, instruction)
   }
 
-  override fun init(scope: JSElement) {
-    // hack meant to trick JVM inheritance
-  }
-
-  init {
-    super.init(scope)
+  override fun doBuild(scope: JSElement) {
+    super.doBuild(scope)
     visitingModeOverrides.clear()
   }
 

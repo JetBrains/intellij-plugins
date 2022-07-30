@@ -15,7 +15,7 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
 
   override fun getControlFlow(scope: JSElement): ControlFlow {
-    return VueControlFlowBuilder(scope).getControlFlow()
+    return VueControlFlowBuilder().buildControlFlow(scope)
   }
 }
 

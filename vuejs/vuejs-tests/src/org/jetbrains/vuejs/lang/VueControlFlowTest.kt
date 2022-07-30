@@ -1,9 +1,9 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.codeInsight.controlflow.ControlFlowBuilder
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSExecutionScope
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.psi.xml.XmlFile
 import org.jetbrains.vuejs.codeInsight.controlflow.VueControlFlowBuilder
@@ -26,8 +26,8 @@ class VueControlFlowTest : BaseJSControlFlowTest() {
 
   fun testIfDiscriminator() = doTest()
 
-  override fun getControlFlowBuilder(scope: JSExecutionScope): ControlFlowBuilder {
-    return VueControlFlowBuilder(scope).getControlFlowBuilder()
+  override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
+    return VueControlFlowBuilder()
   }
 
   fun doTest() {
