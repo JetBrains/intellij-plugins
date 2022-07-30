@@ -1,0 +1,7 @@
+!defineEmits#null#1
+!defineExpose#void#1
+!defineProps#null#1
+!defineAsyncComponent#T#0
+!defineComponent#null#0
+!defineCustomElement#null#0
+!defineSSRCustomElement#null#0

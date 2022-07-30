@@ -314,5 +314,6 @@
     <webpackLocator implementation="org.jetbrains.vuejs.cli.VueCliWebpackConfigLocator"/>
     <!--suppress PluginXmlValidity -->
     <webpackLocator implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtWebpackConfigLocator"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueScriptCandidatesProvider$Companion"/>
   </extensions>
 </idea-plugin>
