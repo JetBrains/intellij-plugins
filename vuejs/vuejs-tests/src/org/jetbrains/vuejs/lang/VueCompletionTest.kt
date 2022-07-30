@@ -1810,6 +1810,28 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2)
   }
 
+  fun testScriptSetupGlobals() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+    myFixture.type("Pro")
+    myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+    myFixture.checkResult("""
+      <script setup>
+      defineProps()
+      </script>
+    """.trimIndent())
+  }
+
+  fun testScriptSetupGlobalsTs() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+    myFixture.type("Pro")
+    myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+    myFixture.checkResult("""
+      <script setup lang="ts">
+      defineProps()
+      </script>
+    """.trimIndent())
+  }
+
   fun testTypedComponentsImportClassic() {
     myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
     myFixture.configureByText("text.vue", "<template><Dial<caret></template>")
@@ -1894,7 +1916,7 @@ export default {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("ImportedByRoot.vue")
     myFixture.moveToOffsetBySignature("<<caret>div")
-    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter) 
+    doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCreateAppNotImported() {

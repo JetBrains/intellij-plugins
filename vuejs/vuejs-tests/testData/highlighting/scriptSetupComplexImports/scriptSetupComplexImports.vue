@@ -34,7 +34,7 @@ function printString(<warning descr="Unused parameter str">str</warning>: string
 }
 
 
-const props = <error descr="Corresponding file is not included in tsconfig.json">defineProps</error><{
+const props = defineProps<{
   fooBar: string;
   barFoo?: number;
 }>();
