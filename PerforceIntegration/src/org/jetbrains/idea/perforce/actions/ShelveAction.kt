@@ -1,15 +1,15 @@
 package org.jetbrains.idea.perforce.actions
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.AbstractVcsHelper
 import com.intellij.openapi.vcs.FilePath
+import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.VcsException
-import com.intellij.openapi.vcs.actions.VcsContext
+import com.intellij.openapi.vcs.actions.commit.AbstractCommitChangesAction
 import com.intellij.openapi.vcs.changes.*
-import com.intellij.openapi.vcs.changes.actions.AbstractCommitChangesAction
 import com.intellij.util.containers.MultiMap
 import com.intellij.vcsUtil.VcsUtil
 import org.jetbrains.idea.perforce.PerforceBundle
@@ -24,9 +24,10 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection
  */
 class ShelveAction : AbstractCommitChangesAction() {
 
-  override fun update(vcsContext: VcsContext, presentation: Presentation) {
-    val changes = vcsContext.selectedChanges
-    val project = vcsContext.project
+  override fun update(e: AnActionEvent) {
+    val changes = e.getData(VcsDataKeys.CHANGES)
+    val project = e.project
+    val presentation = e.presentation
     if (changes == null || project == null) {
       presentation.isEnabledAndVisible = false
     }
