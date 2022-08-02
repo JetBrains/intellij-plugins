@@ -30,7 +30,7 @@ class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandid
 
   override fun processCandidates(ref: String, processor: JSCandidatesProcessor) {
     if (myPlaceInfo.file.fileType == VueFileType.INSTANCE && SCRIPT_SETUP_API.contains(ref)) {
-      processor.clear()
+      processor.remove(ref)
     }
   }
 

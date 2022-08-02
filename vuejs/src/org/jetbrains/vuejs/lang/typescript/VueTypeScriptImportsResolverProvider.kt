@@ -32,7 +32,8 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
 
   override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver {
     return VueFileImportsResolver(project, config.resolveContext,
-                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR)
+                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR,
+                                  config.configFile)
   }
 
   override fun contributeResolver(project: Project,
@@ -41,6 +42,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
     if (!isVueContext(contextFile, project)) return null
 
     return VueFileImportsResolver(project, context,
-                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR)
+                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR,
+                                  contextFile)
   }
 }
