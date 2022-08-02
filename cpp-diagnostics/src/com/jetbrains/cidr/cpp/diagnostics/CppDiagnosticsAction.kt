@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.diagnostics
 
 import com.intellij.ide.actions.RevealFileAction
 import com.intellij.notification.*
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -33,6 +34,10 @@ import java.io.IOException
 class CppDiagnosticsAction : DumbAwareAction(), TroubleInfoCollector {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = getEventProject(e) != null
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread {
+    return ActionUpdateThread.EDT
   }
 
   override fun collectInfo(project: Project): String {
