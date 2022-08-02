@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.cpp.diagnostics
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -20,6 +21,10 @@ class ShowRemoteHostsInfoAction : CidrProjectAction() {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = true
+  }
+
+  override fun getActionUpdateThread(): ActionUpdateThread {
+    return ActionUpdateThread.EDT
   }
 
   override fun actionPerformed(e: AnActionEvent) {
