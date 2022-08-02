@@ -14,9 +14,6 @@ import com.intellij.util.indexing.FileContent
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-private val IMPLICIT_IMPORTS = setOf(VUE_MODULE)
-private val IMPLICIT_IMPORTS_INFO = ES6FileIncludeProvider.buildFileIncludeInfo(IMPLICIT_IMPORTS)
-
 /**
  * ES6FileIncludeProvider doesn't work for vue files but we need these files in index for building ts imports graph
  * @see ES6FileIncludeProvider
@@ -36,7 +33,7 @@ class VueES6ModuleFileIncludeProvider : FileIncludeProvider() {
   }
 
   override fun getIncludeInfos(content: FileContent): Array<FileIncludeInfo> {
-    if (!ES6FileIncludeProvider.checkTextHasFromKeyword(content)) return IMPLICIT_IMPORTS_INFO
+    if (!ES6FileIncludeProvider.checkTextHasFromKeyword(content)) return emptyArray()
 
     val psiFile = content.psiFile
     val importDeclarations = (findModule(psiFile, false)?.let { ES6ImportPsiUtil.getImportDeclarations(it) } ?: emptyList()) +
@@ -48,10 +45,7 @@ class VueES6ModuleFileIncludeProvider : FileIncludeProvider() {
       val fromClause = it.fromClause ?: return@map null
       val referenceText = fromClause.referenceText ?: return@map null
       return@map StringUtil.unquoteString(referenceText)
-    }.filterNotNull().toMutableSet()
-
-    // add implicit imports to autocomplete global symbols in script tags when no direct imports exist
-    result.addAll(IMPLICIT_IMPORTS)
+    }.filterNotNull().toSet()
 
     return ES6FileIncludeProvider.buildFileIncludeInfo(result)
   }

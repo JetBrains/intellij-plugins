@@ -1794,7 +1794,7 @@ export default {
   }
 
   fun testScriptSetupGlobalsTs() {
-    doLookupTest(VueTestModule.VUE_3_2_2)
+    doLookupTest(VueTestModule.VUE_3_2_2, dir = true)
     myFixture.type("Pro")
     myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
     myFixture.checkResult("""
