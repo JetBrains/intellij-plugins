@@ -69,7 +69,7 @@
 
     <typedHandler implementation="org.angularjs.editor.AngularJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
-
+    <directoryIndexExcludePolicy implementation="org.angular2.Angular2ExcludePolicy"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularControllerIndex"/>
