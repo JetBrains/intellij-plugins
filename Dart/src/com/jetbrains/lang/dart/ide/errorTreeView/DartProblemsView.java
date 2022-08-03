@@ -5,8 +5,6 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.*;
-import com.intellij.notification.impl.NotificationSettings;
-import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -244,9 +242,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
                 }
               }).notify(myProject);
 
-          final NotificationSettings oldSettings = NotificationsConfigurationImpl.getSettings(notification.getGroupId());
-          NotificationsConfigurationImpl.getInstanceImpl().changeSettings(oldSettings.getGroupId(), NotificationDisplayType.NONE,
-                                                                          oldSettings.isShouldLog(), oldSettings.isShouldReadAloud());
+          NotificationsConfiguration.getNotificationsConfiguration().setDisplayType(notification.getGroupId(), NotificationDisplayType.NONE);
         }
       }
     });
