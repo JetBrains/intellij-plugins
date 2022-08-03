@@ -4,19 +4,19 @@ import {Component} from "@angular/core"
 @Component({
   template: `
     {{ <warning descr="Private field privateUsed cannot be resolved when using the AOT compiler.">privateUsed</warning> }}
-    {{ <warning descr="Protected field protectedUsed cannot be resolved when using the AOT compiler.">protectedUsed</warning> }}
+    {{ protectedUsed }}
     {{ publicUsed }}
 
     <div (click)="<warning descr="Private property privateUsedSet cannot be resolved when using the AOT compiler.">privateUsedSet</warning> = 12"></div>
-    <div (click)="<warning descr="Protected property protectedUsedSet cannot be resolved when using the AOT compiler.">protectedUsedSet</warning> = 12"></div>
+    <div (click)="protectedUsedSet = 12"></div>
     <div (click)="publicUsedSet = 12"></div>
 
     {{ <warning descr="Private property privateUsedGet cannot be resolved when using the AOT compiler.">privateUsedGet</warning> }}
-    {{ <warning descr="Protected property protectedUsedGet cannot be resolved when using the AOT compiler.">protectedUsedGet</warning> }}
+    {{ protectedUsedGet }}
     {{ publicUsedGet }}
 
     {{ <warning descr="Private method privateUsedFun cannot be resolved when using the AOT compiler.">privateUsedFun</warning>() }}
-    {{ <warning descr="Protected method protectedUsedFun cannot be resolved when using the AOT compiler.">protectedUsedFun</warning>() }}
+    {{ protectedUsedFun() }}
     {{ publicUsedFun() }}
   `
 })
@@ -24,7 +24,7 @@ export class MyComponent {
   private <warning descr="Private field privateUsed cannot be resolved from the component template when using the AOT compiler">privateUsed</warning>: string;
   private privateUnused: string;
 
-  protected <warning descr="Protected field protectedUsed cannot be resolved from the component template when using the AOT compiler">protectedUsed</warning>: string;
+  protected protectedUsed: string;
   protected protectedUnused: string;
 
   publicUsed: string;
@@ -33,7 +33,7 @@ export class MyComponent {
   private set <warning descr="Private property privateUsedSet cannot be resolved from the component template when using the AOT compiler">privateUsedSet</warning>(value) {}
   private set privateUnusedSet(value) {}
 
-  protected set <warning descr="Protected property protectedUsedSet cannot be resolved from the component template when using the AOT compiler">protectedUsedSet</warning>(value) {}
+  protected set protectedUsedSet(value) {}
   protected set protectedUnusedSet(value) {}
 
   public set publicUsedSet(value) {}
@@ -42,7 +42,7 @@ export class MyComponent {
   private get <warning descr="Private property privateUsedGet cannot be resolved from the component template when using the AOT compiler">privateUsedGet</warning>() {}
   private get privateUnusedGet() {}
 
-  protected get <warning descr="Protected property protectedUsedGet cannot be resolved from the component template when using the AOT compiler">protectedUsedGet</warning>() {}
+  protected get protectedUsedGet() {}
   protected get protectedUnusedGet() {}
 
   public get publicUsedGet() {}
@@ -51,7 +51,7 @@ export class MyComponent {
   private <warning descr="Private method privateUsedFun cannot be resolved from the component template when using the AOT compiler">privateUsedFun</warning>() {}
   private privateUnusedFun() {}
 
-  protected <warning descr="Protected method protectedUsedFun cannot be resolved from the component template when using the AOT compiler">protectedUsedFun</warning>() {}
+  protected protectedUsedFun() {}
   protected protectedUnusedFun() {}
 
   public publicUsedFun() {}

@@ -34,14 +34,6 @@ public class Angular2InaccessibleMemberAotQuickFixesTest extends Angular2MultiFi
     doMultiFileTest("private.html", "private<caret>UsedGet");
   }
 
-  public void testProtectedMethodFix() {
-    doMultiFileTest("private.html", "protected<caret>UsedFun");
-  }
-
-  public void testProtectedSetterFix() {
-    doMultiFileTest("private.html", "protected<caret>UsedSet");
-  }
-
   public void testPrivateConstructorFieldFix() {
     doMultiFileTest("private.ts", "private<caret>Field");
   }

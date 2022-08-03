@@ -104,9 +104,8 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
       JSAttributeList attributes = ((JSAttributeListOwner)member).getAttributeList();
       if (attributes == null) return false;
       JSAttributeList.AccessType accessType = attributes.getAccessType();
-      return !attributes.hasModifier(JSAttributeList.ModifierType.STATIC)
-             && (accessType == JSAttributeList.AccessType.PRIVATE
-                 || accessType == JSAttributeList.AccessType.PROTECTED);
+      return !attributes.hasModifier(JSAttributeList.ModifierType.STATIC) &&
+             accessType == JSAttributeList.AccessType.PRIVATE;
     }
     return false;
   }
