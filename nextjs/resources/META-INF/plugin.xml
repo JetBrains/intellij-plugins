@@ -1,0 +1,19 @@
+<idea-plugin>
+  <!--suppress PluginXmlCapitalization -->
+  <name>Next.js Support</name>
+  <id>intellij.nextjs</id>
+  <category>JavaScript Frameworks and Tools</category>
+  <description><![CDATA[
+    <h4>Support for Next.js framework</h4>
+    <b>Features:</b>
+    <p>* Reference resolution in Link components and tags</p>
+    <p>* Auto-excluding .next directory</p>
+    ]]>
+  </description>
+  <vendor>JetBrains</vendor>
+  <depends>JavaScript</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <directoryIndexExcludePolicy implementation="com.intellij.lang.javascript.frameworks.nextjs.NextJsExcludePolicy"/>
+    <pathReferenceProvider implementation="com.intellij.lang.javascript.frameworks.nextjs.references.NextJsPathReferenceProvider"/>
+  </extensions>
+</idea-plugin>
