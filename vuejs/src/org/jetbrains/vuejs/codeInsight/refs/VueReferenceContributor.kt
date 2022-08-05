@@ -90,7 +90,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
 
     private class VueStylesheetFileReferenceSet(element: PsiElement, referenceText: String,
                                                 textRange: TextRange, vararg suitableFileTypes: FileType)
-      : StylesheetFileReferenceSet(element, referenceText, textRange, false, *suitableFileTypes) {
+      : StylesheetFileReferenceSet(element, referenceText, textRange, false, false, *suitableFileTypes) {
 
       override fun computeDefaultContexts(): MutableCollection<PsiFileSystemItem> {
         val result = super.computeDefaultContexts()
