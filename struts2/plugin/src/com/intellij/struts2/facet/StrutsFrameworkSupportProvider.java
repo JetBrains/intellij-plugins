@@ -98,7 +98,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
 
   @Override
   public boolean isEnabledForModuleBuilder(@NotNull ModuleBuilder builder) {
-    return JavaeeProjectCategory.LEGACY_MODULE_BUILDER_ID.equals(builder.getBuilderId());
+    return false;
   }
 
   @Override
