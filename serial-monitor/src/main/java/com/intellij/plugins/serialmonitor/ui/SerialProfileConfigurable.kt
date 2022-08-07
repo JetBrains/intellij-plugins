@@ -34,7 +34,8 @@ private val charsets: List<String> = //todo move most popular charsets to the to
     charset.canEncode() && charset.newEncoder().maxBytesPerChar() == 1.0f && charset.newDecoder().maxCharsPerByte() == 1.0f
   }.map(Map.Entry<String, Any>::key)
 
-private val StandardBauds: List<Int> = listOf(300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400)
+private val StandardBauds: List<Int> = listOf(300, 600, 1200, 2400, 4800, 9600, 19200, 28800, 38400, 57600, 76800, 115200, 230400,
+                                              460800, 576000, 921600)
 
 private val SerialBits: List<Int> = listOf(8, 7, 6, 5)
 
@@ -104,8 +105,10 @@ class SerialProfileConfigurable(var name: @NlsContexts.ConfigurableName String,
           }.layout(RowLayout.PARENT_GRID)
         }
         row {
-          comboBox(StandardBauds).bindItem(portProfile::baudRate.toNullableProperty(0)).label(
-            SerialMonitorBundle.message("label.baud")).focused()
+          comboBox(StandardBauds).applyToComponent { isEditable = true }
+            .bindItem(portProfile::baudRate.toNullableProperty(0))
+            .label(SerialMonitorBundle.message("label.baud"))
+            .focused()
           comboBox(SerialBits).bindItem(portProfile::bits.toNullableProperty(0)).label(SerialMonitorBundle.message("label.bits"))
         }.layout(RowLayout.PARENT_GRID)
         row {
