@@ -105,7 +105,7 @@ class SerialProfileConfigurable(var name: @NlsContexts.ConfigurableName String,
           }.layout(RowLayout.PARENT_GRID)
         }
         row {
-          comboBox(StandardBauds).applyToComponent { isEditable = true }
+          comboBox(StandardBauds)
             .bindItem(portProfile::baudRate.toNullableProperty(0))
             .label(SerialMonitorBundle.message("label.baud"))
             .focused()
