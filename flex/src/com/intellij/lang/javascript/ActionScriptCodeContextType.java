@@ -11,10 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ActionScriptCodeContextType extends TemplateContextType implements JSLikeTemplateContextType {
 
-  @NonNls private static final String ACTION_SCRIPT = "ACTION_SCRIPT";
-
   public ActionScriptCodeContextType() {
-    super(ACTION_SCRIPT, FlexBundle.message("actionscript.template.context.type"));
+    super(FlexBundle.message("actionscript.template.context.type"));
   }
 
   @Override

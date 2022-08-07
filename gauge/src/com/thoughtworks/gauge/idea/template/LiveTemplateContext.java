@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 final class LiveTemplateContext extends TemplateContextType {
   LiveTemplateContext() {
-    super("GAUGE", GaugeBundle.message("gauge.inspection.group"));
+    super(GaugeBundle.message("gauge.inspection.group"));
   }
 
   @Override

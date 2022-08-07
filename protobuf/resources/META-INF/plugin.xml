@@ -152,17 +152,17 @@
     <useScopeEnlarger implementation="com.intellij.protobuf.lang.resolve.PbUseScopeEnlarger"/>
 
     <!-- Live templates -->
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext"/>
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTO_ENUM" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$EnumBody"/>
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTO_EXTEND" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$ExtendBody"/>
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTO_MESSAGE" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$MessageBody"/>
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTO_ONEOF" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$OneofBody"/>
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTO_SERVICE" baseContextId="PROTO"
       implementation="com.intellij.protobuf.ide.template.PbLanguageContext$ServiceBody"/>
   </extensions>
 
@@ -209,7 +209,7 @@
     <templateCompletionProcessor implementation="com.intellij.protobuf.ide.template.SymbolTemplateCompletionProcessor"/>
 
     <!-- Live templates -->
-    <liveTemplateContext
+    <liveTemplateContext contextId="PROTOTEXT"
       implementation="com.intellij.protobuf.ide.template.PbTextLanguageContext"/>
 
     <dependencySupport coordinate="com.google.protobuf:protobuf-java" kind="java"/>

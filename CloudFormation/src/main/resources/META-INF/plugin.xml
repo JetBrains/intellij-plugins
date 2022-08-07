@@ -83,8 +83,8 @@
     <internalFileTemplate name="AWS CloudFormation Template (JSON)" />
     <internalFileTemplate name="AWS CloudFormation Template (YAML)" />
 
-    <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
-    <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
+    <liveTemplateContext contextId="AWS_CLOUD_FORMATION_JSON" baseContextId="JSON" implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
+    <liveTemplateContext contextId="AWS_CLOUD_FORMATION_YAML" implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
     <defaultLiveTemplates file="liveTemplates/cloudformation_json.xml"/>
     <defaultLiveTemplates file="liveTemplates/cloudformation_yaml.xml"/>
 

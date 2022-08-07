@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 public class OgnlTemplateContextType extends TemplateContextType {
 
   public OgnlTemplateContextType() {
-    super(OgnlLanguage.ID, OgnlLanguage.ID);
+    super(OgnlLanguage.ID);
   }
 
   @Override

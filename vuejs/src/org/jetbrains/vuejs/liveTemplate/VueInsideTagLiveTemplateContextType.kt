@@ -5,11 +5,7 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.VueBundle
 
-private const val CONTEXT_TYPE = "VUE_INSIDE_TAG"
-
-class VueInsideTagLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE,
-                                                                VueBundle.message("vue.live.template.context.template.tag.element"),
-                                                                VueBaseLiveTemplateContextType::class.java) {
+class VueInsideTagLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.template.tag.element")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return VueBaseLiveTemplateContextType.evaluateContext(file, offset, forAttributeInsert = true)
   }

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 class PbTextLanguageContext extends TemplateContextType {
 
   PbTextLanguageContext() {
-    super("PROTOTEXT", PbIdeBundle.message("prototext.name.sentence"));
+    super(PbIdeBundle.message("prototext.name.sentence"));
   }
 
   @Override

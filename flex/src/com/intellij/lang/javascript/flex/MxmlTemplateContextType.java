@@ -5,6 +5,6 @@ import com.intellij.javascript.flex.FlexApplicationComponent;
 
 public class MxmlTemplateContextType extends FileTypeBasedContextType {
   protected MxmlTemplateContextType() {
-    super("MXML", FlexBundle.message("dialog.edit.template.checkbox.mxml"), FlexApplicationComponent.MXML);
+    super(FlexBundle.message("dialog.edit.template.checkbox.mxml"), FlexApplicationComponent.MXML);
   }
 }

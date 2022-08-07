@@ -73,7 +73,7 @@
     <spellchecker.support language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.spellchecker.GherkinSpellcheckerStrategy"/>
     <lang.inspectionSuppressor language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.inspections.model.GherkinInspectionSuppressor"/>
 
-    <liveTemplateContext implementation="org.jetbrains.plugins.cucumber.GherkinLiveTemplateContextType"/>
+    <liveTemplateContext contextId="CUCUMBER_FEATURE_FILE" implementation="org.jetbrains.plugins.cucumber.GherkinLiveTemplateContextType"/>
 
     <extendWordSelectionHandler implementation="org.jetbrains.plugins.cucumber.actions.GherkinStepParameterSelectioner"/>
 

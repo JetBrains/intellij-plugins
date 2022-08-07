@@ -91,7 +91,9 @@
     <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
     <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
     <defaultLiveTemplates file="liveTemplates/gaugeTemplates.xml"/>
-    <liveTemplateContext implementation="com.thoughtworks.gauge.idea.template.LiveTemplateContext"/>
+
+    <liveTemplateContext contextId="GAUGE" implementation="com.thoughtworks.gauge.idea.template.LiveTemplateContext"/>
+
     <fileBasedIndex implementation="com.thoughtworks.gauge.stub.GaugeFileStubIndex"/>
     <lang.commenter language="Specification" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
     <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>

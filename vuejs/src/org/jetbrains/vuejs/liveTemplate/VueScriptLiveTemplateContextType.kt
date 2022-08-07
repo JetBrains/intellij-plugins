@@ -10,10 +10,7 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Companion.evaluateContext
 import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Companion.isTagEnd
 
-private const val CONTEXT_TYPE = "VUE_SCRIPT"
-
-class VueScriptLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, VueBundle.message("vue.live.template.context.script.tag"),
-                                                             VueBaseLiveTemplateContextType::class.java) {
+class VueScriptLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.live.template.context.script.tag")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return evaluateContext(file, offset,
                            scriptContextEvaluator = { isTagEnd(it) || it.parent is JSEmbeddedContent && it is JSExpressionStatement },

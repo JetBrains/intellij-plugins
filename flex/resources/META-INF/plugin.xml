@@ -124,9 +124,9 @@
     <internalFileTemplate name="ActionScript Interface"/>
     <internalFileTemplate name="Flex 3 Component"/>
     <internalFileTemplate name="Flex 4 Component"/>
-    <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
-    <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
-    <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptStatementContextType"/>
+    <liveTemplateContext contextId="ACTION_SCRIPT" implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
+    <liveTemplateContext contextId="MXML" implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
+    <liveTemplateContext contextId="AS_STATEMENT" baseContextId="ACTION_SCRIPT" implementation="com.intellij.lang.javascript.ActionScriptStatementContextType"/>
     <defaultLiveTemplates file="liveTemplates/actionscript_iterations.xml"/>
     <defaultLiveTemplates file="liveTemplates/actionscript_miscellaneous.xml"/>
     <liveTemplateOptionalProcessor implementation="com.intellij.lang.javascript.JSShortenFQNamesProcessor"/>

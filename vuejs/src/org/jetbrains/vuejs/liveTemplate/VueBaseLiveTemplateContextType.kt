@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.liveTemplate
 
-import com.intellij.codeInsight.template.EverywhereContextType
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSSourceElement
@@ -16,8 +15,7 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueBaseLiveTemplateContextType : TemplateContextType("Vue", VueBundle.message("vue.documentation.vue"),
-                                                           EverywhereContextType::class.java) {
+class VueBaseLiveTemplateContextType : TemplateContextType(VueBundle.message("vue.documentation.vue")) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return VueFileType.INSTANCE == file.fileType
   }

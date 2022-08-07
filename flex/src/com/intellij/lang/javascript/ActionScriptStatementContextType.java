@@ -4,7 +4,5 @@ package com.intellij.lang.javascript;
 import com.intellij.lang.javascript.liveTemplates.JSStatementContextTypeBase;
 
 public final class ActionScriptStatementContextType extends JSStatementContextTypeBase {
-  public ActionScriptStatementContextType() {
-    super("AS_STATEMENT", ActionScriptCodeContextType.class);
-  }
+
 }

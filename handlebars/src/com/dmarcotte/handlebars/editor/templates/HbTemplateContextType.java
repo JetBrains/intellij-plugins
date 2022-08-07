@@ -1,6 +1,5 @@
 package com.dmarcotte.handlebars.editor.templates;
 
-
 import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.HbHighlighter;
 import com.dmarcotte.handlebars.HbLanguage;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class HbTemplateContextType extends TemplateContextType {
   protected HbTemplateContextType() {
-    super("Handlebars", HbBundle.message("template.context.name"));
+    super(HbBundle.message("template.context.name"));
   }
 
   @Override

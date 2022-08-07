@@ -29,7 +29,7 @@
     <annotator language="OGNL"
                implementationClass="com.intellij.lang.ognl.highlight.OgnlHighlightingAnnotator"/>
 
-    <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
+    <liveTemplateContext contextId="OGNL" implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/ognl"/>
     <defaultLiveTemplates file="liveTemplates/ognl-struts2"/>
 
