@@ -30,6 +30,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.annotate.AnnotationProvider;
@@ -545,6 +546,10 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Override
   public RootsConvertor getCustomConvertor() {
+    if (Registry.is("p4.new.project.mappings.handling")) {
+      return null;
+    }
+
     return new RootsConvertor() {
       @NotNull
       @Override

@@ -86,6 +86,7 @@
     <vcsCheckinHandlerFactory implementation="org.jetbrains.idea.perforce.application.PerforceCheckinHandlerFactory"/>
     <vcsPopupProvider implementation="org.jetbrains.idea.perforce.actions.PerforceQuickListContentProvider"/>
     <search.projectOptionsTopHitProvider implementation="org.jetbrains.idea.perforce.perforce.PerforceOptionsTopHitProvider"/>
+    <vcsRootChecker implementation="org.jetbrains.idea.perforce.perforce.P4RootChecker"/>
 
     <projectService serviceInterface="org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI"
     serviceImplementation="org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager"/>
@@ -96,5 +97,8 @@
 
     <registryKey key="p4.ignore.all.potentially.ignored" defaultValue="true"
                  description="Consider all excluded files as ignored and do not check them via native ignores"/>
+
+    <registryKey key="p4.new.project.mappings.handling" defaultValue="true" restartRequired="true"
+                 description="Use new approach to automatic P4 root detection for &lt;Project&gt; mapping"/>
   </extensions>
 </idea-plugin>

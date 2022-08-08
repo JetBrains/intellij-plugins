@@ -8,6 +8,7 @@ import com.intellij.openapi.diff.impl.patch.formove.FilePathComparator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.AbstractFilterChildren;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -22,10 +23,7 @@ import org.jetbrains.idea.perforce.perforce.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author irengrig
@@ -46,7 +44,9 @@ public class P4ConnectionCalculator {
     final PerforcePhysicalConnectionParameters physicalParameters =
       new PerforcePhysicalConnectionParameters(settings.getPathToExec(), settings.getPathToIgnore(), myProject, settings.getServerTimeout(), settings.getCharsetName());
 
-    final List<VirtualFile> detailedVcsMappings = vcsManager.getDetailedVcsMappings(vcs);
+    final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
+                                                  ? ContainerUtil.newArrayList(vcsManager.getRootsUnderVcs(vcs))
+                                                  : vcsManager.getDetailedVcsMappings(vcs);
 
     final String p4ConfigFileName =
       detailedVcsMappings.isEmpty()
