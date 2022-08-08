@@ -42,8 +42,7 @@ import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 
 class VueInjector : MultiHostInjector {
-  companion object {
-
+  internal object Holder {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
@@ -118,7 +117,7 @@ class VueInjector : MultiHostInjector {
     }
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
-      val braces = BRACES_FACTORY.`fun`(context) ?: return
+      val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
       injectInXmlTextByDelimiters(registrar, context, VueJSLanguage.INSTANCE,
                                   braces.getFirst(), braces.getSecond(),
                                   VueJSParserDefinition.INTERPOLATION)
@@ -136,7 +135,7 @@ class VueInjector : MultiHostInjector {
                      ?.let {
                        Pair(it.first, it.second)
                      }
-                   ?: BRACES_FACTORY.`fun`(context)
+                   ?: Holder.BRACES_FACTORY.`fun`(context)
                    ?: Pair(JSInjectionBracesUtil.DEFAULT_START, JSInjectionBracesUtil.DEFAULT_END)
       JSInjectionUtil.injectInQuotedLiteral(registrar,
                                             VueLanguage.INSTANCE,

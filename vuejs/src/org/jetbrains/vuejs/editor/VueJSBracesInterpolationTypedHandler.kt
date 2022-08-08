@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesCompleter =
-  VueInterpolationBracesCompleter(VueInjector.BRACES_FACTORY)
+  VueInterpolationBracesCompleter(VueInjector.Holder.BRACES_FACTORY)
 
 class VueJSBracesInterpolationTypedHandler : TypedHandlerDelegate() {
   override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
