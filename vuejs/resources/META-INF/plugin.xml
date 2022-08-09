@@ -58,7 +58,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
-    <psi.referenceContributor implementation="org.jetbrains.vuejs.css.refs.VueCssReferencesContributor"/>
     <html.attributeValueProvider implementation="org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider"/>
     <fileType name="Vue.js" extensions="vue" language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.VueFileType"
               fieldName="INSTANCE"/>
@@ -71,6 +70,8 @@
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
     <psi.referenceContributor language="JavaScript"
                               implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
+    <psi.referenceContributor language="VueJS" implementation="org.jetbrains.vuejs.css.refs.VueCssReferencesContributor"/>
+    <psi.referenceContributor language="CSS" implementation="org.jetbrains.vuejs.css.refs.VueCssReferencesContributor"/>
     <pom.declarationSearcher implementation="org.jetbrains.vuejs.codeInsight.refs.VuePomDeclarationSearcher"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <pathReferenceProvider implementation="org.jetbrains.vuejs.libraries.vueLoader.VueLoaderPathReferenceProvider"/>
