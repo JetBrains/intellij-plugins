@@ -464,7 +464,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   /**
-   * @returns true if line separator was updated
+   * @return true if line separator was updated
    */
   private static boolean setDetectedLineSeparator(@NotNull Project project,
                                                   @NotNull VirtualFile vFile,

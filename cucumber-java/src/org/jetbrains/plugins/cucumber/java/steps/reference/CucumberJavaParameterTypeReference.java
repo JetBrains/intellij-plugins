@@ -21,7 +21,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
  * Provides reference from Cucumber Expression to its definition. For example, from "iso-date" in step definition:
  * <pre><code>
  *
- * @Given("today is {iso-date}")
+ * &#064;Given("today  is {iso-date}")
  * public void todayIs(Date date) throws Throwable {
  *   ....
  * }
