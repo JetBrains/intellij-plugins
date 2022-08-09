@@ -146,9 +146,6 @@ public class Angular2SelectorMatcher<T> {
     return result;
   }
 
-  /**
-   * @internal
-   */
   private boolean _matchTerminal(@Nullable Map<String, List<SelectorContext<T>>> map,
                                  @Nullable String name,
                                  @NotNull Angular2DirectiveSimpleSelector cssSelector,
@@ -169,9 +166,6 @@ public class Angular2SelectorMatcher<T> {
     return result;
   }
 
-  /**
-   * @internal
-   */
   private boolean _matchPartial(@Nullable Map<String, Angular2SelectorMatcher<T>> map,
                                 @Nullable String name,
                                 @NotNull Angular2DirectiveSimpleSelector cssSelector,
