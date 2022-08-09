@@ -122,7 +122,6 @@ public abstract class AbstractStepDefinition {
 
   /**
    * Set new value for step definitions (most likely provided by refactor->rename)
-   * @param newValue
    */
   public void setCucumberRegex(@NotNull final String newValue) {
   }

@@ -112,8 +112,6 @@ public final class StreamGobbler implements CancellableRunnable {
 
   /**
    * Should be called only once, since it might be backed by temp file which is immediately deleted
-   * @param consumer
-   * @throws IOException
    */
   public void allowSafeStreamUsage(final ThrowableConsumer<InputStream, IOException> consumer) throws IOException {
     if (! myResultUsedOnce) {

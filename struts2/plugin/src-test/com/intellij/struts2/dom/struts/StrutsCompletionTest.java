@@ -56,7 +56,6 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
   /**
    * {@link  com.intellij.struts2.dom.struts.strutspackage.InterceptorRefResolveConverter}
    *
-   * @throws Throwable On any errors.
    */
   public void testCompletionVariantsInterceptorRef() {
     performCompletionVariantTest("struts-completionvariants-interceptor-ref.xml",
@@ -71,7 +70,6 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
   /**
    * {@link  com.intellij.struts2.dom.struts.action.ActionMethodConverter}
    *
-   * @throws Throwable On any errors.
    */
   public void testCompletionVariantsActionMethod() {
     myFixture.copyFileToProject("ActionClass.java");

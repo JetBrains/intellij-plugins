@@ -39,8 +39,6 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
 
   /**
    * Looks for GherkinTableRow where the caret is located
-   * @param editor
-   * @param file
    * @return GherkinTableRow if caret is inside row, null otherwise
    */
   @Nullable
@@ -112,7 +110,6 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
   /**
    * Calculates number of column where the caret is located
    * @param row where to look for
-   * @param caretPosition
    * @return number of column
    */
   private static int getColumnNumber(@NotNull final GherkinTableRow row, final int caretPosition) {
@@ -136,7 +133,6 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
   /**
    * Calculates where next Pipe symbol should be
    * @param row a row above current
-   * @param columnNumber
    * @return offset in parent that corresponds preferred position of typed pipe symbol
    */
   private static int getPreferredPipeOffset(@NotNull final GherkinTableRow row, final int columnNumber) {

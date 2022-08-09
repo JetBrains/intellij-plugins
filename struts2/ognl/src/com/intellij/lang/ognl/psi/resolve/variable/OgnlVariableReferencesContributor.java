@@ -24,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class OgnlVariableReferencesContributor {
   /**
-   * @param element
-   * @param containingFile
-   * @param processor
    * @return {@code false} to stop processing.
    */
   public abstract boolean process(@NotNull PsiElement element,

@@ -239,7 +239,6 @@ public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
 
   /**
    * @param relatedPath - "/directory"
-   * @throws IOException
    */
   private void doTest(String relatedPath) throws IOException {
     Util.doParserTest(getTestName(true), getProject(), getDataSubpath() + relatedPath + "/");

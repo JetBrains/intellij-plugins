@@ -37,7 +37,6 @@ abstract class ValidationLightHighlightingTestCase extends BasicLightHighlightin
    * Performs highlighting test for the given validation.xml file.
    *
    * @param validationXmlFileName Filename of validation.xml to check.
-   * @throws Throwable On any errors.
    */
   protected void performHighlightingTest(@NonNls final String validationXmlFileName) {
     myFixture.testHighlighting(true, false, false, validationXmlFileName);
@@ -48,7 +47,6 @@ abstract class ValidationLightHighlightingTestCase extends BasicLightHighlightin
    *
    * @param validationXmlFileName Filename of validation.xml to check.
    * @param expectedItems         Expected completion variants.
-   * @throws Throwable On any errors.
    */
   protected void performCompletionVariantTest(@NonNls final String validationXmlFileName,
                                               @NonNls final String... expectedItems) {

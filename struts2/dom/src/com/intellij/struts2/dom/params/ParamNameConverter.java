@@ -43,8 +43,6 @@ public abstract class ParamNameConverter extends BeanPropertyPathConverterBase {
      * Returns custom references or empty array if not applicable.
      *
      * @param nameAttributeValue    "name" attribute.
-     * @param paramsElement
-     * @return
      */
     public abstract PsiReference @NotNull [] getCustomReferences(final XmlAttributeValue nameAttributeValue, final DomElement paramsElement);
   }

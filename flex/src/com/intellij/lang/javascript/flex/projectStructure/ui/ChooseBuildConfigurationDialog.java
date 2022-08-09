@@ -44,8 +44,6 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
   private final boolean myAllowEmptySelection;
 
   /**
-   * @param project
-   * @param filter
    * @return {@code null} if there's no applicable BC configurables according to the filter provided
    */
   @Nullable

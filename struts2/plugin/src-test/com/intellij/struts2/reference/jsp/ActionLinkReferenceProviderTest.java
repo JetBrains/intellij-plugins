@@ -86,7 +86,6 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
    *
    * @param filename   File to check.
    * @param actionName Name of the Action to resolve to.
-   * @throws Throwable On errors.
    */
   private void checkActionReference(final String filename, final String actionName) {
     final PsiReference psiReference = myFixture.getReferenceAtCaretPositionWithAssertion(filename);

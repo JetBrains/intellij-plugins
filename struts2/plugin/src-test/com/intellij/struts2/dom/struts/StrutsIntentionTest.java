@@ -36,7 +36,6 @@ public class StrutsIntentionTest extends StrutsLightHighlightingTestCase {
   /**
    * Check {@link com.intellij.struts2.dom.struts.action.ActionMethodConverter}.
    *
-   * @throws Throwable Any exceptions.
    */
   public void testCreateActionMethodIntention() {
     createStrutsFileSet("struts-action-method.xml");

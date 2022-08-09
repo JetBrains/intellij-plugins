@@ -84,7 +84,6 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   }
 
   /**
-   * @throws Throwable On errors.
    * @see com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor
    */
   public void testActionPath() {
@@ -92,7 +91,6 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   }
 
   /**
-   * @throws Throwable On errors.
    * @see com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider
    */
   public void testActionPathFQ() {
@@ -102,14 +100,12 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
   /**
    * {@link com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor}
    *
-   * @throws Throwable On errors.
    */
   public void testActionChain() {
     performHighlightingTest("struts-actionchain.xml");
   }
 
   /**
-   * @throws Throwable On errors.
    * @see com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor
    */
   public void testActionRedirect() {

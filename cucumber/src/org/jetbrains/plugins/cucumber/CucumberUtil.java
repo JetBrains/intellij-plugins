@@ -419,7 +419,6 @@ public final class CucumberUtil {
    * will be transformed to
    *   Given project with 10 participants
    *
-   * @param stepName
    * @param outlineTableMap mapping from header to the first data row
    * @return OutlineStepSubstitution that contains result step name and can calculate offsets
    */

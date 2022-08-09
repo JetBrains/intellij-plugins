@@ -105,9 +105,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   */
 
   /**
-   * @param componentQualifiedName
    * @param originalFile           = getContainingFile().getOriginalFile();
-   * @return
    */
   public static Collection<CfmlComponent> resolveFromQualifiedName(String componentQualifiedName, @NotNull CfmlFile originalFile) {
     List<CfmlComponent> result = new ArrayList<>();

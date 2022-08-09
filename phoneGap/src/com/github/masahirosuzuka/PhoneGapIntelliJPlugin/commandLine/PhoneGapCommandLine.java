@@ -206,7 +206,6 @@ public final class PhoneGapCommandLine {
   }
 
   /**
-   * @param path
    * @return true - phonegap / false - not phonegap / null - cannot detect
    */
   @Nullable

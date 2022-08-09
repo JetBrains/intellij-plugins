@@ -22,7 +22,6 @@ public class HbFormatterSampleFileTest extends HbFormatterTest {
   /**
    * Test out formatting with a non-HTML template data language
    *
-   * @throws Exception
    */
   public void testSampleFileWithCustomTemplateDataLang()
     throws Exception {

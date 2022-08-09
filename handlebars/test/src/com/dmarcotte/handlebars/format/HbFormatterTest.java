@@ -63,7 +63,6 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    * Passes {@link com.intellij.testFramework.UsefulTestCase#getTestName(boolean)}
    * as a parameter to {@link #doFileBasedTest(java.lang.String)}
    *
-   * @throws Exception
    */
   void doFileBasedTest() throws Exception {
     doFileBasedTest(getTestName(false) + ".hbs");
@@ -77,7 +76,6 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    * the test will look for {@link #TEST_DATA_PATH}/TestFile_expected.hbs to validate the results).
    *
    * @param fileNameBefore The name of the file to test (must have the '.hbs' extension).
-   * @throws Exception
    */
   void doFileBasedTest(@NonNls String fileNameBefore) throws Exception {
     doFileBasedTest(fileNameBefore, HbLanguage.getDefaultTemplateLang());
@@ -89,7 +87,6 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    *
    * @param fileNameBefore           The name of the file to test
    * @param templateDataLanguageType The LanguageFileType of the templated file
-   * @throws Exception
    */
   void doFileBasedTest(@NonNls String fileNameBefore, LanguageFileType templateDataLanguageType) throws Exception {
     String extension = FileUtilRt.getExtension(fileNameBefore);
@@ -111,7 +108,6 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    * @param beforeText               The text run the formatter on
    * @param textAfter                The expected result after running the formatter
    * @param templateDataLanguageType The templated language of the file
-   * @throws IncorrectOperationException
    */
   void doTextTest(final String beforeText, String textAfter, String extension, LanguageFileType templateDataLanguageType) throws IncorrectOperationException {
     // define action to run "Reformat Code" on the whole "file" defined by beforeText

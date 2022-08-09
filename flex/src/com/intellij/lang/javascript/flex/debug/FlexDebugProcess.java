@@ -751,10 +751,8 @@ public class FlexDebugProcess extends XDebugProcess {
    * <li>[4] in the whole project with libraries (prefer BC scope)</li>
    * </ul>
    *
-   * @param fileName
    * @param packageName used as auxiliary information if there are more than one file with the same name.
    *                    {@code null} means that we don't have information about package
-   * @param id
    */
   @Nullable
   VirtualFile findFileByNameOrId(final @NotNull String fileName, @Nullable String packageName, final @Nullable String id) {

@@ -36,7 +36,6 @@ public abstract class StrutsLightHighlightingTestCase extends BasicLightHighligh
    * Performs highlighting test for the given struts.xml file(s).
    *
    * @param strutsXmlFileNames Filename(s) of struts.xml to check.
-   * @throws Throwable On any errors.
    */
   protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) {
     createStrutsFileSet(strutsXmlFileNames);
@@ -48,7 +47,6 @@ public abstract class StrutsLightHighlightingTestCase extends BasicLightHighligh
    *
    * @param strutsXmlFileName Filename of struts.xml to check.
    * @param expectedItems     Expected completion variants.
-   * @throws Throwable On any errors.
    */
   protected void performCompletionVariantTest(@NonNls final String strutsXmlFileName,
                                               @NonNls final String... expectedItems) {
