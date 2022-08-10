@@ -9,6 +9,7 @@ import com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.util.LineSeparator;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,15 +74,15 @@ public class PrettierConfig {
   public void install(@NotNull Project project) {
     JSCodeStyleUtil.updateProjectCodeStyle(project, newSettings -> {
       newSettings.LINE_SEPARATOR = this.lineSeparator;
-      PrettierCodeStyleInstaller.EP_NAME.getExtensionList().stream().forEach(installer -> installer.install(project, this, newSettings));
+      PrettierCodeStyleInstaller.EP_NAME.getExtensionList().forEach(installer -> installer.install(project, this, newSettings));
     });
   }
 
   public boolean isInstalled(@NotNull Project project) {
     CodeStyleSettings settings = CodeStyle.getSettings(project);
     if (!StringUtil.equals(settings.LINE_SEPARATOR, this.lineSeparator)) return false;
-    return PrettierCodeStyleInstaller.EP_NAME.getExtensionList().stream()
-      .allMatch(installer -> installer.isInstalled(project, this, settings));
+    return ContainerUtil.and(PrettierCodeStyleInstaller.EP_NAME.getExtensionList(),
+                             installer -> installer.isInstalled(project, this, settings));
   }
 
   public PrettierConfig mergeWith(@Nullable Map<String, Object> map) {
