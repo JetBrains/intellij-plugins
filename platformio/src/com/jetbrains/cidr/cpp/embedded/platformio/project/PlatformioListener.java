@@ -47,8 +47,7 @@ public class PlatformioListener implements AsyncFileListener, StartupActivity {
     if (state != PlatformioService.State.NONE) {
       List<VirtualFile> platformioNonCmakeRoots = Stream.of(ProjectRootManager.getInstance(project).getContentRoots())
         .filter(root -> root.findChild(PlatformioFileType.FILE_NAME) != null)
-        .filter(root -> root.findChild("CMakeLists.txt") == null)
-        .collect(Collectors.toList());
+        .filter(root -> root.findChild("CMakeLists.txt") == null).toList();
       if (!platformioNonCmakeRoots.isEmpty()) {
         boolean confirmCMakeCreate = Messages.showYesNoDialog(
           project,

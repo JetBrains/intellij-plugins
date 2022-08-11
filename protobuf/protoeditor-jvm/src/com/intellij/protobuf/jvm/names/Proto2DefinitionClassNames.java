@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.util.QualifiedName;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -157,7 +158,7 @@ public class Proto2DefinitionClassNames {
             .stream()
             .filter(PbMessageType.class::isInstance)
             .map(PbMessageType.class::cast)
-            .collect(Collectors.toList());
+            .toList();
     for (PbMessageType message : messagesToVisit) {
       if (messageHasConflictingOuterClassName(message, outerClassName)) {
         return true;
@@ -170,7 +171,7 @@ public class Proto2DefinitionClassNames {
       PbMessageType message, String outerClassName) {
     Multimap<String, PbSymbol> symbolMap = message.getSymbolMap();
     Collection<PbSymbol> matches = symbolMap.get(outerClassName);
-    if (matches.stream().anyMatch(PbNamedTypeElement.class::isInstance)) {
+    if (ContainerUtil.exists(matches, PbNamedTypeElement.class::isInstance)) {
       return true;
     }
     List<PbMessageType> messagesToVisit =
@@ -179,7 +180,7 @@ public class Proto2DefinitionClassNames {
             .stream()
             .filter(PbMessageType.class::isInstance)
             .map(PbMessageType.class::cast)
-            .collect(Collectors.toList());
+            .toList();
     for (PbMessageType nestedMessage : messagesToVisit) {
       if (messageHasConflictingOuterClassName(nestedMessage, outerClassName)) {
         return true;

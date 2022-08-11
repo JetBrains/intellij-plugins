@@ -135,7 +135,7 @@ public final class GenerateNgAddCompatibleList {
         }
       }
       return null;
-    }).filter(r -> r != null).collect(Collectors.toList());
+    }).filter(r -> r != null).toList();
 
     System.out.println("\nFound " + schematicsPkgs.size() + " packages which support schematics.");
     progress.set(0);

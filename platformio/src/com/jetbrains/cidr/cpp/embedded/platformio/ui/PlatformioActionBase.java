@@ -92,7 +92,7 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
     UPLOADFS;
 
     public static List<String> valuesList() {
-      return Stream.of(values()).map(Enum::name).collect(Collectors.toUnmodifiableList());
+      return Stream.of(values()).map(Enum::name).toList();
     }
   }
 

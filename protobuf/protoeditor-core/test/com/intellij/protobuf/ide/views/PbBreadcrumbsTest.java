@@ -75,16 +75,14 @@ public class PbBreadcrumbsTest extends PbCodeInsightFixtureTestCase {
     final CaretModel caretModel = myFixture.getEditor().getCaretModel();
 
     List<String> outputs = new ArrayList<>();
-    List<Integer> offsets =
-        caretModel.getAllCarets().stream().map(Caret::getOffset).collect(Collectors.toList());
+    List<Integer> offsets = ContainerUtil.map(caretModel.getAllCarets(), Caret::getOffset);
     for (int offset : offsets) {
       caretModel.moveToOffset(offset);
       List<BreadcrumbsItem> breadcrumbs = getBreadcrumbs(myFixture);
       if (breadcrumbs.isEmpty()) {
         outputs.add("[]");
       } else {
-        outputs.add(
-            breadcrumbs.stream().map(BreadcrumbsItem::toString).collect(Collectors.joining()));
+        outputs.add(breadcrumbs.stream().map(BreadcrumbsItem::toString).collect(Collectors.joining()));
       }
     }
 
