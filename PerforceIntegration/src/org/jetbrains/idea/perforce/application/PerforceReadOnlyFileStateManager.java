@@ -1,7 +1,7 @@
 package org.jetbrains.idea.perforce.application;
 
-import com.intellij.ide.FrameStateListener;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationActivationListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -14,6 +14,7 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.vcsUtil.VcsUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +31,9 @@ public final class PerforceReadOnlyFileStateManager {
   private final ProjectLevelVcsManager myVcsManager;
   private final PerforceUnversionedTracker myUnversionedTracker;
   private final Object myLock = new Object();
-  private final FrameStateListener myFrameStateListener = new FrameStateListener() {
+  private final ApplicationActivationListener myFrameStateListener = new ApplicationActivationListener() {
     @Override
-    public void onFrameDeactivated() {
+    public void applicationDeactivated(@NotNull IdeFrame ideFrame) {
       processFocusLost();
     }
   };
@@ -65,7 +66,7 @@ public final class PerforceReadOnlyFileStateManager {
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVfsListener(), parentDisposable);
 
     MessageBusConnection appConnection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
-    appConnection.subscribe(FrameStateListener.TOPIC, myFrameStateListener);
+    appConnection.subscribe(ApplicationActivationListener.TOPIC, myFrameStateListener);
 
     connection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, scheduleTotalRescan);
   }
