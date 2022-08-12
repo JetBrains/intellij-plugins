@@ -15,7 +15,7 @@ open class NextJsMoveTest: JSMoveTestBase()  {
   }
 
   override fun getTestDataPath(): String {
-    return PathManager.getHomePath() + "/contrib/nextjs/testData/"
+    return NextJsTestUtil.getTestDataPath()
   }
 
   override fun getTestRoot(): String {

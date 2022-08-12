@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.amd.JSModuleReference
 import com.intellij.lang.javascript.frameworks.html.getFixedDirectories
 import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
+import com.intellij.lang.javascript.frameworks.JSRouteUtil
 import com.intellij.openapi.paths.PathReference
 import com.intellij.openapi.paths.PathReferenceProviderBase
 import com.intellij.openapi.util.TextRange
@@ -13,8 +14,6 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
-
-private val routes = setOf("pages", "routes")
 
 class NextJsPathReferenceProvider : PathReferenceProviderBase() {
   override fun createReferences(psiElement: PsiElement,
@@ -54,7 +53,7 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
       val defaultContexts: Collection<PsiFileSystemItem> = super.computeDefaultContexts()
       val file: PsiFileSystemItem = element.containingFile?.originalFile ?: return defaultContexts
 
-      val items = getFixedDirectories(file, routes)
+      val items = getFixedDirectories(file, JSRouteUtil.ROUTES)
       if (items.isEmpty()) return defaultContexts
 
       return items.toSet() + defaultContexts.toSet()
