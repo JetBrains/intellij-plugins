@@ -21,22 +21,18 @@ internal val SCRIPT_SETUP_API = setOf(
 
 class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
   override fun getNames(keyFilter: Predicate<in String>): Set<String> {
-    if (myPlaceInfo.file.fileType == VueFileType.INSTANCE) {
-      return SCRIPT_SETUP_API.filter { keyFilter.test(it) }.toSet()
-    }
-
-    return emptySet()
+    return SCRIPT_SETUP_API.filter { keyFilter.test(it) }.toSet()
   }
 
   override fun processCandidates(ref: String, processor: JSCandidatesProcessor) {
-    if (myPlaceInfo.file.fileType == VueFileType.INSTANCE && SCRIPT_SETUP_API.contains(ref)) {
+    if (SCRIPT_SETUP_API.contains(ref)) {
       processor.remove(ref)
     }
   }
 
   companion object : JSImportCandidatesProvider.CandidatesFactory {
-    override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider {
-      return VueScriptCandidatesProvider(placeInfo)
+    override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? {
+      return if (placeInfo.file.fileType == VueFileType.INSTANCE) VueScriptCandidatesProvider(placeInfo) else null
     }
   }
 }
