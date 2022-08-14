@@ -1,6 +1,6 @@
 package org.intellij.plugin.mdx
 
-import com.intellij.lang.javascript.inspections.JSUnresolvedReactComponentInspection
+import com.intellij.lang.javascript.inspections.JSXUnresolvedComponentInspection
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
@@ -11,12 +11,12 @@ import org.junit.Test
 class MdxHighlightTest : MdxTestBase() {
     private fun doTestHighlighting(text: String) {
         myFixture.enableInspections(
-            TypeScriptCheckImportInspection(),
-            TypeScriptValidateTypesInspection(),
-            JSUnresolvedReactComponentInspection(),
-            TypeScriptUnresolvedVariableInspection(),
-            TypeScriptUnresolvedFunctionInspection(),
-            JSUnresolvedVariableInspection()
+          TypeScriptCheckImportInspection(),
+          TypeScriptValidateTypesInspection(),
+          JSXUnresolvedComponentInspection(),
+          TypeScriptUnresolvedVariableInspection(),
+          TypeScriptUnresolvedFunctionInspection(),
+          JSUnresolvedVariableInspection()
         )
 
         myFixture.configureByText(
