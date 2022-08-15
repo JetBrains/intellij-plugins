@@ -64,6 +64,9 @@
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedMembersIndex"/>
     <fileBasedIndex implementation="com.intellij.javascript.flex.css.FlexStyleIndex"/>
 
+    <lang.namesValidator language="ECMA Script Level 4"
+                         implementationClass="com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator"/>
+
     <fileType.fileViewProviderFactory filetype="SWF"
                                       implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
     <filetype.decompiler filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileDecompiler"/>

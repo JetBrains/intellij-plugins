@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider
 import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JSTokenTypes.XML_NAME
-import com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator
+import com.intellij.lang.javascript.refactoring.BasicJavascriptNamesValidator
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.lexer.Lexer
 import com.intellij.psi.impl.cache.CacheUtil
@@ -42,7 +42,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
               addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt(), nameIndex, info.name.length)
               nameIndex = info.name.length
             }
-            if (info.arguments != null && ECMAL4NamesValidator.isIdentifier(info.arguments)) {
+            if (info.arguments != null && BasicJavascriptNamesValidator.isIdentifierName(info.arguments)) {
               addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt(), tokenText.indexOf(info.arguments, nameIndex), info.arguments.length)
             }
           }
