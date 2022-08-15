@@ -5,10 +5,10 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
@@ -41,7 +41,7 @@ public class FlexMainStep extends MainStep {
     }
 
     if (isSuperclassFieldEnabled()) {
-      if (!ActionScriptRefactoringUtil.isValidClassName(getSuperclassFqn(), true)) {
+      if (!FlexResolveHelper.isValidClassName(getSuperclassFqn(), true)) {
         return false;
       }
       if (!(ActionScriptClassResolver.findClassByQNameStatic(getSuperclassFqn(), getSuperclassScope()) instanceof JSClass)) {

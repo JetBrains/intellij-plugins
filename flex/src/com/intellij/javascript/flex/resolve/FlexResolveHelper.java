@@ -277,6 +277,16 @@ public class FlexResolveHelper implements JSResolveHelper {
     return statusProcessor.myStatus.get();
   }
 
+  public static boolean isValidClassName(String name, boolean acceptFqn) {
+    if (StringUtil.isEmptyOrSpaces(name)) return false;
+    if (acceptFqn) {
+      return name.trim().matches("[\\p{Alpha}][\\p{Alnum}_]*(\\.[\\p{Alpha}][\\p{Alnum}_]*)*");
+    }
+    else {
+      return name.trim().matches("[\\p{Alpha}][\\p{Alnum}_]*");
+    }
+  }
+
   public enum ImportStatus {
     ABSENT, UNIQUE, MULTIPLE
   }

@@ -1154,7 +1154,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   private void doCreateClassOrInterfaceTestWithCheck(String name, boolean assertNoErrors) throws Exception {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     doCreateClassOrInterfaceTest(name, true, false, assertNoErrors);
     setActiveEditor("../foo/" + name + ".as");
     checkResultByFile(BASE_PATH + getTestName(false) + "_created.js2");

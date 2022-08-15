@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -200,7 +201,7 @@ public class CodeContext {
           if (psiDirectory != null) codeContext.addDependency(psiDirectory);
         }
         else {
-          String qName = JSPackageIndex.buildQualifiedName(packageName, name);
+          String qName = ActionScriptResolveUtil.buildQualifiedName(packageName, name);
           codeContext.putDescriptor(name, new ClassBackedElementDescriptor(name, qName, codeContext, project), true);
           final PsiFile containingFile = PsiManager.getInstance(project).findFile(file);
           if (containingFile == null) return true;
@@ -390,7 +391,7 @@ public class CodeContext {
                                               final String packageName,
                                               final Project project) {
     codeContext.putDescriptor(file.getNameWithoutExtension(), new MxmlBackedElementDescriptor(
-      JSPackageIndex.buildQualifiedName(packageName, file.getNameWithoutExtension()), codeContext, project, file), true);
+      ActionScriptResolveUtil.buildQualifiedName(packageName, file.getNameWithoutExtension()), codeContext, project, file), true);
   }
 
   private static CodeContext getStdCodeContext(final String namespace, final Module module, GlobalSearchScope scope, final FlexBuildConfiguration bc) {

@@ -8,7 +8,6 @@ import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactorin
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveInnerClassProcessor;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -49,7 +48,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
 
     super.setUp();
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
   @NotNull

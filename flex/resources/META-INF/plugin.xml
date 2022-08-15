@@ -20,6 +20,7 @@
   <depends optional="true" config-file="flex-uml-support.xml">com.intellij.diagram</depends>
   <depends optional="true" config-file="flex-ant-support.xml">AntSupport</depends>
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
+  <depends optional="true" config-file="flex-duplicates.xml">com.intellij.modules.duplicatesDetector</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
@@ -66,7 +67,8 @@
 
     <lang.namesValidator language="ECMA Script Level 4"
                          implementationClass="com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator"/>
-
+    <lang.findUsagesProvider language="ECMA Script Level 4"
+                             implementationClass="com.intellij.lang.actionscript.ActionScriptFindUsagesProvider"/>
     <fileType.fileViewProviderFactory filetype="SWF"
                                       implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
     <filetype.decompiler filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileDecompiler"/>
@@ -84,6 +86,7 @@
     <psi.referenceContributor language="CSS" implementation="com.intellij.javascript.flex.FlexCssReferenceContributor"/>
     <psi.referenceContributor language="ECMA Script Level 4" implementation="com.intellij.javascript.flex.ActionScriptReferenceContributor"/>
     <psi.referenceContributor language="Mxml" implementation="com.intellij.javascript.flex.MxmlReferenceContributor"/>
+    <problemFileHighlightFilter implementation="com.intellij.lang.actionscript.highlighting.ActionScriptProblemFileHighlightFilter"/>
 
     <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.flex.FlexFileReferenceHelper"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
@@ -91,7 +94,6 @@
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
     <codeInsight.implementMethod language="Mxml"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex"/>
-
     <codeInsight.implementMethod language="JavaScript"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex"/>
     <codeInsight.delegateMethods language="Mxml"
@@ -101,7 +103,7 @@
     <projectOpenProcessor id="FlashBuilderOpenProcessor"
                           implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
                           order="before EclipseProjectOpenProcessor"/>
-
+    <defaultTemplatePropertiesProvider implementation="com.intellij.lang.javascript.ActionScriptAccessModifierTemplatePropertyProvider"/>
     <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider" order="first"/>
     <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
     <css.dialect id="FlexCSSDialect" order="before JavaFxCSSDialect" implementation="com.intellij.javascript.flex.css.FlexCSSDialect"/>

@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <duplicateScope language="ECMA Script Level 4" implementationClass="com.jetbrains.clones.languagescope.ActionScriptDuplicateScope" />
+  </extensions>
+</idea-plugin>

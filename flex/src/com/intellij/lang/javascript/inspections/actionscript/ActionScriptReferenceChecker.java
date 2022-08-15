@@ -14,19 +14,15 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
-import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.TypedJSReferenceChecker;
-import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
-import com.intellij.lang.javascript.validation.fixes.CreateJSEventMethod;
-import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction;
-import com.intellij.lang.javascript.validation.fixes.CreateJSPropertyAccessorIntentionAction;
+import com.intellij.lang.javascript.validation.fixes.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -132,6 +128,18 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
   }
 
   @Override
+  protected LocalQuickFix createClassOrInterfaceFix(@NotNull JSReferenceExpression referenceExpression, boolean isInterface) {
+    return new ActionScriptCreateClassOrInterfaceFix(referenceExpression, isInterface, null, null);
+  }
+
+  @Override
+  protected LocalQuickFix createClassFromNewFix(@NotNull JSReferenceExpression referenceExpression,
+                                                @Nullable JSArgumentList argumentList,
+                                                @Nullable JSType expectedType) {
+    return new ActionScriptCreateClassOrInterfaceFix(referenceExpression, false, argumentList, expectedType);
+  }
+
+  @Override
   protected boolean addCreateFromUsageFixes(JSReferenceExpression node,
                                             ResolveResult[] resolveResults,
                                             List<LocalQuickFix> fixes,
@@ -226,7 +234,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
 
         if (results.length != 0) {
           PsiElement resultElement = results[0].getElement();
-          if (resultElement instanceof JSPackageWrapper) return ProblemHighlightType.ERROR;
+          if (resultElement instanceof JSPackage) return ProblemHighlightType.ERROR;
           type = getResolveResultType(qualifier, resultElement);
           checkType = true;
         }

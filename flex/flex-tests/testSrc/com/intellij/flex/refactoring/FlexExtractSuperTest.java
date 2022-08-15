@@ -60,7 +60,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     myDoCompare = true;
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
   @Override

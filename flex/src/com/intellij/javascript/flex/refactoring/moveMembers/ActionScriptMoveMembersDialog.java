@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.ide.util.PlatformPackageUtil;
+import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -15,7 +16,6 @@ import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersOptions
 import com.intellij.lang.javascript.refactoring.ui.JSMemberSelectionTable;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.ui.JSVisibilityPanel;
-import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
@@ -261,7 +261,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
       return RefactoringBundle.message("no.destination.class.specified");
     }
     else {
-      if (!ActionScriptRefactoringUtil.isValidClassName(fqName, true)) {
+      if (!FlexResolveHelper.isValidClassName(fqName, true)) {
         return RefactoringBundle.message("0.is.not.a.legal.fq.name", fqName);
       }
       else {

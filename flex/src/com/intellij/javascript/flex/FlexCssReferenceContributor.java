@@ -6,12 +6,12 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.CssClassValueReference;
 import com.intellij.javascript.flex.css.FlexCssUtil;
+import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
-import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -69,7 +69,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
           refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {
             @Override
             public LocalQuickFix @Nullable [] getQuickFixes() {
-              if (!ActionScriptRefactoringUtil.isValidClassName(value, true)) {
+              if (!FlexResolveHelper.isValidClassName(value, true)) {
                 return LocalQuickFix.EMPTY_ARRAY;
               }
 

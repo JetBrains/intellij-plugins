@@ -1743,7 +1743,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateClassByAttributeValue() throws Exception {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
     final VirtualFile verificationFile =
@@ -1814,7 +1814,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   private void testCreateSubclass(boolean subclass) throws Exception {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), subclass ? "Create Subclass" : "Implement Interface", myEditor, myFile);
 
@@ -1951,7 +1951,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testCreateClassFromMetadataAttr() throws Exception {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), JavaScriptBundle.message("javascript.create.class.intention.name", "Baz"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
@@ -1963,7 +1963,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testCreateEventClassFromMetadataAttr() throws Exception {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     findAndInvokeIntentionAction(doTestFor(true, testName + ".as"),
                                  JavaScriptBundle.message("javascript.create.class.intention.name", "MyEvent"), myEditor, myFile);
@@ -2086,7 +2086,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testGenerateTestClass() throws Exception {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     configureByFiles(BASE_PATH + "/" + testName, BASE_PATH + "/" + testName + "/pack/" + testName + ".mxml");
     final FlexUnitTestCreator testCreator = new FlexUnitTestCreator();
@@ -2210,7 +2210,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testUnresolvedClassReference() throws Throwable {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
 
@@ -2228,7 +2228,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testUnresolvedClassReference2() throws Throwable {
-    JSTestUtils.disableFileHeadersInTemplates(getProject());
+    FlexTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Create MXML Component 'Missing'", "mxml");
 

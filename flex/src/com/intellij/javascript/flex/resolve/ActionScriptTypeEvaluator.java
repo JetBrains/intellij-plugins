@@ -3,7 +3,7 @@ package com.intellij.javascript.flex.resolve;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
+import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
@@ -117,7 +117,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         }
       }
     }
-    else if (resolveResult instanceof JSPackageWrapper) {
+    else if (resolveResult instanceof JSPackage) {
       addType(new JSCustomElementType(resolveResult));
     }
     else {

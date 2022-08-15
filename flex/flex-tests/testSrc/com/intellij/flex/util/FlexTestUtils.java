@@ -8,6 +8,8 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JSTestOption;
@@ -29,6 +31,7 @@ import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -146,7 +149,10 @@ public final class FlexTestUtils {
     return JSTestUtils.testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithGumboSdk) ? "4.0.0" : "3.4.0";
   }
 
-  public static void setupFlexSdk(@NotNull final Module module, @NotNull String testName, @NotNull Class<?> clazz, @NotNull Disposable parent) {
+  public static void setupFlexSdk(@NotNull final Module module,
+                                  @NotNull String testName,
+                                  @NotNull Class<?> clazz,
+                                  @NotNull Disposable parent) {
     setupFlexSdk(module, testName, clazz, getPathToMockFlex(clazz, testName), false, parent);
   }
 
@@ -173,7 +179,6 @@ public final class FlexTestUtils {
           bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdk.getName()));
         });
       }
-
     });
   }
 
@@ -401,7 +406,9 @@ public final class FlexTestUtils {
         final String committedLibraryId;
         if (isProjectLibrary) {
           committedLibraryId =
-            FlexProjectRootsUtil.getLibraryId(com.intellij.openapi.roots.libraries.LibraryTablesRegistrar.getInstance().getLibraryTable(module.getProject()).getLibraryByName(libraryName));
+            FlexProjectRootsUtil.getLibraryId(
+              com.intellij.openapi.roots.libraries.LibraryTablesRegistrar.getInstance().getLibraryTable(module.getProject())
+                .getLibraryByName(libraryName));
         }
         else {
           final OrderEntry
@@ -651,6 +658,23 @@ public final class FlexTestUtils {
       LibraryTable table = moduleModifiableModel.getModuleLibraryTable();
       table.removeLibrary(table.getLibraryByName(libraryName));
       moduleModifiableModel.commit();
+    });
+  }
+
+  public static void disableFileHeadersInTemplates(Project project) {
+    WriteAction.run(() -> {
+      String parseDirective = "#parse(\"ActionScript File Header.as\")\n";
+      FileTemplate template =
+        FileTemplateManager.getInstance(project)
+          .getInternalTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME);
+      template.setText(template.getText().replace(parseDirective, ""));
+      template = FileTemplateManager.getInstance(project)
+        .getInternalTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_TEMPLATE_NAME);
+      template.setText(template.getText().replace(parseDirective, ""));
+      template =
+        FileTemplateManager.getInstance(project)
+          .getInternalTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_INTERFACE_TEMPLATE_NAME);
+      template.setText(template.getText().replace(parseDirective, ""));
     });
   }
 }

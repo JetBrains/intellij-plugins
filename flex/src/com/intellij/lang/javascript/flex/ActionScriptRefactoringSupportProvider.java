@@ -8,12 +8,14 @@ import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractInterfaceH
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperClassHandler;
 import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantHandler;
 import com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldHandler;
+import com.intellij.lang.javascript.refactoring.introduceVariable.ActionScriptIntroduceVariableHandler;
 import com.intellij.lang.javascript.refactoring.memberPullUp.JSPullUpHandler;
 import com.intellij.lang.javascript.refactoring.memberPushDown.JSPushDownHandler;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringActionHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ActionScriptRefactoringSupportProvider extends JavascriptRefactoringSupportProvider {
 
@@ -41,6 +43,11 @@ public class ActionScriptRefactoringSupportProvider extends JavascriptRefactorin
   @Override
   public RefactoringActionHandler getPushDownHandler() {
     return new JSPushDownHandler();
+  }
+
+  @Override
+  public @Nullable RefactoringActionHandler getIntroduceVariableHandler() {
+    return new ActionScriptIntroduceVariableHandler();
   }
 
   @Override

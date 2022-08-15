@@ -131,7 +131,6 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
-
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testIntroduceConstantTargetClass() {
     setUpJdk();
