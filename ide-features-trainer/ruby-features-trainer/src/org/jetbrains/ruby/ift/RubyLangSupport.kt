@@ -78,7 +78,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
                                                RubyLessonsBundle.message("ruby.sdk.not.found.dialog.title"),
                                                RubyLessonsBundle.message("ruby.sdk.not.found.dialog.ok"),
                                                CommonBundle.getCancelButtonText(),
-                                               FeaturesTrainerIcons.Img.PluginIcon)
+                                               FeaturesTrainerIcons.PluginIcon)
     if (decision == Messages.OK) {
       ShowSettingsUtil.getInstance().showSettingsDialog(project, RBundle.message("ruby.ide.sdk.configurable.name"))
     }
