@@ -5,7 +5,12 @@ import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.impl.DirectoryIndexExcludePolicy
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
+import org.jetbrains.vuejs.libraries.nuxt.library.NuxtDotFolderSyntheticLibraryProvider
 
+/**
+ * @see NuxtDotFolderSyntheticLibraryProvider
+ */
 class NuxtIndexExcludePolicy(val project: Project) : DirectoryIndexExcludePolicy {
 
   override fun getExcludeUrlsForProject(): Array<String> {
@@ -14,7 +19,7 @@ class NuxtIndexExcludePolicy(val project: Project) : DirectoryIndexExcludePolicy
       .asSequence()
       .mapNotNull { it.parent }
       .filter { parent -> NUXT_CONFIG_NAMES.any { parent.findChild(it) != null } }
-      .map { "${it.url}/.nuxt" }
+      .map { "${it.url}/${NUXT_OUTPUT_FOLDER}" }
       .toList()
       .toTypedArray()
   }

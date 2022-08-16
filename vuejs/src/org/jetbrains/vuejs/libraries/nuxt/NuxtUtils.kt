@@ -9,6 +9,7 @@ const val NUXT_TYPES_PKG = "@nuxt/types"
 const val NUXT_CONFIG_PKG = "@nuxt/config"
 
 const val NUXT_OUTPUT_FOLDER = ".nuxt"
+const val NUXT_DIST_SUBFOLDER = "dist"
 const val NUXT_COMPONENTS_DEFS = "components.d.ts"
 
 val NUXT_CONFIG_NAMES: List<String> = listOf("nuxt.config.js", "nuxt.config.ts")

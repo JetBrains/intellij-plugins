@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.RootsChangeRescanningInfo
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
@@ -31,6 +32,10 @@ fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModul
   for (module in modules) {
     tempDirFixture.copyAll("${getVueTestDataPath()}/modules/${module.folder}/node_modules", "node_modules")
   }
+  forceReloadProjectRoots(project)
+}
+
+internal fun forceReloadProjectRoots(project: Project) {
   // TODO - this shouldn't be needed, something's wrong with how roots are set within tests - check RootIndex#myRootInfos
   runInEdtAndWait {
     runWriteAction {
