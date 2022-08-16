@@ -35,8 +35,8 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider.Result.create
-import com.intellij.psi.util.CachedValuesManager.getCachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
@@ -372,17 +372,17 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
     Key.create(it)
   } as Key<CachedValue<T>>
   val file = scope?.containingFile ?: return null
-  return getCachedValue(file, key) {
-    JSFileReferencesUtil.resolveModuleReference(file, moduleName)
+  return CachedValuesManager.getCachedValue(file, key) {
+    val modules = JSFileReferencesUtil.resolveModuleReference(file, moduleName)
+    val resolvedSymbols = modules
       .filterIsInstance<JSElement>()
       .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
+    val suitableSymbol = resolvedSymbols
       .filter { it.element?.isValid == true }
       .mapNotNull { tryCast(it.element, symbolClass) }
       .minByOrNull { TypeScriptPsiUtil.isFromAugmentationModule(it) }
-      ?.let {
-        return@getCachedValue create(it, PsiModificationTracker.MODIFICATION_COUNT)
-      }
-    create(null, PsiModificationTracker.MODIFICATION_COUNT)
+
+    CachedValueProvider.Result.create(suitableSymbol, PsiModificationTracker.MODIFICATION_COUNT)
   }
 }
 
