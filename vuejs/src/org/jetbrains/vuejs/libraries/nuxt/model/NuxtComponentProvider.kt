@@ -17,7 +17,11 @@ import org.jetbrains.vuejs.libraries.nuxt.NUXT_OUTPUT_FOLDER
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
+/**
+ * @see org.jetbrains.vuejs.model.typed.VueTypedGlobal.typedGlobalComponents
+ */
 class NuxtComponentProvider : VueContainerInfoProvider {
+  private val LAZY = "lazy" // https://nuxtjs.org/docs/directory-structure/components#dynamic-imports
 
   override fun getAdditionalComponents(scope: GlobalSearchScope,
                                        sourceComponents: VueContainerInfoProvider.ComponentsInfo): VueContainerInfoProvider.ComponentsInfo? =
@@ -28,6 +32,9 @@ class NuxtComponentProvider : VueContainerInfoProvider {
         it != null && it.parent?.findSubdirectory(NUXT_OUTPUT_FOLDER)?.findFile(NUXT_COMPONENTS_DEFS) == null}
       }
       ?.let { config ->
+        // alternative idea: there's .nuxt/components/index.js that contains named exports with components,
+        // although it looks like it handles Lazy prefix incorrectly
+        // there's also .nuxt/components/plugin.js that contains object literal with correctly generated component names
         val resolvedDirs = config.components.asSequence()
           .mapNotNull { componentDir -> resolvePath(config.file!!, componentDir)?.let { Pair(it, componentDir) } }
           .sortedWith(
@@ -43,21 +50,45 @@ class NuxtComponentProvider : VueContainerInfoProvider {
                                 ?: return@flatMap emptySequence()
             val index = resolvedDirs.indexOfFirst { VfsUtil.isAncestor(it.first, componentFile, true) }
             if (index < 0) return@flatMap emptySequence()
+
             val componentDirConfig = resolvedDirs[index].second
             if (componentFile.extension.let { componentDirConfig.extensions.contains(it) }) {
-              val prefix = componentDirConfig.prefix.let { if (it.isNotEmpty()) "$it-" else it }
               val dirPrefix = if (componentDirConfig.pathPrefix) {
                 VfsUtil.getRelativePath(componentFile.parent, resolvedDirs[index].first, '-')
                   ?.takeIf { it.isNotEmpty() }
-                  ?.let{ fromAsset(it).replace(MULTI_HYPHEN_REGEX, "-") + "-" } ?: ""
-              } else ""
+                  ?.let { fromAsset(it).replace(MULTI_HYPHEN_REGEX, "-") }
+                ?: ""
+              }
+              else {
+                ""
+              }
+
+              val configuredPrefix = componentDirConfig.prefix.let { if (it.isNotEmpty()) "$it-" else it }
+              val mergedPrefixParts = (configuredPrefix + dirPrefix).split('-').filter { it.isNotEmpty() }
+
               val baseName = fromAsset(componentFile.nameWithoutExtension)
-              val name = if (prefix.isNotEmpty() && (baseName.startsWith(prefix) || baseName == componentDirConfig.prefix)) {
-                baseName
-              } else "$prefix$dirPrefix$baseName"
-              sequenceOf(Triple(name, component, index), Triple("lazy-$name", component, index))
+              val baseNameParts = baseName.split('-')
+
+              var commonIndex = 0
+              while (commonIndex < mergedPrefixParts.size) {
+                if (mergedPrefixParts[commonIndex] == baseNameParts[0]) {
+                  break
+                }
+                commonIndex += 1
+              }
+
+              val parts = mergedPrefixParts.subList(0, commonIndex) + baseNameParts
+              val partsWithoutLazy = if (parts.firstOrNull() == LAZY) parts.drop(1) else parts
+              val name = partsWithoutLazy.joinToString("-")
+
+              sequenceOf(
+                Triple(name, component, index),
+                Triple("$LAZY-$name", component, index)
+              )
             }
-            else emptySequence()
+            else {
+              emptySequence()
+            }
           }
           .sortedBy { it.third }
           .distinctBy { it.first }

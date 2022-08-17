@@ -111,11 +111,16 @@ class NuxtCompletionTest : BasePlatformTestCase() {
       "HooRegular", "HooComp", "HooSubFolderFoo12HooberComp", "HooSubFolderFoo12Special",
       "LazyHooRegular", "LazyHooComp", "LazyHooSubFolderFoo12HooberComp", "LazyHooSubFolderFoo12Special",
       "hoo-regular", "hoo-comp", "hoo-sub-folder-foo12-hoober-comp", "hoo-sub-folder-foo12-special",
-      "lazy-hoo-regular", "lazy-hoo-comp", "lazy-hoo-sub-folder-foo12-hoober-comp", "lazy-hoo-sub-folder-foo12-special"
-    )
+      "lazy-hoo-regular", "lazy-hoo-comp", "lazy-hoo-sub-folder-foo12-hoober-comp", "lazy-hoo-sub-folder-foo12-special",
+
+      "NestedTwiceFull", "NestedTwicePartial", "NestedTest", "NestedComp", "Unnested", "Always",
+      "LazyNestedTwiceFull", "LazyNestedTwicePartial", "LazyNestedTest", "LazyNestedComp", "LazyUnnested", "LazyAlways",
+      "nested-twice-full", "nested-twice-partial", "nested-test", "nested-comp", "unnested", "always",
+      "lazy-nested-twice-full", "lazy-nested-twice-partial", "lazy-nested-test", "lazy-nested-comp", "lazy-unnested", "lazy-always",
+      )
     assertDoesntContain(
       myFixture.lookupElementStrings!!,
-      "HooSubFolderFoo12HooComp", "SubFolderFoo12HooComp"
+      "HooSubFolderFoo12HooComp", "SubFolderFoo12HooComp", "NestedNestedComp", "NestedTwiceTwicePartial", "LazyLazyAlways"
     )
   }
 

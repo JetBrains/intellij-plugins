@@ -1,6 +1,7 @@
 export default {
-  // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
-    {path: "~/components", prefix: "hoo"}
+    {path: "~/components", prefix: "hoo"},
+    "~/components2",
+    "~/components2/unnested",
   ]
 }
