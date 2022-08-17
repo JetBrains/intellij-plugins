@@ -9,6 +9,7 @@
     <b>Features:</b>
     <p>* Reference resolution in Link components and tags</p>
     <p>* Auto-excluding .next directory</p>
+    <p>* New project generator</p>
     ]]>
   </description>
   <vendor>JetBrains</vendor>
