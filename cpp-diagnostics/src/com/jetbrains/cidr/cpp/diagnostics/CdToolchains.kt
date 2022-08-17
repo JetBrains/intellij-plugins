@@ -156,6 +156,8 @@ private fun testRemoteHost(log: CdIndenter, remoteHost: HostMachine) {
     test(log, remoteHost, "rsync local", { CidrRSyncUtil.canUseRSync(remoteHost.hostId) }, "[NOT CONFIGURED]")
     test(log, remoteHost, "rsync remote", ::checkRemoteRsync)
     test(log, remoteHost, "rsync download", ::checkRsyncDownload)
+
+    test(log, remoteHost, "pigz remote", ::checkRemotePigz)
   }
 }
 
@@ -188,6 +190,10 @@ private fun checkRemoteTar(remoteHost: HostMachine): Boolean = RemoteUtil.isTarI
 }
 
 private fun checkRemoteRsync(remoteHost: HostMachine) = RemoteUtil.isRsyncInstalled { cmd ->
+  remoteHost.runProcess(cmd, ProgressManager.getInstance().progressIndicator, 5000)
+}
+
+private fun checkRemotePigz(remoteHost: HostMachine) = RemoteUtil.isPigzInstalled { cmd ->
   remoteHost.runProcess(cmd, ProgressManager.getInstance().progressIndicator, 5000)
 }
 
