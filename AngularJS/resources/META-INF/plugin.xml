@@ -53,6 +53,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:@angular/core" displayName="Angular"/>
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
 

@@ -20,6 +20,7 @@
   <depends optional="true" config-file="javascript-ex.xml">JavaScript</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:hbs" displayName="Handlebars"/>
     <fileType name="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbFileType" fieldName="INSTANCE" language="Handlebars" extensions="handlebars;hbs;mustache"/>
     <html.scriptContentProvider language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbScriptContentProvider"/>
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>

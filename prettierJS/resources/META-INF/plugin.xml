@@ -32,6 +32,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:prettier" displayName="Prettier"/>
     <projectService serviceInterface="com.intellij.prettierjs.PrettierLanguageService"
                     serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceImpl"/>
     <projectService serviceImplementation="com.intellij.prettierjs.PrettierConfiguration"/>

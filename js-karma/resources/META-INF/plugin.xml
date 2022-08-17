@@ -15,6 +15,7 @@
   <depends optional="true" config-file="karma-coverage.xml">com.intellij.modules.coverage</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:karma" displayName="Karma"/>
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
     <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>

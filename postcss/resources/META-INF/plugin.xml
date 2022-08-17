@@ -37,6 +37,7 @@
   </content>
 
   <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="javascript" coordinate="npm:postcss" displayName="PostCSS"/>
     <css.dialect implementation="org.intellij.plugins.postcss.PostCssDialect"/>
     <lang.substitutor language="CSS" implementationClass="org.intellij.plugins.postcss.PostCssLanguageSubstitutor"/>
     <embeddedTokenTypesProvider implementation="org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider"/>

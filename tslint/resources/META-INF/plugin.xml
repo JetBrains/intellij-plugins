@@ -22,7 +22,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-
+    <dependencySupport kind="javascript" coordinate="npm:tslint" displayName="TSLint"/>
     <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.tslint.editor.TsLintCodeStyleEditorNotificationProvider"/>
     <projectConfigurable id="settings.javascript.linters.tslint"
                          parentId="settings.typescriptcompiler"
