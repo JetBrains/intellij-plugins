@@ -12,6 +12,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.UIUtil
+import icons.NextjsIcons
+import javax.swing.Icon
 import javax.swing.JPanel
 
 private const val CREATE_NEXT_APP = "create-next-app"
@@ -26,6 +28,10 @@ class NextJsProjectGenerator : NpmPackageProjectGenerator() {
 
   override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {
 
+  }
+
+  override fun getIcon(): Icon {
+    return NextjsIcons.NextJsGen
   }
 
   override fun generatorArgs(project: Project, baseDir: VirtualFile, settings: Settings): Array<String> {
