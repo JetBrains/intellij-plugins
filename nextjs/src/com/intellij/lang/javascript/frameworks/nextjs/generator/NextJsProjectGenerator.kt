@@ -5,6 +5,7 @@ import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor.NpxCommand
 import com.intellij.lang.javascript.frameworks.nextjs.NextJsBundle
+import com.intellij.lang.javascript.frameworks.react.ReactLikeProjectGenerator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.util.Key
@@ -19,7 +20,7 @@ import javax.swing.JPanel
 private const val CREATE_NEXT_APP = "create-next-app"
 private val ARGUMENTS = Key.create<Array<String>>("create.next.args")
 
-class NextJsProjectGenerator : NpmPackageProjectGenerator() {
+class NextJsProjectGenerator : NpmPackageProjectGenerator(), ReactLikeProjectGenerator {
 
   override fun getDescription(): String = NextJsBundle.message("create.next.app.description")
   override fun getName(): String = NextJsBundle.message("create.next.app.name")
@@ -29,6 +30,8 @@ class NextJsProjectGenerator : NpmPackageProjectGenerator() {
   override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {
 
   }
+
+  override fun order(): Int = 1
 
   override fun getIcon(): Icon {
     return NextjsIcons.NextJsGen
@@ -43,7 +46,7 @@ class NextJsProjectGenerator : NpmPackageProjectGenerator() {
 
   override fun packageName(): String = CREATE_NEXT_APP
 
-  override fun presentablePackageName(): String = CREATE_NEXT_APP
+  override fun presentablePackageName(): String = "create-&next-app:"
 
   override fun createPeer(): ProjectGeneratorPeer<Settings?> {
     return object : NpmPackageGeneratorPeer() {
