@@ -899,7 +899,7 @@ public class Angular2HtmlLexerSpecTest {
     };
   }
 
-  @SuppressWarnings("NewClassNamingConvention")
+  @SuppressWarnings({"NewClassNamingConvention", "JUnitTestCaseWithNonTrivialConstructors"})
   private static final class Token {
 
     public final IElementType type;
