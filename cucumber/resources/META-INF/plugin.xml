@@ -91,6 +91,7 @@
     <runLineMarkerContributor id="scenarioRunLineMarkerContributor" language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor"/>
 
     <intentionAction>
+      <language>Gherkin</language>
       <className>org.jetbrains.plugins.cucumber.intentions.ScenarioToOutlineIntention</className>
       <categoryKey>intention.family.name.cucumber</categoryKey>
     </intentionAction>
