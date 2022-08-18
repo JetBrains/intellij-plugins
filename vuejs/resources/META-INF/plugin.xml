@@ -132,11 +132,13 @@
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"
                      key="vue.inspection.display.name.duplicate.tag" bundle="messages.VueBundle"/>
     <intentionAction>
+      <language>Vue</language>
       <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>
       <!--suppress PluginXmlI18n -->
       <category>VueJS</category>
     </intentionAction>
     <intentionAction>
+      <language>Vue</language>
       <className>org.jetbrains.vuejs.intentions.expandVModel.VueExpandVModelIntention</className>
       <!--suppress PluginXmlI18n -->
       <category>VueJS</category>
