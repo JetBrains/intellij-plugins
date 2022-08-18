@@ -237,14 +237,10 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.type("1")
     myFixture.configureFromTempProjectFile("test.ts")
     myFixture.type("1")
-    WriteAction.runAndWait<Exception> {
-      FileDocumentManager.getInstance().saveAllDocuments()
-    }
+    saveAllDocuments()
     myFixture.checkHighlighting()
     waitEmptyServiceQueue()
-    WriteAction.runAndWait<Exception> {
-      myFixture.tempDirFixture.findOrCreateDir(".").refresh(false, true)
-    }
+    refreshTempDir()
     val files = myFixture.tempDirFixture.findOrCreateDir(".")
       .children.asSequence().map { it.name }.sorted().toList()
     // There is race condition here and the files won't be compiled always.
@@ -253,6 +249,22 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
       TestCase.assertEquals(listOf("NoVueCompileOnSave.vue", "NoVueCompileOnSaveClear.vue",
         "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
         files)
+    }
+  }
+
+  private fun saveAllDocuments() {
+    // extracted due to test method isn't public: testNoVueCompileOnSave$lambda-5
+    // another way to fix is to stop using JUnit 3
+    WriteAction.runAndWait<Exception> {
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
+  }
+
+  private fun refreshTempDir() {
+    // extracted due to test method isn't public: testNoVueCompileOnSave$lambda-5
+    // another way to fix is to stop using JUnit 3
+    WriteAction.runAndWait<Exception> {
+      myFixture.tempDirFixture.findOrCreateDir(".").refresh(false, true)
     }
   }
 
