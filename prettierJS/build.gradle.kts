@@ -1,24 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-}
-
-repositories {
-  mavenCentral()
-  maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-}
+apply(from = "../contrib-configuration/common.gradle.kts")
 
 plugins {
-  id("org.jetbrains.intellij") version "0.4.26"
-  java
-  kotlin("jvm") version "1.4.0"
+  id("java")
+  id("org.jetbrains.kotlin.jvm")
+  id("org.jetbrains.intellij")
 }
 
-dependencies {
-  implementation(kotlin("stdlib-jdk8"))
-  testImplementation("junit", "junit", "4.12")
+intellij {
+  pluginName.set("intellij.prettierJS")
+  plugins.set(listOf("JavaScript"))
+
+  version.set("LATEST-EAP-SNAPSHOT")
+  type.set("IU")
 }
 
 sourceSets {
@@ -32,47 +26,20 @@ sourceSets {
   }
   test {
     java {
-      setSrcDirs(listOf("test"))
+      //setSrcDirs(listOf("test"))
     }
   }
 }
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
-}
-
-val ideVersion = "203-SNAPSHOT"
-
-intellij {
-  version = "IU-${ideVersion}"
-  pluginName = "intellij.prettierJS"
-  downloadSources = false
-  updateSinceUntilBuild = false
-  setPlugins("JavaScriptLanguage")
-}
-
 dependencies {
-  testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:${ideVersion}")
+  //testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:LATEST-EAP-SNAPSHOT")
 }
 
 tasks {
-  withType(JavaCompile::class.java) {
-    options.encoding = "UTF-8"
-  }
-  withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
-    kotlinOptions.jvmTarget = "11"
-    kotlinOptions.freeCompilerArgs = listOf("-Xjvm-default=compatibility")
-  }
-  test {
-    systemProperty("idea.home.path", File("${projectDir}/../").absolutePath)
-  }
-  wrapper {
-    gradleVersion = "6.6.1"
-  }
-  processResources {
+  prepareSandbox {
     from("gen") {
       include("**/*.js")
+      into("prettier")
     }
   }
 }

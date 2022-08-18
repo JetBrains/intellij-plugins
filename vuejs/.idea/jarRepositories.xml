@@ -86,5 +86,10 @@
       <option name="name" value="maven5" />
       <option name="url" value="https://www.jetbrains.com/intellij-repository/nightly" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="Gradle Central Plugin Repository" />
+      <option name="name" value="Gradle Central Plugin Repository" />
+      <option name="url" value="https://plugins.gradle.org/m2" />
+    </remote-repository>
   </component>
 </project>

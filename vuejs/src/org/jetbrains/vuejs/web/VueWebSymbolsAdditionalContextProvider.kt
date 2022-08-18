@@ -411,8 +411,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override fun isEquivalentTo(symbol: Symbol): Boolean =
       if (symbol is DocumentedItemWrapper<*>)
         symbol === this || (symbol.javaClass == this.javaClass
-                            && symbol.matchedName == matchedName
-                            && VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))
+                            && symbol.matchedName == matchedName)
+                            //&& VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))
       else
         super.isEquivalentTo(symbol)
   }

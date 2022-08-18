@@ -1,41 +1,20 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+apply(from = "../contrib-configuration/common.gradle.kts")
+
 plugins {
-    // Java support
-    id("java")
-    // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
-    // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.5.2"
+  id("java")
+  id("org.jetbrains.kotlin.jvm")
+  id("org.jetbrains.intellij")
 }
 
-group = "org.intellij.plugin.mdx"
-
-val realVersion = "1.0.221"
-version = realVersion
-
-repositories {
-    mavenCentral()
-}
-
-// See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    pluginName.set("MDX")
-    version.set("LATEST-EAP-SNAPSHOT")
-    type.set("IU")
-    plugins.set(listOf("JavaScriptLanguage", "org.intellij.plugins.markdown", "CSS"))
-    downloadSources.set(true)
-    updateSinceUntilBuild.set(true)
+  pluginName.set("MDX")
+  plugins.set(listOf("JavaScriptLanguage", "org.intellij.plugins.markdown", "CSS"))
+
+  version.set("LATEST-EAP-SNAPSHOT")
+  type.set("IU")
 }
 
-tasks {
-
-    patchPluginXml {
-        sinceBuild.set("221.5080")
-        untilBuild.set("221.*")
-        version.set(realVersion)
-    }
-
-    wrapper {
-        gradleVersion = "7.2"
-    }
-
+dependencies {
+  //testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:LATEST-EAP-SNAPSHOT")
 }
