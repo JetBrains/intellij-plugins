@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 class VueLexerImpl(override val languageLevel: JSLanguageLevel,
-                   override val project: Project,
+                   override val project: Project?,
                    override val interpolationConfig: Pair<String, String>?)
   : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
 
