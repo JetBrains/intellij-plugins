@@ -62,12 +62,11 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   @TypeScriptVersion(TypeScriptVersions.TS26)
   @Throws(Exception::class)
   fun testSimpleCompletion() {
-    checkBaseStringQualifiedCompletionWithTemplates(
-      {
-        doTestWithCopyDirectory()
-        myFixture.complete(
-          CompletionType.BASIC)
-      }, true)
+    checkBaseStringQualifiedCompletionWithTemplates {
+      doTestWithCopyDirectory()
+      myFixture.complete(
+        CompletionType.BASIC)
+    }
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
