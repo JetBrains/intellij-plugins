@@ -25,7 +25,7 @@ function renderNumber(num: number): string {
     <div v-else>
       <div v-for="item in union">{{ renderNumber(item) }}</div>
     </div>
-    <!-- Order of arguments is irrelevant, in Vue 3 v-if comes before v-for in control flow -->
+    <!-- Order of attributes is irrelevant, in Vue 3 v-if comes before v-for in control flow -->
     <aside v-for="item in union" v-if="Array.isArray(union)">{{ renderNumber(item) }}</aside>
   </section>
 </template>
