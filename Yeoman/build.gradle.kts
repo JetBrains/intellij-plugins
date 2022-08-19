@@ -26,13 +26,9 @@ sourceSets {
   }
   test {
     java {
-      //setSrcDirs(listOf("testSrc"))
+      setSrcDirs(listOf("testSrc"))
     }
   }
-}
-
-dependencies {
-  //testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:LATEST-EAP-SNAPSHOT")
 }
 
 tasks {
