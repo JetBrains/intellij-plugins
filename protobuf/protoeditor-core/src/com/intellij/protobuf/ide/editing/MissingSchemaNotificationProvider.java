@@ -115,7 +115,7 @@ public class MissingSchemaNotificationProvider
       return null;
     }
 
-    EditorNotificationPanel panel = new EditorNotificationPanel();
+    EditorNotificationPanel panel = new EditorNotificationPanel(EditorNotificationPanel.Status.Warning);
     panel.setText(PbIdeBundle.message("prototext.missing.schema.message"));
     HyperlinkListener closingListener =
         (event) ->

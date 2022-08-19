@@ -84,7 +84,7 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
     if (config.isInstalled(project)) {
       return null;
     }
-    final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND);
+    final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, EditorNotificationPanel.Status.Info);
     panel.setText(PrettierBundle.message("editor.notification.title"));
 
     panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"), PrettierImportCodeStyleAction.ACTION_ID, false);

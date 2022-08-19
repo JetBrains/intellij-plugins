@@ -46,7 +46,7 @@ class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : 
 
     if (rules.isEmpty()) return null
 
-    return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND) {
+    return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, Status.Info) {
       init {
         text = TsLintBundle.message("tslint.code.style.apply.message")
         createActionLabel(CommonBundle.message("button.without.mnemonic.yes"), TsLintImportCodeStyleAction.ACTION_ID, false)

@@ -39,7 +39,7 @@ public final class MeteorPackagesEditNotificationProvider extends EditorNotifica
 
   private static final class ImportPackagesPanel extends EditorNotificationPanel {
     private ImportPackagesPanel(@NotNull FileEditor editor, @NotNull Project project) {
-      super(editor, null, EditorColors.GUTTER_BACKGROUND);
+      super(editor, null, EditorColors.GUTTER_BACKGROUND, Status.Info);
       createActionLabel(MeteorBundle.message("link.label.import.packages.as.library"), () -> {
         new MeteorImportPackagesAsExternalLib().run(editor.getFile(), project);
       });

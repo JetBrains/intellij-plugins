@@ -103,7 +103,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   public EditorNotificationPanel createNoDartSdkPanel(@NotNull FileEditor fileEditor, @NotNull Project project, @NlsContexts.Label String message) {
     final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
 
-    final EditorNotificationPanel panel = new EditorNotificationPanel(fileEditor).icon(DartIcons.Dart_16).text(message);
+    final EditorNotificationPanel panel =
+      new EditorNotificationPanel(fileEditor, EditorNotificationPanel.Status.Warning).icon(DartIcons.Dart_16).text(message);
     panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
     panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
     return panel;
@@ -114,7 +115,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                            ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                            : DartBundle.message("dart.support.is.not.enabled.for.project");
-    final EditorNotificationPanel panel = new EditorNotificationPanel(fileEditor).icon(DartIcons.Dart_16).text(message);
+    final EditorNotificationPanel panel =
+      new EditorNotificationPanel(fileEditor, EditorNotificationPanel.Status.Warning).icon(DartIcons.Dart_16).text(message);
     panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module));
     panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(module.getProject()));
     return panel;
@@ -122,7 +124,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
   private static final class PubActionsPanel extends EditorNotificationPanel {
     private PubActionsPanel(@NotNull DartSdk sdk) {
-      super(EditorColors.GUTTER_BACKGROUND);
+      super(EditorColors.GUTTER_BACKGROUND, Status.Info);
       createActionLabel(DartBundle.message("pub.get"), "Dart.pub.get");
       createActionLabel(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade");
 

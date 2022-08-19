@@ -52,7 +52,7 @@ public final class MeteorHtmlFileTypeEditNotificationProvider extends EditorNoti
 
   private static final class IncorrectHtmlAssociationPanel extends EditorNotificationPanel {
     private IncorrectHtmlAssociationPanel(@NotNull Project project) {
-      super(EditorColors.GUTTER_BACKGROUND);
+      super(EditorColors.GUTTER_BACKGROUND, Status.Warning);
       setText(MeteorBundle.message("action.meteor.html.file.type.warning"));
 
       createActionLabel(MeteorBundle.message("action.meteor.html.file.type.change"), () -> ApplicationManager.getApplication().runWriteAction(() -> {
