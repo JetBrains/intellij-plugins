@@ -18,7 +18,7 @@ defineProps({
   optional: Struct,
 });
 
-<weak_warning descr="Element is not exported">optional</weak_warning>; // TODO Should be unresolved, "Element is not exported" should be suppressed
+<weak_warning descr="Unresolved variable or type optional">optional</weak_warning>;
 </script>
 
 <template>
