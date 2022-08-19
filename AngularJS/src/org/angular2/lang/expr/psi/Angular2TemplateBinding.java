@@ -2,9 +2,14 @@
 package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.*;
+import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @see Angular2HtmlTemplateBindings
+ * @see Angular2TemplateBindings
+ */
 public interface Angular2TemplateBinding extends JSStatement {
 
   @NotNull

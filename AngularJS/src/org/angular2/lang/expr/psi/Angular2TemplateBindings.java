@@ -13,6 +13,10 @@ import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.angular2.lang.types.Angular2TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @see Angular2HtmlTemplateBindings
+ * @see Angular2TemplateBinding
+ */
 public interface Angular2TemplateBindings extends Angular2EmbeddedExpression, JSEvaluableElement {
 
   @NotNull
