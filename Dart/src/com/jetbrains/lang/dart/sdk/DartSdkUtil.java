@@ -75,10 +75,16 @@ public final class DartSdkUtil {
                                          final @NotNull JBLabel versionLabel) {
     dartSdkPathComponent.getComboBox().setEditable(true);
     addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, DartSdkUtil::isDartSdkHome);
-    if (SystemInfo.isMac && getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
-      // no need to check folder presence here; even if it doesn't exist - that's the best we can suggest
-      @NlsSafe String path = "/usr/local/opt/dart/libexec";
-      dartSdkPathComponent.getComboBox().getEditor().setItem(path);
+    if (getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
+      // Suggest default path according to https://dart.dev/get-dart.
+      // No need to check folder presence here; even if it doesn't exist - that's the best we can suggest
+      @NlsSafe String path = SystemInfo.isMac ? "/usr/local/opt/dart/libexec"
+                                              : SystemInfo.isWindows ? "C:\\tools\\dart-sdk"
+                                                                     : SystemInfo.isLinux ? "/usr/lib/dart"
+                                                                                          : null;
+      if (path != null) {
+        dartSdkPathComponent.getComboBox().getEditor().setItem(path);
+      }
     }
 
     final String sdkHomePath = getItemFromCombo(dartSdkPathComponent.getComboBox());
