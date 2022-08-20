@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.graph" />
     <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.webpack" />
     <orderEntry type="module" module-name="intellij.platform.graph.impl" />
     <orderEntry type="module" module-name="intellij.diagram.impl" />
     <orderEntry type="library" name="gson" level="project" />

@@ -38,6 +38,7 @@
   <dependencies>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
+    <plugin id="intellij.webpack"/>
   </dependencies>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
 
@@ -349,10 +350,13 @@
     <importModulePathStrategy implementation="org.jetbrains.vuejs.lang.VueImportModulePathStrategy"/>
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueScriptCandidatesProvider$Companion"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="intellij.webpack">
     <!--suppress PluginXmlValidity -->
     <webpackLocator implementation="org.jetbrains.vuejs.cli.VueCliWebpackConfigLocator"/>
     <!--suppress PluginXmlValidity -->
     <webpackLocator implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtWebpackConfigLocator"/>
-    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueScriptCandidatesProvider$Companion"/>
   </extensions>
 </idea-plugin>

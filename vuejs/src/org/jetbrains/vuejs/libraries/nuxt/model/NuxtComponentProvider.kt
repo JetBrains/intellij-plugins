@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt.model
 
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
-import com.intellij.lang.javascript.buildTools.webpack.WebPackReferenceContributor
+import com.intellij.lang.javascript.buildTools.webpack.WebpackConfigManager
+import com.intellij.lang.javascript.buildTools.webpack.WebpackReferenceContributor
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -98,7 +98,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
 
   private fun resolvePath(configFile: PsiFile, componentDir: NuxtConfig.ComponentsDirectoryConfig): VirtualFile? =
     if (componentDir.path.startsWith("~") || componentDir.path.startsWith("@")) {
-      WebPackConfigManager.getInstance(configFile.project)
+      WebpackConfigManager.getInstance(configFile.project)
         .resolveConfig(configFile)
         .takeIf { !it.isEmpty() }
         ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path.trimEnd('/'), configFile, 0, null, it, true) }
@@ -113,7 +113,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
       ?.takeIf { it.isDirectory && it.name != JSLibraryUtil.NODE_MODULES }
 
   companion object {
-    val webpackReferenceProvider = WebPackReferenceContributor()
+    val webpackReferenceProvider = WebpackReferenceContributor()
     private val MULTI_HYPHEN_REGEX = Regex("-{2,}")
   }
 

@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.libraries.nuxt
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerConfig
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
+import com.intellij.lang.javascript.buildTools.webpack.WebpackConfigManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
@@ -58,7 +58,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtComponents() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
-    WebPackConfigManager.getInstance(project).setConfig(
+    WebpackConfigManager.getInstance(project).setConfig(
       WebBundlerConfig(WebBundlerResolve(WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "/src", "~" to "/src")))))
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")
@@ -79,7 +79,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtComponentsWithDirsProperty() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
-    WebPackConfigManager.getInstance(project).setConfig(
+    WebpackConfigManager.getInstance(project).setConfig(
       WebBundlerConfig(WebBundlerResolve(WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "/src", "~" to "/src")))))
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")
@@ -100,7 +100,7 @@ class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtComponents2_15() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUE_2_6_10)
-    WebPackConfigManager.getInstance(project).setConfig(
+    WebpackConfigManager.getInstance(project).setConfig(
       WebBundlerConfig(WebBundlerResolve(WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "/src", "~" to "/src")))))
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")

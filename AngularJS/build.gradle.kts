@@ -10,7 +10,7 @@ plugins {
 
 intellij {
   pluginName.set("AngularJS")
-  plugins.set(listOf("JavaScriptLanguage", "JSIntentionPowerPack", "CSS", "uml", "tslint"))
+  plugins.set(listOf("JavaScriptLanguage", "JSIntentionPowerPack", "CSS", "uml", "tslint", "intellij.webpack"))
 
   version.set("LATEST-EAP-SNAPSHOT")
   type.set("IU")

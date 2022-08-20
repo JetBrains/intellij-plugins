@@ -38,6 +38,7 @@
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="tslint-support.xml">tslint</depends>
+  <depends>intellij.webpack</depends>
 
   <extensionPoints>
     <!--suppress DeprecatedClassUsageInspection -->

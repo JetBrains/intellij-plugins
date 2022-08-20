@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.libraries.vueLoader
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.javascript.web.assertUnresolvedReference
 import com.intellij.javascript.web.resolveReference
-import com.intellij.lang.javascript.JSTestUtils.setWebpack
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
+import com.intellij.lang.javascript.buildTools.webpack.createAndSetWebpackConfig
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -26,7 +26,7 @@ class VueLoaderTest  : BasePlatformTestCase() {
       WebBundlerResolveAlias.fromMap(mutableMapOf("@" to "src", "foo" to "src")),
       mutableListOf(myFixture.tempDirFixture.getFile(".")!!.path)
     )
-    setWebpack(project, resolve, testRootDisposable)
+    createAndSetWebpackConfig(project, resolve, testRootDisposable)
   }
 
   fun testHighlighting() {

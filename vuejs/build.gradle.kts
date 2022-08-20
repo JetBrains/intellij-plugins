@@ -16,7 +16,8 @@ intellij {
          "org.jetbrains.plugins.sass", "org.jetbrains.plugins.less", "org.jetbrains.plugins.stylus",
          "org.intellij.plugins.postcss:$targetVersion",
          "com.jetbrains.plugins.Jade:$targetVersion",
-         "intellij.prettierJS:$targetVersion"))
+         "intellij.prettierJS:$targetVersion",
+         "intellij.webpack:$targetVersion"))
 
   version.set("LATEST-EAP-SNAPSHOT")
   type.set("IU")
