@@ -16,7 +16,6 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.refactoring.rename.PsiElementRenameHandler.DEFAULT_NAME
-import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.containers.ContainerUtil
@@ -27,9 +26,8 @@ import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
-import org.junit.runner.RunWith
+import org.junit.Test
 
-@RunWith(JUnit38AssumeSupportRunner::class)
 class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   override fun getService(): JSLanguageServiceBase {
     val services = JSLanguageServiceProvider.getLanguageServices(project)
@@ -45,6 +43,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVue() {
     doTestWithCopyDirectory()
     myFixture.configureByFile("SimpleVueNoTs.vue")
@@ -52,6 +51,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testGotoDeclaration() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("GotoDeclaration.vue")
@@ -61,6 +61,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
   @Throws(Exception::class)
+  @Test
   fun testSimpleCompletion() {
     checkBaseStringQualifiedCompletionWithTemplates {
       doTestWithCopyDirectory()
@@ -70,6 +71,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueNoTs() {
     doTestWithCopyDirectory()
     myFixture.configureByFile("SimpleVue.vue")
@@ -77,6 +79,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueEditing() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
@@ -86,16 +89,19 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueEditingNoTs() {
     completeTsLangAndAssert()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueEditingNoTsNoRefs() {
     completeTsLangAndAssert()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueEditingCloseTag() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
@@ -105,11 +111,13 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueTsx() {
     doTestWithCopyDirectory()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testNoScriptSection() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     doTestWithCopyDirectory()
@@ -119,6 +127,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testFileCreation() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByFile("tsconfig.json")
@@ -133,6 +142,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS36)
+  @Test
   fun testScriptSetup() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
@@ -148,6 +158,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testFileRename() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.configureByFile("tsconfig.json")
@@ -159,24 +170,26 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     //do the renaming
     val action = RenameElementAction()
     val e = TestActionEvent({ name ->
-      when (name) {
-        DEFAULT_NAME.name -> "newTest.vue"
-        PSI_ELEMENT.name -> myFixture.file
-        PROJECT.name -> myFixture.project
-        else -> null
-      }
-    }, action)
+                              when (name) {
+                                DEFAULT_NAME.name -> "newTest.vue"
+                                PSI_ELEMENT.name -> myFixture.file
+                                PROJECT.name -> myFixture.project
+                                else -> null
+                              }
+                            }, action)
     TestCase.assertTrue(ActionUtil.lastUpdateAndCheckDumb(action, e, true))
     ActionUtil.performActionDumbAwareWithCallbacks(action, e)
     TestCase.assertEquals("newTest.vue", myFixture.file.name)
     WriteAction.runAndWait<Throwable> {
       // We must set contents again, as previous call to `myFixture.checkHighlighting()` removed all markers.
-      myFixture.getDocument(myFixture.file).setText("<script lang='ts'><error descr=\"TS2304: Cannot find name 'bar'.\">bar</error></script>")
+      myFixture.getDocument(myFixture.file).setText(
+        "<script lang='ts'><error descr=\"TS2304: Cannot find name 'bar'.\">bar</error></script>")
     }
     myFixture.checkHighlighting()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS36)
+  @Test
   fun testScriptSetupImportResolveBothScripts() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
@@ -184,6 +197,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testNoScriptSectionVue3() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
@@ -192,11 +206,13 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testConfigScope() {
     doTestWithCopyDirectory()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueTsToTsx() {
     doTestWithCopyDirectory()
     myFixture.type('x')
@@ -204,6 +220,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueTsxToTs() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
@@ -211,6 +228,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testSimpleVueScriptChanges() {
     doTestWithCopyDirectory()
     repeat(10) {
@@ -224,6 +242,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  @Test
   fun testNoVueCompileOnSave() {
     val settings = TypeScriptCompilerSettings.getSettings(project)
     settings.isRecompileOnChanges = true
@@ -246,8 +265,8 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     // However, if they are compiled we can ensure that there are no results for Vue files.
     if (files.contains("test.js.map")) {
       TestCase.assertEquals(listOf("NoVueCompileOnSave.vue", "NoVueCompileOnSaveClear.vue",
-        "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
-        files)
+                                   "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
+                            files)
     }
   }
 
