@@ -115,12 +115,9 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
   }
 
   private static final class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
-    private final @Nullable Collection<PsiElement> myDeclarations;
 
     private Angular2EventImplicitElement(@NotNull XmlAttribute attribute) {
       super($EVENT, new Angular2EventType(attribute), attribute, JSImplicitElement.Type.Variable);
-      XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-      myDeclarations = descriptor != null ? descriptor.getDeclarations() : Collections.emptyList();
     }
 
     @Override
@@ -129,7 +126,6 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
       if (o == null || getClass() != o.getClass()) return false;
       Angular2EventImplicitElement element = (Angular2EventImplicitElement)o;
       if (!myName.equals(element.myName)) return false;
-      if (!Objects.equals(myDeclarations, element.myDeclarations)) return false;
       if (!Objects.equals(myProvider, element.myProvider)) return false;
       if (myKind != element.myKind) return false;
       return true;
@@ -137,7 +133,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
 
     @Override
     public int hashCode() {
-      return Objects.hash(getClass(), myDeclarations, myName, myProvider, myKind);
+      return Objects.hash(getClass(), myName, myProvider, myKind);
     }
   }
 }

@@ -47,6 +47,8 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
         }
       }
     }
+
+    // todo check: TypeScriptFunction case doesn't seem to be needed anymore, and with Ivy the other one might be needless too
     if (element instanceof TypeScriptFunction
         || ((element instanceof TypeScriptField
              || element instanceof TypeScriptParameterImpl)
