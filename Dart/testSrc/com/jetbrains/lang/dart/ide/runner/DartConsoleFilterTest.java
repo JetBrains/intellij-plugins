@@ -51,7 +51,7 @@ public class DartConsoleFilterTest extends TestCase {
     doNegativeTest("adart:foo:5");
     doNegativeTest("dart:5");
     doNegativeTest("package:foo/bar.darts");
-    doNegativeTest("packages:foo/bar.dart");
+    doNegativeTest("package1:foo/bar.dart");
     doNegativeTest("darts:foo.dart");
     doNegativeTest("'darts:foo.dart'");
     doNegativeTest("dart :foo.dart");
@@ -85,6 +85,8 @@ public class DartConsoleFilterTest extends TestCase {
                    "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
     doPositiveTest("file:foo.dart/bar.dart_baz.dart.more.dart,evenmore.dart", Type.FILE, "file:foo.dart/bar.dart_baz.dart.more.dart",
                    "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
+    doPositiveTest("packages/hello_flutter_external/main.dart 63:7  <fn>", Type.PACKAGE, "packages/hello_flutter_external/main.dart",
+                   "hello_flutter_external/main.dart", 62, 6);
   }
 
   public void testRelativePathsConsoleFilter() {

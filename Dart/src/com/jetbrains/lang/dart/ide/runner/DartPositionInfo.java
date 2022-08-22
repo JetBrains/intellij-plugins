@@ -19,6 +19,7 @@ public class DartPositionInfo {
       if ("file".equals(type)) return FILE;
       if ("dart".equals(type)) return DART;
       if ("package".equals(type)) return PACKAGE;
+      if ("packages".equals(type)) return PACKAGE;
       return null;
     }
   }
@@ -53,6 +54,7 @@ public class DartPositionInfo {
   #2      main (file:///C:/dart/DartSample2/web/Bar.dart:4:28)
   #3      _startIsolate.isolateStartHandler (dart:isolate-patch/isolate_patch.dart:190)
   #4      _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:93)
+  packages/hello_flutter_external/main.dart 63:7  <fn>
   'package:DartSample2/mylib.dart': error: line 7 pos 1: 'myLibPart' is already defined
   'file:///C:/dart/DartSample2/bin/file2.dart': error: line 3 pos 1: library handler failed
    WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL package:DartSample2/mylib.dart WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
@@ -60,8 +62,13 @@ public class DartPositionInfo {
    inside WHATEVER_ELSE_STARTING_NOT_FROM_PATH_SYMBOL look for ':4:28' at the beginning or for 'line 3 pos 1' at any place
   */
   @Nullable
-  public static DartPositionInfo parsePositionInfo(final @NotNull String text) {
+  public static DartPositionInfo parsePositionInfo(@NotNull String text) {
+    if (text.startsWith("packages/")) {
+      text = "packages:" + text.substring("packages/".length());
+    }
+
     Couple<Integer> pathStartAndEnd = parseUrlStartAndEnd(text, "package:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "packages:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "dart:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "file:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseDartLibUrlStartAndEnd(text);
