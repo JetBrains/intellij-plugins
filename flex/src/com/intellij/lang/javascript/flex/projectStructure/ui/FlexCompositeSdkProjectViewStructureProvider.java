@@ -114,11 +114,6 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       return mySdk.getRootProvider().getFiles(type);
     }
 
-    @Override
-    public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
-      return getRootUrls(rootType);
-    }
-
     @NotNull
     @Override
     public String getPresentableName() {
