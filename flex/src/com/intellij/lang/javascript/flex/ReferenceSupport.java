@@ -183,8 +183,8 @@ public final class ReferenceSupport {
     if (module != null) {
       final OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
       for (final OrderEntry orderEntry : orderEntries) {
-        if (orderEntry instanceof LibraryOrderEntry || orderEntry instanceof JdkOrderEntry) {
-          final VirtualFile[] files = orderEntry.getFiles(OrderRootType.CLASSES);
+        if (orderEntry instanceof LibraryOrSdkOrderEntry) {
+          final VirtualFile[] files = ((LibraryOrSdkOrderEntry)orderEntry).getRootFiles(OrderRootType.CLASSES);
           for (final VirtualFile file : files) {
             if ("swc".equalsIgnoreCase(file.getExtension())) {
               dirs.add(file);
