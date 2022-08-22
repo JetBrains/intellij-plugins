@@ -18,9 +18,9 @@ import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(JUnit38AssumeSupportRunner::class)
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   var before = false
 
@@ -43,12 +43,14 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
+  @Test
   fun testSimpleDeno() {
     myFixture.configureByText("foo.ts", "console.log(Deno)\n" +
                                         "console.log(<error>Deno1</error>)")
     checkHighlightingByOptions(false)
   }
 
+  @Test
   fun testDenoOpenCloseFile() {
     val file = myFixture.configureByText("bar.ts", "export class Hello {}\n" +
                                                    "UnknownName")
@@ -65,7 +67,8 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.checkResult(document.text)
   }
 
-  fun _testDenoSimpleRename() {
+  //@Test
+  fun testDenoSimpleRename() {
     val foo = myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\n" +
                                                   "const _hi<caret> = new Hello()")
     myFixture.configureByText("bar.ts", "export class Hell<caret>o {}")
@@ -81,6 +84,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
+  @Test
   fun testDenoFileRename() {
     myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\nconst hi = new Hello()")
     val bar = myFixture.configureByText("bar.ts", "export class Hello {}")
@@ -89,6 +93,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     checkHighlightingByOptions(false)
   }
 
+  @Test
   fun testDenoReformat() {
     TypeScriptFormatterTest.setTempSettings(project) {
       it.FORCE_SEMICOLON_STYLE = true
@@ -110,7 +115,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     }, "write", null)
     UIUtil.dispatchAllInvocationEvents()
     //have to wait for the annotations, because diagnostics are async
-    JSTestUtils.waitForConditionWithTimeout({ false }, 2000)
+    Thread.sleep(2000)
     myFixture.doHighlighting()
     JSDaemonAnalyzerLightTestCase.checkHighlightingByText(myFixture, """
       import {Foo} from './foo.ts';
