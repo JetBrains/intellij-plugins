@@ -719,6 +719,13 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkResultByFile("ngIfAs.after.ts");
   }
 
+  public void testNgrxLetAsContextGuard() {
+    configureCopy(myFixture, ANGULAR_COMMON_13_3_5);
+    myFixture.configureByFiles("ngrxLetAs.ts", "ngrxLet.ts", "package.json", "tsconfig.json");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting(true, false, true);
+  }
+
   public void testCodeCompletionItemsTypes() {
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
     myFixture.completeBasic();

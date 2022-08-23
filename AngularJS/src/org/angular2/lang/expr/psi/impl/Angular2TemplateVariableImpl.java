@@ -40,17 +40,20 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
     }
     JSType propertyType = null;
     String propertyName = binding.getName();
-    for (Angular2TemplateBinding candidate : bindings.getBindings()) {
-      if (candidate != binding && !candidate.keyIsVar() && propertyName.equals(candidate.getKey())) {
-        propertyType = JSResolveUtil.getExpressionJSType(candidate.getExpression());
-        break;
-      }
-    }
-    if (propertyName != null && (propertyType == null || propertyType instanceof JSAnyType)) {
+    if (propertyName != null) {
       JSType contextType = JSResolveUtil.getElementJSType(bindings);
       if (contextType != null) {
         JSRecordType.PropertySignature signature = contextType.asRecordType().findPropertySignature(propertyName);
         propertyType = signature != null ? signature.getJSType() : null;
+      }
+
+      if (propertyType == null || propertyType instanceof JSAnyType) {
+        for (Angular2TemplateBinding candidate : bindings.getBindings()) {
+          if (candidate != binding && !candidate.keyIsVar() && propertyName.equals(candidate.getKey())) {
+            propertyType = JSResolveUtil.getExpressionJSType(candidate.getExpression());
+            break;
+          }
+        }
       }
     }
     return propertyType;
