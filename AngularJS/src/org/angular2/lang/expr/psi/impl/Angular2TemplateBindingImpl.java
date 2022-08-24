@@ -93,6 +93,6 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
 
   @Override
   public String toString() {
-    return "Angular2TemplateBinding <" + getKey() + ", " + keyIsVar() + ", " + getName() + ">";
+    return "Angular2TemplateBinding <" + getKey() + ", keyIsVar=" + keyIsVar() + ", " + getName() + ">";
   }
 }

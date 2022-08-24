@@ -13,16 +13,16 @@ HtmlFile:test.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
-              Angular2TemplateBinding <ngFor, false, null>
+              Angular2TemplateBinding <ngFor, keyIsVar=false, null>
                 <empty list>
-              Angular2TemplateBinding <something, true, $implicit>
+              Angular2TemplateBinding <something, keyIsVar=true, $implicit>
                 PsiElement(JS:LET_KEYWORD)('let')
                 PsiWhiteSpace(' ')
                 JSVarStatement
                   Angular2TemplateVariable
                     PsiElement(JS:IDENTIFIER)('something')
               PsiWhiteSpace(' ')
-              Angular2TemplateBinding <ngForOf, false, null>
+              Angular2TemplateBinding <ngForOf, keyIsVar=false, null>
                 Angular2TemplateBindingKey
                   PsiElement(JS:IDENTIFIER)('of')
                 PsiWhiteSpace(' ')

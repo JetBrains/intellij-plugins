@@ -1,6 +1,6 @@
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSPrefixExpression
         PsiElement(JS:MINUS)('-')
         JSLiteralExpression
@@ -8,7 +8,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1')
@@ -20,7 +20,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1')
@@ -34,7 +34,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1')
@@ -52,7 +52,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSBinaryExpression
           JSLiteralExpression
@@ -68,7 +68,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSBinaryExpression
           JSPrefixExpression
@@ -100,7 +100,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSBinaryExpression
           JSLiteralExpression
@@ -114,7 +114,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSBinaryExpression
         JSParenthesizedExpression
           PsiElement(JS:LPAR)('(')
@@ -131,7 +131,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSAssignmentExpression
         JSDefinitionExpression
           JSReferenceExpression
@@ -144,7 +144,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSAssignmentExpression
         JSDefinitionExpression
           JSReferenceExpression
@@ -164,7 +164,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSAssignmentExpression
         JSDefinitionExpression
           JSReferenceExpression
@@ -175,7 +175,7 @@ JSFile:test.expressions.template_bindings
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('123')
     PsiElement(JS:SEMICOLON)(';')
-    Angular2TemplateBinding <expressionsB, false, null>
+    Angular2TemplateBinding <expressionsB, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('b')
       JSAssignmentExpression
@@ -187,10 +187,10 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       PsiErrorElement:Expression expected
         <empty list>
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       PsiElement(JS:COLON)(':')
       PsiElement(JS:COLON)(':')
       JSReferenceExpression
@@ -198,7 +198,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSReferenceExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('aaa')
@@ -207,7 +207,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSReferenceExpression
         TypeScriptNotNullExpression
           JSReferenceExpression
@@ -218,16 +218,16 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       <empty list>
-    Angular2TemplateBinding <todo, true, $implicit>
+    Angular2TemplateBinding <todo, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('todo')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <expressionsOf, false, null>
+    Angular2TemplateBinding <expressionsOf, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
@@ -265,21 +265,21 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       <empty list>
-    Angular2TemplateBinding <of, true, $implicit>
+    Angular2TemplateBinding <of, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('of')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <expressionsTodoService, false, null>
+    Angular2TemplateBinding <expressionsTodoService, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('todoService')
       PsiErrorElement:Expression expected
         <empty list>
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       PsiElement(JS:DOT)('.')
       Angular2PipeExpression
         Angular2PipeLeftSideArgument
@@ -312,21 +312,21 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       <empty list>
-    Angular2TemplateBinding <todo, true, $implicit>
+    Angular2TemplateBinding <todo, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('todo')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <expressionsTodoService, false, null>
+    Angular2TemplateBinding <expressionsTodoService, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('todoService')
       PsiErrorElement:Expression expected
         <empty list>
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       PsiElement(JS:DOT)('.')
       Angular2PipeExpression
         Angular2PipeLeftSideArgument
@@ -359,16 +359,16 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       <empty list>
-    Angular2TemplateBinding <todo, true, $implicit>
+    Angular2TemplateBinding <todo, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('todo')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <expressionsOf, false, null>
+    Angular2TemplateBinding <expressionsOf, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
@@ -379,7 +379,7 @@ JSFile:test.expressions.template_bindings
         PsiElement(JS:IDENTIFIER)('todos')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <index, true, index>
+    Angular2TemplateBinding <index, keyIsVar=true, index>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -390,7 +390,7 @@ JSFile:test.expressions.template_bindings
         PsiElement(JS:IDENTIFIER)('index')
     PsiElement(JS:COMMA)(',')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <last, true, last>
+    Angular2TemplateBinding <last, keyIsVar=true, last>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -402,16 +402,16 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       <empty list>
-    Angular2TemplateBinding <item, true, $implicit>
+    Angular2TemplateBinding <item, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('item')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <expressionsOf, false, null>
+    Angular2TemplateBinding <expressionsOf, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
@@ -429,7 +429,7 @@ JSFile:test.expressions.template_bindings
         PsiElement(JS:RPAR)(')')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <expressionsTrackBy, false, null>
+    Angular2TemplateBinding <expressionsTrackBy, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('trackBy')
       PsiElement(JS:COLON)(':')
@@ -439,7 +439,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSCallExpression
         JSReferenceExpression
           JSCallExpression
@@ -456,7 +456,7 @@ JSFile:test.expressions.template_bindings
 ------
 JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <expressions, false, null>
+    Angular2TemplateBinding <expressions, keyIsVar=false, null>
       JSReferenceExpression
         JSThisExpression
           PsiElement(JS:THIS_KEYWORD)('this')

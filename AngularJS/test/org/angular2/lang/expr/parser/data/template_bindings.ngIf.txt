@@ -1,11 +1,11 @@
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -14,12 +14,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiErrorElement:Expression expected
@@ -27,19 +27,19 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiWhiteSpace(' ')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -48,18 +48,18 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiErrorElement:Expression expected
         <empty list>
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -68,19 +68,19 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiWhiteSpace(' ')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiErrorElement:Expression expected
@@ -88,18 +88,18 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiErrorElement:Expression expected
         <empty list>
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiErrorElement:Expression expected
@@ -107,19 +107,19 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiWhiteSpace(' ')
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('foo')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -127,7 +127,7 @@ JSFile:test.ngIf.template_bindings
         PsiElement(JS:IDENTIFIER)('bar')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <conditionResult, true, $implicit>
+    Angular2TemplateBinding <conditionResult, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -136,12 +136,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiErrorElement:Expression expected
@@ -149,7 +149,7 @@ JSFile:test.ngIf.template_bindings
     PsiWhiteSpace(' ')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThan, false, null>
+    Angular2TemplateBinding <ngIfThan, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('than')
       PsiWhiteSpace(' ')
@@ -157,7 +157,7 @@ JSFile:test.ngIf.template_bindings
         PsiElement(JS:IDENTIFIER)('foo')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <conditionResult, true, $implicit>
+    Angular2TemplateBinding <conditionResult, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -166,12 +166,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <conditionResult, true, $implicit>
+    Angular2TemplateBinding <conditionResult, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -179,7 +179,7 @@ JSFile:test.ngIf.template_bindings
           PsiElement(JS:IDENTIFIER)('conditionResult')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -188,12 +188,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <conditionResult, true, $implicit>
+    Angular2TemplateBinding <conditionResult, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -202,11 +202,11 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('userObservable')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <user, true, ngIf>
+    Angular2TemplateBinding <user, keyIsVar=true, ngIf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -214,7 +214,7 @@ JSFile:test.ngIf.template_bindings
           PsiElement(JS:IDENTIFIER)('user')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -223,7 +223,7 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       Angular2PipeExpression
         Angular2PipeLeftSideArgument
           JSReferenceExpression
@@ -234,7 +234,7 @@ JSFile:test.ngIf.template_bindings
         Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('async')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <user, true, ngIf>
+    Angular2TemplateBinding <user, keyIsVar=true, ngIf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -242,7 +242,7 @@ JSFile:test.ngIf.template_bindings
           PsiElement(JS:IDENTIFIER)('user')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -251,12 +251,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiWhiteSpace(' ')
@@ -264,7 +264,7 @@ JSFile:test.ngIf.template_bindings
         PsiElement(JS:IDENTIFIER)('foo')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -273,19 +273,19 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiErrorElement:Expression expected
         <empty list>
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -294,12 +294,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiWhiteSpace(' ')
@@ -307,7 +307,7 @@ JSFile:test.ngIf.template_bindings
         PsiElement(JS:IDENTIFIER)('foo')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiErrorElement:Expression expected
@@ -315,19 +315,19 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiErrorElement:Expression expected
         <empty list>
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiErrorElement:Expression expected
@@ -335,12 +335,12 @@ JSFile:test.ngIf.template_bindings
 ------
 JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <ngIf, false, null>
+    Angular2TemplateBinding <ngIf, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('condition')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfThen, false, null>
+    Angular2TemplateBinding <ngIfThen, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('then')
       PsiWhiteSpace(' ')
@@ -348,7 +348,7 @@ JSFile:test.ngIf.template_bindings
         PsiElement(JS:IDENTIFIER)('foo')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <ngIfElse, false, null>
+    Angular2TemplateBinding <ngIfElse, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:ELSE_KEYWORD)('else')
       PsiWhiteSpace(' ')
@@ -356,7 +356,7 @@ JSFile:test.ngIf.template_bindings
         PsiElement(JS:IDENTIFIER)('bar')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <conditionResult, true, $implicit>
+    Angular2TemplateBinding <conditionResult, keyIsVar=true, $implicit>
       PsiElement(JS:LET_KEYWORD)('let')
       PsiWhiteSpace(' ')
       JSVarStatement

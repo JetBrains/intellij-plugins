@@ -1,10 +1,10 @@
 JSFile:test.as.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <as, false, null>
+    Angular2TemplateBinding <as, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('AppCtrl')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <app, true, as>
+    Angular2TemplateBinding <app, keyIsVar=true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -13,18 +13,18 @@ JSFile:test.as.template_bindings
 ------
 JSFile:test.as.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <as, false, null>
+    Angular2TemplateBinding <as, keyIsVar=false, null>
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('AppCtrl')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <, true, as>
+    Angular2TemplateBinding <, keyIsVar=true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiErrorElement:Expected identifier or keyword
         <empty list>
 ------
 JSFile:test.as.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <as, false, null>
+    Angular2TemplateBinding <as, keyIsVar=false, null>
       JSReferenceExpression
         JSReferenceExpression
           JSReferenceExpression
@@ -34,7 +34,7 @@ JSFile:test.as.template_bindings
         PsiElement(JS:DOT)('.')
         PsiElement(JS:IDENTIFIER)('Ctrl')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <app, true, as>
+    Angular2TemplateBinding <app, keyIsVar=true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -43,7 +43,7 @@ JSFile:test.as.template_bindings
 ------
 JSFile:test.as.template_bindings
   Angular2TemplateBindings
-    Angular2TemplateBinding <foo-bar-t1, true, as>
+    Angular2TemplateBinding <foo-bar-t1, keyIsVar=true, as>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')
       JSVarStatement
@@ -51,7 +51,7 @@ JSFile:test.as.template_bindings
           PsiElement(JS:IDENTIFIER)('foo-bar-t1')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    Angular2TemplateBinding <foo-, true, foo>
+    Angular2TemplateBinding <foo-, keyIsVar=true, foo>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
@@ -63,7 +63,7 @@ JSFile:test.as.template_bindings
       PsiErrorElement:Expected identifier or keyword
         <empty list>
       PsiElement(JS:NUMERIC_LITERAL)('2')
-    Angular2TemplateBinding <asBar, false, null>
+    Angular2TemplateBinding <asBar, keyIsVar=false, null>
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('bar')
       PsiErrorElement:Expression expected
