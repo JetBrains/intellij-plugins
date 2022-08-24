@@ -4,7 +4,7 @@ package com.intellij.prettierjs;
 import com.google.gson.JsonObject;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
-import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
+import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;

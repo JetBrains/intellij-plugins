@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
-import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
+import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
