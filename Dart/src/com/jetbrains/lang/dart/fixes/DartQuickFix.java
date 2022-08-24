@@ -144,14 +144,17 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
   public static boolean isAvailable(@NotNull Project project, @NotNull SourceChange sourceChange) {
     final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
-    if (fileEdits.size() != 1) return false;
+    if (fileEdits.size() < 1) {
+      return false;
+    }
 
-    final SourceFileEdit fileEdit = fileEdits.get(0);
-    final VirtualFile virtualFile = AssistUtils.findVirtualFile(fileEdit);
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    for (SourceFileEdit fileEdit : fileEdits) {
+      final VirtualFile virtualFile = AssistUtils.findVirtualFile(fileEdit);
+      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
-    if (fileEdit.getFileStamp() != -1) {
-      if (virtualFile == null || !fileIndex.isInContent(virtualFile)) return false;
+      if (fileEdit.getFileStamp() != -1) {
+        if (virtualFile == null || !fileIndex.isInContent(virtualFile)) return false;
+      }
     }
 
     return true;
