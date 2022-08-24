@@ -70,7 +70,7 @@ public final class AngularTemplateCacheIndex extends ScalarIndexExtension<String
     if (psiFile instanceof XmlFile) {
       psiFile.accept(new XmlRecursiveElementWalkingVisitor() {
         @Override
-        public void visitXmlTag(XmlTag tag) {
+        public void visitXmlTag(@NotNull XmlTag tag) {
           if (HtmlUtil.isScriptTag(tag) && "text/ng-template".equals(tag.getAttributeValue("type"))) {
             final XmlAttribute id = tag.getAttribute("id");
             if (id != null) {

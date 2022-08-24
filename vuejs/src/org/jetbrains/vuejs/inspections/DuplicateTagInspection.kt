@@ -22,8 +22,8 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 class DuplicateTagInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
     return object : XmlElementVisitor() {
-      override fun visitXmlTag(tag: XmlTag?) {
-        if (tag?.language != VueLanguage.INSTANCE
+      override fun visitXmlTag(tag: XmlTag) {
+        if (tag.language != VueLanguage.INSTANCE
             || !FileTypeRegistry.getInstance().isFileOfType(tag.containingFile.originalFile.virtualFile, VueFileType.INSTANCE)) return
         val templateTag = TEMPLATE_TAG_NAME == tag.name
         val scriptTag = HtmlUtil.isScriptTag(tag)

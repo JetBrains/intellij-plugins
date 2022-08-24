@@ -403,7 +403,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     myFile.acceptChildren(new XmlRecursiveElementVisitor() {
       @Override
-      public void visitXmlAttribute(final XmlAttribute attr) {
+      public void visitXmlAttribute(final @NotNull XmlAttribute attr) {
         if ("styleName".equals(attr.getName())) {
           final XmlAttributeValue value = attr.getValueElement();
           if (value != null) ContainerUtil.addAll(cssRefs, value.getReferences());
@@ -507,7 +507,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, null, highlightInfos -> {
       myFile.accept(new XmlRecursiveElementVisitor() {
         @Override
-        public void visitXmlAttribute(final XmlAttribute attribute) {
+        public void visitXmlAttribute(final @NotNull XmlAttribute attribute) {
           final XmlAttributeDescriptor descriptor = attribute.getDescriptor();
           if (descriptor instanceof AnnotationBackedDescriptor) {
             assertNotNull(descriptor.getDeclaration());

@@ -32,7 +32,7 @@ public class AngularAttributeIndexer implements DataIndexer<String, AngularNamed
       file.accept(
         new XmlRecursiveElementWalkingVisitor() {
           @Override
-          public void visitXmlAttribute(XmlAttribute attribute) {
+          public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
             if (myDirectiveName.equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
               final XmlAttributeValue element = attribute.getValueElement();
               if (element == null) {

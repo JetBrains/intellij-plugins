@@ -30,7 +30,7 @@ public class AngularInvalidSelectorInspection extends LocalInspectionTool {
     if (holder.getFile() instanceof HtmlCompatibleFile) {
       return new XmlElementVisitor() {
         @Override
-        public void visitXmlAttribute(XmlAttribute attribute) {
+        public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
           XmlAttributeValue value;
           if (attribute.getName().equals(ATTR_SELECT)
               && attribute.getParent().getName().equals(ELEMENT_NG_CONTENT)

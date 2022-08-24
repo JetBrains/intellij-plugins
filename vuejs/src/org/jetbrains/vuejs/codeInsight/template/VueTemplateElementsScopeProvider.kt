@@ -135,10 +135,10 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
       }
     }
 
-    override fun visitXmlAttribute(attribute: XmlAttribute?) {
+    override fun visitXmlAttribute(attribute: XmlAttribute) {
       attribute
-        ?.let { VueAttributeNameParser.parse(it.name, it.parent) }
-        ?.let { info ->
+        .let { VueAttributeNameParser.parse(it.name, it.parent) }
+        .let { info ->
           when (info.kind) {
             VueAttributeKind.SLOT_SCOPE -> addSlotProps(attribute)
             VueAttributeKind.SCOPE -> addSlotProps(attribute)

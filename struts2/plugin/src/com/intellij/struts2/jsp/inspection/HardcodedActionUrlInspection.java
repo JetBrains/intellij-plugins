@@ -68,7 +68,7 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
     return new XmlElementVisitor() {
 
       @Override
-      public void visitXmlAttributeValue(XmlAttributeValue value) {
+      public void visitXmlAttributeValue(@NotNull XmlAttributeValue value) {
         if (!isJspFileWithStrutsSupport ||
             actionExtension == null) {
           return;

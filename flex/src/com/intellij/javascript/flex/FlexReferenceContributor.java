@@ -41,7 +41,7 @@ public final class FlexReferenceContributor {
 
       file.accept(new XmlRecursiveElementVisitor() {
         @Override
-        public void visitXmlTag(XmlTag tag) {
+        public void visitXmlTag(@NotNull XmlTag tag) {
           super.visitXmlTag(tag);
 
           if ("State".equals(tag.getLocalName())) {

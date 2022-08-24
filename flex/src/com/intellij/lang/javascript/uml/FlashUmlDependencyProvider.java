@@ -156,7 +156,7 @@ public class FlashUmlDependencyProvider {
         private String myInClassAttributeName; // also to prevent extra references resolve
 
         @Override
-        public void visitXmlTag(final XmlTag tag) {
+        public void visitXmlTag(final @NotNull XmlTag tag) {
           XmlElementDescriptor descriptor = tag.getDescriptor();
           if (descriptor != null) {
             PsiElement declaration = descriptor.getDeclaration();
@@ -174,7 +174,7 @@ public class FlashUmlDependencyProvider {
         }
 
         @Override
-        public void visitXmlAttribute(final XmlAttribute attribute) {
+        public void visitXmlAttribute(final @NotNull XmlAttribute attribute) {
           XmlAttributeDescriptor descriptor = attribute.getDescriptor();
           if (descriptor instanceof AnnotationBackedDescriptor) {
             if (FlexReferenceContributor.isClassReferenceType(((AnnotationBackedDescriptor)descriptor).getType())) {
@@ -190,14 +190,14 @@ public class FlashUmlDependencyProvider {
         }
 
         @Override
-        public void visitXmlAttributeValue(final XmlAttributeValue value) {
+        public void visitXmlAttributeValue(final @NotNull XmlAttributeValue value) {
           if (myInClassAttributeName != null) {
             processReferenceSet(value.getReferences(), result, Factory.dependency(myInClassAttributeName, value.getParent()));
           }
         }
 
         @Override
-        public void visitXmlText(final XmlText text) {
+        public void visitXmlText(final @NotNull XmlText text) {
           List<Pair<PsiElement, TextRange>> injectedFiles = InjectedLanguageManager.getInstance(text.getProject()).getInjectedPsiFiles(text);
           if (injectedFiles != null) {
             for (Pair<PsiElement, TextRange> pair : injectedFiles) {

@@ -94,7 +94,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
       getElement().processDeclarations(processor, ResolveState.initial(), getElement(), getElement());
       myFile.acceptChildren(new XmlRecursiveElementVisitor() {
         @Override
-        public void visitXmlTag(final XmlTag tag) {
+        public void visitXmlTag(final @NotNull XmlTag tag) {
           if (HtmlUtil.STYLE_TAG_NAME.equalsIgnoreCase(tag.getLocalName())) {
             for (StructureViewExtension ext : StructureViewFactoryEx.getInstanceEx(myFile.getProject()).getAllExtensions(XmlTag.class)) {
               final StructureViewTreeElement[] structureViewTreeElements = ext.getChildren(tag);

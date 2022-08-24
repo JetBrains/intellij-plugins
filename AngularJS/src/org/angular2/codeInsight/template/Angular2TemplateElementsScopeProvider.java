@@ -167,7 +167,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     }
 
     @Override
-    public void visitXmlTag(XmlTag tag) {
+    public void visitXmlTag(@NotNull XmlTag tag) {
       boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
                               || isTemplateTag(tag);
       if (isTemplateTag) {
@@ -223,7 +223,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     }
 
     @Override
-    public void visitXmlTag(XmlTag tag) {
+    public void visitXmlTag(@NotNull XmlTag tag) {
       boolean isTemplateTag = StreamEx.of(tag.getChildren())
                                 .select(XmlAttribute.class)
                                 .anyMatch(attr -> attr.getName().startsWith("*"))
@@ -238,7 +238,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     }
 
     @Override
-    public void visitXmlAttribute(XmlAttribute attribute) {
+    public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
       if (attribute.getParent() == null) {
         return;
       }

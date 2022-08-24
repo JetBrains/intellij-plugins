@@ -583,9 +583,8 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> B
     }
 
     xmlFile.accept(object : VueFileVisitor() {
-      override fun visitXmlTag(tag: XmlTag?) {
+      override fun visitXmlTag(tag: XmlTag) {
         if (result == null
-            && tag != null
             && tag.localName.equals(tagName, ignoreCase = true)
             && accept?.invoke(tag) != false) {
           result = tag
@@ -610,9 +609,8 @@ fun findTopLevelVueTags(xmlFile: XmlFile, tagName: String): List<XmlTag> {
     }
     val result = SmartList<XmlTag>()
     xmlFile.accept(object : VueFileVisitor() {
-      override fun visitXmlTag(tag: XmlTag?) {
-        if (tag != null
-            && tag.localName.equals(tagName, ignoreCase = true)) {
+      override fun visitXmlTag(tag: XmlTag) {
+        if (tag.localName.equals(tagName, ignoreCase = true)) {
           result.add(tag)
         }
       }

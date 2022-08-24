@@ -27,7 +27,7 @@ public abstract class AngularHtmlLikeTemplateLocalInspectionTool extends LocalIn
   protected @NotNull PsiElementVisitor doBuildVisitor(@NotNull ProblemsHolder holder) {
     return new XmlElementVisitor() {
       @Override
-      public void visitXmlAttribute(XmlAttribute attribute) {
+      public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
         Angular2AttributeDescriptor descriptor = ObjectUtils.tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
         if (descriptor != null) {
           visitAngularAttribute(holder, attribute, descriptor);
@@ -35,7 +35,7 @@ public abstract class AngularHtmlLikeTemplateLocalInspectionTool extends LocalIn
       }
 
       @Override
-      public void visitXmlTag(XmlTag tag) {
+      public void visitXmlTag(@NotNull XmlTag tag) {
         AngularHtmlLikeTemplateLocalInspectionTool.this.visitXmlTag(holder, tag);
       }
     };

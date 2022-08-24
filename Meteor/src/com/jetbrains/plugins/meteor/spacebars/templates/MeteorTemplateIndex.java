@@ -123,7 +123,7 @@ public final class MeteorTemplateIndex extends ScalarIndexExtension<String> {
 
     htmlPsiFile.acceptChildren(new XmlRecursiveElementWalkingVisitor() {
       @Override
-      public void visitXmlTag(XmlTag tag) {
+      public void visitXmlTag(@NotNull XmlTag tag) {
         if (TEMPLATE_TAG.equalsIgnoreCase(tag.getName())) {
 
           processor.consume(tag);

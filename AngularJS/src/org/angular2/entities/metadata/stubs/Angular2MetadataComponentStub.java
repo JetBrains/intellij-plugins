@@ -59,7 +59,7 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
     if (file != null) {
       file.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
         @Override
-        public void visitXmlAttribute(XmlAttribute attribute) {
+        public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
           if (attribute.getName().equals(ATTR_SELECT)
               && attribute.getParent().getName().equals(ELEMENT_NG_CONTENT)) {
             String value = attribute.getValue();

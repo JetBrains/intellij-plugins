@@ -58,7 +58,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
     boolean isMaven = MavenDomUtil.isMavenFile(problemsHolder.getFile());
     return !isMaven ? PsiElementVisitor.EMPTY_VISITOR : new XmlElementVisitor() {
       @Override
-      public void visitXmlTag(XmlTag tag) {
+      public void visitXmlTag(@NotNull XmlTag tag) {
         if (OsmorcFacet.hasOsmorcFacet(tag)) {
           MavenDomDependency dependency = getDependency(tag);
           if (dependency != null) {

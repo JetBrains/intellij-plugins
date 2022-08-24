@@ -58,7 +58,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
 
       file.accept(new XmlRecursiveElementVisitor(true) {
         @Override
-        public void visitXmlTag(XmlTag tag) {
+        public void visitXmlTag(@NotNull XmlTag tag) {
           if (isAcceptableTagType(tag)) {
             result.add(tag);
           }

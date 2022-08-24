@@ -63,7 +63,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
 
     xmlFile.acceptChildren(new XmlRecursiveElementVisitor() {
       @Override
-      public void visitXmlTag(XmlTag tag) {
+      public void visitXmlTag(@NotNull XmlTag tag) {
         final String path = "link".equalsIgnoreCase(tag.getName()) ? getPathRelativeToPackageRoot(tag.getAttributeValue("href")) :
                             "script".equalsIgnoreCase(tag.getName()) ? getPathRelativeToPackageRoot(tag.getAttributeValue("src")) : null;
         if (!StringUtil.isEmptyOrSpaces(path)) {

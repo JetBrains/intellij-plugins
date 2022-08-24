@@ -91,7 +91,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
         else {
           template.accept(new XmlRecursiveElementWalkingVisitor() {
             @Override
-            public void visitXmlAttribute(XmlAttribute attribute) {
+            public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
               AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), attribute.getParent());
               if (info.type == Angular2AttributeType.REFERENCE) {
                 JSLocalImplicitElementImpl refVar = new JSLocalImplicitElementImpl(info.name, "*", attribute);

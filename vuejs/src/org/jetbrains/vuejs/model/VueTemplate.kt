@@ -13,8 +13,8 @@ interface VueTemplate<T : PsiElement> {
   @StubSafe
   fun safeVisitTags(visitor: (XmlTag) -> Unit) {
     source.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
-      override fun visitXmlTag(tag: XmlTag?) {
-        tag?.let(visitor)
+      override fun visitXmlTag(tag: XmlTag) {
+        visitor.invoke(tag)
         super.visitXmlTag(tag)
       }
     })

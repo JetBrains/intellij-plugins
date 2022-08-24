@@ -7,11 +7,11 @@ import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 
 open class VueFileVisitor : XmlElementVisitor() {
-  override fun visitXmlDocument(document: XmlDocument?): Unit = recursion(document)
+  override fun visitXmlDocument(document: XmlDocument): Unit = recursion(document)
 
-  override fun visitXmlFile(file: XmlFile?): Unit = recursion(file)
+  override fun visitXmlFile(file: XmlFile): Unit = recursion(file)
 
-  protected fun recursion(element: PsiElement?) {
-    element?.children?.forEach { it.accept(this) }
+  protected fun recursion(element: PsiElement) {
+    element.children.forEach { it.accept(this) }
   }
 }
