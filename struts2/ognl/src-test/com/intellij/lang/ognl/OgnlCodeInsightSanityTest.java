@@ -64,7 +64,7 @@ public class OgnlCodeInsightSanityTest extends LightJavaCodeInsightFixtureTestCa
   }
 
   public void testRandomActivity() {
-    MadTestingUtil.enableAllInspections(getProject());
+    MadTestingUtil.enableAllInspections(getProject(), OgnlLanguage.INSTANCE);
     Function<PsiFile, Generator<? extends MadTestingAction>> fileActions =
       file -> Generator.sampledFrom(new InvokeIntention(file, new IntentionPolicy()),
                                     new InvokeCompletion(file, new MyCompletionPolicy()),
