@@ -24,10 +24,11 @@ class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandid
     return SCRIPT_SETUP_API.filter { keyFilter.test(it) }.toSet()
   }
 
-  override fun processCandidates(ref: String, processor: JSCandidatesProcessor) {
+  override fun processCandidates(ref: String, processor: JSCandidatesProcessor, forCompletion: Boolean): Boolean {
     if (SCRIPT_SETUP_API.contains(ref)) {
       processor.remove(ref)
     }
+    return true
   }
 
   companion object : JSImportCandidatesProvider.CandidatesFactory {
