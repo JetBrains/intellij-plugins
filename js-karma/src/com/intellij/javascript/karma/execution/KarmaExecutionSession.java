@@ -157,6 +157,9 @@ public class KarmaExecutionSession {
     commandLine.setWorkingDirectory(targetRun.path(myRunSettings.getWorkingDirectorySystemDependent()));
     targetRun.addNodeOptionsWithExpandedMacros(false, myRunSettings.getNodeOptions());
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
+
+    // upload karma-intellij/ folder to the remote if needed
+    targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
     File clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
     commandLine.addParameter(targetRun.path(clientAppFile.getAbsolutePath()));
     commandLine.addParameter("--serverPort=" + server.getServerPort());

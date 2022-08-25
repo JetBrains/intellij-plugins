@@ -177,6 +177,8 @@ public final class KarmaServer {
     }
     NodePackage pkg = serverSettings.getKarmaPackage();
     String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
+    // upload karma-intellij/ folder to the remote if needed
+    targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
     if (angularCli) {
       if (pkg instanceof YarnPnpNodePackage) {
