@@ -1,7 +1,7 @@
 {
   "rulesDirectory": "<RULES_DIRECTORY_TO_PATCH>",
   "rules": {
-    "template-banana-in-box": "true",
-    "quotemark": [true, "single"]
+    "quotemark": [true, "single"],
+    "template-i18n": [true, "check-id", "check-text"]
   }
 }

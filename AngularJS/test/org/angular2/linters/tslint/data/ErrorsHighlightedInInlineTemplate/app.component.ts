@@ -4,13 +4,10 @@ import {Component} from '@angular/core';
 @Component({
     selector: 'app-root',
     template:`<div style="text-align:center">
-        <h1>
-            Welcome to {{ title }}!
-            <input <error>([ngModel])</error>="name" #ctrl="ngModel" required>
-        </h1>
+      <h1><error descr="TSLint: Each element containing text node should have an i18n attribute (template-i18n)">Welcome</error> to {{ title }}!</h1>
   </div>`,
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    title = <error>"ng-cli-codelyzer"</error>;
+  title = <error descr="TSLint: &quot; should be ' (quotemark)">"ng-cli-codelyzer"</error>;
 }
