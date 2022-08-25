@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.AbstractDiagramNodeContentManager;
@@ -8,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
+import com.intellij.ui.IconManager;
 import com.intellij.uml.utils.DiagramBundle;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +17,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManager {
   private final DiagramCategory myFields =
-    new DiagramCategory(DiagramBundle.messagePointer("category.name.fields"), PlatformIcons.FIELD_ICON);
+    new DiagramCategory(DiagramBundle.messagePointer("category.name.fields"),
+                        IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field));
   private final DiagramCategory myConstructors =
     new DiagramCategory(DiagramBundle.messagePointer("category.name.constructors"), JSFunctionImpl.CONSTRUCTOR_ICON);
   private final DiagramCategory myMethods =
-    new DiagramCategory(DiagramBundle.messagePointer("category.name.methods"), PlatformIcons.METHOD_ICON);
+    new DiagramCategory(DiagramBundle.messagePointer("category.name.methods"),
+                        IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method));
   private final DiagramCategory myProperties =
     new DiagramCategory(DiagramBundle.messagePointer("category.name.properties"), PlatformIcons.PROPERTY_ICON);
 

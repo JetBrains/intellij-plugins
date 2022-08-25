@@ -63,22 +63,22 @@ public class A15 extends ZZZ
 <structure>
 <node text="15.js2">
   <node text="ZZZ2" icon="AS_CLASS_ICON">
-    <node text="c:*" icon="FIELD_ICON"/>
+    <node text="c:*" icon="Field"/>
   </node>
   <node text="ZZZ" icon="AS_CLASS_ICON">
-    <node text="aaa:*" icon="FIELD_ICON"/>
-    <node text="ttt:*" allIcons="FIELD_ICON PRIVATE_ICON"/>
-    <node text="c2:*" icon="FIELD_ICON"/>
-    <node text="EE" allIcons="AS_CLASS_ICON PRIVATE_ICON"/>
+    <node text="aaa:*" icon="Field"/>
+    <node text="ttt:*" allIcons="Field Private"/>
+    <node text="c2:*" icon="Field"/>
+    <node text="EE" allIcons="AS_CLASS_ICON Private"/>
   </node>
   <node text="A15" icon="AS_CLASS_ICON">
-    <node text="delegate:Object" icon="FIELD_ICON"/>
-    <node text="_automation:Object" icon="FIELD_ICON"/>
-    <node text="automation:Object" allIcons="PUBLIC_ICON"/>
+    <node text="delegate:Object" icon="Field"/>
+    <node text="_automation:Object" icon="Field"/>
+    <node text="automation:Object" allIcons="Public"/>
     <node text="initialized:Boolean"/>
     <node text="register(c:Object):void"/>
-    <node text="aaa:*" icon="FIELD_ICON" inherited="true"/>
-    <node text="c2:*" icon="FIELD_ICON" inherited="true"/>
+    <node text="aaa:*" icon="Field" inherited="true"/>
+    <node text="c2:*" icon="Field" inherited="true"/>
   </node>
 </node>
 </structure>

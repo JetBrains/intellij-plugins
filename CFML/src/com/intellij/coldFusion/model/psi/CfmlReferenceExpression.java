@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -15,12 +15,11 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.CheckUtil;
-import com.intellij.psi.scope.JavaScopeProcessorEvent;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -297,14 +296,14 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
              (((CfmlComponent)namedElement.getParent()).hasImplicitAccessors() ||
               ((CfmlComponent)namedElement.getParent()).isPersistent()))) {
           result.add(LookupElementBuilder.create(namedElement, "get" + capitalizedName + "()").withCaseSensitivity(false)
-                       .withIcon(PlatformIcons.METHOD_ICON));
+                       .withIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method)));
         }
         if (((CfmlProperty)namedElement).hasSetter() ||
             (namedElement.getParent() instanceof CfmlComponent &&
              (((CfmlComponent)namedElement.getParent()).hasImplicitAccessors() ||
               ((CfmlComponent)namedElement.getParent()).isPersistent()))) {
           result.add(LookupElementBuilder.create(namedElement, "set" + capitalizedName + "()").withCaseSensitivity(false)
-                       .withIcon(PlatformIcons.METHOD_ICON));
+                       .withIcon(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method)));
         }
       }
     }

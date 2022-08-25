@@ -1,10 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.psi.CfmlVariable;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiType;
-import com.intellij.util.PlatformIcons;
+import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class CfmlNamedAttributeImpl extends CfmlAttributeNameImpl implements Cfm
   }
 
   public static Icon getIcon() {
-    return PlatformIcons.VARIABLE_ICON;
+    return IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Variable);
   }
 
   @Override

@@ -15,23 +15,25 @@
  */
 package com.intellij.protobuf.ide.util;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.IconManager;
 import com.intellij.util.PlatformIcons;
 
 import javax.swing.*;
 
 public interface PbIcons {
   Icon ENUM = PlatformIcons.ENUM_ICON;
-  Icon ENUM_VALUE = PlatformIcons.FIELD_ICON;
+  Icon ENUM_VALUE = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field);
   Icon EXTEND = PlatformIcons.EXPORT_ICON;
-  Icon FIELD = PlatformIcons.FIELD_ICON;
+  Icon FIELD = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field);
   Icon FILE = IconLoader.getIcon("protoFile.png", PbIcons.class.getClassLoader());
   Icon GROUP_FIELD = PlatformIcons.ANONYMOUS_CLASS_ICON;
   Icon MESSAGE = IconLoader.getIcon("protoMessage.png", PbIcons.class.getClassLoader());
-  Icon ONEOF = PlatformIcons.CLASS_ICON;
-  Icon PACKAGE = PlatformIcons.PACKAGE_ICON;
+  Icon ONEOF = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class);
+  Icon PACKAGE = AllIcons.Nodes.Package;
   Icon SERVICE = PlatformIcons.INTERFACE_ICON;
-  Icon SERVICE_METHOD = PlatformIcons.METHOD_ICON;
+  Icon SERVICE_METHOD = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method);
 
   // TODO(volkman): find a better icon.
   Icon TEXT_FILE = IconLoader.getIcon("protoFile.png", PbIcons.class.getClassLoader());

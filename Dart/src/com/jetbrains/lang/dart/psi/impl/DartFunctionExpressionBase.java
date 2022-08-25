@@ -9,14 +9,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.IconManager;
 import com.intellij.ui.icons.RowIcon;
-import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
-  private static final RowIcon ICON = IconManager.getInstance().createRowIcon(AllIcons.Nodes.Lambda, PlatformIcons.PRIVATE_ICON);
+  private static final RowIcon ICON = IconManager.getInstance().createRowIcon(AllIcons.Nodes.Lambda,
+                                                                              IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Private));
 
   public DartFunctionExpressionBase(ASTNode node) {
     super(node);

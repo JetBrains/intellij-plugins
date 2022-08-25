@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramBuilder;
@@ -13,7 +14,7 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.PlatformIcons;
+import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +23,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
   public FlexCreateFieldFromDiagramAction() {
-    super(JavaScriptBundle.messagePointer("new.field.action.text"), JavaScriptBundle.messagePointer("new.field.action.description"), PlatformIcons.FIELD_ICON);
+    super(JavaScriptBundle.messagePointer("new.field.action.text"), JavaScriptBundle.messagePointer("new.field.action.description"),
+          IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field));
   }
 
   @Override

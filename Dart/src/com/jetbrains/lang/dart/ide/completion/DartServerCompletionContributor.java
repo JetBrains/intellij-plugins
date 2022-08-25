@@ -56,7 +56,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
 import static com.intellij.patterns.StandardPatterns.or;
 
-public class DartServerCompletionContributor extends CompletionContributor {
+public final class DartServerCompletionContributor extends CompletionContributor {
   public DartServerCompletionContributor() {
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
@@ -499,14 +499,15 @@ public class DartServerCompletionContributor extends CompletionContributor {
       // icon
       Icon icon = getBaseImage(element);
       if (icon != null) {
+        IconManager iconManager = IconManager.getInstance();
         if (suggestion.getKind().equals(CompletionSuggestionKind.OVERRIDE)) {
-          icon = IconManager.getInstance().createRowIcon(icon, AllIcons.Gutter.OverridingMethod);
+          icon = iconManager.createRowIcon(icon, AllIcons.Gutter.OverridingMethod);
         }
         else {
-          icon = IconManager.getInstance().createRowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON
-                                                                                   : PlatformIcons.PUBLIC_ICON);
-          icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
-          icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
+          icon = iconManager.createRowIcon(icon, element.isPrivate() ? iconManager.getPlatformIcon(com.intellij.ui.PlatformIcons.Private)
+                                                                  : PlatformIcons.PUBLIC_ICON);
+          icon = applyOverlay(icon, element.isFinal(), iconManager.getPlatformIcon(com.intellij.ui.PlatformIcons.FinalMark));
+          icon = applyOverlay(icon, element.isConst(), iconManager.getPlatformIcon(com.intellij.ui.PlatformIcons.FinalMark));
         }
 
         lookup = lookup.withIcon(icon);

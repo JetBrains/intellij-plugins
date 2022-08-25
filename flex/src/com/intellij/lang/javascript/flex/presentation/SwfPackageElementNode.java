@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -8,7 +8,8 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PlatformIcons;
+import com.intellij.ui.IconManager;
+import com.intellij.ui.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -49,7 +50,7 @@ public class SwfPackageElementNode extends ProjectViewNode<String> {
   @Override
   protected void update(@NotNull PresentationData presentation) {
     presentation.setPresentableText(myDisplayText);
-    presentation.setIcon(PlatformIcons.PACKAGE_ICON);
+    presentation.setIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Package));
   }
 
   @Override

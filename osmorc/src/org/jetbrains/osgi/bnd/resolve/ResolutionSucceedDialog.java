@@ -1,12 +1,10 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.resolve;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.SimpleColoredComponent;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ObjectUtils;
@@ -152,7 +150,7 @@ class ResolutionSucceedDialog extends DialogWrapper {
 
           switch (namespace) {
             case PACKAGE_NAMESPACE:
-              setIcon(AllIcons.Nodes.Package);
+              setIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Package));
               break;
             case IDENTITY_NAMESPACE:
               setIcon(AllIcons.Nodes.PpLib);

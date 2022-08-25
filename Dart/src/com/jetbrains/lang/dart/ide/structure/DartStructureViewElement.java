@@ -12,7 +12,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.ui.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -27,21 +29,20 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.intellij.icons.AllIcons.Nodes.Class;
-import static com.intellij.icons.AllIcons.Nodes.Enum;
 import static com.intellij.icons.AllIcons.Nodes.*;
 
-class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
-
-  private static final LayeredIcon STATIC_FINAL_FIELD_ICON = new LayeredIcon(Field, StaticMark, FinalMark);
-  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, FinalMark);
-  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(Field, StaticMark);
-  private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, StaticMark);
-  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Lambda, StaticMark);
-  private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, StaticMark);
-  private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(Class, TabPin);
+final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
+  private static final LayeredIcon STATIC_FINAL_FIELD_ICON = new LayeredIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Field), IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(
+    PlatformIcons.FinalMark));
+  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark));
+  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
+  private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
+  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Lambda, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
+  private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark));
+  private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Class), TabPin);
   private static final LayeredIcon FUNCTION_INVOCATION_ICON = new LayeredIcon(Method, TabPin);
-  private static final LayeredIcon TOP_LEVEL_CONST_ICON = new LayeredIcon(Variable, StaticMark, FinalMark);
+  private static final LayeredIcon TOP_LEVEL_CONST_ICON = new LayeredIcon(Variable, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(
+    PlatformIcons.FinalMark));
 
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
@@ -102,7 +103,7 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
 
     switch (element.getKind()) {
       case ElementKind.CLASS:
-        return element.isAbstract() ? AbstractClass : Class;
+        return element.isAbstract() ? AbstractClass : AllIcons.Nodes.Class;
       case ElementKind.EXTENSION:
         return Include;
       case ElementKind.MIXIN:
@@ -112,7 +113,7 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
       case ElementKind.CONSTRUCTOR_INVOCATION:
         return CONSTRUCTOR_INVOCATION_ICON;
       case ElementKind.ENUM:
-        return Enum;
+        return AllIcons.Nodes.Enum;
       case ElementKind.ENUM_CONSTANT:
         return STATIC_FINAL_FIELD_ICON;
       case ElementKind.FIELD:

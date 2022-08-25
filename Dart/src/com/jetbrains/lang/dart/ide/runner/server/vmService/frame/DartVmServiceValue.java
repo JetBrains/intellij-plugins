@@ -5,7 +5,9 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.ui.PlatformIcons;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
@@ -28,10 +30,12 @@ import java.util.Objects;
 
 public class DartVmServiceValue extends XNamedValue {
 
-  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.FinalMark);
-  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark);
+  private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(
+    PlatformIcons.FinalMark));
+  private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(
+    PlatformIcons.StaticMark));
   private static final LayeredIcon STATIC_FINAL_FIELD_ICON =
-    new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark, AllIcons.Nodes.FinalMark);
+    new LayeredIcon(AllIcons.Nodes.Field, IconManager.getInstance().getPlatformIcon(PlatformIcons.StaticMark), IconManager.getInstance().getPlatformIcon(PlatformIcons.FinalMark));
 
   private final @NotNull DartVmServiceDebugProcess myDebugProcess;
   private final @NotNull String myIsolateId;

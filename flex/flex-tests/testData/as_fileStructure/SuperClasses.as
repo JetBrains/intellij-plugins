@@ -9,10 +9,10 @@ public class SuperClasses extends Base {
     <node text="SuperClasses.as">
         <node text="SuperClasses" icon="AS_CLASS_ICON">
           <node text="Super" icon="(GROUP)">
-            <node text="foo():*" icon="METHOD_ICON"/>
+            <node text="foo():*" icon="Method"/>
           </node>
           <node text="IFoo" icon="(GROUP)">
-            <node text="zz():*" icon="METHOD_ICON"/>
+            <node text="zz():*" icon="Method"/>
           </node>
         </node>
     </node>

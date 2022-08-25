@@ -1,7 +1,8 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.util.PlatformIcons;
+import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FlexCreateMethodFromDiagramAction extends JSCreateMethodActionBase {
   public FlexCreateMethodFromDiagramAction() {
-    super(JavaScriptBundle.messagePointer("new.method.action.text"), JavaScriptBundle.messagePointer("new.method.action.description"), PlatformIcons.METHOD_ICON);
+    super(JavaScriptBundle.messagePointer("new.method.action.text"), JavaScriptBundle.messagePointer("new.method.action.description"),
+          IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method));
   }
 
   @Override

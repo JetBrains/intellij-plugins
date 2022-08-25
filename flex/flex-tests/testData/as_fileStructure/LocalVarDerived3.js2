@@ -31,8 +31,8 @@ public class LocalVarDerived3 {
 <structure activeFilters="HIDE_INHERITED">
 <node text="LocalVarDerived3.js2">
   <node text="LocalVarDerived3" icon="AS_CLASS_ICON">
-    <node text="xxx:Button" icon="FIELD_ICON"/>
-    <node text="UNIT_MAP:Object" icon="FIELD_ICON">
+    <node text="xxx:Button" icon="Field"/>
+    <node text="UNIT_MAP:Object" icon="Field">
       <node text="px"/>
       <node text="lpx"/>
       <node text="lpy"/>

@@ -35,7 +35,7 @@ namespace myns;
     <node text="toSource():Object" inherited="true"/>
     <node text="toString():String" inherited="true"/>
     <node text="unwatch(prop:String):void" inherited="true"/>
-    <node text="v:*" icon="FIELD_ICON"/>
+    <node text="v:*" icon="Field"/>
     <node text="watch(prop:String, handler:Object):void" inherited="true"/>
     <node text="z:*"/>
   </node>

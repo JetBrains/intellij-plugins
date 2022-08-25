@@ -23,8 +23,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.ui.IconManager;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -40,7 +40,7 @@ abstract class OgnlReferenceExpressionBase extends OgnlExpressionImpl {
   public ItemPresentation getPresentation() {
     return new PresentationData(getIdentifier().getText(),
                                 null,
-                                PlatformIcons.PARAMETER_ICON,
+                                IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Parameter),
                                 null);
   }
 

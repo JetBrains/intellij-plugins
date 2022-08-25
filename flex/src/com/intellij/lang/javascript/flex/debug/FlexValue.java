@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.ui.IconManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.xdebugger.XDebuggerUtil;
@@ -102,10 +103,10 @@ class FlexValue extends XValue {
   };
 
   enum ValueType {
-    This(PlatformIcons.CLASS_ICON),
-    Parameter(PlatformIcons.PARAMETER_ICON),
-    Variable(PlatformIcons.VARIABLE_ICON),
-    Field(PlatformIcons.FIELD_ICON),
+    This(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class)),
+    Parameter(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Parameter)),
+    Variable(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Variable)),
+    Field(IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Field)),
     ScopeChainEntry(PlatformIcons.CLASS_INITIALIZER),
     Other(null);
 

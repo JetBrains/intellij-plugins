@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.UI;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -15,6 +15,7 @@ import com.intellij.coldFusion.model.psi.*;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.ui.IconManager;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,8 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
     String typeText = functionDescription.getReturnType();
     String tailText = "(" + functionDescription.getParametersListPresentableText() + ")";
 
-    return LookupElementBuilder.create(name).withTypeText(typeText).withIcon(METHOD_ICON)
+    return LookupElementBuilder.create(name).withTypeText(typeText).withIcon(
+        IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method))
       .withInsertHandler(new ParenthesesInsertHandler<>() {
         @Override
         protected boolean placeCaretInsideParentheses(final InsertionContext context, final LookupElement item) {
@@ -109,20 +111,20 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
   @Nullable
   private static Icon getIcon(PsiElement element) {
     if (CfmlPsiUtil.isFunctionDefinition(element)) {
-      return METHOD_ICON;
+      return IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method);
     }
     else if (element instanceof CfmlParameter) {
-      return PARAMETER_ICON;
+      return IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Parameter);
     }
     else if (element instanceof CfmlVariable) {
-      return VARIABLE_ICON;
+      return IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Variable);
     }
     else if (element instanceof CfmlComponent) {
       if (((CfmlComponent)element).isInterface()) {
         return INTERFACE_ICON;
       }
       else {
-        return CLASS_ICON;
+        return IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class);
       }
     }
     return null;

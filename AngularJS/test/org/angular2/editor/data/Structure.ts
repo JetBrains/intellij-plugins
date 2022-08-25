@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import {Component} from "@angular/core"
 
 @Component({
@@ -15,7 +15,7 @@ class Dependency {
 <structure>
 <node text="Structure.ts">
   <node text="Dependency">
-    <node text="id: string" icon="FIELD_ICON"/>
+    <node text="id: string" icon="Field"/>
   </node>
 </node>
 </structure>

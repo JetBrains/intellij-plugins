@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -25,6 +25,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
@@ -395,11 +396,11 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
               .withInsertHandler(new DotInsertHandler()).withCaseSensitivity(false);
           }
           else {
-            Icon icon = CLASS_ICON;
+            Icon icon = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class);
             // choosing correct icon (class or interface)
             if (CfmlIndex.getInstance(project).getComponentsByNameInScope(elementNameWithoutExtension, GlobalSearchScope
               .fileScope(project, element)).size() == 1) {
-              icon = CLASS_ICON;
+              icon = IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Class);
             }
             else if (CfmlIndex.getInstance(project).getInterfacesByNameInScope(elementNameWithoutExtension, GlobalSearchScope
               .fileScope(project, element)).size() == 1) {

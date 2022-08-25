@@ -21,11 +21,6 @@ import java.util.List;
 import static com.intellij.flex.util.FlexTestUtils.getPathToMockFlex;
 
 public class FlexStructureViewTest extends JSAbstractStructureViewTest {
-  @Override
-  protected boolean isIconRequired() {
-    return true;
-  }
-
   private static final String BASE_PATH = "/as_fileStructure/";
   private static final int OBJECT_METHODS_COUNT = 11;
 
@@ -38,15 +33,13 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return new LightProjectDescriptor() {
-      @NotNull
       @Override
-      public String getModuleTypeId() {
+      public @NotNull String getModuleTypeId() {
         return FlexModuleType.MODULE_TYPE_ID;
       }
 
-      @NotNull
       @Override
-      public Sdk getSdk() {
+      public @NotNull Sdk getSdk() {
         return FlexTestUtils.createSdk(getPathToMockFlex(FlexStructureViewTest.class, getTestName(false)),
                                        "3.4.0", false, false, getTestRootDisposable());
       }
