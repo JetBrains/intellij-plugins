@@ -58,6 +58,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <dependencySupport kind="javascript" coordinate="npm:vue" displayName="Vue.js"/>
+    <dependencySupport kind="javascript" coordinate="npm:nuxt" displayName="Nuxt"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
     <html.attributeValueProvider implementation="org.jetbrains.vuejs.codeInsight.attributes.VueCustomAttributeValueProvider"/>
