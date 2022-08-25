@@ -26,7 +26,7 @@ import com.intellij.protobuf.lang.psi.PbOptionExpression;
  * Given a proto file, determines which {@link JavaNameGenerator}s are most appropriate. This is based
  * on checking the file-level options.
  */
-public class NameGeneratorSelector {
+public final class NameGeneratorSelector {
   private static final Logger log = Logger.getInstance(NameGeneratorSelector.class);
 
   private NameGeneratorSelector() {}
@@ -77,7 +77,7 @@ public class NameGeneratorSelector {
 
   /** Return the list of generators that are most appropriate to the given file. */
   public static ImmutableList<JavaNameGenerator> selectForFile(PbFile file) {
-    for (NameGeneratorContributor contributor : NameGeneratorContributor.EP_NAME.getExtensions()) {
+    for (NameGeneratorContributor contributor : NameGeneratorContributor.EP_NAME.getExtensionList()) {
       if (contributor.isApplicable(file)) {
         log.debug(
           "NameSelector using "

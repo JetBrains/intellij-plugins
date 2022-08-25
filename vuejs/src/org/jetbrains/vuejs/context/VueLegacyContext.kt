@@ -19,7 +19,7 @@ internal class VueLegacyContext : WebFrameworkContext {
 
   override fun isEnabled(directory: PsiDirectory): CachedValueProvider.Result<Int?> {
     val dependencies = mutableSetOf<Any>()
-    for (provider in VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensions) {
+    for (provider in VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensionList) {
       val result = provider.isVueContext(directory)
       if (result.value == true) {
         return CachedValueProvider.Result(0, result.dependencyItems)
