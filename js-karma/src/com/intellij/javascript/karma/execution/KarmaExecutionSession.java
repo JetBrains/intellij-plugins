@@ -3,9 +3,9 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.*;
+import com.intellij.execution.target.TargetedCommandLineBuilder;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.KarmaBundle;
@@ -15,7 +15,7 @@ import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
-import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
@@ -35,14 +35,13 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
+import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.execution.ParametersListUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -144,24 +143,22 @@ public class KarmaExecutionSession {
   @NotNull
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
-    GeneralCommandLine commandLine = createCommandLine(interpreter, server);
-    OSProcessHandler processHandler = new KillableColoredProcessHandler.Silent(commandLine);
+    NodeTargetRun targetRun = createTargetRun(interpreter, server);
+    OSProcessHandler processHandler = targetRun.startProcessEx().getProcessHandler();
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(@NotNull NodeJsInterpreter interpreter,
-                                               @NotNull KarmaServer server) throws ExecutionException {
-    GeneralCommandLine commandLine = new GeneralCommandLine();
-    commandLine.setWorkDirectory(myRunSettings.getWorkingDirectorySystemDependent());
-    commandLine.setCharset(StandardCharsets.UTF_8);
-    List<String> nodeOptionList = ParametersListUtil.parse(myRunSettings.getNodeOptions().trim());
-    commandLine.addParameters(nodeOptionList);
+  private NodeTargetRun createTargetRun(@NotNull NodeJsInterpreter interpreter, @NotNull KarmaServer server) throws ExecutionException {
+    NodeTargetRun targetRun = new NodeTargetRun(interpreter, myProject, null, NodeTargetRun.createOptions(ThreeState.NO, List.of()));
+    TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
+    commandLine.setWorkingDirectory(targetRun.path(myRunSettings.getWorkingDirectorySystemDependent()));
+    targetRun.addNodeOptionsWithExpandedMacros(false, myRunSettings.getNodeOptions());
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);
     File clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
-    commandLine.addParameter(clientAppFile.getAbsolutePath());
+    commandLine.addParameter(targetRun.path(clientAppFile.getAbsolutePath()));
     commandLine.addParameter("--serverPort=" + server.getServerPort());
     KarmaConfig config = server.getKarmaConfig();
     if (config != null) {
@@ -174,10 +171,9 @@ public class KarmaExecutionSession {
     String testNamesPattern = getTestNamesPattern();
     if (testNamesPattern != null) {
       commandLine.addParameter("--testNamePattern=" + testNamesPattern);
-      myFolder.addLastParameterFrom(commandLine);
+      myFolder.addPlaceholderText("--testNamePattern=" + testNamesPattern);
     }
-    NodeCommandLineConfigurator.find(interpreter).configure(commandLine, NodeCommandLineConfigurator.defaultOptions(myProject));
-    return commandLine;
+    return targetRun;
   }
 
   @Nullable

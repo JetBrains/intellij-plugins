@@ -13,12 +13,15 @@ import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.javascript.nodejs.execution.AbstractNodeTargetRunProfile;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
+import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.SystemInfo;
@@ -38,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigurationOptions>
+public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
                                    implements RefactoringListenerProvider,
                                               PreferableRunConfiguration,
                                               JSRunProfileWithCompileBeforeLaunchOption,
@@ -48,12 +51,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
 
   protected KarmaRunConfiguration(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull String name) {
     super(project, factory, name);
-  }
-
-  @NotNull
-  @Override
-  public KarmaRunConfigurationEditor getConfigurationEditor() {
-    return new KarmaRunConfigurationEditor(getProject());
   }
 
   @Override
@@ -140,6 +137,18 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
   public KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor, @Nullable KarmaServer server) {
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(getProject(), server);
     return new KarmaConsoleProperties(this, executor, filterProvider);
+  }
+
+  @Nullable
+  @Override
+  public NodeJsInterpreter getInterpreter() {
+    return myRunSettings.getInterpreterRef().resolve(getProject());
+  }
+
+  @NotNull
+  @Override
+  public SettingsEditor<? extends AbstractNodeTargetRunProfile> createConfigurationEditor() {
+    return new KarmaRunConfigurationEditor(getProject());
   }
 
   @Nullable

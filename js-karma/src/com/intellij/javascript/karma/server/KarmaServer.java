@@ -4,22 +4,21 @@ package com.intellij.javascript.karma.server;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
+import com.intellij.execution.target.TargetedCommandLineBuilder;
+import com.intellij.execution.target.value.TargetValue;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
-import com.intellij.javascript.nodejs.NodeCommandLineUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testing.AngularCliConfig;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -28,6 +27,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.text.SemVer;
@@ -37,9 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,7 +65,7 @@ public final class KarmaServer {
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
-    KillableColoredProcessHandler processHandler = startServer(project, serverSettings, myCoveragePeer, myCommandLineFolder);
+    KillableProcessHandler processHandler = startServer(project, serverSettings, myCoveragePeer, myCommandLineFolder);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
@@ -140,61 +138,52 @@ public final class KarmaServer {
     return myCommandLineFolder;
   }
 
-  private static @NotNull KillableColoredProcessHandler startServer(@NotNull Project project,
-                                                                    @NotNull KarmaServerSettings serverSettings,
-                                                                    @Nullable KarmaCoveragePeer coveragePeer,
-                                                                    @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
-    GeneralCommandLine commandLine = ReadAction.compute(() -> {
-      try {
-        return createCommandLine(project, serverSettings, coveragePeer, commandLineFolder);
-      }
-      catch (ExecutionException e) {
-        throw new IOException("Can not create command line", e);
-      }
-    });
-    KillableColoredProcessHandler processHandler;
+  private static @NotNull KillableProcessHandler startServer(@NotNull Project project,
+                                                             @NotNull KarmaServerSettings serverSettings,
+                                                             @Nullable KarmaCoveragePeer coveragePeer,
+                                                             @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
+    NodeTargetRun targetRun;
     try {
-      processHandler = NodeCommandLineUtil.createKillableColoredProcessHandler(commandLine, true);
+      targetRun = createTargetRun(project, serverSettings, coveragePeer, commandLineFolder);
     }
     catch (ExecutionException e) {
-      throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
+      throw new IOException("Cannot create command line", e);
     }
-    processHandler.setShouldDestroyProcessRecursively(true);
+    KillableProcessHandler processHandler;
+    try {
+      processHandler = targetRun.startProcessEx().getProcessHandler();
+    }
+    catch (ExecutionException e) {
+      throw new IOException("Cannot start Karma server", e);
+    }
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }
 
-  private static @NotNull GeneralCommandLine createCommandLine(@NotNull Project project,
-                                                               @NotNull KarmaServerSettings serverSettings,
-                                                               @Nullable KarmaCoveragePeer coveragePeer,
-                                                               @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException,
-                                                                                                                  ExecutionException {
-    NodeCommandLineConfigurator configurator = NodeCommandLineConfigurator.find(serverSettings.getNodeInterpreter());
-    GeneralCommandLine commandLine = new GeneralCommandLine();
-    serverSettings.getEnvData().configureCommandLine(commandLine, true);
-    NodeCommandLineUtil.configureUsefulEnvironment(commandLine);
-    commandLine.withWorkDirectory(serverSettings.getWorkingDirectorySystemDependent());
+  private static @NotNull NodeTargetRun createTargetRun(@NotNull Project project,
+                                                        @NotNull KarmaServerSettings serverSettings,
+                                                        @Nullable KarmaCoveragePeer coveragePeer,
+                                                        @NotNull ConsoleCommandLineFolder commandLineFolder)
+    throws IOException, ExecutionException {
+    NodeTargetRun targetRun =
+      new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null, NodeTargetRun.createOptions(ThreeState.NO, List.of()));
+    targetRun.setEnvData(serverSettings.getEnvData());
+    TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
+    commandLine.setWorkingDirectory(targetRun.path(serverSettings.getWorkingDirectorySystemDependent()));
     commandLine.setRedirectErrorStream(true);
-    List<String> nodeOptionList = ParametersListUtil.parse(serverSettings.getNodeOptions().trim());
-    commandLine.addParameters(nodeOptionList);
-    if (Boolean.parseBoolean(commandLine.getEnvironment().get("KARMA_SERVER_WITH_INSPECT_BRK"))) {
-      try {
-        NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 34598, true,
-                                                       serverSettings.getNodeInterpreter(), true);
-      }
-      catch (ExecutionException e) {
-        throw new IOException(e);
-      }
+    targetRun.addNodeOptionsWithExpandedMacros(false, serverSettings.getNodeOptions());
+    if (Boolean.parseBoolean(serverSettings.getEnvData().getEnvs().get("KARMA_SERVER_WITH_INSPECT_BRK"))) {
+      targetRun.addNodeOptionsWithExpandedMacros(false, "--inspect-brk=34598");
     }
     NodePackage pkg = serverSettings.getKarmaPackage();
     String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
     if (angularCli) {
       if (pkg instanceof YarnPnpNodePackage) {
-        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter(), null);
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
       }
       else {
-        commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
+        commandLine.addParameter(targetRun.path(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng"));
       }
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("ng", "test");
@@ -209,55 +198,56 @@ public final class KarmaServer {
           commandLine.addParameter(defaultProject);
           commandLineFolder.addPlaceholderText(defaultProject);
         }
-        commandLine.addParameters("--karma-config", configFile.getAbsolutePath());
+        commandLine.addParameter("--karma-config");
+        commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
         commandLineFolder.addPlaceholderText("--karma-config=" + userConfigFileName);
 
         commandLine.addParameter("--source-map");
       }
       else {
-        String configPath = FileUtil.getRelativePath(workingDir, configFile);
-        if (configPath == null) {
-          configPath = configFile.getAbsolutePath();
+        commandLine.addParameter("--config");
+        String relativeConfigPath = FileUtil.getRelativePath(workingDir, configFile);
+        if (relativeConfigPath != null) {
+          commandLine.addParameter(TargetValue.fixed(relativeConfigPath));
         }
-        commandLine.addParameters("--config", configurator.convertLocalPathToRemote(configPath));
+        else {
+          commandLine.addParameter(targetRun.path(configFile.getAbsolutePath()));
+        }
         commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
     }
     else {
       if (pkg instanceof YarnPnpNodePackage) {
-        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter(), null);
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(targetRun, null, true);
       }
       else {
-        commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
+        commandLine.addParameter(targetRun.path(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma"));
       }
       commandLine.addParameter("start");
-      commandLine.addParameter(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile().getAbsolutePath());
+      commandLine.addParameter(targetRun.path(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile().getAbsolutePath()));
       commandLineFolder.addPlaceholderTexts("karma", "start", userConfigFileName);
     }
     List<String> karmaOptions = ParametersListUtil.parse(serverSettings.getKarmaOptions());
     commandLine.addParameters(karmaOptions);
     commandLineFolder.addPlaceholderTexts(karmaOptions);
-    setIntellijParameter(commandLine, "user_config", configurator.convertLocalPathToRemote(serverSettings.getConfigurationFilePath()));
+    setIntellijParameter(commandLine, "user_config", targetRun.path(serverSettings.getConfigurationFilePath()));
     if (coveragePeer != null) {
-      String coverageDir = configurator.convertLocalPathToRemote(coveragePeer.getCoverageTempDir().getAbsolutePath());
-      setIntellijParameter(commandLine, "coverage_temp_dir", coverageDir);
+      setIntellijParameter(commandLine, "coverage_temp_dir", targetRun.path(coveragePeer.getCoverageTempDir().getAbsolutePath()));
       if (angularCli) {
         commandLine.addParameter("--code-coverage");
-        commandLineFolder.addLastParameterFrom(commandLine);
+        commandLineFolder.addPlaceholderText("--code-coverage");
       }
     }
     if (serverSettings.isDebug()) {
-      setIntellijParameter(commandLine, "debug", "true");
+      setIntellijParameter(commandLine, "debug", TargetValue.fixed("true"));
     }
-    commandLine.setCharset(StandardCharsets.UTF_8);
-    configurator.configure(commandLine);
-    return commandLine;
+    return targetRun;
   }
 
-  private static void setIntellijParameter(@NotNull GeneralCommandLine commandLine,
+  private static void setIntellijParameter(@NotNull TargetedCommandLineBuilder commandLine,
                                            @NotNull String name,
-                                           @NotNull String value) {
-    commandLine.getEnvironment().put("_INTELLIJ_KARMA_INTERNAL_PARAMETER_" + name, value);
+                                           @NotNull TargetValue<String> value) {
+    commandLine.addEnvironmentVariable("_INTELLIJ_KARMA_INTERNAL_PARAMETER_" + name, value);
   }
 
   public void shutdownAsync() {

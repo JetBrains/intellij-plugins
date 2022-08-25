@@ -3,33 +3,31 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.execution.*;
-import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.debugger.CommandLineDebugConfigurator;
 import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
-import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
+import com.intellij.javascript.nodejs.debug.NodeDebuggableRunProfileState;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.util.CatchingConsumer;
-import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 
 import java.util.List;
+import java.util.Objects;
 
-public class KarmaRunProfileState implements RunProfileState {
-
-  private static final Logger LOG = Logger.getInstance(KarmaRunProfileState.class);
+public final class KarmaRunProfileState implements NodeDebuggableRunProfileState {
 
   private final Project myProject;
   private final KarmaRunConfiguration myRunConfiguration;
@@ -52,17 +50,23 @@ public class KarmaRunProfileState implements RunProfileState {
   }
 
   @Override
-  @Nullable
-  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
-    KarmaServer server = getServerOrStart(executor);
-    if (server != null) {
-      return executeWithServer(executor, server);
+  public @NotNull Promise<ExecutionResult> execute(@Nullable CommandLineDebugConfigurator configurator) {
+    try {
+      return getServerOrStart().thenAsync(server -> {
+        try {
+          return executeWithServer(server);
+        }
+        catch (ExecutionException e) {
+          return Promises.rejectedPromise(e);
+        }
+      });
     }
-    return null;
+    catch (ExecutionException e) {
+      return Promises.rejectedPromise(e);
+    }
   }
 
-  @Nullable
-  public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
+  public @NotNull Promise<KarmaServer> getServerOrStart() throws ExecutionException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
       .setNodeInterpreter(interpreter)
@@ -78,40 +82,36 @@ public class KarmaRunProfileState implements RunProfileState {
       server.shutdownAsync();
       server = null;
     }
-    if (server == null) {
-      JSLocationResolver locationResolver = ApplicationManager.getApplication().getService(JSLocationResolver.class);
-      if (locationResolver != null) {
-        // dependency is optional
-        locationResolver.dropCache(myRunConfiguration);
-      }
-      registry.startServer(
-        serverSettings,
-        new CatchingConsumer<>() {
-          @Override
-          public void consume(KarmaServer server) {
-            RunnerAndConfigurationSettings configuration = myEnvironment.getRunnerAndConfigurationSettings();
-            if (configuration != null) {
-              ProgramRunnerUtil.executeConfiguration(configuration, executor);
-            }
-          }
-
-          @Override
-          public void consume(final Exception e) {
-            LOG.error(e);
-            showServerStartupError(e);
-          }
-        }
-      );
+    if (server != null) {
+      return Promises.resolvedPromise(server);
     }
-    return server;
+    JSLocationResolver locationResolver = ApplicationManager.getApplication().getService(JSLocationResolver.class);
+    if (locationResolver != null) {
+      // dependency is optional
+      locationResolver.dropCache(myRunConfiguration);
+    }
+    AsyncPromise<KarmaServer> promise = new AsyncPromise<>();
+    registry.startServer(
+      serverSettings,
+      new CatchingConsumer<>() {
+        @Override
+        public void consume(KarmaServer server) {
+          promise.setResult(Objects.requireNonNull(server));
+        }
+
+        @Override
+        public void consume(final Exception e) {
+          promise.setError(e);
+        }
+      }
+    );
+    return promise;
   }
 
-  @NotNull
-  public ExecutionResult executeWithServer(@NotNull Executor executor,
-                                           @NotNull KarmaServer server) throws ExecutionException {
+  private @NotNull Promise<ExecutionResult> executeWithServer(@NotNull KarmaServer server) throws ExecutionException {
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
                                                               myRunConfiguration,
-                                                              executor,
+                                                              myEnvironment.getExecutor(),
                                                               server,
                                                               myRunSettings,
                                                               myExecutionType,
@@ -121,7 +121,7 @@ public class KarmaRunProfileState implements RunProfileState {
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
     executionResult.setRestartActions(((KarmaConsoleProperties)consoleView.getProperties()).createRerunFailedTestsAction(consoleView),
                                       new ToggleAutoTestAction());
-    return executionResult;
+    return Promises.resolvedPromise(executionResult);
   }
 
   public void setFailedTestNames(@NotNull List<List<String>> failedTestNames) {
@@ -138,11 +138,4 @@ public class KarmaRunProfileState implements RunProfileState {
     }
     return KarmaExecutionType.RUN;
   }
-
-  private void showServerStartupError(@NotNull Exception serverException) {
-    Messages.showErrorDialog(myProject,
-                             KarmaBundle.message("karma.server.launching.failed", ExceptionUtil.getMessage(serverException)),
-                             KarmaBundle.message("karma.server.tab.title"));
-  }
-
 }
