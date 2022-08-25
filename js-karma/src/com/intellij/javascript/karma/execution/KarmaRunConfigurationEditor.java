@@ -59,7 +59,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
-    myNodeInterpreterField = new NodeJsInterpreterField(project, false);
+    myNodeInterpreterField = new NodeJsInterpreterField(project, true);
     myNodeOptionsEditor = createOptionsEditor(null);
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.PKG_DESCRIPTOR, null);
     myWorkingDirComponent = createWorkingDirComponent(project);
