@@ -44,7 +44,6 @@ import com.jetbrains.debugger.wip.BrowserChromeDebugProcess
 import com.jetbrains.debugger.wip.WipRemoteVmConnection
 import org.jetbrains.concurrency.Promise
 import org.jetbrains.concurrency.resolvedPromise
-import org.jetbrains.debugger.Vm
 import org.jetbrains.debugger.connection.VmConnection
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -105,7 +104,7 @@ class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
               val resumeTestRunning = ConcurrencyUtil.once { resumeTestRunning(executionResult.processHandler as OSProcessHandler) }
               val alarm = SingleAlarm(resumeTestRunning, 5000)
               alarm.request()
-              debugProcess.connection.executeOnStart { vm: Vm ->
+              debugProcess.connection.executeOnStart { vm ->
                 if (Registry.`is`("js.debugger.break.on.first.statement.karma")) {
                   vm.breakpointManager.setBreakOnFirstStatement()
                 }
