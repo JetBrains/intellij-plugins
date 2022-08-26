@@ -1,27 +1,22 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
-import com.intellij.concurrency.JobScheduler;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.CatchingConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 public class KarmaServerRegistry {
 
-  private static final Logger LOG = Logger.getInstance(KarmaServerRegistry.class);
-
   private final Project myProject;
   private final ConcurrentMap<String, KarmaServer> myServerByConfigFile = new ConcurrentHashMap<>();
-  private final ConcurrentMap<KarmaServerSettings, KarmaServer> myServers = new ConcurrentHashMap<>();
-  private final ConcurrentMap<KarmaServerSettings, KarmaServerSettings> myStartingServers = new ConcurrentHashMap<>();
+  private final ConcurrentMap<KarmaServerSettings, Promise<KarmaServer>> myServers = new ConcurrentHashMap<>();
 
   public KarmaServerRegistry(@NotNull Project project) {
     myProject = project;
@@ -32,58 +27,58 @@ public class KarmaServerRegistry {
     return project.getService(KarmaServerRegistry.class);
   }
 
-  @Nullable
-  public KarmaServer getServer(@NotNull KarmaServerSettings serverSettings) {
-    return myServers.get(serverSettings);
+  public @Nullable KarmaServer getServer(@NotNull KarmaServerSettings serverSettings) {
+    Promise<KarmaServer> promise = myServers.get(serverSettings);
+    if (promise != null && promise.isSucceeded()) {
+      try {
+        return promise.blockingGet(0);
+      }
+      catch (Exception e) {
+        throw new RuntimeException("Unexpected", e);
+      }
+    }
+    return null;
   }
 
-  public void startServer(@NotNull final KarmaServerSettings serverSettings, final CatchingConsumer<KarmaServer, Exception> consumer) {
+  public @NotNull Promise<KarmaServer> startServer(@NotNull KarmaServerSettings serverSettings) {
+    AsyncPromise<KarmaServer> promise = new AsyncPromise<>();
+    Promise<KarmaServer> prevPromise = myServers.putIfAbsent(serverSettings, promise);
+    if (prevPromise != null) {
+      return prevPromise;
+    }
     KarmaServer prevServer = myServerByConfigFile.get(serverSettings.getConfigurationFilePath());
     if (prevServer != null) {
       prevServer.onTerminated(new KarmaServerTerminatedListener() {
         @Override
         public void onTerminated(int exitCode) {
-          doStartServer(serverSettings, consumer);
+          doStartServer(serverSettings, promise);
         }
       });
       prevServer.shutdownAsync();
     }
     else {
-      doStartServer(serverSettings, consumer);
+      doStartServer(serverSettings, promise);
     }
+    return promise;
   }
 
-  private void doStartServer(@NotNull final KarmaServerSettings serverSettings,
-                             @NotNull final CatchingConsumer<KarmaServer, Exception> consumer) {
-    if (myStartingServers.putIfAbsent(serverSettings, serverSettings) != null) {
-      LOG.warn(new Throwable("Unexpected subsequent karma server starting:" + serverSettings.toString()));
-      JobScheduler.getScheduler().schedule(() -> startServer(serverSettings, consumer), 100, TimeUnit.MILLISECONDS);
-      return;
-    }
+  private void doStartServer(@NotNull KarmaServerSettings serverSettings, @NotNull AsyncPromise<KarmaServer> promise) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
-        final KarmaServer server;
-        try {
-          server = new KarmaServer(myProject, serverSettings);
-          myServers.put(serverSettings, server);
-          myServerByConfigFile.put(serverSettings.getConfigurationFilePath(), server);
-        }
-        finally {
-          myStartingServers.remove(serverSettings);
-        }
+        KarmaServer server = new KarmaServer(myProject, serverSettings);
+        myServerByConfigFile.put(serverSettings.getConfigurationFilePath(), server);
         server.onTerminated(new KarmaServerTerminatedListener() {
           @Override
           public void onTerminated(int exitCode) {
-            myServers.remove(serverSettings, server);
+            myServers.remove(serverSettings, promise);
             myServerByConfigFile.remove(serverSettings.getConfigurationFilePath(), server);
           }
         });
-        ApplicationManager.getApplication().invokeLater(() -> consumer.consume(server));
+        promise.setResult(server);
       }
-      catch (final Exception e) {
-        ApplicationManager.getApplication().invokeLater(() -> consumer.consume(e));
+      catch (Exception e) {
+        promise.setError(e);
       }
     });
   }
-
 }

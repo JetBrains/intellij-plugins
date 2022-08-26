@@ -17,15 +17,12 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.CatchingConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
 import java.util.List;
-import java.util.Objects;
 
 public final class KarmaRunProfileState implements NodeDebuggableRunProfileState {
 
@@ -90,22 +87,7 @@ public final class KarmaRunProfileState implements NodeDebuggableRunProfileState
       // dependency is optional
       locationResolver.dropCache(myRunConfiguration);
     }
-    AsyncPromise<KarmaServer> promise = new AsyncPromise<>();
-    registry.startServer(
-      serverSettings,
-      new CatchingConsumer<>() {
-        @Override
-        public void consume(KarmaServer server) {
-          promise.setResult(Objects.requireNonNull(server));
-        }
-
-        @Override
-        public void consume(final Exception e) {
-          promise.setError(e);
-        }
-      }
-    );
-    return promise;
+    return registry.startServer(serverSettings);
   }
 
   private @NotNull Promise<ExecutionResult> executeWithServer(@NotNull KarmaServer server) throws ExecutionException {
