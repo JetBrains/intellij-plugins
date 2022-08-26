@@ -14,7 +14,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -83,7 +83,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     if (element instanceof PsiDirectoryContainer) {
       final PsiDirectory[] directories = ((PsiDirectoryContainer)element).getDirectories();
       if (directories.length == 0) return null;
-      return DirectoryIndex.getInstance(element.getProject()).getPackageName(directories[0].getVirtualFile());
+      return ProjectFileIndex.getInstance(element.getProject()).getPackageNameByDirectory(directories[0].getVirtualFile());
     }
     return ((JSQualifiedNamedElement)element).getQualifiedName();
   }

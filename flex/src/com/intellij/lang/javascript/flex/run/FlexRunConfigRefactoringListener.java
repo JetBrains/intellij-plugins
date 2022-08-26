@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
@@ -99,7 +99,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
     protected void updateParams(final PsiElement newElement) {
       if (!(newElement instanceof PsiDirectory)) return;
       updatePackage(myRunConfiguration,
-                    DirectoryIndex.getInstance(newElement.getProject()).getPackageName(((PsiDirectory)newElement).getVirtualFile()));
+                    ProjectFileIndex.getInstance(newElement.getProject()).getPackageNameByDirectory(((PsiDirectory)newElement).getVirtualFile()));
     }
 
     @Override

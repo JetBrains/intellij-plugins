@@ -40,7 +40,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.*;
@@ -131,7 +131,7 @@ public class ActionScriptCreateClassOrInterfaceFix extends FixAndIntentionAction
   public ActionScriptCreateClassOrInterfaceFix(final PsiDirectory dir) {
     myClassNameToCreate = null;
     myIsClassNameEditable = true;
-    myPackageName = DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile());
+    myPackageName = ProjectFileIndex.getInstance(dir.getProject()).getPackageNameByDirectory(dir.getVirtualFile());
     LOG.assertTrue(myPackageName != null, "No package for file " + dir.getVirtualFile().getPath());
     myBaseClassifier = null;
     myContext = dir;

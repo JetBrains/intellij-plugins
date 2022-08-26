@@ -18,8 +18,8 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
@@ -158,12 +158,12 @@ public class FlexMoveClassDialog extends RefactoringDialog {
   private void createUIComponents() {
     String initialPackage;
     if (myTargetContainer instanceof PsiDirectoryContainer) {
-      initialPackage = DirectoryIndex.getInstance(myProject)
-        .getPackageName(((PsiDirectoryContainer)myTargetContainer).getDirectories()[0].getVirtualFile());
+      initialPackage = ProjectFileIndex.getInstance(myProject)
+        .getPackageNameByDirectory(((PsiDirectoryContainer)myTargetContainer).getDirectories()[0].getVirtualFile());
     }
     else if (myTargetContainer instanceof PsiDirectory) {
-      initialPackage = DirectoryIndex.getInstance(myProject)
-        .getPackageName(((PsiDirectory)myTargetContainer).getVirtualFile());
+      initialPackage = ProjectFileIndex.getInstance(myProject)
+        .getPackageNameByDirectory(((PsiDirectory)myTargetContainer).getVirtualFile());
     }
     else {
       if (myFileLocal) {

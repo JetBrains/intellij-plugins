@@ -16,9 +16,9 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -126,7 +126,7 @@ public class FlexResolveHelper implements JSResolveHelper {
   @Override
   public boolean processPackage(String packageQualifierText, String resolvedName, Processor<? super VirtualFile> processor, GlobalSearchScope globalSearchScope,
                                 Project project) {
-    for (VirtualFile vfile: DirectoryIndex.getInstance(project).getDirectoriesByPackageName(packageQualifierText, globalSearchScope)) {
+    for (VirtualFile vfile: PackageIndex.getInstance(project).getDirsByPackageName(packageQualifierText, globalSearchScope)) {
       if (vfile.getFileSystem() instanceof JarFileSystem) {
         VirtualFile fileForJar = JarFileSystem.getInstance().getVirtualFileForJar(vfile);
         if (fileForJar != null &&
@@ -251,7 +251,7 @@ public class FlexResolveHelper implements JSResolveHelper {
   }
 
   private static boolean processMxmlAndFxgFilesInPackage(final GlobalSearchScope scope, Project project, final String packageName, MxmlAndFxgFilesProcessor processor) {
-    Query<VirtualFile> packageFiles = DirectoryIndex.getInstance(project).getDirectoriesByPackageName(packageName, scope.isSearchInLibraries());
+    Query<VirtualFile> packageFiles = PackageIndex.getInstance(project).getDirsByPackageName(packageName, scope.isSearchInLibraries());
 
     final PsiManager manager = PsiManager.getInstance(project);
     for (VirtualFile packageFile : packageFiles) {

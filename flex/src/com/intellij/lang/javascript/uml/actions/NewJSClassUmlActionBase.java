@@ -18,7 +18,7 @@ import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -80,7 +80,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
     Pair<PsiDirectory, String> dirAndPackage = getPackageToCreateIn((FlashUmlDataModel)diagramBuilder.getDataModel());
     if (dirAndPackage.first == null) {
       Collection<VirtualFile> dirs =
-        DirectoryIndex.getInstance(project).getDirectoriesByPackageName(dirAndPackage.second, false).findAll();
+        PackageIndex.getInstance(project).getDirsByPackageName(dirAndPackage.second, false).findAll();
       final PsiManager psiManager = PsiManager.getInstance(project);
       PsiDirectory[] psiDirs = ContainerUtil.map2Array(dirs, PsiDirectory.class, virtualFile -> psiManager.findDirectory(virtualFile));
       PsiDirectory dir = DirectoryChooserUtil.selectDirectory(project, psiDirs, null, null);

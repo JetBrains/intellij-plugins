@@ -13,7 +13,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +41,7 @@ public class NewActionScriptClassAction extends AnAction {
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     for (PsiDirectory dir : view.getDirectories()) {
       if (projectFileIndex.isInSourceContent(dir.getVirtualFile()) &&
-          DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile()) != null) {
+          projectFileIndex.getPackageNameByDirectory(dir.getVirtualFile()) != null) {
         Module module = ModuleUtilCore.findModuleForPsiElement(dir);
         if (module != null && isAvailableIn(module)) {
           return true;
