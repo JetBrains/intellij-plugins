@@ -14,7 +14,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -102,8 +102,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
         FileEditorManager.getInstance(project).openFile(newFile.getVirtualFile(), true);
 
         if (myCreatedClassFqnConsumer != null) {
-          final String packageName = ProjectRootManager.getInstance(project).getFileIndex().getPackageNameByDirectory(
-            fileTextAndDir.second.getVirtualFile());
+          final String packageName = PackageIndex.getInstance(project).getPackageNameByDirectory(fileTextAndDir.second.getVirtualFile());
           myCreatedClassFqnConsumer.consume(packageName + (packageName.isEmpty() ? "" : ".") + myClassName);
         }
       }

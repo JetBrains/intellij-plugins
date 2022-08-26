@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
@@ -39,9 +40,10 @@ public class NewActionScriptClassAction extends AnAction {
     if (project == null || project.isDisposed() || view == null) return false;
 
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    PackageIndex packageIndex = PackageIndex.getInstance(project);
     for (PsiDirectory dir : view.getDirectories()) {
       if (projectFileIndex.isInSourceContent(dir.getVirtualFile()) &&
-          projectFileIndex.getPackageNameByDirectory(dir.getVirtualFile()) != null) {
+          packageIndex.getPackageNameByDirectory(dir.getVirtualFile()) != null) {
         Module module = ModuleUtilCore.findModuleForPsiElement(dir);
         if (module != null && isAvailableIn(module)) {
           return true;

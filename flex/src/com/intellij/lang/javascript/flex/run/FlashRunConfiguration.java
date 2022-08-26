@@ -26,7 +26,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
@@ -159,7 +159,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
   }
 
   public static boolean containsClass(final Module module, final PsiDirectory directory, final String className) {
-    final String packageName = ProjectFileIndex.getInstance(module.getProject()).getPackageNameByDirectory(directory.getVirtualFile());
+    final String packageName = PackageIndex.getInstance(module.getProject()).getPackageNameByDirectory(directory.getVirtualFile());
     if (!StringUtil.getPackageName(className).equals(packageName)) return false;
 
     final PsiElement psiElement = ActionScriptClassResolver.findClassByQNameStatic(className, GlobalSearchScope.moduleScope(module));

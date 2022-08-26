@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -121,7 +121,7 @@ public class WizardModel implements CreateClassParameters {
     Pair<GlobalSearchScope, PsiDirectory> scopeAndBaseDir = getTargetClassScopeAndBaseDir();
     if (myContext instanceof PsiDirectory &&
         getPackageName()
-          .equals(ProjectFileIndex.getInstance(myContext.getProject()).getPackageNameByDirectory(((PsiDirectory)myContext).getVirtualFile()))) {
+          .equals(PackageIndex.getInstance(myContext.getProject()).getPackageNameByDirectory(((PsiDirectory)myContext).getVirtualFile()))) {
       // user has not changed package
       myTargetDirectory = (PsiDirectory)myContext;
       return true;
