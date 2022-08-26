@@ -74,7 +74,7 @@ public final class KarmaServer {
     myProcessOutputManager.startNotify();
 
     myDisposable = new MyDisposable();
-    Disposer.register(project, myDisposable);
+    Disposer.register(KarmaServerRegistry.getInstance(project), myDisposable);
     myRestarter = new KarmaServerRestarter(configurationFile, myDisposable);
 
     final int processHashCode = System.identityHashCode(processHandler.getProcess());

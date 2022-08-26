@@ -2,6 +2,7 @@
 package com.intellij.javascript.karma.server;
 
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,7 @@ import org.jetbrains.concurrency.Promise;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class KarmaServerRegistry {
+public final class KarmaServerRegistry implements Disposable {
 
   private final Project myProject;
   private final ConcurrentMap<String, KarmaServer> myServerByConfigFile = new ConcurrentHashMap<>();
@@ -80,5 +81,9 @@ public class KarmaServerRegistry {
         promise.setError(e);
       }
     });
+  }
+
+  @Override
+  public void dispose() {
   }
 }
