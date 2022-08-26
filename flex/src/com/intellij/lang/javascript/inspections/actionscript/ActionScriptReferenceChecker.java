@@ -142,7 +142,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
   @Override
   protected boolean addCreateFromUsageFixes(JSReferenceExpression node,
                                             ResolveResult[] resolveResults,
-                                            List<LocalQuickFix> fixes,
+                                            List<? super LocalQuickFix> fixes,
                                             boolean inTypeContext,
                                             boolean ecma) {
     final PsiElement nodeParent = node.getParent();

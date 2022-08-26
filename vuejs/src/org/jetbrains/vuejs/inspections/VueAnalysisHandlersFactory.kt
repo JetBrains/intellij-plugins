@@ -67,7 +67,7 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
     return object : JSReferenceChecker((reporter)) {
       override fun addCreateFromUsageFixes(node: JSReferenceExpression?,
                                            resolveResults: Array<out ResolveResult>?,
-                                           fixes: MutableList<LocalQuickFix>?,
+                                           fixes: MutableList<in LocalQuickFix>,
                                            inTypeContext: Boolean,
                                            ecma: Boolean): Boolean {
         return inTypeContext

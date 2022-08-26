@@ -88,7 +88,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       @Override
       protected boolean addCreateFromUsageFixes(JSReferenceExpression referenceExpression,
                                                 ResolveResult[] resolveResults,
-                                                List<LocalQuickFix> quickFixes,
+                                                List<? super LocalQuickFix> quickFixes,
                                                 boolean inTypeContext,
                                                 boolean ecma) {
         JSExpression qualifier = referenceExpression.getQualifier();
