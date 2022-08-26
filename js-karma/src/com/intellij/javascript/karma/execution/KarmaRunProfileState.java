@@ -4,6 +4,7 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.execution.*;
 import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
@@ -15,10 +16,15 @@ import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.debug.NodeDebuggableRunProfileState;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
@@ -91,19 +97,51 @@ public final class KarmaRunProfileState implements NodeDebuggableRunProfileState
   }
 
   private @NotNull Promise<ExecutionResult> executeWithServer(@NotNull KarmaServer server) throws ExecutionException {
-    KarmaExecutionSession session = new KarmaExecutionSession(myProject,
-                                                              myRunConfiguration,
-                                                              myEnvironment.getExecutor(),
-                                                              server,
-                                                              myRunSettings,
-                                                              myExecutionType,
-                                                              myFailedTestNames);
-    SMTRunnerConsoleView consoleView = session.getSmtConsoleView();
-    ProcessHandler processHandler = session.getProcessHandler();
+    return executeUnderProgress(new KarmaExecutionSession(myProject,
+                                                          myRunConfiguration,
+                                                          myEnvironment.getExecutor(),
+                                                          server,
+                                                          myRunSettings,
+                                                          myExecutionType,
+                                                          myFailedTestNames));
+  }
+
+  private @NotNull Promise<ExecutionResult> executeUnderProgress(@NotNull KarmaExecutionSession session) {
+    AsyncPromise<ExecutionResult> promise = new AsyncPromise<>();
+    String title = JavaScriptBundle.message("node.execution.starting.process.progress.title", myRunConfiguration.getName());
+    ProgressManager.getInstance().run(new Task.Backgroundable(myProject, title, true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        runInBackground(promise, session);
+      }
+    });
+    return promise;
+  }
+
+  private static void runInBackground(@NotNull AsyncPromise<ExecutionResult> promise, @NotNull KarmaExecutionSession session) {
+    try {
+      ProcessHandler processHandler = session.createProcessHandler();
+      ApplicationManager.getApplication().invokeLater(() -> {
+        promise.setResult(createExecutionResult(session, processHandler));
+      });
+    }
+    catch (Exception e) {
+      promise.setError(e);
+    }
+  }
+
+  private static @NotNull ExecutionResult createExecutionResult(@NotNull KarmaExecutionSession session,
+                                                                @NotNull ProcessHandler processHandler) {
+    SMTRunnerConsoleView consoleView = session.createSMTRunnerConsoleView(processHandler);
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
     executionResult.setRestartActions(((KarmaConsoleProperties)consoleView.getProperties()).createRerunFailedTestsAction(consoleView),
                                       new ToggleAutoTestAction());
-    return Promises.resolvedPromise(executionResult);
+    if (!(processHandler instanceof NopProcessHandler)) {
+      // show test result notifications for real test runs only
+      consoleView.attachToProcess(processHandler);
+      session.getFolder().foldCommandLine(consoleView, processHandler);
+    }
+    return executionResult;
   }
 
   public void setFailedTestNames(@NotNull List<List<String>> failedTestNames) {

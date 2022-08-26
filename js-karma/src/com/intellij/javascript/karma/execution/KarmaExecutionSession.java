@@ -55,9 +55,7 @@ public class KarmaExecutionSession {
   private final Executor myExecutor;
   private final KarmaServer myKarmaServer;
   private final KarmaRunSettings myRunSettings;
-  private final ProcessHandler myProcessHandler;
   private final KarmaExecutionType myExecutionType;
-  private final SMTRunnerConsoleView mySmtConsoleView;
   private final ConsoleCommandLineFolder myFolder = new ConsoleCommandLineFolder("karma", "run");
   private final List<List<String>> myFailedTestNames;
 
@@ -67,7 +65,7 @@ public class KarmaExecutionSession {
                                @NotNull KarmaServer karmaServer,
                                @NotNull KarmaRunSettings runSettings,
                                @NotNull KarmaExecutionType executionType,
-                               @Nullable List<List<String>> failedTestNames) throws ExecutionException {
+                               @Nullable List<List<String>> failedTestNames) {
     myProject = project;
     myRunConfiguration = runConfiguration;
     myExecutor = executor;
@@ -75,22 +73,14 @@ public class KarmaExecutionSession {
     myRunSettings = runSettings;
     myExecutionType = executionType;
     myFailedTestNames = failedTestNames;
-    myProcessHandler = createProcessHandler(karmaServer);
-    mySmtConsoleView = createSMTRunnerConsoleView();
-    if (!(myProcessHandler instanceof NopProcessHandler)) {
-      // show test result notifications for real test runs only
-      mySmtConsoleView.attachToProcess(myProcessHandler);
-      myFolder.foldCommandLine(mySmtConsoleView, myProcessHandler);
-    }
   }
 
-  @NotNull
-  private SMTRunnerConsoleView createSMTRunnerConsoleView() {
+  public @NotNull SMTRunnerConsoleView createSMTRunnerConsoleView(@NotNull ProcessHandler processHandler) {
     KarmaConsoleProperties consoleProperties = myRunConfiguration.createTestConsoleProperties(myExecutor, myKarmaServer);
     consoleProperties.addStackTraceFilter(new NodeStackTraceFilter(
       myProject, myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent())
     );
-    KarmaConsoleView consoleView = new KarmaConsoleView(consoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
+    KarmaConsoleView consoleView = new KarmaConsoleView(consoleProperties, myKarmaServer, myExecutionType, processHandler);
     for (Filter filter : consoleProperties.getStackTrackFilters()) {
       if (!(filter instanceof NodeStackTraceFilter)) {
         consoleView.addMessageFilter(filter);
@@ -100,27 +90,30 @@ public class KarmaExecutionSession {
     return consoleView;
   }
 
-  public boolean isDebug() {
+  private boolean isDebug() {
     return myExecutionType == KarmaExecutionType.DEBUG;
   }
 
-  @NotNull
-  private ProcessHandler createProcessHandler(@NotNull final KarmaServer server) throws ExecutionException {
+  public @NotNull ConsoleCommandLineFolder getFolder() {
+    return myFolder;
+  }
+
+  public @NotNull ProcessHandler createProcessHandler() throws ExecutionException {
     ProcessHandler processHandler = null;
     if (isDebug()) {
-      if (server.isPortBound()) {
-        processHandler = createOSProcessHandler(server);
+      if (myKarmaServer.isPortBound()) {
+        processHandler = createOSProcessHandler(myKarmaServer);
       }
     }
     else {
-      if (server.areBrowsersReady()) {
-        processHandler = createOSProcessHandler(server);
+      if (myKarmaServer.areBrowsersReady()) {
+        processHandler = createOSProcessHandler(myKarmaServer);
       }
     }
     if (processHandler == null) {
       processHandler = new NopProcessHandler();
     }
-    terminateOnServerShutdown(server, processHandler);
+    terminateOnServerShutdown(myKarmaServer, processHandler);
     return processHandler;
   }
 
@@ -245,15 +238,5 @@ public class KarmaExecutionSession {
       JSTestNamePattern anyTestPattern = new JSTestNamePattern(Collections.singletonList(JSTestNamePattern.anyRange("match all descendant suites/specs")));
       return ContainerUtil.concat(patterns, Collections.singletonList(anyTestPattern));
     });
-  }
-
-  @NotNull
-  public ProcessHandler getProcessHandler() {
-    return myProcessHandler;
-  }
-
-  @NotNull
-  public SMTRunnerConsoleView getSmtConsoleView() {
-    return mySmtConsoleView;
   }
 }
