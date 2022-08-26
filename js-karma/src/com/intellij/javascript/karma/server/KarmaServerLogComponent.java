@@ -14,7 +14,6 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
-import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -101,8 +100,6 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
   private static ConsoleView createConsole(@NotNull Project project) {
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
-    builder.setUsePredefinedMessageFilter(false);
-    builder.addFilter(new NodeStackTraceFilter(project));
     builder.setViewer(false);
     return builder.getConsole();
   }
