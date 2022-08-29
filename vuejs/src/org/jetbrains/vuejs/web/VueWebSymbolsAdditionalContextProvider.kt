@@ -10,6 +10,7 @@ import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_JS_EVENTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.PROP_HIDE_FROM_COMPLETION
 import com.intellij.javascript.web.symbols.WebSymbol.NameSegment
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
 import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItemCustomizer.Companion.decorateWithSymbolType
@@ -412,7 +413,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       if (symbol is DocumentedItemWrapper<*>)
         symbol === this || (symbol.javaClass == this.javaClass
                             && symbol.matchedName == matchedName)
-                            //&& VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))
+      //&& VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))
       else
         super.isEquivalentTo(symbol)
   }
@@ -729,6 +730,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override val pattern: WebSymbolsPattern
       get() = RegExpPattern(".*", false)
+
+    override val properties: Map<String, Any> =
+      mapOf(Pair(PROP_HIDE_FROM_COMPLETION, true))
 
     override fun createPointer(): Pointer<AnyWrapper> =
       Pointer.hardPointer(this)

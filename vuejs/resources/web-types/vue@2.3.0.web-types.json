@@ -53,7 +53,8 @@
                 "doc-hide-pattern": true,
                 "attribute-value": {
                   "required": false
-                }
+                },
+                "hide-from-completion": true
               }
             }
           ]
@@ -127,7 +128,8 @@
                 "regex": ".*"
               }
             ]
-          }
+          },
+          "hide-from-completion": true
         },
         {
           "name": "Vue directive",
@@ -649,18 +651,16 @@
             "description": "Event name",
             "required": true,
             "pattern": {
-              "or": [
+              "items": "/js/events"
+            },
+            "js": {
+              "events": [
                 {
-                  "items": "/js/events",
-                  "priority": "normal"
-                },
-                {
-                  "template": [
-                    {
-                      "regex": "(?!\\.).*"
-                    }
-                  ],
-                  "priority": "lowest"
+                  "name": "Custom event",
+                  "pattern": "(?!\\.).*",
+                  "priority": "lowest",
+                  "doc-hide-pattern": true,
+                  "hide-from-completion": true
                 }
               ]
             }

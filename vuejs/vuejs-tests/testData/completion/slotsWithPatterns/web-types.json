@@ -1,0 +1,1455 @@
+{
+  "$schema": "http://json.schemastore.org/web-types",
+  "framework": "vue",
+  "name": "vuetify",
+  "version": "2.6.9",
+  "contributions": {
+    "html": {
+      "types-syntax": "typescript",
+      "description-markup": "markdown",
+      "tags": [
+        {
+          "name": "VDataTable",
+          "source": {
+            "module": "./src/components/index.ts",
+            "symbol": "VDataTable"
+          },
+          "description": "",
+          "doc-url": "https://www.vuetifyjs.com/api/v-data-table",
+          "attributes": [
+            {
+              "name": "calculate-widths",
+              "description": "Enables calculation of column widths. `widths` property will be available in select scoped slots",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "caption",
+              "description": "Set the caption (using `<caption>`)",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "checkbox-color",
+              "description": "Set the color of the checkboxes (showSelect must be used)",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "custom-filter",
+              "description": "Function to filter items",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "gh:defaultFilter",
+              "value": {
+                "kind": "expression",
+                "type": "function"
+              }
+            },
+            {
+              "name": "custom-group",
+              "description": "Function used to group items",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "gh:groupItems",
+              "value": {
+                "kind": "expression"
+              }
+            },
+            {
+              "name": "custom-sort",
+              "description": "Function used to sort items",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "gh:sortItems",
+              "value": {
+                "kind": "expression",
+                "type": "function"
+              }
+            },
+            {
+              "name": "dark",
+              "description": "Applies the dark theme variant to the component. You can find more information on the Material Design documentation for [dark themes](https://material.io/design/color/dark-theme.html).",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "dense",
+              "description": "Decreases the height of rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "disable-filtering",
+              "description": "Disables filtering completely",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "disable-pagination",
+              "description": "Disables pagination completely",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "disable-sort",
+              "description": "Disables sorting completely",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "expand-icon",
+              "description": "Icon used for expand toggle button.",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "'$expand'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "expanded",
+              "description": "Array of expanded items. Can be used with `.sync` modifier",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": "array"
+              }
+            },
+            {
+              "name": "fixed-header",
+              "description": "Fixed header to top of table. **NOTE:** Does not work in IE11",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "footer-props",
+              "description": "See the [`v-data-footer`](/api/v-data-footer) API for more information",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": "object"
+              }
+            },
+            {
+              "name": "group-by",
+              "description": "Changes which item property should be used for grouping items. Currently only supports a single grouping in the format: `group` or `['group']`. When using an array, only the first element is considered. Can be used with `.sync` modifier",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            },
+            {
+              "name": "group-desc",
+              "description": "Changes which direction grouping is done. Can be used with `.sync` modifier",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "boolean",
+                  "array"
+                ]
+              }
+            },
+            {
+              "name": "header-props",
+              "description": "Pass props to the default header. See [`v-data-table-header` API](/api/v-data-table-header) for more information",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": "object"
+              }
+            },
+            {
+              "name": "headers",
+              "description": "An array of objects that each describe a header column. See the example below for a definition of all properties",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": "DataTableHeader[]"
+              }
+            },
+            {
+              "name": "headers-length",
+              "description": "Can be used in combination with `hide-default-header` to specify the number of columns in the table to allow expansion rows and loading bar to function properly",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": "number"
+              }
+            },
+            {
+              "name": "height",
+              "description": "Set an explicit height of table",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "number",
+                  "string"
+                ]
+              }
+            },
+            {
+              "name": "hide-default-footer",
+              "description": "Hides default footer",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "hide-default-header",
+              "description": "Hide the default headers",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "item-key",
+              "description": "The property on each item that is used as a unique key",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "'id'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "items",
+              "description": "The array of items to display",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": "array"
+              }
+            },
+            {
+              "name": "items-per-page",
+              "description": "Changes how many items per page should be visible. Can be used with `.sync` modifier. Setting this prop to `-1` will display all items on the page",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "10",
+              "value": {
+                "kind": "expression",
+                "type": "number"
+              }
+            },
+            {
+              "name": "light",
+              "description": "Applies the light theme variant to the component.",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "loading",
+              "description": "If `true` and no items are provided, then a loading text will be shown",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "boolean",
+                  "string"
+                ]
+              }
+            },
+            {
+              "name": "loading-text",
+              "description": "Text shown when `loading` is true and no items are provided",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "'$vuetify.dataIterator.loadingText'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "locale",
+              "description": "Sets the locale used for sorting. This is passed into [`Intl.Collator()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator) in the default `customSort` function",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "'en-US'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "mobile-breakpoint",
+              "description": "Used to set when to toggle between regular table and mobile view",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "600",
+              "value": {
+                "kind": "expression",
+                "type": "number"
+              }
+            },
+            {
+              "name": "multi-sort",
+              "description": "If `true` then one can sort on multiple properties",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "must-sort",
+              "description": "If `true` then one can not disable sorting, it will always switch between ascending and descending",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "no-data-text",
+              "description": "Text shown when no items are provided to the component",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "'$vuetify.noDataText'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "no-results-text",
+              "description": "Text shown when `search` prop is used and there are no results",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "'$vuetify.dataIterator.noResultsText'",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "options",
+              "description": "",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "{}",
+              "value": {
+                "kind": "expression",
+                "type": "DataOptions"
+              }
+            },
+            {
+              "name": "page",
+              "description": "The current displayed page number (1-indexed)",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "1",
+              "value": {
+                "kind": "expression",
+                "type": "number"
+              }
+            },
+            {
+              "name": "search",
+              "description": "Text input used to filter items",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "undefined",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "server-items-length",
+              "description": "Used only when data is provided by a server. Should be set to the total amount of items available on server so that pagination works correctly",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "-1",
+              "value": {
+                "kind": "expression",
+                "type": "number"
+              }
+            },
+            {
+              "name": "show-expand",
+              "description": "Shows the expand toggle in default rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "show-group-by",
+              "description": "Shows the group by toggle in the header and enables grouped rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "show-select",
+              "description": "Shows the select checkboxes in both the header and rows (if using default rows)",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "single-expand",
+              "description": "Changes expansion mode to single expand",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "single-select",
+              "description": "Changes selection mode to single select",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "false",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "sort-by",
+              "description": "Changes which item property (or properties) should be used for sort order. Can be used with `.sync` modifier",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            },
+            {
+              "name": "sort-desc",
+              "description": "Changes which direction sorting is done. Can be used with `.sync` modifier",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "boolean",
+                  "array"
+                ]
+              }
+            },
+            {
+              "name": "value",
+              "description": "Used for controlling selected rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#props",
+              "default": "[]",
+              "value": {
+                "kind": "expression",
+                "type": "array"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "click:row",
+              "description": "Emits when a table row is clicked. This event provides 2 arguments: the first is the item data that was clicked and the second is the other related data provided by the `item` slot. **NOTE:** will not emit when table rows are defined through a slot such as `item` or `body`.",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "any, {\n  expand: (value: boolean) => void,\n  headers: DataTableHeader[],\n  isExpanded: boolean,\n  isMobile: boolean,\n  isSelected: boolean,\n  item: any,\n  select: (value: boolean) => void\n}"
+                }
+              ]
+            },
+            {
+              "name": "contextmenu:row",
+              "description": "Emits when a table row is right-clicked. The item for the row is included. **NOTE:** will not emit when table rows are defined through a slot such as `item` or `body`.",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "MouseEvent, {\n  expand: (value: boolean) => void,\n  headers: DataTableHeader[],\n  isExpanded: boolean,\n  isMobile: boolean,\n  isSelected: boolean,\n  item: any,\n  select: (value: boolean) => void\n}"
+                }
+              ]
+            },
+            {
+              "name": "current-items",
+              "description": "Emits the items provided via the **items** prop, every time the internal **computedItems** is changed.",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "any[]"
+                }
+              ]
+            },
+            {
+              "name": "dblclick:row",
+              "description": "Emits when a table row is double-clicked. The item for the row is included. **NOTE:** will not emit when table rows are defined through a slot such as `item` or `body`.",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "MouseEvent, {\n  expand: (value: boolean) => void,\n  headers: DataTableHeader[],\n  isExpanded: boolean,\n  isMobile: boolean,\n  isSelected: boolean,\n  item: any,\n  select: (value: boolean) => void\n}"
+                }
+              ]
+            },
+            {
+              "name": "input",
+              "description": "Array of selected items",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "any[]"
+                }
+              ]
+            },
+            {
+              "name": "item-expanded",
+              "description": "Event emitted when an item is expanded or closed",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "{ item: any, value: boolean }"
+                }
+              ]
+            },
+            {
+              "name": "item-selected",
+              "description": "Event emitted when an item is selected or deselected",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "{ item: any, value: boolean }"
+                }
+              ]
+            },
+            {
+              "name": "page-count",
+              "description": "Emits when the **pageCount** property of the **pagination** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "name": "pagination",
+              "description": "Emits when something changed to the `pagination` which can be provided via the `pagination` prop",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"}"
+                }
+              ]
+            },
+            {
+              "name": "toggle-select-all",
+              "description": "Emits when the `select-all` checkbox in table header is clicked. This checkbox is enabled by the **show-select** prop",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "{ items: any[], value: boolean }"
+                }
+              ]
+            },
+            {
+              "name": "update:expanded",
+              "description": "The `.sync` event for `expanded` prop",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "any[]"
+                }
+              ]
+            },
+            {
+              "name": "update:group-by",
+              "description": "Emits when the **group-by** property of the **options** property is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "string | string[]"
+                }
+              ]
+            },
+            {
+              "name": "update:group-desc",
+              "description": "Emits when the **group-desc** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "boolean | boolean[]"
+                }
+              ]
+            },
+            {
+              "name": "update:items-per-page",
+              "description": "Emits when the **items-per-page** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "name": "update:multi-sort",
+              "description": "Emits when the **multi-sort** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "boolean"
+                }
+              ]
+            },
+            {
+              "name": "update:must-sort",
+              "description": "Emits when the **must-sort** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "boolean"
+                }
+              ]
+            },
+            {
+              "name": "update:options",
+              "description": "Emits when one of the **options** properties is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                }
+              ]
+            },
+            {
+              "name": "update:page",
+              "description": "Emits when the **page** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "name": "update:sort-by",
+              "description": "Emits when the **sort-by** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "string | string[]"
+                }
+              ]
+            },
+            {
+              "name": "update:sort-desc",
+              "description": "Emits when the **sort-desc** property of the **options** prop is updated",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#events",
+              "arguments": [
+                {
+                  "name": "argument",
+                  "type": "boolean | boolean[]"
+                }
+              ]
+            }
+          ],
+          "slots": [
+            {
+              "name": "body",
+              "description": "Slot to replace the default table `<tbody>`",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "originalItemsLength",
+                  "type": "number"
+                },
+                {
+                  "name": "pagination",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"}"
+                },
+                {
+                  "name": "options",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                },
+                {
+                  "name": "groupedItems",
+                  "type": "Array<{ name: string, items: any[] }>"
+                },
+                {
+                  "name": "updateOptions",
+                  "type": "(obj: any) => void"
+                },
+                {
+                  "name": "sort",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "sortArray",
+                  "type": "(sortBy: string[]) => void"
+                },
+                {
+                  "name": "group",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isSelected",
+                  "type": "(item: any) => boolean"
+                },
+                {
+                  "name": "select",
+                  "type": "(item: any, value: boolean) => void"
+                },
+                {
+                  "name": "isExpanded",
+                  "type": "(item: any) => boolean"
+                },
+                {
+                  "name": "expand",
+                  "type": "(item: any, value: boolean) => void"
+                }
+              ]
+            },
+            {
+              "name": "body.append",
+              "description": "Appends elements to the end of the default table `<tbody>`",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "originalItemsLength",
+                  "type": "number"
+                },
+                {
+                  "name": "pagination",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"}"
+                },
+                {
+                  "name": "options",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                },
+                {
+                  "name": "groupedItems",
+                  "type": "Array<{ name: string, items: any[] }>"
+                },
+                {
+                  "name": "updateOptions",
+                  "type": "(obj: any) => void"
+                },
+                {
+                  "name": "sort",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "sortArray",
+                  "type": "(sortBy: string[]) => void"
+                },
+                {
+                  "name": "group",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isSelected",
+                  "type": "(item: any) => boolean"
+                },
+                {
+                  "name": "select",
+                  "type": "(item: any, value: boolean) => void"
+                },
+                {
+                  "name": "isExpanded",
+                  "type": "(item: any) => boolean"
+                },
+                {
+                  "name": "expand",
+                  "type": "(item: any, value: boolean) => void"
+                }
+              ]
+            },
+            {
+              "name": "body.prepend",
+              "description": "Prepends elements to the start of the default table `<tbody>`",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "originalItemsLength",
+                  "type": "number"
+                },
+                {
+                  "name": "pagination",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"}"
+                },
+                {
+                  "name": "options",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                },
+                {
+                  "name": "groupedItems",
+                  "type": "Array<{ name: string, items: any[] }>"
+                },
+                {
+                  "name": "updateOptions",
+                  "type": "(obj: any) => void"
+                },
+                {
+                  "name": "sort",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "sortArray",
+                  "type": "(sortBy: string[]) => void"
+                },
+                {
+                  "name": "group",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isSelected",
+                  "type": "(item: any) => boolean"
+                },
+                {
+                  "name": "select",
+                  "type": "(item: any, value: boolean) => void"
+                },
+                {
+                  "name": "isExpanded",
+                  "type": "(item: any) => boolean"
+                },
+                {
+                  "name": "expand",
+                  "type": "(item: any, value: boolean) => void"
+                }
+              ]
+            },
+            {
+              "name": "expanded-item",
+              "description": "Slot to customize expanded rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "item",
+                  "type": "any"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                }
+              ]
+            },
+            {
+              "name": "foot",
+              "description": "Slot to add a `<tfoot>` element after the `<tbody>`. Not to be confused with the `footer` slot",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "originalItemsLength",
+                  "type": "number"
+                },
+                {
+                  "name": "pagination",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"}"
+                },
+                {
+                  "name": "options",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                },
+                {
+                  "name": "groupedItems",
+                  "type": "Array<{ name: string, items: any[] }>"
+                },
+                {
+                  "name": "updateOptions",
+                  "type": "(obj: any) => void"
+                },
+                {
+                  "name": "sort",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "sortArray",
+                  "type": "(sortBy: string[]) => void"
+                },
+                {
+                  "name": "group",
+                  "type": "(value: string) => void"
+                }
+              ]
+            },
+            {
+              "name": "footer",
+              "description": "Slot to add a custom footer",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "props",
+                  "type": "{\"options\":{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"},\"pagination\":{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"},\"itemsPerPageText\":\"string\"}"
+                },
+                {
+                  "name": "on",
+                  "type": "{}"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                },
+                {
+                  "name": "widths",
+                  "type": "[]"
+                }
+              ]
+            },
+            {
+              "name": "footer.page-text",
+              "description": "Slot to customize footer page text",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "pageStart",
+                  "type": "number"
+                },
+                {
+                  "name": "pageStop",
+                  "type": "number"
+                },
+                {
+                  "name": "itemsLength",
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "name": "footer.prepend",
+              "description": "Adds content to the empty space in the footer",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots"
+            },
+            {
+              "name": "group",
+              "description": "Slot to replace the default rendering of grouped rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "group",
+                  "type": "string"
+                },
+                {
+                  "name": "options",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                }
+              ]
+            },
+            {
+              "name": "group.header",
+              "description": "Slot to customize the default rendering of group headers",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "group",
+                  "type": "string"
+                },
+                {
+                  "name": "groupBy",
+                  "type": "string[]"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                },
+                {
+                  "name": "isOpen",
+                  "type": "boolean"
+                },
+                {
+                  "name": "toggle",
+                  "type": "() => void"
+                },
+                {
+                  "name": "remove",
+                  "type": "() => void"
+                }
+              ]
+            },
+            {
+              "name": "group.summary",
+              "description": "Slot to customize the default rendering of group summaries",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "group",
+                  "type": "string"
+                },
+                {
+                  "name": "groupBy",
+                  "type": "string[]"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                },
+                {
+                  "name": "isOpen",
+                  "type": "boolean"
+                },
+                {
+                  "name": "toggle",
+                  "type": "() => void"
+                }
+              ]
+            },
+            {
+              "name": "header",
+              "description": "",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "props",
+                  "type": "{\"headers\":\"DataTableHeader[]\",\"options\":{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"},\"mobile\":\"boolean\",\"showGroupBy\":\"boolean\",\"someItems\":\"boolean\",\"everyItem\":\"boolean\"}"
+                },
+                {
+                  "name": "on",
+                  "type": "{\"sort\":\"(value: string) => void\",\"group\":\"(value: string) => void\",\"toggle-select-all\":\"(value: boolean) => void\"}"
+                }
+              ]
+            },
+            {
+              "name": "header.<name>",
+              "pattern": {
+                "items": "header-columns",
+                "template": [
+                  "header.",
+                  "#item:header column"
+                ]
+              },
+              "header-columns": {
+                "name": "Header column",
+                "pattern": {
+                  "regex": ".+"
+                },
+                "doc-hide-pattern": true
+              },
+              "description": "Slot to customize a specific header column",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "header",
+                  "type": "DataTableHeader"
+                }
+              ]
+            },
+            {
+              "name": "header.data-table-select",
+              "description": "Slot to replace the default `v-simple-checkbox` in header",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "props",
+                  "type": "{\"value\":\"boolean\",\"indeterminate\":\"boolean\"}"
+                },
+                {
+                  "name": "on",
+                  "type": "{\"input\":\"(value: boolean) => void\"}"
+                }
+              ]
+            },
+            {
+              "name": "item",
+              "description": "Slot to replace the default rendering of a row",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "expand",
+                  "type": "(v: boolean) => void"
+                },
+                {
+                  "name": "index",
+                  "type": "number"
+                },
+                {
+                  "name": "item",
+                  "type": "any"
+                },
+                {
+                  "name": "isExpanded",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isSelected",
+                  "type": "boolean"
+                },
+                {
+                  "name": "select",
+                  "type": "(v: boolean) => void"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                }
+              ]
+            },
+            {
+              "name": "item.<name>",
+              "pattern": {
+                "items": "columns",
+                "template": [
+                  "item.",
+                  "#item:column"
+                ]
+              },
+              "columns": {
+                "name": "Column",
+                "pattern": {
+                  "regex": ".+"
+                },
+                "doc-hide-pattern": true
+              },
+              "description": "Slot to customize a specific column",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "item",
+                  "type": "any"
+                },
+                {
+                  "name": "header",
+                  "type": "DataTableHeader"
+                },
+                {
+                  "name": "value",
+                  "type": "any"
+                },
+                {
+                  "name": "index",
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "name": "item.data-table-expand",
+              "description": "Slot to replace the default `v-icon` used when expanding rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "expand",
+                  "type": "(v: boolean) => void"
+                },
+                {
+                  "name": "index",
+                  "type": "number"
+                },
+                {
+                  "name": "item",
+                  "type": "any"
+                },
+                {
+                  "name": "isExpanded",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isSelected",
+                  "type": "boolean"
+                },
+                {
+                  "name": "select",
+                  "type": "(v: boolean) => void"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                }
+              ]
+            },
+            {
+              "name": "item.data-table-select",
+              "description": "Slot to replace the default `v-simple-checkbox` used when selecting rows",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "expand",
+                  "type": "(v: boolean) => void"
+                },
+                {
+                  "name": "index",
+                  "type": "number"
+                },
+                {
+                  "name": "item",
+                  "type": "any"
+                },
+                {
+                  "name": "isExpanded",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                },
+                {
+                  "name": "isSelected",
+                  "type": "boolean"
+                },
+                {
+                  "name": "select",
+                  "type": "(v: boolean) => void"
+                },
+                {
+                  "name": "headers",
+                  "type": "DataTableHeader[]"
+                }
+              ]
+            },
+            {
+              "name": "loading",
+              "description": "Defines content for when `loading` is true and no items are provided",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots"
+            },
+            {
+              "name": "no-data",
+              "description": "Defines content for when no items are provided",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots"
+            },
+            {
+              "name": "no-results",
+              "description": "Defines content for when `search` is provided but no results are found",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots"
+            },
+            {
+              "name": "progress",
+              "description": "Slot to replace the default `<v-progress-linear>` component",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots"
+            },
+            {
+              "name": "top",
+              "description": "Slot to add content above the table",
+              "doc-url": "https://www.vuetifyjs.com/api/v-data-table#slots",
+              "vue-properties": [
+                {
+                  "name": "items",
+                  "type": "any[]"
+                },
+                {
+                  "name": "originalItemsLength",
+                  "type": "number"
+                },
+                {
+                  "name": "pagination",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"pageStart\":\"number\",\"pageStop\":\"number\",\"pageCount\":\"number\",\"itemsLength\":\"number\"}"
+                },
+                {
+                  "name": "options",
+                  "type": "{\"page\":\"number\",\"itemsPerPage\":\"number\",\"sortBy\":\"string[]\",\"sortDesc\":\"boolean[]\",\"groupBy\":\"string[]\",\"groupDesc\":\"boolean[]\",\"multiSort\":\"boolean\",\"mustSort\":\"boolean\"}"
+                },
+                {
+                  "name": "groupedItems",
+                  "type": "Array<{ name: string, items: any[] }>"
+                },
+                {
+                  "name": "updateOptions",
+                  "type": "(obj: any) => void"
+                },
+                {
+                  "name": "sort",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "sortArray",
+                  "type": "(sortBy: string[]) => void"
+                },
+                {
+                  "name": "group",
+                  "type": "(value: string) => void"
+                },
+                {
+                  "name": "isMobile",
+                  "type": "boolean"
+                }
+              ]
+            }
+          ],
+          "vue-model": {
+            "prop": "value",
+            "event": "input"
+          }
+        }
+      ]
+    }
+  }
+}

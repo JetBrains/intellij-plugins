@@ -1891,7 +1891,8 @@ export default {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("index.html")
-    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"), lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"),
+                 lookupFilter = nonHtmlLookupFilter)
     myFixture.moveToOffsetBySignature("w<<caret>")
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "Car", "Bar", "foo-bar")
@@ -1901,14 +1902,16 @@ export default {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("foo.vue")
-    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"), lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"),
+                 lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCreateAppRootComponent() {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
     myFixture.configureFromTempProjectFile("App.vue")
-    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"), lookupFilter = nonHtmlLookupFilter)
+    doLookupTest(renderPriority = true, noConfigure = true, locations = listOf("<<caret>Boo", "<div v-<caret>"),
+                 lookupFilter = nonHtmlLookupFilter)
   }
 
   fun testCreateAppImportedByRootComponent() {
@@ -1927,6 +1930,10 @@ export default {
     doLookupTest(renderPriority = true, noConfigure = true, lookupFilter = nonHtmlLookupFilter)
   }
 
+  fun testSlotsWithPatterns() {
+    doLookupTest(dir = true, renderPriority = false, renderPresentedText = true, locations = listOf("<template #<caret>"))
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
@@ -1942,6 +1949,7 @@ export default {
                            renderTailText: Boolean = false,
                            containsCheck: Boolean = false,
                            renderProximity: Boolean = false,
+                           renderPresentedText: Boolean = false,
                            lookupFilter: (item: LookupElement) -> Boolean = { true },
                            filter: (item: String) -> Boolean = { true }) {
     if (!noConfigure) {
@@ -1964,7 +1972,7 @@ export default {
     if (locations.isEmpty()) {
       myFixture.completeBasic()
       myFixture.checkListByFile(
-        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, lookupFilter)
+        myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter)
           .filter(filter),
         getTestName(true) + ".txt",
         containsCheck
@@ -1975,7 +1983,7 @@ export default {
         myFixture.moveToOffsetBySignature(location)
         myFixture.completeBasic()
         myFixture.checkListByFile(
-          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, lookupFilter)
+          myFixture.renderLookupItems(renderPriority, renderTypeText, renderTailText, renderProximity, renderPresentedText, lookupFilter)
             .filter(filter),
           getTestName(true) + ".${index + 1}.txt",
           containsCheck

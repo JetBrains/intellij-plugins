@@ -390,7 +390,8 @@
             "name": "Reference variable",
             "pattern": ".*",
             "doc-hide-pattern": true,
-            "ij-no-psi-refs": true
+            "ij-no-psi-refs": true,
+            "hide-from-completion": true
           },
           "value": {
             "required": false,
@@ -410,7 +411,8 @@
           },
           "value": {
             "required": false
-          }
+          },
+          "hide-from-completion": true
         },
         {
           "name": "i18n attribute translation",
@@ -438,7 +440,8 @@
               "proximity": 0,
               "pattern": ".+",
               "doc-hide-pattern": true,
-              "ng-error-symbol": true
+              "ng-error-symbol": true,
+              "hide-from-completion": true
             }
           ]
         }
@@ -472,7 +475,8 @@
                 "priority": "low",
                 "pattern": ".+",
                 "doc-hide-pattern": true,
-                "ng-error-symbol": true
+                "ng-error-symbol": true,
+                "hide-from-completion": true
               }
             ]
           }
@@ -505,7 +509,8 @@
                 "priority": "low",
                 "pattern": ".+",
                 "doc-hide-pattern": true,
-                "ng-error-symbol": true
+                "ng-error-symbol": true,
+                "hide-from-completion": true
               }
             ]
           }
@@ -545,7 +550,8 @@
               "priority": "low",
               "pattern": ".+",
               "doc-hide-pattern": true,
-              "ng-error-symbol": true
+              "ng-error-symbol": true,
+              "hide-from-completion": true
             }
           ]
         },
@@ -578,7 +584,8 @@
                 "priority": "low",
                 "pattern": ".+",
                 "doc-hide-pattern": true,
-                "ng-error-symbol": true
+                "ng-error-symbol": true,
+                "hide-from-completion": true
               }
             ]
           }
@@ -592,7 +599,8 @@
                 "regex": ".+"
               }
             ]
-          }
+          },
+          "hide-from-completion": true
         }
       ]
     },
@@ -676,15 +684,19 @@
             },
             {
               "name": "Extended event standard key",
+              "description": "Key name: `f1`-`f20`, `a`-`z`, `0`-`9`, `` ` ``, `~`, `@`, `#`, `$`, `%`, `^`, `&`, `*`, `(`, `)`, `_`, `+`, `-`, `[`, `]`, `{`, `}`, `|`, `;`, `:`, `,` or `?`.",
               "priority": "low",
-              "pattern": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]"
+              "pattern": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]",
+              "doc-hide-pattern": true,
+              "hide-from-completion": true
             }
           ]
         },
         {
           "name": "Namespaced event",
           "pattern": ".+:.+",
-          "doc-hide-pattern": true
+          "doc-hide-pattern": true,
+          "hide-from-completion": true
         },
         {
           "name": "Animation callback",

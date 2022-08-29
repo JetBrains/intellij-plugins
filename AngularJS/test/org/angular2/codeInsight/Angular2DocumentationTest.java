@@ -51,6 +51,10 @@ public class Angular2DocumentationTest extends Angular2CodeInsightFixtureTestCas
     doTest();
   }
 
+  public void testExtendedEventKey() {
+    doTest();
+  }
+
   private void doTest() {
     myFixture.configureByFiles(getTestName(true) + ".html",
                                "package.json", "deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts", "deps/ng_plural.ts");

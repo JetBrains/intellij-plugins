@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
 import com.intellij.javascript.web.symbols.WebSymbolsRegistryManager
+import com.intellij.javascript.web.symbols.hideFromCompletion
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
@@ -50,7 +51,7 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
           if (symbol != null
               && WebSymbolsRegistryManager.get(attr)
                 .runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_DIRECTIVE_ARGUMENT), context = listOf(symbol))
-                .count { it.pattern?.isMatchAllRegExp() != true } == 0
+                .count { !it.hideFromCompletion } == 0
           ) {
             names.add(ATTR_DIRECTIVE_PREFIX + info.name)
           }
