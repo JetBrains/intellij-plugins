@@ -33,6 +33,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.dartlang.analysis.server.protocol.ImportedElements;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -155,23 +156,8 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
     }
 
     @Override
-    public DataFlavor getFlavor() {
+    public @Nullable DataFlavor getFlavor() {
       return FLAVOR;
-    }
-
-    @Override
-    public int getOffsetCount() {
-      return 0;
-    }
-
-    @Override
-    public int getOffsets(int[] offsets, int index) {
-      return index;
-    }
-
-    @Override
-    public int setOffsets(int[] offsets, int index) {
-      return index;
     }
   }
 }
