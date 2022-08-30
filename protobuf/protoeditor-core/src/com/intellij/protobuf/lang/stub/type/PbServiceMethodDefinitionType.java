@@ -35,7 +35,7 @@ public class PbServiceMethodDefinitionType
 
   @Override
   public @NotNull String getExternalId() {
-    return "protobuf.serviceMethod";
+    return "protobuf.SERVICE_METHOD";
   }
 
   @Override

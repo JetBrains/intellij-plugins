@@ -50,7 +50,7 @@ public class PbMessageDefinitionType
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.message";
+    return "protobuf.MESSAGE_DEFINITION";
   }
 
   @Override

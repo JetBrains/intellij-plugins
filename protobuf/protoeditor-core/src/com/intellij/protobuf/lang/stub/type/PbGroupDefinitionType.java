@@ -51,7 +51,7 @@ public class PbGroupDefinitionType
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.group";
+    return "protobuf.GROUP_DEFINITION";
   }
 
   @Override

@@ -50,7 +50,7 @@ public class PbServiceDefinitionType
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.service";
+    return "protobuf.SERVICE_DEFINITION";
   }
 
   @Override

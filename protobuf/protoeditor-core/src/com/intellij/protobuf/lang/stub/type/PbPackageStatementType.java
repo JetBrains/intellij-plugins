@@ -59,7 +59,7 @@ public class PbPackageStatementType
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.package";
+    return "protobuf.PACKAGE_STATEMENT";
   }
 
   @Override

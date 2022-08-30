@@ -50,7 +50,7 @@ public class PbOneofDefinitionType
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.oneof";
+    return "protobuf.ONEOF_DEFINITION";
   }
 
   @Override

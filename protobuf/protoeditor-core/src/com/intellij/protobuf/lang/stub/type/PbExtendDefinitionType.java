@@ -54,7 +54,7 @@ public class PbExtendDefinitionType
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.extend";
+    return "protobuf.EXTEND_DEFINITION";
   }
 
   @Override

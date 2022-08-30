@@ -49,7 +49,7 @@ public class PbEnumDefinitionType extends IStubElementType<PbEnumDefinitionStub,
   @NotNull
   @Override
   public String getExternalId() {
-    return "protobuf.enum";
+    return "protobuf.ENUM_DEFINITION";
   }
 
   @Override
