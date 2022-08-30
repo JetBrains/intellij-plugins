@@ -132,7 +132,7 @@
     <documentationProvider implementation="com.intellij.protobuf.ide.documentation.PbDocumentationProvider"/>
 
     <!-- Stub indexing -->
-    <stubElementTypeHolder externalIdPrefix="protobuf." class="com.intellij.protobuf.lang.stub.type.PbStubElementTypes"/>
+    <stubElementTypeHolder class="com.intellij.protobuf.lang.stub.type.PbStubElementTypes"/>
     <stubIndex implementation="com.intellij.protobuf.lang.stub.index.QualifiedNameIndex"/>
     <stubIndex implementation="com.intellij.protobuf.lang.stub.index.ShortNameIndex"/>
 
