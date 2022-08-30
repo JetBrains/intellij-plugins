@@ -34,4 +34,9 @@ public class ShortNameIndex extends StringStubIndexExtension<PbNamedElement> {
   public StubIndexKey<String, PbNamedElement> getKey() {
     return KEY;
   }
+
+  @Override
+  public int getVersion() {
+    return super.getVersion() + 1;
+  }
 }
