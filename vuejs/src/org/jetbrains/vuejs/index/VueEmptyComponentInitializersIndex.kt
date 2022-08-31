@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.castSafelyTo
@@ -54,9 +55,13 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     }
   }
 
-  override fun getVersion(): Int = 7
+  override fun getVersion(): Int = 8
 
-  override fun getInputFilter(): FileBasedIndex.InputFilter = DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE)
+  override fun getInputFilter(): FileBasedIndex.InputFilter = object: DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE) {
+    override fun acceptInput(file: VirtualFile): Boolean {
+      return file.fileType == VueFileType.INSTANCE
+    }
+  }
 
   companion object {
     val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")

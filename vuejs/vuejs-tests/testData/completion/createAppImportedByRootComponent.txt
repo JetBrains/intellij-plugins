@@ -26,10 +26,8 @@ teleport#vue#10
 transition#vue#10
 transition-group#vue#10
 Foo#null#1
-Index#null#1
 NotImported#null#1
 TheComponent#null#1
 foo#null#1
-index#null#1
 not-imported#null#1
 the-component#null#1

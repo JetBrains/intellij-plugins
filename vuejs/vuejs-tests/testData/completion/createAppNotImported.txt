@@ -26,8 +26,6 @@ foo-bar#null#1
 imported-by-root#null#1
 non-chain#null#1
 Foo#null#1
-Index#null#1
 TheComponent#null#1
 foo#null#1
-index#null#1
 the-component#null#1

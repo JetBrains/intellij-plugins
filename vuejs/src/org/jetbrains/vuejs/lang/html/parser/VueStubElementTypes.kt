@@ -27,7 +27,7 @@ import java.io.IOException
 
 object VueStubElementTypes {
 
-  const val VERSION = 6
+  const val VERSION = 7
 
   val STUBBED_NON_TEMPLATE_TAG = VueStubBasedTagElementType("STUBBED_NON_TEMPLATE_TAG")
   val STUBBED_TEMPLATE_TAG = object : VueStubBasedTagElementType("STUBBED_TEMPLATE_TAG") {

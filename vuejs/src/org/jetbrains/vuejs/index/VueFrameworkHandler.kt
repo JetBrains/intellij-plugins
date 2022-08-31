@@ -568,7 +568,7 @@ fun hasAttribute(tag: XmlTag, attributeName: String): Boolean =
 
 @StubSafe
 fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> Boolean)? = null): XmlTag? {
-  if (xmlFile.fileType == VueFileType.INSTANCE) {
+  if ((xmlFile.virtualFile?.fileType ?: xmlFile.fileType) == VueFileType.INSTANCE) {
     var result: XmlTag? = null
     if (xmlFile is PsiFileImpl) {
       xmlFile.stub?.let { stub ->
