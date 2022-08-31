@@ -67,7 +67,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
       }
       userSelected(boardInfo);
     });
-    new TreeSpeedSearch(myTree, DeviceTreeNode::searchText, true);
+    new TreeSpeedSearch(myTree, true, DeviceTreeNode::searchText);
   }
 
   @Override
