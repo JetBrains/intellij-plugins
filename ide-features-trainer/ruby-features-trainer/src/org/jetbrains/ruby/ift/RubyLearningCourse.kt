@@ -105,4 +105,42 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
       )
     },
   )
+
+  override fun getLessonIdToTipsMap(): Map<String, List<String>> = mutableMapOf(
+    // EditorBasics
+    "context.actions" to listOf("ContextActions"),
+    "Actions" to listOf("find_action", "GoToAction"),
+    "Select" to listOf("smart_selection", "CtrlW"),
+    "Comment line" to listOf("CommentCode"),
+    "Duplicate" to listOf("CtrlD", "DeleteLine"),
+    "Move" to listOf("MoveUpDown"),
+    "Surround and unwrap" to listOf("SurroundWith"),
+
+    // CodeCompletion
+    "Basic completion" to listOf("CodeCompletion"),
+    "Completion with tab" to listOf("TabInLookups"),
+
+    // Refactorings
+    "Extract variable" to listOf("IntroduceVariable"),
+    "Extract method" to listOf("ExtractMethod"),
+
+    // CodeAssistance
+    "CodeAssistance.LocalHistory" to listOf("local_history"),
+    "CodeAssistance.CodeFormatting" to listOf("LayoutCode"),
+    "CodeAssistance.ParameterInfo" to listOf("ParameterInfo"),
+    "CodeAssistance.QuickPopups" to listOf("CtrlShiftIForLookup", "CtrlShiftI", "QuickJavaDoc"),
+    "CodeAssistance.EditorCodingAssistance" to listOf("HighlightUsagesInFile", "NextPrevError", "NavigateBetweenErrors"),
+
+    // Navigation
+    "Search everywhere" to listOf("SearchEverywhere", "GoToClass", "search_everywhere_general"),
+    "Find in files" to listOf("FindReplaceToggle", "FindInPath"),
+    "Declaration and usages" to listOf("GoToDeclaration", "ShowUsages"),
+    "File structure" to listOf("FileStructurePopup"),
+    "Recent Files and Locations" to listOf("recent-locations", "RecentFiles"),
+  ).also { map ->
+    val gitCourse = CourseManager.instance.findCommonCourseById("Git")
+    if (gitCourse != null) {
+      map.putAll(gitCourse.getLessonIdToTipsMap())
+    }
+  }
 }
