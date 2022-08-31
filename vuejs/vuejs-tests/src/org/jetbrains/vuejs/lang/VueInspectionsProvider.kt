@@ -14,6 +14,9 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import org.jetbrains.vuejs.inspections.DuplicateTagInspection
+import org.jetbrains.vuejs.inspections.VueDeprecatedSymbolInspection
+import org.jetbrains.vuejs.inspections.VueUnrecognizedDirectiveInspection
+import org.jetbrains.vuejs.inspections.VueUnrecognizedSlotInspection
 
 class VueInspectionsProvider : InspectionToolProvider {
   override fun getInspectionClasses(): Array<Class<out LocalInspectionTool>> =
@@ -24,6 +27,9 @@ class VueInspectionsProvider : InspectionToolProvider {
       HtmlUnknownBooleanAttributeInspection::class.java,
       HtmlUnknownAttributeInspection::class.java,
       HtmlUnknownTagInspection::class.java,
+      VueDeprecatedSymbolInspection::class.java,
+      VueUnrecognizedDirectiveInspection::class.java,
+      VueUnrecognizedSlotInspection::class.java,
       RequiredAttributesInspection::class.java,
       DuplicateTagInspection::class.java,
       XmlUnboundNsPrefixInspection::class.java,

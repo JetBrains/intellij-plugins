@@ -1136,4 +1136,10 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.checkHighlighting();
   }
+
+  public void testHtmlAttributesInspections() {
+    myFixture.configureByFiles("htmlAttributesInspections.html", "package.json");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
+  }
 }

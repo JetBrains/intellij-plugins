@@ -27,7 +27,7 @@ import {Component} from "@angular/core"
         <fieldset #fieldset></fieldset>
         {{ testFieldSet(fieldset) }}
         
-        <<weak_warning descr="Deprecated symbol used, consult docs for better alternative">frameset</weak_warning> #frameset></<weak_warning descr="Deprecated symbol used, consult docs for better alternative">frameset</weak_warning>>
+        <frameset #frameset></frameset>
         {{ testFrameSet(frameset) }}
         
         <hr #hr/>

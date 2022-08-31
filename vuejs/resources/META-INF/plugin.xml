@@ -131,6 +131,38 @@
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"
                      key="vue.inspection.display.name.duplicate.tag" bundle="messages.VueBundle"/>
+
+    <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueUnrecognizedSlot"
+                     enabledByDefault="true" level="WEAK WARNING"
+                     implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedSlotInspection"
+                     key="vue.inspection.display.name.unrecognized.slot" bundle="messages.VueBundle"/>
+    <javascript.web.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
+                                          toolShortName="VueUnrecognizedSlot"/>
+
+    <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueUnrecognizedDirective"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedDirectiveInspection"
+                     key="vue.inspection.display.name.unrecognized.directive" bundle="messages.VueBundle"/>
+    <javascript.web.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-directives"
+                                          toolShortName="VueUnrecognizedDirective"/>
+
+    <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDeprecatedSymbol"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.jetbrains.vuejs.inspections.VueDeprecatedSymbolInspection"
+                     key="vue.inspection.display.name.deprecated.symbol" bundle="messages.VueBundle"/>
+    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
+                                          toolShortName="VueDeprecatedSymbol"/>
+    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-components"
+                                          toolShortName="VueDeprecatedSymbol"/>
+    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-directives"
+                                          toolShortName="VueDeprecatedSymbol"/>
+    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-special-properties"
+                                          toolShortName="VueDeprecatedSymbol"/>
+    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-file-top-elements"
+                                          toolShortName="VueDeprecatedSymbol"/>
+    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
+                                          toolShortName="VueDeprecatedSymbol"/>
+
     <intentionAction>
       <language>Vue</language>
       <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>

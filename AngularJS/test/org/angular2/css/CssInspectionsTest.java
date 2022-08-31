@@ -3,6 +3,7 @@ package org.angular2.css;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -25,6 +26,13 @@ public class CssInspectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testLocalStylesheetExtUsage() {
     doTest(new CssUnusedSymbolInspection(), () -> {
       myFixture.configureByFiles("local-stylesheet-ext.ts", "local-stylesheet-ext.html", "local-stylesheet-ext.css", "package.json");
+      myFixture.checkHighlighting();
+    });
+  }
+
+  public void testUnknownProperty() {
+    doTest(new CssUnknownPropertyInspection(), () -> {
+      myFixture.configureByFiles("unknownCssProperty.html", "package.json");
       myFixture.checkHighlighting();
     });
   }

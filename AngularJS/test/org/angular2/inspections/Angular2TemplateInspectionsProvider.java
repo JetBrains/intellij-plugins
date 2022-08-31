@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.InspectionToolProvider;
@@ -6,6 +6,8 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection;
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection;
 import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
@@ -46,6 +48,8 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       HtmlUnknownAttributeInspection.class,
       HtmlUnknownTagInspection.class,
       HtmlUnknownBooleanAttributeInspection.class,
+      HtmlDeprecatedTagInspection.class,
+      HtmlDeprecatedAttributeInspection.class,
 
       CheckEmptyTagInspection.class
     };

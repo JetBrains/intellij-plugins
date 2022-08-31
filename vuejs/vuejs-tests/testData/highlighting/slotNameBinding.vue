@@ -7,8 +7,8 @@
   </template>
   <div v-bind:<warning descr="Unrecognized attribute or property name">foo</warning>="12"/>
   <Bar>
-    <template #<warning descr="Unrecognized slot name">errorLine</warning>></template>
-    <template v-slot:<warning descr="Unrecognized slot name">errorLine</warning>></template>
+    <template #<weak_warning descr="Unrecognized slot name">errorLine</weak_warning>></template>
+    <template v-slot:<weak_warning descr="Unrecognized slot name">errorLine</weak_warning>></template>
     <template #item.bar></template>
     <template v-slot:item.bar></template>
     <template #okSlot></template>

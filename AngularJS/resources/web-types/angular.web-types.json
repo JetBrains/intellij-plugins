@@ -501,18 +501,6 @@
               "#...",
               "#item:CSS Property"
             ]
-          },
-          "css": {
-            "properties": [
-              {
-                "name": "Unknown CSS property",
-                "priority": "low",
-                "pattern": ".+",
-                "doc-hide-pattern": true,
-                "ng-error-symbol": true,
-                "hide-from-completion": true
-              }
-            ]
           }
         },
         {
@@ -544,14 +532,6 @@
               "name": "Namespaced attribute",
               "pattern": ".+:.+",
               "doc-hide-pattern": true
-            },
-            {
-              "name": "Unknown attribute",
-              "priority": "low",
-              "pattern": ".+",
-              "doc-hide-pattern": true,
-              "ng-error-symbol": true,
-              "hide-from-completion": true
             }
           ]
         },
