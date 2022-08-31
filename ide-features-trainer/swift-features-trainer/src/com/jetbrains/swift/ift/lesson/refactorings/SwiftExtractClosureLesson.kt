@@ -44,8 +44,6 @@ class ExtractClosure: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("ExtractClosure")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.refactoring.extract.closure.help.link"),
          LessonUtil.getHelpLink("extract-closure.html")),

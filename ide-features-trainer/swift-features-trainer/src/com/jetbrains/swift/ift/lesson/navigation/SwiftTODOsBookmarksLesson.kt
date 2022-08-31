@@ -125,8 +125,6 @@ class Navigation: UITableViewController {
     }
   }
 
-  override val suitableTips = listOf("PreviewTODO", "FavoritesToolWindow1", "FavoritesToolWindow2")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.navigation.todo.help.link.1"),
          LessonUtil.getHelpLink("using-todo.html")),

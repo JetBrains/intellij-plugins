@@ -48,8 +48,6 @@ class Move: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("MoveUpDown")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.move.help.link"),
          LessonUtil.getHelpLink("working-with-source-code.html#move-statements")),

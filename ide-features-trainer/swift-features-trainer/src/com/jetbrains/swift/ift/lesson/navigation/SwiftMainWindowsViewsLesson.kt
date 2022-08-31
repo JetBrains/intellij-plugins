@@ -174,8 +174,6 @@ class Navigation: UITableViewController {
     text(SwiftLessonsBundle.message("swift.navigation.windows.vcs.window"))
   }
 
-  override val suitableTips = listOf("StructureToolWindow")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.navigation.windows.help.link"),
          LessonUtil.getHelpLink("guided-tour-around-the-user-interface.html")),

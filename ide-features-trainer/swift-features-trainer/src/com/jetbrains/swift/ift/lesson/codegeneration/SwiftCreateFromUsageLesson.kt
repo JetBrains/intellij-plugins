@@ -60,8 +60,6 @@ class CreateFromUsage: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("GenerateFromUsage")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.codegeneration.cfu.help.link"),
          LessonUtil.getHelpLink("generating-code.html#generate_method_from_usage")),

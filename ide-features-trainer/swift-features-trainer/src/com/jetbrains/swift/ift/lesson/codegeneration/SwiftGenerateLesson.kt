@@ -45,8 +45,6 @@ class IDE {
 
   }
 
-  override val suitableTips = listOf("GenerateEqualsHash", "Generate", "GenerateDescription")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.codegeneration.generate.help.link"),
          LessonUtil.getHelpLink("generating-code.html")),

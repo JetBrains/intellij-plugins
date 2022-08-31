@@ -46,8 +46,6 @@ class ExtractVariable: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("IntroduceVariable")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.refactoring.extract.variable.help.link"),
          LessonUtil.getHelpLink("extract-variable.html")),

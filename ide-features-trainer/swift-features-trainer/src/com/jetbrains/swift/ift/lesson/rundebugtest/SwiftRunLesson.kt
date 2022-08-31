@@ -53,8 +53,6 @@ class RunExample: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("SelectRunDebugConfiguration")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.rdt.run.help.link"),
          LessonUtil.getHelpLink("running-applications.html")),

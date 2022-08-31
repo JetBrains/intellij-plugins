@@ -60,8 +60,6 @@ class Select: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("smart_selection")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.selection.help.link"),
          LessonUtil.getHelpLink("working-with-source-code.html#editor_code_selection")),

@@ -72,8 +72,6 @@ class AnotherTest: Test {
     }
   }
 
-  override val suitableTips = listOf("find-usages", "HighlightUsagesInFile", "FindInPath", "FindReplaceToggle", "GoToAction")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.navigation.search.help.link.1"),
          LessonUtil.getHelpLink("finding-and-replacing-text-in-file.html")),

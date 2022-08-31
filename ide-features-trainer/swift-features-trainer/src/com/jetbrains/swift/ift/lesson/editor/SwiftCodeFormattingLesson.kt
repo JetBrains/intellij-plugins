@@ -52,8 +52,6 @@ class Format: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("LayoutCode")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.format.help.link"),
          LessonUtil.getHelpLink("reformat-and-rearrange-code.html")),

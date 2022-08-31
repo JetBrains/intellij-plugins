@@ -64,8 +64,6 @@ class Comment: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("comments")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.comment.help.link"),
          LessonUtil.getHelpLink("creating-and-viewing-doxygen-documentation.html")),

@@ -106,8 +106,6 @@ class TestExample: UIViewController {
     text(SwiftLessonsBundle.message("swift.rdt.test.more"))
   }
 
-  override val suitableTips = listOf("RunTests")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.rdt.test.help.link.1"),
          LessonUtil.getHelpLink("create-tests.html")),

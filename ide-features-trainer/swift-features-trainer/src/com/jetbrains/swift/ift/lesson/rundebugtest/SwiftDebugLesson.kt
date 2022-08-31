@@ -72,8 +72,6 @@ class DebugExample: UIViewController {
 
   }
 
-  override val suitableTips = listOf("tips_go_RunToCursor", "EvaluateExpression")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.rdt.debug.help.link.1"),
          LessonUtil.getHelpLink("debugging-code.html")),

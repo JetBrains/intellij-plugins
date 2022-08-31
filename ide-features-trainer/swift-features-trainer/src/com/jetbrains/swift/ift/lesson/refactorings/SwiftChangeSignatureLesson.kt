@@ -55,8 +55,6 @@ class ChangeSignature: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("ChangeSignature")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.refactoring.change.signature.help.link"),
          LessonUtil.getHelpLink("change-signature.html")),

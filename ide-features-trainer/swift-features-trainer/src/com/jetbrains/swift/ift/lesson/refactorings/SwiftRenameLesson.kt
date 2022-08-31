@@ -55,8 +55,6 @@ class Rename: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("Rename")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.refactoring.rename.help.link"),
          LessonUtil.getHelpLink("rename-refactorings.html")),

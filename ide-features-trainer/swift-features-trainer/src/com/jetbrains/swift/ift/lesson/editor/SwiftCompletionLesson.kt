@@ -72,8 +72,6 @@ class Completion: UIViewController {
     text(SwiftLessonsBundle.message("swift.editor.completion.go.next", LessonUtil.rawEnter()))
   }
 
-  override val suitableTips = listOf("CodeCompletionNoShift", "CodeCompletion", "SmartTypeCompletion", "CamelHumpsInCodeCompletion")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.completion.help.link"),
          LessonUtil.getHelpLink("auto-completing-code.html")),

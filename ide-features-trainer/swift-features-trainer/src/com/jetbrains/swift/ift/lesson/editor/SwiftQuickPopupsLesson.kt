@@ -57,8 +57,6 @@ class Duplicate: UIViewController {
     }
   }
 
-  override val suitableTips = listOf("parameter-info", "ExternalJavaDoc", "CtrlShiftIForLookup")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.popups.help.link"),
          LessonUtil.getHelpLink("using-code-editor.html#quick_popups")),

@@ -82,8 +82,6 @@ class PreciseNavigationController : UIViewController {
     }
   }
 
-  override val suitableTips = listOf("JumpToLastEdit", "GotoNextError", "GotoNextError")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.navigation.precise.help.link"),
          LessonUtil.getHelpLink("navigating-through-the-source-code.html#navigate-errors-warnings")),

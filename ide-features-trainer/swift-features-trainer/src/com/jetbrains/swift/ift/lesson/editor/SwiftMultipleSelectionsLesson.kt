@@ -90,8 +90,6 @@ SIX
     }
   }
 
-  override val suitableTips = listOf("Multiselection1", "Multiselection2")
-
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(SwiftLessonsBundle.message("swift.editor.selections.help.link"),
          LessonUtil.getHelpLink("multicursor.html")),
