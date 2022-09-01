@@ -24,8 +24,13 @@ public final class Angular2HtmlNgContentSelectorElementType
 
   @NonNls
   @Override
+  public String toString() {
+    return Angular2HtmlStubElementTypes.EXTERNAL_ID_PREFIX + super.getDebugName();
+  }
+
+  @Override
   public @NotNull String getExternalId() {
-    return "NG-HTML:" + super.toString();
+    return toString();
   }
 
   @Override

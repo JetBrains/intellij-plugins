@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2MetadataElementTypes {
 
+  int STUB_VERSION = 0;
+
+  String EXTERNAL_PREFIX_ID = "METADATA_JSON:";
+
   MetadataElementType<Angular2MetadataStringStub> STRING =
     new Angular2MetadataElementType<>("STRING", (stream, parent) -> new Angular2MetadataStringStub(stream, parent),
                                       element -> new Angular2MetadataString(element));
@@ -63,5 +67,12 @@ public interface Angular2MetadataElementTypes {
                                        @NotNull MetadataElementConstructor<Stub> psiConstructor) {
       super(debugName, MetadataJsonLanguage.INSTANCE, stubConstructor, psiConstructor);
     }
+
+    @NonNls
+    @Override
+    public String toString() {
+      return EXTERNAL_PREFIX_ID + super.getDebugName();
+    }
+
   }
 }

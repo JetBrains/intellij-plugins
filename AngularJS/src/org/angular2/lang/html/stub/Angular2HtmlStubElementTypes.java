@@ -9,6 +9,11 @@ import static org.angular2.lang.html.psi.Angular2HtmlAttrVariable.Kind.LET;
 import static org.angular2.lang.html.psi.Angular2HtmlAttrVariable.Kind.REFERENCE;
 
 public interface Angular2HtmlStubElementTypes {
+
+  int STUB_VERSION = 1;
+
+  String EXTERNAL_ID_PREFIX = "NG-HTML:";
+
   JSStubElementType<JSVariableStub<JSVariable>, JSVariable> REFERENCE_VARIABLE = new Angular2HtmlVariableElementType(REFERENCE);
   JSStubElementType<JSVariableStub<JSVariable>, JSVariable> LET_VARIABLE = new Angular2HtmlVariableElementType(LET);
 

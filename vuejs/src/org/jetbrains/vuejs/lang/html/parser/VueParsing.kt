@@ -73,24 +73,24 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       advance()
       parseAttributeValue()
     }
-    if (peekTagName().toLowerCase(Locale.US) == SLOT_TAG_NAME) {
-      attr.done(VueStubElementTypes.VUE_STUBBED_ATTRIBUTE)
+    if (peekTagName().lowercase(Locale.US) == SLOT_TAG_NAME) {
+      attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
     }
     else
       when (attributeInfo.kind) {
         TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
         SCRIPT_ID -> attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
-        SCRIPT_SETUP, STYLE_MODULE -> attr.done(VueStubElementTypes.VUE_STUBBED_ATTRIBUTE)
+        SCRIPT_SETUP, STYLE_MODULE -> attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
         REF -> attr.done(VueStubElementTypes.REF_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
   }
 
   override fun getHtmlTagElementType(): IElementType {
-    val tagName = peekTagName().toLowerCase(Locale.US)
+    val tagName = peekTagName().lowercase(Locale.US)
     if (tagName in ALWAYS_STUBBED_TAGS
         || (tagLevel() == 1 && tagName in TOP_LEVEL_TAGS)) {
-      return if (tagName == TEMPLATE_TAG_NAME) VueStubElementTypes.STUBBED_TEMPLATE_TAG else VueStubElementTypes.STUBBED_NON_TEMPLATE_TAG
+      return if (tagName == TEMPLATE_TAG_NAME) VueStubElementTypes.TEMPLATE_TAG else VueStubElementTypes.STUBBED_TAG
     }
     return super.getHtmlTagElementType()
   }

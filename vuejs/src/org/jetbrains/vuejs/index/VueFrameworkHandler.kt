@@ -97,8 +97,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
     private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =
-      TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_NON_TEMPLATE_TAG))
-        ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_NON_TEMPLATE_TAG }
+      TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
+        ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
         .let { it?.psi?.castSafelyTo<HtmlTag>()?.name == SCRIPT_TAG_NAME }
 
     private fun recordSignificantFunctionName(vueFrameworkHandler: VueFrameworkHandler,

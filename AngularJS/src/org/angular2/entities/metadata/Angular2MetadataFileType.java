@@ -18,7 +18,12 @@ import org.jetbrains.annotations.NotNull;
 public final class Angular2MetadataFileType extends MetadataJsonFileType {
 
   public static final Angular2MetadataFileType INSTANCE = new Angular2MetadataFileType();
-  private static final IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(MetadataJsonLanguage.INSTANCE);
+  private static final IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(MetadataJsonLanguage.INSTANCE) {
+    @Override
+    public int getStubVersion() {
+      return Angular2MetadataElementTypes.STUB_VERSION;
+    }
+  };
 
   @NonNls public static final String METADATA_SUFFIX = ".metadata.json";
   @NonNls public static final String D_TS_SUFFIX = ".d.ts";

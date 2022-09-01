@@ -102,8 +102,8 @@
     <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex"/>
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueEmptyComponentInitializersIndex"/>
 
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes"/>
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
+    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes" externalIdPrefix="VUE-JS:"/>
+    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes" externalIdPrefix="VUE:"/>
 
     <langCodeStyleSettingsProvider implementation="org.jetbrains.vuejs.options.VueCodeStyleSettingsProvider"/>
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"

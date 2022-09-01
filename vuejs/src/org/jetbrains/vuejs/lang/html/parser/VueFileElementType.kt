@@ -10,6 +10,7 @@ import com.intellij.psi.impl.source.tree.SharedImplUtil
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.psi.xml.HtmlFileElementType
+import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLanguage.INSTANCE) {
@@ -32,7 +33,7 @@ class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLa
   }
 
   override fun getStubVersion(): Int {
-    return HtmlFileElementType.getHtmlStubVersion() + VueStubElementTypes.VERSION
+    return HtmlFileElementType.getHtmlStubVersion() + VueStubElementTypes.VERSION + VueJSStubElementTypes.STUB_VERSION
   }
 
   override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {
