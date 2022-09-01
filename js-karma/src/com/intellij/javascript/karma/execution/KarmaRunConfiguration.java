@@ -9,7 +9,6 @@ import com.intellij.execution.testframework.sm.runner.SMRunnerConsolePropertiesP
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
-import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.KarmaUtil;
@@ -17,14 +16,12 @@ import com.intellij.javascript.nodejs.execution.AbstractNodeTargetRunProfile;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -34,7 +31,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.text.SemVer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,9 +81,6 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
       Project project = getProject();
       VirtualFile contextFile = getContextFile();
       pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, null, contextFile);
-      if (shouldPreferKarmaPackage(pkg)) {
-        pkg = new NodePackageDescriptor(KarmaUtil.KARMA_PACKAGE_NAME).findFirstDirectDependencyPackage(project, null, contextFile);
-      }
       if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
         NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
         if (projectKarmaPackage.isEmptyPath()) {
@@ -98,21 +91,6 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
       myRunSettings = myRunSettings.toBuilder().setKarmaPackage(pkg).build();
     }
     return pkg;
-  }
-
-  private boolean shouldPreferKarmaPackage(@NotNull NodePackage pkg) {
-    if (!SystemInfo.isWindows || !pkg.nameMatches(KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
-      return false;
-    }
-    SemVer version = pkg.getVersion();
-    if (version == null || version.getMajor() >= 6) {
-      return false;
-    }
-    String path1 = getProject().getBasePath();
-    String path2 = KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath();
-    // @angular/cli < 6 doesn't work when karma-intellij on a different drive ()
-    return path1 != null && FileUtil.isWindowsAbsolutePath(path1) && FileUtil.isWindowsAbsolutePath(path2) &&
-           !path1.substring(0, 1).equals(path2.substring(0, 1));
   }
 
   @Nullable
