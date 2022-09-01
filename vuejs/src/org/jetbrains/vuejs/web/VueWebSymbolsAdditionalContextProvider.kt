@@ -5,6 +5,7 @@ import com.intellij.codeInsight.navigation.targetPresentation
 import com.intellij.find.usages.api.SearchTarget
 import com.intellij.find.usages.api.UsageHandler
 import com.intellij.ide.util.EditSourceUtil
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.web.refactoring.WebSymbolRenameTarget
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
@@ -18,6 +19,8 @@ import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPA
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace
 import com.intellij.javascript.web.symbols.patterns.RegExpPattern
 import com.intellij.javascript.web.symbols.patterns.WebSymbolsPattern
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -390,10 +393,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val matchedName: String, protected val item: T) : VueWrapperBase(), PsiSourcedWebSymbol {
 
     override val description: String?
-      get() = item.documentation.description
-
-    override val docUrl: String?
-      get() = item.documentation.docUrl
+      get() = item.description
 
     override fun getSymbolPresentation(): SymbolPresentation {
       val description = VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name)
@@ -459,26 +459,36 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val origin: WebSymbolsContainer.Origin =
       object : WebSymbolsContainer.Origin {
 
+        private val info: Pair<String?, String?>? by lazy(LazyThreadSafetyMode.NONE) {
+          (item as VueScopeElement).parents
+            .takeIf { it.size == 1 }
+            ?.get(0)
+            ?.castSafelyTo<VuePlugin>()
+            ?.let { Pair(it.moduleName, it.moduleVersion) }
+          ?: item.source
+            ?.containingFile
+            ?.virtualFile
+            ?.let { PackageJsonUtil.findUpPackageJson(it) }
+            ?.takeIf { NodeModuleUtil.isFromNodeModules(item.source!!.project, it) }
+            ?.let { PackageJsonData.getOrCreate(it) }
+            ?.let { Pair(it.name, it.version?.rawVersion) }
+        }
+
         override val framework: FrameworkId
           get() = VueFramework.ID
 
         override val packageName: String?
-          get() = (item as VueScopeElement).parents
-            .takeIf { it.size == 1 }
-            ?.get(0)
-            ?.castSafelyTo<VuePlugin>()
-            ?.moduleName
+          get() = info?.first
 
         override val version: String?
-          get() = (item as VueScopeElement).parents
-            .takeIf { it.size == 1 }
-            ?.get(0)
-            ?.castSafelyTo<VuePlugin>()
-            ?.moduleVersion
+          get() = info?.second
       }
 
     override val usageHandler: UsageHandler<*>
       get() = UsageHandler.createEmptyUsageHandler(presentation.presentableText)
+
+    override val presentation: TargetPresentation
+      get() = super.presentation
 
   }
 
@@ -740,22 +750,21 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   private class ComponentSourceNavigationTarget(private val myElement: PsiElement) : NavigationTarget {
 
-    override fun createPointer(): Pointer<out NavigationTarget> = Pointer.delegatingPointer(
-      myElement.createSmartPointer(), ComponentSourceNavigationTarget::class.java, ::ComponentSourceNavigationTarget
-    )
+    override fun createPointer(): Pointer<out NavigationTarget> {
+      val elementPointer = myElement.createSmartPointer()
+      return Pointer {
+        elementPointer.element?.let { ComponentSourceNavigationTarget(it) }
+      }
+    }
 
-    override fun getNavigatable(): Navigatable =
+    override fun navigationRequest(): NavigationRequest? =
       (VueComponents.getComponentDescriptor(myElement)?.source ?: myElement).let {
         it as? Navigatable
         ?: EditSourceUtil.getDescriptor(it)
         ?: EmptyNavigatable.INSTANCE
-      }
+      }?.navigationRequest()
 
     override fun getTargetPresentation(): TargetPresentation = targetPresentation(myElement)
-
-    override fun navigationRequest(): NavigationRequest? {
-      return navigatable.navigationRequest()
-    }
 
     override fun equals(other: Any?): Boolean =
       this === other ||

@@ -65,36 +65,5 @@ interface VueItemDocumentation {
         else -> throw IncorrectOperationException(item.javaClass.name)
       }
 
-    fun createSections(item: VueDocumentedItem): Map<String, String> {
-      val sections = LinkedHashMap<String, String>()
-      when (item) {
-        is VueDirective -> {
-          item.argument?.documentation?.description?.let { sections["vue.documentation.section.argument"] = it }
-        }
-        is VueDirectiveArgument -> {
-          if (item.required) {
-            sections["vue.documentation.section.required"] = ""
-          }
-          item.pattern?.let { sections["vue.documentation.section.pattern"] = it.toString() }
-        }
-        is VueDirectiveModifier -> {
-          item.pattern?.let { sections["vue.documentation.section.pattern"] = it.toString() }
-        }
-        is VueSlot -> {
-          item.pattern?.let { sections["vue.documentation.section.pattern"] = it.toString() }
-        }
-        is VueInputProperty -> {
-          if (item.required) {
-            sections["vue.documentation.section.required"] = ""
-          }
-          item.defaultValue
-            ?.takeIf { it != "null" }
-            ?.let { sections["vue.documentation.section.default"] = it }
-        }
-      }
-      return sections
-        .map { (key, value) -> Pair(VueBundle.message(key), value) }
-        .toMap()
-    }
   }
 }

@@ -1,17 +1,15 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.lang.javascript.documentation.JSDocumentationProvider
+import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.psi.types.JSAnyType
-import com.intellij.lang.javascript.psi.types.JSImportType
-import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeKeyTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.psi.types.TypeScriptIndexedAccessJSTypeImpl
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
@@ -55,7 +53,7 @@ class VueTypedComponent(override val source: PsiElement,
       val contextFile = type.source.scope ?: return null
       return importType.qualifiedName.name
         .takeIf { it.startsWith(prefix) && it.endsWith(")") }
-        ?.let {it.substring(prefix.length + 1, it.length - 2)}
+        ?.let { it.substring(prefix.length + 1, it.length - 2) }
         ?.takeIf { it.endsWith("." + VueFileType.INSTANCE.defaultExtension) }
         ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
         ?.let { contextFile.manager.findFile(it) }
@@ -119,7 +117,7 @@ class VueTypedComponent(override val source: PsiElement,
           ?.asRecordType()
           ?.properties
           ?.mapNotNull { signature ->
-            VueTypedSlot(signature.memberName, signature.memberSource.singleElement)
+            VueTypedSlot(signature.memberName, signature.memberSource.singleElement, signature.jsType)
           } ?: emptyList(),
         PsiModificationTracker.MODIFICATION_COUNT)
     }
@@ -155,7 +153,24 @@ class VueTypedComponent(override val source: PsiElement,
   override fun hashCode(): Int =
     source.hashCode()
 
-  private abstract class VueTypedProperty(protected val property: JSRecordType.PropertySignature) : VueProperty {
+  private abstract class VueTypedDocumentedElement : VueNamedSymbol {
+
+    override val description: String? by lazy {
+      val doc = JSDocumentationProvider()
+                  .generateDoc(source ?: return@lazy null, null) ?: return@lazy null
+      val contentStart = doc.indexOf(DocumentationMarkup.CONTENT_START)
+      val sectionsStart = doc.indexOf(DocumentationMarkup.SECTIONS_START)
+      if (contentStart < 0 )
+        null
+      else
+        doc.substring(contentStart + DocumentationMarkup.CONTENT_START.length, sectionsStart)
+          .trim()
+          .removeSuffix(DocumentationMarkup.CONTENT_END)
+    }
+
+  }
+
+  private abstract class VueTypedProperty(protected val property: JSRecordType.PropertySignature) : VueTypedDocumentedElement(), VueProperty {
     override val name: String get() = property.memberName
     override val jsType: JSType? get() = property.jsType
     override val source: PsiElement? get() = property.memberSource.singleElement
@@ -167,7 +182,7 @@ class VueTypedComponent(override val source: PsiElement,
   }
 
   private class VueTypedEmit(override val name: String,
-                             private val callSignature: JSRecordType.CallSignature) : VueEmitCall {
+                             private val callSignature: JSRecordType.CallSignature) : VueTypedDocumentedElement(), VueEmitCall {
     override val eventJSType: JSType?
       get() = callSignature.functionType.parameters.getOrNull(1)?.inferredType
 
@@ -178,7 +193,11 @@ class VueTypedComponent(override val source: PsiElement,
               ?: callSignature.memberSource.singleElement
   }
 
-  private class VueTypedSlot(override val name: String, override val source: PsiElement?) : VueSlot
+  private class VueTypedSlot(override val name: String,
+                             override val source: PsiElement?,
+                             typeSignature: JSType?) : VueTypedDocumentedElement(), VueSlot {
+    override val scope: JSType? = (typeSignature as? JSFunctionType)?.parameters?.getOrNull(0)?.simpleType
+  }
 
   companion object {
 

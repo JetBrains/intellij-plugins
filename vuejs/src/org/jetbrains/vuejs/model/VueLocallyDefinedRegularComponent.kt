@@ -36,9 +36,8 @@ private constructor(override val delegate: VueRegularComponent, source: PsiEleme
     get() = (source as? JSPsiNamedElementBase)?.name
             ?: getTextIfLiteral(source as JSLiteralExpression)
 
-  override val documentation: VueItemDocumentation
-    get() = delegate.documentation
-
+  override val description: String?
+    get() = delegate.description
 
   override fun createPointer(): Pointer<VueLocallyDefinedRegularComponent> {
     val delegate = this.delegate.createPointer()

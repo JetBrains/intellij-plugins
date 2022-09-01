@@ -163,6 +163,8 @@
     <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
                                           toolShortName="VueDeprecatedSymbol"/>
 
+    <javascript.web.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
+
     <intentionAction>
       <language>Vue</language>
       <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>
