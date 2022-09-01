@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.frameworks.nextjs
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 
-class NextJsHighlightTest: JSDaemonAnalyzerLightTestCase() {
+class NextJsHighlightTest : JSDaemonAnalyzerLightTestCase() {
   override fun getBasePath(): String = NextJsTestUtil.getTestDataPath()
   override fun getExtension(): String = "js"
 
@@ -14,6 +14,16 @@ class NextJsHighlightTest: JSDaemonAnalyzerLightTestCase() {
 
   fun testUnusedGlobalInspection() {
     myFixture.addFileToProject("pages/smth/component1.js", "export default function Test1() {return <div></div>}")
+    myFixture.testHighlighting("pages/smth/component1.js")
+  }
+
+  fun testUnusedStaticMethods() {
+    myFixture.addFileToProject("pages/smth/component1.js",
+                               "export async function getStaticProps(context) {\n" +
+                               "  return {\n" +
+                               "    props: {}, // will be passed to the page component as props\n" +
+                               "  }\n" +
+                               "}")
     myFixture.testHighlighting("pages/smth/component1.js")
   }
 }

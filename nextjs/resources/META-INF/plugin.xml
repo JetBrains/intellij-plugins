@@ -18,7 +18,7 @@
     <directoryIndexExcludePolicy implementation="com.intellij.lang.javascript.frameworks.nextjs.NextJsExcludePolicy"/>
     <pathReferenceProvider implementation="com.intellij.lang.javascript.frameworks.nextjs.references.NextJsPathReferenceProvider"/>
     <directoryProjectGenerator implementation="com.intellij.lang.javascript.frameworks.nextjs.generator.NextJsProjectGenerator"/>
-
+    <implicitUsageProvider implementation="com.intellij.lang.javascript.frameworks.nextjs.inspections.NextJsImplicitUsageProvider" />
     <dependencySupport kind="javascript" coordinate="npm:next" displayName="Next.js"/>
   </extensions>
 </idea-plugin>
