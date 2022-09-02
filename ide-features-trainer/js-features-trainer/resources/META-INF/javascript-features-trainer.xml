@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
   <extensions defaultExtensionNs="training">
-    <ift.language.extension language="JavaScript" implementationClass="com.intellij.javascript.ift.JavaScriptLangSupport"/>
+    <ift.language.extension language="JavaScript" defaultProductName="WebStorm"
+                            implementationClass="com.intellij.javascript.ift.JavaScriptLangSupport"/>
     <ift.learning.course language="JavaScript" implementationClass="com.intellij.javascript.ift.JavaScriptMainLearningCourse"/>
     <ifs.suggesterSupport language="JavaScript" implementationClass="com.intellij.javascript.ifs.JavaScriptSuggesterSupport"/>
   </extensions>
