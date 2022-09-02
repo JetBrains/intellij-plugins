@@ -1,11 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.symbols.WebSymbol
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.types.asCompleteType
 
 const val DEFAULT_SLOT_NAME = "default"
 const val SLOT_NAME_ATTRIBUTE = "name"
@@ -22,6 +29,20 @@ fun getAvailableSlots(tag: XmlTag, name: String?, newApi: Boolean): List<WebSymb
   else
     (tag.descriptor as? WebSymbolElementDescriptor)?.getSlots(name)
       ?.filter { it.name == DEFAULT_SLOT_NAME } ?: emptyList()
+
+fun getSlotTypeFromContext(context: PsiElement): JSType? =
+  context.parentOfType<XmlAttribute>()
+    ?.takeIf { attribute ->
+      VueAttributeNameParser.parse(attribute.name, attribute.parent).let {
+        it is VueAttributeNameParser.VueDirectiveInfo
+        && it.directiveKind == VueAttributeNameParser.VueDirectiveKind.SLOT
+      }
+    }
+    ?.descriptor
+    ?.castSafelyTo<WebSymbolAttributeDescriptor>()
+    ?.symbol
+    ?.jsType
+    ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =
   runNameMatchQuery(listOfNotNull(WebSymbol.KIND_HTML_SLOTS, name))

@@ -531,7 +531,7 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting(/* checkWarnings = */ true, /* checkInfos = */ true, /* checkWeakWarnings = */ true)
   }
 
-  fun testTypedSlots() {
+  fun testSlotTypes() {
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.QUASAR_2_6_5), "MyTable.vue")
   }

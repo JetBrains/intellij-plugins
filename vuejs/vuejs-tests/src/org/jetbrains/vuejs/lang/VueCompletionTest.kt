@@ -1934,6 +1934,12 @@ export default {
     doLookupTest(dir = true, renderPriority = false, renderPresentedText = true, locations = listOf("<template #<caret>"))
   }
 
+  fun testSlotTypes() {
+    doLookupTest(VueTestModule.VUE_3_2_2, VueTestModule.QUASAR_2_6_5,
+                 dir = true, renderPriority = false,
+                 locations = listOf("props.<caret>key", "{<caret>selected,"))
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

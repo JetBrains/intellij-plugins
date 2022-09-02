@@ -1,0 +1,8 @@
+__trClass#string
+color#string
+cols#any
+colsMap#any
+dark#boolean
+dense#boolean
+expand#boolean
+header#boolean

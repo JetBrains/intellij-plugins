@@ -44,6 +44,7 @@ import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
+import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
@@ -427,8 +428,16 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
-  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean =
-    VueCompositionPropsTypeProvider.addTypeFromResolveResult(evaluator, result)
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean {
+    if (result is JSDestructuringParameter) {
+      // possibly v-slot destructing context
+      getSlotTypeFromContext(result)?.let {
+        evaluator.addType(it)
+        return@let true
+      }
+    }
+    return VueCompositionPropsTypeProvider.addTypeFromResolveResult(evaluator, result)
+  }
 
   override fun useOnlyCompleteMatch(type: JSType, evaluateContext: JSEvaluateContext): Boolean =
     VueCompositionPropsTypeProvider.useOnlyCompleteMatch(type)
@@ -444,7 +453,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val parentType = expression.node.treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
         || (JSElementTypes.PROPERTY == parentType
-            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP, NAME_PROP))) {
+            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP,
+                                                                                                   NAME_PROP))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
