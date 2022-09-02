@@ -292,7 +292,7 @@
                                     implementationClass="org.angular2.editor.Angular2InlayParameterHintsProvider"/>
 
     <!-- Angular2 metadata JSON contributions -->
-    <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="METADATA_JSON:"/>
+    <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="NG-META:"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataPipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataClassNameIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>

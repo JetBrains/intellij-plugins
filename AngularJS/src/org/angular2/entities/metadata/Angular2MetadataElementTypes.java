@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2MetadataElementTypes {
 
-  int STUB_VERSION = 0;
+  int STUB_VERSION = 1;
 
-  String EXTERNAL_PREFIX_ID = "METADATA_JSON:";
+  String EXTERNAL_PREFIX_ID = "NG-META:";
 
   MetadataElementType<Angular2MetadataStringStub> STRING =
     new Angular2MetadataElementType<>("STRING", (stream, parent) -> new Angular2MetadataStringStub(stream, parent),
