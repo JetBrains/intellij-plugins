@@ -6,6 +6,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlWrongAttributeValueInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection;
 import com.intellij.lang.javascript.inspections.*;
@@ -50,6 +51,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       HtmlUnknownBooleanAttributeInspection.class,
       HtmlDeprecatedTagInspection.class,
       HtmlDeprecatedAttributeInspection.class,
+      HtmlWrongAttributeValueInspection.class,
 
       CheckEmptyTagInspection.class
     };

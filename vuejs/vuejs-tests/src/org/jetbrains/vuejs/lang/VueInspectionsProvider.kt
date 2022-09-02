@@ -27,6 +27,7 @@ class VueInspectionsProvider : InspectionToolProvider {
       HtmlUnknownBooleanAttributeInspection::class.java,
       HtmlUnknownAttributeInspection::class.java,
       HtmlUnknownTagInspection::class.java,
+      HtmlWrongAttributeValueInspection::class.java,
       VueDeprecatedSymbolInspection::class.java,
       VueUnrecognizedDirectiveInspection::class.java,
       VueUnrecognizedSlotInspection::class.java,
