@@ -16,6 +16,11 @@ public class FlexReferenceImporter implements ReferenceImporter {
   @Override
   public boolean autoImportReferenceAtCursor(@NotNull final Editor editor, @NotNull final PsiFile file) {
     int offset = editor.getCaretModel().getOffset();
+    return autoImportReferenceAtOffset(editor, file, offset);
+  }
+
+  @Override
+  public boolean autoImportReferenceAtOffset(@NotNull Editor editor, @NotNull PsiFile file, int offset) {
     JSReferenceExpression expression = JSImportHandlingUtil.findUnresolvedReferenceExpression(editor, file, offset);
     if (expression != null) {
       new AddImportECMAScriptClassOrFunctionAction(editor, expression, true).execute();
