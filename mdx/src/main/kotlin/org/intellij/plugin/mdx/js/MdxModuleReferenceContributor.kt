@@ -3,7 +3,6 @@ package org.intellij.plugin.mdx.js
 import com.intellij.javascript.JSModuleBaseReference
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.amd.JSModuleReference
-import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceContributor
 import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
 import com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor
 import com.intellij.openapi.util.TextRange
@@ -14,16 +13,15 @@ import org.intellij.plugin.mdx.lang.psi.MdxFile
 import org.jetbrains.annotations.NotNull
 
 
-class MdxModuleReferenceContributor : JSBaseModuleReferenceContributor() {
+open class MdxModuleReferenceContributor : JSModuleReferenceContributor {
   override fun isApplicable(host: PsiElement): Boolean {
     return !DialectDetector.isTypeScript(host)
   }
 
-  override fun getReferences(unquotedRefText: String,
-                             host: PsiElement,
-                             offset: Int,
-                             provider: PsiReferenceProvider?,
-                             isCommonJS: Boolean): Array<out @NotNull FileReference> {
+  override fun getAllReferences(unquotedRefText: String,
+                                host: PsiElement,
+                                offset: Int,
+                                provider: PsiReferenceProvider?): Array<out @NotNull FileReference> {
     if (!StringUtil.endsWith(unquotedRefText, ".mdx")) {
       return emptyArray()
     }
@@ -31,31 +29,24 @@ class MdxModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     val modulePath = path.second
     val resourcePathStartInd = path.first
     val index = resourcePathStartInd + offset
-    val isSoft = isSoft(host, modulePath, isCommonJS)
-    return getReferences(host, provider, modulePath, index, isSoft, null)
+    return getReferences(host, provider, modulePath, index)
 
   }
 
-  protected fun getReferences(host: PsiElement,
-                              provider: PsiReferenceProvider?,
-                              modulePath: String,
-                              index: Int,
-                              isSoft: Boolean,
-                              templateName: String?): Array<out @NotNull FileReference> {
+  private fun getReferences(host: PsiElement,
+                            provider: PsiReferenceProvider?,
+                            modulePath: String,
+                            index: Int): Array<out @NotNull FileReference> {
 
-    return object : JSModuleFileReferenceSet(modulePath, host, index, provider, templateName) {
-
-
-      override fun isSoft(): Boolean {
-        return isSoft
-      }
+    return object : JSModuleFileReferenceSet(modulePath, host, index, provider, null) {
+      override fun isSoft(): Boolean = false
 
       override fun createFileReference(textRange: TextRange?, i: Int, text: String?): FileReference? {
         if (!StringUtil.endsWith(text!!, ".mdx")) {
           return super.createFileReference(textRange, i, text)
         }
 
-        return object : JSModuleReference(text, i, textRange!!, this, emptyArray(), templateName, isSoft) {
+        return object : JSModuleReference(text, i, textRange!!, this, emptyArray(), null, isSoft) {
           override fun innerResolve(caseSensitive: Boolean, containingFile: PsiFile): Array<ResolveResult> {
             val result = super.innerResolve(caseSensitive, containingFile)
             (result.indices).forEach { i ->

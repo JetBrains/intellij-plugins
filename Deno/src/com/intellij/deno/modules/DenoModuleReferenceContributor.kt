@@ -13,13 +13,14 @@ import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathBuilder
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
-import com.intellij.lang.javascript.frameworks.modules.*
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.isRelative
+import com.intellij.lang.javascript.frameworks.modules.*
 import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil.trimSchema
 import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
+import com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.TextRange
@@ -37,15 +38,14 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
 
-class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
+class DenoModuleReferenceContributor : JSModuleReferenceContributor {
 
   override fun isApplicable(host: PsiElement): Boolean = DenoSettings.getService(host.project).isUseDeno()
 
-  override fun getReferences(unquotedRefText: String,
-                             host: PsiElement,
-                             offset: Int,
-                             provider: PsiReferenceProvider?,
-                             isCommonJS: Boolean): Array<PsiReference> {
+  override fun getAllReferences(unquotedRefText: String,
+                                host: PsiElement,
+                                offset: Int,
+                                provider: PsiReferenceProvider?): Array<PsiReference> {
     if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(unquotedRefText)) {
       return resolveAsUrl(unquotedRefText, host, TextRange(offset, offset + unquotedRefText.length))
     }

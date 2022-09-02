@@ -32,7 +32,7 @@ class VueLoaderPathReferenceProvider : PathReferenceProviderBase() {
     val initialOffset = if (leadingTilde) 1 else 0
 
     val moduleRefs = JSModuleReferenceContributor.getReferences(
-      text.substring(initialOffset), psiElement, offset + initialOffset, null, true)
+      text.substring(initialOffset), psiElement, offset + initialOffset, null)
 
     val pathSegments = pathSegments(text.substring(initialOffset), offset + initialOffset)
 

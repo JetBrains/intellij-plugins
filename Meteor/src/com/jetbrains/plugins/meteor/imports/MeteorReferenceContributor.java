@@ -110,14 +110,6 @@ public class MeteorReferenceContributor implements JSModuleReferenceContributor 
     return ByteArraySequence.EMPTY;
   }
 
-  @Override
-  public PsiReference @NotNull [] getCommonJSModuleReferences(@NotNull String unquotedEscapedText,
-                                                              @NotNull PsiElement host,
-                                                              int offset,
-                                                              @Nullable PsiReferenceProvider provider) {
-    return getAllReferences(unquotedEscapedText, host, offset, provider);
-  }
-
   private static final class MeteorGlobalReference extends PsiReferenceBase<PsiElement> implements JSModuleBaseReference {
 
     @NotNull
