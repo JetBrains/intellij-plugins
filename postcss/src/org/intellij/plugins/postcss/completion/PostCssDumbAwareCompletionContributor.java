@@ -4,24 +4,19 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElementInteractivity;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.css.CssBlock;
-import com.intellij.psi.css.CssRuleset;
 import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.css.impl.CssElementTypes;
-import com.intellij.psi.css.impl.util.completion.CssAddSpaceWithBracesInsertHandler;
 import com.intellij.psi.css.impl.util.completion.provider.PropertyNamesCompletionProvider;
 import com.intellij.psi.css.impl.util.completion.provider.TagsCompletionProvider;
 import com.intellij.psi.css.util.CssCompletionUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.intellij.plugins.postcss.PostCssElementTypes;
+import org.intellij.plugins.postcss.PostCssStubElementTypes;
 import org.intellij.plugins.postcss.completion.handler.PostCssOneLineAtRuleInsertHandler;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +49,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
   }
 
   private static PsiElementPattern.Capture<PsiElement> inPostCssFile(@NotNull IElementType type) {
-    return psiElement(type).inside(psiElement(PostCssElementTypes.POST_CSS_STYLESHEET));
+    return psiElement(type).inside(psiElement(PostCssStubElementTypes.POST_CSS_STYLESHEET));
   }
 
   @Override

@@ -10,6 +10,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ArrayUtil;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
+import org.intellij.plugins.postcss.PostCssStubElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected IElementType getStylesheetElementType() {
-    return PostCssElementTypes.POST_CSS_STYLESHEET;
+    return PostCssStubElementTypes.POST_CSS_STYLESHEET;
   }
 
   @Override
@@ -168,7 +169,7 @@ public class PostCssParser extends CssParser2 {
     if (isIdent()) {
       PsiBuilder.Marker customMedia = createCompositeElement();
       addSingleToken();
-      customMedia.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA);
+      customMedia.done(PostCssStubElementTypes.POST_CSS_CUSTOM_MEDIA);
     }
     else {
       createErrorElement(CssBundle.message("parsing.error.identifier.expected"));
@@ -259,7 +260,7 @@ public class PostCssParser extends CssParser2 {
     if (getTokenType() == CssElementTypes.CSS_IDENT) {
       addSingleToken();
     }
-    customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+    customSelectorName.done(PostCssStubElementTypes.POST_CSS_CUSTOM_SELECTOR);
   }
 
   private boolean parseAtRuleNesting() {

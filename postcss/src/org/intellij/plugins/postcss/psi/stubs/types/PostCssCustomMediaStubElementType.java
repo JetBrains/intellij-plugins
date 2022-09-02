@@ -9,12 +9,13 @@ import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomMediaImpl;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomMediaStubElementType extends CssSimpleNamedStubElementType<PostCssCustomMedia> {
 
-  public PostCssCustomMediaStubElementType() {
-    super("POST_CSS_CUSTOM_MEDIA", PostCssLanguage.INSTANCE);
+  public PostCssCustomMediaStubElementType(@NonNls @NotNull String debugName) {
+    super(debugName, PostCssLanguage.INSTANCE);
   }
 
   @Override

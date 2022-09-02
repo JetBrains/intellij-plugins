@@ -9,12 +9,13 @@ import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomSelectorImpl;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomSelectorStubElementType extends CssSimpleNamedStubElementType<PostCssCustomSelector> {
 
-  public PostCssCustomSelectorStubElementType() {
-    super("POST_CSS_CUSTOM_SELECTOR", PostCssLanguage.INSTANCE);
+  public PostCssCustomSelectorStubElementType(@NonNls @NotNull String debugName) {
+    super(debugName, PostCssLanguage.INSTANCE);
   }
 
   @Override

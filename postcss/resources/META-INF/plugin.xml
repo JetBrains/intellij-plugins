@@ -64,7 +64,7 @@
 
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex"/>
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex"/>
-    <stubElementTypeHolder class="org.intellij.plugins.postcss.PostCssElementTypes"/>
+    <stubElementTypeHolder externalIdPrefix="PostCSS." class="org.intellij.plugins.postcss.PostCssStubElementTypes"/>
 
     <gotoSymbolContributor implementation="org.intellij.plugins.postcss.PostCssGotoSymbolContributor"/>
 
