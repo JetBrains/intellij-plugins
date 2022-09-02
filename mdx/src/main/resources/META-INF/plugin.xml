@@ -54,7 +54,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
-    <moduleReferenceContributor implementation="org.intellij.plugin.mdx.js.MdxModuleReferenceContributor"/>
+    <importModulePathStrategy implementation="org.intellij.plugin.mdx.js.MdxImportModulePathStrategy" />
   </extensions>
 
   <actions>

@@ -1,10 +1,12 @@
 package com.intellij.lang.javascript.frameworks.nextjs.references
 
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.javascript.frameworks.amd.JSModuleReference
-import com.intellij.lang.javascript.frameworks.html.getFixedDirectories
-import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
 import com.intellij.lang.javascript.frameworks.JSRouteUtil
+import com.intellij.lang.javascript.frameworks.html.getFixedDirectories
+import com.intellij.lang.javascript.frameworks.modules.JSFileModuleReference
+import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
+import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultModuleFileReferenceContext
+import com.intellij.lang.javascript.frameworks.modules.resolver.JSModuleFileReferenceContext
 import com.intellij.openapi.paths.PathReference
 import com.intellij.openapi.paths.PathReferenceProviderBase
 import com.intellij.openapi.util.TextRange
@@ -12,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 
@@ -31,7 +34,23 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
 
   private fun jsReferences(text: String,
                            psiElement: PsiElement,
-                           offset: Int) = NextJsFileReferenceSet(text, psiElement, offset).allReferences
+                           offset: Int): Array<out PsiReference> {
+
+    val context = object : JSDefaultModuleFileReferenceContext(text, psiElement, null) {
+      override fun getDefaultContexts(set: FileReferenceSet,
+                                      noContextElements: Collection<PsiFileSystemItem>): Collection<PsiFileSystemItem> {
+        val defaultContexts: Collection<PsiFileSystemItem> = super.getDefaultContexts(set, noContextElements)
+        val file: PsiFileSystemItem = myContext.containingFile?.originalFile ?: return defaultContexts
+
+        val items = getFixedDirectories(file, JSRouteUtil.ROUTES)
+        if (items.isEmpty()) return defaultContexts
+
+        return items.toSet() + defaultContexts.toSet()
+      }
+    }
+
+    return JSModuleFileReferenceSet(text, context, psiElement, offset).allReferences
+  }
 
   override fun getPathReference(path: String, element: PsiElement): PathReference? {
     if (element !is XmlAttributeValue) return null
@@ -43,32 +62,6 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
     val resolve = jsReferences.last().resolve() ?: return null
     return object : PathReference(path, ResolveFunction(null)) {
       override fun resolve(): PsiElement = resolve
-    }
-  }
-
-  class NextJsFileReferenceSet(text: String, psiElement: PsiElement, offset: Int) :
-    JSModuleFileReferenceSet(text, psiElement, offset, null, null) {
-
-    override fun computeDefaultContexts(): Collection<PsiFileSystemItem> {
-      val defaultContexts: Collection<PsiFileSystemItem> = super.computeDefaultContexts()
-      val file: PsiFileSystemItem = element.containingFile?.originalFile ?: return defaultContexts
-
-      val items = getFixedDirectories(file, JSRouteUtil.ROUTES)
-      if (items.isEmpty()) return defaultContexts
-
-      return items.toSet() + defaultContexts.toSet()
-    }
-
-    override fun createFileReference(textRange: TextRange?, i: Int, text: String?): FileReference {
-      return object : JSModuleReference(text, i, textRange!!, this, null, isSoft, isUrlEncoded) {
-        override fun handleElementRename(newElementName: String): PsiElement? {
-          var newName = newElementName
-          if (isLast) {
-            newName = fixLastNameForRename(newName)
-          }
-          return super.handleElementRename(fixRelativePath(newName))
-        }
-      }
     }
   }
 }

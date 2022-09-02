@@ -54,7 +54,6 @@ class DenoModuleReferenceContributor : JSModuleReferenceContributor {
       return resolveAsDenoLibFile(unquotedRefText, host, TextRange(offset, offset + unquotedRefText.length))
     }
 
-
     return resolveAsImportMap(unquotedRefText, host, offset)
   }
 

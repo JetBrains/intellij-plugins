@@ -17,7 +17,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.intellij.lang.typescript.modules.TypeScriptModuleFileReferenceSet.addParentPathContexts;
+import static com.intellij.lang.typescript.modules.resolver.TypeScriptModuleFileReferenceContext.addParentPathContexts;
 
 public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
   @Override
@@ -99,8 +98,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     @Override
     public FileReference createFileReference(TextRange range, int index, String text) {
       return Angular2LangUtil.isAngular2Context(getElement())
-             ? new Angular2FileReference(text, index, range, this, ArrayUtilRt.EMPTY_STRING_ARRAY)
-             : new JSFileReference(text, index, range, this, ArrayUtilRt.EMPTY_STRING_ARRAY);
+             ? new Angular2FileReference(text, index, range, this)
+             : new JSFileReference(text, index, range, this);
     }
 
     private static void visitFile(@Nullable PsiFile file, @NotNull Consumer<Angular2SoftFileReferenceSet> action) {
@@ -161,9 +160,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     Angular2FileReference(String refText,
                           int offset,
                           TextRange textRange,
-                          @NotNull FileReferenceSet fileReferenceSet,
-                          String[] implicitExtensions) {
-      super(refText, offset, textRange, fileReferenceSet, implicitExtensions);
+                          @NotNull FileReferenceSet fileReferenceSet) {
+      super(refText, offset, textRange, fileReferenceSet);
     }
 
     public void bindToElementAfterMove(@NotNull PsiFileSystemItem targetFile, @NotNull Collection<PsiFileSystemItem> contexts) {

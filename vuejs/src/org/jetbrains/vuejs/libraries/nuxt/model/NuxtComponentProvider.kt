@@ -101,7 +101,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
       WebpackConfigManager.getInstance(configFile.project)
         .resolveConfig(configFile)
         .takeIf { !it.isEmpty() }
-        ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path.trimEnd('/'), configFile, 0, null, it, true) }
+        ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path.trimEnd('/'), configFile, 0, it, true) }
         ?.lastOrNull()
         ?.resolve()
         ?.castSafelyTo<PsiDirectory>()

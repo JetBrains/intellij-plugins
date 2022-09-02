@@ -10,10 +10,10 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.dialects.JSLanguageFeature
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
-import com.intellij.lang.javascript.frameworks.amd.JSModuleReference
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -41,7 +41,8 @@ class DenoEditorNotificationAnnotator : Annotator {
       if (es6Import is ES6ImportExportDeclaration) {
         val importModuleText = ES6ImportPsiUtil.getUnquotedFromClauseOrModuleText(es6Import)
         if (importModuleText != null) {
-          if (JSModuleReference.findExtension(importModuleText, TypeScriptUtil.TYPESCRIPT_EXTENSIONS) != null) {
+          if (JSFileReferencesUtil.findExtension(importModuleText,
+                                                 TypeScriptUtil.TYPESCRIPT_EXTENSIONS) != null) {
             hasDenoMarkers = true
             break
           }

@@ -2,7 +2,6 @@
 package org.angular2.refactoring.extractComponent
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.javascript.JSFileReference
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
@@ -175,9 +174,10 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
 
   private fun extractComponentPath(output: List<String>): String? {
     output.forEach { filePath ->
-      val ext = JSFileReference.findExtension(filePath, TypeScriptUtil.TYPESCRIPT_EXTENSIONS)
+      val ext = JSFileReferencesUtil.findExtension(filePath,
+                                                   TypeScriptUtil.TYPESCRIPT_EXTENSIONS)
       if (ext != null) {
-        val trimmedName = JSFileReference.trimExistingExtension(filePath, ext)
+        val trimmedName = JSFileReferencesUtil.trimExistingExtension(filePath, ext)
         if (!trimmedName.endsWith(".spec")) return filePath
       }
     }

@@ -1,7 +1,7 @@
 package com.jetbrains.plugins.meteor.ide.action;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.javascript.JSFileReference;
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -40,7 +40,7 @@ public final class MeteorPackagesUtil {
     ContainerUtil.immutableSet("node_modules", "test", "example", "tests", "examples", "tmp");
 
 
-  public static final String[] EXTENSIONS = JSFileReference.IMPLICIT_EXTENSIONS;
+  public static final String[] EXTENSIONS = JSFileReferencesUtil.IMPLICIT_EXTENSIONS;
 
   @Nullable
   public static VirtualFile getVersionPackage(@Nullable VirtualFile packagesFolder, @NotNull PackageWrapper wrapper) {

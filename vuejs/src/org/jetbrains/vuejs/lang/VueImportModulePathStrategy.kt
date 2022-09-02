@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.modules.JSModuleNameInfo.ExtensionSettings
 import com.intellij.lang.javascript.modules.imports.path.JSImportModulePathStrategy
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.lang.typescript.defaultExtensionsWithDot
 import org.jetbrains.vuejs.lang.typescript.vueExtension
 
 class VueImportModulePathStrategy : JSImportModulePathStrategy {
@@ -11,4 +12,6 @@ class VueImportModulePathStrategy : JSImportModulePathStrategy {
     //by default always use the explicit extension
     return if (auto && extensionWithDot == vueExtension) ExtensionSettings.FORCE_EXTENSION else null
   }
+
+  override fun getDefaultImplicitExtensions(place: PsiElement): Array<String> = defaultExtensionsWithDot
 }
