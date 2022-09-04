@@ -28,16 +28,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.thoughtworks.gauge.language.SpecFile;
+import com.thoughtworks.gauge.language.SpecTokenSets;
 import com.thoughtworks.gauge.language.Specification;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 import com.thoughtworks.gauge.lexer.SpecLexer;
 import org.jetbrains.annotations.NotNull;
 
 public final class SpecParserDefinition implements ParserDefinition {
-  public static final TokenSet WHITE_SPACES = TokenSet.WHITE_SPACE;
-  public static final TokenSet COMMENTS = TokenSet.create(SpecTokenTypes.SPEC_COMMENT);
-
-  public static final IFileElementType FILE = new IFileElementType(Language.findInstance(Specification.class));
+  public static final IFileElementType FILE = new IFileElementType(Specification.INSTANCE);
 
   @NotNull
   @Override
@@ -48,13 +46,13 @@ public final class SpecParserDefinition implements ParserDefinition {
   @Override
   @NotNull
   public TokenSet getWhitespaceTokens() {
-    return WHITE_SPACES;
+    return SpecTokenSets.WHITE_SPACES;
   }
 
   @Override
   @NotNull
   public TokenSet getCommentTokens() {
-    return COMMENTS;
+    return SpecTokenSets.COMMENTS;
   }
 
   @Override
