@@ -20,13 +20,8 @@ final class Angular2TemplateVariableElementType extends JSVariableElementType {
   }
 
   @Override
-  public String toString() {
-    return Angular2StubElementTypes.EXTERNAL_ID_PREFIX + super.getDebugName();
-  }
-
-  @Override
   public @NotNull String getExternalId() {
-    return toString();
+    return Angular2StubElementTypes.EXTERNAL_ID_PREFIX + getDebugName();
   }
 
   @Override

@@ -11,7 +11,6 @@ import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
 import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl;
 import org.angular2.lang.html.stub.impl.Angular2HtmlAttrVariableStubImpl;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -24,15 +23,9 @@ public final class Angular2HtmlVariableElementType extends JSVariableElementType
     myKind = kind;
   }
 
-  @NonNls
-  @Override
-  public String toString() {
-    return Angular2HtmlStubElementTypes.EXTERNAL_ID_PREFIX + super.getDebugName();
-  }
-
   @Override
   public @NotNull String getExternalId() {
-    return toString();
+    return Angular2HtmlStubElementTypes.EXTERNAL_ID_PREFIX + getDebugName();
   }
 
   @Override

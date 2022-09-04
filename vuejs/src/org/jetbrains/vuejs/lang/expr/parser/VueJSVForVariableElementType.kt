@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang.expr.parser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.types.JSVariableElementType
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes.EXTERNAL_ID_PREFIX
 import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSVForVariableImpl
 
@@ -13,7 +12,5 @@ class VueJSVForVariableElementType : JSVariableElementType("V_FOR_VARIABLE") {
   override fun construct(node: ASTNode): PsiElement = VueJSVForVariableImpl(node)
   override fun shouldCreateStub(node: ASTNode): Boolean = false
 
-  @NonNls
-  override fun toString(): String = EXTERNAL_ID_PREFIX + super.getDebugName()
-  override fun getExternalId(): String = toString()
+  override fun getExternalId(): String = EXTERNAL_ID_PREFIX + debugName
 }
