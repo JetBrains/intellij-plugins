@@ -23,9 +23,12 @@ import java.util.*;
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
-  private static final Logger LOG = Logger.getInstance(JsonGherkinKeywordProvider.class.getName());
 
-  private final GherkinKeywordList myEmptyKeywordList = new GherkinKeywordList();
+  private static final class Lazy {
+    // leads to init of gher
+    static final GherkinKeywordList myEmptyKeywordList = new GherkinKeywordList();
+  }
+
   private final Map<String, GherkinKeywordList> myLanguageKeywords = new HashMap<>();
   private final Set<String> myAllStepKeywords = new HashSet<>();
 
@@ -86,7 +89,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
       // ignore
     }
     catch (IOException e) {
-      LOG.error(e);
+      Logger.getInstance(JsonGherkinKeywordProvider.class.getName()).error(e);
     }
   }
 
@@ -125,7 +128,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   private GherkinKeywordList getKeywordList(@Nullable final String language) {
     GherkinKeywordList keywordList = myLanguageKeywords.get(language);
     if (keywordList == null) {
-      keywordList = myEmptyKeywordList;
+      keywordList = Lazy.myEmptyKeywordList;
     }
     return keywordList;
   }
