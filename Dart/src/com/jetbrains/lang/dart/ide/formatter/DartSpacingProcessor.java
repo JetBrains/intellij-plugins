@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.intellij.lang.parser.GeneratedParserUtilBase.DUMMY_BLOCK;
+import static com.jetbrains.lang.dart.DartParserDefinition.DART_FILE;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 

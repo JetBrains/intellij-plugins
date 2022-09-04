@@ -20,8 +20,6 @@ import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public interface DartTokenTypesSets {
-  IFileElementType DART_FILE = new IFileElementType("DARTFILE", DartLanguage.INSTANCE);
-
   IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
   IElementType BAD_CHARACTER = TokenType.BAD_CHARACTER;
 
@@ -189,7 +187,7 @@ public interface DartTokenTypesSets {
     BLOCK,
     LAZY_PARSEABLE_BLOCK,
     CLASS_MEMBERS,
-    DART_FILE,
+    DartParserDefinition.DART_FILE,
     EMBEDDED_CONTENT
   );
 
@@ -272,7 +270,7 @@ public interface DartTokenTypesSets {
     @Override
     protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
       PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(psi.getProject(), chameleon);
-      new DartParser().parseLight(DART_FILE, builder);
+      new DartParser().parseLight(DartParserDefinition.DART_FILE, builder);
       return builder.getTreeBuilt().getFirstChildNode();
     }
 

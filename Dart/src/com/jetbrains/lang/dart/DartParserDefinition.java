@@ -19,6 +19,7 @@ import com.jetbrains.lang.dart.psi.impl.DartEmbeddedContentImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class DartParserDefinition implements ParserDefinition {
+  public static final IFileElementType DART_FILE = new IFileElementType("DARTFILE", DartLanguage.INSTANCE);
 
   @NotNull
   @Override
@@ -33,7 +34,7 @@ public class DartParserDefinition implements ParserDefinition {
 
   @Override
   public @NotNull IFileElementType getFileNodeType() {
-    return DartTokenTypesSets.DART_FILE;
+    return DART_FILE;
   }
 
   @NotNull

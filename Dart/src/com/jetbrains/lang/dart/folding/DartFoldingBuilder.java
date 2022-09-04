@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.jetbrains.lang.dart.DartParserDefinition.DART_FILE;
+
 public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
 
   private static final String SMILEY = "<~>";
@@ -43,7 +45,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   @Override
   protected boolean isCustomFoldingRoot(@NotNull final ASTNode node) {
     final IElementType type = node.getElementType();
-    return type == DartTokenTypesSets.DART_FILE || type == DartTokenTypes.CLASS_BODY || type == DartTokenTypes.FUNCTION_BODY;
+    return type == DART_FILE || type == DartTokenTypes.CLASS_BODY || type == DartTokenTypes.FUNCTION_BODY;
   }
 
   @Override
