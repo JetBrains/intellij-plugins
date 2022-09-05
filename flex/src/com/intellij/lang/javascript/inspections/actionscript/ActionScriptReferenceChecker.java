@@ -5,6 +5,8 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.dialects.JSLanguageFeature;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionAction;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -194,6 +196,9 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
     if (!(isNewExpression)) {
       //foo() -> AS methods are callable without this -> method
       quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false, false));
+      if (DialectDetector.hasFeature(methodExpression, JSLanguageFeature.ARROW_FUNCTIONS)) {
+        quickFixes.add(JSFixFactory.getInstance().createJSArrowFunctionIntentionAction(methodExpression.getReferenceName(), true, false, false));
+      }
     }
 
     super.addCreateFromUsageFixesForCall(methodExpression, isNewExpression, resolveResults, quickFixes);
