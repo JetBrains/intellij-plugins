@@ -51,8 +51,8 @@ class PbBlockBodyType extends IErrorCounterReparseableElementType
   }
 
   @Override
-  public FlyweightCapableTreeStructure<LighterASTNode> parseContents(
-      final LighterLazyParseableNode chameleon) {
+  public @NotNull FlyweightCapableTreeStructure<LighterASTNode> parseContents(
+      final @NotNull LighterLazyParseableNode chameleon) {
     ParserDefinition parserDefinition = new PbParserDefinition();
     PsiElement psi = chameleon.getContainingFile();
     assert psi != null : chameleon;

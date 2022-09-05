@@ -275,7 +275,7 @@ public interface DartTokenTypesSets {
     }
 
     @Override
-    public FlyweightCapableTreeStructure<LighterASTNode> parseContents(LighterLazyParseableNode chameleon) {
+    public @NotNull FlyweightCapableTreeStructure<LighterASTNode> parseContents(@NotNull LighterLazyParseableNode chameleon) {
       PsiFile file = chameleon.getContainingFile();
       assert file != null : chameleon;
 
