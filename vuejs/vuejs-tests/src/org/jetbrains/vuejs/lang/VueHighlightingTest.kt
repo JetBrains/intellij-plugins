@@ -541,6 +541,11 @@ const props = {seeMe: {}}
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "HelloWorld.vue")
   }
 
+  fun testDynamicArguments() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "HelloWorld.vue")
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

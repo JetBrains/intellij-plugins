@@ -259,7 +259,10 @@
           },
           "pattern": {
             "proximity": 10,
-            "items": "vue-available-slots",
+            "items": [
+              "vue-available-slots",
+              "/html/vue-dynamic-argument"
+            ],
             "template": [
               "#",
               "$...",
@@ -281,7 +284,10 @@
             "template": [
               "v-slot",
               {
-                "items": "vue-available-slots",
+                "items": [
+                  "vue-available-slots",
+                  "/html/vue-dynamic-argument"
+                ],
                 "required": false,
                 "proximity": 5,
                 "template": [
@@ -706,7 +712,10 @@
             "name": "event name",
             "description": "Optional event name",
             "pattern": {
-              "items": "/js/events"
+              "items": [
+                "/js/events",
+                "/html/vue-dynamic-argument"
+              ]
             },
             "js": {
               "events": [
@@ -879,7 +888,8 @@
                   "includeVirtual": false,
                   "filter": "vue-bind"
                 },
-                "/html/vue-special-properties"
+                "/html/vue-special-properties",
+                "/html/vue-dynamic-argument"
               ]
             }
           },
@@ -901,12 +911,15 @@
           "argument": {
             "name": "v-model prop/event pair to bind",
             "pattern": {
-              "items": {
-                "path": "/html/attributes",
-                "filter": "match-with-target-list",
-                "target-list": "/js/events",
-                "prefix": "update:"
-              }
+              "items": [
+                {
+                  "path": "/html/attributes",
+                  "filter": "match-with-target-list",
+                  "target-list": "/js/events",
+                  "prefix": "update:"
+                },
+                "/html/vue-dynamic-argument"
+              ]
             }
           },
           "modifiers": [
@@ -974,7 +987,16 @@
           "doc-hide-pattern": true,
           "hide-from-completion": true
         }
-      ]
+      ],
+      "vue-dynamic-argument": {
+        "name": "Dynamic directive argument",
+        "description": "It is possible to use a JavaScript expression in a directive argument by wrapping it with square brackets. The expression's evaluated value will be used as the final value for the argument.\n\nDynamic arguments are expected to evaluate to a string, with the exception of `null`. The special value `null` can be used to explicitly remove the binding. Any other non-string value will trigger a warning.",
+        "doc-url": "https://vuejs.org/guide/essentials/template-syntax.html#dynamic-arguments",
+        "hide-from-completion": true,
+        "doc-hide-pattern": true,
+        "pattern": "\\[[^\\]]+\\]",
+        "priority": "high"
+      }
     },
     "css": {
       "pseudo-classes": [

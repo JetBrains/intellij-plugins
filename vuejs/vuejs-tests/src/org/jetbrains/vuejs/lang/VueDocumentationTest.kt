@@ -53,6 +53,11 @@ class VueDocumentationTest : BasePlatformTestCase() {
     defaultTest()
   }
 
+  fun testDynamicAttributes() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
+    defaultTest()
+  }
+
   fun testCustomComponentProperty() {
     defaultTest()
   }
