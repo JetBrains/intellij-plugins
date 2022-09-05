@@ -58,6 +58,11 @@ class VueDocumentationTest : BasePlatformTestCase() {
     defaultTest()
   }
 
+  fun testScriptSetupDestructing() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    defaultTest()
+  }
+
   fun testCustomComponentProperty() {
     defaultTest()
   }

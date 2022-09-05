@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.expr.psi.impl
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.impl.JSParameterImpl
+import com.intellij.lang.javascript.psi.util.JSDestructuringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.LocalSearchScope
@@ -27,9 +28,11 @@ class VueJSScriptSetupParameterImpl(node: ASTNode) : JSParameterImpl(node), VueJ
 
   override fun calculateType(): JSType? {
     if (this.parent.children.find { it is VueJSScriptSetupParameter } != this) return null
-    return VueModelManager.getComponent(VueComponents.getComponentDescriptor(
-      findModule(this, false) ?: findModule(this, true)))
-      ?.let { VuePropsType(it) }
+    return JSDestructuringUtil.getTypeFromInitializer(this) {
+      VueModelManager.getComponent(VueComponents.getComponentDescriptor(
+        findModule(this, false) ?: findModule(this, true)))
+        ?.let { VuePropsType(it) }
+    }
   }
 
 }
