@@ -189,7 +189,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     if (!it.base.isStarReference()) {
       String ref = getTypeRef(it.base, null, false);
       JSReferenceListStub<JSReferenceList> parent =
-        JSStubElementTypes.DEFAULT_EXTENDS_LIST.createStub(parents.getLast());
+        JSStubElementTypes.EXTENDS_LIST.createStub(parents.getLast());
 
       new JSReferenceListMemberStubImpl(parent, ref);
     }
@@ -199,7 +199,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   protected void dumpInterfacesList(String indent, Traits it, boolean anInterface) {
     if (it.interfaces.length > 0) {
       JSReferenceListStubImpl parent = new JSReferenceListStubImpl(parents.getLast(), anInterface
-                                                                                    ? JSStubElementTypes.DEFAULT_EXTENDS_LIST
+                                                                                    ? JSStubElementTypes.EXTENDS_LIST
                                                                                     : JSStubElementTypes.IMPLEMENTS_LIST);
 
       for (Multiname name : it.interfaces) {

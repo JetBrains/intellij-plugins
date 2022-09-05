@@ -477,7 +477,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
         final PsiBuilder.Marker ref = builder.mark();
         builder.advanceLexer();
         ref.done(JSElementTypes.REFERENCE_EXPRESSION);
-        property.done(ES6StubElementTypes.PROPERTY);
+        property.done(ES6StubElementTypes.ES6_PROPERTY);
         return true;
       }
 

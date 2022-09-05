@@ -46,7 +46,7 @@ HtmlFile:CustomDelimitersInterpolationInVue.vue
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('script')
       XmlToken:XML_TAG_END('>')
-      JSEmbeddedContent:MOD_ES6_EMBEDDED_CONTENT
+      JSEmbeddedContent:JS:MOD_ES6_EMBEDDED_CONTENT
         PsiWhiteSpace('\n')
         JSExpressionStatement
           JSNewExpression
