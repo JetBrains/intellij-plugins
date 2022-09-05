@@ -3,7 +3,9 @@ package org.angularjs.codeInsight.refs;
 
 import com.intellij.javascript.JSFileReference;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.typescript.modules.resolver.TypeScriptModuleFileReferenceContext;
 import com.intellij.model.ModelBranch;
 import com.intellij.model.ModelBranchUtil;
 import com.intellij.openapi.util.Key;
@@ -27,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.intellij.lang.typescript.modules.resolver.TypeScriptModuleFileReferenceContext.addParentPathContexts;
 
 public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
   @Override
@@ -86,7 +87,10 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         final PsiFile file = element.getContainingFile().getOriginalFile();
         String pathString = StringUtil.trimStart(getPathString(), "./");
         Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
-        if (!pathString.startsWith("../") && addParentPathContexts(file, pathString, contexts)) {
+        PsiDirectory classicResolveRoot =
+          TypeScriptModuleFileReferenceContext.getClassicResolveRoot(file, pathString, TypeScriptUtil.TYPESCRIPT_EXTENSIONS);
+        if (classicResolveRoot != null) {
+          contexts.add(classicResolveRoot);
           return contexts;
         }
         return getDefaultFileRelativeContexts(file);
@@ -116,16 +120,18 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     private @Nullable Angular2TemplateReferenceData encodeTemplateReferenceData() {
       final PsiFile file = getElement().getContainingFile().getOriginalFile();
       String pathString = StringUtil.trimStart(getPathString(), "./");
-      Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
-      if (!pathString.startsWith("../") && addParentPathContexts(file, pathString, contexts)) {
-        PsiFileSystemItem firstItem = ContainerUtil.getFirstItem(contexts);
-        if (firstItem instanceof PsiFile) {
-          firstItem = firstItem.getParent();
-        }
-        boolean isFileRelative = firstItem == file.getParent();
-        PsiFileSystemItem resolved = resolve();
-        if (resolved != null) {
-          return new Angular2TemplateReferenceData(resolved, isFileRelative ? null : new ArrayList<>(contexts));
+
+      PsiDirectory firstItem =
+        TypeScriptModuleFileReferenceContext.getClassicResolveRoot(file, pathString, TypeScriptUtil.TYPESCRIPT_EXTENSIONS);
+      if (!pathString.startsWith("../")) {
+        if (firstItem != null) {
+          boolean isFileRelative = firstItem == file.getParent();
+          PsiFileSystemItem resolved = resolve();
+          if (resolved != null) {
+            Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
+            contexts.add(firstItem);
+            return new Angular2TemplateReferenceData(resolved, isFileRelative ? null : new ArrayList<>(contexts));
+          }
         }
       }
       return null;
