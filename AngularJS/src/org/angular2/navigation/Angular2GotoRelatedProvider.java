@@ -68,16 +68,13 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       file);
 
     List<Angular2Component> components = mapNotNull(componentClasses, Angular2EntitiesProvider::getComponent);
-    switch (components.size()) {
-      case 0:
-        return Collections.emptyList();
-      case 1:
-        return filter(getRelatedItems(components.get(0)),
-                      f -> !filter.equals(ObjectUtils.doIfNotNull(
-                        f.getElement(), PsiElement::getContainingFile)));
-      default:
-        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGroupName()));
-    }
+    return switch (components.size()) {
+      case 0 -> Collections.emptyList();
+      case 1 -> filter(getRelatedItems(components.get(0)),
+                       f -> !filter.equals(ObjectUtils.doIfNotNull(
+                         f.getElement(), PsiElement::getContainingFile)));
+      default -> map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGroupName()));
+    };
   }
 
   private static List<GotoRelatedItem> getRelatedItems(Angular2Component component) {

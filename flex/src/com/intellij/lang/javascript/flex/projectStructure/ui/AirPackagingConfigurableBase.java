@@ -241,22 +241,13 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
 
   @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
-    if (place != null) {
-      final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
-      if (location instanceof Location) {
-        switch ((Location)location) {
-          case CustomDescriptor:
-            return myAirDescriptorForm.navigateTo((Location)location);
-          case PackageFileName:
-            return IdeFocusManager.findInstance().requestFocus(myPackageFileNameTextField, true);
-          case FilesToPackage:
-            return myFilesToPackageForm.navigateTo((Location)location);
-          case ProvisioningProfile:
-          case Keystore:
-          case IosSdkPath:
-            return mySigningOptionsForm.navigateTo((Location)location);
-        }
-      }
+    if (place != null && place.getPath(FlexBCConfigurable.LOCATION_ON_TAB) instanceof Location loc) {
+      return switch (loc) {
+        case CustomDescriptor -> myAirDescriptorForm.navigateTo(loc);
+        case PackageFileName -> IdeFocusManager.findInstance().requestFocus(myPackageFileNameTextField, true);
+        case FilesToPackage -> myFilesToPackageForm.navigateTo(loc);
+        case ProvisioningProfile, Keystore, IosSdkPath -> mySigningOptionsForm.navigateTo(loc);
+      };
     }
     return ActionCallback.DONE;
   }

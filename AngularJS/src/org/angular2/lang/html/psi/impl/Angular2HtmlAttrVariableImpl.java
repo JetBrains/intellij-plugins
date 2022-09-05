@@ -43,13 +43,10 @@ public class Angular2HtmlAttrVariableImpl extends JSVariableImpl<JSVariableStub<
 
   @Override
   public @Nullable JSType calculateType() {
-    switch (getKind()) {
-      case REFERENCE:
-        return new Angular2ReferenceType(this);
-      case LET:
-        return new Angular2LetType(this);
-    }
-    throw new IllegalStateException(getKind().toString());
+    return switch (getKind()) {
+      case REFERENCE -> new Angular2ReferenceType(this);
+      case LET -> new Angular2LetType(this);
+    };
   }
 
   @Override
@@ -64,13 +61,10 @@ public class Angular2HtmlAttrVariableImpl extends JSVariableImpl<JSVariableStub<
 
   @Override
   public @NotNull SearchScope getUseScope() {
-    switch (getKind()) {
-      case REFERENCE:
-        return Angular2ReferenceType.getUseScope(this);
-      case LET:
-        return Angular2LetType.getUseScope(this);
-    }
-    throw new IllegalStateException(getKind().toString());
+    return switch (getKind()) {
+      case REFERENCE -> Angular2ReferenceType.getUseScope(this);
+      case LET -> Angular2LetType.getUseScope(this);
+    };
   }
 
   @Override

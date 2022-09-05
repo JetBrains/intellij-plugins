@@ -437,20 +437,15 @@ class Abc {
     namespaces[0] = PUBLIC_NS;
     for (i = 1; i < n; i++) {
       switch (data.readByte()) {
-        case CONSTANT_Namespace:
-        case CONSTANT_PackageNs:
-        case CONSTANT_PackageInternalNs:
-        case CONSTANT_ProtectedNs:
-        case CONSTANT_StaticProtectedNs:
-        case CONSTANT_StaticProtectedNs2: {
+        case CONSTANT_Namespace, CONSTANT_PackageNs, CONSTANT_PackageInternalNs,
+          CONSTANT_ProtectedNs, CONSTANT_StaticProtectedNs, CONSTANT_StaticProtectedNs2 -> {
           namespaces[i] = strings[readU32()];
           // todo mark kind of namespace.
-          break;
         }
-        case CONSTANT_PrivateNs:
+        case CONSTANT_PrivateNs -> {
           readU32();
           namespaces[i] = "private";
-          break;
+        }
       }
     }
 
@@ -487,38 +482,16 @@ class Abc {
 
     for (i = 1; i < n; i++) {
       switch (data.readByte()) {
-        case CONSTANT_Qname:
-        case CONSTANT_QnameA:
-          names[i] = new Multiname(new String[]{namespaces[readU32()]}, strings[readU32()]);
-          break;
-
-        case CONSTANT_RTQname:
-        case CONSTANT_RTQnameA:
-          names[i] = new Multiname(new String[]{strings[readU32()]}, null);
-          break;
-
-        case CONSTANT_RTQnameL:
-        case CONSTANT_RTQnameLA:
-          names[i] = null;
-          break;
-
-        case CONSTANT_NameL:
-        case CONSTANT_NameLA:
-          names[i] = new Multiname(PUBLIC_NS_SET, null);
-          break;
-
-        case CONSTANT_Multiname:
-        case CONSTANT_MultinameA:
+        case CONSTANT_Qname, CONSTANT_QnameA -> names[i] = new Multiname(new String[]{namespaces[readU32()]}, strings[readU32()]);
+        case CONSTANT_RTQname, CONSTANT_RTQnameA -> names[i] = new Multiname(new String[]{strings[readU32()]}, null);
+        case CONSTANT_RTQnameL, CONSTANT_RTQnameLA -> names[i] = null;
+        case CONSTANT_NameL, CONSTANT_NameLA -> names[i] = new Multiname(PUBLIC_NS_SET, null);
+        case CONSTANT_Multiname, CONSTANT_MultinameA -> {
           String name = strings[readU32()];
           names[i] = new Multiname(nssets[readU32()], name);
-          break;
-
-        case CONSTANT_MultinameL:
-        case CONSTANT_MultinameLA:
-          names[i] = new Multiname(nssets[readU32()], null);
-          break;
-
-        case CONSTANT_TypeName:
+        }
+        case CONSTANT_MultinameL, CONSTANT_MultinameLA -> names[i] = new Multiname(nssets[readU32()], null);
+        case CONSTANT_TypeName -> {
           // TODO:
           int nameId = readU32();
           final TypeNameInfo e = new TypeNameInfo();
@@ -535,10 +508,8 @@ class Abc {
               e.genericIndices.add(nameId);
             }
           }
-          break;
-
-        default:
-          throw new Error("invalid kind " + data.getByte(data.getPosition() - 1));
+        }
+        default -> throw new Error("invalid kind " + data.getByte(data.getPosition() - 1));
       }
     }
 
@@ -755,9 +726,7 @@ class Abc {
       MemberInfo member = null;
 
       switch (kind) {
-        case Slot:
-        case Const:
-        case Class:
+        case Slot, Const, Class -> {
           SlotInfo slot = new SlotInfo(name, kind);
           member = slot;
           slot.id = readU32();
@@ -775,10 +744,8 @@ class Abc {
           {
             slot.value = classes[readU32()];
           }
-          break;
-        case Method:
-        case Getter:
-        case Setter:
+        }
+        case Method, Getter, Setter -> {
           int disp_id = readU32();
           MethodInfo method = methods[readU32()];
           member = method;
@@ -786,7 +753,7 @@ class Abc {
           method.id = disp_id;
           member.kind = kind;
           member.name = name;
-          break;
+        }
       }
 
       t.members.put(i, member);

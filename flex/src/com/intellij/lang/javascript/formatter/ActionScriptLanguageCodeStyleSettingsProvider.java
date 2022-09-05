@@ -51,19 +51,12 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
-    switch (settingsType) {
-      case WRAPPING_AND_BRACES_SETTINGS:
-        return WRAPPING_CODE_SAMPLE;
-      case BLANK_LINES_SETTINGS:
-        return BLANK_LINE_CODE_SAMPLE;
-      case SPACING_SETTINGS:
-        return GENERAL_CODE_SAMPLE;
-      case LANGUAGE_SPECIFIC:
-        return GENERAL_CODE_SAMPLE;
-      case INDENT_SETTINGS:
-        return INDENT_CODE_SAMPLE;
-    }
-    return GENERAL_CODE_SAMPLE;
+    return switch (settingsType) {
+      case WRAPPING_AND_BRACES_SETTINGS -> WRAPPING_CODE_SAMPLE;
+      case BLANK_LINES_SETTINGS -> BLANK_LINE_CODE_SAMPLE;
+      case INDENT_SETTINGS -> INDENT_CODE_SAMPLE;
+      default -> GENERAL_CODE_SAMPLE;
+    };
   }
 
   @Override

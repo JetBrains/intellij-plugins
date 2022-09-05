@@ -154,20 +154,13 @@ public class ActionScriptRearranger extends JSRearrangerBase {
       }
 
       if (accessType != null) {
-        switch (accessType) {
-          case PUBLIC:
-            result.add(PUBLIC);
-            break;
-          case PROTECTED:
-            result.add(PROTECTED);
-            break;
-          case PACKAGE_LOCAL:
-            result.add(PACKAGE_PRIVATE);
-            break;
-          case PRIVATE:
-            result.add(PRIVATE);
-            break;
-        }
+        ArrangementSettingsToken token = switch (accessType) {
+          case PUBLIC -> PUBLIC;
+          case PROTECTED -> PROTECTED;
+          case PACKAGE_LOCAL -> PACKAGE_PRIVATE;
+          case PRIVATE -> PRIVATE;
+        };
+        result.add(token);
       }
 
       if (attributes.hasModifier(JSAttributeList.ModifierType.STATIC)) result.add(STATIC);

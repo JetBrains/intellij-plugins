@@ -243,18 +243,13 @@ public final class Angular2AttributeNameParser {
 
     @Override
     public String getFullName() {
-      switch (this.bindingType) {
-        case ANIMATION:
-          return (isCanonical ? "animate-" : "@") + name;
-        case ATTRIBUTE:
-          return "attr." + name;
-        case STYLE:
-          return "style." + name;
-        case CLASS:
-          return "class." + name;
-        default:
-          return name;
-      }
+      return switch (this.bindingType) {
+        case ANIMATION -> (isCanonical ? "animate-" : "@") + name;
+        case ATTRIBUTE -> "attr." + name;
+        case STYLE -> "style." + name;
+        case CLASS -> "class." + name;
+        default -> name;
+      };
     }
 
     @Override

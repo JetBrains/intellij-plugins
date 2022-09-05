@@ -367,25 +367,23 @@ public final class AirPackageUtil {
       @Override
       protected void appendAdtOptions(List<String> command) {
         switch (packageType) {
-          case AirInstaller:
+          case AirInstaller -> {
             command.add("-package");
             appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
-            break;
-          case NativeInstaller:
+          }
+          case NativeInstaller -> {
             command.add("-package");
             appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
             command.add("-target");
             command.add("native");
-            break;
-          case CaptiveRuntimeBundle:
+          }
+          case CaptiveRuntimeBundle -> {
             command.add("-package");
             appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
             command.add("-target");
             command.add("bundle");
-            break;
-          case Airi:
-            command.add("-prepare");
-            break;
+          }
+          case Airi -> command.add("-prepare");
         }
 
         appendPaths(command, module, bc, packagingOptions, null, packageType.getFileExtension());
@@ -419,26 +417,17 @@ public final class AirPackageUtil {
         command.add("-target");
 
         switch (packageType) {
-          case Release:
-            command.add(captiveRuntime ? "apk-captive-runtime" : "apk");
-            break;
-          case DebugOverNetwork:
+          case Release -> command.add(captiveRuntime ? "apk-captive-runtime" : "apk");
+          case DebugOverNetwork -> {
             command.add("apk-debug");
             command.add("-connect");
-            break;
-          case DebugOverUSB:
+          }
+          case DebugOverUSB -> {
             command.add("apk-debug");
             command.add("-listen");
             command.add(String.valueOf(debugPort));
-            break;
+          }
         }
-
-        /*
-        if (parameters.AIR_DOWNLOAD_URL.length() > 0) {
-          command.add("-airDownloadURL");
-          command.add(parameters.AIR_DOWNLOAD_URL);
-        }
-        */
 
         if (!AirSigningOptions.ARCH_DEFAULT.equals(packagingOptions.getSigningOptions().getArch())) {
           command.add("-arch");
@@ -483,30 +472,20 @@ public final class AirPackageUtil {
         command.add("-target");
 
         switch (packageType) {
-          case Test:
-            command.add(fastPackaging ? "ipa-test-interpreter" : "ipa-test");
-            break;
-          case DebugOverUSB:
+          case Test -> command.add(fastPackaging ? "ipa-test-interpreter" : "ipa-test");
+          case DebugOverUSB -> {
             command.add(fastPackaging ? "ipa-debug-interpreter" : "ipa-debug");
             command.add("-listen");
             command.add(String.valueOf(usbDebugPort));
-            break;
-          case DebugOverNetwork:
+          }
+          case DebugOverNetwork -> {
             command.add(fastPackaging ? "ipa-debug-interpreter" : "ipa-debug");
             command.add("-connect");
-            break;
-          case TestOnSimulator:
-            command.add("ipa-test-interpreter-simulator");
-            break;
-          case DebugOnSimulator:
-            command.add("ipa-debug-interpreter-simulator");
-            break;
-          case AdHoc:
-            command.add("ipa-ad-hoc");
-            break;
-          case AppStore:
-            command.add("ipa-app-store");
-            break;
+          }
+          case TestOnSimulator -> command.add("ipa-test-interpreter-simulator");
+          case DebugOnSimulator -> command.add("ipa-debug-interpreter-simulator");
+          case AdHoc -> command.add("ipa-ad-hoc");
+          case AppStore -> command.add("ipa-app-store");
         }
 
         if (adtOptions.equals("-sampler") ||
