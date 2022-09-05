@@ -45,12 +45,6 @@ public final class ConceptParserDefinition implements ParserDefinition {
 
   @Override
   @NotNull
-  public TokenSet getWhitespaceTokens() {
-    return ConceptTokenSets.WHITE_SPACES;
-  }
-
-  @Override
-  @NotNull
   public TokenSet getCommentTokens() {
     return ConceptTokenSets.COMMENTS;
   }

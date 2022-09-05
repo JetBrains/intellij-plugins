@@ -42,7 +42,6 @@ public interface DartTokenTypesSets {
   IElementType LAZY_PARSEABLE_BLOCK = new DartLazyParseableBlockElementType();
 
   TokenSet STRINGS = TokenSet.create(RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, OPEN_QUOTE, CLOSING_QUOTE, REGULAR_STRING_PART);
-  TokenSet WHITE_SPACES = TokenSet.create(WHITE_SPACE);
 
   TokenSet RESERVED_WORDS = TokenSet.create(ASSERT,
                                             BREAK,

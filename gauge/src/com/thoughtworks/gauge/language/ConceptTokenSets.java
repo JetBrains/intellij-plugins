@@ -8,6 +8,5 @@ public final class ConceptTokenSets {
   }
 
 
-  public static final TokenSet WHITE_SPACES = TokenSet.WHITE_SPACE;
   public static final TokenSet COMMENTS = TokenSet.create(ConceptTokenTypes.CONCEPT_COMMENT);
 }

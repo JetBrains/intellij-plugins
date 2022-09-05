@@ -39,12 +39,6 @@ public class DartParserDefinition implements ParserDefinition {
 
   @NotNull
   @Override
-  public TokenSet getWhitespaceTokens() {
-    return DartTokenTypesSets.WHITE_SPACES;
-  }
-
-  @NotNull
-  @Override
   public TokenSet getCommentTokens() {
     return DartTokenTypesSets.COMMENTS;
   }

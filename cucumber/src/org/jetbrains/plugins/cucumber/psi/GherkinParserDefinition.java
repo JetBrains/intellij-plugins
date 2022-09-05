@@ -18,7 +18,6 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 
 public class GherkinParserDefinition implements ParserDefinition {
-  private static final TokenSet WHITESPACE = TokenSet.WHITE_SPACE;
   public static final IFileElementType GHERKIN_FILE = new IFileElementType(GherkinLanguage.INSTANCE);
 
   @Override
@@ -35,12 +34,6 @@ public class GherkinParserDefinition implements ParserDefinition {
   @Override
   public @NotNull IFileElementType getFileNodeType() {
     return GHERKIN_FILE;
-  }
-
-  @Override
-  @NotNull
-  public TokenSet getWhitespaceTokens() {
-    return WHITESPACE;
   }
 
   @Override
