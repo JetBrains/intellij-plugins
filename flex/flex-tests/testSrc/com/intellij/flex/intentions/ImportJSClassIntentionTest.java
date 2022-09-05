@@ -4,8 +4,8 @@ package com.intellij.flex.intentions;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.BaseJSIntentionTestCase;
+import com.intellij.lang.javascript.flex.ActionScriptAutoImportOptionsProvider;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +34,9 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
     boolean oldHintsEnabled = CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY;
 
     CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = false;
+    boolean old = ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly();
+    ActionScriptAutoImportOptionsProvider.setAddUnambiguousImportsOnTheFly(true);
     try {
-      PropertiesComponent.getInstance().setValue("ActionScript.add.unambiguous.imports.on.the.fly", true);
       DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(true);
 
       final String testName = getTestName(false);
@@ -46,7 +47,7 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
       myFixture.checkResultByFile(testName + "_after.as");
     }
     finally {
-      PropertiesComponent.getInstance().unsetValue("ActionScript.add.unambiguous.imports.on.the.fly");
+      ActionScriptAutoImportOptionsProvider.setAddUnambiguousImportsOnTheFly(old);
       CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = oldHintsEnabled;
     }
   }
