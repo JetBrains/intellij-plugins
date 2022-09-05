@@ -536,6 +536,11 @@ const props = {seeMe: {}}
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.QUASAR_2_6_5), "MyTable.vue")
   }
 
+  fun testGlobalScriptSetup() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "HelloWorld.vue")
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

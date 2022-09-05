@@ -132,8 +132,7 @@ class VueModelManager {
             ?.descriptorQualifiedReference
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
             ?.castSafelyTo<VueSourceEntityDescriptor>()
-            ?.initializer
-            ?.let { return VueSourceEntityDescriptor(it) }
+            ?.let { return it }
 
           if (context is JSProperty) {
             return VueSourceEntityDescriptor(source = element)
