@@ -967,6 +967,14 @@
       ]
     },
     "css": {
+      "pseudo-classes": [
+        {
+          "name": "deep",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#deep-selectors",
+          "arguments": true,
+          "description": "Make a rule that targets child components."
+        }
+      ],
       "pseudo-elements": [
         {
           "name": "v-deep",
