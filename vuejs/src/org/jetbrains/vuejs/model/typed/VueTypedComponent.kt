@@ -160,7 +160,7 @@ class VueTypedComponent(override val source: PsiElement,
                   .generateDoc(source ?: return@lazy null, null) ?: return@lazy null
       val contentStart = doc.indexOf(DocumentationMarkup.CONTENT_START)
       val sectionsStart = doc.indexOf(DocumentationMarkup.SECTIONS_START)
-      if (contentStart < 0 )
+      if (contentStart < 0 || contentStart > sectionsStart )
         null
       else
         doc.substring(contentStart + DocumentationMarkup.CONTENT_START.length, sectionsStart)
