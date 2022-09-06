@@ -1142,4 +1142,21 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.checkHighlighting();
   }
+
+  public void testCdkDirectivesHighlighting() {
+    myFixture.configureByFiles("cdkDirectives.html", "cdkDirectives.ts");
+    configureCopy(myFixture, ANGULAR_CDK_14_2_0);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
+  }
+
+  public void testCdkDirectivesCompletion() {
+    configureCopy(myFixture, ANGULAR_CDK_14_2_0);
+    myFixture.configureByFile(getTestName(true) + ".html");
+    myFixture.completeBasic();
+    checkListByFile(myFixture,
+                    WebTestUtil.renderLookupItems(myFixture, true, true),
+                    getTestName(true) + ".expected.txt",
+                    false);
+  }
 }

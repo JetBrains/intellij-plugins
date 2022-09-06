@@ -1,0 +1,271 @@
+{
+  "name": "@angular/cdk",
+  "version": "14.2.0",
+  "description": "Angular Material Component Development Kit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular/components.git"
+  },
+  "keywords": [
+    "angular",
+    "cdk",
+    "component",
+    "development",
+    "kit"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/angular/components/issues"
+  },
+  "homepage": "https://github.com/angular/components#readme",
+  "exports": {
+    ".": {
+      "sass": "./_index.scss",
+      "types": "./index.d.ts",
+      "esm2020": "./esm2020/index.mjs",
+      "es2020": "./fesm2020/cdk.mjs",
+      "es2015": "./fesm2015/cdk.mjs",
+      "node": "./fesm2015/cdk.mjs",
+      "default": "./fesm2020/cdk.mjs"
+    },
+    "./a11y-prebuilt.css": {
+      "style": "./a11y-prebuilt.css"
+    },
+    "./a11y-prebuilt": {
+      "style": "./a11y-prebuilt.css"
+    },
+    "./overlay-prebuilt.css": {
+      "style": "./overlay-prebuilt.css"
+    },
+    "./overlay-prebuilt": {
+      "style": "./overlay-prebuilt.css"
+    },
+    "./text-field-prebuilt.css": {
+      "style": "./text-field-prebuilt.css"
+    },
+    "./text-field-prebuilt": {
+      "style": "./text-field-prebuilt.css"
+    },
+    "./schematics": {
+      "default": "./schematics/index.js"
+    },
+    "./package.json": {
+      "default": "./package.json"
+    },
+    "./a11y": {
+      "types": "./a11y/index.d.ts",
+      "esm2020": "./esm2020/a11y/a11y_public_index.mjs",
+      "es2020": "./fesm2020/a11y.mjs",
+      "es2015": "./fesm2015/a11y.mjs",
+      "node": "./fesm2015/a11y.mjs",
+      "default": "./fesm2020/a11y.mjs"
+    },
+    "./accordion": {
+      "types": "./accordion/index.d.ts",
+      "esm2020": "./esm2020/accordion/accordion_public_index.mjs",
+      "es2020": "./fesm2020/accordion.mjs",
+      "es2015": "./fesm2015/accordion.mjs",
+      "node": "./fesm2015/accordion.mjs",
+      "default": "./fesm2020/accordion.mjs"
+    },
+    "./bidi": {
+      "types": "./bidi/index.d.ts",
+      "esm2020": "./esm2020/bidi/bidi_public_index.mjs",
+      "es2020": "./fesm2020/bidi.mjs",
+      "es2015": "./fesm2015/bidi.mjs",
+      "node": "./fesm2015/bidi.mjs",
+      "default": "./fesm2020/bidi.mjs"
+    },
+    "./clipboard": {
+      "types": "./clipboard/index.d.ts",
+      "esm2020": "./esm2020/clipboard/clipboard_public_index.mjs",
+      "es2020": "./fesm2020/clipboard.mjs",
+      "es2015": "./fesm2015/clipboard.mjs",
+      "node": "./fesm2015/clipboard.mjs",
+      "default": "./fesm2020/clipboard.mjs"
+    },
+    "./coercion": {
+      "types": "./coercion/index.d.ts",
+      "esm2020": "./esm2020/coercion/index.mjs",
+      "es2020": "./fesm2020/coercion.mjs",
+      "es2015": "./fesm2015/coercion.mjs",
+      "node": "./fesm2015/coercion.mjs",
+      "default": "./fesm2020/coercion.mjs"
+    },
+    "./collections": {
+      "types": "./collections/index.d.ts",
+      "esm2020": "./esm2020/collections/collections_public_index.mjs",
+      "es2020": "./fesm2020/collections.mjs",
+      "es2015": "./fesm2015/collections.mjs",
+      "node": "./fesm2015/collections.mjs",
+      "default": "./fesm2020/collections.mjs"
+    },
+    "./dialog": {
+      "types": "./dialog/index.d.ts",
+      "esm2020": "./esm2020/dialog/dialog_public_index.mjs",
+      "es2020": "./fesm2020/dialog.mjs",
+      "es2015": "./fesm2015/dialog.mjs",
+      "node": "./fesm2015/dialog.mjs",
+      "default": "./fesm2020/dialog.mjs"
+    },
+    "./drag-drop": {
+      "types": "./drag-drop/index.d.ts",
+      "esm2020": "./esm2020/drag-drop/drag-drop_public_index.mjs",
+      "es2020": "./fesm2020/drag-drop.mjs",
+      "es2015": "./fesm2015/drag-drop.mjs",
+      "node": "./fesm2015/drag-drop.mjs",
+      "default": "./fesm2020/drag-drop.mjs"
+    },
+    "./keycodes": {
+      "types": "./keycodes/index.d.ts",
+      "esm2020": "./esm2020/keycodes/keycodes_public_index.mjs",
+      "es2020": "./fesm2020/keycodes.mjs",
+      "es2015": "./fesm2015/keycodes.mjs",
+      "node": "./fesm2015/keycodes.mjs",
+      "default": "./fesm2020/keycodes.mjs"
+    },
+    "./layout": {
+      "types": "./layout/index.d.ts",
+      "esm2020": "./esm2020/layout/layout_public_index.mjs",
+      "es2020": "./fesm2020/layout.mjs",
+      "es2015": "./fesm2015/layout.mjs",
+      "node": "./fesm2015/layout.mjs",
+      "default": "./fesm2020/layout.mjs"
+    },
+    "./listbox": {
+      "types": "./listbox/index.d.ts",
+      "esm2020": "./esm2020/listbox/listbox_public_index.mjs",
+      "es2020": "./fesm2020/listbox.mjs",
+      "es2015": "./fesm2015/listbox.mjs",
+      "node": "./fesm2015/listbox.mjs",
+      "default": "./fesm2020/listbox.mjs"
+    },
+    "./menu": {
+      "types": "./menu/index.d.ts",
+      "esm2020": "./esm2020/menu/menu_public_index.mjs",
+      "es2020": "./fesm2020/menu.mjs",
+      "es2015": "./fesm2015/menu.mjs",
+      "node": "./fesm2015/menu.mjs",
+      "default": "./fesm2020/menu.mjs"
+    },
+    "./observers": {
+      "types": "./observers/index.d.ts",
+      "esm2020": "./esm2020/observers/observers_public_index.mjs",
+      "es2020": "./fesm2020/observers.mjs",
+      "es2015": "./fesm2015/observers.mjs",
+      "node": "./fesm2015/observers.mjs",
+      "default": "./fesm2020/observers.mjs"
+    },
+    "./overlay": {
+      "types": "./overlay/index.d.ts",
+      "esm2020": "./esm2020/overlay/overlay_public_index.mjs",
+      "es2020": "./fesm2020/overlay.mjs",
+      "es2015": "./fesm2015/overlay.mjs",
+      "node": "./fesm2015/overlay.mjs",
+      "default": "./fesm2020/overlay.mjs"
+    },
+    "./platform": {
+      "types": "./platform/index.d.ts",
+      "esm2020": "./esm2020/platform/platform_public_index.mjs",
+      "es2020": "./fesm2020/platform.mjs",
+      "es2015": "./fesm2015/platform.mjs",
+      "node": "./fesm2015/platform.mjs",
+      "default": "./fesm2020/platform.mjs"
+    },
+    "./portal": {
+      "types": "./portal/index.d.ts",
+      "esm2020": "./esm2020/portal/portal_public_index.mjs",
+      "es2020": "./fesm2020/portal.mjs",
+      "es2015": "./fesm2015/portal.mjs",
+      "node": "./fesm2015/portal.mjs",
+      "default": "./fesm2020/portal.mjs"
+    },
+    "./scrolling": {
+      "types": "./scrolling/index.d.ts",
+      "esm2020": "./esm2020/scrolling/scrolling_public_index.mjs",
+      "es2020": "./fesm2020/scrolling.mjs",
+      "es2015": "./fesm2015/scrolling.mjs",
+      "node": "./fesm2015/scrolling.mjs",
+      "default": "./fesm2020/scrolling.mjs"
+    },
+    "./stepper": {
+      "types": "./stepper/index.d.ts",
+      "esm2020": "./esm2020/stepper/stepper_public_index.mjs",
+      "es2020": "./fesm2020/stepper.mjs",
+      "es2015": "./fesm2015/stepper.mjs",
+      "node": "./fesm2015/stepper.mjs",
+      "default": "./fesm2020/stepper.mjs"
+    },
+    "./table": {
+      "types": "./table/index.d.ts",
+      "esm2020": "./esm2020/table/table_public_index.mjs",
+      "es2020": "./fesm2020/table.mjs",
+      "es2015": "./fesm2015/table.mjs",
+      "node": "./fesm2015/table.mjs",
+      "default": "./fesm2020/table.mjs"
+    },
+    "./testing": {
+      "types": "./testing/index.d.ts",
+      "esm2020": "./esm2020/testing/index.mjs",
+      "es2020": "./fesm2020/testing.mjs",
+      "es2015": "./fesm2015/testing.mjs",
+      "node": "./fesm2015/testing.mjs",
+      "default": "./fesm2020/testing.mjs"
+    },
+    "./testing/selenium-webdriver": {
+      "types": "./testing/selenium-webdriver/index.d.ts",
+      "esm2020": "./esm2020/testing/selenium-webdriver/index.mjs",
+      "es2020": "./fesm2020/testing/selenium-webdriver.mjs",
+      "es2015": "./fesm2015/testing/selenium-webdriver.mjs",
+      "node": "./fesm2015/testing/selenium-webdriver.mjs",
+      "default": "./fesm2020/testing/selenium-webdriver.mjs"
+    },
+    "./testing/testbed": {
+      "types": "./testing/testbed/index.d.ts",
+      "esm2020": "./esm2020/testing/testbed/index.mjs",
+      "es2020": "./fesm2020/testing/testbed.mjs",
+      "es2015": "./fesm2015/testing/testbed.mjs",
+      "node": "./fesm2015/testing/testbed.mjs",
+      "default": "./fesm2020/testing/testbed.mjs"
+    },
+    "./text-field": {
+      "types": "./text-field/index.d.ts",
+      "esm2020": "./esm2020/text-field/text-field_public_index.mjs",
+      "es2020": "./fesm2020/text-field.mjs",
+      "es2015": "./fesm2015/text-field.mjs",
+      "node": "./fesm2015/text-field.mjs",
+      "default": "./fesm2020/text-field.mjs"
+    },
+    "./tree": {
+      "types": "./tree/index.d.ts",
+      "esm2020": "./esm2020/tree/tree_public_index.mjs",
+      "es2020": "./fesm2020/tree.mjs",
+      "es2015": "./fesm2015/tree.mjs",
+      "node": "./fesm2015/tree.mjs",
+      "default": "./fesm2020/tree.mjs"
+    }
+  },
+  "peerDependencies": {
+    "@angular/core": "^14.0.0 || ^15.0.0",
+    "@angular/common": "^14.0.0 || ^15.0.0",
+    "rxjs": "^6.5.3 || ^7.4.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "optionalDependencies": {
+    "parse5": "^5.0.0"
+  },
+  "schematics": "./schematics/collection.json",
+  "ng-update": {
+    "migrations": "./schematics/migration.json"
+  },
+  "sideEffects": false,
+  "fesm2020": "./fesm2020/cdk.mjs",
+  "fesm2015": "./fesm2015/cdk.mjs",
+  "esm2020": "./esm2020/index.mjs",
+  "typings": "./index.d.ts",
+  "module": "./fesm2015/cdk.mjs",
+  "es2020": "./fesm2020/cdk.mjs",
+  "type": "module"
+}

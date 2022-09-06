@@ -16,6 +16,7 @@ import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandi
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2StructuralDirectiveSymbol
 import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider
 
 class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsContainer {
 
@@ -79,6 +80,27 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
       val inOuts = HashMap<String, Angular2Symbol>()
       val attributes = HashMap<String, Angular2Symbol>()
 
+      fun processStructuralDirective(candidate: Angular2Directive) {
+        val selectors = candidate.selector.simpleSelectorsWithPsi
+        for (selector in selectors) {
+          val attributeCandidates = selector.attributes
+          if (attributeCandidates.size == 1) {
+            consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attributeCandidates[0]))
+          }
+          else {
+            CANDIDATES_LOOP@ for (attr in attributeCandidates) {
+              val attrName = attr.name
+              for (input in inputs.keys) {
+                if (!input.startsWith(attrName)) {
+                  break@CANDIDATES_LOOP
+                }
+              }
+              consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attr))
+            }
+          }
+        }
+      }
+
       for (candidate in findElementDirectivesCandidates(project, tagName)
         .asSequence().plus(findElementDirectivesCandidates(project, ""))) {
 
@@ -88,24 +110,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
         val kind = candidate.directiveKind
 
         if (!isTemplateTag && kind.isStructural) {
-          val selectors = candidate.selector.simpleSelectorsWithPsi
-          for (selector in selectors) {
-            val attributeCandidates = selector.attributes
-            if (attributeCandidates.size == 1) {
-              consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attributeCandidates[0]))
-            }
-            else {
-              CANDIDATES_LOOP@ for (attr in attributeCandidates) {
-                val attrName = attr.name
-                for (input in inputs.keys) {
-                  if (!input.startsWith(attrName)) {
-                    break@CANDIDATES_LOOP
-                  }
-                }
-                consumer(createAngular2StructuralDirectiveSymbol(candidate, inputs, attr))
-              }
-            }
-          }
+          processStructuralDirective(candidate)
         }
         if (isTemplateTag || kind.isRegular) {
           fillNamesAndProperties(outputs, candidate.outputs)
@@ -130,6 +135,13 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
               }
             }
+          }
+        }
+      }
+      if (!isTemplateTag) {
+        for (candidate in findElementDirectivesCandidates(project, Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE)) {
+          if (candidate.directiveKind.isStructural) {
+            processStructuralDirective(candidate)
           }
         }
       }

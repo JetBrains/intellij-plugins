@@ -19,6 +19,7 @@ import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 public enum Angular2TestModule {
 
   AGM_CORE_1_0_0_BETA_5("@agm/core", "1.0.0-beta.5"),
+  ANGULAR_CDK_14_2_0("@angular/cdk", "14.2.0"),
   ANGULAR_COMMON_4_0_0("@angular/common", "4.0.0"),
   ANGULAR_COMMON_8_2_14("@angular/common", "8.2.14"),
   ANGULAR_COMMON_13_3_5("@angular/common", "13.3.5"),

@@ -336,6 +336,9 @@
             "ng-structural-directives": [
               {
                 "name": "Unknown structural directive",
+                "attribute-value": {
+                  "required": false
+                },
                 "priority": "lowest",
                 "pattern": ".+",
                 "doc-hide-pattern": true,
