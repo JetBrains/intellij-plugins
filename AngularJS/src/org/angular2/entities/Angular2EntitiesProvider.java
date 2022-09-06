@@ -22,6 +22,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.ivy.Angular2IvyUtil;
 import org.angular2.entities.metadata.Angular2MetadataUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
@@ -50,6 +51,9 @@ import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
 import static org.angular2.index.Angular2IndexingHandler.*;
 import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
+/**
+ * @see Angular2ApplicableDirectivesProvider
+ */
 public final class Angular2EntitiesProvider {
 
   public static final String TRANSFORM_METHOD = "transform";

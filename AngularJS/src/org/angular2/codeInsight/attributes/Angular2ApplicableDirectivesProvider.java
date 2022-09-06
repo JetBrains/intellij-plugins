@@ -6,6 +6,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2SelectorMatcher;
@@ -17,6 +18,9 @@ import static org.angular2.codeInsight.template.Angular2TemplateElementsScopePro
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE;
 
+/**
+ * @see Angular2EntitiesProvider
+ */
 public class Angular2ApplicableDirectivesProvider {
 
   private final NotNullLazyValue<List<Angular2Directive>> myDirectiveCandidates;
