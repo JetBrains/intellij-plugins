@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 import * as prettier from "prettier";
 
 type PrettierApi = typeof prettier & { prettierPath: string, packageJsonPath?: string }
@@ -24,13 +24,13 @@ type FormatArguments = {
 export class PrettierPlugin implements LanguagePlugin {
     private _prettierApi?: PrettierApi;
 
-    onMessage(p: string, writer: MessageWriter): void {
+    async onMessage(p: string, writer: MessageWriter) {
         let r: ServiceRequest<FormatArguments> = JSON.parse(p);
         let response: any;
 
         try {
             if (r.command == "reformat") {
-                response = this.handleReformatCommand((<FormatArguments>r.arguments));
+                response = await this.handleReformatCommand((<FormatArguments>r.arguments));
             }
             else {
                 response = {error: "Unknown command: " + r.command};
@@ -44,14 +44,14 @@ export class PrettierPlugin implements LanguagePlugin {
         writer.write(JSON.stringify(response))
     }
 
-    private handleReformatCommand(args: FormatArguments): FormatResponse {
+    private async handleReformatCommand(args: FormatArguments): Promise<FormatResponse> {
         let prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
 
-        let config = this.resolveConfig(prettierApi, args)
+        let config = await this.resolveConfig(prettierApi, args)
         let options = {ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins};
 
         if (prettierApi.getFileInfo) {
-            let fileInfo = prettierApi.getFileInfo.sync(args.path, options)
+            let fileInfo = await prettierApi.getFileInfo(args.path, options)
             if (fileInfo.ignored) {
                 return {ignored: true}
             }
@@ -62,8 +62,8 @@ export class PrettierPlugin implements LanguagePlugin {
         return performFormat(prettierApi, config, args)
     }
 
-  private resolveConfig(prettierApi: PrettierApi, args: FormatArguments): any {
-      let config = prettierApi.resolveConfig.sync(args.path, {useCache: true, editorconfig: true});
+  private async resolveConfig(prettierApi: PrettierApi, args: FormatArguments) {
+      let config = await prettierApi.resolveConfig(args.path, {useCache: true, editorconfig: true});
       if (config == null) {
         config = {filepath: args.path};
       }
@@ -90,11 +90,11 @@ export class PrettierPlugin implements LanguagePlugin {
     }
 }
 
-function performFormat(api: PrettierApi, config: any, args: FormatArguments): { formatted: string } {
+async function performFormat(api: PrettierApi, config: any, args: FormatArguments): Promise<FormatResponse> {
     if (args.flushConfigCache) {
         api.clearConfigCache()
     }
-    return {formatted: api.format(args.content, config)};
+    return {formatted: await api.format(args.content, config)};
 }
 
 function requireInContext(modulePathToRequire: string, contextPath?: string): any {

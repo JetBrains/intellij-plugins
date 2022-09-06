@@ -173,6 +173,14 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     }
   }
 
+  public void testNextVersion() {
+    doReformatFile("toReformat", "js", () -> {
+      performNpmInstallForPackageJson("package.json");
+      NodePackage nextPrettier = new NodePackage(myFixture.getTempDirPath() + "/node_modules/prettier");
+      PrettierConfiguration.getInstance(getProject()).withLinterPackage(NodePackageRef.create(nextPrettier));
+    });
+  }
+
   private void configureYarnPrettierPackage(VirtualFile root) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
