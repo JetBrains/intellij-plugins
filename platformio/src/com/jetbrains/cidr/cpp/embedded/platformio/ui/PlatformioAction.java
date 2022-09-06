@@ -1,7 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,17 +12,18 @@ public abstract class PlatformioAction extends PlatformioActionBase {
     super(dynamicText, dynamicDescription);
   }
 
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.EDT;
+  }
+
   public PlatformioAction(@NotNull Supplier<String> dynamicText) {
     this(dynamicText, () -> null);
   }
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    super.update(e);
-
-    Presentation presentation = e.getPresentation();
-    if (presentation.isVisible()) {
-      presentation.setEnabled(PlatformioService.getState(e.getProject()) != PlatformioService.State.NONE);
-    }
+    PlatformioService.State state = PlatformioService.getState(e.getProject());
+    e.getPresentation().setEnabled(state != PlatformioService.State.NONE);
   }
 }

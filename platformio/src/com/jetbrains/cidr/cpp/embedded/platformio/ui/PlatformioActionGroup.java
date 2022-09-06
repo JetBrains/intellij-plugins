@@ -26,9 +26,8 @@ public class PlatformioActionGroup extends ActionGroup {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    super.update(e);
     Presentation presentation = e.getPresentation();
-    if (presentation.isVisible() && !ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
+    if (!ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
       VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
       if (PlatformioFileType.isFileOfType(file)) {
         presentation.setEnabledAndVisible(true);
@@ -37,6 +36,11 @@ public class PlatformioActionGroup extends ActionGroup {
         presentation.setEnabledAndVisible(false);
       }
     }
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override
