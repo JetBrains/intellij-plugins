@@ -3,6 +3,7 @@ package com.intellij.plugins.serialmonitor.ui
 import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
+import com.intellij.openapi.actionSystem.ActionUpdateThread.*
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
@@ -109,6 +110,8 @@ internal class SerialSettingsConfigurable : SearchableConfigurable, MasterDetail
         removePaths(myTree.selectionPath)
       }
 
+      override fun getActionUpdateThread() = EDT
+
       override fun update(e: AnActionEvent) {
         val selectedProfile = (myTree.selectionPath?.lastPathComponent as? MyNode)?.userObject as SerialProfileConfigurable?
         e.presentation.isEnabled = if (selectedProfile != null) !selectedProfile.isDefaultProfile else false
@@ -124,6 +127,8 @@ internal class SerialSettingsConfigurable : SearchableConfigurable, MasterDetail
         e.presentation.isEnabled = if (selectedProfile != null) !selectedProfile.isDefaultProfile else false
       }
 
+      override fun getActionUpdateThread() = EDT
+
       override fun actionPerformed(e: AnActionEvent) {
         val selectedProfileConfigurable = selectedNode?.configurable as SerialProfileConfigurable?
         if (selectedProfileConfigurable == null) return
@@ -131,7 +136,7 @@ internal class SerialSettingsConfigurable : SearchableConfigurable, MasterDetail
         for (i in 1..999) {
           defaultName = "${selectedProfileConfigurable.name} ($i)"
           val duplicate = TreeUtil.treeNodeTraverser(myRoot).firstOrNull { (it as MyNode).configurable.displayName == defaultName }
-          if (duplicate == null) break;
+          if (duplicate == null) break
         }
         val name: String? = Messages.showInputDialog(
           SerialMonitorBundle.message("label.new.profile.name"),

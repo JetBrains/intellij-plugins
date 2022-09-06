@@ -189,6 +189,11 @@ public class SerialMonitorDuplexConsoleView extends DuplexConsoleView<ConsoleVie
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.EDT;
+    }
+
+    @Override
     public boolean isSelected(final @NotNull AnActionEvent event) {
       return !isPrimaryConsoleEnabled();
     }
@@ -209,6 +214,11 @@ public class SerialMonitorDuplexConsoleView extends DuplexConsoleView<ConsoleVie
             SerialMonitorBundle.messagePointer("action.clear.contents.console.description"), AllIcons.Actions.GC);
       myConsoleView = consoleView;
     }
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.EDT;
+    }
+
 
     @Override
     public void update(@NotNull AnActionEvent e) {
@@ -249,6 +259,11 @@ public class SerialMonitorDuplexConsoleView extends DuplexConsoleView<ConsoleVie
     @Override
     protected @Nullable Editor getEditor(@NotNull AnActionEvent e) {
       return getPrimaryConsoleView().getEditor();
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.EDT;
     }
 
     @Override
