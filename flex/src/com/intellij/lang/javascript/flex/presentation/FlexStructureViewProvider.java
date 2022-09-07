@@ -69,7 +69,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     FlexStructureViewClassElement(@NotNull JSClass clazz, boolean inherited) {
-      super(Collections.singletonList(clazz), (OwnAndAncestorSiblings)null, null, true, inherited);
+      super(Collections.singletonList(clazz), null, null, true, inherited);
       myFile = (XmlFile)clazz.getContainingFile();
     }
 
