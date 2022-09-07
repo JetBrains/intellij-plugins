@@ -2,21 +2,30 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.symbols.*
-import com.intellij.lang.javascript.documentation.JSHtmlHighlightingUtil
+import com.intellij.openapi.util.text.Strings
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
+import renderJsTypeForDocs
 
 class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
   override fun customize(symbol: WebSymbol, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
     if (symbol.namespace == WebSymbolsContainer.Namespace.HTML
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
         && symbol.psiContext.let { it != null && isVueContext(it) }) {
-      symbol.jsType?.let {
+      symbol.renderJsTypeForDocs()?.let {
         @Suppress("HardCodedStringLiteral")
         return documentation.withDescriptionSection(
           VueBundle.message("vue.documentation.section.slot.scope"),
-          "<code>${JSHtmlHighlightingUtil.getTypeWithLinksHtmlHighlighting(it, (symbol as? PsiSourcedWebSymbol)?.source, false)}</code>"
+          "<code>$it</code>"
         )
+      }
+    }
+    else {
+      if (symbol.namespace == WebSymbolsContainer.Namespace.HTML
+          && symbol.kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS) {
+        symbol.renderJsTypeForDocs()?.let {
+          return documentation.withDefinition("${Strings.escapeXmlEntities(symbol.name)}: $it")
+        }
       }
     }
     return documentation
