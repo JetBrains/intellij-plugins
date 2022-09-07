@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
 import com.intellij.openapi.paths.PathReference
 import com.intellij.openapi.paths.PathReferenceProviderBase
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
@@ -33,8 +34,8 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
                            offset: Int): Array<out PsiReference> {
 
     val context = object : JSDefaultFileReferenceContext(text, psiElement, null) {
-      override fun getDefaultRoots(moduleName: String, containingDirectory: VirtualFile): Collection<VirtualFile> {
-        val defaultContexts: Collection<VirtualFile> = super.getDefaultRoots(moduleName, containingDirectory)
+      override fun getDefaultRoots(project: Project, moduleName: String, containingDirectory: VirtualFile): Collection<VirtualFile> {
+        val defaultContexts: Collection<VirtualFile> = super.getDefaultRoots(project, moduleName, containingDirectory)
         val file: PsiFileSystemItem = myContext.containingFile?.originalFile ?: return defaultContexts
 
         val items = getFixedVirtualFiles(file, JSRouteUtil.ROUTES)

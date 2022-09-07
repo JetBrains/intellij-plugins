@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.typescript
 
-import com.intellij.javascript.nodejs.NodeModuleDirectorySearchProcessor
 import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.stubs.TypeScriptScriptContentIndex
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolverImpl
@@ -18,9 +17,8 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueFileImportsResolver(project: Project,
                              resolveContext: TypeScriptImportResolveContext,
-                             nodeProcessor: NodeModuleDirectorySearchProcessor,
                              private val contextFile: VirtualFile) :
-  TypeScriptFileImportsResolverImpl(project, resolveContext, nodeProcessor, defaultExtensionsWithDot, listOf(VueFileType.INSTANCE)) {
+  TypeScriptFileImportsResolverImpl(project, resolveContext, defaultExtensionsWithDot, listOf(VueFileType.INSTANCE)) {
 
   override fun processAllFilesInScope(includeScope: GlobalSearchScope, processor: Processor<in VirtualFile>) {
     if (includeScope == GlobalSearchScope.EMPTY_SCOPE) return

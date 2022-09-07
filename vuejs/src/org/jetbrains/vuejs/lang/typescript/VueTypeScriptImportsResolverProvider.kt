@@ -31,9 +31,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
   override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver {
-    return VueFileImportsResolver(project, config.resolveContext,
-                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR,
-                                  config.configFile)
+    return VueFileImportsResolver(project, config.resolveContext, config.configFile)
   }
 
   override fun contributeResolver(project: Project,
@@ -41,8 +39,6 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
                                   contextFile: VirtualFile): TypeScriptFileImportsResolver? {
     if (!isVueContext(contextFile, project)) return null
 
-    return VueFileImportsResolver(project, context,
-                                  TypeScriptNodeSearchProcessor.TS_PROCESSOR,
-                                  contextFile)
+    return VueFileImportsResolver(project, context, contextFile)
   }
 }
