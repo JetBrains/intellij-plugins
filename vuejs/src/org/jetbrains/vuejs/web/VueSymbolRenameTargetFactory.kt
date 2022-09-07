@@ -6,9 +6,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.SymbolRenameTargetFactory
 
-class VueSymbolRenameTargetFactory: SymbolRenameTargetFactory {
+class VueSymbolRenameTargetFactory : SymbolRenameTargetFactory {
 
   override fun renameTarget(project: Project, symbol: Symbol): RenameTarget? =
-    VueWebSymbolsAdditionalContextProvider.renameTarget(symbol)
+    createRenameTarget(symbol)
 
 }

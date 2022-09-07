@@ -264,7 +264,7 @@
     <javascript.web.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
     <javascript.web.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <javascript.web.codeCompletionItemCustomizer
-      implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider$VueSymbolsCodeCompletionItemCustomizer"/>
+      implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>
 
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"

@@ -24,7 +24,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
     val name = getTextIfLiteral(literal) ?: return emptyList()
 
     return VueCompositionApp.getVueElement(callExpr)
-             ?.let { VueWebSymbolsAdditionalContextProvider.wrap(name, it, VueModelVisitor.Proximity.APP) }
+             ?.asWebSymbol(name, VueModelVisitor.Proximity.APP)
              ?.let { listOf(VueSymbolDeclaration(it, literal)) }
            ?: emptyList()
   }
