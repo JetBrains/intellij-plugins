@@ -5,7 +5,7 @@ import com.intellij.javascript.JSFileReference;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.typescript.modules.resolver.TypeScriptModuleFileReferenceContext;
+import com.intellij.lang.typescript.modules.resolver.TypeScriptFileReferenceContext;
 import com.intellij.model.ModelBranch;
 import com.intellij.model.ModelBranchUtil;
 import com.intellij.openapi.util.Key;
@@ -88,7 +88,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         String pathString = StringUtil.trimStart(getPathString(), "./");
         Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
         PsiDirectory classicResolveRoot =
-          TypeScriptModuleFileReferenceContext.getClassicResolveRoot(file, pathString, TypeScriptUtil.TYPESCRIPT_EXTENSIONS);
+          TypeScriptFileReferenceContext.getClassicResolveRoot(file, pathString, TypeScriptUtil.TYPESCRIPT_EXTENSIONS);
         if (classicResolveRoot != null) {
           contexts.add(classicResolveRoot);
           return contexts;
@@ -122,7 +122,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       String pathString = StringUtil.trimStart(getPathString(), "./");
 
       PsiDirectory firstItem =
-        TypeScriptModuleFileReferenceContext.getClassicResolveRoot(file, pathString, TypeScriptUtil.TYPESCRIPT_EXTENSIONS);
+        TypeScriptFileReferenceContext.getClassicResolveRoot(file, pathString, TypeScriptUtil.TYPESCRIPT_EXTENSIONS);
       if (!pathString.startsWith("../")) {
         if (firstItem != null) {
           boolean isFileRelative = firstItem == file.getParent();

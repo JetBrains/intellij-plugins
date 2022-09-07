@@ -2,19 +2,15 @@ package com.intellij.lang.javascript.frameworks.nextjs.references
 
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.frameworks.JSRouteUtil
-import com.intellij.lang.javascript.frameworks.html.getFixedDirectories
-import com.intellij.lang.javascript.frameworks.modules.JSFileModuleReference
+import com.intellij.lang.javascript.frameworks.html.getFixedVirtualFiles
 import com.intellij.lang.javascript.frameworks.modules.JSModuleFileReferenceSet
-import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultModuleFileReferenceContext
-import com.intellij.lang.javascript.frameworks.modules.resolver.JSModuleFileReferenceContext
+import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
 import com.intellij.openapi.paths.PathReference
 import com.intellij.openapi.paths.PathReferenceProviderBase
-import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 
@@ -36,16 +32,15 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
                            psiElement: PsiElement,
                            offset: Int): Array<out PsiReference> {
 
-    val context = object : JSDefaultModuleFileReferenceContext(text, psiElement, null) {
-      override fun getDefaultContexts(set: FileReferenceSet,
-                                      noContextElements: Collection<PsiFileSystemItem>): Collection<PsiFileSystemItem> {
-        val defaultContexts: Collection<PsiFileSystemItem> = super.getDefaultContexts(set, noContextElements)
+    val context = object : JSDefaultFileReferenceContext(text, psiElement, null) {
+      override fun getDefaultRoots(moduleName: String, containingDirectory: VirtualFile): Collection<VirtualFile> {
+        val defaultContexts: Collection<VirtualFile> = super.getDefaultRoots(moduleName, containingDirectory)
         val file: PsiFileSystemItem = myContext.containingFile?.originalFile ?: return defaultContexts
 
-        val items = getFixedDirectories(file, JSRouteUtil.ROUTES)
+        val items = getFixedVirtualFiles(file, JSRouteUtil.ROUTES)
         if (items.isEmpty()) return defaultContexts
 
-        return items.toSet() + defaultContexts.toSet()
+        return items + defaultContexts.toSet()
       }
     }
 

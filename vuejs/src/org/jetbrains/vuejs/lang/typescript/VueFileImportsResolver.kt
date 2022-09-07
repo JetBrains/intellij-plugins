@@ -43,7 +43,7 @@ class VueFileImportsResolver(project: Project,
    * Explicitly include a Vue package typings into the import graph for completion inside script tags.
    */
   private fun processVuePackage(processor: Processor<in VirtualFile>) {
-    TypeScriptImportsResolverProvider.getDefaultProvider(project, resolveContext, contextFile)
+    TypeScriptImportsResolverProvider.getDefaultProvider(project, resolveContext)
       .resolveFileModule(VUE_MODULE, contextFile)
       ?.let { processor.process(it) }
   }
