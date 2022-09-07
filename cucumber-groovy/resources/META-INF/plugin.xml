@@ -1,12 +1,11 @@
-<idea-plugin>
+<idea-plugin on-demand="true">
   <id>cucumber-groovy</id>
   <name>Cucumber for Groovy</name>
   <category>Test Tools</category>
-  <description>
-      <![CDATA[
-Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Groovy.
- ]]>
-   </description>
+  <description><![CDATA[
+    Adds support for <a href="https://cucumber.io/">Cucumber</a> testing tools with step definitions written in Groovy.
+  ]]></description>
+
   <depends>gherkin</depends>
   <depends>org.intellij.groovy</depends>
   <depends>cucumber-java</depends>
@@ -21,6 +20,8 @@ Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with st
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
     <codeInsight.lineMarkerProvider implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.GrCucumberLineMarkerProvider" language="Groovy"/>
     <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.groovy.GrCucumberStepIndex"/>
+
+    <dependencySupport kind="java" coordinate="io.cucumber:cucumber-groovy" displayName="Cucumber"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

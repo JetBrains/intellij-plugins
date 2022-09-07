@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin on-demand="true">
   <id>cucumber-java</id>
   <name>Cucumber for Java</name>
   <category>Test Tools</category>
