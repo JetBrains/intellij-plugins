@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Workspace;
@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ReimportProjectsAction extends AnAction {
-
   @Override
   public @NotNull ActionUpdateThread getActionUpdateThread() {
     return ActionUpdateThread.BGT;

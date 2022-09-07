@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.osgi.bnd.resolve;
 
 import aQute.bnd.build.Run;
@@ -40,6 +40,20 @@ import static com.intellij.openapi.command.WriteCommandAction.writeCommandAction
 import static org.osmorc.i18n.OsmorcBundle.message;
 
 public class ResolveAction extends DumbAwareAction {
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    VirtualFile file;
+    event.getPresentation().setEnabledAndVisible(
+      event.getProject() != null &&
+      (file = event.getData(CommonDataKeys.VIRTUAL_FILE)) != null &&
+      BndFileType.BND_RUN_EXT.equals(file.getExtension()));
+  }
+
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
     VirtualFile virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE);
@@ -104,18 +118,6 @@ public class ResolveAction extends DumbAwareAction {
         }
       }
     }.queue();
-  }
-
-  @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.BGT;
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent event) {
-    VirtualFile virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE);
-    event.getPresentation().setEnabledAndVisible(event.getProject() != null &&
-                                                 virtualFile != null && BndFileType.BND_RUN_EXT.equals(virtualFile.getExtension()));
   }
 
   private static final class WrappingException extends RuntimeException {
