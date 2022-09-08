@@ -76,7 +76,7 @@ public class GoToSymbolProviderTest extends BasicLightHighlightingTestCase {
     final PsiFile file = myFixture.addFileToProject(getTestName(true) + "-struts.xml", strutsXmlContent);
     createStrutsFileSet(file.getName());
 
-    final GotoSymbolModel2 model2 = new GotoSymbolModel2(getProject());
+    final GotoSymbolModel2 model2 = new GotoSymbolModel2(getProject(), myFixture.getTestRootDisposable());
     final String[] names = model2.getNames(false);
 
     for (final String expectedSymbol : expectedSymbols) {

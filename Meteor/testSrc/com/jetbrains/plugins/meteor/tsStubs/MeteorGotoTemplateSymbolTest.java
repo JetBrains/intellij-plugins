@@ -16,7 +16,7 @@ public class MeteorGotoTemplateSymbolTest extends MeteorProjectTestBase {
 
   private void runGotoTest(final String... expectedSymbols) {
     ApplicationManager.getApplication().runWriteAction(() -> {
-      ChooseByNameModel model2 = new GotoSymbolModel2(getProject());
+      ChooseByNameModel model2 = new GotoSymbolModel2(getProject(), myFixture.getTestRootDisposable());
       String[] names = model2.getNames(false);
 
       for (String expectedSymbol : expectedSymbols) {

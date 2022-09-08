@@ -49,7 +49,7 @@ public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
   private void doTest(@NotNull String name, boolean detailed, String @NotNull ... expectedItems) {
     ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
 
-    GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject());
+    GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject(), myFixture.getTestRootDisposable());
 
     assertContainsElements(asList(model.getNames(false)), name);
     final ArrayList<String> actual = new ArrayList<>();
