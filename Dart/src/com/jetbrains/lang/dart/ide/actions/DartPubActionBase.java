@@ -405,6 +405,11 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.BGT;
+    }
+
+    @Override
     public void update(final @NotNull AnActionEvent e) {
       e.getPresentation().setEnabled(!isInProgress() && myProcessHandler != null && myProcessHandler.isProcessTerminated());
     }
