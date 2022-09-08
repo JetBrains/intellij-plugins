@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.model
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.symbols.WebSymbol
+import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItem
+import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
@@ -20,14 +22,18 @@ const val SLOT_TAG_NAME: String = "slot"
 
 const val DEPRECATED_SLOT_ATTRIBUTE = "slot"
 
-fun getAvailableSlots(attr: XmlAttribute, newApi: Boolean): List<WebSymbol> =
-  getAvailableSlots(attr.parent, null, newApi)
-
 fun getAvailableSlots(tag: XmlTag, name: String?, newApi: Boolean): List<WebSymbol> =
   if (!newApi || tag.name == TEMPLATE_TAG_NAME)
     (tag.parentTag?.descriptor as? WebSymbolElementDescriptor)?.getSlots(name) ?: emptyList()
   else
     (tag.descriptor as? WebSymbolElementDescriptor)?.getSlots(name)
+      ?.filter { it.name == DEFAULT_SLOT_NAME } ?: emptyList()
+
+fun getAvailableSlotsCompletions(tag: XmlTag, name: String?, position: Int, newApi: Boolean): List<WebSymbolCodeCompletionItem> =
+  if (!newApi || tag.name == TEMPLATE_TAG_NAME)
+    (tag.parentTag?.descriptor as? WebSymbolElementDescriptor)?.getSlotsCompletions(name, position) ?: emptyList()
+  else
+    (tag.descriptor as? WebSymbolElementDescriptor)?.getSlotsCompletions(name, position)
       ?.filter { it.name == DEFAULT_SLOT_NAME } ?: emptyList()
 
 fun getSlotTypeFromContext(context: PsiElement): JSType? =
@@ -45,4 +51,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =
-  runNameMatchQuery(listOfNotNull(WebSymbol.KIND_HTML_SLOTS, name))
+  runNameMatchQuery(listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name))
+
+private fun WebSymbolElementDescriptor.getSlotsCompletions(name: String?, position: Int): List<WebSymbolCodeCompletionItem> =
+  runCodeCompletionQuery(listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name), position)

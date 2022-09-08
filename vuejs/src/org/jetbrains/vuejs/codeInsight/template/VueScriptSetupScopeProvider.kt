@@ -3,15 +3,12 @@ package org.jetbrains.vuejs.codeInsight.template
 
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
-import com.intellij.lang.javascript.psi.JSTypeOwner
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
 import java.util.function.Consumer
 

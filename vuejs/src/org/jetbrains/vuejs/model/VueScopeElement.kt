@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.model
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.codeInsight.fromAsset
 
-interface VueScopeElement {
+interface VueScopeElement : VueSourceElement {
 
-  val source: PsiElement?
+  override val source: PsiElement?
 
   val parents: List<VueEntitiesContainer>
 

@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol
 import com.intellij.model.Symbol
 import com.intellij.model.presentation.SymbolPresentation
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
@@ -11,6 +12,12 @@ import java.util.*
 
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val matchedName: String, protected val item: T) : VueWebSymbolBase(), PsiSourcedWebSymbol {
+
+  override val source: PsiElement?
+    get() = item.source
+
+  val rawSource: PsiElement?
+    get() = item.rawSource
 
   override val description: String?
     get() = item.description

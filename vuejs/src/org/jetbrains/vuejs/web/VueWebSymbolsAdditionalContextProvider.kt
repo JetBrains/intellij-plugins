@@ -45,7 +45,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     if (framework != VueFramework.ID || element == null) return emptyList()
     val result = SmartList<WebSymbolsContainer>()
     val tag = (element as? XmlAttribute)?.parent ?: element as? XmlTag
-    val fileContext = element.containingFile.originalFile
+    val fileContext = element.containingFile?.originalFile ?: return emptyList()
 
     if (allowResolve) {
       addEntityContainers(element, fileContext, result)

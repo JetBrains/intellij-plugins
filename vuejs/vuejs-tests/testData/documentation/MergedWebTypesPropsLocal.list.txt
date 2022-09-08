@@ -1,0 +1,4 @@
+!bottom#InferPropType<NumberConstructor>#100
+!offset-top#number | undefined#100
+!position#"absolute" | "fix"#100
+!trigger-bottom#InferPropType<NumberConstructor>#100

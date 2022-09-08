@@ -19,8 +19,8 @@ class VueDeprecatedSlotAttributeReferenceProvider : WebSymbolReferenceProvider<X
       val value = psiElement.value
       if (value.isNotEmpty()) {
         return (psiElement.parent as? XmlAttribute)
-          ?.let { getAvailableSlots(it, false) }
-          ?.find { it.name == value }
+          ?.let { getAvailableSlots(it.parent, value, false) }
+          ?.firstOrNull()
       }
     }
     return null

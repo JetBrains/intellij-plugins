@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.javascript.web.checkDocumentationAtCaret
+import com.intellij.javascript.web.checkLookupElementDocumentationAtCaret
 import com.intellij.javascript.web.checkNoDocumentationAtCaret
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
@@ -83,6 +84,36 @@ class VueDocumentationTest : BasePlatformTestCase() {
 
   fun testNotRequiredPropertyJS() {
     defaultTest()
+  }
+
+  fun testMergedWebTypesComponents() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true) {
+      it.lookupString in setOf("n-affix", "n-bar", "n-a", "n-button", "n-alert")
+    }
+  }
+
+  fun testMergedWebTypesPropsGlobal() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+      it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
+    }
+  }
+
+  fun testMergedWebTypesPropsLocal() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+      it.lookupString in setOf("bottom", "offset-top", "position", "trigger-bottom")
+    }
+  }
+
+  fun testMergedWebTypesSlots() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true)
   }
 
   private fun defaultTest() {

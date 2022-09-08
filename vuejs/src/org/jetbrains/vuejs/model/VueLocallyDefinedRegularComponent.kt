@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
@@ -31,6 +30,12 @@ private constructor(override val delegate: VueRegularComponent, source: PsiEleme
     else
       (delegate.source ?: mySource)
   }
+
+  override val rawSource: PsiElement
+    get() = if (mySource is JSPsiNamedElementBase)
+      mySource
+    else
+      (delegate.rawSource ?: mySource)
 
   override val defaultName: String?
     get() = (source as? JSPsiNamedElementBase)?.name

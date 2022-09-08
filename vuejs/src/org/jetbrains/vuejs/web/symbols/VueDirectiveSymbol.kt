@@ -6,7 +6,6 @@ import com.intellij.javascript.web.symbols.WebSymbol
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.javascript.web.symbols.WebSymbolsNameMatchQueryParams
 import com.intellij.model.Pointer
-import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueDirective
@@ -22,9 +21,6 @@ class VueDirectiveSymbol(matchedName: String, directive: VueDirective, val vuePr
 
   override val name: String
     get() = matchedName
-
-  override val source: PsiElement?
-    get() = item.source
 
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()

@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
-import org.jetbrains.vuejs.model.getAvailableSlots
+import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
 import java.util.*
 
 // TODO move to web-types
@@ -37,7 +37,7 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
       SCRIPT_LANG -> VUE_SCRIPT_LANGUAGE
       STYLE_LANG -> VUE_STYLE_LANGUAGE
       TEMPLATE_LANG -> VUE_TEMPLATE_LANGUAGE
-      SLOT -> getAvailableSlots(xmlAttribute, false).map { it.name }.toSet()
+      SLOT -> getAvailableSlotsCompletions(xmlAttribute.parent, "", 0, false).map { it.name }.toSet()
       else -> emptySet()
     }
 

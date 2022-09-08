@@ -1,7 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.documentation
 
-interface VueDocumentedItem {
+import org.jetbrains.vuejs.model.VueSourceElement
+
+interface VueDocumentedItem : VueSourceElement {
+  @Suppress("DEPRECATION")
+  @JvmDefault
   val description: String? get() = null
 
   val documentation: VueItemDocumentation

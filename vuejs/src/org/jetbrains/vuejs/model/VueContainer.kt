@@ -45,7 +45,9 @@ data class VueModelDirectiveProperties(
 
 interface VueNamedSymbol : VueDocumentedItem {
   val name: String
-  val source: PsiElement? get() = null
+
+  override val source: PsiElement?
+    get() = null
 }
 
 interface VueSlot : VueNamedSymbol {

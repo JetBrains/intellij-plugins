@@ -11,14 +11,17 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
   override fun customize(symbol: WebSymbol, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
     if (symbol.namespace == WebSymbolsContainer.Namespace.HTML
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
-        && symbol.psiContext.let { it != null && isVueContext(it) }) {
-      symbol.renderJsTypeForDocs()?.let {
-        @Suppress("HardCodedStringLiteral")
-        return documentation.withDescriptionSection(
-          VueBundle.message("vue.documentation.section.slot.scope"),
-          "<code>$it</code>"
-        )
-      }
+        && (symbol.origin.framework == VueFramework.ID
+            || symbol.psiContext.let { it != null && isVueContext(it) })) {
+      symbol.renderJsTypeForDocs()
+        ?.replace(",", ",<br>")
+        ?.let {
+          @Suppress("HardCodedStringLiteral")
+          return documentation.withDescriptionSection(
+            VueBundle.message("vue.documentation.section.slot.scope"),
+            "<code>$it</code>"
+          )
+        }
     }
     else {
       if (symbol.namespace == WebSymbolsContainer.Namespace.HTML

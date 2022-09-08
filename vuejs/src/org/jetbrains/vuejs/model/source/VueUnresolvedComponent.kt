@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.model.Pointer
@@ -14,11 +13,11 @@ import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 
 class VueUnresolvedComponent(private val context: PsiElement,
-                             private val mySource: PsiElement?,
+                             override val rawSource: PsiElement?,
                              override val defaultName: String?) : VueComponent {
 
   override val source: PsiElement? by lazy(LazyThreadSafetyMode.NONE) {
-    (mySource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: mySource
+    (rawSource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: rawSource
   }
 
   override val parents: List<VueEntitiesContainer> = emptyList()

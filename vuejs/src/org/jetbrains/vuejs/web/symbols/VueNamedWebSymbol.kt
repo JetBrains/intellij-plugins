@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.model.Pointer
-import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueNamedSymbol
 
@@ -14,9 +13,6 @@ abstract class VueNamedWebSymbol<T : VueNamedSymbol>(item: T,
 
   override val name: String
     get() = item.name
-
-  override val source: PsiElement?
-    get() = item.source
 
   abstract override fun createPointer(): Pointer<VueNamedWebSymbol<T>>
 
