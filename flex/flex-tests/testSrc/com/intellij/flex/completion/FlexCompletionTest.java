@@ -5,6 +5,8 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
@@ -79,7 +81,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.METHOD})
+  @Target(ElementType.METHOD)
   public @interface NeedsJavaModule {
   }
 
@@ -145,52 +147,49 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     return "as";
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml() {
     defaultTest();
     //    doTest("_2", MXML_EXTENSION);
     //    doTest("_3", MXML_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteInsertsQualifiedNameInItemRenderer() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testSkinClassAsAttributeWithSpaces() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testSkinClassAsSubTag() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteInsertsQualifiedNameInEventType() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testSimpleCompleteInAddEventListener() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml2() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml3() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCompleteBeforeVariable() {
     doTest("", "as");
   }
@@ -201,7 +200,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertTrue(elements != null && elements.length > 0);
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet}, selectLookupItem = 0)
+  @JSTestOptions(selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml4() {
     defaultTest();
   }
@@ -215,20 +215,17 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     withNoAbsoluteReferences(() -> defaultTest());
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml6() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml7() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml8() {
     LookupElement[] items = doTest("", MXML_EXTENSION);
     assertNotNull(items);
@@ -243,63 +240,57 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     }
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompletionInMxml9() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompletionInMxml10() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
+  @JSTestOptions(selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlColorAttributeValueCompletion1() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlColorAttributeValueCompletion2() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlColorAttributeValueCompletion3() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlColorAttributeValueCompletion4() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
+  @JSTestOptions(selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlColorAttributeValueCompletion5() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testStateNameCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionOfMethodOfCustomComponent() {
     final String testName = getTestName(false);
 
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.mxml"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionOfPackageLocalClass() {
     final String testName = getTestName(false);
 
@@ -309,8 +300,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile("", "mxml", null);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionOfMxmlInAnotherDirectory() {
     final String testName = getTestName(false);
     VirtualFile directory = myFixture.copyDirectoryToProject(testName, "");
@@ -319,7 +309,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile("", "as", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompleteAfterThisInMxml() {
     defaultTest();
   }
@@ -332,52 +322,58 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletionInMxml() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletionInMxml_2() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletionInMxml_3() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletionInMxml_4() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletionInMxml_5() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletionInMxml_6() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testClassRefInSkinClass() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteAnnotationParameter() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompleteWithoutQualifier() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testReplaceChar() {
     myFixture.configureByFile(getTestName(false) + ".as");
     complete();
@@ -387,51 +383,50 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testEnumeratedCompletionInMxml() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml() {
     doTestForFiles(new String[] {getTestName(false) + ".mxml", getTestName(false) + ".as"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion})
+  @JSTestOptions(JSTestOption.ClassNameCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml2() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".as"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml6() {
     doTestForFiles(new String[]{getTestName(false) + ".as", "MyComponent.mxml"}, "", "as");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion},
-    selectLookupItem = 0)
+  @JSTestOptions(value = JSTestOption.ClassNameCompletion, selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml3() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion})
+  @JSTestOptions(JSTestOption.ClassNameCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml4() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCompleteResourceReferences() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "test.properties"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml5() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml"}, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCustomComponentCompletionInMxml7() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", getTestName(false) + "_2.mxml"}, "", MXML_EXTENSION);
   }
@@ -469,14 +464,10 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(new String[]{getTestName(false) + ".as"}, "", "as");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithLoadingAndSavingCaches})
   public final void testAs2Completion6() {
     doTestForFiles(getTestName(false) + ".as");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithLoadingAndSavingCaches})
   public final void testAs2Completion6_2() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".as", testName.substring(0, testName.length() - 2) + "_3.as"}, "", "as");
@@ -491,26 +482,27 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void _testInsertImportForStaticField() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.as"}, "", "mxml");
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void _testInsertImportForStaticField_3() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName.substring(0, testName.length() - 2) + "_2.as"}, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSuggestOnlyInterfaces() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.as"}, "", "mxml");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
+  @JSTestOptions(selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSuggestOnlyDescendants() {
     final String testName = getTestName(false);
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
@@ -518,28 +510,28 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSuggestOnlyDescendants2() {
     final String testName = getTestName(false);
     String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSuggestOnlyDescendants3() {
     final String testName = getTestName(false);
     String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSuggestOnlyDescendants4() {
     final String testName = getTestName(false);
     String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteInComponent() {
     final String testName = getTestName(false);
     String[] files =
@@ -547,64 +539,54 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files, "", "mxml");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRemoteObject() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRemoteObject_2() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCompleteOnlyPackages() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCompleteOnlyPackages_2() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCompleteOnlyPackages_3() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCompleteOnlyPackages_4() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCompleteOnlyPackages_5() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInheritorCompletion() {
     final String testName = getTestName(false);
     String[] files = new String[]{testName + ".mxml",testName + ".as"};
     doTestForFiles(files, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInheritorCompletion2() {
     defaultTest();
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testOnlyMembersCompletion() {
     final String[] vFiles = new String[]{getTestName(false) + ".mxml",
       getTestName(false) + ".as"};
@@ -613,7 +595,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("tabs", elements[0].getLookupString());
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testOnlyMembersCompletion2() {
     String[] vFiles = new String[]{getTestName(false) + ".mxml",
       getTestName(false) + ".as"};
@@ -621,41 +603,36 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertNull(elements);
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testOnlyMembersCompletion2_2() {
     String[] vFiles = new String[]{getTestName(false) + ".mxml",
       "OnlyMembersCompletion2.as"};
     doTestForFiles(vFiles, "", "mxml");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCompleteBindingAttr() {
     doTest("", "mxml");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testImportedMember() {
     final String[] vFiles = new String[]{getTestName(false) + ".mxml",
       getTestName(false) + "_2.mxml",getTestName(false) + "_2_script.as"};
     doTestForFiles(vFiles, "", "mxml");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testPackagesInCompilerConfig() {
     doTest("", "xml");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testClassesInCompilerConfig() {
     doTest("", "xml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testComponentFromManifestCompletion() {
     final String name = getTestName(false);
 
@@ -668,7 +645,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testComponentFromManifestCompletionWithNamespaceAutoInsert() {
     final String name = getTestName(false);
 
@@ -684,17 +661,18 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files, "", MXML_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testInlineComponent() {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNamedInlineComponent() {
     doTest("", "mxml");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
+  @JSTestOptions(selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNamedInlineComponent2() {
     doTest("", "mxml");
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -705,7 +683,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("MyEditor3", elements[2].getLookupString());
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testAssetFromAnotherSourceRoot() {
     final String testName = getTestName(false);
     final VirtualFile secondSourceRoot = VfsUtil.findFileByIoFile(new File(getTestDataPath() + testName), false);
@@ -714,23 +692,23 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     withNoAbsoluteReferences(() -> doTest("", "mxml"));
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCompleteStandardMxmlImport() {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCompleteUIComponentInItemRenderer() {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCompleteComponentsInUIComponent() {
     doTest("", "mxml");
     doTest("_2", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testResourceBundleFromSdk() {
     final String testName = getTestName(false);
 
@@ -745,7 +723,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testResourceBundleFromLib() {
     FlexTestUtils.addFlexLibrary(false, getModule(), "Lib", false, getTestDataPath(), getTestName(false) + ".swc", null,
                                  null);
@@ -754,7 +732,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIgnoreClassesFromOnlyLibSources() {
     final String testName = getTestName(false);
 
@@ -769,7 +747,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     FlexTestUtils.removeLibrary(getModule(), "library");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIgnoreClassesFromOnlySdkSources() {
     final String testName = getTestName(false);
 
@@ -786,32 +764,32 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEmpty(doTest("_3", MXML_EXTENSION));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition1() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition2() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition3() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition4() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition5() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition6() {
     mxmlTest();
   }
@@ -820,27 +798,27 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", MXML_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition7() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition8() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInsertPosition9() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testDoNotCompleteMembersInType() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testDoNotCompleteMembersInType2() {
     mxmlTest();
   }
@@ -849,7 +827,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testTwoCompletions() {
     myCompletionPerformer = () -> {
       super.complete();
@@ -858,7 +836,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testObsoleteContext() {
     myCompletionPerformer = () -> {
       final int offset = myFixture.getEditor().getCaretModel().getOffset();
@@ -895,7 +873,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     //}
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConditionalCompilationConstantsInAs() {
     FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
       bc.getCompilerOptions()
@@ -910,7 +888,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConditionalCompilationConstantsInMxml() {
     FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
@@ -921,41 +899,42 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testPredefinedTagsInsideRootTagWithDefaultProperty() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithFlexFacet}, selectLookupItem = 0)
+  @JSTestOptions(selectLookupItem = 0)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInFlex3RootTag() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testPredefinedTagsInsideNonContainerRootTag() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testPredefinedTagsInsideNotRootTagWithDefaultProperty() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testXmlSourceAndFormatAttrs() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testXmlListInXmlListCollection() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testNoCompletionInFxPrivate() {
     myCompletionPerformer = () -> {
       final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
@@ -969,20 +948,20 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxLibraryAndFxDefinition() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testMxmlFieldReference() {
     final String testName = getTestName(false);
 
     doTestForFiles(new String[]{testName + "/aaa/" + testName + ".mxml"}, "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testMatchingClassFromSomePackage() {
     final String testName = getTestName(false);
 
@@ -996,12 +975,12 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testDoNotSuggestFlex3NamespaceInFlex4Context() {
     commonFlex3NamespaceInFlex4Context("library://ns.adobe.com/flex/mx", "mx.containers.*");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testSuggestClassInAllSuitableNamespaces() {
     commonFlex3NamespaceInFlex4Context("http://www.adobe.com/2006/mxml", "mx.containers.*", "library://ns.adobe.com/flex/mx");
   }
@@ -1037,51 +1016,51 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after.mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testSuggestCorrectPrefix() {
     final String testName = getTestName(false);
 
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.as"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testEnumeratedMetadataAttributeValue() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testTypeAttributeOfEventMetadata() {
     doTest("", "as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testImplicitImport() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testNoApplicationPropertyCompletionInsideFxDeclarations() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testNonVisualComponentInsideFxDeclarations() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testIdAttribute() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testPropertySpecifiedByMxmlIdAttribute() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.mxml"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testPropertySpecifiedByMxmlIdAttributeInParent() {
     final String testName = getTestName(false);
     doTestForFiles(
@@ -1089,98 +1068,98 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
       "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxgComponentCompletion() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxgAttributeCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxgSubTagCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxgClassCompletion() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxgClassMembersCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTestForFiles(new String[]{getTestName(false) + ".as", "CommonFxgComponent.fxg"}, "as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxComponent() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxComponentChildren() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testFxReparent() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStaticBlock() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStaticBlock2() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testRootTagCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testRootTagReferencingToThisMxmlItself() {
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsideTagWithDefaultPropertyOfObjectType() {
     mxmlTest();
     // need to check that it was really mx:DataGridColumn completion, but not incomplete DataGridColumn completion from mx.controls.dataGridClasses.* namespace
     assertNull(myFixture.getLookupElements());
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsideTagWithDefaultPropertyOfAnyType() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.as"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testIdAndPredefinedAttributes() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testLanguageTagsInInlineRenderer() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testBindingCompletion() {
     mxmlTest();
     assertEquals(2, myFixture.getLookupElements().length);
@@ -1191,20 +1170,20 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile("_after2", MXML_EXTENSION, null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testMobileApplicationChildren() {
     mxmlTest();
     assertNull(myFixture.getLookupElements());
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testInternalPropertiesInMxml() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml",testName + "_other.as"},
                    "", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testMxmlIdValueSuggestion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
@@ -1225,26 +1204,27 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertSameElements(AnnotationBackedDescriptorImpl.suggestIdValues(value, type), expected);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testParentGetter() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.mxml"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public final void testVectorAttributes() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testLowercasedMxml() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", Character.toLowerCase(testName.charAt(0)) + testName.substring(1) + "_other.mxml"},
                    "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexLib, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions({FlexTestOption.WithGumboSdk, FlexTestOption.WithFlexLib})
   public void testNonApplicableInheritors() {
     FlexTestUtils.addFlexLibrary(false, getModule(), "Flex Lib", true, getTestDataPath() + "../flexlib", "flexlib.swc", null, null);
 
@@ -1277,13 +1257,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     }
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk})
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testDoNotSuggestClassesWithoutDefaultConstructor() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.as"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk})
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testMxmlFromOtherPackage() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]
@@ -1306,19 +1286,19 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.properties"}, "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk})
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testStateGroups() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testStarlingEvent() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTest("", "as");
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk})
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public final void testNoDuplicateVariants() {
     doTest("", "as");
   }

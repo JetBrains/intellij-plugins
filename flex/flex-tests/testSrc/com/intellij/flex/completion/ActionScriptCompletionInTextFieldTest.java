@@ -1,14 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.completion;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinDialog;
@@ -51,7 +51,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     return createFakeClass().findFunctionByName("a");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeSignatureReturnType() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -64,7 +64,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion(fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeSignatureParameterTypeCell() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -74,7 +74,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeSignatureDefaultValueCell() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -86,7 +86,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeSignatureInitializerCell() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -98,7 +98,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPackageNameCombo() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -109,7 +109,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "com", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPackageNameCombo2() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -120,7 +120,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "foo", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testCreateFlexSkinHostComponent() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -131,7 +131,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIntroduceConstantTargetClass() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -146,7 +146,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoveMembersTargetClass() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -157,7 +157,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoveMembersTargetInnerClass() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -215,22 +215,22 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     });
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testCustomScope1() {
     doTestCustomScope("Flex", "Flex", 0);
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testCustomScope2() {
     doTestCustomScope("Flex", "AIR", 2);
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testCustomScope3() {
     doTestCustomScope("AIR", "Flex", 0);
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testCustomScope4() {
     doTestCustomScope("AIR", "AIR", 2);
   }

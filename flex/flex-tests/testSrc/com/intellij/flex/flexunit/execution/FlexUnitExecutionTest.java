@@ -20,11 +20,11 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
@@ -465,136 +465,136 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     });
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Package, "", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1Class() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Class, "FlexUnit1Class", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1Method() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Method, "FlexUnit1Method", "testRed");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1Empty() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Package, "", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Package, "", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4Class() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Class, "FlexUnit4Class", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4Method() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Method, "FlexUnit4Method", "red");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4TestIgnored1() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Package, "", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4TestIgnored2() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Package, "", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4TestIgnored3() throws Exception {
     doRunTest(FlexUnitRunnerParameters.Scope.Package, "", null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testPackaged1() throws Exception {
     doTest(false, FlexUnitRunnerParameters.Scope.Class, "test.TestFoo", null, BASE_PATH, BASE_PATH + "test/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testPackaged2() throws Exception {
     doTest(false, FlexUnitRunnerParameters.Scope.Class, "test.TestFoo", null, BASE_PATH, BASE_PATH + "test/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testPackaged3() throws Exception {
     doTest(false, FlexUnitRunnerParameters.Scope.Class, "testSuite.TestFoo", null, BASE_PATH, BASE_PATH + "testSuite/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testPackaged4() throws Exception {
     doTest(false, FlexUnitRunnerParameters.Scope.Class, "testSuite.TestFoo", null, BASE_PATH, BASE_PATH + "testSuite/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testPackaged5() throws Exception {
     doTest(false, FlexUnitRunnerParameters.Scope.Class, "tests.TestFoo", null, BASE_PATH, BASE_PATH + "tests/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testPackaged6() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, "tests.TestFoo", null, BASE_PATH, BASE_PATH + "tests/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testSuite1() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, "Suite1", null, BASE_PATH + "suites", BASE_PATH + "suites/Suite1.as",
            BASE_PATH + "suites/rawTests/testFoo.as", BASE_PATH + "suites/rawTests/testBar.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testOldStyleSuiteFlexUnit1() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, "OldStyleSuite", null, BASE_PATH + "suites", BASE_PATH + "suites/OldStyleSuite.as",
            BASE_PATH + "suites/rawTests/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testOldStyleSuiteFlexUnit4() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, "OldStyleSuite", null, BASE_PATH + "suites", BASE_PATH + "suites/OldStyleSuite.as",
            BASE_PATH + "suites/rawTests/testFoo.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlunitSuite() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, "FlunitSuite", null, BASE_PATH + "suites", BASE_PATH + "suites/FlunitSuite.as",
            BASE_PATH + "suites/rawTests/FlunitTest.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testAllInPackageWithSuite() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Package, "", null, BASE_PATH + "suites", BASE_PATH + "suites/AllInPackageWithSuite.as",
            BASE_PATH + "suites/Suite1.as", BASE_PATH + "suites/Suite2.as", BASE_PATH + "suites/FlunitSuite.as",
            BASE_PATH + "suites/rawTests/testFoo.as", BASE_PATH + "suites/rawTests/testBar.as", BASE_PATH + "suites/rawTests/FlunitTest.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testClassWithCustomRunner() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, getTestName(false), null, BASE_PATH, BASE_PATH + getTestName(false) + ".as",
            BASE_PATH + "CustomRunner.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testClassWithCustomRunnerInPackage() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Package, "", null, null, BASE_PATH + "ClassWithCustomRunner.as",
            BASE_PATH + "CustomRunner.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethodWithCustomRunner() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Method, getTestName(false), "foo2", BASE_PATH, BASE_PATH + getTestName(false) + ".as",
            BASE_PATH + "CustomRunner.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testImplicitRunners() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, getTestName(false), null, null, BASE_PATH + getTestName(false) + ".as",
            BASE_PATH + getTestName(false) + "2.as", BASE_PATH + getTestName(false) + "3.as", BASE_PATH + "CustomRunner.as");
@@ -606,67 +606,67 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     checkOutput(testRoot, logLevel);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testLogOutputNone1() throws Exception {
     doTestLogOutput(true, null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testLogOutputFatal1() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Fatal);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testLogOutputError1() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Error);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testLogOutputWarn1() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Warn);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testLogOutputDebug1() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Debug);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testLogOutputInfo1() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Info);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testLogOutputNone4() throws Exception {
     doTestLogOutput(true, null);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testLogOutputFatal4() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Fatal);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testLogOutputError4() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Error);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testLogOutputWarn4() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Warn);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testLogOutputDebug4() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Debug);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testLogOutputInfo4() throws Exception {
     doTestLogOutput(true, FlexUnitRunnerParameters.OutputLogLevel.Info);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testUnicodeBreaks() throws Exception {
     doTest(true, FlexUnitRunnerParameters.Scope.Class, getTestName(false), null, null, BASE_PATH + getTestName(false) + ".as");
   }

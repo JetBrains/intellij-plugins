@@ -1,10 +1,10 @@
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -69,7 +69,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTest(getTestName(false), "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsideAttribute() {
     doTest(getTestName(false), "mxml");
     doTest(getTestName(false) + "_2", "mxml");
@@ -117,7 +117,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestFailure(getTestName(false) + 3, "js2", reason);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMethodInHierarchyMxml() {
     doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"},
                   JavaScriptBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method"));
@@ -176,7 +176,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestConflicts(new String[]{getTestName(false) + ".js2", getTestName(false) + "_2.mxml"}, conflicts);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testConflicts4() {
     String[] conflicts = new String[]{
       "Field Foo.abc with private visibility won't be accessible from function &lt;anonymous&gt;(*) in class Conflicts4",

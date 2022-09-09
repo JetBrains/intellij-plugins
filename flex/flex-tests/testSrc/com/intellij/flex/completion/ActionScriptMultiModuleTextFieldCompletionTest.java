@@ -3,9 +3,9 @@ package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.EditorInfo;
 import com.intellij.codeInsight.completion.JavaCompletionTestCase;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
@@ -63,7 +63,7 @@ public class ActionScriptMultiModuleTextFieldCompletionTest extends JavaCompleti
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testComponentFromIndependentModule() {
     final Module module2 = doCreateRealModule("module2");
     final VirtualFile contentRoot =

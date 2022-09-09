@@ -4,9 +4,9 @@ package com.intellij.flex.codeInsight;
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.ShowImplementationsTestUtil;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -166,25 +166,25 @@ public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
     assertEquals(expected, StringUtil.join(strings, ","));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testClassInheritors() throws Exception {
     addLib();
     doTestForClass("MySkin", "MySkinEx,MySkinEx2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testClassMethodInheritors() throws Exception {
     addLib();
     doTestForMethod("MySkin", "foo", 2);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testInterfaceInheritors() throws Exception {
     addLib();
     doTestForClass("MyInt", "MyImpl,MyImpl2,MyIntEx");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testIntergaceMethodInheritors() throws Exception {
     addLib();
     doTestForMethod("MyInt", "zz", 2);

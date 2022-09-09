@@ -14,6 +14,8 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -207,7 +209,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testReferencingNameInE4X() {
     defaultTest();
   }
@@ -238,7 +240,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk})
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testMethodCanBeStaticImplicitVars() {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
     JSTestUtils.setInspectionHighlightLevel(myProject, inspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
@@ -246,17 +248,17 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testCDATAInE4X() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports, JSTestOption.WithFlexSdk})
+  @FlexTestOptions({FlexTestOption.WithUnusedImports, FlexTestOption.WithFlexSdk})
   public void testReferencingNameInE4X2() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithUnusedImports})
+  @FlexTestOptions({FlexTestOption.WithFlexSdk, FlexTestOption.WithUnusedImports})
   public void testQNameProblem() {
     defaultTest();
   }
@@ -303,12 +305,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     runRenameSpellcheckerFixWithChooseVariant("typo");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testProxy() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testAnyAttrInE4X() {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     defaultTest();
@@ -363,7 +365,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testTypeEvalFails() {
     defaultTest();
   }
@@ -392,12 +394,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testBindableClassImplicitlyImplementsIEventDispatcher() {
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testBindableClassImplicitlyImplementsIEventDispatcher2() {
     doTestFor(true, new File(getTestDataPath() + BASE_PATH + getTestName(false)), (Runnable)null, getTestName(false) + "/Main.js2");
     final JSClassResolver resolver =
@@ -410,7 +412,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testHighlightQualifiedNameWithoutImport() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("mx.messaging.messages.AbstractMessage?");
   }
@@ -453,7 +455,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, testName + ".js2", testName + "_2.js2");
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testIncompatibleOverride() {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".js2");
@@ -467,7 +469,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change parameters to expected");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIncompatibleOverrideFix3() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change return type to expected");
   }
@@ -480,7 +482,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change Base.foo() signature");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIncompatibleOverrideFix6() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change parameters to expected");
   }
@@ -528,13 +530,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportBeforePackage() {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testIncompatibleImplementation() {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".js2", testName + "_2.js2");
@@ -548,7 +550,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change parameters to expected");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIncompatibleImplementationFix3() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change return type to expected");
   }
@@ -561,7 +563,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change Int1.foo() signature");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIncompatibleImplementationFix6() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change parameters to expected");
   }
@@ -623,7 +625,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change FunctionSignatureMismatch9.foo() signature");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testFunctionSignatureMismatch10() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change FunctionSignatureMismatch10.foo() signature");
   }
@@ -702,7 +704,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testQualifyReferencesInArguments() throws Exception {
     enableCheckGuessedTypes();
     String testName = getTestName(false);
@@ -729,7 +731,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     setActiveEditor(((TextEditor)fileEditor).getEditor());
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testConstructorSignatureMismatch2() throws Exception {
     Collection<HighlightInfo> infoCollection = defaultTestForTwoFiles();
     findAndInvokeIntentionAction(infoCollection, "Create constructor 'Foo'", myEditor, myFile);
@@ -737,7 +739,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     checkResultByFile(BASE_PATH + getTestName(false) + "_after.js2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testConstructorSignatureMismatch3() throws Exception {
     Collection<HighlightInfo> infoCollection = defaultTestForTwoFiles();
     findAndInvokeIntentionAction(infoCollection, "Create constructor 'Foo'", myEditor, myFile);
@@ -745,7 +747,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     checkResultByFile(BASE_PATH + getTestName(false) + "_after.js2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateConstructor1() throws Exception {
     doTestCreateConstructor("Subclass1.js2", "SuperClass");
   }
@@ -766,7 +768,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testRegress() {
     defaultTest();
   }
@@ -792,7 +794,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, testName + ".js2", testName + "_2.js2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testThisTypeIsDynamic() {
     defaultTest();
   }
@@ -817,7 +819,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Insert cast");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAssignmentTypeMismatch2() {
     defaultTest();
   }
@@ -838,7 +840,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testForInTypeMismatch() {
     defaultTest();
   }
@@ -855,12 +857,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testCorrectScopeOfImports() {
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports, JSTestOption.WithFlexSdk})
+  @FlexTestOptions({FlexTestOption.WithUnusedImports, FlexTestOption.WithFlexSdk})
   public void testCorrectScopeOfImports2() {
     defaultTest();
   }
@@ -884,12 +886,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   // TODO now stubs are created for variable in package
-  //@JSTestOptions({/*JSTestOption.WithoutSourceRoot*/})
+  //@FlexTestOptions({/*JSTestOption.WithoutSourceRoot*/})
   //public void testUnresolvedMembers() throws Exception {
   //  doTestFor(true, getTestName(false) + ".js2");
   //}
 
-  @JSTestOptions({JSTestOption.WithoutSourceRoot})
+  @JSTestOptions(JSTestOption.WithoutSourceRoot)
   public void testNoSourceRoot() {
     defaultTest();
   }
@@ -920,7 +922,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     findAndInvokeIntentionAction(infos, "Create file RefsInIncludesz.js2", myEditor, myFile);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testUnusedSymbols() {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     defaultTest();
@@ -1097,12 +1099,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     assertNull(findIntentionAction(infos, "foo.A.Bar?", getEditor(), getFile()));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportClass_2() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("mypackage.Alert?");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportClass_3() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("mypackage.Alert?");
   }
@@ -1118,12 +1120,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     assertNull(intentionAction);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportFunction() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("mypackage.getDefinitionByName?");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNoImportFunction() {
     Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".js2");
     IntentionAction action = findIntentionAction(infoCollection, "Bar.foo?", myEditor, myFile);
@@ -1211,7 +1213,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doCreateClassOrInterfaceTestWithCheck("Abc", true);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateClassOrInterfaceAction10() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Abc", true);
   }
@@ -1220,7 +1222,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doCreateClassOrInterfaceTestWithCheck("Abc", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateClassOrInterfaceAction12() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Foo", true);
   }
@@ -1261,7 +1263,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testVectorLiteral() {
     defaultTest();
   }
@@ -1314,7 +1316,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     findAndInvokeActionWithExpectedCheck("Remove access modifier", "js2", infoCollection);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testOverridingMarkers() {
     doTestFor(true, () -> {
       final PsiElement at = invokeGotoSuperMethodAction("AAA");
@@ -1348,7 +1349,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doOverrideMethodTestWithResultFileCheck();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverrideFunWithRestParameter() throws Exception {
     doOverrideMethodTestWithResultFileCheck();
   }
@@ -1367,7 +1368,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     invokeNamedActionWithExpectedFileCheck(getTestName(false), "ImplementMethods", "js2");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testShowImplementationsForStatic() {
     doTestFor(true, () -> {
                 final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
@@ -1377,7 +1377,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
               getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testLocalClasses() {
     final String fileName = getTestName(false) + ".js2";
     doTestFor(true, () -> {
@@ -1394,7 +1393,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }, fileName, getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testGotoSuperWorksFromClass() {
     doTestFor(true, () -> {
       final PsiElement at = invokeGotoSuperMethodAction("AAA");
@@ -1403,7 +1401,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testShowImplementationsFromInterface() {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
@@ -1412,7 +1409,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testShowImplementationsFromInterfaceCall() {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
@@ -1453,39 +1449,39 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     assertNotNull(action);
   }
 
-  @JSTestOptions({/*JSTestOption.WithoutSourceRoot,*/ JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoreThanOneTopLevelSymbolDeclared2() {
     doTestFor(true);
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testImportInClass() {
     enableInspectionTool(new BadExpressionStatementJSInspection());
     doTestFor(true);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplementingInterface() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, (Runnable)null, testName + ".js2", testName + "_2.js2");
     invokeNamedActionWithExpectedFileCheck(testName, "ImplementMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplementingInterface2() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, (Runnable)null, testName + ".js2", testName + "_2.js2");
     invokeNamedActionWithExpectedFileCheck(testName, "ImplementMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testImplementingInterfaceVector() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, (Runnable)null, testName + ".js2", testName + "_2.js2");
     invokeNamedActionWithExpectedFileCheck(testName, "ImplementMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithUnusedImports})
+  @FlexTestOptions({FlexTestOption.WithFlexSdk, FlexTestOption.WithUnusedImports})
   public void testOptimizeImports() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     final String testName = getTestName(false);
@@ -1519,7 +1515,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(false, testName + ".js2", testName + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testUnresolvedThisInCallback() {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     final String testName = getTestName(false);
@@ -1562,7 +1558,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConditionalBlocks() {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.getCompilerOptions()
       .setAllOptions(
@@ -1591,7 +1587,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithUnusedImports})
+  @FlexTestOptions({FlexTestOption.WithFlexSdk, FlexTestOption.WithUnusedImports})
   public void testMethodFromNamespace() {
     doTestFor(true, getTestName(false) + ".as");
   }
@@ -1600,18 +1596,18 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk})
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testVectorElementTypeIncompatible() {
     doTestFor(true, getTestName(false) + ".as");
   }
 
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithUnusedImports})
+  @FlexTestOptions({FlexTestOption.WithFlexSdk, FlexTestOption.WithUnusedImports})
   public void testNoFqnReplaceInsideNamesake() { // IDEADEV-37712
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplicitImplementMarker_() {
     doTestFor(true, () -> {
       final PsiElement element =
@@ -1623,7 +1619,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testQualified() {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
@@ -1632,7 +1628,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithUnusedImports})
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testEmptyImport() {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
@@ -1699,7 +1695,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                                          infoCollection);
   }
 
-  @JSTestOptions(JSTestOption.WithUnusedImports)
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testNoPackageNameReplacement() {
     final String testName = getTestName(false);
     doTestFor(true, new File(getTestDataPath() + getBasePath() + File.separatorChar + testName), (Runnable)null,
@@ -1707,7 +1703,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
               testName + "/com/view.as");
   }
 
-  @JSTestOptions(JSTestOption.WithUnusedImports)
+  @FlexTestOptions(FlexTestOption.WithUnusedImports)
   public void testNoPackageNameReplacement2() {
     final String testName = getTestName(false);
     doTestFor(true, new File(getTestDataPath() + getBasePath() + File.separatorChar + testName), (Runnable)null,
@@ -1721,7 +1717,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     assertNull(intentionAction);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testConditionalCompileBlock() throws Exception {
     Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
     findAndInvokeActionWithExpectedCheck("flash.events.KeyboardEvent?", "as", infoCollection);
@@ -1732,7 +1728,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   // IDEA-56342
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMultinamesInDecompiledSwc() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "playerglobal", FlexImporterTest.getTestDataPath(), "PlayerGlobal10.swc", null, null);
@@ -1749,28 +1745,28 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     JSTestUtils.checkThatActionDisabled("DelegateMethods");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testDelegateMethods() throws Exception {
     String testName = getTestName(false);
     configureByFiles(null, BASE_PATH + testName + ".js2", BASE_PATH + testName + "_2.js2");
     invokeNamedActionWithExpectedFileCheck(testName, "DelegateMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testDelegateMethods2() throws Exception {
     String testName = getTestName(false);
     configureByFiles(null, BASE_PATH + testName + ".js2", BASE_PATH + testName + "_2.js2");
     invokeNamedActionWithExpectedFileCheck(testName, "DelegateMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testDelegateMethods3() throws Exception {
     String testName = getTestName(false);
     configureByFiles(null, BASE_PATH + testName + ".js2", BASE_PATH + testName + "_2.js2");
     invokeNamedActionWithExpectedFileCheck(testName, "DelegateMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testDelegateMethods4() throws Exception {
     String testName = getTestName(false);
     configureByFiles(null, BASE_PATH + testName + ".js2", BASE_PATH + testName + "_2.js2", BASE_PATH + testName + "_3.js2");
@@ -1797,7 +1793,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testInvalidAttribute() {
     doTestFor(true, getTestName(false) + ".as");
   }
@@ -1842,13 +1838,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     assertNotNull(findIntentionAction(infos, "a.ProductionClass?", myEditor, myFile));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testExtraEmptyLineInImport() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
     findAndInvokeActionWithExpectedCheck("cocoa.plaf.LookAndFeelUtil?", "as", infoCollection);
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testNoChangeSignatureForLibraryMethod() {
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".js2");
     assertInaccessible(infos, "Change decodeURI() signature");
@@ -1893,13 +1889,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNoCreateFieldInSdkClass() {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, JavaScriptBundle.message("javascript.create.field.intention.name", "foo"));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNoCreateMethodInLibraryClass() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
@@ -1951,17 +1947,17 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     findAndInvokeActionWithExpectedCheck("Make field 'foo' protected", "as", infos);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeVarTypeFix1() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change 'v2' type to 'flash.display.Sprite'");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeVarTypeFix2() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change 'v' type to 'mypackage.IResourceManager'");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testChangeVarTypeFix3() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change 'v2' type to 'Vector.<String>'");
   }
@@ -2010,7 +2006,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'I2' extend 'I1'");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeSignatureFixForIncompatibleReturnType1() throws Exception {
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change ChangeSignatureFixForIncompatibleReturnType1.foo() signature");
   }
@@ -2151,12 +2147,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doHighlightingWithInvokeFixAndCheckResult("Add override modifier", "as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testFileLocalClassInheritance() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCorrectScopeForSuperclassCheck() {
     doTestFor(true, getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
@@ -2262,13 +2258,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     assertFalse(class1.isEquivalentTo(class2));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateVarOfArrayType() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
     findAndInvokeActionWithExpectedCheck(JavaScriptBundle.message("javascript.create.variable.intention.name", "x"), "as", infoCollection);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateObjectVar() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
     findAndInvokeActionWithExpectedCheck(JavaScriptBundle.message("javascript.create.variable.intention.name", "foo"), "as", infoCollection);
@@ -2297,7 +2293,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testProtectedMembersWithImplicitInheritance() {
     defaultTest(); // IDEA-146722
   }

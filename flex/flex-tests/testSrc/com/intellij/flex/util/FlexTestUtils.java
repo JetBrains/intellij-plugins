@@ -4,6 +4,8 @@ package com.intellij.flex.util;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
@@ -12,7 +14,6 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
-import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -59,6 +60,7 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
@@ -68,6 +70,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +107,7 @@ public final class FlexTestUtils {
   }
 
   public static void setupFlexLib(final Project project, final Class<?> clazz, final String testName) {
-    if (JSTestUtils.testMethodHasOption(clazz, testName, JSTestOption.WithFlexLib)) {
+    if (FlexTestUtils.testMethodHasOption(clazz, testName, FlexTestOption.WithFlexLib)) {
       Module[] modules = ModuleManager.getInstance(project).getModules();
 
       for (Module module : modules) {
@@ -114,7 +117,7 @@ public final class FlexTestUtils {
   }
 
   public static String getPathToMockFlex(@NotNull Class<?> clazz, @NotNull String testName) {
-    if (JSTestUtils.testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithGumboSdk)) {
+    if (FlexTestUtils.testMethodHasOption(clazz, testName, FlexTestOption.WithGumboSdk)) {
       return getTestDataPath("MockFlexSdk4");
     }
     return getTestDataPath("MockFlexSdk3");
@@ -129,9 +132,8 @@ public final class FlexTestUtils {
                                   @NotNull Class<?> clazz,
                                   String pathToFlexSdk,
                                   boolean air, @NotNull Disposable parent) {
-    boolean withFlexSdk = JSTestUtils
-      .testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithFlexSdk, JSTestOption.WithGumboSdk,
-                           JSTestOption.WithFlexFacet);
+    boolean withFlexSdk = FlexTestUtils
+      .testMethodHasOption(clazz, testName, FlexTestOption.WithFlexSdk, FlexTestOption.WithGumboSdk, FlexTestOption.WithFlexFacet);
     if (withFlexSdk) {
       doSetupFlexSdk(module, pathToFlexSdk, air, getSdkVersion(testName, clazz), parent);
     }
@@ -146,7 +148,7 @@ public final class FlexTestUtils {
   }
 
   private static String getSdkVersion(String testName, Class<?> clazz) {
-    return JSTestUtils.testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithGumboSdk) ? "4.0.0" : "3.4.0";
+    return FlexTestUtils.testMethodHasOption(clazz, testName, FlexTestOption.WithGumboSdk) ? "4.0.0" : "3.4.0";
   }
 
   public static void setupFlexSdk(@NotNull final Module module,
@@ -629,10 +631,10 @@ public final class FlexTestUtils {
 
   public static void addFlexUnitLib(Class<?> clazz, String method, Module module,
                                     String libRootPath, String flexUnit1Swc, String flexUnit4Swc) {
-    if (JSTestUtils.testMethodHasOption(clazz, method, JSTestOption.WithFlexUnit1)) {
+    if (FlexTestUtils.testMethodHasOption(clazz, method, FlexTestOption.WithFlexUnit1)) {
       addLibrary(module, "FlexUnit1", libRootPath, flexUnit1Swc, null, null);
     }
-    if (JSTestUtils.testMethodHasOption(clazz, method, JSTestOption.WithFlexUnit4)) {
+    if (FlexTestUtils.testMethodHasOption(clazz, method, FlexTestOption.WithFlexUnit4)) {
       addLibrary(module, "FlexUnit4", libRootPath, flexUnit4Swc, null, null);
     }
   }
@@ -676,5 +678,22 @@ public final class FlexTestUtils {
           .getInternalTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_INTERFACE_TEMPLATE_NAME);
       template.setText(template.getText().replace(parseDirective, ""));
     });
+  }
+
+  public static boolean testMethodHasOption(Class<?> aClass, String testName, FlexTestOption... options) {
+    final Method testMethod = JSTestUtils.getTestMethod(aClass, testName);
+    if (testMethod != null) {
+      FlexTestOptions annotation = testMethod.getAnnotation(FlexTestOptions.class);
+      if (annotation != null) {
+        final FlexTestOption[] testOptions = annotation.value();
+
+        for (FlexTestOption o : options) {
+          if (ArrayUtil.contains(o, testOptions)) return true;
+        }
+        return false;
+      }
+    }
+
+    return false;
   }
 }

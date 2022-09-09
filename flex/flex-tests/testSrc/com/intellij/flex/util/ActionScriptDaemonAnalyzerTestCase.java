@@ -2,10 +2,16 @@
 package com.intellij.flex.util;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.flex.FlexTestOption;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.actionscript.JSUntypedDeclarationInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public abstract class ActionScriptDaemonAnalyzerTestCase extends JSDaemonAnalyzerTestCase {
@@ -26,5 +32,14 @@ public abstract class ActionScriptDaemonAnalyzerTestCase extends JSDaemonAnalyze
         FlexTestUtils.addFlexLibrary(false, myModule, file.getName(), true, file.getParent().getPath(), file.getName(), null, null);
       }
     }
+  }
+
+  @Override
+  protected LocalInspectionTool[] configureLocalInspectionTools() {
+    ArrayList<LocalInspectionTool> tools = new ArrayList<>(Arrays.asList(super.configureLocalInspectionTools()));
+    if (FlexTestUtils.testMethodHasOption(getClass(), getTestName(false), FlexTestOption.WithUnusedImports)) {
+      tools.add(new JSUnusedLocalSymbolsInspection());
+    }
+    return tools.toArray(LocalInspectionTool.EMPTY_ARRAY);
   }
 }

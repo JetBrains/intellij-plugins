@@ -2,12 +2,12 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.execution.RunManager;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveClassProcessor;
 import com.intellij.lang.javascript.JSMoveTestBase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
@@ -105,7 +105,7 @@ public class FlexMoveTest extends JSMoveTestBase {
     doTest("bar/MoveFile.as", "foo");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoveFile2() {
     doTest("MoveFile2.mxml", "xxx");
   }
@@ -114,38 +114,38 @@ public class FlexMoveTest extends JSMoveTestBase {
     doTest("foo/MoveFileWithImport.as", "");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoveMxmlFileWithImport() {
     doTest("foo/MoveMxmlFileWithImport.mxml", "");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoveFileWithImportInMxml() {
     doTest("Two.as", "foo");
   }
 
   // IDEADEV-40449: short references in the moved file may become ambiguous
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void _testAmbiguous1() {
     doTest("foo/Test.as", "bar");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlUsagesUpdated() {
     doTest("one/Foo.mxml", "two");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNoImport() {
     doTest("two/Baz.mxml", "one");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlNamespacesUpdated() {
     doTest("pack/Bar.as", "pack/sub");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConfigUpdatedOnClassMove() {
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils
@@ -163,7 +163,7 @@ public class FlexMoveTest extends JSMoveTestBase {
     FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "SomeClass", "SomeClass");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConfigUpdatedOnPackageMove() {
     FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> bc.setMainClass("foo.SomeClass"));
 
@@ -185,32 +185,32 @@ public class FlexMoveTest extends JSMoveTestBase {
     FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "SomeClass", "bar.foo.SomeClass");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testReferencesToAssetsUpdated() {
     doTest("one/asset.css", "two");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlWithReferencesToAssetsMoved() {
     doTest("one/Foo.mxml", "");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlImplementsList() {
     doTest("from/MyInterface.as", "to");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMoveClasses1() {
     doTest(new String[]{"a.MyClass", "a.MyFunc", "a.MyNs", "a.MyVar", "a.MyConst"}, "b", ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportForConstuctorUsage() {
     doTest(new String[]{"from.Test"}, "to", ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testConflicts1() {
     String[] conflicts = new String[]{
       "Class Subj1 with internal visibility won't be accessible from class Usage1",

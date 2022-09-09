@@ -1,9 +1,9 @@
 package com.intellij.flex.highlighting;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.testFramework.PlatformTestUtil;
@@ -32,7 +32,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
     return "as";
   }
 
-  @JSTestOptions({JSTestOption.WithLoadingAndSavingCaches, JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testPerformance() {
     final boolean doProfiling = false;
     if (doProfiling) YourKitProfilerHandler.startCPUProfiling();

@@ -3,14 +3,12 @@ package com.intellij.flex.flexunit.codeInsight;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ex.InspectionToolWrapper;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassInProductSourceInspection;
@@ -19,7 +17,6 @@ import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -82,90 +79,90 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
     return FlexTestUtils.getTestDataPath("flexUnit");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethods1() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Remove static modifier", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNoUnusedHighlighting() throws Exception {
     enableInspectionTool(new JSUnusedGlobalSymbolsInspection() {
     });
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethods2() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethods3() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMethods1NoFlexUnit() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testClassInProductSource1() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testClassInProductSource2() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testEmptyClass() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonPublicClass1() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make class '" + getTestName(false) + "' public", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonPublicClass2() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make class '" + getTestName(false) + "' public", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonPublicClass3() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make class '" + getTestName(false) + "' public", "as", getTestName(false) + ".as");
   }
 
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonPublicMethod1() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make method 'foo' public", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testNonPublicMethod2() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make method 'testFoo' public", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonPublicMethod3() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make method 'testFoo' public", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonVoidMethod1() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make 'foo' return 'void'", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonVoidMethod2() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make 'foo' return 'void'", "as", getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonVoidMethod3() throws Exception {
     doHighlightingWithInvokeFixAndCheckResult("Make 'foo' return 'void'", "as", getTestName(false) + ".as");
   }
@@ -176,18 +173,18 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
     assertNull(action);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonVoidMethod4() {
     checkNoFixFor("foo");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethodInSuite() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethodInSuite2() throws Exception {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
     JSTestUtils.setInspectionHighlightLevel(myProject, inspection, HighlightDisplayLevel.WARNING, getTestRootDisposable());
@@ -196,52 +193,52 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethodInSuite3() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethodsWithCustomRunner() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testEmptySuite() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testSuiteWithNoRunner1() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testSuiteWithNoRunner2() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testSuiteWithNoRunner3() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + getTestName(false) + "_2.as");
     doDoTest(true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testSuiteWithWrongCustomRunner() {
     configureByFiles(null, getBasePath() + getTestName(false) + ".as", getBasePath() + "WrongCustomRunner.as");
     doDoTest(true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testNonEmptyClass() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testMethodInStaticBlock() throws Exception {
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }

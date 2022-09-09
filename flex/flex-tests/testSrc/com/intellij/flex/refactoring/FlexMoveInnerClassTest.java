@@ -2,12 +2,12 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.EditorInfo;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler;
 import com.intellij.javascript.flex.refactoring.moveClass.FlexMoveInnerClassProcessor;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -130,7 +130,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
     }
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testClass() {
     doTest("/From.as", "Foo2", "com.foo", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
@@ -167,12 +167,12 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
     doTest("/A.as", "my", "foo", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testGenericVectorCreation() {
     doTest("/Z1.as", "Cell", "", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testClassFromDefaultPackageConstructorCall() {
     doTest("/Z1.as", "Foo", "", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }

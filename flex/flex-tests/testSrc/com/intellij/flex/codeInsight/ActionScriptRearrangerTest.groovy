@@ -1,9 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight
 
+import com.intellij.flex.FlexTestOption
+import com.intellij.flex.FlexTestOptions
 import com.intellij.flex.util.FlexTestUtils
 import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger
-import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.ActionScriptFileType
+import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest
@@ -54,7 +58,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
     }
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   void testComplex() {
 
     commonSettings.BLANK_LINES_AROUND_METHOD = 0
@@ -267,7 +271,7 @@ public class Test {
     )
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   void testGroupPropertyFieldWithGetterSetter() {
 
     commonSettings.BLANK_LINES_AROUND_METHOD = 0

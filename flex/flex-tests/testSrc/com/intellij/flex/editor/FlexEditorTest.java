@@ -1,6 +1,8 @@
 package com.intellij.flex.editor;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
@@ -39,7 +41,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     run.run();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsertQuoteInMxml() {
     doTestWithJSSupportLoaderAndFlex(() -> doInsertQuoteTest("mxml", '\''));
   }
@@ -76,22 +78,18 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     doEnterTestForExtension("as");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_3InXml() {
     doEnterTestForExtension("mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_4InXml() {
     doEnterTestForExtension("mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_5InXml() {
     doEnterTestForExtension("mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testEnter3_6InXml() {
     doEnterTestForExtension("mxml");
   }
@@ -113,22 +111,22 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     doFormatterTest("mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsertCdataOnGt() {
     doGtTestWithJSSupportLoaderAndFlex();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsertCdataOnGt2() {
     doGtTestWithJSSupportLoaderAndFlex();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsertCdataOnGt3() {
     doGtTestWithJSSupportLoaderAndFlex();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInsertCdataOnGt4() {
     final CodeStyleSettings codeSettings = CodeStyle.getSettings(getProject());
     final XmlCodeStyleSettings xmlSettings = codeSettings.getCustomSettings(XmlCodeStyleSettings.class);
@@ -146,12 +144,10 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     doTestWithJSSupportLoaderAndFlex('{');
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testInsertPairRBrace3() {
     doTestWithJSSupportLoaderAndFlex('{');
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testInsertRBraceOnEnter() {
     doTestWithJSSupportLoaderAndFlex('\n');
   }
@@ -201,7 +197,6 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     doSmartEnterTest(getTestName(false), "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testSmartEnterFunctionInInjected() {
     doSmartEnterTest(getTestName(false), "mxml");
   }
@@ -226,17 +221,17 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     performCopyRefAndPasteTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testCopyReference5() {
     doTestWithJSSupportLoaderAndFlex(this::performCopyRefAndPasteTest);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testCopyReference6() {
     performCopyRefAndPasteTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testCopyReferenceInMxml() {
     performCopyRefAndPasteTest("mxml");
   }

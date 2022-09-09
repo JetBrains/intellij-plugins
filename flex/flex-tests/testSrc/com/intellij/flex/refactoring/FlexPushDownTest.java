@@ -1,9 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -101,7 +101,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
     }
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testClass() {
     doTestPushDown("Super", DocCommentPolicy.MOVE, false, "foo", "bar", "t", "uu", "v");
   }
@@ -150,17 +150,17 @@ public class FlexPushDownTest extends MultiFileTestCase {
     doTestConflicts("Interface1", conflicts, "foo");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testVector() {
     doTestPushDown("foo.From", DocCommentPolicy.ASIS, false, "foo");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testVector2() {
     doTestPushDown("IFoo", DocCommentPolicy.ASIS, false, "abc");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testVector3() {
     doTestPushDown("IFoo", DocCommentPolicy.ASIS, false, "abc");
   }

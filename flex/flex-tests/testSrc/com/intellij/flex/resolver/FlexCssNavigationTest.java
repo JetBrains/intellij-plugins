@@ -2,9 +2,9 @@ package com.intellij.flex.resolver;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -75,14 +75,14 @@ public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssStyleReference1() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssSelectorSuffix.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssStyleReference2() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".css");
     boolean flag = false;
@@ -95,28 +95,28 @@ public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
     assertTrue(flag);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssStyleReference3() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssSelectorSuffix.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssPropertyReference() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], JSAttributeNameValuePair.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssClassPropertyValue() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".css");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssSelectorSuffix.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testCssTypeReference() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".css");
     assertEquals(1, elements.length);
@@ -124,7 +124,7 @@ public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
     assertEquals(((JSClass)elements[0]).getQualifiedName(), "spark.components.Button");
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testCssTypeReference1() {
     PsiElement[] elements = findTargetElements(getTestName(false) + ".css");
     assertEquals(1, elements.length);
@@ -134,35 +134,35 @@ public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
     assertEquals(jsClass.getQualifiedName(), "spark.components.Button");
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStyleName1() {
     final PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssClass.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStyleName2() {
     final PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssClass.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStyleName3() {
     final PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssClass.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStyleName4() {
     final PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);
     assertInstanceOf(elements[0], CssClass.class);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testStyleName5() {
     final PsiElement[] elements = findTargetElements(getTestName(false) + ".mxml");
     assertEquals(1, elements.length);

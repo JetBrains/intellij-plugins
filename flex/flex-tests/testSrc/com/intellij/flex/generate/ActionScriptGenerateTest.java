@@ -1,10 +1,10 @@
 package com.intellij.flex.generate;
 
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.generate.JSGenerateTestBase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NonNls;
@@ -39,46 +39,38 @@ public class ActionScriptGenerateTest extends JSGenerateTestBase {
     return "js2";
   }
 
-
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateGetter() {
     doGenerateTest("Generate.GetAccessor.JavaScript");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateSetter() {
     doGenerateTest("Generate.SetAccessor.JavaScript");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testGenerateGetterAndSetter() {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     doGenerateTest("Generate.GetSetAccessor.JavaScript");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateConstructor() {
     doGenerateTest("Generate.Constructor.JavaScript");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateConstructor2() {
     doGenerateTest("Generate.Constructor.JavaScript");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateConstructor3() {
     doGenerateTest("Generate.Constructor.JavaScript");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateToString() {
     doGenerateTest("Generate.ToString.Actionscript", "", "js2");
     doGenerateTest("Generate.ToString.Actionscript", "_2", "js2");
     doGenerateTest("Generate.ToString.Actionscript", "_3", "as");
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testGenerateToString2() {
     doGenerateTest("Generate.ToString.Actionscript", "", "js2");
     doGenerateTest("Generate.ToString.Actionscript", "_2", "js2");

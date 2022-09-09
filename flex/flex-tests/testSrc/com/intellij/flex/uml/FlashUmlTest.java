@@ -4,10 +4,10 @@ package com.intellij.flex.uml;
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -211,7 +211,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
     doTest(getTestName(false) + ".as");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlClass() throws Exception {
     doTest(getTestName(false) + ".mxml");
   }

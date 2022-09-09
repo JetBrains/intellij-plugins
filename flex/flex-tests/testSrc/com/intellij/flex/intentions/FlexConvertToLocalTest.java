@@ -1,10 +1,10 @@
 package com.intellij.flex.intentions;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSIntentionTestCase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -30,27 +30,27 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
     return FlexTestUtils.getTestDataPath("") + "/convertToLocal";
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testConvertToLocal_() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testConvertToLocal_1() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testConvertToLocal_2() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testConvertToLocal_3() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testConvertToLocal_4() {
     doCompositeNameBeforeAfterTest("as", false);
   }

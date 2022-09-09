@@ -2,8 +2,6 @@ package com.intellij.flex.resolver;
 
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSResolveTestCase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSLocalVariable;
 import com.intellij.lang.javascript.psi.JSNamedElement;
@@ -206,7 +204,6 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
     doMultipleResolveTestForFile(createProcessor("BazBar2"), testName + "_2.as", testName + "_3.as");
   }
 
-  @JSTestOptions({JSTestOption.WithIndex})
   public void testResolve26() {
     String fileText = "dynamic class Object {}\n" +
                       "package {\n" +

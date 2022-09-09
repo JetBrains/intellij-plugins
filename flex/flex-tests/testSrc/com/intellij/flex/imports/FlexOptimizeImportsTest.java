@@ -2,12 +2,12 @@ package com.intellij.flex.imports;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.actions.OptimizeImportsAction;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
@@ -39,12 +39,12 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     myFixture.setTestDataPath(FlexTestUtils.getTestDataPath("imports/optimize"));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsPositioning() {
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsPositioningWithComments() {
     runOptimizeAction(AS_FILE_EXTENSION);
   }
@@ -74,7 +74,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsFqn5() {
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
@@ -89,111 +89,111 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsInMxml1() {
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testRemoveUnusedAndSortImports() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.SamePackClass", "com.test.pack1.ClassName", "com.test.pack2.ClassName",
                                     "com.test.pack3.ClassName");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsInMxml2() {
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsInMxml3() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.a.ClassB");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsInMxml4() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.a.ClassA", "com.a.ClassB");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsInMxml5() {
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsInMxml6() {
     myFixture.addFileToProject("Included2.as", "import mx.rpc.AbstractService;");
     myFixture.addFileToProject("Included.as", "include \"Included2.as\"");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsWithInclude1() {
     myFixture.addFileToProject("Included2.as", "var t : AbstractService;");
     myFixture.addFileToProject("Included.as", "include \"Included2.as\"");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsWithInclude2() {
     myFixture.addFileToProject("Included2.as", "var t : AbstractService;");
     myFixture.addFileToProject("Included.as", "include \"Included2.as\"");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportsWithInclude3() {
     myFixture.addFileToProject("Included2.as", "var t : AbstractService;");
     myFixture.addFileToProject("Included.as", "include \"Included2.as\"");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNamesakeFqn() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.foo.Foo");
     JSTestUtils.addClassesToProject(myFixture, false, "com.bar.Foo");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testInlineComponents() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.a.Class1", "com.a.Class2", "com.a.Class3", "com.a.Class4");
     myFixture.addFileToProject("InlineComponents_2.as", "function zz() { var tt : Class4; }");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplicitImports1() {
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplicitImports2() {
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplicitImports3() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.foo.IFactory");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAmbiguous1() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.test.UIComponent");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAmbiguous2() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.bar.UIComponent");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAmbiguous3() {
     final CodeStyleSettings styleSettings = CodeStyle.getSettings(getProject());
     XmlCodeStyleSettings xmlSettings = styleSettings.getCustomSettings(XmlCodeStyleSettings.class);
@@ -204,25 +204,25 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = aroundCDataBefore;
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAmbiguous4() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.example.idea.Map", "zzz.Map");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testQualifiedConstructor() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.foo.MyClass", "com.foo.MyClass2", "com.foo.Ambiguous", "test.Ambiguous");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCoverByStar() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.Base", "com.Other");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNoSemicolons() {
     JSTestUtils.addClassesToProject(myFixture, true, "foo.MyClass", "foo.MyClass2", "bar.MyClass3");
     final JSCodeStyleSettings codeStyleSettings =
@@ -237,13 +237,12 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     }
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testConditionalCompileBlock() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.Class1", "com.Class2");
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testDataGridColumn() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.example.flex.ui.utils.Icons");
     runOptimizeAction(MXML_FILE_EXTENSION);
@@ -254,13 +253,13 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
     runOptimizeAction(AS_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testNoBlankLines() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.Foo", "com.Bar", "com.Zzz");
     runOptimizeAction(MXML_FILE_EXTENSION);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testNoBlankLines2() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.Foo", "com.Bar", "com.Zzz");
     final CodeStyleSettings styleSettings = CodeStyle.getSettings(getProject());

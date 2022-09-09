@@ -1,10 +1,10 @@
 package com.intellij.flex.intentions;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSIntentionTestCase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +59,7 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateVariableAS_3_3() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
@@ -68,7 +68,7 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
     doCompositeNameBeforeAfterTest("js2", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateVariableAS_4Mxml() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }

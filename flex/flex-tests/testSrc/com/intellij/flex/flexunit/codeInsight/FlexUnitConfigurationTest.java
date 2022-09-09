@@ -4,11 +4,11 @@ import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.ide.DataManager;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
@@ -120,72 +120,72 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
     }
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit1WithFlexUnit4() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1Empty() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1NonPublic() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1EmptyWithFlex4() throws Exception {
     doTest("FlexUnit1Empty.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit1WithNonDefaultConstructor() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit1WithNonDefaultConstructorWithFlex4() throws Exception {
     doTest("FlexUnit1WithNonDefaultConstructor.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit4WithFlexUnit1() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testFlexUnit4WithFlexUnit1_2() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4WithNonDefaultConstructor() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4Empty() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlexUnit4NonPublic() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testNoFlexUnit() throws Exception {
     defaultTest();
   }
@@ -194,37 +194,37 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
     doTest("NoFlexUnit.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlunit1() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testSuite1() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit1})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit1})
   public void testNoSuiteWithFlexUnit1() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testTestMethodInSuite() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testWithCustomRunner() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testOldStyleSuite() throws Exception {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithFlexUnit4})
   public void testFlunitSuite() throws Exception {
     defaultTest();
   }

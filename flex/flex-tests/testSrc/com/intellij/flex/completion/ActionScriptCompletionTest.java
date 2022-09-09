@@ -5,6 +5,8 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
@@ -169,13 +171,11 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithLoadingAndSavingCaches)
   public final void testVarTypePickedUp() {
     doTest("");
     doTest("_2");
   }
 
-  @JSTestOptions(JSTestOption.WithLoadingAndSavingCaches)
   public final void testVarTypePickedUp2() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
@@ -430,12 +430,11 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
   }
 
-  @JSTestOptions(JSTestOption.WithLoadingAndSavingCaches)
   public final void testCompletePackage4() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteType() {
     setUpJdk();
     doTest("");
@@ -446,7 +445,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertTrue(myFixture.getLookupElements().length < 110);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteType2() {
     setUpJdk();
     doTest("");
@@ -460,7 +459,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testCompleteTypeInNew2() {
     setUpJdk();
     doTest("");
@@ -762,7 +761,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testEventName() {
     setUpJdk();
     doTest("");
@@ -813,13 +813,15 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithSmartCompletion, JSTestOption.WithFlexFacet})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testSmartCompletion2_2() {
     setUpJdk();
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletion2_3() {
     // TODO consider parseInt() returning Number etc expect to appear. + 2_36 and 2_36_2. see JSTypeUtils.typeCanBeAssignedWithoutCoercion
     setUpJdk();
@@ -967,7 +969,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithSmartCompletion, JSTestOption.WithFlexSdk})
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testSmartCompletion2_30() {
     LookupElement[] lookupElements = defaultTest();
     for (LookupElement l : lookupElements) {
@@ -1197,7 +1200,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testDetectExprType() { defaultTest(); }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public final void testQualifiedReference() {
     setUpJdk();
     defaultTest();

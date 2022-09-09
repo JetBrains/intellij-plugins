@@ -1,11 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersProcessor;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -188,7 +188,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     doTest("a.From", "b.To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testFromMxml1() {
     doTest("From", "foo.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
@@ -242,22 +242,22 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     doTest("From", "To", VISIBILITY_AS_IS, new String[]{"readwrite", "read", "write"});
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInMxml() {
     doTest("From", "foo.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInMxml2() {
     doTest("bar.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImports5() {
     doTest("From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImportInMxml3() {
     doTest("foo.From", "bar.To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
@@ -301,12 +301,12 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     doTest("From", "To", JSAttributeList.AccessType.PUBLIC.name(), new String[]{"foo", "bar", "ZZ"});
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testVector() {
     doTest("foo.From", "To", VISIBILITY_AS_IS, ALL_MEMBERS);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testEmbeddedImage() {
     doTest("From", "To", JSVisibilityUtil.ESCALATE_VISIBILITY, ALL_MEMBERS);
   }

@@ -1,5 +1,7 @@
 package com.intellij.flex.codeInsight;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
@@ -7,8 +9,6 @@ import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
 import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.lang.javascript.JSHierarchyTestBase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.hierarchy.call.JSCalleeMethodsTreeStructure;
@@ -123,7 +123,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getSubtypesHierarchyType(), "pack.Interface2", testName + ".as", testName + ".mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testSupertypesHierarchy() throws Exception {
     setUpJdk();
     final String testName = getTestName(false);
@@ -132,25 +132,25 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
 
   private static final String COMMON_METHOD_HIERARCHY_RESOURCE_NAME = "MethodHierarchyCommon";
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMethodHierarchyFromInterface() throws Exception {
     doJSMethodHierarchyTest("pack.Interface1", "foo", true, COMMON_METHOD_HIERARCHY_RESOURCE_NAME + ".as",
                             COMMON_METHOD_HIERARCHY_RESOURCE_NAME + ".mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMethodHierarchyFromMxml() throws Exception {
     doJSMethodHierarchyTest(COMMON_METHOD_HIERARCHY_RESOURCE_NAME, "foo", false, COMMON_METHOD_HIERARCHY_RESOURCE_NAME + ".as",
                             COMMON_METHOD_HIERARCHY_RESOURCE_NAME + ".mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMethodHierarchyFromAs() throws Exception {
     doJSMethodHierarchyTest("pack.Class2", "foo", true, COMMON_METHOD_HIERARCHY_RESOURCE_NAME + ".as",
                             COMMON_METHOD_HIERARCHY_RESOURCE_NAME + ".mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMethodCalleeHierarchy() throws Exception {
     setUpJdk();
     final String testName = getTestName(false);
@@ -159,7 +159,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
                           testName + ".as", testName + ".mxml");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMethodCallerHierarchy() throws Exception {
     final String testName = getTestName(false);
     doJSCallHierarchyTest(CallHierarchyBrowserBase.getCallerType(), "pack.Class1", "bar", HierarchyBrowserBaseEx.SCOPE_PROJECT,

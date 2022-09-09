@@ -2,9 +2,9 @@
 package com.intellij.flex.completion
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.flex.FlexTestOption
+import com.intellij.flex.FlexTestOptions
 import com.intellij.flex.util.FlexTestUtils
-import com.intellij.lang.javascript.JSTestOption
-import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.flex.FlexModuleType
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.CompletionAutoPopupTestCase
@@ -142,7 +142,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     assert lookup != null
   }
 
-  @JSTestOptions([JSTestOption.WithFlexFacet])
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   void testAutoPopupCompletionInsertsImport() {
     myFixture.configureByText("a.as", """
         package {
@@ -165,7 +165,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     """
   }
 
-  @JSTestOptions([JSTestOption.WithFlexFacet])
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   void testAutoPopupCompletionInsertsImportInMxml() {
     myFixture.configureByText("a.mxml", """
       <?xml version="1.0"?>

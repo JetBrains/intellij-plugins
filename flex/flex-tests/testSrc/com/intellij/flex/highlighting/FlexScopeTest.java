@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.codeInsight.FlexNavigationTest;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
@@ -9,8 +11,6 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.application.WriteAction;
@@ -150,7 +150,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     doHighlightingTest("_2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testBcDependencyInSameModule() throws Exception {
     WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
       final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];

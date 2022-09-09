@@ -5,6 +5,8 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
@@ -46,7 +48,7 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
   protected Runnable myAfterCommitRunnable = null;
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.METHOD})
+  @Target(ElementType.METHOD)
   public @interface NeedsJavaModule {
   }
 
@@ -121,19 +123,22 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     }
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkers() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, (Runnable)null, testName + ".mxml", testName + "_2.mxml");
     invokeNamedActionWithExpectedFileCheck(testName, "OverrideMethods", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testHighlightStaticInstanceMembers() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkersXmlBacked() {
     doTestFor(true, getTestName(false) + "_B.mxml", getTestName(false) + "_A.mxml", getTestName(false) + "_C.mxml",
               getTestName(false) + "_D.as", getTestName(false) + "_MyInterface.as");
@@ -156,7 +161,8 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     assertTrue(classNames.contains(getTestName(false) + "_D"));
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkersXmlBacked2() {
     doTestFor(true, getTestName(false) + "_MyInterface.as", getTestName(false) + "_A.mxml", getTestName(false) + "_B.mxml");
     int offset = myEditor.getCaretModel().getOffset();
@@ -179,7 +185,8 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     //assertTrue(classNames.contains(getTestName(false) +"_B")); IDEADEV-34319
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverridingMarkersInlineComponents() {
     doTestFor(true, getTestName(false) + ".mxml");
 
@@ -194,23 +201,26 @@ public class FlexLineMarkersTest extends ActionScriptDaemonAnalyzerTestCase {
     assertEquals(2, implementations.size());
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverriddenMarkersInMxml1() {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testOverriddenMarkersInMxml2() {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplicitImplementMarker() {
     doTestFor(true, getTestName(false) + "Interface.as", getTestName(false) + "Base.mxml", getTestName(false) + ".mxml");
   }
 
-  @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testFlexWithMockFlexWithLineMarkers() {
     defaultTest();
   }

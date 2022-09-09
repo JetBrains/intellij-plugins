@@ -1,12 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSChangeSignatureTestBase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
@@ -52,14 +52,14 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
            new JSParameterInfo("stringParam", "String", "", "\"def\"", NEW_PARAMETER));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAddParam2() {
     doTest("blablabala__12", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
            new JSParameterInfo("p", "mx.messaging.AbstractConsumer", "", "CONS", NEW_PARAMETER),
            new JSParameterInfo("p2", "flash.events.EventDispatcher", "null", "DISP", NEW_PARAMETER));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAddParam3() {
     doTest("bar", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
            new JSParameterInfo("p1", "int", "", "100", NEW_PARAMETER),
@@ -68,12 +68,12 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
            new JSParameterInfo("p4", "...", "", "", NEW_PARAMETER, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testRemoveParam1() {
     doTest("foo", JSAttributeList.AccessType.PRIVATE, "flash.events.EventDispatcher");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testChangeParam1() {
     withRefactorSuperMethod(() -> doTest("renamed", JSAttributeList.AccessType.PACKAGE_LOCAL, "Boolean",
                                          new JSParameterInfo("i2", "Number", "", "", 1),
@@ -84,18 +84,18 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   }
 
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testProp1() {
     doTest("v2", JSAttributeList.AccessType.PROTECTED, "Number");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testProp2() {
     doTest("v2", JSAttributeList.AccessType.PROTECTED, "void",
            new JSParameterInfo("value", "Number", "", "", 0));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPropagate1() {
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"bar", "zzz", "abc", "nopropagate"});
@@ -138,7 +138,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
                     new JSParameterInfo("value2", "", "", "foo", 0));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxml() {
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"ref", "aaa"});
@@ -149,7 +149,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     });
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testExistingSignature() {
     doTest("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
            new JSParameterInfo("p", "int", "15", "2000", NEW_PARAMETER),
@@ -215,7 +215,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
            new JSParameterInfo("p", "From", "null", "", 3));
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testNoPropagateToSdkInheritor() {
     FlexTestUtils.addLibrary(getModule(), "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
     Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
@@ -261,7 +261,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     });
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testEventHandlerCall() {
     doTest("", JSAttributeList.AccessType.PACKAGE_LOCAL, "void",
            new JSParameterInfo("i", "int", "", "1000", NEW_PARAMETER));

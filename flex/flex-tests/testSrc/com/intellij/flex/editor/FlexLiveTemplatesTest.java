@@ -7,10 +7,10 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSLiveTemplatesTestBase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -125,12 +125,12 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     });
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPickVectorTypeInFlexIter() {
     doTest("iter", "as", createLookupSelectingSegmentHandler(getProject(), 0, "bar"));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPickVectorTypeInMxmlIter() {
     myFixture.setCaresAboutInjection(false);
     setUpJdk();
@@ -174,12 +174,12 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     });
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testPrivateFunction() {
     doTest("prf", "as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testPublicStaticFunction() {
     doTest("psf", "as");
   }

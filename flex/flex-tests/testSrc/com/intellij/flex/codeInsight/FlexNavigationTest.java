@@ -3,10 +3,10 @@ package com.intellij.flex.codeInsight;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 
-@SuppressWarnings({"ConstantConditions"})
+@SuppressWarnings("ConstantConditions")
 public class FlexNavigationTest extends JavaCodeInsightTestCase {
   private static final String BASE_PATH = "/flex_navigation/";
 
@@ -175,7 +175,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
       .findFileByUrl("jar://" + FileUtil.toSystemIndependentName(getTestDataPath()) + BASE_PATH + relativePath);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testLibraryClass1() throws Exception {
     final String sources = "TestLibSources.zip";
     myAfterCommitRunnable = () -> {
@@ -188,7 +188,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest("LibraryClass.as", forSource, forSource);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testLibraryClass2() throws Exception {
     final String libWithAsDocSwc = "TestLib3.swc";
     myAfterCommitRunnable = () -> {
@@ -200,7 +200,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest("LibraryClass.as", null, forAsdoc);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testLibraryClass3() throws Exception {
     myAfterCommitRunnable = () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "TestLib1.swc", null, null);
 
@@ -208,7 +208,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest("LibraryClass.as", forSource, forSource);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testSdkClass1() throws Exception {
     VirtualFile asdoc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "SdkAsdoc.zip");
     asdoc = JarFileSystem.getInstance().getJarRootForLocalFile(asdoc);
@@ -223,7 +223,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest("SdkClass.as", null, forAsDoc);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testSdkClass2() throws Exception {
     VirtualFile asdoc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "SdkAsdoc.zip");
     asdoc = JarFileSystem.getInstance().getJarRootForLocalFile(asdoc);
@@ -238,7 +238,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest("SdkClass.as", null, forAsDoc);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testAmbiguousCssSelector() throws Exception {
     final String sources = "StyleableLibSources.zip";
     myAfterCommitRunnable = () -> {
@@ -253,49 +253,49 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     }
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testIncludes() {
     VirtualFile vFile = configureByFiles(null, BASE_PATH + "Includes.css", BASE_PATH + "Includes.as", BASE_PATH + "Includes1.as");
     VirtualFile file = vFile.getParent().findChild("Includes1.as");
     doTest(file, file, null);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssPropertyForCustomClass1() throws Exception {
     doCustomClassCssTest("!/foo/Styles.as", null);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssPropertyForCustomClass2() throws Exception {
     doCustomClassCssTest("!/foo/Styles.as", "CssPropertyForCustomClass1");
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssPropertyForCustomClass3() throws Exception {
     doCustomClassCssTest("!/foo/Styleable2.as", null);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssSelector() throws Exception {
     doLibClassCssTest(true, null);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssSelector1() throws Exception {
     doLibClassCssTest(true, null);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testLibCss() throws Exception {
     doTestLibCss(0, 1);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testLibCss1() throws Exception {
     doTestLibCss(1, 6);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testLibCss2() throws Exception {
     doTestLibCss(5, 6);
   }
@@ -316,17 +316,17 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest(classFile, null, null);
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssProperty1() throws Exception {
     doLibClassCssTest(false, "Container");
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssProperty2() throws Exception {
     doLibClassCssTest(false, "Button");
   }
 
-  @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCssProperty3() throws Exception {
     doLibClassCssTest(false, null);
   }
@@ -353,7 +353,7 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
     doTest(testName + ".css", file, expectedForDoc ? file : null, expectedClassName);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMonkeyPatching() {
     final String testName = getTestName(false);
 

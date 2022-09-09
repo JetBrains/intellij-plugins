@@ -69,11 +69,6 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @Override
-  protected boolean enableJSIndex() {
-    return false; // otherwise all the files will be parsed when building
-  }
-
-  @Override
   protected void setUpJdk() {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
@@ -120,12 +115,12 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     return result;
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testOverridingMarkersIncludes1() {
     doTest(null, getTestName(false) + ".as", getTestName(false) + "_2.as", getTestName(false) + "_3.as", getTestName(false) + "_4.as");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testCreateVariable() {
     doTest(() -> {
       final IntentionAction action =

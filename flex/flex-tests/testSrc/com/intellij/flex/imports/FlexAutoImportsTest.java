@@ -4,12 +4,12 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.application.ApplicationManager;
@@ -114,17 +114,17 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
     launchImportIntention(MXML_FILE_EXTENSION, "com.test.Foo");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testAnonymousHandler1() {
     launchImportIntention(MXML_FILE_EXTENSION, "mx.utils.Base64Decoder");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testBeforePackage() {
     launchImportIntention(AS_FILE_EXTENSION, "mx.utils.Base64Decoder");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testWrapImportStatement() {
     CodeStyleSettings currentSettings = CodeStyle.getSettings(myFixture.getProject());
     int m = currentSettings.getDefaultRightMargin();

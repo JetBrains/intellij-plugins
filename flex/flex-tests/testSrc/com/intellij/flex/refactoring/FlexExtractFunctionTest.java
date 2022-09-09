@@ -1,9 +1,9 @@
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.extractMethod.DefaultJSExtractFunctionSettings;
@@ -134,17 +134,17 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     assertFails(() -> doTest("created", "js2"));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxml() {
     doTest("created", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxml2() {
     doTest("created", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxml3() {
     doTest("created", "mxml");
   }

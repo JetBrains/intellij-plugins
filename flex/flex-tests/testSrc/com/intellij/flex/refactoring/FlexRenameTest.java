@@ -3,11 +3,16 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.execution.RunManager;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.JSAbstractRenameTest;
+import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
+import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.index.JSPackageIndex;
@@ -124,13 +129,11 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testRenameMethodOfInterface3() {
     final String testName = getTestName(false);
     doTest("test2", "RenameMethodOfInterface3_after.js2", testName + ".js2", testName + "_2.mxml", testName + "_3.mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testRenameMethodOfInterface4() {
     doTest("foo2", "as");
   }
@@ -160,14 +163,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     doTest("bar", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlComponentRename() {
     String name = getTestName(false);
     doTest("RenamedComponent2", name + "_after.mxml", name + ".mxml", "RenamedComponent.mxml");
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlComponentRename_2() {
     String name = getTestName(false);
 
@@ -175,14 +178,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenameStateInMxml() {
     String name = getTestName(false);
 
     doTest("foo2", name + "_after.mxml", name + ".mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testInlineFunRename() {
     String name = getTestName(false);
     myFixture.configureByFile(getBasePath() + name + ".mxml");
@@ -196,7 +199,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     myFixture.checkResultByFile((getBasePath() + name + "_after.mxml"));
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenameStateGroupInMxml() {
     String name = getTestName(false);
 
@@ -210,35 +213,35 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(0, JSDaemonAnalyzerTestCase.filterUnwantedInfos(myFixture.doHighlighting(), true, false, false).size());
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlComponentRename2() {
     final String name = getTestName(false);
     doTest("RenamedClazz", name + "_after.mxml", name + ".mxml", "Clazz.as");
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlComponentRename3() {
     String name = getTestName(false);
     doTest("RenamedComponent3", name + "_after.mxml", name + ".mxml", "RenamedComponent2.mxml");
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testMxmlComponentRename4() {
     String name = getTestName(false);
     doTest("RenamedComponent4", true, name + ".as", "MxmlComponentRename4_2.mxml", "MxmlComponentRename4_3.xml");
     assertEquals(6, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenamePackageRefs() {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.mxml", testName + ".mxml", testName + "_2.as");
     assertEquals(6, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenamePackageRefs2() {
     String testName = getTestName(false);
     doTest(
@@ -251,7 +254,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(6, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenamePackageRefs3() {
     String testName = getTestName(false);
     doTest(
@@ -265,14 +268,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(8, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenamePackageRefs4() {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.as", testName + ".as", testName + "_2.as");
     assertEquals(8, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenamePackageRefs5() {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.as", testName + ".as", testName + "_2.as");
@@ -280,20 +283,20 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(7, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testClassRename2() {
     String name = getTestName(false);
     doTest("classRename2_2", name + "_after.as", name + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testMxmlComponentIdRename() {
     final String name = getTestName(false);
     doTest("p2", name + "_after.mxml", name + ".mxml");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenameRestParameter() {
     final String name = getTestName(false);
     doTest("rest2", name + "_after.js2", name + ".js2");
@@ -341,7 +344,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     }
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenamePropertyAsWhole2() {
     final String name = getTestName(false);
     doTest("yyy", name + "_after.js2", name + ".js2", name + ".mxml");
@@ -358,7 +361,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testSeeTopLevelFunction() {
     String name = getTestName(false);
     doTest("SeeTopLevelFunction_3", true, name + ".as", name + "_2.as");
@@ -398,25 +401,25 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testSuperClasses() {
     String name = getTestName(false);
     doTest("foo", true, name + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testSuperClasses2() {
     String name = getTestName(false);
     doTest("foo", true, name + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRenameFileReferenceInInjectedCode() {
     final String name = getTestName(false);
     doTest("foo.txt", name + "_after.mxml", false, true, true, name + ".mxml", name + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRunConfigUpdatedOnMethodRename() {
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils
@@ -427,7 +430,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "SomeTest.testAnotherThing()", "", "SomeTest", "testAnotherThing");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConfigUpdatedOnClassRename() {
     FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> bc.setMainClass("foo.bar.SomeClass"));
 
@@ -452,7 +455,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "Renamed", "foo.bar.Renamed");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testConfigUpdatedOnPackageRename() {
     FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> bc.setMainClass("foo.bar.SomeClass"));
 
@@ -475,7 +478,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "SomeClass", "foo.renamed.SomeClass");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet})
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testRunConfigUpdatedOnBcRename() {
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", getModule(), FlexUnitRunnerParameters.Scope.Method, "",

@@ -2,11 +2,11 @@
 package com.intellij.flex.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.CreateJSFunctionIntentionTestBase;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
@@ -33,7 +33,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     return FlexTestUtils.getTestDataPath("") + "/createfunction_as";
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS() {
     doCompositeNameBeforeAfterTest("js2", false);
   }
@@ -42,12 +42,12 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     doCompositeNameBeforeAfterTest("js2", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS_2Mxml() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS_2_2() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
@@ -56,7 +56,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     doCompositeNameBeforeAfterTest("js2", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS_3Mxml() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
@@ -73,7 +73,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     doCompositeNameBeforeAfterTest("js2", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS_5Mxml() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
@@ -82,7 +82,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     doCompositeNameBeforeAfterTest("js2", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS_6Mxml() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
@@ -99,7 +99,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
     doCompositeNameBeforeAfterTest("js2", false);
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testCreateFunctionAS_8Mxml() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }

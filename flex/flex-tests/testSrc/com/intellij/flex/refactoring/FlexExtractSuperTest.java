@@ -1,12 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperProcessor;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -134,7 +134,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "SourceClass", "ISuper", DocCommentPolicy.COPY);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  @FlexTestOptions({FlexTestOption.WithFlexFacet, FlexTestOption.WithGumboSdk})
   public void testUsages() {
     doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "SourceClass", "ISuper", DocCommentPolicy.COPY,
            "movedMethod",
@@ -259,12 +259,12 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     doTest(JSExtractSuperMode.ExtractSuperTurnRefs, false, "From", "IFrom", DocCommentPolicy.COPY, "moved");
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testForInStatement() {
     doTest(JSExtractSuperMode.RenameImplementation, true, "From.as:Box", "BoxImpl", DocCommentPolicy.COPY, "sleep");
   }
 
-  @JSTestOptions(JSTestOption.WithGumboSdk)
+  @FlexTestOptions(FlexTestOption.WithGumboSdk)
   public void testInheritanceFromSdk() {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, myFixture.getTestRootDisposable());
     doTest(new PerformAction() {

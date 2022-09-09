@@ -3,6 +3,8 @@ package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
@@ -119,24 +121,24 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     doSimpleHighlightingWithInvokeFixAndCheckResult("Remove unused inner class 'Foo'");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testHighlightStaticInstanceMembers() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testGenerics() {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testOverridingMarkersWithLineMarkers() {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     defaultTest();
   }
 
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testOverridingMarkers3() {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doTestFor(true, () -> {
@@ -150,7 +152,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testShowImplementationsFromInterface2() {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
@@ -159,7 +161,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testImplementingMarkerFromSwc() {
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
@@ -167,7 +169,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
   }
 
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testNoOverrideForInternal() {
     DaemonCodeAnalyzerSettings myDaemonCodeAnalyzerSettings = DaemonCodeAnalyzerSettings.getInstance();
     myDaemonCodeAnalyzerSettings.SHOW_METHOD_SEPARATORS = true;
@@ -180,7 +182,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
   }
 
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testOverridingMarkers2() {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doTestFor(true, () -> {
@@ -194,12 +196,13 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testImplicitImplementMarker() {
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testNullQualifiedName() {
     doTestFor(true, getTestName(false) + ".as");
   }
@@ -241,7 +244,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     defaultTest(); // IDEA-110040
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithLineMarkers})
+  @JSTestOptions(JSTestOption.WithLineMarkers)
   public void testImplementsAndImplementedMarkers() {
     //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doTestFor(true, () -> {

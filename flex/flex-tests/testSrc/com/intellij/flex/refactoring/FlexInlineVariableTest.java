@@ -1,9 +1,9 @@
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
 import com.intellij.testFramework.LightProjectDescriptor;
 
@@ -45,7 +45,7 @@ public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
     doTest(getTestName(false), "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testIntoAttribute() {
     doTest(getTestName(false), "mxml");
   }

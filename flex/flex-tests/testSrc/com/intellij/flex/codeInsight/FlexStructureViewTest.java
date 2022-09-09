@@ -1,11 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.codeInsight;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.JSAbstractStructureViewTest;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.StructureViewTestUtil;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -133,7 +133,6 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testWithIncludedFiles1()  {
     myFixture.configureByFiles(BASE_PATH + getTestName(false) + ".mxml",
                      BASE_PATH + getTestName(false) + "_1.css",
@@ -143,14 +142,13 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
-  @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testSuperClasses()  {
     String s = BASE_PATH + getTestName(false);
     myFixture.configureByFiles(s + ".as", s + "_2.as", s + "_3.as", s + "_4.as");
     StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testLocalVarDerived3()  {
     trivialOneFileTest("js2");
   }
@@ -163,7 +161,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     trivialOneFileTest("js2");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexSdk)
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testObjectFields()  {
     String s = BASE_PATH + getTestName(false);
     myFixture.configureByFiles(s + ".js2");

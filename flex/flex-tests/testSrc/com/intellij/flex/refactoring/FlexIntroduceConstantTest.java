@@ -2,11 +2,11 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -124,7 +124,7 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testInMxml2() throws Exception {
     doTest("created", getTestName(false), "mxml");
   }

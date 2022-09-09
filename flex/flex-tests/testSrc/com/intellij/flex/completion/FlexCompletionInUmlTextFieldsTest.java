@@ -1,8 +1,8 @@
 package com.intellij.flex.completion;
 
+import com.intellij.flex.FlexTestOption;
+import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.uml.actions.JSCreateFieldDialog;
 import com.intellij.psi.PsiFile;
@@ -14,7 +14,7 @@ public class FlexCompletionInUmlTextFieldsTest extends FlexCompletionInTextField
     return FlexTestUtils.getTestDataPath(BASE_PATH);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateUmlFieldType() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
@@ -25,7 +25,7 @@ public class FlexCompletionInUmlTextFieldsTest extends FlexCompletionInTextField
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
+  @FlexTestOptions(FlexTestOption.WithFlexSdk)
   public void testCreateUmlFieldInitializer() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
