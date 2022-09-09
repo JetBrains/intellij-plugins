@@ -8,6 +8,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.*;
@@ -17,7 +18,6 @@ import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -30,6 +30,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
@@ -54,8 +55,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
  */
 public class DartFileListener implements AsyncFileListener {
 
-  private static final Key<Boolean> DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS =
-    Key.create("DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS");
+  private static final Object DART_PACKAGE_ROOTS_UPDATE_COALESCE = new Object();
 
   @Nullable
   @Override
@@ -101,49 +101,23 @@ public class DartFileListener implements AsyncFileListener {
     return new DartFileChangeApplier(packagesFileEvents, moveOrRenameAnalyzableFileEvents);
   }
 
-  /**
-   * Make sure to set it to {@code false} in the corresponding {@code finally} block
-   */
-  public static void setDartPackageRootUpdateScheduledOrInProgress(@NotNull final Project project, final boolean scheduledOrInProgress) {
-    if (scheduledOrInProgress) {
-      project.putUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS, true);
-    }
-    else {
-      project.putUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS, null);
-    }
-  }
-
   public static void scheduleDartPackageRootsUpdate(@NotNull final Project project) {
     if (Registry.is("dart.projects.without.pubspec", false)) return;
 
-    if (project.getUserData(DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS) == Boolean.TRUE) {
-      return;
-    }
+    ReadAction.nonBlocking(() -> collectPackagesLibraryRoots(project))
+      .coalesceBy(DART_PACKAGE_ROOTS_UPDATE_COALESCE)
+      .expireWith(DartAnalysisServerService.getInstance(project))
+      .finishOnUiThread(ModalityState.NON_MODAL, libInfo -> {
+        if (libInfo.getLibRootUrls().isEmpty()) {
+          removeDartPackagesLibraryAndDependencies(project);
+          return;
+        }
 
-    setDartPackageRootUpdateScheduledOrInProgress(project, Boolean.TRUE);
-
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      DartLibInfo libInfo = ReadAction.compute(() -> collectPackagesLibraryRoots(project));
-
-      ApplicationManager.getApplication()
-        .invokeLater(() -> {
-                       try {
-                         if (libInfo.getLibRootUrls().isEmpty()) {
-                           removeDartPackagesLibraryAndDependencies(project);
-                           return;
-                         }
-
-                         Library library = updatePackagesLibraryRoots(project, libInfo);
-                         Condition<Module> moduleFilter = DartSdkLibUtil::isDartSdkEnabled;
-                         updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
-                       }
-                       finally {
-                         setDartPackageRootUpdateScheduledOrInProgress(project, false);
-                       }
-                     },
-                     ModalityState.NON_MODAL,
-                     DartAnalysisServerService.getInstance(project).getDisposedCondition());
-    });
+        Library library = updatePackagesLibraryRoots(project, libInfo);
+        Condition<Module> moduleFilter = DartSdkLibUtil::isDartSdkEnabled;
+        updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
+      })
+      .submit(AppExecutorUtil.getAppExecutorService());
   }
 
   @NotNull
@@ -155,6 +129,7 @@ public class DartFileListener implements AsyncFileListener {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
     for (VirtualFile pubspecFile : pubspecYamlFiles) {
+      ProgressManager.checkCanceled();
       final Module module = fileIndex.getModuleForFile(pubspecFile);
       if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) continue;
 
