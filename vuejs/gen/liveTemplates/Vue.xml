@@ -1,6 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <templateSet group="Vue">
+  <template name="vrouter"
+            value="import Vue from &apos;vue&apos;;&#10;import VueRouter from &apos;vue-router&apos;;&#10;&#10;Vue.use(VueRouter);&#10;&#10;export const router = new VueRouter({&#10;	base: &apos;/&apos;,&#10;	mode: &apos;history&apos;,&#10;	routes: [&#10;		{ path: &apos;/path&apos;, component: component }&#10;	]&#10;});"
+            description="Base for Vue Router"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vroute-named"
+            value="{&#10;	path: &apos;$pathName$&apos;,&#10;	name: &apos;$routeName$&apos;,&#10;	component: () =&gt; import(&apos;./$pathToComponent$&apos;),&#10;},"
+            description="Vue Router route with per route code-splitting"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="pathName" expression="" defaultValue="&quot;pathName&quot;" alwaysStopAt="true"/>
+    <variable name="routeName" expression="" defaultValue="&quot;routeName&quot;" alwaysStopAt="true"/>
+    <variable name="pathToComponent" expression="" defaultValue="&quot;pathToComponent&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vaftereach"
+            value="router.afterEach((to, from) =&gt; {&#10;	&#10;});"
+            description="Vue Router global guards afterEach"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforeeach"
+            value="router.beforeEach((to, from, next) =&gt; {&#10;	$next$&#10;});"
+            description="Vue Router global guards beforeEach"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="next" expression="" defaultValue="&quot;next();&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforeenter"
+            value="beforeEnter(to, from, next) {&#10;	$next$&#10;},"
+            description="Vue Router per-route guard beforeEnter"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="next" expression="" defaultValue="&quot;next();&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforeresolve"
+            value="router.beforeResolve((to, from, next) =&gt; {&#10;	$next$&#10;});"
+            description="Vue Router global guards beforeResolve"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="next" expression="" defaultValue="&quot;next();&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforerouteenter"
+            value="beforeRouteEnter(to, from, next) {&#10;	next(vm =&gt; {${1:}});&#10;},"
+            description="Vue Router component guards beforeRouteEnter"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforerouteleave"
+            value="beforeRouteLeave(to, from, next) {&#10;	$next$&#10;},"
+            description="Vue Router component guards beforeRouteLeave"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="next" expression="" defaultValue="&quot;next();&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforerouteupdate"
+            value="beforeRouteUpdate(to, from, next) {&#10;	$next$&#10;},"
+            description="Vue Router component guards beforeRouteUpdate"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="next" expression="" defaultValue="&quot;next();&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vscrollbehavior"
+            value="scrollBehavior(to, from, savedPosition) {&#10;	if(savedPosition) {&#10;		return savedPosition;&#10;	} else {&#10;		return { x: 0, y: 0 };&#10;	}&#10;},"
+            description="Vue Router scrollBehavior"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
   <template name="vstore-import"
             value="import { store } from &apos;./store/index&apos;;"
             description="Import vuex store into main.js"
@@ -31,6 +129,15 @@
     </context>
   </template>
 
+  <template name="vmodule"
+            value="export default {&#10;	state: {&#10;		value: &apos;my value&apos;&#10;	},&#10;	getters: {&#10;		value: state =&gt; {&#10;			return state.value;&#10;		}&#10;	},&#10;	mutations: {&#10;		updateValue(state, payload) {&#10;			state.value = payload;&#10;		}&#10;	},&#10;	actions: {&#10;		updateValue({commit}, payload) {&#10;			commit(&apos;updateValue&apos;, payload);&#10;		}&#10;	}&#10;};"
+            description="Vuex module"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
   <template name="vmutation"
             value="mutations: {&#10;	$updateValue$(state, $payload$) {&#10;		state.$value$ = $payload$;&#10;	}&#10;}"
             description="Vuex mutation"
@@ -49,6 +156,141 @@
             toReformat="true" toShortenFQNames="true">
     <variable name="key" expression="" defaultValue="&quot;key&quot;" alwaysStopAt="true"/>
     <variable name="value" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vstore2"
+            value="export const state = () =&gt; ({&#10;	value: &apos;myvalue&apos;&#10;})&#10;&#10;export const getters = {&#10;	getterValue: state =&gt; {&#10;		return state.value&#10;	}&#10;}&#10;&#10;export const mutations = {&#10;	updateValue: (state, payload) =&gt; {&#10;		state.value = payload&#10;	}&#10;}&#10;&#10;export const actions = {&#10;	updateActionValue({ commit }) {&#10;		commit(&apos;updateValue&apos;, payload)&#10;	}&#10;}"
+            description="Vuex store 2"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vplugin"
+            value="import Vue from &apos;vue&apos;&#10;import $VueCompositionApi$ from &apos;$VueCompositionApiPackage$&apos;&#10;&#10;Vue.use($VueCompositionApi$)"
+            description="Import a plugin to main.js or plugins file"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="VueCompositionApiPackage" expression="" defaultValue="&quot;@vue/composition-api&quot;" alwaysStopAt="true"/>
+    <variable name="VueCompositionApi" expression="" defaultValue="&quot;VueCompositionApi&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vtest"
+            value="import Vue from &apos;vue&apos;;&#10;import $componentName$ from &apos;./components/$componentName$&apos;;&#10;&#10;describe(&apos;$componentName$.vue&apos;, () =&gt; {&#10;	it(&apos;$name$&apos;, () =&gt; {&#10;		const Constructor = Vue.extend($componentName$);&#10;		const vm = new Constructor().$mount$();&#10;		expect(vm.$el$.querySelector(&apos;.hello h1&apos;).textContent)&#10;			.to.equal($equal$);&#10;	});&#10;});"
+            description="Unit test component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;should render correct contents&quot;" alwaysStopAt="true"/>
+    <variable name="equal" expression="" defaultValue="&quot;'Welcome to Your Vue.js App'&quot;" alwaysStopAt="true"/>
+    <variable name="mount" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="el" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="componentName" expression="" defaultValue="&quot;HelloWorld&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3useinoptions"
+            value="import { $component$ } from &apos;@/composables/$component$.js&apos;&#10;&#10;export default {&#10;	setup () {&#10;		const { $name$ } = $component$()&#10;	&#10;		return {&#10;			$name$&#10;		}&#10;	}&#10;}"
+            description="Use Composition API within Options API"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="component" expression="" defaultValue="&quot;component&quot;" alwaysStopAt="true"/>
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vcommit"
+            value="$mutationName$() {&#10;	this.\$store$.commit(&apos;$mutationName$&apos;, $payload$);&#10;}"
+            description="Commit to vuex store in methods for mutation"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="store" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="mutationName" expression="" defaultValue="&quot;mutationName&quot;" alwaysStopAt="true"/>
+    <variable name="payload" expression="" defaultValue="&quot;payload&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3computed"
+            value="const $name$ = computed(() =&gt; {&#10;	return $return$&#10;})"
+            description="Vue Composition api - computed"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="return" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3reactive"
+            value="const $name$ = reactive({&#10;	$count$: $END$&#10;})"
+            description="Vue Composition api - reactive"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="count" expression="" defaultValue="&quot;count&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3ref"
+            value="const $name$ = ref($initialValue$)"
+            description="Vue Ref"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="initialValue" expression="" defaultValue="&quot;initialValue&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3watch-array"
+            value="watch([$foo$, $bar$], ([new$1$, new$2$], [prev$1$, prev$2$]) =&gt; {&#10;	$3$&#10;})"
+            description="Vue Composition api - watch as array"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="1" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="2" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="3" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="foo" expression="" defaultValue="&quot;foo&quot;" alwaysStopAt="true"/>
+    <variable name="bar" expression="" defaultValue="&quot;bar&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3watch"
+            value="watch(() =&gt; $foo$, (newValue, oldValue) =&gt; {&#10;	$body$&#10;})"
+            description="Vue Composition api - watcher single source"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="foo" expression="" defaultValue="&quot;foo&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3watcheffect"
+            value="watchEffect(() =&gt; {&#10;	$body$&#10;})"
+            description="Vue Composition api - watchEffect"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3reactive-setup"
+            value="import { reactive, toRefs } from &apos;vue&apos;&#10;&#10;export default {&#10;	setup () {&#10;		const state = reactive({&#10;			$count$: $END$,&#10;		})&#10;	&#10;		return {&#10;			...toRefs(state),&#10;		}&#10;	}&#10;}"
+            description="Vue Composition API Script with Reactive"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="count" expression="" defaultValue="&quot;count&quot;" alwaysStopAt="true"/>
     <context>
       <option name="VUE_SCRIPT" value="true"/>
     </context>
@@ -88,6 +330,18 @@
     </context>
   </template>
 
+  <template name="vdispatch"
+            value="$actionName$() {&#10;	this.\$store$.dispatch(&apos;$actionName$&apos;, $payload$);&#10;}"
+            description="Dispatch to vuex store in methods for action"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="store" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="actionName" expression="" defaultValue="&quot;actionName&quot;" alwaysStopAt="true"/>
+    <variable name="payload" expression="" defaultValue="&quot;payload&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
   <template name="vfilter"
             value="filters: {&#10;	$fnName$: function($value$) {&#10;		return $value$$END$;&#10;	}&#10;}"
             description="Vue filter"
@@ -96,6 +350,16 @@
     <variable name="value" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
     <context>
       <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vimport-dynamic"
+            value="$New$ = () =&gt; import(&apos;@/components/$New$.vue&apos;)"
+            description="Import component that should be lazy loaded"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="New" expression="" defaultValue="&quot;New&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
 
@@ -145,6 +409,188 @@
     <variable name="New" expression="" defaultValue="&quot;New&quot;" alwaysStopAt="true"/>
     <context>
       <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onbeforemount"
+            value="onBeforeMount(() =&gt; {$body$})"
+            description="Vue onBeforeMount Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onbeforeunmount"
+            value="onBeforeUnmount(() =&gt; {$body$})"
+            description="(beforeDestroy) Vue onBeforeUnmount Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onbeforeupdate"
+            value="onBeforeUpdate(() =&gt; {$body$})"
+            description="Vue onBeforeUpdate Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onerrorcaptured"
+            value="onErrorCaptured(() =&gt; {$body$})"
+            description="Vue onErrorCaptured Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onmounted"
+            value="onMounted(() =&gt; {$body$})"
+            description="Vue Mounted Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onunmounted"
+            value="onUnmounted(() =&gt; {$body$})"
+            description="(destroyed) Vue onUnmounted Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="v3onupdated"
+            value="onUpdated(() =&gt; {$body$})"
+            description="Vue onUpdated Lifecycle hook"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="body" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforecreate"
+            value="beforeCreate () {&#10;	$END$;&#10;},"
+            description="BeforeCreate lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforedestroy"
+            value="beforeDestroy () {&#10;	$END$;&#10;},"
+            description="BeforeDestroy lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforemount"
+            value="beforeMount () {&#10;	$END$;&#10;},"
+            description="BeforeMount lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbeforeupdate"
+            value="beforeUpdate () {&#10;	$END$;&#10;},"
+            description="BeforeUpdate lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vcreated"
+            value="created () {&#10;	$END$;&#10;},"
+            description="Created lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vdestroyed"
+            value="destroyed () {&#10;	$END$;&#10;},"
+            description="Destroyed lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vmounted"
+            value="mounted () {&#10;	$END$;&#10;},"
+            description="Mounted lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vupdated"
+            value="updated () {&#10;	$END$;&#10;},"
+            description="Updated lifecycle method"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vmapactions"
+            value="import { mapActions } from &apos;vuex&apos;;&#10;&#10;export default {&#10;	methods: {&#10;		...mapActions([&#10;			$nameOfAction$, //also supports payload `this.nameOfAction(amount)` &#10;		])&#10;	},&#10;};"
+            description="Mapactions inside a vue component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="nameOfAction" expression="" defaultValue="&quot;'nameOfAction'&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vmapgetters"
+            value="import { mapGetters } from &apos;vuex&apos;;&#10;&#10;export default {&#10;	computed: {&#10;		...mapGetters([&#10;			$nameOfGetter$,&#10;		])&#10;	},&#10;};"
+            description="Mapgetters inside a vue component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="nameOfGetter" expression="" defaultValue="&quot;'nameOfGetter'&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vmapmutations"
+            value="import { mapMutations } from &apos;vuex&apos;;&#10;&#10;export default {&#10;	methods: {&#10;		...mapMutations([&#10;			$nameOfMutation$, //also supports payload `this.nameOfMutation(amount)` &#10;		])&#10;	},&#10;};"
+            description="Mapmutations inside a vue component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="nameOfMutation" expression="" defaultValue="&quot;'nameOfMutation'&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
+  <template name="vmapstate"
+            value="import { mapState } from &apos;vuex&apos;;&#10;&#10;export default {&#10;	computed: {&#10;		...mapState([&#10;			$vmapstate$,&#10;		])&#10;	},&#10;};"
+            description="Map getters inside a vue component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="vmapstate" expression="" defaultValue="&quot;'nameOfState'&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
 
@@ -211,6 +657,30 @@
     </context>
   </template>
 
+  <template name="vwatcher-options"
+            value="watch: {&#10;	$data$: {&#10;		immediate: $true$,&#10;		deep: $true$,&#10;		handler($newValue$, $oldValue$) {&#10;			$END$&#10;		}&#10;	}&#10;},"
+            description="Vue watcher with options"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="data" expression="" defaultValue="&quot;data&quot;" alwaysStopAt="true"/>
+    <variable name="true" expression="" defaultValue="&quot;true&quot;" alwaysStopAt="true"/>
+    <variable name="newValue" expression="" defaultValue="&quot;newValue&quot;" alwaysStopAt="true"/>
+    <variable name="oldValue" expression="" defaultValue="&quot;oldValue&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_COMPONENT_DESCRIPTOR" value="true"/>
+    </context>
+  </template>
+
+  <template name="vconfig"
+            value="module.exports = {&#10;	css: {&#10;		loaderOptions: {&#10;			$sass$: {&#10;				data: `$data$`&#10;			}&#10;		}&#10;	}&#10;}"
+            description="Vue.config.js"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="data" expression="" defaultValue="&quot;@import '@/styles/_variables.scss';&quot;" alwaysStopAt="true"/>
+    <variable name="sass" expression="" defaultValue="&quot;sass&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_SCRIPT" value="true"/>
+    </context>
+  </template>
+
   <template name="vclass"
             value="&lt;$div$ :class=&quot;{ $className$: $data$ }&quot;&gt;&lt;/$div$&gt;"
             description="Vue class binding"
@@ -246,6 +716,28 @@
     </context>
   </template>
 
+  <template name="vemit-child"
+            value="@change=&quot;$emit$(&apos;change&apos;, $event$.target.value)&quot;"
+            description="Vue Emit from Child Component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="emit" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="event" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_INSIDE_TAG" value="true"/>
+    </context>
+  </template>
+
+  <template name="vemit-parent"
+            value="@change=&quot;$foo$ = $event$&quot;"
+            description="Vue Emit to Parent Component"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="event" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true"/>
+    <variable name="foo" expression="" defaultValue="&quot;foo&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_INSIDE_TAG" value="true"/>
+    </context>
+  </template>
+
   <template name="vsrc"
             value="&lt;img :src=&quot;&apos;/path/to/images/&apos; + $fileName$&quot; alt=&quot;$altText$&quot;/&gt;"
             description="Vue image source binding"
@@ -265,6 +757,62 @@
     <variable name="classNameA" expression="" defaultValue="&quot;classNameA&quot;" alwaysStopAt="true"/>
     <variable name="classNameB" expression="" defaultValue="&quot;classNameB&quot;" alwaysStopAt="true"/>
     <variable name="condition" expression="" defaultValue="&quot;condition&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TEMPLATE" value="true"/>
+    </context>
+  </template>
+
+  <template name="vroutename"
+            value="&lt;router-link :to=&quot;{name: &apos;$name$&apos;}&quot;&gt;$LinkTitle$&lt;/router-link&gt;"
+            description="Named routing link"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="LinkTitle" expression="" defaultValue="&quot;LinkTitle&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TEMPLATE" value="true"/>
+    </context>
+  </template>
+
+  <template name="vroutenameparam"
+            value="&lt;router-link :to=&quot;{name: &apos;$name$&apos;, params:{$id$: &apos;$value$&apos;} }&quot;&gt;$LinkTitle$&lt;/router-link&gt;"
+            description="Named routing link w/ params"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="id" expression="" defaultValue="&quot;id&quot;" alwaysStopAt="true"/>
+    <variable name="value" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="LinkTitle" expression="" defaultValue="&quot;LinkTitle&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TEMPLATE" value="true"/>
+    </context>
+  </template>
+
+  <template name="vslot-named"
+            value="&lt;template v-slot:$name$&gt;$defaultcontent$&lt;/template&gt;"
+            description="Named slot"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="name" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="defaultcontent" expression="" defaultValue="&quot;defaultcontent&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TEMPLATE" value="true"/>
+    </context>
+  </template>
+
+  <template name="vnuxtl"
+            value="&lt;nuxt-link to=&quot;/$page$&quot;&gt;$page$&lt;/nuxt-link&gt;"
+            description="Nuxt routing link"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="page" expression="" defaultValue="&quot;page&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TEMPLATE" value="true"/>
+    </context>
+  </template>
+
+  <template name="vroutepath"
+            value="&lt;router-link to=&quot;$path$&quot;&gt;$LinkTitle$&lt;/router-link&gt;"
+            description="Path routing link"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="path" expression="" defaultValue="&quot;path&quot;" alwaysStopAt="true"/>
+    <variable name="LinkTitle" expression="" defaultValue="&quot;LinkTitle&quot;" alwaysStopAt="true"/>
     <context>
       <option name="VUE_TEMPLATE" value="true"/>
     </context>
@@ -345,9 +893,127 @@
     </context>
   </template>
 
+  <template name="vbase"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;scss&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with SCSS"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-3"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;export default {&#10;	setup () {&#10;		$END$&#10;&#10;		return {}&#10;	}&#10;}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;scss&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File Composition API with SCSS"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-3-reactive"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;import { reactive, toRefs } from &apos;vue&apos;&#10;&#10;export default {&#10;	setup () {&#10;		const state = reactive({&#10;			$count$: $END$,&#10;		})&#10;	&#10;		return {&#10;			...toRefs(state),&#10;		}&#10;	}&#10;}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;scss&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File Composition API with SCSS"
+            toReformat="true" toShortenFQNames="true">
+    <variable name="count" expression="" defaultValue="&quot;count&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-3-ts"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script lang=&quot;ts&quot;&gt;&#10;import { defineComponent } from &apos;vue&apos;&#10;&#10;export default defineComponent({&#10;	setup () {&#10;		$END$&#10;&#10;		return {}&#10;	}&#10;})&#10;&lt;/script&gt;&#10;&#10;&lt;style scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File Composition API - Typescript"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-3-setup"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script setup&gt;&#10;&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;scss&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File Setup Composition API with SCSS"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-3-ts-setup"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script setup lang=&quot;ts&quot;&gt;&#10;&#10;&lt;/script&gt;&#10;&#10;&lt;style scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File Setup Composition API - Typescript"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-ts-class"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script lang=&quot;ts&quot;&gt;&#10;	import { Component, Vue } from &apos;vue-property-decorator&apos;;&#10;&#10;	@Component&#10;	export default class $END$ extends Vue {&#10;		&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with Class based Typescript format"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
   <template name="vbase-css"
             value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style scoped&gt;&#10;&#10;&lt;/style&gt;"
             description="Base for Vue File with CSS"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-less"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;less&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with PostCSS"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-ns"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;"
+            description="Base for Vue File with no styles"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-sass"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;sass&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with PostCSS"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-styl"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;stylus&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with Stylus"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-ts"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script lang=&quot;ts&quot;&gt;&#10;	import Vue from &apos;vue&apos;&#10;&#10;	export default Vue.extend({&#10;		$END$&#10;	})&#10;&lt;/script&gt;&#10;&#10;&lt;style scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with Typescript"
+            toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="VUE_TOP_LEVEL" value="true"/>
+    </context>
+  </template>
+
+  <template name="vbase-pcss"
+            value="&lt;template&gt;&#10;	&lt;div&gt;&#10;&#10;	&lt;/div&gt;&#10;&lt;/template&gt;&#10;&#10;&lt;script&gt;&#10;	export default {&#10;		$END$&#10;	}&#10;&lt;/script&gt;&#10;&#10;&lt;style lang=&quot;postcss&quot; scoped&gt;&#10;&#10;&lt;/style&gt;"
+            description="Base for Vue File with PostCSS"
             toReformat="true" toShortenFQNames="true">
     <context>
       <option name="VUE_TOP_LEVEL" value="true"/>

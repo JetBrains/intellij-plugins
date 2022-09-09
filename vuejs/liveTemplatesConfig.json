@@ -111,6 +111,835 @@
       "context": [
         "VUE_COMPONENT_DESCRIPTOR"
       ]
+    },
+    "vrouter": {
+      "description": "Base for Vue Router",
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vroute-named": {
+      "description": "Vue Router route with per route code-splitting",
+      "variables": {
+        "pathName": {
+          "name": "pathName",
+          "defaultValue": "pathName"
+        },
+        "routeName": {
+          "name": "routeName",
+          "defaultValue": "routeName"
+        },
+        "pathToComponent": {
+          "name": "pathToComponent",
+          "defaultValue": "pathToComponent"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vaftereach": {
+      "description": "Vue Router global guards afterEach",
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vbeforeeach": {
+      "description": "Vue Router global guards beforeEach",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vbeforeenter": {
+      "description": "Vue Router per-route guard beforeEnter",
+      "variables": {},
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vbeforeresolve": {
+      "description": "Vue Router global guards beforeResolve",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vbeforerouteenter": {
+      "description": "Vue Router component guards beforeRouteEnter",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vbeforerouteleave": {
+      "description": "Vue Router component guards beforeRouteLeave",
+      "variables": {},
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vbeforerouteupdate": {
+      "description": "Vue Router component guards beforeRouteUpdate",
+      "variables": {},
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vscrollbehavior": {
+      "description": "Vue Router scrollBehavior",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vaction": {
+      "description": "Vuex action",
+      "variables": {
+        "updateValue": {
+          "name": "updateValue",
+          "defaultValue": "updateValue"
+        },
+        "payload": {
+          "name": "payload",
+          "defaultValue": "payload"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vgetter": {
+      "description": "Vuex getter",
+      "variables": {},
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vmodule": {
+      "description": "Vuex module",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vmutation": {
+      "description": "Vuex mutation",
+      "variables": {
+        "updateValue": {
+          "name": "updateValue",
+          "defaultValue": "updateValue"
+        },
+        "payload": {
+          "name": "payload",
+          "defaultValue": "payload"
+        },
+        "value": {
+          "name": "value",
+          "defaultValue": "value"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vstore2": {
+      "description": "Vuex store 2",
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vplugin": {
+      "description": "Import a plugin to main.js or plugins file",
+      "variables": {
+        "VueCompositionApiPackage": {
+          "name": "VueCompositionApiPackage",
+          "defaultValue": "@vue/composition-api"
+        },
+        "VueCompositionApi": {
+          "name": "VueCompositionApi",
+          "defaultValue": "VueCompositionApi"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vtest": {
+      "description": "Unit test component",
+      "variables": {
+        "name": {
+          "name": "name",
+          "defaultValue": "should render correct contents"
+        },
+        "equal": {
+          "name": "equal",
+          "defaultValue": "'Welcome to Your Vue.js App'"
+        },
+        "mount": {
+          "name": "mount",
+          "defaultValue": ""
+        },
+        "el": {
+          "name": "el",
+          "defaultValue": ""
+        },
+        "componentName": {
+          "name": "componentName",
+          "defaultValue": "HelloWorld"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3useinoptions": {
+      "description": "Use Composition API within Options API",
+      "variables": {
+        "component": {
+          "name": "component",
+          "defaultValue": "component"
+        },
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vcommit": {
+      "description": "Commit to vuex store in methods for mutation",
+      "variables": {
+        "store": {
+          "name": "store",
+          "defaultValue": ""
+        },
+        "mutationName": {
+          "name": "mutationName",
+          "defaultValue": "mutationName"
+        },
+        "payload": {
+          "name": "payload",
+          "defaultValue": "payload"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "v3computed": {
+      "description": "Vue Composition api - computed",
+      "variables": {
+        "return": {
+          "name": "return",
+          "defaultValue": ""
+        },
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3reactive": {
+      "description": "Vue Composition api - reactive",
+      "variables": {
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        },
+        "count": {
+          "name": "count",
+          "defaultValue": "count"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3ref": {
+      "description": "Vue Ref",
+      "variables": {
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        },
+        "initialValue": {
+          "name": "initialValue",
+          "defaultValue": "initialValue"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3watch-array": {
+      "description": "Vue Composition api - watch as array",
+      "variables": {
+        "1": {
+          "name": "1",
+          "defaultValue": ""
+        },
+        "2": {
+          "name": "2",
+          "defaultValue": ""
+        },
+        "3": {
+          "name": "3",
+          "defaultValue": ""
+        },
+        "foo": {
+          "name": "foo",
+          "defaultValue": "foo"
+        },
+        "bar": {
+          "name": "bar",
+          "defaultValue": "bar"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3watch": {
+      "description": "Vue Composition api - watcher single source",
+      "variables": {
+        "body": {
+          "name": "body",
+          "defaultValue": ""
+        },
+        "foo": {
+          "name": "foo",
+          "defaultValue": "foo"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3watcheffect": {
+      "description": "Vue Composition api - watchEffect",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3reactive-setup": {
+      "description": "Vue Composition API Script with Reactive",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vdispatch": {
+      "description": "Dispatch to vuex store in methods for action",
+      "variables": {
+        "store": {
+          "name": "store",
+          "defaultValue": ""
+        },
+        "actionName": {
+          "name": "actionName",
+          "defaultValue": "actionName"
+        },
+        "payload": {
+          "name": "payload",
+          "defaultValue": "payload"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vimport-dynamic": {
+      "description": "Import component that should be lazy loaded",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vimport-export": {
+      "description": "Import a component and include it in export default",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vimport": {
+      "description": "Import one component into another",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vimport-lib": {
+      "description": "Import a library",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onbeforemount": {
+      "description": "Vue onBeforeMount Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onbeforeunmount": {
+      "description": "(beforeDestroy) Vue onBeforeUnmount Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onbeforeupdate": {
+      "description": "Vue onBeforeUpdate Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onerrorcaptured": {
+      "description": "Vue onErrorCaptured Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onmounted": {
+      "description": "Vue Mounted Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onunmounted": {
+      "description": "(destroyed) Vue onUnmounted Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "v3onupdated": {
+      "description": "Vue onUpdated Lifecycle hook",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vbeforecreate": {
+      "description": "BeforeCreate lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vbeforedestroy": {
+      "description": "BeforeDestroy lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vbeforemount": {
+      "description": "BeforeMount lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vbeforeupdate": {
+      "description": "BeforeUpdate lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vcreated": {
+      "description": "Created lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vdestroyed": {
+      "description": "Destroyed lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vmounted": {
+      "description": "Mounted lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vupdated": {
+      "description": "Updated lifecycle method",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vmapactions": {
+      "description": "Mapactions inside a vue component",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vmapgetters": {
+      "description": "Mapgetters inside a vue component",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vmapmutations": {
+      "description": "Mapmutations inside a vue component",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vmapstate": {
+      "description": "Map getters inside a vue component",
+      "variables": {},
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vwatcher-options": {
+      "description": "Vue watcher with options",
+      "variables": {
+        "data": {
+          "name": "data",
+          "defaultValue": "data"
+        },
+        "true": {
+          "name": "true",
+          "defaultValue": "true"
+        },
+        "newValue": {
+          "name": "newValue",
+          "defaultValue": "newValue"
+        },
+        "oldValue": {
+          "name": "oldValue",
+          "defaultValue": "oldValue"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vconfig": {
+      "description": "Vue.config.js",
+      "variables": {
+        "data": {
+          "name": "data",
+          "defaultValue": "@import '@/styles/_variables.scss';"
+        },
+        "sass": {
+          "name": "sass",
+          "defaultValue": "sass"
+        }
+      },
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vclass": {
+      "description": "Vue class binding",
+      "variables": {
+        "div": {
+          "name": "div",
+          "defaultValue": "div"
+        },
+        "className": {
+          "name": "className",
+          "defaultValue": "className"
+        },
+        "data": {
+          "name": "data",
+          "defaultValue": "data"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vclass-obj": {
+      "description": "Vue class binding",
+      "variables": {
+        "div": {
+          "name": "div",
+          "defaultValue": "div"
+        },
+        "classNameA": {
+          "name": "classNameA",
+          "defaultValue": "classNameA"
+        },
+        "classNameB": {
+          "name": "classNameB",
+          "defaultValue": "classNameB"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vemit-child": {
+      "description": "Vue Emit from Child Component",
+      "variables": {
+        "emit": {
+          "name": "emit",
+          "defaultValue": ""
+        },
+        "event": {
+          "name": "event",
+          "defaultValue": ""
+        }
+      },
+      "context": [
+        "VUE_INSIDE_TAG"
+      ]
+    },
+    "vemit-parent": {
+      "description": "Vue Emit to Parent Component",
+      "variables": {
+        "event": {
+          "name": "event",
+          "defaultValue": ""
+        },
+        "foo": {
+          "name": "foo",
+          "defaultValue": "foo"
+        }
+      },
+      "context": [
+        "VUE_INSIDE_TAG"
+      ]
+    },
+    "vclass-obj-mult": {
+      "description": "Vue multiple conditional class bindings",
+      "variables": {
+        "div": {
+          "name": "div",
+          "defaultValue": "div"
+        },
+        "classNameA": {
+          "name": "classNameA",
+          "defaultValue": "classNameA"
+        },
+        "classNameB": {
+          "name": "classNameB",
+          "defaultValue": "classNameB"
+        },
+        "condition": {
+          "name": "condition",
+          "defaultValue": "condition"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vroutename": {
+      "description": "Named routing link",
+      "variables": {
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        },
+        "LinkTitle": {
+          "name": "LinkTitle",
+          "defaultValue": "LinkTitle"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vroutenameparam": {
+      "description": "Named routing link w/ params",
+      "variables": {
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        },
+        "id": {
+          "name": "id",
+          "defaultValue": "id"
+        },
+        "value": {
+          "name": "value",
+          "defaultValue": "value"
+        },
+        "LinkTitle": {
+          "name": "LinkTitle",
+          "defaultValue": "LinkTitle"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vslot-named": {
+      "description": "Named slot",
+      "variables": {
+        "name": {
+          "name": "name",
+          "defaultValue": "name"
+        },
+        "defaultcontent": {
+          "name": "defaultcontent",
+          "defaultValue": "defaultcontent"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vnuxtl": {
+      "description": "Nuxt routing link",
+      "variables": {},
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vroutepath": {
+      "description": "Path routing link",
+      "variables": {
+        "path": {
+          "name": "path",
+          "defaultValue": "path"
+        },
+        "LinkTitle": {
+          "name": "LinkTitle",
+          "defaultValue": "LinkTitle"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vstyle": {
+      "description": "Vue inline style binding",
+      "variables": {
+        "div": {
+          "name": "div",
+          "defaultValue": "div"
+        },
+        "data": {
+          "name": "data",
+          "defaultValue": "data"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vstyle-obj": {
+      "description": "Vue inline style binding, objects",
+      "variables": {
+        "div": {
+          "name": "div",
+          "defaultValue": "div"
+        },
+        "styleObjectA": {
+          "name": "styleObjectA",
+          "defaultValue": "styleObjectA"
+        },
+        "styleObjectB": {
+          "name": "styleObjectB",
+          "defaultValue": "styleObjectB"
+        }
+      },
+      "context": [
+        "VUE_TEMPLATE"
+      ]
+    },
+    "vbase": {
+      "description": "Base for Vue File with SCSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-3": {
+      "description": "Base for Vue File Composition API with SCSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-3-reactive": {
+      "description": "Base for Vue File Composition API with SCSS",
+      "variables": {},
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-3-ts": {
+      "description": "Base for Vue File Composition API - Typescript",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-3-setup": {
+      "description": "Base for Vue File Setup Composition API with SCSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-3-ts-setup": {
+      "description": "Base for Vue File Setup Composition API - Typescript",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-ts-class": {
+      "description": "Base for Vue File with Class based Typescript format",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-css": {
+      "description": "Base for Vue File with CSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-less": {
+      "description": "Base for Vue File with PostCSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-ns": {
+      "description": "Base for Vue File with no styles",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-sass": {
+      "description": "Base for Vue File with PostCSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-styl": {
+      "description": "Base for Vue File with Stylus",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-ts": {
+      "description": "Base for Vue File with Typescript",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
+    },
+    "vbase-pcss": {
+      "description": "Base for Vue File with PostCSS",
+      "context": [
+        "VUE_TOP_LEVEL"
+      ]
     }
   }
 }
