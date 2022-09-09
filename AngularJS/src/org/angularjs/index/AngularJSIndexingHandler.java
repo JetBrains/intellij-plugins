@@ -279,7 +279,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean shouldCreateStubForCallExpression(ASTNode node) {
+  public boolean shouldCreateStubForCallExpression(@NotNull ASTNode node) {
     final ASTNode methodExpression = JSCallExpressionImpl.getMethodExpression(node);
     if (methodExpression == null) return false;
 

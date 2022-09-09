@@ -277,8 +277,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return outData
   }
 
-  override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
-    val reference = (node?.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
+  override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
+    val reference = (node.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
     return isCompositionApiAppObjectCall(node, reference)
            || VueStaticMethod.matchesAny(reference)
            || isCallExpressionWithSignificantName(node, reference.referenceName)
@@ -442,8 +442,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun useOnlyCompleteMatch(type: JSType, evaluateContext: JSEvaluateContext): Boolean =
     VueCompositionPropsTypeProvider.useOnlyCompleteMatch(type)
 
-  override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
-    if (node?.psi is JSLiteralExpression) {
+  override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
+    if (node.psi is JSLiteralExpression) {
       return hasSignificantValue(node.psi as JSLiteralExpression)
     }
     return super.shouldCreateStubForLiteral(node)

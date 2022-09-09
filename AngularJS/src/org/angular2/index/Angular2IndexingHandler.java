@@ -103,12 +103,12 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean shouldCreateStubForLiteral(ASTNode node) {
+  public boolean shouldCreateStubForLiteral(@NotNull ASTNode node) {
     return checkIsInterestingPropertyValue(node.getTreeParent());
   }
 
   @Override
-  public boolean shouldCreateStubForCallExpression(ASTNode node) {
+  public boolean shouldCreateStubForCallExpression(@NotNull ASTNode node) {
     final ASTNode parent = node.getTreeParent();
     if (parent != null && parent.getElementType() == JSStubElementTypes.ES6_DECORATOR) {
       final ASTNode methodExpression = node.getFirstChildNode();

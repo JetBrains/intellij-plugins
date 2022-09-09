@@ -19,7 +19,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.types.JSContext
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.castSafelyTo
@@ -39,9 +38,9 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     VueFrameworkHandler.record(VuexStoreIndex.KEY)
   )
 
-  override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
-    if (node?.elementType === JSElementTypes.CALL_EXPRESSION) {
-      val reference = node?.let { JSCallExpressionImpl.getMethodExpression(it) }
+  override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
+    if (node.elementType === JSElementTypes.CALL_EXPRESSION) {
+      val reference = node.let { JSCallExpressionImpl.getMethodExpression(it) }
                         ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
                       ?: return false
       val refName = JSReferenceExpressionImpl.getReferenceName(reference) ?: return false
@@ -55,7 +54,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     else {
       // new Vuex.Store call
       return node
-        ?.takeIf {
+        .takeIf {
           it.elementType === JSElementTypes.NEW_EXPRESSION
           || it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION
         }
@@ -69,12 +68,12 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
-  override fun shouldCreateStubForArrayLiteral(node: ASTNode?): Boolean {
-    return shouldCreateStubForCallExpression(node?.treeParent?.treeParent)
+  override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean {
+    val grandParent = node.treeParent?.treeParent
+    return grandParent != null && shouldCreateStubForCallExpression(grandParent)
   }
 
-  override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
-    if (node == null) return false
+  override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     if (node.firstChildNode?.elementType === JSTokenTypes.TRUE_KEYWORD) {
       return node.treeParent?.psi
         ?.castSafelyTo<JSProperty>()
@@ -86,7 +85,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       val parent = node.treeParent
       when (parent?.elementType) {
         JSElementTypes.ARGUMENT_LIST -> {
-          return shouldCreateStubForCallExpression(parent?.treeParent)
+          return parent.treeParent?.let { shouldCreateStubForCallExpression(it) } ?: false
         }
         JSElementTypes.ARRAY_LITERAL_EXPRESSION -> {
           return shouldCreateStubForArrayLiteral(parent)
