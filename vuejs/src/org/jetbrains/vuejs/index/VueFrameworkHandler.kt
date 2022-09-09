@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
+import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
@@ -278,10 +280,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
-    val reference = (node.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
-    return isCompositionApiAppObjectCall(node, reference)
-           || VueStaticMethod.matchesAny(reference)
-           || isCallExpressionWithSignificantName(node, reference.referenceName)
+    val methodExpression = JSCallExpressionImpl.getMethodExpression(node)
+    if (methodExpression == null || methodExpression.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
+    return isCompositionApiAppObjectCall(node, methodExpression)
+           || VueStaticMethod.matchesAny(methodExpression)
+           || isCallExpressionWithSignificantName(node, JSReferenceExpressionImpl.getReferenceName(methodExpression))
   }
 
   override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean =
@@ -373,7 +376,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
     else if (callExpression.methodExpression
-        .castSafelyTo<JSReferenceExpression>()?.let { isCompositionApiAppObjectCall(callExpression.node, it) } == true) {
+        .castSafelyTo<JSReferenceExpression>()?.let { isCompositionApiAppObjectCall(callExpression.node, it.node) } == true) {
       outData.addImplicitElement(JSImplicitElementImpl.Builder(normalizeNameForIndex(referenceName), callExpression)
                                    .setUserStringWithData(
                                      this, VueCompositionAppIndex.JS_KEY,
@@ -461,7 +464,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       expression.node.treeParent.treeParent
         ?.takeIf { it.elementType == JSElementTypes.CALL_EXPRESSION }
         ?.let { callNode ->
-          val reference = (callNode.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression ?: return false
+          val reference = JSCallExpressionImpl.getMethodExpression(callNode)
+          if (reference == null || reference.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
           return isCompositionApiAppObjectCall(callNode, reference)
         }
     }
@@ -519,9 +523,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           METHOD_NAME_USER_STRING, VueCompositionAppIndex.JS_KEY)
 
   private fun isCompositionApiAppObjectCall(callNode: ASTNode,
-                                            ref: JSReferenceExpression): Boolean {
-    val refName = ref.referenceName
-    return if (ref.qualifier == null)
+                                            referenceExpression: ASTNode): Boolean {
+    val refName = JSReferenceExpressionImpl.getReferenceName(referenceExpression)
+    return if (JSReferenceExpressionImpl.getQualifierNode(referenceExpression) == null)
       refName == CREATE_APP_FUN
     else {
       refName == MOUNT_FUN || refName == MIXIN_FUN ||
@@ -637,10 +641,13 @@ private enum class VueStaticMethod(val methodName: String) {
   Filter(FILTER_FUN);
 
   companion object {
-    fun matchesAny(reference: JSReferenceExpression): Boolean = values().any { it.matches(reference) }
+    fun matchesAny(referenceExpression: ASTNode): Boolean = values().any { it.matches(referenceExpression) }
   }
 
   fun matches(reference: JSReferenceExpression): Boolean =
+    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE_NAMESPACE, methodName)
+
+  fun matches(reference: ASTNode): Boolean =
     JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE_NAMESPACE, methodName)
 }
 //#endregion
