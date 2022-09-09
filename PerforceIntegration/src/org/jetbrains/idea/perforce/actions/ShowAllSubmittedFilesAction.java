@@ -16,6 +16,7 @@
 package org.jetbrains.idea.perforce.actions;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -43,6 +44,11 @@ import java.util.Date;
 public class ShowAllSubmittedFilesAction extends AnAction implements DumbAware {
   public ShowAllSubmittedFilesAction() {
     super(PerforceBundle.messagePointer("action.text.show.all.submitted"), AllIcons.Actions.ListChanges);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

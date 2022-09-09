@@ -16,6 +16,7 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
@@ -198,6 +199,11 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
     ShowBranchesAction(final Runnable panelRefresher) {
       super(PerforceBundle.message("action.name.show.branches"), null, AllIcons.Vcs.Branch);
       myPanelRefresher = panelRefresher;
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.EDT;
     }
 
     @Override

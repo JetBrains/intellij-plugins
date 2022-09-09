@@ -2,6 +2,7 @@ package org.jetbrains.idea.perforce.actions
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -44,6 +45,9 @@ object ShelfUtils {
     browser.addToolbarAction(object : DumbAwareAction(PerforceBundle.messagePointer("shelf.unshelve"),
                                                       PerforceBundle.messagePointer("shelf.unshelve.action.description"),
                                                       AllIcons.Vcs.Unshelve) {
+      override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+      }
 
       override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = browser.includedChanges.isNotEmpty()

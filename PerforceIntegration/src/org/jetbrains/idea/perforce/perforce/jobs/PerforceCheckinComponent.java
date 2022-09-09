@@ -141,6 +141,11 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
       }
 
       @Override
+      public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
+      }
+
+      @Override
       public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(!myDetails.getSelectedJobs().isEmpty());
       }
