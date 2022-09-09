@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.parsing;
 
+import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.psi.HbOpenPartialBlockMustacheImpl;
 import com.dmarcotte.handlebars.psi.HbPsiFile;
 import com.dmarcotte.handlebars.psi.impl.*;
@@ -14,10 +15,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 public class HbParseDefinition implements ParserDefinition {
+
+  public static final IFileElementType FILE_ELEMENT_TYPE = new IStubFileElementType<>("FILE", HbLanguage.INSTANCE);
+
   @Override
   @NotNull
   public Lexer createLexer(Project project) {
@@ -31,7 +36,7 @@ public class HbParseDefinition implements ParserDefinition {
 
   @Override
   public @NotNull IFileElementType getFileNodeType() {
-    return HbTokenTypes.FILE;
+    return FILE_ELEMENT_TYPE;
   }
 
   @Override
