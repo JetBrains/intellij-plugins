@@ -26,6 +26,7 @@ public class DependencyInjectionTest extends BasePlatformTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     JSTestUtils.forbidStubAstSwitch(myFixture::getFile, getProject(), this, myFixture.getTestRootDisposable());
+    JSTestUtils.buildJSFileGists(getProject());
   }
 
   public void testInjectedServiceCompletion() {
@@ -109,12 +110,14 @@ public class DependencyInjectionTest extends BasePlatformTestCase {
   public void testPropertyInitializedWithInjectedParameter() {
     myFixture.copyFileToProject("property.to.parameter.js");
     myFixture.copyFileToProject("angular.js");
+    JSTestUtils.buildJSFileGists(getProject());
     myFixture.configureByText(JavaScriptFileType.INSTANCE, "someRef.serv.<caret>");
     myFixture.completeBasic();
   }
   
   public void testParameterNavigation() {
     myFixture.copyFileToProject("angular.js");
+    JSTestUtils.buildJSFileGists(getProject());
     myFixture.configureByFile(getTestName(false) + ".js");
     PsiElement target = JSTestUtils.getGotoDeclarationTarget(myFixture);
     if (target instanceof LeafElement) target = target.getParent();
