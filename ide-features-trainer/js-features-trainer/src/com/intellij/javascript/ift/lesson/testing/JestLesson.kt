@@ -13,9 +13,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.fileEditor.impl.EditorWindow
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.treeStructure.Tree
 import training.dsl.*
 import training.dsl.LessonUtil.highlightBreakpointGutter
@@ -45,8 +43,8 @@ class JestLesson
 
         prepareRuntimeTask(ModalityState.current()) {
           val fileEditorManager = FileEditorManagerEx.getInstanceEx(project)
-          val window: EditorWindow = fileEditorManager.currentWindow
-          val file: VirtualFile = window.selectedFile
+          val window = fileEditorManager.currentWindow!!
+          val file = window.selectedFile!!
 
           WriteAction.run<Throwable> {
             fileEditorManager.createSplitter(SwingConstants.VERTICAL, window)
