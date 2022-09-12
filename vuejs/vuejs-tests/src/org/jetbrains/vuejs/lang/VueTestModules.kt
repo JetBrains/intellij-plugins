@@ -1,14 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.RootsChangeRescanningInfo
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx
-import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.testFramework.runInEdtAndWait
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
                                        additionalDependencies: String = "") {
@@ -37,12 +33,7 @@ fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModul
 
 internal fun forceReloadProjectRoots(project: Project) {
   // TODO - this shouldn't be needed, something's wrong with how roots are set within tests - check RootIndex#myRootInfos
-  runInEdtAndWait {
-    runWriteAction {
-      ProjectRootManagerEx.getInstanceEx(project)
-        .makeRootsChange(EmptyRunnable.getInstance(), RootsChangeRescanningInfo.TOTAL_RESCAN)
-    }
-  }
+  NodeModulesDirectoryManager.getInstance(project).requestLibrariesUpdate()
 }
 
 enum class VueTestModule(val folder: String, vararg packageNames: String) {
