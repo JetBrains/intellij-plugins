@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.highlighting;
 
 import com.intellij.application.options.CodeStyle;
@@ -190,10 +190,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       assertEquals(2, targets.size());
       assertTrue(targets.get(0).getText().contains("interface IFoo"));
       assertTrue(targets.get(1).getText().contains("interface IBar"));
-      List<String> readUsages = handler.readUsages;
-      assertEquals(2, readUsages.size());
-      assertEquals("foo", readUsages.get(0));
-      assertEquals("baz", readUsages.get(1));
+      assertSameElements(handler.readUsages, "foo", "baz");
     }, getTestName(false) + ".js2");
   }
 
