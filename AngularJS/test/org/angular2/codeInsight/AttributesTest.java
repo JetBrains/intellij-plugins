@@ -610,30 +610,27 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
         List<PsiElement> sources = map(ref, s -> s.getPsiContext());
         String messageStart = "Attribute " + wrap.first + name + wrap.second;
         switch (checks.charAt(i)) {
-          case 'x':
-            assertEquals(messageStart + " should not resolve",
-                         Collections.emptyList(), ref);
-            break;
-          case 'p':
+          case 'x' -> assertEquals(messageStart + " should not resolve",
+                                   Collections.emptyList(), ref);
+          case 'p' -> {
             assertNotNull(messageStart + " should have reference", ref);
             assert all(sources, TypeScriptField.class::isInstance) :
               messageStart + " should resolve to TypeScriptField instead of " +
               sources;
-            break;
-          case 's':
+          }
+          case 's' -> {
             assertNotNull(messageStart + " should have reference", ref);
             assert all(ref, s -> unwrapAllDelegates(s) instanceof Angular2DirectiveSelectorSymbol) :
               messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
               ref;
-            break;
-          case 'c':
+          }
+          case 'c' -> {
             assertNotNull(messageStart + " should have reference", ref);
             assert all(sources, TypeScriptClass.class::isInstance) :
               messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
               sources;
-            break;
-          default:
-            throw new IllegalStateException("wrong char: " + checks.charAt(i));
+          }
+          default -> throw new IllegalStateException("wrong char: " + checks.charAt(i));
         }
       }
     }

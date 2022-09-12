@@ -99,8 +99,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
     final String path = params.getPath();
 
     switch (params.getScope()) {
-      case Method:
-      case Component: {
+      case Method, Component -> {
         if (StringUtil.isEmpty(path)) {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.file.name.empty", path));
         }
@@ -121,8 +120,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
         if ()
         */
       }
-      break;
-      case Directory: {
+      case Directory -> {
         if (StringUtil.isEmpty(path)) {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.directory.name.empty", path));
         }
@@ -134,7 +132,6 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.directory.not.in.project", path));
         }
       }
-      break;
     }
     // check URL
     CfmlRunConfiguration.checkURL(params.getWebPath());

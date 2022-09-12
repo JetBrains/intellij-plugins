@@ -208,16 +208,9 @@ public final class DomElementSchemaRegistry {
       data.forEach(entry -> {
         if (!entry.isEmpty()) {
           switch (entry.charAt(0)) {
-            case '*':
-              events.add(entry.substring(1));
-              break;
-            case '!':
-            case '#':
-            case '%':
-              props.add(entry.substring(1));
-              break;
-            default:
-              props.add(entry);
+            case '*' -> events.add(entry.substring(1));
+            case '!', '#', '%' -> props.add(entry.substring(1));
+            default -> props.add(entry);
           }
         }
       });

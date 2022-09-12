@@ -17,6 +17,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE;
@@ -168,7 +168,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
 
     @Override
     public void visitXmlTag(@NotNull XmlTag tag) {
-      boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
+      boolean isTemplateTag = ContainerUtil.or(tag.getChildren(), Angular2HtmlTemplateBindings.class::isInstance)
                               || isTemplateTag(tag);
       if (isTemplateTag) {
         pushScope(tag);
@@ -245,16 +245,10 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
         attribute.getName(), attribute.getParent());
       switch (info.type) {
-        case REFERENCE:
-          addReference(attribute, info, isTemplateTag(attribute.getParent()));
-          break;
-        case LET:
-          addVariable(attribute, info);
-          break;
-        case TEMPLATE_BINDINGS:
-          addTemplateBindings(attribute);
-          break;
-        default:
+        case REFERENCE -> addReference(attribute, info, isTemplateTag(attribute.getParent()));
+        case LET -> addVariable(attribute, info);
+        case TEMPLATE_BINDINGS -> addTemplateBindings(attribute);
+        default -> {}
       }
     }
 

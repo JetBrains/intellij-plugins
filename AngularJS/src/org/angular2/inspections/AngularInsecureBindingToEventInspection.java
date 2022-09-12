@@ -27,13 +27,12 @@ public class AngularInsecureBindingToEventInspection extends AngularHtmlLikeTemp
       final String propertyName = info.name;
       if (propertyName.startsWith(EVENT_ATTR_PREFIX)) {
         switch (((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType) {
-          case ATTRIBUTE:
-            holder.registerProblem(attribute.getNameElement(),
-                                   Angular2Bundle.message("angular.inspection.insecure-binding-to-event.message.attribute", propertyName),
-                                   new ConvertToEventQuickFix(propertyName.substring(2)),
-                                   new RemoveAttributeIntentionFix(attribute.getName()));
-            break;
-          case PROPERTY:
+          case ATTRIBUTE -> holder.registerProblem(attribute.getNameElement(),
+                                                   Angular2Bundle.message("angular.inspection.insecure-binding-to-event.message.attribute",
+                                                                          propertyName),
+                                                   new ConvertToEventQuickFix(propertyName.substring(2)),
+                                                   new RemoveAttributeIntentionFix(attribute.getName()));
+          case PROPERTY -> {
             Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
             if (ContainerUtil.find(descriptor.getSourceDirectives(), scope::contains) == null) {
               holder.registerProblem(attribute.getNameElement(),
@@ -41,8 +40,8 @@ public class AngularInsecureBindingToEventInspection extends AngularHtmlLikeTemp
                                      new ConvertToEventQuickFix(propertyName.substring(2)),
                                      new RemoveAttributeIntentionFix(attribute.getName()));
             }
-            break;
-          default:
+          }
+          default -> { }
         }
       }
     }
