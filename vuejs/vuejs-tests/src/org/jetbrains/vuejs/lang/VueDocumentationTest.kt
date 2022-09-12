@@ -6,6 +6,7 @@ import com.intellij.javascript.web.checkLookupElementDocumentationAtCaret
 import com.intellij.javascript.web.checkNoDocumentationAtCaret
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
+import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
@@ -114,6 +115,18 @@ class VueDocumentationTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true)
+  }
+
+  fun testMergedWebTypesPropsSource() {
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsSource.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+      it.lookupString in setOf("test-prop-two", "test-prop")
+    }
+    myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsScriptSource.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+      it.lookupString in setOf("test-prop-two", "test-prop")
+    }
   }
 
   private fun defaultTest() {

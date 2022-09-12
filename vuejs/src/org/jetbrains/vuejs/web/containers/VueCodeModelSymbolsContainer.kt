@@ -8,12 +8,16 @@ import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPA
 import com.intellij.javascript.web.symbols.WebSymbolsContainerWithCache
 import com.intellij.javascript.web.symbols.WebSymbolsRegistryManager
 import com.intellij.javascript.web.webTypes.WebTypesSymbol
-import com.intellij.javascript.web.webTypes.json.SourceSymbol
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolder
@@ -114,48 +118,79 @@ class VueCodeModelSymbolsContainer<K> private constructor(private val container:
       .asSequence().plus(registry.runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_DIRECTIVES), virtualSymbols = false))
       .filterIsInstance<WebTypesSymbol>()
       .forEach { symbol ->
-        (symbol.rawSource as? SourceSymbol)
-          ?.let {
+        when (val location = symbol.location) {
+          is WebTypesSymbol.FileExport ->
+            location.findFile()?.let {
+              WebTypesSymbolLocation(
+                it.url,
+                location.symbolName,
+                symbol.kind
+              )
+            }
+          is WebTypesSymbol.ModuleExport ->
             WebTypesSymbolLocation(
-              it.module ?: symbol.origin.packageName ?: return@let null,
-              it.symbol ?: "default",
+              location.moduleName,
+              location.symbolName,
               symbol.kind)
-          }?.let {
-            result.putValue(it, symbol)
-          }
+          is WebTypesSymbol.FileOffset, null -> null
+        }?.let {
+          result.putValue(it, symbol)
+        }
       }
     return result
   }
 
   private fun WebSymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>): WebSymbol {
-    val source = (this as? VueDocumentedItemSymbol<*>)?.rawSource ?: return this
+    val source =
+      (this as? VueDocumentedItemSymbol<*>)?.rawSource
+        ?.let { source ->
+          if (source is JSProperty)
+            JSPsiImplUtils.getInitializerReference(source)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, source) }
+          else source
+        }
+      ?: return this
 
-    val location = when (source) {
-      is ES6ImportSpecifierAlias -> symbolLocationFromSpecifier(source.findSpecifierElement() as? ES6ImportSpecifier, kind)
-      is ES6ImportSpecifier -> symbolLocationFromSpecifier(source, kind)
-      is TypeScriptPropertySignature -> symbolLocationFromPropertySignature(source, kind)
-      else -> null
-    }
+    val locations =
+      when (source) {
+        is ES6ImportSpecifierAlias -> symbolLocationsFromSpecifier(source.findSpecifierElement() as? ES6ImportSpecifier, kind)
+        is ES6ImportSpecifier -> symbolLocationsFromSpecifier(source, kind)
+        is ES6ImportedBinding -> symbolLocationsForModule(source, source.declaration?.fromClause?.referenceText, "default", kind)
+        is TypeScriptPropertySignature -> symbolLocationFromPropertySignature(source, kind)?.let { listOf(it) }
+        else -> null
+      } ?: emptyList()
 
-    if (location != null) {
-      val toMerge = webTypesContributions[location]
-      if (toMerge.isNotEmpty())
-        return VueWebTypesMergedSymbol(this, toMerge)
-    }
+    val toMerge = locations.flatMap { webTypesContributions[it] }
+    if (toMerge.isNotEmpty())
+      return VueWebTypesMergedSymbol(this, toMerge)
     return this
   }
 
-  private fun symbolLocationFromSpecifier(specifier: ES6ImportSpecifier?, kind: String): WebTypesSymbolLocation? {
+  private fun symbolLocationsFromSpecifier(specifier: ES6ImportSpecifier?, symbolKind: String): List<WebTypesSymbolLocation> {
     if (specifier?.specifierKind == ES6ImportExportSpecifier.ImportExportSpecifierKind.IMPORT) {
       val symbolName = if (specifier.isDefault) "default" else specifier.referenceName
       val moduleName = specifier.declaration?.fromClause?.referenceText
-        ?.let { StringUtil.unquoteString(it) }
-      if (symbolName != null && moduleName != null) {
-        return WebTypesSymbolLocation(moduleName, symbolName, kind)
-      }
+      return symbolLocationsForModule(specifier, moduleName, symbolName, symbolKind)
     }
-    return null
+    return emptyList()
   }
+
+  private fun symbolLocationsForModule(context: PsiElement,
+                                       moduleName: String?,
+                                       symbolName: String?,
+                                       symbolKind: String): List<WebTypesSymbolLocation> =
+    if (symbolName != null && moduleName != null) {
+      val result = mutableListOf<String>()
+      val unquotedModule = StringUtil.unquoteString(moduleName)
+      if (!unquotedModule.startsWith(".")) {
+        result.add(unquotedModule)
+      }
+      if (unquotedModule.contains('/')) {
+        JSFileReferencesUtil.resolveModuleReference(context, unquotedModule)
+          .mapNotNullTo(result) { it.containingFile?.originalFile?.virtualFile?.url }
+      }
+      result.map { WebTypesSymbolLocation(it, symbolName, symbolKind) }
+    }
+    else emptyList()
 
   private fun symbolLocationFromPropertySignature(property: TypeScriptPropertySignature, kind: SymbolKind): WebTypesSymbolLocation? {
     // TypeScript GlobalComponents definition

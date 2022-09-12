@@ -1,0 +1,2 @@
+!test-prop#string#100
+!test-prop-two#string | undefined#100

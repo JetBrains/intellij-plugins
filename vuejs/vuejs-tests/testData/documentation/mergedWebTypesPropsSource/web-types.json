@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JetBrains/web-types/master/schema/web-types.json",
+  "framework": "vue",
+  "name": "vite-project",
+  "version": "0.0.0",
+  "description-markup": "markdown",
+  "js-types-syntax": "typescript",
+  "contributions": {
+    "html": {
+      "vue-components": [
+        {
+          "name": "HelloWorld",
+          "description": "**HelloWorld** component",
+          "props": [
+            {
+              "name": "testProp",
+              "type": "string",
+              "default": "testPropVal"
+            }
+          ],
+          "source": {
+            "module": "./src/components/HelloWorld.vue",
+            "symbol": "default"
+          }
+        }
+      ]
+    }
+  }
+}
