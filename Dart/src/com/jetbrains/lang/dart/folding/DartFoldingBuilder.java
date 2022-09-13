@@ -310,14 +310,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       if (componentType == null) continue;
 
       switch (componentType) {
-        case CONSTRUCTOR:
-        case FUNCTION:
-        case METHOD:
-        case OPERATOR:
-          foldFunctionBody(descriptors, dartComponent);
-          break;
-        default:
-          break;
+        case CONSTRUCTOR, FUNCTION, METHOD, OPERATOR -> foldFunctionBody(descriptors, dartComponent);
+        default -> {
+        }
       }
     }
   }

@@ -67,15 +67,10 @@ public final class DartHierarchyUtil {
     if (component instanceof DartComponentName) return false;
     final DartComponentType componentType = DartComponentType.typeOf(component);
     if (componentType == null) return false;
-    switch (componentType) {
-      case CONSTRUCTOR:
-      case FUNCTION:
-      case METHOD:
-      case OPERATOR:
-        return true;
-      default:
-        return false;
-    }
+    return switch (componentType) {
+      case CONSTRUCTOR, FUNCTION, METHOD, OPERATOR -> true;
+      default -> false;
+    };
   }
 
   public static PsiElement getResolvedElementAtCursor(DataContext dataContext) {

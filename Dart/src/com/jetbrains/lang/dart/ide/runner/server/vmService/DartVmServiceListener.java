@@ -238,19 +238,10 @@ public class DartVmServiceListener implements VmServiceListener {
   @NotNull
   private static String getSimpleStringPresentation(@NotNull final InstanceRef instanceRef) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
-    switch (instanceRef.getKind()) {
-      case Null:
-      case Bool:
-      case Double:
-      case Int:
-      case String:
-      case Float32x4:
-      case Float64x2:
-      case Int32x4:
-      case StackTrace:
-        return Objects.requireNonNull(instanceRef.getValueAsString());
-      default:
-        return "Instance of " + instanceRef.getClassRef().getName();
-    }
+    return switch (instanceRef.getKind()) {
+      case Null, Bool, Double, Int, String, Float32x4, Float64x2, Int32x4, StackTrace ->
+        Objects.requireNonNull(instanceRef.getValueAsString());
+      default -> "Instance of " + instanceRef.getClassRef().getName();
+    };
   }
 }

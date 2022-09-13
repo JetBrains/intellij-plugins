@@ -68,16 +68,11 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
 
   @Override
   protected @NotNull @NlsContexts.Command String getCommandName() {
-    switch (myStrategy) {
-      case GETTER:
-        return DartBundle.message("command.generate.getters");
-      case SETTER:
-        return DartBundle.message("command.generate.setters");
-      case GETTER_SETTER:
-        return DartBundle.message("command.generate.getters.and.setters");
-      default:
-        return "";
-    }
+    return switch (myStrategy) {
+      case GETTER -> DartBundle.message("command.generate.getters");
+      case SETTER -> DartBundle.message("command.generate.setters");
+      case GETTER_SETTER -> DartBundle.message("command.generate.getters.and.setters");
+    };
   }
 
   @Override

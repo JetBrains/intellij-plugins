@@ -276,13 +276,10 @@ public class DartComponentMover extends LineMover {
     }
 
     private static boolean isLineComment(@NotNull PsiElement element) {
-      switch (commentTypeOf(element)) {
-        case SINGLE_LINE_DOC_COMMENT:
-        case SINGLE_LINE_COMMENT:
-          return true;
-        default:
-          return false;
-      }
+      return switch (commentTypeOf(element)) {
+        case SINGLE_LINE_DOC_COMMENT, SINGLE_LINE_COMMENT -> true;
+        default -> false;
+      };
     }
 
     @NotNull

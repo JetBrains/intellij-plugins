@@ -67,16 +67,12 @@ public class DartUsageTypeProvider implements UsageTypeProvider {
       return UsageType.CLASS_METHOD_RETURN_TYPE;
     }
     if (typeParent instanceof DartVarAccessDeclaration && typeParentType != null) {
-      switch (typeParentType) {
-        case PARAMETER:
-          return UsageType.CLASS_METHOD_PARAMETER_DECLARATION;
-        case FIELD:
-          return UsageType.CLASS_FIELD_DECLARATION;
-        case METHOD:
-          return UsageType.CLASS_METHOD_RETURN_TYPE;
-        default:
-          return null;
-      }
+      return switch (typeParentType) {
+        case PARAMETER -> UsageType.CLASS_METHOD_PARAMETER_DECLARATION;
+        case FIELD -> UsageType.CLASS_FIELD_DECLARATION;
+        case METHOD -> UsageType.CLASS_METHOD_RETURN_TYPE;
+        default -> null;
+      };
     }
     return null;
   }

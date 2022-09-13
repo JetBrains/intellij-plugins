@@ -33,25 +33,18 @@ public final class BoardsJsonParser {
         while (jsonReader.hasNext()) {
           String name = jsonReader.nextName();
           switch (name) {
-            case "id":
-              boardId = jsonReader.nextAsString();
-              break;
-            case "name":
-              boardName = jsonReader.nextAsString();
-              break;
-            case "vendor":
-              vendorName = Objects.toString(jsonReader.nextAsString(), vendorName);
-              break;
-            case "frameworks":
+            case "id" -> boardId = jsonReader.nextAsString();
+            case "name" -> boardName = jsonReader.nextAsString();
+            case "vendor" -> vendorName = Objects.toString(jsonReader.nextAsString(), vendorName);
+            case "frameworks" -> {
               jsonReader.beginArray();
               while (jsonReader.hasNext()) {
                 String frameworkName = jsonReader.nextAsString();
                 frameworks.add(frameworkName);
               }
               jsonReader.endArray();
-              break;
-            default:
-              jsonReader.skipValue();
+            }
+            default -> jsonReader.skipValue();
           }
         }
         jsonReader.endObject();

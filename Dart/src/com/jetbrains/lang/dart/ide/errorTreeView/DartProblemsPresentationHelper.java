@@ -203,24 +203,13 @@ public class DartProblemsPresentationHelper {
   }
 
   public @NotNull @Nls String getFilterTypeText() {
-    final String filtering;
-
-    switch (getFileFilterMode()) {
-      case ContentRoot:
-        filtering = DartBundle.message("dart.problems.view.filter.current.content.root");
-        break;
-      case DartPackage:
-        filtering = DartBundle.message("dart.problems.view.filter.current.dart.package");
-        break;
-      case Directory:
-        filtering = DartBundle.message("dart.problems.view.filter.current.directory");
-        break;
-      case File:
-        filtering = DartBundle.message("dart.problems.view.filter.current.file");
-        break;
-      default:
-        filtering = "";
-    }
+    final String filtering = switch (getFileFilterMode()) {
+      case ContentRoot -> DartBundle.message("dart.problems.view.filter.current.content.root");
+      case DartPackage -> DartBundle.message("dart.problems.view.filter.current.dart.package");
+      case Directory -> DartBundle.message("dart.problems.view.filter.current.directory");
+      case File -> DartBundle.message("dart.problems.view.filter.current.file");
+      default -> "";
+    };
 
     boolean filteringBySeverity = !isShowErrors() || !isShowWarnings() || !isShowHints();
 
