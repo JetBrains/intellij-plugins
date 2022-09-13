@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
@@ -1858,13 +1859,21 @@ export default {
   }
 
   fun testTypedComponentsPropsAndEvents() {
-    doLookupTest(VueTestModule.VUE_3_2_2, VueTestModule.HEADLESS_UI_1_4_1, locations = listOf("v-bind:<caret>", "v-on:<caret>")) {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    doLookupTest(VueTestModule.VUE_3_2_2,
+                 VueTestModule.HEADLESS_UI_1_4_1,
+                 VueTestModule.ELEMENT_PLUS_2_1_11_NO_WEB_TYPES,
+                 locations = listOf("Dialog v-bind:<caret>", "Dialog v-on:<caret>",
+                                    "el-affix v-bind:<caret>", "el-affix v-on:<caret>")) {
       !it.startsWith("aria-")
     }
   }
 
   fun testTypedComponentsList() {
-    doLookupTest(VueTestModule.VUE_3_2_2, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES,
+    doLookupTest(VueTestModule.VUE_3_2_2,
+                 VueTestModule.HEADLESS_UI_1_4_1,
+                 VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES,
+                 VueTestModule.ELEMENT_PLUS_2_1_11_NO_WEB_TYPES,
                  fileContents = """<template><<caret></template>""", lookupFilter = nonHtmlLookupFilter)
   }
 

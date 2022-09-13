@@ -42,6 +42,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   COMPOSITION_API_0_4_0("composition-api/0.4.0", "@vue/composition-api"),
   COMPOSITION_API_1_0_0("composition-api/1.0.0", "@vue/composition-api"),
   ELEMENT_UI_2_0_5("element-ui"),
+  ELEMENT_PLUS_2_1_11_NO_WEB_TYPES("element-plus/2.1.11-no-web-types", "element-plus"),
   HEADLESS_UI_1_4_1("headlessui", "@headlessui/vue"),
   IVIEW_2_8_0("iview"),
   MINT_UI_2_2_3("mint-ui"),

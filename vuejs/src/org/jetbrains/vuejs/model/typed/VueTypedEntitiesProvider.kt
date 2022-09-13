@@ -2,9 +2,10 @@
 package org.jetbrains.vuejs.model.typed
 
 import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeArgumentList
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptUnionOrIntersectionType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
@@ -13,7 +14,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.GlobalSearchScopesCore
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.VueFrameworkHandler
@@ -22,13 +22,35 @@ import org.jetbrains.vuejs.model.source.VueEntityDescriptor
 
 object VueTypedEntitiesProvider {
 
+  private val defineComponentRegex = Regex("import\\s*\\(\\s*['\"]vue['\"]\\s*\\)\\s*\\.\\s*DefineComponent")
+
   fun isComponentDefinition(variable: TypeScriptVariable): Boolean {
-    val qualifiedTypeName = variable.typeElement?.castSafelyTo<TypeScriptSingleType>()
-      ?.qualifiedTypeName
-    return variable.name != null
-           && (qualifiedTypeName == "DefineComponent"
-               || qualifiedTypeName == "import(\"vue\").DefineComponent"
-               || qualifiedTypeName == "import('vue').DefineComponent")
+    if (variable.name == null || variable is JSField) return false
+    var result = false
+    variable.typeElement?.accept(
+      object : JSElementVisitor() {
+
+        override fun visitTypeScriptUnionOrIntersectionType(unionOrIntersectionType: TypeScriptUnionOrIntersectionType) {
+          unionOrIntersectionType.acceptChildren(this)
+        }
+
+        override fun visitTypeScriptSingleType(singleType: TypeScriptSingleType) {
+          if (singleType.qualifiedTypeName
+              .let { it != null && (it == "DefineComponent" || it.matches(defineComponentRegex)) }) {
+            result = true
+          } else {
+            singleType.acceptChildren(this)
+          }
+        }
+
+        override fun visitJSElement(node: JSElement) {
+          if (node is TypeScriptTypeArgumentList) {
+            node.acceptChildren(this)
+          }
+        }
+      }
+    )
+    return result
   }
 
   fun getComponentDescriptor(element: PsiElement?): VueEntityDescriptor? {

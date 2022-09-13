@@ -62,8 +62,11 @@ internal class VueGlobalImpl(override val project: Project, override val package
     packageJson?.let { file ->
       dependencies.add(PackageJsonWebTypesRegistryManager.getModificationTracker(project, file))
       PackageJsonWebTypesRegistryManager.getNodeModulesWithoutWebTypes(project, file)
+        .asSequence()
         .filter { isVueLibrary(it) }
         .map { VueSourcePlugin(project, it.name, it.version?.toString(), it.packageJsonFile) }
+        // Make order of plugin symbol containers predictable
+        .sortedBy { it.moduleName ?: "" }
         .toCollection(result)
     }
     return Result.create(result, dependencies)
