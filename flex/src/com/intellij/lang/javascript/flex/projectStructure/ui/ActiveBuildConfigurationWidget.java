@@ -34,8 +34,8 @@ import com.intellij.ui.LightweightHint;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.NamedColorUtil;
 import com.intellij.util.ui.StartupUiUtil;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,7 +124,7 @@ public final class ActiveBuildConfigurationWidget {
 
       myDisabledLabel.setHorizontalAlignment(SwingConstants.CENTER);
       myDisabledLabel.setToolTipText(FlexBundle.message("active.bc.widget.empty.tooltip"));
-      myDisabledLabel.setForeground(UIUtil.getInactiveTextColor());
+      myDisabledLabel.setForeground(NamedColorUtil.getInactiveTextColor());
       myDisabledLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
       myPanel = new JPanel(new GridBagLayout()) {

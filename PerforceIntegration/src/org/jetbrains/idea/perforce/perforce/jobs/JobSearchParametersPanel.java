@@ -1,7 +1,7 @@
 package org.jetbrains.idea.perforce.perforce.jobs;
 
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.NamedColorUtil;
 import org.jetbrains.idea.perforce.PerforceBundle;
 
 import javax.swing.*;
@@ -53,7 +53,7 @@ public class JobSearchParametersPanel {
     ++ gb.gridy;
     gb.gridx = 1;
     final JLabel formatLabel = new JLabel(PerforceBundle.message("job.search.date.format"));
-    formatLabel.setForeground(UIUtil.getInactiveTextColor());
+    formatLabel.setForeground(NamedColorUtil.getInactiveTextColor());
     myPanel.add(formatLabel, gb);
 
     ++ gb.gridy;
@@ -66,7 +66,7 @@ public class JobSearchParametersPanel {
     ++ gb.gridy;
     gb.gridx = 1;
     final JLabel formatLabel2 = new JLabel(PerforceBundle.message("job.search.date.format"));
-    formatLabel2.setForeground(UIUtil.getInactiveTextColor());
+    formatLabel2.setForeground(NamedColorUtil.getInactiveTextColor());
     myPanel.add(formatLabel2, gb);
 
     ++ gb.gridy;

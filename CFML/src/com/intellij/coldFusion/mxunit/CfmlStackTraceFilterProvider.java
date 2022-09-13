@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.NamedColorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -95,7 +95,7 @@ public final class CfmlStackTraceFilterProvider implements Filter {
 
     TextAttributes attributes = HYPERLINK_ATTRIBUTES.clone();
     if (!ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(vFile.get())) {
-      Color color = UIUtil.getInactiveTextColor();
+      Color color = NamedColorUtil.getInactiveTextColor();
       attributes.setForegroundColor(color);
       attributes.setEffectColor(color);
     }
