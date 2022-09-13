@@ -1,7 +1,7 @@
 Foo#null
 SelectProps#null
 count#number
-foo#string
+foo#string | undefined
 foos#null
 inc#() => void
 props#null

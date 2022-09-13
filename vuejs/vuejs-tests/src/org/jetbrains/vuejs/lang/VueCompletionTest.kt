@@ -1765,6 +1765,7 @@ export default {
   }
 
   fun testScriptSetupTs() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     doLookupTest(VueTestModule.VUE_3_2_2,
                  renderPriority = false,
                  locations = listOf(

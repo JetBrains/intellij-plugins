@@ -96,6 +96,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testMergedWebTypesPropsGlobal() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
@@ -104,6 +105,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   }
 
   fun testMergedWebTypesPropsLocal() {
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED)
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {

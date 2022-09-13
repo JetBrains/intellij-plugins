@@ -111,6 +111,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testStandardCompletion() {
+    TypeScriptTestUtil.setStrictNullChecks(getProject(), getTestRootDisposable());
     myFixture.configureByFiles("custom.ts", "package.json");
     myFixture.configureByText("test.html", "<some-tag <caret>");
     myFixture.completeBasic();
