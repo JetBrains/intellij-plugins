@@ -25,13 +25,10 @@ public final class GaugeNotification {
   public String type;
 
   public NotificationType getType() {
-    switch (type) {
-      case "error":
-        return NotificationType.ERROR;
-      case "warning":
-        return NotificationType.WARNING;
-      default:
-        return NotificationType.INFORMATION;
-    }
+    return switch (type) {
+      case "error" -> NotificationType.ERROR;
+      case "warning" -> NotificationType.WARNING;
+      default -> NotificationType.INFORMATION;
+    };
   }
 }

@@ -100,19 +100,13 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
 
         final String definition;
         switch (params.getScope()) {
-          case Class:
-            definition = params.getClassName();
-            break;
-          case Method:
-            definition = params.getClassName() + "." + params.getMethodName() + "()";
-            break;
-          case Package:
-            definition = params.getPackageName();
-            break;
-
-          default:
+          case Class -> definition = params.getClassName();
+          case Method -> definition = params.getClassName() + "." + params.getMethodName() + "()";
+          case Package -> definition = params.getPackageName();
+          default -> {
             fail(place + "Unknown scope: " + params.getScope());
             definition = null;
+          }
         }
 
         assertEquals(place + "Invalid definition", expected[1], definition);

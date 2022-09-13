@@ -442,14 +442,10 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         switch (myMobileRunTarget) {
           case Emulator:
             switch (myAppDescriptorForEmulator) {
-              case Android:
-                checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), consumer, true,
-                                                  getBCName());
-                break;
-              case IOS:
-                checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), consumer, true,
-                                                  getBCName());
-                break;
+              case Android -> checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), consumer, true,
+                                                                getBCName());
+              case IOS -> checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), consumer, true,
+                                                            getBCName());
             }
             break;
           case AndroidDevice:
@@ -606,12 +602,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
             if (bc.getOutputType() == OutputType.Application) {
               switch (myAppDescriptorForEmulator) {
-                case Android:
-                  checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
-                  break;
-                case IOS:
-                  checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
-                  break;
+                case Android -> checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
+                case IOS -> checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
               }
             }
             break;

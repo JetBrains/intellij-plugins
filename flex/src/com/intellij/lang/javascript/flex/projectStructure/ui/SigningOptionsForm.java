@@ -246,15 +246,12 @@ public class SigningOptionsForm {
   }
 
   public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
-    switch (location) {
-      case ProvisioningProfile:
-        return IdeFocusManager.findInstance().requestFocus(myProvisioningProfileTextWithBrowse.getChildComponent(), true);
-      case Keystore:
-        return IdeFocusManager.findInstance().requestFocus(myKeystoreFileTextWithBrowse.getChildComponent(), true);
-      case IosSdkPath:
-        return IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField(), true);
-      default:
-        return ActionCallback.DONE;
-    }
+    return switch (location) {
+      case ProvisioningProfile ->
+        IdeFocusManager.findInstance().requestFocus(myProvisioningProfileTextWithBrowse.getChildComponent(), true);
+      case Keystore -> IdeFocusManager.findInstance().requestFocus(myKeystoreFileTextWithBrowse.getChildComponent(), true);
+      case IosSdkPath -> IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField(), true);
+      default -> ActionCallback.DONE;
+    };
   }
 }

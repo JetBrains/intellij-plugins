@@ -157,7 +157,7 @@ public final class FlexUnitPrecompileTask implements CompileTask {
 
     final boolean flexUnit4;
     switch (params.getScope()) {
-      case Class: {
+      case Class -> {
         final Ref<Boolean> isFlexUnit1Suite = new Ref<>();
         final Ref<Boolean> isSuite = new Ref<>();
         Set<String> customRunners = ApplicationManager.getApplication().runReadAction((NullableComputable<Set<String>>)() -> {
@@ -179,9 +179,7 @@ public final class FlexUnitPrecompileTask implements CompileTask {
         generateImportCode(imports, params.getClassName(), customRunners);
         generateTestClassCode(code, params.getClassName(), customRunners, isSuite.get());
       }
-      break;
-
-      case Method: {
+      case Method -> {
         Set<String> customRunners = ApplicationManager.getApplication().runReadAction((NullableComputable<Set<String>>)() -> {
           if (DumbService.getInstance(myProject).isDumb()) return null;
           Set<String> result = new HashSet<>();
@@ -198,9 +196,7 @@ public final class FlexUnitPrecompileTask implements CompileTask {
         generateImportCode(imports, params.getClassName(), customRunners);
         generateTestMethodCode(code, params.getClassName(), params.getMethodName(), customRunners);
       }
-      break;
-
-      case Package: {
+      case Package -> {
         final Collection<Pair<String, Set<String>>> classes =
           ApplicationManager.getApplication().runReadAction((NullableComputable<Collection<Pair<String, Set<String>>>>)() -> {
             if (DumbService.getInstance(myProject).isDumb()) return null;
@@ -241,10 +237,10 @@ public final class FlexUnitPrecompileTask implements CompileTask {
           generateTestClassCode(code, classAndRunner.first, classAndRunner.second, false);
         }
       }
-      break;
-      default:
+      default -> {
         flexUnit4 = false;
         assert false : "Unknown scope: " + params.getScope();
+      }
     }
 
     if (!flexUnit4 && bc.isPureAs()) {

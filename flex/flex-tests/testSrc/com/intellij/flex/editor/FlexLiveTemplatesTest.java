@@ -158,18 +158,18 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
       final CaretModel caretModel = myFixture.getEditor().getCaretModel();
 
       switch (segmentIndex) {
-        case 0:
+        case 0 -> {
           myFixture.type("functionName");
           caretModel.moveToOffset(caretModel.getOffset() + 1);
-          break;
-        case 1:
+        }
+        case 1 -> {
           myFixture.type("param:Object");
           caretModel.moveToOffset(caretModel.getOffset() + 1);
-          break;
-        case 2:
+        }
+        case 2 -> {
           myFixture.type("String");
           caretModel.moveToOffset(caretModel.getOffset() + 1);
-          break;
+        }
       }
     });
   }
@@ -187,15 +187,9 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
   public void testPrivateStaticFunctionWithTyping() {
     doTest("prsf", "as", segmentIndex -> {
       switch (segmentIndex) {
-        case 0:
-          myFixture.type("functionName");
-          break;
-        case 1:
-          myFixture.type("param:Object");
-          break;
-        case 2:
-          myFixture.type("String");
-          break;
+        case 0 -> myFixture.type("functionName");
+        case 1 -> myFixture.type("param:Object");
+        case 2 -> myFixture.type("String");
       }
     });
   }

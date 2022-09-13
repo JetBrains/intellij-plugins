@@ -82,14 +82,14 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
             switch (params.getMobileRunTarget()) {
               case Emulator:
                 switch (params.getAppDescriptorForEmulator()) {
-                  case Android:
-                    FlashRunnerParameters.checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), errorConsumer, false,
+                  case Android ->
+                    FlashRunnerParameters.checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(),
+                                                                            errorConsumer, false,
                                                                             "does not matter");
-                    break;
-                  case IOS:
-                    FlashRunnerParameters.checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), errorConsumer, false,
+                  case IOS ->
+                    FlashRunnerParameters.checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), errorConsumer,
+                                                                            false,
                                                                             "does not matter");
-                    break;
                 }
                 break;
               case AndroidDevice:

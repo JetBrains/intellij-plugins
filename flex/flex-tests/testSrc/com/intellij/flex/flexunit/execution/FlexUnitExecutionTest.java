@@ -255,18 +255,13 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     params.setOutputLogLevel(outputLogLevel);
     params.setScope(testScope);
     switch (testScope) {
-      case Class:
-        params.setClassName(testClassOrPackage);
-        break;
-      case Method:
+      case Class -> params.setClassName(testClassOrPackage);
+      case Method -> {
         params.setClassName(testClassOrPackage);
         params.setMethodName(testMethod);
-        break;
-      case Package:
-        params.setPackageName(testClassOrPackage);
-        break;
-      default:
-        fail("Unknown scope: " + testScope);
+      }
+      case Package -> params.setPackageName(testClassOrPackage);
+      default -> fail("Unknown scope: " + testScope);
     }
 
     flexUnitRunConfig.checkConfiguration();

@@ -542,31 +542,30 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
         final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
 
         switch (info.TYPE) {
-          case Boolean:
+          case Boolean -> {
             myCheckBox.setBackground(table.getBackground());
             //myCheckBox.setForeground(UIUtil.getTableForeground());
             //myCheckBox.setEnabled(moduleDefault || fromConfigFile || custom);
             myCheckBox.setSelected("true".equalsIgnoreCase(valueAndSource.first));
             return myCheckBox;
-          case String:
-          case Int:
-          case List:
-          case IncludeClasses:
-          case IncludeFiles:
+          }
+          case String, Int, List, IncludeClasses, IncludeFiles -> {
             myLabel.setBackground(table.getBackground());
             myLabel.setText(getPresentableSummary(valueAndSource.first, info));
             renderAccordingToSource(myLabel, valueAndSource.second, false);
             return myLabel;
-          case File:
+          }
+          case File -> {
             final JLabel label = myLabelWithBrowse.getChildComponent();
             myLabelWithBrowse.setBackground(table.getBackground());
             label.setText(FileUtil.toSystemDependentName(valueAndSource.first));
             renderAccordingToSource(label, valueAndSource.second, false);
             return myLabelWithBrowse;
-          case Group:
-          default:
+          }
+          default -> {
             assert false;
             return null;
+          }
         }
       }
     };
