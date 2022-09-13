@@ -4,9 +4,9 @@ import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.javascript.web.checkDocumentationAtCaret
 import com.intellij.javascript.web.checkLookupElementDocumentationAtCaret
 import com.intellij.javascript.web.checkNoDocumentationAtCaret
+import com.intellij.javascript.web.moveToOffsetBySignature
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
-import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
@@ -128,6 +128,19 @@ class VueDocumentationTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("src/MergedWebTypesPropsScriptSource.vue")
     myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
       it.lookupString in setOf("test-prop-two", "test-prop")
+    }
+  }
+
+  fun testPrimeVueMergedProps() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PRIMEVUE_3_8_2)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true,
+                                                     fileName = "PrimeVueMergedPropsElement") {
+      it.lookupString in setOf("Avatar", "BlockUI")
+    }
+    myFixture.moveToOffsetBySignature("Avatar <caret>>")
+    myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true) {
+      it.lookupString in setOf("icon", "size")
     }
   }
 

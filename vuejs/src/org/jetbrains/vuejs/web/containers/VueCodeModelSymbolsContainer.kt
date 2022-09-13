@@ -8,10 +8,8 @@ import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPA
 import com.intellij.javascript.web.symbols.WebSymbolsContainerWithCache
 import com.intellij.javascript.web.symbols.WebSymbolsRegistryManager
 import com.intellij.javascript.web.webTypes.WebTypesSymbol
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifier
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias
-import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.ecmascript6.psi.*
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSProperty
@@ -26,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
@@ -34,6 +33,7 @@ import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.
 import org.jetbrains.vuejs.web.asWebSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
+import java.util.*
 
 class VueCodeModelSymbolsContainer<K> private constructor(private val container: VueEntitiesContainer,
                                                           project: Project,
@@ -129,7 +129,7 @@ class VueCodeModelSymbolsContainer<K> private constructor(private val container:
             }
           is WebTypesSymbol.ModuleExport ->
             WebTypesSymbolLocation(
-              location.moduleName,
+              location.moduleName.lowercase(Locale.US),
               location.symbolName,
               symbol.kind)
           is WebTypesSymbol.FileOffset, null -> null
@@ -179,16 +179,35 @@ class VueCodeModelSymbolsContainer<K> private constructor(private val container:
                                        symbolName: String?,
                                        symbolKind: String): List<WebTypesSymbolLocation> =
     if (symbolName != null && moduleName != null) {
-      val result = mutableListOf<String>()
+      val result = mutableListOf<WebTypesSymbolLocation>()
       val unquotedModule = StringUtil.unquoteString(moduleName)
       if (!unquotedModule.startsWith(".")) {
-        result.add(unquotedModule)
+        result.add(WebTypesSymbolLocation(unquotedModule.lowercase(Locale.US), symbolName, symbolKind))
       }
+
       if (unquotedModule.contains('/')) {
-        JSFileReferencesUtil.resolveModuleReference(context, unquotedModule)
-          .mapNotNullTo(result) { it.containingFile?.originalFile?.virtualFile?.url }
+        val modules = JSFileReferencesUtil.resolveModuleReference(context, unquotedModule)
+        modules.mapNotNullTo(result) {
+          it.containingFile?.originalFile?.virtualFile?.url?.let { url ->
+            WebTypesSymbolLocation(url, symbolName, symbolKind)
+          }
+        }
+        // A workaround to avoid full resolution in case of components in subpackages
+        if (symbolName == "default"
+            && !unquotedModule.startsWith(".")
+            && unquotedModule.count { it == '/' } == 1) {
+
+          modules.mapNotNullTo(result) {
+            ES6PsiUtil.findDefaultExport(it)
+              ?.castSafelyTo<ES6ExportDefaultAssignment>()
+              ?.initializerReference
+              ?.let { symbolName ->
+                WebTypesSymbolLocation(unquotedModule.takeWhile { it != '/' }, symbolName, symbolKind)
+              }
+          }
+        }
       }
-      result.map { WebTypesSymbolLocation(it, symbolName, symbolKind) }
+      result
     }
     else emptyList()
 
@@ -203,10 +222,10 @@ class VueCodeModelSymbolsContainer<K> private constructor(private val container:
                         ?.name
                       ?: return null
 
-    return WebTypesSymbolLocation(packageName, symbolName, kind)
+    return WebTypesSymbolLocation(packageName.lowercase(Locale.US), symbolName, kind)
   }
 
-  private data class WebTypesSymbolLocation(
+  private data class WebTypesSymbolLocation constructor(
     val moduleName: String,
     val symbolName: String,
     val symbolKind: String,

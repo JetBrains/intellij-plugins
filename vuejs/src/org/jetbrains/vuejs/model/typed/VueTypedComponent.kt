@@ -5,7 +5,10 @@ import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeOwner
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -39,9 +42,17 @@ class VueTypedComponent(override val source: PsiElement,
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class)
-          ?.jsType
-          ?.let { getFromVueFile(it) ?: JSApplyNewType(it, it.source).substitute().asRecordType() },
+        resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
+          ?.let { componentDefinition ->
+            when (componentDefinition) {
+              is JSTypeOwner ->
+                componentDefinition.jsType
+                  ?.let { getFromVueFile(it) ?: JSApplyNewType(it, it.source).substitute() }
+              is TypeScriptClass ->
+                componentDefinition.jsType
+              else -> null
+            }
+          },
         PsiModificationTracker.MODIFICATION_COUNT)
     } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
 
@@ -76,16 +87,21 @@ class VueTypedComponent(override val source: PsiElement,
   override val props: List<VueInputProperty>
     get() = CachedValuesManager.getCachedValue(source) {
       val toFilterOut = getFilteredOutProperties(source)
-      CachedValueProvider.Result(
-        thisType.asRecordType().findPropertySignature(INSTANCE_PROPS_PROP)
-          ?.jsType
-          ?.asRecordType()
-          ?.properties
-          ?.filter { !toFilterOut.contains(it.memberName) }
-          ?.mapNotNull {
-            VueTypedInputProperty(it)
-          }
-        ?: emptyList(), PsiModificationTracker.MODIFICATION_COUNT)
+      val thisType = thisType.asRecordType()
+      val props = mutableListOf<PropertySignature>()
+
+      thisType.findPropertySignature(INSTANCE_PROPS_PROP)
+        ?.jsType
+        ?.asRecordType()
+        ?.properties
+        ?.filterTo(props) { !toFilterOut.contains(it.memberName) }
+
+      if (source is TypeScriptClass)
+        thisType
+          .properties
+          .filterTo(props) { !it.memberName.startsWith("$") && !toFilterOut.contains(it.memberName) }
+
+      CachedValueProvider.Result(props.map { VueTypedInputProperty(it) }, PsiModificationTracker.MODIFICATION_COUNT)
     }
 
 
@@ -160,7 +176,7 @@ class VueTypedComponent(override val source: PsiElement,
                   .generateDoc(source ?: return@lazy null, null) ?: return@lazy null
       val contentStart = doc.indexOf(DocumentationMarkup.CONTENT_START)
       val sectionsStart = doc.indexOf(DocumentationMarkup.SECTIONS_START)
-      if (contentStart < 0 || contentStart > sectionsStart )
+      if (contentStart < 0 || contentStart > sectionsStart)
         null
       else
         doc.substring(contentStart + DocumentationMarkup.CONTENT_START.length, sectionsStart)

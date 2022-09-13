@@ -878,6 +878,12 @@ $script""")
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("affix", "alert", "auto-complete", "avatar"))
   }
 
+  fun testIview3Completion() {
+    doLookupTest(VueTestModule.IVIEW_3_5_4, locations = listOf("v-bind:<caret>", "v-on:<caret>")) {
+      !it.startsWith("aria-")
+    }
+  }
+
   fun testBootstrapVueCompletion() {
     myFixture.configureVueDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("BoostrapVue.vue",

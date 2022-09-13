@@ -1,19 +1,23 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.typed
 
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeArgumentList
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptUnionOrIntersectionType
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
+import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
+import com.intellij.lang.javascript.psi.stubs.TypeScriptSingleTypeStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptTypeArgumentListStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptUnionOrIntersectionTypeStub
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.search.GlobalSearchScopesCore
+import com.intellij.psi.stubs.Stub
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.VueFrameworkHandler
@@ -24,33 +28,52 @@ object VueTypedEntitiesProvider {
 
   private val defineComponentRegex = Regex("import\\s*\\(\\s*['\"]vue['\"]\\s*\\)\\s*\\.\\s*DefineComponent")
 
-  fun isComponentDefinition(variable: TypeScriptVariable): Boolean {
-    if (variable.name == null || variable is JSField) return false
-    var result = false
-    variable.typeElement?.accept(
-      object : JSElementVisitor() {
+  fun isComponentDefinition(definition: JSQualifiedNamedElement): Boolean {
+    if (definition.name == null || definition is JSField) return false
+    when (definition) {
+      is TypeScriptVariable -> {
+        val typeElement = definition.typeElement ?: return false
 
-        override fun visitTypeScriptUnionOrIntersectionType(unionOrIntersectionType: TypeScriptUnionOrIntersectionType) {
-          unionOrIntersectionType.acceptChildren(this)
-        }
+        var result = false
+        val typeStub = (typeElement as? StubBasedPsiElement<*>)?.stub
 
-        override fun visitTypeScriptSingleType(singleType: TypeScriptSingleType) {
-          if (singleType.qualifiedTypeName
-              .let { it != null && (it == "DefineComponent" || it.matches(defineComponentRegex)) }) {
-            result = true
-          } else {
-            singleType.acceptChildren(this)
+        fun checkTypeName(typeName: String?) =
+          typeName != null && (typeName == "DefineComponent" || typeName.matches(defineComponentRegex))
+
+        if (typeStub != null) {
+          fun visit(stub: Stub) {
+            if (stub is TypeScriptSingleTypeStub
+                && checkTypeName(stub.qualifiedTypeName)) {
+              result = true
+            }
+            else if (stub is TypeScriptTypeArgumentListStub
+                     || stub is TypeScriptUnionOrIntersectionTypeStub
+                     || stub is TypeScriptSingleTypeStub) {
+              stub.childrenStubs.forEach { visit(it) }
+            }
           }
+          visit(typeStub)
         }
-
-        override fun visitJSElement(node: JSElement) {
-          if (node is TypeScriptTypeArgumentList) {
-            node.acceptChildren(this)
-          }
+        else {
+          typeElement.accept(object : JSElementVisitor() {
+            override fun visitJSElement(node: JSElement) {
+              if (node is TypeScriptSingleType
+                  && checkTypeName(node.qualifiedTypeName)) {
+                result = true
+              }
+              else if (node is TypeScriptTypeArgumentList
+                       || node is TypeScriptUnionOrIntersectionType
+                       || node is TypeScriptSingleType) {
+                node.acceptChildren(this)
+              }
+            }
+          })
         }
+        return result
       }
-    )
-    return result
+      is TypeScriptClass -> return TypeScriptUtil.isDefinitionFile(definition.containingFile)
+      else -> return false
+    }
   }
 
   fun getComponentDescriptor(element: PsiElement?): VueEntityDescriptor? {
@@ -59,9 +82,10 @@ object VueTypedEntitiesProvider {
       element.resolveIfImportSpecifier()
     }
     else element
-    val variable = resolveElementTo(element, TypeScriptVariable::class)
-    return variable?.takeIf { isComponentDefinition(it) }?.let {
-      VueTypedComponentDescriptor(source, (source as? PsiNamedElement)?.name ?: variable.name!!)
+    val componentDefinition: JSQualifiedNamedElement? = resolveElementTo(element, TypeScriptVariable::class,
+                                                                         TypeScriptInterfaceClass::class)
+    return componentDefinition?.takeIf { isComponentDefinition(it) }?.let {
+      VueTypedComponentDescriptor(source, (source as? PsiNamedElement)?.name ?: componentDefinition.name!!)
     }
   }
 
