@@ -17,7 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.containers.sequenceOfNotNull
-import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
+import org.jetbrains.vuejs.codeInsight.collectMembers
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
@@ -91,7 +91,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       var rawBindings: List<VueNamedSymbol> = emptyList()
 
       module.getStubSafeDefineCalls().forEach { call ->
-        when (VueFrameworkHandler.getSignificantFunctionName(call)) {
+        when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
           DEFINE_PROPS_FUN -> {
             props = analyzeDefineProps(call, listOf())
           }
@@ -143,7 +143,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       else if (arguments.size == 1) {
         when (val arg = arguments[0]) {
           is JSObjectLiteralExpression -> {
-            props = collectPropertiesRecursively(arg)
+            props = collectMembers(arg)
               .map { (name, property) ->
                 VueDefaultContainerInfoProvider.VueSourceInputProperty(name, property, defaults.contains(name))
               }
@@ -203,7 +203,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         return callStub.childrenStubs.asSequence()
           .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
           .mapNotNull { it.psi as? JSCallExpression }
-          .filter { innerCall -> VueFrameworkHandler.getSignificantFunctionName(innerCall) == DEFINE_PROPS_FUN }
+          .filter { innerCall -> VueFrameworkHandler.getFunctionNameFromVueIndex(innerCall) == DEFINE_PROPS_FUN }
       }
 
       return sequenceOfNotNull((this.arguments.getOrNull(0)

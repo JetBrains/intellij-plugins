@@ -141,7 +141,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
       fun <T> processCalls(funName: String, hasName: Boolean, processor: (String, PsiElement, JSLiteralExpression?) -> T?): Sequence<T> =
         resolve(funName, searchScope, VueCompositionAppIndex.KEY)
           .asSequence()
-          .filter { resolveScope == null || PsiTreeUtil.isAncestor(resolveScope, it, false) }
+          .filter { resolveScope == null || PsiTreeUtil.isContextAncestor(resolveScope, it, false) }
           .mapNotNull { el ->
             val defineCall = el.context as? JSCallExpression ?: return@mapNotNull null
             val args = getFilteredArgs(defineCall)

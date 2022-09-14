@@ -16,10 +16,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
-import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.objectLiteralFor
+import org.jetbrains.vuejs.codeInsight.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -153,7 +150,7 @@ interface EntityContainerInfoProvider<T> {
           }
         }
         if (propsObject != null && canBeObject) {
-          return collectPropertiesRecursively(propsObject)
+          return collectMembers(propsObject)
         }
         return if (canBeArray) readPropsFromArray(property) else return emptyList()
       }
@@ -166,23 +163,11 @@ interface EntityContainerInfoProvider<T> {
           ?.let { exportedMember ->
             val objectLiteral = objectLiteralFor(exportedMember)
             if (canBeObject && objectLiteral != null)
-              collectPropertiesRecursively(objectLiteral)
+              collectMembers(objectLiteral)
             else if (canBeArray)
               readPropsFromArray(exportedMember)
             else null
           } ?: emptyList()
-
-      private fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
-        type?.asRecordType()
-          ?.properties
-          ?.mapNotNull { prop ->
-            prop.takeIf { it.hasValidName() }
-              ?.memberSource
-              ?.singleElement
-              ?.let { it as? JSElement }
-              ?.let { Pair(prop.memberName, it) }
-          }
-        ?: emptyList()
 
       protected open fun getObjectLiteral(element: PsiElement): JSObjectLiteralExpression? =
         if (canBeFunctionResult) objectLiteralFor(element) else null

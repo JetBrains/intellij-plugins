@@ -35,11 +35,7 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.*
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -233,8 +229,8 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
   return null
 }
 
-fun collectPropertiesRecursively(element: JSObjectLiteralExpression): List<Pair<String, JSProperty>> {
-  val result = mutableListOf<Pair<String, JSProperty>>()
+fun collectMembers(element: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
+  val result = mutableListOf<Pair<String, JSElement>>()
   val initialPropsList = element.propertiesIncludingSpreads
   val queue = ArrayDeque<JSElement>(initialPropsList.size)
   queue.addAll(initialPropsList)
@@ -244,19 +240,30 @@ fun collectPropertiesRecursively(element: JSObjectLiteralExpression): List<Pair<
     if (!visited.add(property)) continue
     when (property) {
       is JSSpreadExpression -> {
-        objectLiteralFor(property.expression)
-          ?.propertiesIncludingSpreads
-          ?.toCollection(queue)
+        processJSTypeMembers(property.innerExpressionType).toCollection(result)
       }
       is JSProperty -> {
         if (property.name != null) {
           result.add(Pair(property.name!!, property))
         }
       }
+      else -> processJSTypeMembers(JSTypeUtils.getTypeOfElement(element)).toCollection(result)
     }
   }
   return result
 }
+
+fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
+  type?.asRecordType()
+    ?.properties
+    ?.mapNotNull { prop ->
+      prop.takeIf { it.hasValidName() }
+        ?.memberSource
+        ?.singleElement
+        ?.let { it as? JSElement }
+        ?.let { Pair(prop.memberName, it) }
+    }
+  ?: emptyList()
 
 val XmlTag.stubSafeAttributes: List<XmlAttribute>
   get() =
@@ -313,6 +320,11 @@ fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   (expression as? JSObjectLiteralExpression)
     ?.findProperty(PROPS_REQUIRED_PROP)
     ?.jsType
+    ?.let { type ->
+      if (type is JSWidenType)
+        type.originalType
+      else type
+    }
     ?.let { type ->
       (type as? JSBooleanLiteralTypeImpl)?.literal
     }

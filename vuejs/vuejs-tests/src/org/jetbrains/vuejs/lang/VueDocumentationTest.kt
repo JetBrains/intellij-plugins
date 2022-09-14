@@ -144,6 +144,10 @@ class VueDocumentationTest : BasePlatformTestCase() {
     }
   }
 
+  fun testPropertyTypeDoc() {
+    defaultTest()
+  }
+
   private fun defaultTest() {
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkDocumentationAtCaret()

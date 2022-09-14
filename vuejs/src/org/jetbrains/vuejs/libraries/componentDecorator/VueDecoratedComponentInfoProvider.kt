@@ -92,7 +92,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       clazz.extendsList?.members?.forEach { extendItem ->
         if (extendItem.referenceText == null) {
           val call = extendItem.expression as? JSCallExpression
-          if ((call?.methodExpression as? JSReferenceExpression)?.referenceName?.toLowerCase(Locale.US) == "mixins") {
+          if ((call?.methodExpression as? JSReferenceExpression)?.referenceName?.lowercase(Locale.US) == "mixins") {
             call.arguments.mapNotNullTo(mixins) { arg ->
               (arg as? JSReferenceExpression)?.resolve()
                 ?.let { VueModelManager.getMixin(it) }

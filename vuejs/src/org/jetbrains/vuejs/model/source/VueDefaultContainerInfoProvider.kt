@@ -17,10 +17,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.objectLiteralFor
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
@@ -162,7 +159,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
           }?.let {
             if (element is JSPsiNamedElementBase && it is VueRegularComponent) {
               VueLocallyDefinedRegularComponent(it, element)
-            } else it
+            }
+            else it
           }
           ?: VueUnresolvedComponent(declaration, element, element.name)
         }
@@ -206,7 +204,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                sourceElement: PsiElement,
                                hasOuterDefault: Boolean = false) : VueInputProperty {
 
-    override val required: Boolean = isRequired(hasOuterDefault, sourceElement as? JSProperty)
+    override val required: Boolean = isRequired(hasOuterDefault, sourceElement)
 
     override val source: VueImplicitElement =
       VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(!required),
@@ -218,11 +216,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       return "VueSourceInputProperty(name='$name', required=$required, jsType=$jsType)"
     }
 
-    private fun isRequired(hasOuterDefault: Boolean, sourceElement: JSProperty?): Boolean {
+    private fun isRequired(hasOuterDefault: Boolean, sourceElement: PsiElement?): Boolean {
       // script setup defineProps runtime declarations rely on this class (see VueScriptSetupInfoProvider)
       // withDefaults call is incompatible, but defaults from props destructure should work
       if (hasOuterDefault) return false
-      return getRequiredFromPropOptions((sourceElement)?.initializerOrStub)
+      return getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
     }
 
   }

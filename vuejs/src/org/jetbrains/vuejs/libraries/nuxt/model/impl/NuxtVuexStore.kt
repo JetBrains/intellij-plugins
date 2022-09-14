@@ -1,13 +1,13 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
-import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.IMPLICIT_EXTENSIONS
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil.IMPLICIT_EXTENSIONS
 import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -15,7 +15,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
+import org.jetbrains.vuejs.codeInsight.collectMembers
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MODULES
@@ -67,7 +67,7 @@ abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContai
     }.getOrPut(key) { provider() } as Map<String, T>
   }
 
-  private fun <T> get(symbolKind: String, constructor: (name: String, source: JSProperty) -> T): Map<String, T> {
+  private fun <T> get(symbolKind: String, constructor: (name: String, source: JSElement) -> T): Map<String, T> {
     return getFromCache(symbolKind) {
       val files = getJSFiles(source)
       files[symbolKind]?.let {
@@ -87,14 +87,14 @@ abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContai
 
     private fun <T> buildFromExportedMembers(file: JSFile,
                                              exportName: String?,
-                                             constructor: (name: String, source: JSProperty) -> T): Map<String, T> =
+                                             constructor: (name: String, source: JSElement) -> T): Map<String, T> =
       ES6PsiUtil.resolveSymbolInModule(exportName ?: ES6PsiUtil.DEFAULT_NAME, file, file)
         .asSequence()
         .filter { it.isValidResult }
         .mapNotNull { objectLiteralFor(it.element) }
         .firstOrNull()
         ?.let {
-          collectPropertiesRecursively(it)
+          collectMembers(it)
         }?.associateBy({ it.first }, { constructor(it.first, it.second) })
       ?: emptyMap()
 

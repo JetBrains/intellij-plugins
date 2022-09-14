@@ -47,7 +47,6 @@ import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
@@ -88,41 +87,16 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
 
-    //region JSCallExpression stubbed reference names
-
     private val SCRIPT_SETUP_MACROS = setOf(DEFINE_EXPOSE_FUN, DEFINE_EMITS_FUN, DEFINE_PROPS_FUN, WITH_DEFAULTS_FUN)
 
     private const val METHOD_NAME_USER_STRING = "vmn"
 
-    private fun isCallExpressionWithSignificantName(callNode: ASTNode, referenceName: String?): Boolean {
-      return referenceName in SCRIPT_SETUP_MACROS && isDescendantOfStubbedScriptTag(callNode)
-    }
-
-    private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =
-      TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
-        ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
-        .let { it?.psi?.let { it as? HtmlTag }?.name == SCRIPT_TAG_NAME }
-
-    private fun recordSignificantFunctionName(vueFrameworkHandler: VueFrameworkHandler,
-                                              outData: JSElementIndexingData,
-                                              callExpression: JSCallExpression,
-                                              referenceName: String) {
-      outData.addImplicitElement(JSImplicitElementImpl.Builder(referenceName, callExpression)
-                                   .setUserString(vueFrameworkHandler, METHOD_NAME_USER_STRING)
-                                   .toImplicitElement())
-    }
-
-    /**
-     * Possibly a fake name (meaningful only in the context of VueFrameworkHandler)
-     */
-    fun getSignificantFunctionName(call: JSCallExpression): String? {
+    fun getFunctionNameFromVueIndex(call: JSCallExpression): String? {
       // todo consider first using AST if loaded
       return call.indexingData
         ?.implicitElements?.find { it.userString == METHOD_NAME_USER_STRING }
         ?.name
     }
-
-    //endregion Stubbed JSCallExpression reference names
 
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
       obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
@@ -244,7 +218,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (parent is JSExportAssignment ||
           parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression) ||
           parent is JSArgumentList && (parent.parent as? JSCallExpression)
-            ?.let { isDefineComponentOrVueExtendCall(it) } == true) {
+            ?.let { isDefineComponentOrVueExtendCall(it.node) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
           val element = createImplicitElement(VueComponentsIndex.JS_KEY, getComponentNameFromDescriptor(obj), property)
@@ -281,27 +255,30 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun shouldCreateStubForCallExpression(node: ASTNode): Boolean {
     val methodExpression = JSCallExpressionImpl.getMethodExpression(node)
     if (methodExpression == null || methodExpression.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
-    return isCompositionApiAppObjectCall(node, methodExpression)
+    return isCompositionApiAppObjectCall(node)
            || VueStaticMethod.matchesAny(methodExpression)
-           || isCallExpressionWithSignificantName(node, JSReferenceExpressionImpl.getReferenceName(methodExpression))
+           || isScriptSetupMacroCall(node)
+           || isDefineComponentOrVueExtendCall(node)
   }
 
   override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean =
     node.treeParent.takeIf { it.elementType == JSElementTypes.ARGUMENT_LIST }
-      ?.treeParent?.takeIf {
-        val reference = (it.psi as? JSCallExpression)?.methodExpression as? JSReferenceExpression
-        // isCallExpressionWithSignificantName will also match withDefaults,
+      ?.treeParent?.let {
+        // isScriptSetupMacroCall will also match withDefaults,
         // which is redundant, but arrays won't occur inside valid withDefaults, so it's fine
-        reference != null && isCallExpressionWithSignificantName(it, reference.referenceName)
-      } != null
+        isScriptSetupMacroCall(it)
+      } == true
 
   override fun processCallExpression(callExpression: JSCallExpression?, outData: JSElementIndexingData) {
     val reference = callExpression?.methodExpression as? JSReferenceExpression ?: return
     val referenceName = reference.referenceName ?: return
 
-    if (isCallExpressionWithSignificantName(callExpression.node, referenceName)) {
-      recordSignificantFunctionName(this, outData, callExpression, referenceName)
+    if (isScriptSetupMacroCall(callExpression.node)) {
+      recordVueFunctionName(this, outData, callExpression, referenceName)
       return
+    }
+    if (isDefineComponentOrVueExtendCall(callExpression.node)) {
+      recordVueFunctionName(this, outData, callExpression, referenceName)
     }
 
     val arguments = callExpression.arguments
@@ -374,19 +351,19 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
       }
     }
-    else if ((callExpression.methodExpression
-        as? JSReferenceExpression)?.let { isCompositionApiAppObjectCall(callExpression.node, it.node) } == true) {
-      outData.addImplicitElement(JSImplicitElementImpl.Builder(normalizeNameForIndex(referenceName), callExpression)
-                                   .setUserStringWithData(
-                                     this, VueCompositionAppIndex.JS_KEY,
-                                     // Store reference name for resolution
-                                     (callExpression.arguments
-                                       .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
-                                       as? JSReferenceExpression)
-                                       ?.takeIf { it.qualifier == null }
-                                       ?.referenceName
-                                   )
-                                   .toImplicitElement())
+    else if (isCompositionApiAppObjectCall(callExpression.node)) {
+      outData.addImplicitElement(
+        JSImplicitElementImpl.Builder(normalizeNameForIndex(referenceName), callExpression)
+          .setUserStringWithData(
+            this, VueCompositionAppIndex.JS_KEY,
+            // Store reference name for resolution
+            (callExpression.arguments
+              .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
+              as? JSReferenceExpression)
+              ?.takeIf { it.qualifier == null }
+              ?.referenceName
+          )
+          .toImplicitElement())
     }
   }
 
@@ -460,13 +437,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
-      expression.node.treeParent.treeParent
-        ?.takeIf { it.elementType == JSElementTypes.CALL_EXPRESSION }
-        ?.let { callNode ->
-          val reference = JSCallExpressionImpl.getMethodExpression(callNode)
-          if (reference == null || reference.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
-          return isCompositionApiAppObjectCall(callNode, reference)
-        }
+      return expression.node.treeParent.treeParent
+        .let { it != null && isCompositionApiAppObjectCall(it) }
     }
     return false
   }
@@ -481,7 +453,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       statement.findChildByType(JSStubElementTypes.DEFINITION_EXPRESSION)
     else statement
     val ref = referenceHolder?.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
-    return ref.getChildren(JSKeywordSets.IDENTIFIER_NAMES).filter { it.text in VUE_DESCRIPTOR_OWNERS }.any()
+    return ref.getChildren(JSKeywordSets.IDENTIFIER_NAMES).any { it.text in VUE_DESCRIPTOR_OWNERS }
   }
 
   private fun getComponentNameFromDescriptor(obj: JSObjectLiteralExpression): String {
@@ -521,16 +493,49 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           VueGlobalDirectivesIndex.JS_KEY, VueExtendsBindingIndex.JS_KEY, VueGlobalFiltersIndex.JS_KEY, VueIdIndex.JS_KEY,
           METHOD_NAME_USER_STRING, VueCompositionAppIndex.JS_KEY)
 
-  private fun isCompositionApiAppObjectCall(callNode: ASTNode,
-                                            referenceExpression: ASTNode): Boolean {
-    val refName = JSReferenceExpressionImpl.getReferenceName(referenceExpression)
-    return if (JSReferenceExpressionImpl.getQualifierNode(referenceExpression) == null)
-      refName == CREATE_APP_FUN
-    else {
-      refName == MOUNT_FUN || refName == MIXIN_FUN ||
-      ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN)
-       && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
+  private fun isCompositionApiAppObjectCall(callNode: ASTNode): Boolean =
+    checkCallExpression(callNode) { refName, hasQualifier ->
+      if (!hasQualifier)
+        refName == CREATE_APP_FUN
+      else {
+        refName == MOUNT_FUN || refName == MIXIN_FUN ||
+        ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN)
+         && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
+      }
     }
+
+  private fun isScriptSetupMacroCall(callNode: ASTNode): Boolean =
+    checkCallExpression(callNode) { referenceName, hasQualifier ->
+      !hasQualifier && referenceName in SCRIPT_SETUP_MACROS && isDescendantOfStubbedScriptTag(callNode)
+    }
+
+  private fun isDefineComponentOrVueExtendCall(callNode: ASTNode): Boolean =
+    checkCallExpression(callNode) { referenceName, hasQualifier ->
+      (!hasQualifier && referenceName == DEFINE_COMPONENT_FUN)
+      || (hasQualifier && referenceName == EXTEND_FUN)
+    }
+
+  private fun isDescendantOfStubbedScriptTag(callNode: ASTNode): Boolean =
+    TreeUtil.findParent(callNode, TokenSet.create(XmlElementType.HTML_TAG, VueStubElementTypes.STUBBED_TAG))
+      ?.takeIf { it.elementType == VueStubElementTypes.STUBBED_TAG }
+      .let { it?.psi?.let { it as? HtmlTag }?.name == SCRIPT_TAG_NAME }
+
+  private fun recordVueFunctionName(vueFrameworkHandler: VueFrameworkHandler,
+                                    outData: JSElementIndexingData,
+                                    callExpression: JSCallExpression,
+                                    referenceName: String) {
+    outData.addImplicitElement(JSImplicitElementImpl.Builder(referenceName, callExpression)
+                                 .setUserString(vueFrameworkHandler, METHOD_NAME_USER_STRING)
+                                 .toImplicitElement())
+  }
+
+  private fun checkCallExpression(callNode: ASTNode, check: (referenceName: String, hasQualifier: Boolean) -> Boolean): Boolean {
+    if (callNode.elementType != JSElementTypes.CALL_EXPRESSION) return false
+    val methodExpression = JSCallExpressionImpl.getMethodExpression(callNode)
+    if (methodExpression == null || methodExpression.elementType != JSElementTypes.REFERENCE_EXPRESSION) return false
+    val referenceName = JSReferenceExpressionImpl.getReferenceName(methodExpression) ?: return false
+    val hasQualifier = JSReferenceExpressionImpl.getQualifierNode(methodExpression) != null
+    return check(referenceName, hasQualifier)
   }
 
 }

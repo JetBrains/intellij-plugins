@@ -20,9 +20,10 @@ import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
+import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
+import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
@@ -110,7 +111,9 @@ class VueComponents {
         // defineComponent({...})
         is JSCallExpression ->
           if (isDefineComponentOrVueExtendCall(resolved)) {
-            PsiTreeUtil.getStubChildOfType(resolved.argumentList!!, JSObjectLiteralExpression::class.java)
+            resolved.stubSafeCallArguments
+              .getOrNull(0)
+              ?.let { it as? JSObjectLiteralExpression }
               ?.let { VueSourceEntityDescriptor(it) }
           }
           else null
@@ -151,14 +154,11 @@ class VueComponents {
       return null
     }
 
-    @StubUnsafe
+    @StubSafe
     fun isDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
-      callExpression.methodExpression
-        ?.let { it as? JSReferenceExpression }
-        ?.let {
-          (it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN)
-          || it.referenceName == EXTEND_FUN
-        } == true
+      VueFrameworkHandler.getFunctionNameFromVueIndex(callExpression).let {
+        it == DEFINE_COMPONENT_FUN || it == EXTEND_FUN
+      }
 
     fun isStrictDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
       callExpression.methodExpression?.let {
