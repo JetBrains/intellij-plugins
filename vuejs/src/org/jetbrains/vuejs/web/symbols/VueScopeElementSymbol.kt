@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.model.Pointer
 import com.intellij.navigation.TargetPresentation
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.VueScopeElement
@@ -28,7 +27,7 @@ abstract class VueScopeElementSymbol<T : VueDocumentedItem>(matchedName: String,
         (item as VueScopeElement).parents
           .takeIf { it.size == 1 }
           ?.get(0)
-          ?.castSafelyTo<VuePlugin>()
+          ?.let { it as? VuePlugin }
           ?.let { Pair(it.moduleName, it.moduleVersion) }
         ?: item.source
           ?.containingFile

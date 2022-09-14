@@ -14,7 +14,6 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.CommonProcessors
-import com.intellij.util.castSafelyTo
 
 internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   override fun findImplementationsForProtoElement(pbElement: PbElement,
@@ -88,7 +87,7 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   }
 
   private fun effectiveServiceFqn(serviceDefinition: PbServiceDefinition): String? {
-    val pbFile = serviceDefinition.containingFile.castSafelyTo<PbFile>() ?: return null
+    val pbFile = serviceDefinition.containingFile as? PbFile ?: return null
     val javaPackageOrNull = pbFile.options
       .firstOrNull { it.optionName.text == PB_JAVA_PACKAGE_OPTION }
       ?.stringValue

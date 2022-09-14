@@ -21,7 +21,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AlarmFactory
-import com.intellij.util.castSafelyTo
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
@@ -96,7 +95,7 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     ?: resolveSymbolFromNodeModule(context, NUXT_TYPES_PKG, "Configuration", TypeScriptInterface::class.java)
       ?.jsType
     ?: resolveSymbolFromNodeModule(context, NUXT_CONFIG_PKG, "default", ES6ExportDefaultAssignment::class.java)
-      ?.stubSafeElement?.castSafelyTo<TypeScriptInterface>()?.jsType
+      ?.stubSafeElement?.let { it as? TypeScriptInterface }?.jsType
 
   override val config: NuxtConfig
     get() = PsiManager.getInstance(project).findFile(configFile)?.let { file ->

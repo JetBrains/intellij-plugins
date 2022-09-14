@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueDataProperty
@@ -24,8 +23,8 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 class VueCompositionInfoProvider : VueContainerInfoProvider {
 
   override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo? =
-    descriptor.source
-      .castSafelyTo<JSObjectLiteralExpression>()
+    (descriptor.source
+      as? JSObjectLiteralExpression)
       ?.let { VueCompositionInfo(it) }
 
   class VueCompositionInfo(val initializer: JSObjectLiteralExpression) : VueContainerInfo {
@@ -52,7 +51,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
         ?.let { returnType ->
           (returnType as? JSAsyncReturnType)
             ?.substitute()
-            ?.castSafelyTo<JSGenericTypeImpl>()
+            ?.let { it as? JSGenericTypeImpl }
             ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "Promise" }
             ?.arguments
             ?.getOrNull(0)

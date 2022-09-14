@@ -15,7 +15,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
-import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
@@ -69,7 +68,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
         (element as? XmlAttributeValue)
           ?.parent
-          ?.castSafelyTo<VueRefAttribute>()
+          ?.let { it as? VueRefAttribute }
           ?.implicitElement
           ?.takeIf { it !is VueRefAttribute.VueRefDeclaration }
           ?.let {

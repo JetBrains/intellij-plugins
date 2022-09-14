@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSReferenceType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -79,8 +78,8 @@ class VueComponentsCalculation {
 
       var indexedAccessUsed = indexData.indexedAccessUsed
 
-      resolved = (resolved as? JSVariable)?.jsType?.castSafelyTo<JSApplyIndexedAccessType>()
-                   ?.qualifierType?.castSafelyTo<JSReferenceType>()
+      resolved = (resolved as? JSVariable)?.jsType?.let { it as? JSApplyIndexedAccessType }
+                   ?.qualifierType?.let { it as? JSReferenceType }
                    ?.let {
                      indexedAccessUsed = true
                      JSStubBasedPsiTreeUtil.resolveLocally(it.referenceName, resolved!!) ?: return null
@@ -110,15 +109,15 @@ class VueComponentsCalculation {
         if (!descriptor.isValid) return null
         val property = descriptor.findProperty(nameReferenceParts[1])
         if (property != null) {
-          val alias = property.jsType.castSafelyTo<JSStringLiteralTypeImpl>()?.literal ?: ""
+          val alias = (property.jsType as? JSStringLiteralTypeImpl)?.literal ?: ""
           val realName = if ("name" == nameReferenceParts[1]) alias else getNameFromDescriptor(descriptor) ?: alias
           return SingleGlobalRegistration(realName, alias, descriptor)
         }
         return null
       }
       if (descriptor == null) return null
-      return (JSStubBasedPsiTreeUtil.resolveLocally(nameReference, context) as? JSVariable)
-        ?.jsType.castSafelyTo<JSStringLiteralTypeImpl>()
+      return ((JSStubBasedPsiTreeUtil.resolveLocally(nameReference, context) as? JSVariable)
+        ?.jsType as? JSStringLiteralTypeImpl)
         ?.literal
         ?.let {
           SingleGlobalRegistration(getNameFromDescriptor(descriptor) ?: "", it, descriptor)

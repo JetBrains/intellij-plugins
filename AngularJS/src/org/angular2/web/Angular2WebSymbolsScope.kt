@@ -1,9 +1,19 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.web.symbols.*
+import com.intellij.javascript.web.symbols.FrameworkId
+import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol
+import com.intellij.javascript.web.symbols.SymbolKind
+import com.intellij.javascript.web.symbols.WebSymbol
+import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItem
+import com.intellij.javascript.web.symbols.WebSymbolDelegate
+import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.HTML
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.JS
+import com.intellij.javascript.web.symbols.WebSymbolsScope
+import com.intellij.javascript.web.symbols.WebSymbolsScopeProvider
+import com.intellij.javascript.web.symbols.psiModificationCount
+import com.intellij.javascript.web.symbols.unwrapMatchedSymbols
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.navigation.NavigationTarget
@@ -15,7 +25,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
@@ -50,7 +59,7 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     if (namespace == JS && kinds.contains(kind)) {
       if (strict) {
         matches.filter { symbol ->
-          symbol.properties[PROP_SYMBOL_DIRECTIVE].castSafelyTo<Angular2Directive>()?.let { scope.contains(it) } != false
+          (symbol.properties[PROP_SYMBOL_DIRECTIVE] as? Angular2Directive)?.let { scope.contains(it) } != false
           && symbol.properties[PROP_ERROR_SYMBOL] != true
         }
       }
@@ -92,7 +101,7 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     val symbol = item.symbol
     if (symbol == null || namespace != JS || !kinds.contains(kind)) return item
     val directives = symbol.unwrapMatchedSymbols()
-      .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.castSafelyTo<Angular2Directive>() }
+      .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.let { it as? Angular2Directive } }
       .toList()
     return if (symbol.properties[PROP_ERROR_SYMBOL] == true) {
       null

@@ -13,7 +13,6 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.context.isVueContext
@@ -78,7 +77,7 @@ object VuexModelManager {
                ?: return null
 
     val initializer = arguments.getOrNull(1)
-                        ?.castSafelyTo<JSObjectLiteralExpression>()
+                        ?.let { it as? JSObjectLiteralExpression }
                       ?: resolveFromImplicitElement(implicitElement)
                       ?: return null
     return VuexModuleImpl(path, initializer, nameElement)

@@ -2,12 +2,10 @@
 package org.jetbrains.vuejs.libraries.cssModules
 
 import com.intellij.lang.javascript.psi.JSRecordType
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
-import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.MODULE_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.index.findTopLevelVueTags
@@ -21,7 +19,7 @@ class VueCssModulesInfoProvider : VueContainerInfoProvider {
                                      standardProperties: MutableMap<String, JSRecordType.PropertySignature>): Collection<JSRecordType.PropertySignature> {
     val context = instanceOwner.source as? PsiFile ?: instanceOwner.source?.context
     return context?.containingFile
-             ?.castSafelyTo<XmlFile>()
+             ?.let { it as? XmlFile }
              ?.let { findTopLevelVueTags(it, HtmlUtil.STYLE_TAG_NAME) }
              ?.mapNotNull { tag ->
                PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java)

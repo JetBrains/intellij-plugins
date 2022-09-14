@@ -7,7 +7,6 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlFile
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.index.findScriptTag
 import java.util.*
@@ -65,7 +64,7 @@ class VueIncorrectlySelfReferredComponentFilteringContainer(private val delegate
     || (symbol.source as? JSImplicitElement)?.context.let { context ->
       context == null
       || context != file
-      || context.containingFile.castSafelyTo<XmlFile>()?.let { findScriptTag(it, true) } != null
+      || (context.containingFile as? XmlFile)?.let { findScriptTag(it, true) } != null
     }
 
 }

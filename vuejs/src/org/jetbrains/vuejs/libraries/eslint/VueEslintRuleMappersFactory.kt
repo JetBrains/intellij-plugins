@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.linter.eslint.importer.EslintSettingsConvert
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
-import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
@@ -51,8 +50,8 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
 
   private class VueHtmlIndent : EslintRuleMapper("vue/html-indent") {
     override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
-      val isTab = values?.getOrNull(0)?.castSafelyTo<JsonStringLiteral>()?.value == "tab"
-      val base = if (isTab) 1 else values?.getOrNull(0)?.castSafelyTo<JsonNumberLiteral>()?.value?.toInt() ?: 2
+      val isTab = values?.getOrNull(0)?.let { it as? JsonStringLiteral }?.value == "tab"
+      val base = if (isTab) 1 else values?.getOrNull(0)?.let { it as? JsonNumberLiteral }?.value?.toInt() ?: 2
       val config = values?.getOrNull(1)
       val indent = getIntOptionValue(config, "baseIndent", 1) ?: return EslintSettingsConverter.MISCONFIGURATION
       val attributeIndent = getIntOptionValue(config, "attribute", 1) ?: return EslintSettingsConverter.MISCONFIGURATION
@@ -95,7 +94,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   private class VueHtmlQuotes : EslintRuleMapper("vue/html-quotes") {
     override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val quoteStyle = when (values?.getOrNull(0)
-        ?.castSafelyTo<JsonStringLiteral>()
+        ?.let { it as? JsonStringLiteral }
         ?.value) {
         "double" -> CodeStyleSettings.QuoteStyle.Double
         "single" -> CodeStyleSettings.QuoteStyle.Single
@@ -141,8 +140,8 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
 
   private class VueScriptIndent : EslintRuleMapper("vue/script-indent") {
     override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
-      val isTab = values?.getOrNull(0)?.castSafelyTo<JsonStringLiteral>()?.value == "tab"
-      val base = if (isTab) 1 else values?.getOrNull(0)?.castSafelyTo<JsonNumberLiteral>()?.value?.toInt() ?: 2
+      val isTab = values?.getOrNull(0)?.let { it as? JsonStringLiteral }?.value == "tab"
+      val base = if (isTab) 1 else values?.getOrNull(0)?.let { it as? JsonNumberLiteral }?.value?.toInt() ?: 2
       val indent = getIntOptionValue(values?.getOrNull(1), "baseIndent", 0)
                    ?: return EslintSettingsConverter.MISCONFIGURATION
 

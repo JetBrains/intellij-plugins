@@ -16,14 +16,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Function
 
 interface EntityContainerInfoProvider<T> {
 
@@ -113,9 +111,9 @@ interface EntityContainerInfoProvider<T> {
         }
 
       private fun getBooleanValue(element: Any?): Boolean =
-        element?.castSafelyTo<JSTypeOwner>()
+        element?.let { it as? JSTypeOwner }
           ?.jsType?.substitute()
-          ?.castSafelyTo<JSBooleanLiteralTypeImpl>()
+          ?.let { it as? JSBooleanLiteralTypeImpl }
           ?.literal == true
     }
 
@@ -181,7 +179,7 @@ interface EntityContainerInfoProvider<T> {
             prop.takeIf { it.hasValidName() }
               ?.memberSource
               ?.singleElement
-              ?.castSafelyTo<JSElement>()
+              ?.let { it as? JSElement }
               ?.let { Pair(prop.memberName, it) }
           }
         ?: emptyList()

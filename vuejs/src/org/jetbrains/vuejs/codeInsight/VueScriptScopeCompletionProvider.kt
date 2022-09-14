@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.util.ProcessingContext
-import com.intellij.util.castSafelyTo
 
 class VueScriptScopeCompletionProvider : CompletionProvider<CompletionParameters>() {
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -18,7 +17,7 @@ class VueScriptScopeCompletionProvider : CompletionProvider<CompletionParameters
     if (ref is PsiMultiReference) {
       ref = ref.references.find { it is JSReferenceExpressionImpl }
     }
-    ref.castSafelyTo<JSReferenceExpressionImpl>()
+    (ref as? JSReferenceExpressionImpl)
       ?.takeIf { it.qualifier == null }
       ?.let { VueScriptAdditionalScopeProvider.getAdditionalScopeSymbols(it) }
       ?.forEach {
