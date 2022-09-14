@@ -23,7 +23,7 @@ class NavigationLesson
   private val thisName = "$" + "{this.name}"
   private val favoriteTreat = "$" + "{favoriteTreat}"
 
-  val sample = parseLessonSample("""
+  private val sample = parseLessonSample("""
         import {Pet} from './pet';
         
         export class Dog extends Pet {

@@ -15,7 +15,7 @@ import training.learn.js.textOnLine
 class CodeEditingLesson
   : KLesson("Code Editing Tips and Tricks", JsLessonsBundle.message("js.editor.code.editing.tips.and.tricks.title")) {
 
-  val sample = parseLessonSample(""" 
+  private val sample = parseLessonSample(""" 
         <!doctype html><html lang="en">
 <head>
   <meta charset="UTF-8">

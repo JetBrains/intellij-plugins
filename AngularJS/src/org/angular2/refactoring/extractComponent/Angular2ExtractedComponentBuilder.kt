@@ -30,7 +30,7 @@ import org.angular2.lang.html.psi.*
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.ELEMENT_NG_CONTENT
 
 
-class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionStart: Int, val selectionEnd: Int) {
+class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private val selectionStart: Int, private val selectionEnd: Int) {
   private var extractedRange: TextRange = TextRange.EMPTY_RANGE
   private var enclosingTag: XmlTag? = null
 

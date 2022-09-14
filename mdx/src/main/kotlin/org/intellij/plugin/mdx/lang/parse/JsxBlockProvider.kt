@@ -75,33 +75,33 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
   companion object {
     val IMPORT_EXPORT_CONST = 6
 
-    val TAG_NAMES =
+    private val TAG_NAMES =
       "address, article, aside, base, basefont, blockquote, body, caption, center, col, colgroup, dd, details, " +
       "dialog, dir, div, dl, dt, fieldset, figcaption, figure, footer, form, frame, frameset, h1, " +
       "head, header, hr, html, legend, li, link, main, menu, menuitem, meta, nav, noframes, ol, " +
       "optgroup, option, p, param, pre, section, source, title, summary, table, tbody, td, tfoot, " +
       "th, thead, title, tr, track, ul"
 
-    val IMPORT_KEYWORD = "(^|\\s+)import($|\\s+|\\{)"
+    private val IMPORT_KEYWORD = "(^|\\s+)import($|\\s+|\\{)"
 
-    val EXPORT_KEYWORD = "(^|\\s+)export($|\\s+)"
+    private val EXPORT_KEYWORD = "(^|\\s+)export($|\\s+)"
 
-    val TAG_NAME = "[a-zA-Z][a-zA-Z0-9.-]*"
+    private val TAG_NAME = "[a-zA-Z][a-zA-Z0-9.-]*"
 
-    val ATTR_NAME = "[A-Za-z:_][A-Za-z0-9_.:-]*"
+    private val ATTR_NAME = "[A-Za-z:_][A-Za-z0-9_.:-]*"
 
-    val ATTR_VALUE = "\\s*=\\s*(?:[^=<>`]+|\\{.*\\}|'[^']*'|\"[^\"]*\")"
+    private val ATTR_VALUE = "\\s*=\\s*(?:[^=<>`]+|\\{.*\\}|'[^']*'|\"[^\"]*\")"
 
-    val ATTRIBUTE = "\\s+$ATTR_NAME(?:$ATTR_VALUE)?"
+    private val ATTRIBUTE = "\\s+$ATTR_NAME(?:$ATTR_VALUE)?"
 
-    val OPEN_TAG = "<$TAG_NAME(?:$ATTRIBUTE)*\\s*>|<>"
+    private val OPEN_TAG = "<$TAG_NAME(?:$ATTRIBUTE)*\\s*>|<>"
 
     val EMPTY_TAG = "<$TAG_NAME(?:$ATTRIBUTE)*\\s*/>"
 
     /**
      * Closing tag allowance is not in public spec version yet
      */
-    val CLOSE_TAG = "</$TAG_NAME\\s*>|</>"
+    private val CLOSE_TAG = "</$TAG_NAME\\s*>|</>"
 
     val CLOSE_TAG_REGEX = Regex("$CLOSE_TAG|^($ATTRIBUTE|[^<])*/>")
 
@@ -116,7 +116,7 @@ class JsxBlockProvider : MarkerBlockProvider<MarkerProcessor.StateInfo> {
      * nulls mean "Next line should be blank"
      * */
 
-    val MULTILINE_TAG_REGEX_PAIR = Pair(Regex("<$TAG_NAME.*"), null)
+    private val MULTILINE_TAG_REGEX_PAIR = Pair(Regex("<$TAG_NAME.*"), null)
 
     val OPEN_CLOSE_REGEXES: List<Pair<Regex, Regex?>> = listOf(
       Pair(Regex("<(?i:script|pre|style)(?: |>|$)"), Regex("</(?i:script|style|pre)>")),

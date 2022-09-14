@@ -7,7 +7,7 @@ import com.intellij.aws.cloudformation.model.CfnResourceNode
 import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
 
 object CloudFormationResolve {
-  fun getSectionEntities(parsed: CloudFormationParsedFile, section: CloudFormationSection): List<CfnNamedNode> =
+  private fun getSectionEntities(parsed: CloudFormationParsedFile, section: CloudFormationSection): List<CfnNamedNode> =
       when (section) {
         CloudFormationSection.Conditions -> parsed.root.conditionsNode?.conditions ?: emptyList()
         CloudFormationSection.Mappings -> parsed.root.mappingsNode?.mappings ?: emptyList()

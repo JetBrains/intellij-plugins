@@ -14,7 +14,7 @@ class Angular2DescriptorSymbolsProvider(symbol: WebSymbol) {
 
   val nonDirectiveSymbols: List<WebSymbol>
   val errorSymbols: List<WebSymbol>
-  val directiveSymbols: List<WebSymbol>
+  private val directiveSymbols: List<WebSymbol>
   val directives: List<Angular2Directive>
 
   init {

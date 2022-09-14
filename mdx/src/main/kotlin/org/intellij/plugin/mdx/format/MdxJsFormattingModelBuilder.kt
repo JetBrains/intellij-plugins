@@ -30,7 +30,7 @@ class MdxJsFormattingModelBuilder : JavascriptFormattingModelBuilder() {
     return formattingModel
   }
 
-  fun getPolicy(element: PsiElement, settings: CodeStyleSettings, model: FormattingDocumentModel): XmlFormattingPolicy {
+  private fun getPolicy(element: PsiElement, settings: CodeStyleSettings, model: FormattingDocumentModel): XmlFormattingPolicy {
     return if (DialectDetector.isJSX(element)) object : HtmlPolicy(settings, model) {
       override fun getWrappingTypeForTagBegin(tag: XmlTag): WrapType {
         val parent = tag.parent

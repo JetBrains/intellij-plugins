@@ -12,7 +12,7 @@ import training.learn.js.textBeforeCaret
 class BasicCompletionLesson
   : KLesson("The Nuts and Bolts of Code Completion", JsLessonsBundle.message("js.editor.completion.title")) {
 
-  val sample = parseLessonSample("""
+  private val sample = parseLessonSample("""
         let favoriteAnimals = ['dog', 'cat', 'unicorn'];
         
         function pickAnimal(arr) {

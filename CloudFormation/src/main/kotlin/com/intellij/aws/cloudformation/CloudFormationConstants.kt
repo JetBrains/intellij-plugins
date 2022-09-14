@@ -24,14 +24,14 @@ object CloudFormationConstants {
   const val ConditionPropertyName = "Condition"
   const val TypePropertyName = "Type"
   const val PropertiesPropertyName = "Properties"
-  const val CreationPolicyPropertyName = "CreationPolicy"
-  const val DeletionPolicyPropertyName = "DeletionPolicy"
-  const val DescriptionPropertyName = "Description"
+  private const val CreationPolicyPropertyName = "CreationPolicy"
+  private const val DeletionPolicyPropertyName = "DeletionPolicy"
+  private const val DescriptionPropertyName = "Description"
   const val DependsOnPropertyName = "DependsOn"
-  const val MetadataPropertyName = "Metadata"
-  const val UpdatePolicyPropertyName = "UpdatePolicy"
-  const val UpdateReplacePolicyPropertyName = "UpdateReplacePolicy"
-  const val VersionPropertyName = "Version"
+  private const val MetadataPropertyName = "Metadata"
+  private const val UpdatePolicyPropertyName = "UpdatePolicy"
+  private const val UpdateReplacePolicyPropertyName = "UpdateReplacePolicy"
+  private const val VersionPropertyName = "Version"
 
   // https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst#supported-resources
   val GlobalsResourcesMap = mapOf(

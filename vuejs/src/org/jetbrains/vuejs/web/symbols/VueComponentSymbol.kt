@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-class VueComponentSymbol(matchedName: String, component: VueComponent, val vueProximity: VueModelVisitor.Proximity) :
+class VueComponentSymbol(matchedName: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueComponent>(matchedName, component) {
 
   private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
@@ -104,10 +104,10 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, val vuePr
   }
 
 
-  fun <T> List<T>.mapWithNameFilter(name: String?,
-                                    params: WebSymbolsNameMatchQueryParams,
-                                    context: Stack<WebSymbolsContainer>,
-                                    mapper: (T) -> WebSymbol): List<WebSymbol> =
+  private fun <T> List<T>.mapWithNameFilter(name: String?,
+                                            params: WebSymbolsNameMatchQueryParams,
+                                            context: Stack<WebSymbolsContainer>,
+                                            mapper: (T) -> WebSymbol): List<WebSymbol> =
     if (name != null) {
       asSequence()
         .map(mapper)

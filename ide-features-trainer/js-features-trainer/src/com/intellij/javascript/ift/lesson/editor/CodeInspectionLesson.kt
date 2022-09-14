@@ -15,7 +15,7 @@ import training.learn.js.textOnLine
 class CodeInspectionLesson
   : KLesson("The Power of Code Inspections", JsLessonsBundle.message("js.editor.code.inspection.title")) {
 
-  val sample = parseLessonSample("""
+  private val sample = parseLessonSample("""
         function listBookAuthors(books) {
             let listOfAuthors = [];
             books.forEach(function () {

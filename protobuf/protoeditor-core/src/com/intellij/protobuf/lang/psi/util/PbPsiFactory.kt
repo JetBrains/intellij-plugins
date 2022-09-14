@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.util.LocalTimeCounter
 
 internal object PbPsiFactory {
-  fun createFileFromText(project: Project, content: String = "", name: String = "dummy.proto"): PbFile {
+  private fun createFileFromText(project: Project, content: String = "", name: String = "dummy.proto"): PbFile {
     return PsiFileFactory.getInstance(project).createFileFromText(
       name,
       PbFileType.INSTANCE,

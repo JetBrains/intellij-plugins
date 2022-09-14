@@ -200,8 +200,8 @@ class OneLineElseRule : MergedArrayRule("one-line") {
 }
 
 abstract class FunctionSpacesRule : TsLintSimpleRule<Boolean>("space-before-function-paren") {
-  val ALWAYS: String = "always"
-  val NEVER: String = "never"
+  private val ALWAYS: String = "always"
+  private val NEVER: String = "never"
 
   override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()

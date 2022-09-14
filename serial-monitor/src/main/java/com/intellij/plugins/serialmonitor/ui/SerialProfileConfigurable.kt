@@ -45,7 +45,7 @@ class SerialProfileConfigurable(var name: @NlsContexts.ConfigurableName String,
                                 private var isNew: Boolean) :
   NamedConfigurable<SerialPortProfile>(), Iconable {
 
-  var profile = originalProfile.copy()
+  private var profile = originalProfile.copy()
 
   private val myPanel: DialogPanel = createSettingsPanel(profile, isDefaultProfile, true)
   override fun getDisplayName(): String = if (isDefaultProfile) SerialMonitorBundle.message("default.profile.name") else name

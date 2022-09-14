@@ -18,7 +18,7 @@ import training.learn.js.textOnLine
 class RefactoringLesson
   : KLesson("Refactorings in a Nutshell", JsLessonsBundle.message("js.editor.refactorings.title")) {
 
-  val sample = parseLessonSample(""" 
+  private val sample = parseLessonSample(""" 
         function listBookAuthors(<caret>books) {
             let listOfAuthors = [];
             books.forEach(book => {

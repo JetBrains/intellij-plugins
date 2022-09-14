@@ -27,7 +27,7 @@ open class MdxTemplateDataElementTypeBase : TemplateDataElementType("MDX_TEMPLAT
                                                                     MdxLanguage,
                                                                     MarkdownElementType.platformType(MdxTokenTypes.JSX_BLOCK_CONTENT),
                                                                     MdxTokenTypes.OUTER_ELEMENT_TYPE) {
-  var lastImportExportBlock = 0
+  private var lastImportExportBlock = 0
   override fun collectTemplateModifications(sourceCode: CharSequence, baseLexer: Lexer): TemplateDataModifications {
     val modifications = TemplateDataModifications()
     baseLexer.start(sourceCode)

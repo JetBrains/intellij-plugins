@@ -36,7 +36,7 @@ class AngularCliGenerateOptionsDialogs(val project: Project, val schematic: Sche
     return editor
   }
 
-  fun paramsDesc(b: Schematic): String {
+  private fun paramsDesc(b: Schematic): String {
     val argDisplay = b.arguments.joinToString(" ") { "<" + it.name + ">" }
     val optionsDisplay = if (b.options.isEmpty()) "" else Angular2Bundle.message("angular.action.ng-generate.params.options")
 

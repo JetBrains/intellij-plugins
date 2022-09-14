@@ -2,7 +2,7 @@ package com.intellij.aws.cloudformation
 
 import java.io.Writer
 
-class IndentWriter(val writer: Writer, val indentString: String) {
+class IndentWriter(private val writer: Writer, private val indentString: String) {
   private var needIndent = true
   private var level = 0
 

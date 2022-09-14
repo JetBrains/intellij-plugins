@@ -17,7 +17,7 @@ class MdxJsSpacingProcessor(parent: ASTNode?,
                             dialect: Language?,
                             jsCodeStyleSettings: JSCodeStyleSettings) : JSSpacingProcessor(parent, child1, child2, topSettings, dialect,
                                                                                            jsCodeStyleSettings) {
-  fun visitMdxElement(node: ASTNode) {
+  private fun visitMdxElement(node: ASTNode) {
     val type = node.elementType
     if (type is MdxTemplateDataElementType) {
       BiConsumer<JSNodeVisitor, ASTNode> { obj: JSNodeVisitor, node: ASTNode? -> obj.visitEmbeddedContent(node) }.accept(this, node)

@@ -137,7 +137,7 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     return affectedPaths
   }
 
-  fun generateComponentFallback(cliDir: VirtualFile, workingDir: VirtualFile, arguments: Array<String>): () -> List<String> {
+  private fun generateComponentFallback(cliDir: VirtualFile, workingDir: VirtualFile, arguments: Array<String>): () -> List<String> {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: throw Exception("Node interpreter not found")
     val module = findCliPackage(cliDir) ?: throw Exception("Angular CLI package not found")
 

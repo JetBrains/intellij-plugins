@@ -14,8 +14,8 @@ class MdxJsBlockContext(topSettings: CodeStyleSettings,
                         dialect: Language,
                         explicitSettings: JSCodeStyleSettings?,
                         formattingMode: FormattingMode) : JSBlockContext(topSettings, dialect, explicitSettings, formattingMode) {
-  val myDialectSettings = ObjectUtils.coalesce(explicitSettings,
-                                               topSettings.getCustomSettings(JSCodeStyleSettings.getSettingsClass(dialect)))
+  private val myDialectSettings = ObjectUtils.coalesce(explicitSettings,
+                                                       topSettings.getCustomSettings(JSCodeStyleSettings.getSettingsClass(dialect)))
 
 
   override fun createSpacingStrategy(node: ASTNode): JSSpacingStrategy {

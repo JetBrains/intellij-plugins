@@ -37,7 +37,7 @@ object CfmlTagUtil {
     return if (current == null) null else current.psi as LeafPsiElement
   }
 
-  fun getEndTagNameElement(tag: CfmlTag): LeafPsiElement? {
+  private fun getEndTagNameElement(tag: CfmlTag): LeafPsiElement? {
     val node = tag.node ?: return null
 
     var current: ASTNode? = node.lastChildNode

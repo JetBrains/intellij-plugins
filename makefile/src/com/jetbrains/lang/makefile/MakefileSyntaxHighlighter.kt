@@ -25,7 +25,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     val FUNCTION = createTextAttributesKey("MAKEFILE_FUNCTION", DefaultLanguageHighlighterColors.KEYWORD)
     val FUNCTION_PARAM = createTextAttributesKey("MAKEFILE_FUNCTION_PARAM", DefaultLanguageHighlighterColors.STRING)
     val BRACES = createTextAttributesKey("MAKEFILE_BRACES", DefaultLanguageHighlighterColors.BRACES)
-    val PARENS = createTextAttributesKey("MAKEFILE_PARENTHESES", DefaultLanguageHighlighterColors.PARENTHESES)
+    private val PARENS = createTextAttributesKey("MAKEFILE_PARENTHESES", DefaultLanguageHighlighterColors.PARENTHESES)
 
 /*
     private fun braces(t: TextAttributesKey) {
