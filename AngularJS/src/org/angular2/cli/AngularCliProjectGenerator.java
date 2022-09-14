@@ -10,6 +10,7 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -17,6 +18,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.NlsContexts.DialogMessage;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -265,15 +267,15 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     @SuppressWarnings("HardCodedStringLiteral")
     private void nodePackageChanged(NodePackage nodePackage) {
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        List<Option> options = Collections.emptyList();
-        SemVer cliVersion = UNKNOWN_VERSION;
+        Ref<List<Option>> options = Ref.create(Collections.emptyList());
+        Ref<SemVer> cliVersion = Ref.create(UNKNOWN_VERSION);
         if (nodePackage.getSystemIndependentPath().endsWith("/node_modules/@angular/cli")) {
           VirtualFile localFile = StandardFileSystems.local().findFileByPath(
             nodePackage.getSystemDependentPath());
           if (localFile != null) {
             localFile = localFile.getParent().getParent().getParent();
             try {
-              options = AngularCliSchematicsRegistryService.getInstance()
+              List<Option> availableOptions = AngularCliSchematicsRegistryService.getInstance()
                 .getSchematics(ProjectManager.getInstance().getDefaultProject(), localFile, true, false)
                 .stream()
                 .filter(s -> "ng-new".equals(s.getName()))
@@ -286,6 +288,8 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
                   return list;
                 })
                 .orElse(Collections.emptyList());
+
+              options.set(availableOptions);
             }
             catch (Exception e) {
               LOG.error("Failed to load schematics", e);
@@ -293,12 +297,14 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
             var packageVersion = NodePackageVersionUtil.getPackageVersion(nodePackage.getSystemIndependentPath());
             if (packageVersion != null && packageVersion.getSemVer() != null) {
-              cliVersion = packageVersion.getSemVer();
+              cliVersion.set(packageVersion.getSemVer());
             }
           }
         }
 
-        myOptionsTextField.setVariants(options, cliVersion);
+        ReadAction.run(() -> {
+          myOptionsTextField.setVariants(options.get(), cliVersion.get());
+        });
       });
     }
 
