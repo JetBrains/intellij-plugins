@@ -7,6 +7,7 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
@@ -191,7 +192,9 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val dialog = AngularCliGenerateOptionsDialogs(project, schematic, cliVersion)
     if (dialog.showAndGet()) {
-      runGenerator(project, schematic, dialog.arguments(), cli, workingDir)
+      ApplicationManager.getApplication().executeOnPooledThread {
+        runGenerator(project, schematic, dialog.arguments(), cli, workingDir)
+      }
     }
   }
 
@@ -207,7 +210,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
     AngularCliProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
                                         Function { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
-                                        null, arrayOf(filter), "generate", schematic.name, *arguments)
+                                        null, JavaScriptBundle.message("generating.0", cli.name),
+                                        arrayOf(filter), "generate", schematic.name, *arguments)
   }
 
   override fun update(e: AnActionEvent) {
