@@ -551,6 +551,11 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testWithPropsFromFunctionCall2() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doTest()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

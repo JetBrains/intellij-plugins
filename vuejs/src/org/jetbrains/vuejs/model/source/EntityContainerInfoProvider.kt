@@ -152,7 +152,14 @@ interface EntityContainerInfoProvider<T> {
         if (propsObject != null && canBeObject) {
           return collectMembers(propsObject)
         }
-        return if (canBeArray) readPropsFromArray(property) else return emptyList()
+        if (canBeArray)
+          readPropsFromArray(property).let {
+            if (it.isNotEmpty()) return it
+          }
+        return if (canBeObject)
+          processJSTypeMembers(property.jsType)
+        else
+          emptyList()
       }
 
       private fun readFileExports(file: JSFile): List<Pair<String, JSElement>> =
