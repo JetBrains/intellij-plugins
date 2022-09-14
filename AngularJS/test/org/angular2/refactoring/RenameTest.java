@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.ui.TestDialogManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import org.angular2.Angular2MultiFileFixtureTestCase;
@@ -94,6 +95,11 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
     });
   }
 
+  public void testComponentFile() {
+    TestDialogManager.setTestDialog(TestDialog.OK);
+    doFileRename("foo-bar.component.ts", "new-name.component.ts", true);
+  }
+
   public void testComponentToNonComponentName() {
     TestDialogManager.setTestDialog(TestDialog.OK);
     doMultiFileTest("foo-bar.component.ts", "NewNameSomething");
@@ -132,6 +138,15 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
           new RenameProcessor(myFixture.getProject(), targetElement, newName, searchCommentsAndText, searchCommentsAndText);
         renameProcessor.run();
       }
+    });
+  }
+
+  private void doFileRename(String mainFile, String newName, boolean searchCommentsAndText) {
+    doTest((rootDir, rootAfter) -> {
+      PsiFile file = myFixture.configureFromTempProjectFile(mainFile);
+      RenameProcessor renameProcessor =
+        new RenameProcessor(myFixture.getProject(), file, newName, searchCommentsAndText, searchCommentsAndText);
+      renameProcessor.run();
     });
   }
 
