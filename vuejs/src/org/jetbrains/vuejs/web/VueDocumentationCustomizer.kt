@@ -13,7 +13,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
-      symbol.renderJsTypeForDocs()
+      symbol.renderJsTypeForDocs(null)
         ?.replace(",", ",<br>")
         ?.let {
           @Suppress("HardCodedStringLiteral")
@@ -26,8 +26,8 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
     else {
       if (symbol.namespace == WebSymbolsContainer.Namespace.HTML
           && symbol.kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS) {
-        symbol.renderJsTypeForDocs()?.let {
-          return documentation.withDefinition("${Strings.escapeXmlEntities(symbol.name)}: $it")
+        symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name))?.let {
+          return documentation.withDefinition(it)
         }
       }
     }
