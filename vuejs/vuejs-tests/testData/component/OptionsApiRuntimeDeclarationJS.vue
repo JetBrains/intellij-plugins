@@ -1,18 +1,18 @@
 <!--
 Expected Component Model:
 Prop(name=optional, required=false, presentableType=string)
-Prop(name=optionalUnion, required=false, presentableType=String | Number)
+Prop(name=optionalUnion, required=false, presentableType=string | number)
 Prop(name=required, required=true, presentableType=string)
-Prop(name=requiredUnion, required=true, presentableType=String | Number)
+Prop(name=requiredUnion, required=true, presentableType=string | number)
 -->
 <script>
 export default {
   name: "TestComponent",
   props: {
     optional: String,
-    optionalUnion: [String, Number], // buggy, presentableType should be lowercase
+    optionalUnion: [String, Number],
     required: { type: String, required: true },
-    requiredUnion: { type: [String, Number], required: true }, // buggy, presentableType should be lowercase
+    requiredUnion: { type: [String, Number], required: true },
   }
 }
 </script>

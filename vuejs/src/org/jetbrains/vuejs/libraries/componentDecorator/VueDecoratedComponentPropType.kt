@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
+import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
 import org.jetbrains.vuejs.codeInsight.getDecoratorArgument
 import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 
@@ -31,7 +32,11 @@ class VueDecoratedComponentPropType private constructor(typeSource: JSTypeSource
      && type.decoratorArgumentIndex == decoratorArgumentIndex)
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType =
-    getJSTypeFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex)) ?: member.jsType ?: JSAnyType.get(source)
+    getJSTypeFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
+      ?.substitute(context)
+      ?.fixPrimitiveTypes()
+    ?: member.jsType
+    ?: JSAnyType.get(source)
 
   override fun hashCodeImpl(): Int = member.memberHashCode
 

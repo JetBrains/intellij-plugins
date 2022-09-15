@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
+import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
@@ -305,6 +306,13 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
       }
     null -> null
     else -> getJSTypeFromConstructor(expression)
+  }
+
+fun JSType.fixPrimitiveTypes(): JSType =
+  transformTypeHierarchy {
+    if (it is JSPrimitiveType && !it.isPrimitive)
+      JSNamedTypeFactory.createType(it.primitiveTypeText, it.source, it.typeContext)
+    else it
   }
 
 private fun getJSTypeFromConstructor(expression: JSExpression): JSType =

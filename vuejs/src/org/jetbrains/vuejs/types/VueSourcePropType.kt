@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.util.ProcessingContext
+import org.jetbrains.vuejs.codeInsight.fixPrimitiveTypes
 import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 
 class VueSourcePropType private constructor(typeSource: JSTypeSource, private val property: JSProperty)
@@ -24,12 +25,7 @@ class VueSourcePropType private constructor(typeSource: JSTypeSource, private va
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType =
     getJSTypeFromPropOptions(property.value)
       ?.substitute(context)
-      ?.let {
-        if (it is JSPrimitiveType && !it.isPrimitive)
-          JSNamedTypeFactory.createType(it.primitiveTypeText, it.source, it.typeContext)
-        else
-          it
-      }
+      ?.fixPrimitiveTypes()
     ?: JSAnyType.get(source)
 
   override fun hashCodeImpl(): Int = property.name.hashCode()
