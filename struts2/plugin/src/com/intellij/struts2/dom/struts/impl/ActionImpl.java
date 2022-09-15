@@ -53,7 +53,7 @@ public abstract class ActionImpl implements Action {
       return false;
     }
 
-    return ActionUtil.matchesPath(myPath, path);
+    return ActionImplUtil.matchesPath(myPath, path);
   }
 
   @Override
@@ -109,7 +109,7 @@ public abstract class ActionImpl implements Action {
       return Collections.emptyList();
     }
 
-    return ActionUtil.findActionMethods(actionClass, null);
+    return ActionImplUtil.findActionMethods(actionClass, null);
   }
 
   @Override
@@ -123,7 +123,7 @@ public abstract class ActionImpl implements Action {
       return null;
     }
 
-    final List<PsiMethod> actionMethods = ActionUtil.findActionMethods(actionClass, methodName);
+    final List<PsiMethod> actionMethods = ActionImplUtil.findActionMethods(actionClass, methodName);
     return actionMethods.size() == 1 ? actionMethods.get(0) : null;
   }
 
