@@ -2043,9 +2043,11 @@ export default class UsageComponent extends Vue {
 
     TestCase.assertNull((mixinJsPsiFile as PsiFileImpl).treeElement)
     val mixinsViaStubs = VueModelManager.getGlobal(mixinJsPsiFile).mixins
+    TestCase.assertNull(mixinJsPsiFile.treeElement)
+    PsiManager.getInstance(project).dropPsiCaches()
 
     myFixture.openFileInEditor(mixinJsFile)
-    PsiManager.getInstance(project).dropPsiCaches()
+    TestCase.assertNotNull(mixinJsPsiFile.calcTreeElement())
     TestCase.assertNotNull(mixinJsPsiFile.treeElement)
     val mixinsViaPsi = VueModelManager.getGlobal(mixinJsPsiFile).mixins
 
