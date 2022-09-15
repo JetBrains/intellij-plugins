@@ -899,23 +899,9 @@ public class Angular2HtmlLexerSpecTest {
     };
   }
 
-  @SuppressWarnings({"NewClassNamingConvention", "JUnitTestCaseWithNonTrivialConstructors"})
-  private static final class Token {
-
-    public final IElementType type;
-    public final String contents;
-    public final int start;
-    public final int end;
-
-    private Token(IElementType type, String contents, int start, int end) {
-      this.type = type;
-      this.contents = contents;
-      this.start = start;
-      this.end = end;
-    }
-
-    public static List<Token> create(String input, boolean tokenizeExpansionForms,
-                                     Pair<String, String> interpolationConfig) {
+  @SuppressWarnings({"NewClassNamingConvention"})
+  private record Token(IElementType type, String contents, int start, int end) {
+    public static List<Token> create(String input, boolean tokenizeExpansionForms, Pair<String, String> interpolationConfig) {
       Angular2HtmlLexer lexer = new Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig);
       List<Token> result = new ArrayList<>();
       lexer.start(input, 0, input.length());
