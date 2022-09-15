@@ -84,26 +84,24 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
     ProblemHighlightType severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope);
     @PropertyKey(resourceBundle = BUNDLE) final String messageKey;
     switch (info.type) {
-      case EVENT:
+      case EVENT -> {
         if (templateTag) {
           messageKey = "angular.inspection.undefined-binding.message.embedded.event-not-emitted";
         }
         else {
           messageKey = "angular.inspection.undefined-binding.message.event-not-emitted";
         }
-        break;
-      case PROPERTY_BINDING:
+      }
+      case PROPERTY_BINDING -> {
         if (templateTag) {
           messageKey = "angular.inspection.undefined-binding.message.embedded.property-not-provided";
         }
         else {
           messageKey = "angular.inspection.undefined-binding.message.property-not-provided";
         }
-        break;
-      case BANANA_BOX_BINDING:
-        messageKey = "angular.inspection.undefined-binding.message.banana-box-binding-not-provided";
-        break;
-      case REGULAR:
+      }
+      case BANANA_BOX_BINDING -> messageKey = "angular.inspection.undefined-binding.message.banana-box-binding-not-provided";
+      case REGULAR -> {
         if (proximity == NOT_REACHABLE) {
           messageKey = "angular.inspection.undefined-binding.message.unknown-attribute";
         }
@@ -111,9 +109,10 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
           messageKey = "angular.inspection.undefined-binding.message.attribute-directive-out-of-scope";
         }
         severity = ProblemHighlightType.WARNING;
-        break;
-      default:
+      }
+      default -> {
         return;
+      }
     }
     // TODO register error on the symbols themselves
     holder.registerProblem(attribute.getNameElement(),

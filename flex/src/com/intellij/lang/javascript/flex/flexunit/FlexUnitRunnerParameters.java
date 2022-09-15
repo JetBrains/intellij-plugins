@@ -254,16 +254,16 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
         FlashRunnerParameters.checkAdlAndAirRuntime(sdk);
 
         switch (myAppDescriptorForEmulator) {
-          case Android:
+          case Android -> {
             if (bc.getOutputType() == OutputType.Application) {
               FlashRunnerParameters.checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
             }
-            break;
-          case IOS:
+          }
+          case IOS -> {
             if (bc.getOutputType() == OutputType.Application) {
               FlashRunnerParameters.checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
             }
-            break;
+          }
         }
         break;
     }
@@ -279,11 +279,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
     final GlobalSearchScope searchScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(moduleAndBC.first, bc, true);
     switch (getScope()) {
-      case Class:
-        getClassToTest(getClassName(), searchScope, support, true);
-        break;
-
-      case Method:
+      case Class -> getClassToTest(getClassName(), searchScope, support, true);
+      case Method -> {
         final JSClass classToTest = getClassToTest(getClassName(), searchScope, support, false);
         if (StringUtil.isEmpty(getMethodName())) {
           throw new RuntimeConfigurationError(FlexBundle.message("no.test.method.specified"));
@@ -294,16 +291,15 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
         if (methodToTest == null || !support.isTestMethod(methodToTest)) {
           throw new RuntimeConfigurationError(FlexBundle.message("method.not.valid", getMethodName()));
         }
-        break;
-
-      case Package:
+      }
+      case Package -> {
         if (!FlexUtils.packageExists(getPackageName(), searchScope)) {
           throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", getPackageName()));
         }
-        break;
-
-      default:
+      }
+      default -> {
         assert false : "Unknown scope: " + getScope();
+      }
     }
   }
 

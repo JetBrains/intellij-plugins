@@ -632,30 +632,27 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
 
 
         switch (info.TYPE) {
-          case Boolean:
+          case Boolean -> {
             myCheckBox.setBackground(table.getBackground());
             myCheckBox.setSelected("true".equalsIgnoreCase(optionValue));
             myCurrentEditor = myCheckBox;
-            break;
-          case List:
+          }
+          case List -> {
             myRepeatableValueEditor.setInfoAndValue(info, optionValue);
             myCurrentEditor = myRepeatableValueEditor;
-            break;
-          case String:
-          case Int:
-          case IncludeClasses:
-          case IncludeFiles:
+          }
+          case String, Int, IncludeClasses, IncludeFiles -> {
             myTextField.setText(optionValue);
             myCurrentEditor = myTextField;
-            break;
-          case File:
+          }
+          case File -> {
             myFileChooserDescriptor.setAllowedExtensions(info.FILE_EXTENSION);
             myTextWithBrowse.setText(FileUtil.toSystemDependentName(optionValue));
             myCurrentEditor = myTextWithBrowse;
-            break;
-          case Group:
-          default:
+          }
+          case Group -> {
             assert false;
+          }
         }
 
         return myCurrentEditor;
@@ -1022,16 +1019,15 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
   @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
-      final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
-      if (location instanceof Location) {
-        switch ((Location)location) {
-          case AdditionalConfigFile:
+      if (place.getPath(FlexBCConfigurable.LOCATION_ON_TAB) instanceof Location location) {
+        switch (location) {
+          case AdditionalConfigFile -> {
             return IdeFocusManager.findInstance().requestFocus(myConfigFileTextWithBrowse.getChildComponent(), true);
-
-          case FilesToIncludeInSwc:
+          }
+          case FilesToIncludeInSwc -> {
             return IdeFocusManager.findInstance().requestFocus(myIncludeInSWCField.getChildComponent(), true);
-
-          case ConditionalCompilerDefinition:
+          }
+          case ConditionalCompilerDefinition -> {
             final DefaultMutableTreeNode root = (DefaultMutableTreeNode)myTreeTable.getTree().getModel().getRoot();
             final CompilerOptionInfo info = CompilerOptionInfo.getOptionInfo("compiler.define");
             final DefaultMutableTreeNode node = findChildNodeWithInfo(root, info);
@@ -1050,7 +1046,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
                 }
               }
             }
-            break;
+          }
         }
       }
     }

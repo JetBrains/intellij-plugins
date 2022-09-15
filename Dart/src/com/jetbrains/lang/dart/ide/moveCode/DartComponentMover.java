@@ -247,15 +247,15 @@ public class DartComponentMover extends LineMover {
         }
         CommentType type;
         switch (type = commentTypeOf(sib)) {
-          case INVALID:
+          case INVALID -> {
             PsiElement parent = sib.getParent();
             if (parent instanceof DartFile) return sib;
             return findFinalComment(parent, isForward);
-          case MULTI_LINE_DOC_COMMENT:
+          }
+          case MULTI_LINE_DOC_COMMENT -> {
             return sib;
-          case MULTI_LINE_COMMENT:
-          case SINGLE_LINE_DOC_COMMENT:
-          case SINGLE_LINE_COMMENT:
+          }
+          case MULTI_LINE_COMMENT, SINGLE_LINE_DOC_COMMENT, SINGLE_LINE_COMMENT -> {
             if (groupType == null) {
               groupType = type;
             }
@@ -266,10 +266,8 @@ public class DartComponentMover extends LineMover {
             else {
               sib = null;
             }
-            break;
-          case NONE:
-            sib = null;
-            break;
+          }
+          case NONE -> sib = null;
         }
       }
       return target;

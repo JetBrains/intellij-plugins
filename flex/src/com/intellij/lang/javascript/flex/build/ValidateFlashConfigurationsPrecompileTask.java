@@ -80,7 +80,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
           }
           else if (bc.getNature().isMobilePlatform()) {
             switch (params.getMobileRunTarget()) {
-              case Emulator:
+              case Emulator -> {
                 switch (params.getAppDescriptorForEmulator()) {
                   case Android ->
                     FlashRunnerParameters.checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(),
@@ -91,19 +91,13 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
                                                                             false,
                                                                             "does not matter");
                 }
-                break;
-              case AndroidDevice:
-                checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(), false,
-                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
-                break;
-              case iOSSimulator:
-                checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), true,
-                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
-                break;
-              case iOSDevice:
-                checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), false,
-                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
-                break;
+              }
+              case AndroidDevice -> checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(), false,
+                                                          PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
+              case iOSSimulator -> checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), true,
+                                                         PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
+              case iOSDevice -> checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), false,
+                                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
             }
           }
         }

@@ -52,17 +52,14 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
     return new SourceItemPresentation() {
       @Override
       public String getPresentableName() {
-        switch (myType) {
-          case OutputFile:
-            return FlexBundle.message("bc.output.file.source.item", myBc.getName(), PathUtil.getFileName(myBc.getActualOutputFilePath()));
-          case OutputFileAndHtmlWrapper:
-            return FlexBundle.message("bc.output.file.and.wrapper.source.item", myBc.getName());
-          case OutputFolderContents:
-            return FlexBundle.message("bc.output.folder.source.item", myBc.getName());
-          default:
-            assert false;
-            return "";
-        }
+        return switch (myType) {
+          case OutputFile ->
+            FlexBundle.message("bc.output.file.source.item", myBc.getName(), PathUtil.getFileName(myBc.getActualOutputFilePath()));
+          case OutputFileAndHtmlWrapper ->
+            FlexBundle.message("bc.output.file.and.wrapper.source.item", myBc.getName());
+          case OutputFolderContents ->
+            FlexBundle.message("bc.output.folder.source.item", myBc.getName());
+        };
       }
 
       @Override
@@ -86,11 +83,9 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
     final String outputFilePath = myBc.getActualOutputFilePath();
     final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
 
-    switch (myType) {
-      case OutputFile:
-        return Collections.singletonList(new FileCopyPackagingElement(outputFilePath));
-
-      case OutputFileAndHtmlWrapper:
+    return switch (myType) {
+      case OutputFile -> Collections.singletonList(new FileCopyPackagingElement(outputFilePath));
+      case OutputFileAndHtmlWrapper -> {
         final List<PackagingElement<?>> result = new ArrayList<>();
 
         result.add(new FileCopyPackagingElement(outputFilePath));
@@ -111,14 +106,9 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
             }
           }
         }
-        return result;
-
-      case OutputFolderContents:
-        return Collections.singletonList(new DirectoryCopyPackagingElement(outputFolderPath));
-
-      default:
-        assert false;
-        return Collections.emptyList();
-    }
+        yield result;
+      }
+      case OutputFolderContents -> Collections.singletonList(new DirectoryCopyPackagingElement(outputFolderPath));
+    };
   }
 }

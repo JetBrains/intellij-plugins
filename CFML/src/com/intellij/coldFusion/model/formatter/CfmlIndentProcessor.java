@@ -74,21 +74,13 @@ public class CfmlIndentProcessor extends CfmlFormatterUtil {
       return Indent.getNormalIndent();
     }
     else if (myType == CfscriptTokenTypes.R_CURLYBRACKET || myType == CfscriptTokenTypes.L_CURLYBRACKET) {
-      switch (braceStyle) {
-        case CommonCodeStyleSettings.END_OF_LINE:
-          return Indent.getNoneIndent();
-        case CommonCodeStyleSettings.NEXT_LINE:
-          return Indent.getNoneIndent();
-        case CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED:
-          return Indent.getNoneIndent();
-        case CommonCodeStyleSettings.NEXT_LINE_SHIFTED:
-          return Indent.getNormalIndent();
-        case CommonCodeStyleSettings.NEXT_LINE_SHIFTED2:
-          return Indent.getNormalIndent();
-        default:
-          break;
-      }
-      return Indent.getNoneIndent();
+      return switch (braceStyle) {
+        case CommonCodeStyleSettings.END_OF_LINE, CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED, CommonCodeStyleSettings.NEXT_LINE ->
+          Indent.getNoneIndent();
+        case CommonCodeStyleSettings.NEXT_LINE_SHIFTED, CommonCodeStyleSettings.NEXT_LINE_SHIFTED2 ->
+          Indent.getNormalIndent();
+        default -> Indent.getNoneIndent();
+      };
     }
 
     else if (myType == CfmlTokenTypes.ASSIGN) {

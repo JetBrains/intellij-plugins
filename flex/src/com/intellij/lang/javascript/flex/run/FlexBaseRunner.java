@@ -284,11 +284,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   public static void launchWithSelectedApplication(final String urlOrPath, final LauncherParameters launcherParams) {
     switch (launcherParams.getLauncherType()) {
-      case OSDefault:
-        BrowserUtil.open(urlOrPath);
-        break;
-
-      case Browser:
+      case OSDefault -> BrowserUtil.open(urlOrPath);
+      case Browser -> {
         final Runnable runnable1 =
           () -> BrowserLauncher.getInstance().browse(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath),
                                                      launcherParams.getBrowser());
@@ -300,9 +297,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         else {
           application1.invokeLater(runnable1);
         }
-        break;
-
-      case Player:
+      }
+      case Player -> {
         try {
           if (SystemInfo.isMac) {
             if (launcherParams.isNewPlayerInstance()) {
@@ -331,7 +327,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             application2.invokeLater(runnable2);
           }
         }
-        break;
+      }
     }
   }
 
@@ -623,19 +619,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static String getDescriptorForEmulatorPath(final FlexBuildConfiguration bc,
                                                      final AppDescriptorForEmulator appDescriptorForEmulator) {
-    final String airDescriptorPath;
-    switch (appDescriptorForEmulator) {
-      case Android:
-        airDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
-        break;
-      case IOS:
-        airDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
-        break;
-      default:
-        assert false;
-        airDescriptorPath = "";
-    }
-    return airDescriptorPath;
+    return switch (appDescriptorForEmulator) {
+      case Android -> getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
+      case IOS -> getAirDescriptorPath(bc, bc.getIosPackagingOptions());
+    };
   }
 
   public static String getAirDescriptorPath(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {

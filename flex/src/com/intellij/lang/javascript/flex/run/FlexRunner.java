@@ -51,21 +51,23 @@ public class FlexRunner extends FlexBaseRunner {
                                                   final RunContentDescriptor contentToReuse,
                                                   final ExecutionEnvironment environment) throws ExecutionException {
     switch (bc.getTargetPlatform()) {
-      case Web:
+      case Web -> {
         final String urlOrPath = runnerParameters.isLaunchUrl()
                                  ? runnerParameters.getUrl()
                                  : bc.isUseHtmlWrapper()
                                    ? PathUtil.getParentPath(bc.getActualOutputFilePath()) + "/" + BCUtils.getWrapperFileName(bc)
                                    : bc.getActualOutputFilePath();
         launchWithSelectedApplication(urlOrPath, runnerParameters.getLauncherParameters());
-        break;
-      case Desktop:
+      }
+      case Desktop -> {
         return standardLaunch(module.getProject(), state, contentToReuse, environment);
-      case Mobile:
+      }
+      case Mobile -> {
         switch (runnerParameters.getMobileRunTarget()) {
-          case Emulator:
+          case Emulator -> {
             return standardLaunch(module.getProject(), state, contentToReuse, environment);
-          case AndroidDevice:
+          }
+          case AndroidDevice -> {
             final String androidDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
             final String androidAppId = getApplicationId(androidDescriptorPath);
 
@@ -80,7 +82,8 @@ public class FlexRunner extends FlexBaseRunner {
               launchOnAndroidDevice(module.getProject(), bc.getSdk(), runnerParameters.getDeviceInfo(), androidAppId, false);
             }
             return null;
-          case iOSSimulator:
+          }
+          case iOSSimulator -> {
             final String adtVersionSimulator = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
 
             final String iosSimulatorDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
@@ -97,7 +100,8 @@ public class FlexRunner extends FlexBaseRunner {
                                    runnerParameters.getIOSSimulatorDevice(), false);
             }
             return null;
-          case iOSDevice:
+          }
+          case iOSDevice -> {
             final String adtVersion = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
 
             if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
@@ -122,9 +126,9 @@ public class FlexRunner extends FlexBaseRunner {
                   });
               }
             }
-            break;
+          }
         }
-        break;
+      }
     }
     return null;
   }

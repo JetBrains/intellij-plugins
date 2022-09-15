@@ -292,13 +292,11 @@ public final class Angular2AttributeNameParser {
     public String getFullName() {
       if (eventType == EventType.ANIMATION) {
         if (animationPhase != null) {
-          switch (animationPhase) {
-            case DONE:
-              return "@" + name + ".done";
-            case START:
-              return "@" + name + ".start";
-            default:
-          }
+          return switch (animationPhase) {
+            case DONE -> "@" + name + ".done";
+            case START -> "@" + name + ".start";
+            default -> "@" + name;
+          };
         }
         return "@" + name;
       }

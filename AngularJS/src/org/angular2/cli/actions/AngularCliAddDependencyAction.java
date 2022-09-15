@@ -101,15 +101,11 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
                 Angular2Bundle.message("angular.action.ng-add.install-current"),
                 Messages.getCancelButton()
               }, 0, Messages.getQuestionIcon())) {
-
-              case 0:
-                version.set(LATEST);
-                break;
-              case 1:
-                version.set(packageVersion);
-                break;
-              default:
+              case 0 -> version.set(LATEST);
+              case 1 -> version.set(packageVersion);
+              default -> {
                 return;
+              }
             }
           }
           runAndShowConsole(project, cli, packageName + "@" + version.get(), !proposeLatestVersion);

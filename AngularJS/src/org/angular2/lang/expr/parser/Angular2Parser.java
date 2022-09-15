@@ -149,24 +149,23 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
         }
       }
       switch (count) {
-        case 0:
+        case 0 -> {
           if (myIsAction) {
             chain.done(EMPTY_STATEMENT);
           }
           else {
             chain.done(EMPTY_EXPRESSION);
           }
-          break;
-        case 1:
-          chain.drop();
-          break;
-        default:
+        }
+        case 1 -> chain.drop();
+        default -> {
           if (myIsAction) {
             chain.done(CHAIN_STATEMENT);
           }
           else {
             chain.drop();
           }
+        }
       }
     }
 

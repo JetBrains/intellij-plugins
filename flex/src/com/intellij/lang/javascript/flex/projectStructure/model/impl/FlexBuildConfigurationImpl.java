@@ -367,13 +367,9 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   public String getStatisticsEntry() {
     StringBuilder s = new StringBuilder();
     switch (myTargetPlatform) {
-      case Web:
-        s.append("Web");
-        break;
-      case Desktop:
-        s.append("Desktop");
-        break;
-      case Mobile:
+      case Web -> s.append("Web");
+      case Desktop -> s.append("Desktop");
+      case Mobile -> {
         s.append("Mobile");
         if (myAndroidPackagingOptions.isEnabled() && myIosPackagingOptions.isEnabled()) {
           s.append("(a+i)");
@@ -384,25 +380,21 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
         else if (myIosPackagingOptions.isEnabled()) {
           s.append("(i)");
         }
-        break;
-      default:
+      }
+      default -> {
         assert false : myTargetPlatform;
+      }
     }
     s.append(" ");
     s.append(myPureAs ? "AS" : "Flex");
     s.append(" ");
     switch (myOutputType) {
-      case Application:
-        s.append("app");
-        break;
-      case Library:
-        s.append("lib");
-        break;
-      case RuntimeLoadedModule:
-        s.append("rlm");
-        break;
-      default:
+      case Application -> s.append("app");
+      case Library -> s.append("lib");
+      case RuntimeLoadedModule -> s.append("rlm");
+      default -> {
         assert false : myOutputType;
+      }
     }
     Sdk sdk = getSdk();
     if (sdk != null && sdk.getSdkType() == FlexmojosSdkType.getInstance()) {

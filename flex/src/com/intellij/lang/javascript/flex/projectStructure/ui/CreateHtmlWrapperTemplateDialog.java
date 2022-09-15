@@ -161,7 +161,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
       final int choice = Messages.showDialog(project, FlexBundle.message("folder.not.empty.clear.or.overwrite"),
                                              getTitleText(), options, 0, Messages.getWarningIcon());
       switch (choice) {
-        case 0:
+        case 0 -> {
           final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<>() {
             @Override
             public IOException compute() {
@@ -182,10 +182,13 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
             return false;
           }
           return true;
-        case 1:
+        }
+        case 1 -> {
           return true;
-        case 2:
+        }
+        case 2 -> {
           return false;
+        }
       }
     }
     return true;

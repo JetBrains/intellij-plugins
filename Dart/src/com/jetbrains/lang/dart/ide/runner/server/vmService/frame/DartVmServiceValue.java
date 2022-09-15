@@ -196,29 +196,25 @@ public class DartVmServiceValue extends XNamedValue {
   private boolean computeVarHavingStringValuePresentation(@NotNull XValueNode node) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
     switch (myInstanceRef.getKind()) {
-      case Null:
-      case Bool:
+      case Null, Bool ->
         node.setPresentation(getIcon(), new XKeywordValuePresentation(Objects.requireNonNull(myInstanceRef.getValueAsString())), false);
-        break;
-      case Double:
-      case Int:
-        node.setPresentation(getIcon(), new XNumericValuePresentation(myInstanceRef.getValueAsString()), false);
-        break;
-      case String:
+      case Double, Int -> node.setPresentation(getIcon(), new XNumericValuePresentation(myInstanceRef.getValueAsString()), false);
+      case String -> {
         final String presentableValue = StringUtil.replace(Objects.requireNonNull(myInstanceRef.getValueAsString()), "\"", "\\\"");
         node.setPresentation(getIcon(), new XStringValuePresentation(presentableValue), false);
 
         if (myInstanceRef.getValueAsStringIsTruncated()) {
           addFullStringValueEvaluator(node, myInstanceRef);
         }
-        break;
-      case StackTrace:
+      }
+      case StackTrace -> {
         node.setFullValueEvaluator(new ImmediateFullValueEvaluator(DartBundle.message("debugger.link.see.stack.trace"),
                                                                    Objects.requireNonNull(myInstanceRef.getValueAsString())));
         node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
-        break;
-      default:
+      }
+      default -> {
         return false;
+      }
     }
     return true;
   }
@@ -490,23 +486,17 @@ public class DartVmServiceValue extends XNamedValue {
 
   private static @NotNull String getShortPresentableValue(@NotNull InstanceRef instanceRef) {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
-    switch (instanceRef.getKind()) {
-      case String:
+    return switch (instanceRef.getKind()) {
+      case String -> {
         String string = Objects.requireNonNull(instanceRef.getValueAsString());
         if (string.length() > 103) string = string.substring(0, 100) + "...";
-        return "\"" + StringUtil.replace(string, "\"", "\\\"") + "\"";
-      case Null:
-      case Bool:
-      case Double:
-      case Int:
-      case Float32x4:
-      case Float64x2:
-      case Int32x4:
+        yield "\"" + StringUtil.replace(string, "\"", "\\\"") + "\"";
+      }
+      case Null, Bool, Double, Int, Float32x4, Float64x2, Int32x4 ->
         // case StackTrace:  getValueAsString() is too long for StackTrace
-        return Objects.requireNonNull(instanceRef.getValueAsString());
-      default:
-        return "[" + instanceRef.getClassRef().getName() + "]";
-    }
+        Objects.requireNonNull(instanceRef.getValueAsString());
+      default -> "[" + instanceRef.getClassRef().getName() + "]";
+    };
   }
 
   private static boolean isListKind(@NotNull InstanceKind kind) {

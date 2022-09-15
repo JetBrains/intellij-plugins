@@ -54,40 +54,33 @@ public class DartConsoleFilter implements Filter {
     final DartPositionInfo info = DartPositionInfo.parsePositionInfo(line);
     if (info == null) return null;
 
-    final VirtualFile file;
-    switch (info.type) {
-      case FILE:
+    final VirtualFile file = switch (info.type) {
+      case FILE -> {
         String path = URLUtil.unescapePercentSequences(info.path);
         if (SystemInfo.isWindows) {
           path = StringUtil.trimLeading(path, '/');
         }
-        file = LocalFileSystem.getInstance().findFileByPath(path);
-        break;
-      case DART:
-        file = DartUrlResolver.findFileInDartSdkLibFolder(myProject, mySdk, DART_PREFIX + info.path);
-        break;
-      case PACKAGE:
+        yield LocalFileSystem.getInstance().findFileByPath(path);
+      }
+      case DART -> DartUrlResolver.findFileInDartSdkLibFolder(myProject, mySdk, DART_PREFIX + info.path);
+      case PACKAGE -> {
         if (myDartUrlResolver != null) {
-          file = myDartUrlResolver.findFileByDartUrl(PACKAGE_PREFIX + info.path);
+          yield myDartUrlResolver.findFileByDartUrl(PACKAGE_PREFIX + info.path);
         }
-        else {
-          if (myAllPubspecYamlFiles == null) {
-            myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
-          }
+        if (myAllPubspecYamlFiles == null) {
+          myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
+        }
 
-          VirtualFile inPackage = null;
-          for (VirtualFile yamlFile : myAllPubspecYamlFiles) {
-            inPackage = DartUrlResolver.getInstance(myProject, yamlFile).findFileByDartUrl(PACKAGE_PREFIX + info.path);
-            if (inPackage != null) {
-              break;
-            }
+        VirtualFile inPackage = null;
+        for (VirtualFile yamlFile : myAllPubspecYamlFiles) {
+          inPackage = DartUrlResolver.getInstance(myProject, yamlFile).findFileByDartUrl(PACKAGE_PREFIX + info.path);
+          if (inPackage != null) {
+            break;
           }
-          file = inPackage;
         }
-        break;
-      default:
-        file = null;
-    }
+        yield inPackage;
+      }
+    };
 
     if (file != null && !file.isDirectory()) {
       final int highlightStartOffset = entireLength - line.length() + info.highlightingStartIndex;

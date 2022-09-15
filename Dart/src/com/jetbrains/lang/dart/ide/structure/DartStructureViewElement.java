@@ -101,59 +101,38 @@ final class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     final Element element = myOutline.getElement();
     final boolean finalOrConst = element.isConst() || element.isFinal();
 
-    switch (element.getKind()) {
-      case ElementKind.CLASS:
-        return element.isAbstract() ? AbstractClass : AllIcons.Nodes.Class;
-      case ElementKind.EXTENSION:
-        return Include;
-      case ElementKind.MIXIN:
-        return AbstractClass;
-      case ElementKind.CONSTRUCTOR:
-        return Method;
-      case ElementKind.CONSTRUCTOR_INVOCATION:
-        return CONSTRUCTOR_INVOCATION_ICON;
-      case ElementKind.ENUM:
-        return AllIcons.Nodes.Enum;
-      case ElementKind.ENUM_CONSTANT:
-        return STATIC_FINAL_FIELD_ICON;
-      case ElementKind.FIELD:
-        if (finalOrConst && element.isTopLevelOrStatic()) return STATIC_FINAL_FIELD_ICON;
-        if (finalOrConst) return FINAL_FIELD_ICON;
-        if (element.isTopLevelOrStatic()) return STATIC_FIELD_ICON;
-        return Field;
-      case ElementKind.FUNCTION:
-        return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Lambda;
-      case ElementKind.FUNCTION_INVOCATION:
-        return FUNCTION_INVOCATION_ICON;
-      case ElementKind.FUNCTION_TYPE_ALIAS:
-        return DartComponentType.TYPEDEF.getIcon();
-      case ElementKind.GETTER:
-        return element.isTopLevelOrStatic() ? PropertyReadStatic : PropertyRead;
-      case ElementKind.METHOD:
-        if (element.isAbstract()) return AbstractMethod;
-        return element.isTopLevelOrStatic() ? STATIC_METHOD_ICON : Method;
-      case ElementKind.SETTER:
-        return element.isTopLevelOrStatic() ? PropertyWriteStatic : PropertyWrite;
-      case ElementKind.TOP_LEVEL_VARIABLE:
-        return finalOrConst ? TOP_LEVEL_CONST_ICON : TOP_LEVEL_VAR_ICON;
-      case ElementKind.UNIT_TEST_GROUP:
-        return TestSourceFolder;
-      case ElementKind.UNIT_TEST_TEST:
-        return AllIcons.RunConfigurations.Junit;
-
-      case ElementKind.CLASS_TYPE_ALIAS:
-      case ElementKind.COMPILATION_UNIT:
-      case ElementKind.FILE:
-      case ElementKind.LABEL:
-      case ElementKind.LIBRARY:
-      case ElementKind.LOCAL_VARIABLE:
-      case ElementKind.PARAMETER:
-      case ElementKind.PREFIX:
-      case ElementKind.TYPE_PARAMETER:
-      case ElementKind.UNKNOWN:
-      default:
-        return null; // unexpected
-    }
+    return switch (element.getKind()) {
+      case ElementKind.CLASS -> element.isAbstract() ? AbstractClass : AllIcons.Nodes.Class;
+      case ElementKind.EXTENSION -> Include;
+      case ElementKind.MIXIN -> AbstractClass;
+      case ElementKind.CONSTRUCTOR -> Method;
+      case ElementKind.CONSTRUCTOR_INVOCATION -> CONSTRUCTOR_INVOCATION_ICON;
+      case ElementKind.ENUM -> AllIcons.Nodes.Enum;
+      case ElementKind.ENUM_CONSTANT -> STATIC_FINAL_FIELD_ICON;
+      case ElementKind.FIELD -> {
+        if (finalOrConst && element.isTopLevelOrStatic()) yield STATIC_FINAL_FIELD_ICON;
+        if (finalOrConst) yield FINAL_FIELD_ICON;
+        if (element.isTopLevelOrStatic()) yield STATIC_FIELD_ICON;
+        yield Field;
+      }
+      case ElementKind.FUNCTION -> element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Lambda;
+      case ElementKind.FUNCTION_INVOCATION -> FUNCTION_INVOCATION_ICON;
+      case ElementKind.FUNCTION_TYPE_ALIAS -> DartComponentType.TYPEDEF.getIcon();
+      case ElementKind.GETTER -> element.isTopLevelOrStatic() ? PropertyReadStatic : PropertyRead;
+      case ElementKind.METHOD -> {
+        if (element.isAbstract()) yield AbstractMethod;
+        yield element.isTopLevelOrStatic() ? STATIC_METHOD_ICON : Method;
+      }
+      case ElementKind.SETTER -> element.isTopLevelOrStatic() ? PropertyWriteStatic : PropertyWrite;
+      case ElementKind.TOP_LEVEL_VARIABLE -> finalOrConst ? TOP_LEVEL_CONST_ICON : TOP_LEVEL_VAR_ICON;
+      case ElementKind.UNIT_TEST_GROUP -> TestSourceFolder;
+      case ElementKind.UNIT_TEST_TEST -> AllIcons.RunConfigurations.Junit;
+      case ElementKind.CLASS_TYPE_ALIAS, ElementKind.COMPILATION_UNIT, ElementKind.FILE, ElementKind.LABEL, ElementKind.LIBRARY,
+        ElementKind.LOCAL_VARIABLE, ElementKind.PARAMETER, ElementKind.PREFIX, ElementKind.TYPE_PARAMETER, ElementKind.UNKNOWN ->
+        // unexpected
+        null;
+      default -> null;
+    };
   }
 
   @Nullable

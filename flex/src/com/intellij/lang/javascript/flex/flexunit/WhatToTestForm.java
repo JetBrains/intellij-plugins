@@ -143,24 +143,25 @@ public class WhatToTestForm {
                         final @Nullable FlexBuildConfiguration bc,
                         final FlexUnitRunnerParameters params) {
     switch (params.getScope()) {
-      case Class:
+      case Class -> {
         myClassRadioButton.setSelected(true);
         myClassField.setText(params.getClassName());
         myPackageField.setText("");
-        break;
-      case Method:
+      }
+      case Method -> {
         myMethodRadioButton.setSelected(true);
         myClassField.setText(params.getClassName());
         myPackageField.setText("");
         myMethodField.setText(params.getMethodName());
-        break;
-      case Package:
+      }
+      case Package -> {
         myPackageRadioButton.setSelected(true);
         myClassField.setText("");
         myPackageField.setText(params.getPackageName());
-        break;
-      default:
+      }
+      default -> {
         assert false : "Unknown scope: " + params.getScope();
+      }
     }
 
     updateOnBCChange(bc, module);

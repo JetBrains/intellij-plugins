@@ -165,12 +165,14 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       while (index > 0) {
         char ch = lineText.charAt(--index);
         switch (ch) {
-          case ' ':
-            continue;
-          case '/':
+          case ' ' -> {
+          }
+          case '/' -> {
             return index >= 2 && lineText.charAt(index - 1) == '/' && lineText.charAt(index - 2) != '/';
-          default:
+          }
+          default -> {
             return false;
+          }
         }
       }
       return false;
@@ -186,9 +188,9 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       while (++index < prevLine.length()) {
         char ch = prevLine.charAt(index);
         switch (ch) {
-          case ' ':
-            continue;
-          case '/':
+          case ' ' -> {
+          }
+          case '/' -> {
             if (prevLine.length() > index + 1 && prevLine.charAt(index + 1) == '/') {
               final String comment = prevLine.subSequence(index + 2, prevLine.length()).toString();
               if (StringUtil.trimLeading(comment, ' ').startsWith(IGNORE_PREFIX)) {
@@ -196,8 +198,10 @@ public class DartProblemGroup implements SuppressableProblemGroup {
               }
             }
             return false;
-          default:
+          }
+          default -> {
             return false;
+          }
         }
       }
       return false;

@@ -440,22 +440,18 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       }
       else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
         switch (myMobileRunTarget) {
-          case Emulator:
+          case Emulator -> {
             switch (myAppDescriptorForEmulator) {
               case Android -> checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), consumer, true,
                                                                 getBCName());
               case IOS -> checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), consumer, true,
                                                             getBCName());
             }
-            break;
-          case AndroidDevice:
-            checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), consumer, true,
-                                              getBCName());
-            break;
-          case iOSSimulator:
-          case iOSDevice:
+          }
+          case AndroidDevice -> checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), consumer, true,
+                                                                  getBCName());
+          case iOSSimulator, iOSDevice ->
             checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), consumer, true, getBCName());
-            break;
         }
       }
 
@@ -557,7 +553,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     }
 
     switch (bc.getTargetPlatform()) {
-      case Web:
+      case Web -> {
         if (myLaunchUrl) {
           if (myUrl.isEmpty()) throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.not.set"));
           try {
@@ -586,18 +582,16 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
           }
         }
         checkDebuggerSdk();
-        break;
-
-      case Desktop:
+      }
+      case Desktop -> {
         checkAdlAndAirRuntime(sdk);
         if (bc.getOutputType() == OutputType.Application) {
           checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
         }
-        break;
-
-      case Mobile:
+      }
+      case Mobile -> {
         switch (myMobileRunTarget) {
-          case Emulator:
+          case Emulator -> {
             checkAdlAndAirRuntime(sdk);
 
             if (bc.getOutputType() == OutputType.Application) {
@@ -606,13 +600,13 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
                 case IOS -> checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
               }
             }
-            break;
-          case AndroidDevice:
+          }
+          case AndroidDevice -> {
             if (bc.getOutputType() == OutputType.Application) {
               checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
             }
-            break;
-          case iOSSimulator:
+          }
+          case iOSSimulator -> {
             if (bc.getOutputType() == OutputType.Application) {
               checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
             }
@@ -628,14 +622,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
               throw new RuntimeConfigurationError(
                 FlexBundle.message("ios.simulator.sdk.not.found", FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)));
             }
-            break;
-          case iOSDevice:
+          }
+          case iOSDevice -> {
             if (bc.getOutputType() == OutputType.Application) {
               checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
             }
-            break;
+          }
         }
-        break;
+      }
     }
   }
 

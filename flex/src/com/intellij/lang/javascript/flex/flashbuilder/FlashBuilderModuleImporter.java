@@ -112,13 +112,13 @@ public class FlashBuilderModuleImporter {
       }
 
       switch (targetPlatform) {
-        case Web:
+        case Web -> {
           if (fbProject.isUseHtmlWrapper()) {
             mainBC.setUseHtmlWrapper(true);
             mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME);
           }
-          break;
-        case Desktop:
+        }
+        case Desktop -> {
           setupAirDescriptor(mainBC, rootModel);
           mainBC.getAirDesktopPackagingOptions().setPackageFileName(shortClassName);
           if (!StringUtil.isEmpty(fbProject.getDesktopCertPath())) {
@@ -127,8 +127,8 @@ public class FlashBuilderModuleImporter {
           }
           FilesToPackageUtil
             .setupFilesToPackage(mainBC.getAirDesktopPackagingOptions(), fbProject.getPathsExcludedFromDesktopPackaging(), rootModel);
-          break;
-        case Mobile:
+        }
+        case Mobile -> {
           setupAirDescriptor(mainBC, rootModel);
 
           mainBC.getAndroidPackagingOptions().setEnabled(fbProject.isAndroidSupported());
@@ -146,7 +146,7 @@ public class FlashBuilderModuleImporter {
             .setProvisioningProfilePath(StringUtil.notNullize(fbProject.getIOSProvisioningPath()));
           mainBC.getIosPackagingOptions().getSigningOptions().setKeystorePath(StringUtil.notNullize(fbProject.getIOSCertPath()));
           FilesToPackageUtil.setupFilesToPackage(mainBC.getIosPackagingOptions(), fbProject.getPathsExcludedFromIOSPackaging(), rootModel);
-          break;
+        }
       }
     }
     else {

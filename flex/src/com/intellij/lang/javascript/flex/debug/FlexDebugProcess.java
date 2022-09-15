@@ -227,40 +227,37 @@ public class FlexDebugProcess extends XDebugProcess {
       final FlashRunnerParameters appParams = (FlashRunnerParameters)params;
 
       switch (bc.getTargetPlatform()) {
-        case Web:
+        case Web -> {
           final String urlOrPath = appParams.isLaunchUrl() ? appParams.getUrl()
                                                            : bc.isUseHtmlWrapper()
                                                              ? PathUtil.getParentPath(bc.getActualOutputFilePath()) +
                                                                "/" + BCUtils.getWrapperFileName(bc)
                                                              : bc.getActualOutputFilePath();
           sendCommand(new LaunchBrowserCommand(urlOrPath, appParams.getLauncherParameters()));
-          break;
-        case Desktop:
-          sendAdlStartingCommand(bc, appParams);
-          break;
-        case Mobile:
+        }
+        case Desktop -> sendAdlStartingCommand(bc, appParams);
+        case Mobile -> {
           switch (appParams.getMobileRunTarget()) {
-            case Emulator:
-              sendAdlStartingCommand(bc, appParams);
-              break;
-            case AndroidDevice:
+            case Emulator -> sendAdlStartingCommand(bc, appParams);
+            case AndroidDevice -> {
               final String androidAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
               sendCommand(new StartAppOnAndroidDeviceCommand(bc.getSdk(), appParams.getDeviceInfo(), androidAppId));
-              break;
-            case iOSSimulator:
+            }
+            case iOSSimulator -> {
               final String iosSimulatorAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
               sendCommand(new StartAppOnIosSimulatorCommand(bc.getSdk(), iosSimulatorAppId,
                                                             ((FlashRunnerParameters)params).getIOSSimulatorSdkPath(),
                                                             ((FlashRunnerParameters)params).getIOSSimulatorDevice()));
-              break;
-            case iOSDevice:
+            }
+            case iOSDevice -> {
               final String iosAppName =
                 FlexBaseRunner.getApplicationName(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
               sendCommand(new StartAppOnIosDeviceCommand(iosAppName));
-              break;
+            }
           }
+        }
       }
     }
     else if (params instanceof FlexUnitRunnerParameters) {

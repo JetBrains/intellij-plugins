@@ -42,15 +42,19 @@ public class LauncherParameters implements Cloneable {
 
   public String getPresentableText() {
     switch (myLauncherType) {
-      case OSDefault:
+      case OSDefault -> {
         return FlexBundle.message("system.default.application");
-      case Browser:
+      }
+      case Browser -> {
         return myBrowser.getName();
-      case Player:
+      }
+      case Player -> {
         return FileUtil.toSystemDependentName(myPlayerPath);
-      default:
+      }
+      default -> {
         assert false;
         return "";
+      }
     }
   }
 

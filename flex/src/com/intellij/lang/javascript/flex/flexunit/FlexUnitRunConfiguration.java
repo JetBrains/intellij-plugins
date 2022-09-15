@@ -81,19 +81,13 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
 
   @Override
   public String suggestedName() {
-    switch (myRunnerParameters.getScope()) {
-      case Class:
-        return StringUtil.getShortName(myRunnerParameters.getClassName());
-      case Method:
-        return StringUtil.getShortName(myRunnerParameters.getClassName()) + "." + myRunnerParameters.getMethodName() + "()";
-      case Package:
-        return StringUtil.isEmpty(myRunnerParameters.getPackageName())
-               ? myRunnerParameters.getModuleName()
-               : myRunnerParameters.getPackageName();
-      default:
-        assert false : "Unknown scope: " + myRunnerParameters.getScope();
-        return null;
-    }
+    return switch (myRunnerParameters.getScope()) {
+      case Class -> StringUtil.getShortName(myRunnerParameters.getClassName());
+      case Method -> StringUtil.getShortName(myRunnerParameters.getClassName()) + "." + myRunnerParameters.getMethodName() + "()";
+      case Package -> StringUtil.isEmpty(myRunnerParameters.getPackageName())
+            ? myRunnerParameters.getModuleName()
+            : myRunnerParameters.getPackageName();
+    };
   }
 
   @Override

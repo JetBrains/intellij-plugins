@@ -715,15 +715,12 @@ public final class CompilerConfigGenerator {
     final String elementName = elementNames.get(elementNames.size() - 1);
 
     switch (info.TYPE) {
-      case Boolean:
-      case String:
-      case Int:
-      case File:
+      case Boolean, String, Int, File -> {
         final Element simpleElement = new Element(elementName, parentElement.getNamespace());
         simpleElement.setText(value);
         parentElement.addContent(simpleElement);
-        break;
-      case List:
+      }
+      case List -> {
         if (info.LIST_ELEMENTS.length == 1) {
           final Element listHolderElement = getOrCreateElement(parentElement, elementName);
           for (final String listElementValue : StringUtil.split(value, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
@@ -748,9 +745,10 @@ public final class CompilerConfigGenerator {
             parentElement.addContent(repeatableListHolderElement);
           }
         }
-        break;
-      default:
+      }
+      default -> {
         assert false : info.DISPLAY_NAME;
+      }
     }
   }
 
