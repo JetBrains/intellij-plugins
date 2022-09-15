@@ -1,0 +1,53 @@
+JsonFile: TypingInI18NTag.vue
+  PsiWhiteSpace('\n')
+  JsonObject
+    PsiElement({)('{')
+    PsiWhiteSpace('\n  ')
+    JsonProperty
+      JsonStringLiteral
+        PsiElement(DOUBLE_QUOTED_STRING)('"en"')
+      PsiElement(:)(':')
+      PsiWhiteSpace(' ')
+      JsonObject
+        PsiElement({)('{')
+        PsiWhiteSpace('\n    ')
+        JsonProperty
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"title"')
+          PsiElement(:)(':')
+          PsiWhiteSpace(' ')
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"Lilly's Limited Edition"')
+        PsiElement(,)(',')
+        PsiWhiteSpace('\n    ')
+        JsonProperty
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"description1"')
+          PsiElement(:)(':')
+          PsiWhiteSpace(' ')
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"<p>Thank you for completing the {day}-day trial! Unfortunately, we are not able to offer a free version.</p>"')
+        PsiElement(,)(',')
+        PsiWhiteSpace('\n    ')
+        JsonProperty
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"other"')
+          PsiElement(:)(':')
+          PsiWhiteSpace(' ')
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('""')
+        PsiErrorElement:',' or '}' expected, got '"feature"'
+          <empty list>
+        PsiWhiteSpace('\n    ')
+        JsonProperty
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"feature"')
+          PsiElement(:)(':')
+          PsiWhiteSpace(' ')
+          JsonStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"asdas"')
+        PsiWhiteSpace('\n  ')
+        PsiElement(})('}')
+    PsiWhiteSpace('\n')
+    PsiElement(})('}')
+  PsiWhiteSpace('\n')

@@ -318,6 +318,13 @@ Vue.options.delimiters = ['<%', '%>']
     }
   }
 
+  fun testTypingInI18NTag() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    myFixture.type(':')
+    myFixture.type('"')
+    checkParseTree()
+  }
+
   private fun checkParseTree(suffix: String = "") {
     ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "${suffix}.txt", toParseTreeText(myFixture.file))
   }
