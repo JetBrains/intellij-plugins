@@ -128,7 +128,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   /**
    * @deprecated use {@link JSTypeUtils#areTypesCompatible(JSType, JSType, ProcessingContext, PsiElement)} instead.
    */
-  @Deprecated(forRemoval = true)
+  @Deprecated
   protected static boolean compatibleType(String overrideParameterType,
                                           String parameterType,
                                           PsiElement overrideContext,

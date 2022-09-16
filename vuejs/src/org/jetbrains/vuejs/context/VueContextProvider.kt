@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.annotations.ApiStatus
 
-@ApiStatus.ScheduledForRemoval
 @Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
 interface VueContextProvider {
   /**
