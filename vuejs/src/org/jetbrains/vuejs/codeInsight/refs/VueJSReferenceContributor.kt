@@ -47,8 +47,10 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
       return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
         .and(FilterPattern(object : ElementFilter {
           override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-            return VueModelManager.findComponentForThisResolve(
-              element.castSafelyTo<JSReferenceExpression>()?.qualifier?.castSafelyTo() ?: return false) != null
+            return element.castSafelyTo<JSReferenceExpression>()
+              ?.qualifier
+              ?.castSafelyTo<JSThisExpression>()
+              ?.let { VueModelManager.findComponentForThisResolve(it) } != null
           }
 
           override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
