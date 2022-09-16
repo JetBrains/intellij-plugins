@@ -16,7 +16,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -110,9 +110,9 @@ interface EntityContainerInfoProvider<T> {
         }
 
       private fun getBooleanValue(element: Any?): Boolean =
-        element?.castSafelyTo<JSTypeOwner>()
+        element?.asSafely<JSTypeOwner>()
           ?.jsType?.substitute()
-          ?.castSafelyTo<JSBooleanLiteralTypeImpl>()
+          ?.asSafely<JSBooleanLiteralTypeImpl>()
           ?.literal == true
     }
 

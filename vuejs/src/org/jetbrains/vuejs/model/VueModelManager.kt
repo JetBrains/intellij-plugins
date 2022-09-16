@@ -28,7 +28,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
@@ -131,7 +131,7 @@ class VueModelManager {
           getVueIndexData(element)
             ?.descriptorQualifiedReference
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
-            ?.castSafelyTo<VueSourceEntityDescriptor>()
+            ?.asSafely<VueSourceEntityDescriptor>()
             ?.let { return it }
 
           if (context is JSProperty) {
@@ -150,7 +150,7 @@ class VueModelManager {
           context.argumentList
             ?.arguments
             ?.find { it is JSObjectLiteralExpression }
-        }.castSafelyTo<JSObjectLiteralExpression>()
+        }.asSafely<JSObjectLiteralExpression>()
         return VueSourceEntityDescriptor(initializer, source = initializer ?: context)
       }
       else if (context is JSProperty) {
@@ -262,7 +262,7 @@ class VueModelManager {
             ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
           )
             ?.let { getComponentDescriptor(it) }
-            ?.castSafelyTo<VueSourceEntityDescriptor>()
+            ?.asSafely<VueSourceEntityDescriptor>()
             ?.let { return it }
         }
         if (file.virtualFile?.fileType == VueFileType.INSTANCE)

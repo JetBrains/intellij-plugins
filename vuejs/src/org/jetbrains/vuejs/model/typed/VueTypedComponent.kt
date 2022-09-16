@@ -20,7 +20,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -116,7 +116,7 @@ class VueTypedComponent(override val source: PsiElement,
             signature.functionType
               .parameters.getOrNull(0)
               ?.inferredType
-              ?.castSafelyTo<JSStringLiteralTypeImpl>()
+              ?.asSafely<JSStringLiteralTypeImpl>()
               ?.literal
               ?.let { name ->
                 VueTypedEmit(name, signature)
@@ -204,7 +204,7 @@ class VueTypedComponent(override val source: PsiElement,
 
     override val source: PsiElement?
       get() = callSignature.functionType.parameters.getOrNull(0)
-                ?.inferredType?.castSafelyTo<JSTypeKeyTypeImpl>()
+                ?.inferredType?.asSafely<JSTypeKeyTypeImpl>()
                 ?.keySourceElements?.firstOrNull()
               ?: callSignature.memberSource.singleElement
   }

@@ -11,7 +11,7 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
 import com.intellij.util.ProcessingContext
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
@@ -41,9 +41,9 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_INDEXED_ACCESS_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
-        val reference = element.context.castSafelyTo<JSIndexedPropertyAccessExpression>()
+        val reference = element.context.asSafely<JSIndexedPropertyAccessExpression>()
                           ?.qualifier
-                          ?.castSafelyTo<JSReferenceExpression>()
+                          ?.asSafely<JSReferenceExpression>()
                         ?: return null
         val referenceName = reference.referenceName
         val accessor = when (referenceName) {
@@ -70,7 +70,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           null -> {
             // function parameter
             return JSStubBasedPsiTreeUtil.resolveLocally(referenceName, reference)
-              .castSafelyTo<JSParameter>()
+              .asSafely<JSParameter>()
               ?.let { getNamespaceForGettersOrState(it, referenceName) }
           }
           is JSReferenceExpression -> {
@@ -133,7 +133,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_DISPATCH_COMMIT_OBJECT_ARG_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
-        return element.context?.castSafelyTo<JSProperty>()
+        return element.context?.asSafely<JSProperty>()
           ?.takeIf { it.name == PROP_TYPE }
           ?.context
           ?.let { VUEX_CALL_ARGUMENT_REF_PROVIDER.getSettings(it) }
@@ -167,7 +167,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           if (qualifier === null) {
             // Ensure we are within a correct context
             val param = JSStubBasedPsiTreeUtil.resolveLocally(functionName, functionRef)
-              ?.castSafelyTo<JSParameter>()
+              ?.asSafely<JSParameter>()
             if (param?.context is JSDestructuringShorthandedProperty) {
               if (isPossiblyStoreActionContextParam(param)) {
                 if (isRootCall(functionName, element))
@@ -197,7 +197,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
             }
           }
           else {
-            return qualifier.castSafelyTo<JSReferenceExpression>()
+            return qualifier.asSafely<JSReferenceExpression>()
               ?.let {
                 if (!isRootCall(functionName, element)) {
                   getNamespaceIfActionContextParam(it) ?: VuexStaticNamespace.EMPTY
@@ -232,19 +232,19 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         ?.arguments
         ?.takeIf { it.getOrNull(0) == element }
         ?.getOrNull(if (element is JSObjectLiteralExpression) 1 else 2)
-        ?.castSafelyTo<JSObjectLiteralExpression>()
+        ?.asSafely<JSObjectLiteralExpression>()
         ?.findProperty(PROP_ROOT)
         ?.value
-        ?.castSafelyTo<JSLiteralExpression>()
+        ?.asSafely<JSLiteralExpression>()
         ?.getExpressionKind(false) == JSLiteralExpressionKind.TRUE
 
     fun getFunctionReference(callContext: PsiElement?): JSReferenceExpression? {
       return callContext?.let {
         if (it is JSArgumentList) it.context else it
       }
-        ?.castSafelyTo<JSCallExpression>()
+        ?.asSafely<JSCallExpression>()
         ?.methodExpression
-        ?.castSafelyTo<JSReferenceExpression>()
+        ?.asSafely<JSReferenceExpression>()
     }
   }
 

@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -39,7 +39,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
             if (exportedElement is JSObjectLiteralExpression || exportedElement is JSCallExpression) {
               VueComponents.getSourceComponentDescriptor(exportedElement)
                 ?.initializer
-                ?.castSafelyTo<JSObjectLiteralExpression>()
+                ?.asSafely<JSObjectLiteralExpression>()
                 ?.properties
                 ?.count { it is JSPropertyImpl } == 0
             }

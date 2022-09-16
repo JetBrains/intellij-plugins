@@ -12,7 +12,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findExpressionInAttributeValue
@@ -27,7 +27,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
 
   override val nameElement: PsiElement?
     get() = descriptor.initializer
-      ?.castSafelyTo<JSObjectLiteralExpression>()
+      ?.asSafely<JSObjectLiteralExpression>()
       ?.findProperty(NAME_PROP)
       ?.let { it.literalExpressionInitializer ?: it.value }
 

@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
@@ -23,7 +23,7 @@ class NuxtConfigImpl(override val file: PsiFile, nuxt2_15: Boolean) : NuxtConfig
     configLiteral
       ?.findProperty("srcDir")
       ?.jsType
-      ?.castSafelyTo<JSStringLiteralTypeImpl>()
+      ?.asSafely<JSStringLiteralTypeImpl>()
       ?.literal
       ?.let { file.virtualFile?.parent?.findFileByRelativePath(it) }
 
@@ -47,16 +47,16 @@ class NuxtConfigImpl(override val file: PsiFile, nuxt2_15: Boolean) : NuxtConfig
         ComponentsDirectoryConfigImpl(it, pathPrefix = pathPrefixDefault, global = globalDefault)
       }
       is JSObjectLiteralExpression -> ComponentsDirectoryConfigImpl(
-        path = config.findProperty("path")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? String ?: DEFAULT_PATH,
-        prefix = (config.findProperty("prefix")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? String)?.let { fromAsset(it) }
+        path = config.findProperty("path")?.value?.asSafely<JSLiteralExpression>()?.value as? String ?: DEFAULT_PATH,
+        prefix = (config.findProperty("prefix")?.value?.asSafely<JSLiteralExpression>()?.value as? String)?.let { fromAsset(it) }
                  ?: DEFAULT_PREFIX,
-        pathPrefix = config.findProperty("pathPrefix")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? Boolean ?: pathPrefixDefault,
-        global = config.findProperty("global")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? Boolean ?: globalDefault,
-        extensions = config.findProperty("extensions")?.value?.castSafelyTo<JSArrayLiteralExpression>()
+        pathPrefix = config.findProperty("pathPrefix")?.value?.asSafely<JSLiteralExpression>()?.value as? Boolean ?: pathPrefixDefault,
+        global = config.findProperty("global")?.value?.asSafely<JSLiteralExpression>()?.value as? Boolean ?: globalDefault,
+        extensions = config.findProperty("extensions")?.value?.asSafely<JSArrayLiteralExpression>()
                        ?.expressions?.asSequence()
                        ?.mapNotNull { (it as? JSLiteralExpression)?.value as? String }
                        ?.toSet() ?: DEFAULT_EXTENSIONS,
-        level = config.findProperty("level")?.value?.castSafelyTo<JSLiteralExpression>()?.value?.castSafelyTo<Number>()?.toInt()
+        level = config.findProperty("level")?.value?.asSafely<JSLiteralExpression>()?.value?.asSafely<Number>()?.toInt()
                 ?: DEFAULT_LEVEL
       )
       else -> null

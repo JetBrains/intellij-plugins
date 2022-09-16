@@ -21,7 +21,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.index.VueFrameworkHandler
@@ -54,7 +54,7 @@ class VueComponents {
       getVueIndexData(implicitElement)?.descriptorQualifiedReference
         ?.takeIf { it.isNotBlank() }
         ?.let { resolveReferenceToVueComponent(implicitElement, it) }
-        ?.castSafelyTo<VueSourceEntityDescriptor>()
+        ?.asSafely<VueSourceEntityDescriptor>()
         ?.let { return it }
 
       val mixinObj = (implicitElement.parent as? JSProperty)?.parent as? JSObjectLiteralExpression

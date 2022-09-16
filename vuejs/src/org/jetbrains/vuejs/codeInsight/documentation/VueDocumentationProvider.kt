@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.FakePsiElement
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceExpressionResolver
@@ -39,9 +39,9 @@ class VueDocumentationProvider : DocumentationProvider {
   }
 
   override fun getDocumentationElementForLookupItem(psiManager: PsiManager?, `object`: Any?, element: PsiElement?): PsiElement? {
-    val documentationItem = `object`?.castSafelyTo<Pair<*, *>>()
+    val documentationItem = `object`?.asSafely<Pair<*, *>>()
       ?.first
-      ?.castSafelyTo<VueItemDocumentation>()
+      ?.asSafely<VueItemDocumentation>()
     if (documentationItem != null && element != null) {
       return PsiWrappedVueDocumentedItem(documentationItem, element)
     }

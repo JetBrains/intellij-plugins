@@ -25,7 +25,7 @@ import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
@@ -257,7 +257,7 @@ export default {
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
     val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
-      ?.findProperty("components")?.value?.castSafelyTo<JSObjectLiteralExpression>()?.properties
+      ?.findProperty("components")?.value?.asSafely<JSObjectLiteralExpression>()?.properties
     if (!componentsInitializer.isNullOrEmpty()) {
       val names = componentsInitializer.map { toAsset(it.name ?: "", true) }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
@@ -288,12 +288,12 @@ export default {
   private class RefData(val ref: PsiReference, val tag: XmlTag, val offset: Int) {
     fun getRefName(): String {
       val jsRef = ref as? JSReferenceExpression ?: return ref.canonicalText
-      return JSResolveUtil.getLeftmostQualifier(jsRef).castSafelyTo<JSReferenceExpression>()?.referenceName ?: ref.canonicalText
+      return JSResolveUtil.getLeftmostQualifier(jsRef).asSafely<JSReferenceExpression>()?.referenceName ?: ref.canonicalText
     }
 
     fun resolve(): PsiElement? {
       val jsRef = ref as? JSReferenceExpression ?: return ref.resolve()
-      return JSResolveUtil.getLeftmostQualifier(jsRef).castSafelyTo<JSReferenceExpression>()?.resolve()
+      return JSResolveUtil.getLeftmostQualifier(jsRef).asSafely<JSReferenceExpression>()?.resolve()
     }
 
     fun getReplaceRange(): TextRange? {

@@ -13,7 +13,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_ACTIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
@@ -186,12 +186,12 @@ private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSEle
   }
   return if (function == null && element is JSLiteralExpression) {
     element.references.lastOrNull()?.resolve()
-      ?.castSafelyTo<JSLocalImplicitElementImpl>()
+      ?.asSafely<JSLocalImplicitElementImpl>()
       ?.takeIf { it is VueImplicitElement || (resolveState && it is VuexStoreStateElement) }
       ?.context
       ?.let {
         if (resolveState) {
-          it.castSafelyTo<JSProperty>()
+          it.asSafely<JSProperty>()
         }
         else when (it) {
           is JSFunctionItem -> it

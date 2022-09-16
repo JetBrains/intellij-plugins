@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
@@ -199,7 +199,7 @@ class VueCodeModelSymbolsContainer<K> private constructor(private val container:
 
           modules.mapNotNullTo(result) {
             ES6PsiUtil.findDefaultExport(it)
-              ?.castSafelyTo<ES6ExportDefaultAssignment>()
+              ?.asSafely<ES6ExportDefaultAssignment>()
               ?.initializerReference
               ?.let { symbolName ->
                 WebTypesSymbolLocation(unquotedModule.takeWhile { it != '/' }, symbolName, symbolKind)

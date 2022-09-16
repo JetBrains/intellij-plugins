@@ -19,7 +19,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
@@ -102,7 +102,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   val data = mutableMapOf<String, JSRecordType.PropertySignature>()
   val methods = mutableMapOf<String, JSRecordType.PropertySignature>()
 
-  instance.castSafelyTo<VueEntitiesContainer>()
+  instance.asSafely<VueEntitiesContainer>()
     ?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
 
       override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {

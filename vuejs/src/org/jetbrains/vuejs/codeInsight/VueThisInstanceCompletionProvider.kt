@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.util.ProcessingContext
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.model.VueModelManager
 
 class VueThisInstanceCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -18,9 +18,9 @@ class VueThisInstanceCompletionProvider : CompletionProvider<CompletionParameter
     if (ref is PsiMultiReference) {
       ref = ref.references.find { it is JSReferenceExpressionImpl }
     }
-    ref.castSafelyTo<JSReferenceExpressionImpl>()
+    ref.asSafely<JSReferenceExpressionImpl>()
       ?.qualifier
-      ?.castSafelyTo<JSThisExpression>()
+      ?.asSafely<JSThisExpression>()
       ?.let { VueModelManager.findComponentForThisResolve(it) }
       ?.thisType
       ?.asRecordType()

@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.types.asCompleteType
@@ -45,7 +45,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
       }
     }
     ?.descriptor
-    ?.castSafelyTo<WebSymbolAttributeDescriptor>()
+    ?.asSafely<WebSymbolAttributeDescriptor>()
     ?.symbol
     ?.jsType
     ?.asCompleteType()

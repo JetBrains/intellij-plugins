@@ -7,7 +7,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions
 import com.intellij.psi.codeStyle.FileIndentOptionsProvider
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -20,7 +20,7 @@ class VueFileIndentOptionsProvider : FileIndentOptionsProvider() {
         return if (settings.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT)
           settings.getLanguageIndentOptions(VueLanguage.INSTANCE)
             ?.clone()
-            ?.castSafelyTo<IndentOptions>()
+            ?.asSafely<IndentOptions>()
             ?.also { it.isOverrideLanguageOptions = true }
         else
           settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE)

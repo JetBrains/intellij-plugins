@@ -15,7 +15,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
@@ -50,7 +50,7 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     if (namespace == JS && kinds.contains(kind)) {
       if (strict) {
         matches.filter { symbol ->
-          symbol.properties[PROP_SYMBOL_DIRECTIVE].castSafelyTo<Angular2Directive>()?.let { scope.contains(it) } != false
+          symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
           && symbol.properties[PROP_ERROR_SYMBOL] != true
         }
       }
@@ -92,7 +92,7 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     val symbol = item.symbol
     if (symbol == null || namespace != JS || !kinds.contains(kind)) return item
     val directives = symbol.unwrapMatchedSymbols()
-      .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.castSafelyTo<Angular2Directive>() }
+      .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.asSafely<Angular2Directive>() }
       .toList()
     return if (symbol.properties[PROP_ERROR_SYMBOL] == true) {
       null

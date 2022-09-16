@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_COMPONENTS_DEFS
@@ -104,7 +104,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
         ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path.trimEnd('/'), configFile, 0, it, true) }
         ?.lastOrNull()
         ?.resolve()
-        ?.castSafelyTo<PsiDirectory>()
+        ?.asSafely<PsiDirectory>()
         ?.virtualFile
     }
     else {

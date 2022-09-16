@@ -16,7 +16,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
@@ -78,7 +78,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override fun build(declaration: JSElement): List<VueMixin> =
       declaration.context
         ?.let { if (it is JSArgumentList) it.context else it }
-        ?.castSafelyTo<JSCallExpression>()
+        ?.asSafely<JSCallExpression>()
         ?.indexingData
         ?.implicitElements
         ?.asSequence()
@@ -94,7 +94,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     : ListAccessor<VueMixin>() {
 
     override fun build(declaration: JSElement): List<VueMixin> {
-      val mixinsProperty = declaration.castSafelyTo<JSObjectLiteralExpression>()
+      val mixinsProperty = declaration.asSafely<JSObjectLiteralExpression>()
                              ?.findProperty(propertyName) ?: return emptyList()
       val original = CompletionUtil.getOriginalOrSelf<PsiElement>(mixinsProperty)
       val referencedMixins: List<VueMixin> =
@@ -149,7 +149,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                 ?.resolveReferencedElements()
                 ?.find { it is JSEmbeddedContent }
                 ?.context
-                ?.castSafelyTo<XmlTag>()
+                ?.asSafely<XmlTag>()
                 ?.takeIf { hasAttribute(it, SETUP_ATTRIBUTE_NAME) }
                 ?.containingFile
                 ?.let { VueModelManager.getComponent(it) }

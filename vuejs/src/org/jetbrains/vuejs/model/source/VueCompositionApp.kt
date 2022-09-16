@@ -16,7 +16,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.context.isVueContext
@@ -28,7 +28,7 @@ import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDesc
 class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedContainer<VueContainer>(), VueApp {
 
   override val rootComponent: VueComponent?
-    get() = delegate.castSafelyTo<VueComponent>()
+    get() = delegate.asSafely<VueComponent>()
 
   override val components: Map<String, VueComponent>
     get() = (delegate?.components ?: emptyMap()) + getEntitiesAnalysis().components
@@ -103,7 +103,7 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
           }
         }
         DIRECTIVE_FUN, FILTER_FUN -> getFilteredArgs(call).getOrNull(0)
-          ?.castSafelyTo<JSLiteralExpression>()
+          ?.asSafely<JSLiteralExpression>()
           ?.let { literal ->
             getTextIfLiteral(literal)?.let { name ->
               if (implicitElement.name == DIRECTIVE_FUN)

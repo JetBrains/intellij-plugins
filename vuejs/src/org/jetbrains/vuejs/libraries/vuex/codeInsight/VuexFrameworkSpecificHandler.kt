@@ -11,16 +11,16 @@ import com.intellij.lang.javascript.psi.impl.JSPropertyNameReference
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 
 class VuexFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
   override fun adjustTargetElement(editor: Editor?, offset: Int, flags: Int, targetElement: PsiElement): PsiElement {
     if (true == (targetElement as? TypeScriptIndexSignature)
         ?.context
-        ?.castSafelyTo<TypeScriptObjectType>()
+        ?.asSafely<TypeScriptObjectType>()
         ?.context
-        ?.castSafelyTo<TypeScriptInterface>()
+        ?.asSafely<TypeScriptInterface>()
         ?.name
         ?.let { it == "ActionTree" || it == "GetterTree" || it == "MutationTree" || it == "ModuleTree" }) {
       val project = editor?.project ?: return targetElement
@@ -29,7 +29,7 @@ class VuexFrameworkSpecificHandler : JSFrameworkSpecificHandler {
       val file = PsiDocumentManager.getInstance(project).getPsiFile(document) ?: return targetElement
       val adjusted = TargetElementUtilBase.adjustOffset(file, document, offset)
       return TargetElementUtil.findReference(editor, adjusted)
-               ?.castSafelyTo<JSPropertyNameReference>()
+               ?.asSafely<JSPropertyNameReference>()
                ?.element ?: targetElement
     }
     return targetElement

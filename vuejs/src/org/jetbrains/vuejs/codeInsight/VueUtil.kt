@@ -41,7 +41,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
@@ -144,7 +144,7 @@ fun getTextIfLiteral(holder: PsiElement?): String? =
     resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
   }
   else holder)
-    ?.castSafelyTo<JSLiteralExpression>()
+    ?.asSafely<JSLiteralExpression>()
     ?.let { literalExpr ->
       when {
         (literalExpr as? StubBasedPsiElement<*>)?.stub != null -> literalExpr.significantValue?.let { es6Unquote(it) }
@@ -318,7 +318,7 @@ fun JSType.fixPrimitiveTypes(): JSType =
 
 private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
   (expression as? TypeScriptAsExpression)
-    ?.type?.jsType?.castSafelyTo<JSGenericTypeImpl>()
+    ?.type?.jsType?.asSafely<JSGenericTypeImpl>()
     ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "PropType" }
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()

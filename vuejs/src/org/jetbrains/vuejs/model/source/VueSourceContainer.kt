@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
@@ -20,7 +20,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
 
   override val element: String?
     get() = getTextIfLiteral(
-      descriptor.initializer?.castSafelyTo<JSObjectLiteralExpression>()
+      descriptor.initializer?.asSafely<JSObjectLiteralExpression>()
         ?.findProperty(EL_PROP)?.literalExpressionInitializer)
 
   override val data: List<VueDataProperty> get() = get(DATA)

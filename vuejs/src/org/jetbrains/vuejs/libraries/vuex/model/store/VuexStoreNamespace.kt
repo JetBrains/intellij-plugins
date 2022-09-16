@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.suggested.startOffset
-import com.intellij.util.castSafelyTo
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
@@ -45,12 +45,12 @@ open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexSto
 
   override fun get(element: PsiElement): String {
     val call = PsiTreeUtil.getContextOfType(element, JSCallExpression::class.java)
-    val functionRef = call?.methodExpression?.castSafelyTo<JSReferenceExpression>()
+    val functionRef = call?.methodExpression?.asSafely<JSReferenceExpression>()
                       ?: return ""
     return (if (functionRef.qualifier !== null)
-      functionRef.qualifier.castSafelyTo<JSReferenceExpression>()
+      functionRef.qualifier.asSafely<JSReferenceExpression>()
         ?.resolve()
-        ?.castSafelyTo<JSVariable>()
+        ?.asSafely<JSVariable>()
         ?.let { getNamespaceFromHelpersVar(it, decorator) }
     else {
       val functionName = functionRef.referenceName ?: return ""
@@ -60,7 +60,7 @@ open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexSto
       else
         call.stubSafeCallArguments
           .getOrNull(0)
-          ?.castSafelyTo<JSLiteralExpression>()
+          ?.asSafely<JSLiteralExpression>()
           ?.let { getTextIfLiteral(it) }
     }) ?: ""
   }
@@ -68,9 +68,9 @@ open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexSto
   private fun getNamespaceFromHelpersVar(variable: JSVariable, decorator: Boolean): String? {
     return (variable.initializer
             ?: JSDestructuringUtil.getNearestDestructuringInitializer(variable))
-      ?.castSafelyTo<JSCallExpression>()
+      ?.asSafely<JSCallExpression>()
       ?.takeIf {
-        it.methodExpression?.castSafelyTo<JSReferenceExpression>()
+        it.methodExpression?.asSafely<JSReferenceExpression>()
           ?.referenceName == if (decorator) VuexUtils.CREATE_NAMESPACED_DECS else VuexUtils.CREATE_NAMESPACED_HELPERS
       }
       ?.arguments
@@ -123,16 +123,16 @@ fun isPossiblyStoreContext(element: PsiElement): Boolean {
     ?.let {
       it is JSProperty
       || it.context is JSProperty
-      || it.context?.castSafelyTo<JSVariable>()
-        ?.context?.castSafelyTo<JSVarStatement>()
+      || it.context?.asSafely<JSVariable>()
+        ?.context?.asSafely<JSVarStatement>()
         ?.attributeList?.hasModifier(JSAttributeList.ModifierType.EXPORT) == true
     } == true
 }
 
 fun isPossiblyStoreActionContextParam(element: JSParameter): Boolean {
   return element.context
-           ?.context?.castSafelyTo<JSDestructuringObject>()
-           ?.context?.castSafelyTo<JSDestructuringParameter>()
+           ?.context?.asSafely<JSDestructuringObject>()
+           ?.context?.asSafely<JSDestructuringParameter>()
            ?.let {
              it.contextOfType<JSFunction>()?.parameters?.getOrNull(0) == it
            } == true
