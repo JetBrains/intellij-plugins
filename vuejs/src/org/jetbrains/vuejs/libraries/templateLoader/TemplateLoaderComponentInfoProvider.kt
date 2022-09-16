@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlFile
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler.Companion.WITH_RENDER
 import org.jetbrains.vuejs.model.VueFileTemplate
 import org.jetbrains.vuejs.model.VueTemplate
@@ -33,7 +34,7 @@ class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
         clazz.attributeList
           ?.decorators
           ?.asSequence()
-          ?.plus((clazz.parent as? ES6ExportDefaultAssignment)
+          ?.plus(clazz.parent.castSafelyTo<ES6ExportDefaultAssignment>()
                    ?.attributeList?.decorators ?: emptyArray<ES6Decorator>())
           ?.find { it.decoratorName?.equals(WITH_RENDER, ignoreCase = true) == true }
           ?.expression
@@ -89,7 +90,7 @@ class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
           JSStubBasedPsiTreeUtil.calculateMeaningfulElements(it)
         }
         ?.find { it is XmlFile }
-        ?.let { it as? XmlFile }
+        ?.castSafelyTo<XmlFile>()
     }
   }
 }

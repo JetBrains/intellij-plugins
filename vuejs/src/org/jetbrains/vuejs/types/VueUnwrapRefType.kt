@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ProcessingContext
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.COMPOSITION_API_MODULE
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -96,7 +97,7 @@ class VueUnwrapRefType private constructor(private val typeToUnwrap: JSType, sou
 
     val hasUnwrap = (substituted as? JSGenericTypeImpl)
       ?.type
-      ?.let { it as? JSTypeImpl }
+      ?.castSafelyTo<JSTypeImpl>()
       ?.typeText == UNWRAP_REF_TYPE
 
     if (hasUnwrap) return substituted

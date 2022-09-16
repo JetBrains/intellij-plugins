@@ -16,6 +16,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
+import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.sequenceOfNotNull
 import org.jetbrains.vuejs.codeInsight.collectMembers
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
@@ -206,8 +207,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
           .filter { innerCall -> VueFrameworkHandler.getFunctionNameFromVueIndex(innerCall) == DEFINE_PROPS_FUN }
       }
 
-      return sequenceOfNotNull((this.arguments.getOrNull(0)
-        as? JSCallExpression)
+      return sequenceOfNotNull(this.arguments.getOrNull(0)
+                                 .castSafelyTo<JSCallExpression>()
                                  ?.takeIf { (it.methodExpression as? JSReferenceExpression)?.referenceName == DEFINE_PROPS_FUN }
       )
     }

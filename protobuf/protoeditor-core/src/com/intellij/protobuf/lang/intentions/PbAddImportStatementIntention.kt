@@ -27,6 +27,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.parentsOfType
+import com.intellij.util.castSafelyTo
 
 internal class PbAddImportStatementIntention : IntentionAction {
   override fun startInWriteAction(): Boolean {
@@ -103,7 +104,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
   }
 
   private fun findSymbolPathReference(editor: Editor, file: PsiFile): PsiReference? {
-    return file.findReferenceAt(editor.caretModel.offset) as? ProtoSymbolPathReference
+    return file.findReferenceAt(editor.caretModel.offset).castSafelyTo<ProtoSymbolPathReference>()
   }
 
   private fun constructUnresolvedSymbolPath(file: PbFile, editor: Editor): String? {

@@ -5,6 +5,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.psi.PsiElement
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 
@@ -14,9 +15,9 @@ class NuxtFrameworkSpecificHandler : JSFrameworkSpecificHandler {
     if (element is JSObjectLiteralExpression
         && NUXT_CONFIG_NAMES.any { it == element.containingFile.name }
         && (element.parent is ES6ExportDefaultAssignment
-            || (element.parent as? JSAssignmentExpression)
-              ?.lOperand?.let { it as? JSDefinitionExpression }
-              ?.expression?.let { it as? JSReferenceExpression }
+            || element.parent.castSafelyTo<JSAssignmentExpression>()
+              ?.lOperand?.castSafelyTo<JSDefinitionExpression>()
+              ?.expression?.castSafelyTo<JSReferenceExpression>()
               ?.referenceName == "exports")) {
       return NuxtModelManager.getApplication(element)?.getNuxtConfigType(element)
     }

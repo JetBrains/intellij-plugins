@@ -10,6 +10,7 @@ import com.intellij.psi.impl.FakePsiElement
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
 
@@ -35,7 +36,7 @@ fun resolveTagSrcReference(tag: XmlTag): PsiElement? {
   if (attrReferences != null) {
     return attrReferences
       ?.asSequence()
-      ?.mapNotNull { it.resolve()?.let { it as? PsiFile } }
+      ?.mapNotNull { it.resolve()?.castSafelyTo<PsiFile>() }
       ?.firstOrNull()
   }
   return tag

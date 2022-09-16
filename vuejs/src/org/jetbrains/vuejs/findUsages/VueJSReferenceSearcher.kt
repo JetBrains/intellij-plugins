@@ -21,6 +21,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
@@ -71,7 +72,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
                                                UsageSearchContext.ANY, true, element, object : RequestResultProcessor() {
             override fun processTextOccurrence(occurence: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
               val implicitElement = (occurence as? XmlAttributeValue)
-                ?.parent?.let { it as? VueRefAttribute }
+                ?.parent?.castSafelyTo<VueRefAttribute>()
                 ?.implicitElement
               if (implicitElement != null && implicitElement.context == element) {
                 val collector = queryParameters.optimizer
@@ -154,7 +155,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
       if (name != null && isVueContext(element)) {
         JSUtils.getMemberContainingClass(element)
           ?.let { VueModelManager.getComponent(it) }
-          ?.let { it as? VueRegularComponent }
+          ?.castSafelyTo<VueRegularComponent>()
           ?.template
           ?.source
           ?.let {

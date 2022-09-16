@@ -13,6 +13,7 @@ import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.parentOfType
+import com.intellij.util.castSafelyTo
 import icons.ProtoeditorCoreIcons
 
 internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
@@ -62,7 +63,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
   }
 
   private fun findImplementations(pbElement: PsiElement): Sequence<PsiElement> {
-    val identifierOwner = pbElement.parentIdentifierOwner()?.let { it as? PbElement } ?: return emptySequence()
+    val identifierOwner = pbElement.parentIdentifierOwner()?.castSafelyTo<PbElement>() ?: return emptySequence()
     val converters = collectRpcConverters()
     return IMPLEMENTATION_SEARCHER_EP_NAME.extensionList.asSequence()
       .flatMap { it.findImplementationsForProtoElement(identifierOwner, converters) }

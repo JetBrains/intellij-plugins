@@ -15,6 +15,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.getFirstInjectedFile
 import org.jetbrains.vuejs.codeInsight.getHostFile
@@ -55,8 +56,8 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 
     private fun locateTemplateInTheSameVueFile(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
       val context = source as? PsiFile ?: source.context!!
-      return (context.containingFile
-        as? XmlFile)
+      return context.containingFile
+        ?.castSafelyTo<XmlFile>()
         ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
         ?.let {
           CachedValueProvider.Result.create(locateTemplateInTemplateTag(it), context, context.containingFile)
@@ -125,8 +126,8 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
             && element.valueElement?.references
               ?.any { it.resolve()?.containingFile == source.containingFile } == true) {
           result = CachedValueProvider.Result.create(
-            (element.containingFile
-              as? XmlFile)
+            element.containingFile
+              ?.castSafelyTo<XmlFile>()
               ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
               ?.let { locateTemplateInTemplateTag(it) },
             element, element.containingFile,

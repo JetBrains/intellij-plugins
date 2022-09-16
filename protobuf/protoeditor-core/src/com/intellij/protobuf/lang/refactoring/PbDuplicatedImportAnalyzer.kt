@@ -3,6 +3,7 @@ package com.intellij.protobuf.lang.refactoring
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbImportStatement
 import com.intellij.protobuf.lang.resolve.PbImportReference
+import com.intellij.util.castSafelyTo
 
 internal fun collectDuplicatedImportsSkipOriginal(file: PbFile): Collection<PbImportStatement> {
   return analyzeImports(file).second.values.flatten()
@@ -31,7 +32,7 @@ private fun analyzeImports(file: PbFile): Pair<Map<PbFile, PbImportStatement>, M
     val importedFile = importStatement.importName?.references
                          ?.filterIsInstance<PbImportReference>()
                          ?.singleOrNull()?.resolve()
-                         ?.let { it as? PbFile } ?: continue
+                         ?.castSafelyTo<PbFile>() ?: continue
     if (importedFile in originalGoodImports) {
       if (duplicatesWithoutOriginal[importedFile] == null) {
         duplicatesWithoutOriginal[importedFile] = mutableListOf()

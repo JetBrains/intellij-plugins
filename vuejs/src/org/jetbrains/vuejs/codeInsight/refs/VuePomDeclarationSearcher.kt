@@ -7,6 +7,7 @@ import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.Consumer
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 
 class VuePomDeclarationSearcher : PomDeclarationSearcher() {
@@ -15,7 +16,7 @@ class VuePomDeclarationSearcher : PomDeclarationSearcher() {
     if (element is XmlAttributeValue && element.parent is VueRefAttribute
         && ElementManipulators.getValueTextRange(element).contains(offsetInElement)) {
       (element.parent as VueRefAttribute).implicitElement
-        ?.let { it as? VueRefAttribute.VueRefDeclaration }
+        ?.castSafelyTo<VueRefAttribute.VueRefDeclaration>()
         ?.let { consumer.consume(it) }
     }
   }

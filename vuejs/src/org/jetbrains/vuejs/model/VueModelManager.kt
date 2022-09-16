@@ -28,6 +28,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
@@ -130,7 +131,7 @@ class VueModelManager {
           getVueIndexData(element)
             ?.descriptorQualifiedReference
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
-            ?.let { it as? VueSourceEntityDescriptor }
+            ?.castSafelyTo<VueSourceEntityDescriptor>()
             ?.let { return it }
 
           if (context is JSProperty) {
@@ -140,7 +141,7 @@ class VueModelManager {
       }
       if (context is JSCallExpression) {
         val stub = (context as? StubBasedPsiElement<*>)?.stub
-        val initializer = (if (stub != null) {
+        val initializer = if (stub != null) {
           stub.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION,
                                  JSObjectLiteralExpression.ARRAY_FACTORY)
             .firstOrNull()
@@ -149,7 +150,7 @@ class VueModelManager {
           context.argumentList
             ?.arguments
             ?.find { it is JSObjectLiteralExpression }
-        }) as? JSObjectLiteralExpression
+        }.castSafelyTo<JSObjectLiteralExpression>()
         return VueSourceEntityDescriptor(initializer, source = initializer ?: context)
       }
       else if (context is JSProperty) {
@@ -261,7 +262,7 @@ class VueModelManager {
             ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
           )
             ?.let { getComponentDescriptor(it) }
-            ?.let { it as? VueSourceEntityDescriptor }
+            ?.castSafelyTo<VueSourceEntityDescriptor>()
             ?.let { return it }
         }
         if (file.virtualFile?.fileType == VueFileType.INSTANCE)

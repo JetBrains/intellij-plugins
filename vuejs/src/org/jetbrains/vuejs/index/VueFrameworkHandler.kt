@@ -40,6 +40,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -217,12 +218,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       val parent = obj.parent
       if (parent is JSExportAssignment ||
           parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression) ||
-          parent is JSArgumentList && (parent.parent as? JSCallExpression)
+          parent is JSArgumentList && parent.parent?.castSafelyTo<JSCallExpression>()
             ?.let { isDefineComponentOrVueExtendCall(it.node) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
           val element = createImplicitElement(VueComponentsIndex.JS_KEY, getComponentNameFromDescriptor(obj), property)
-          if (parent is JSArgumentList && (parent.parent as? JSCallExpression)
+          if (parent is JSArgumentList && parent.parent?.castSafelyTo<JSCallExpression>()
               ?.let { isStrictDefineComponentOrVueExtendCall(it) } == false) {
             out.setAddUnderlyingElementToSymbolIndex(true)
           }
@@ -333,17 +334,17 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
         // 3-rd party library support: vue-typed-mixin
         is JSCallExpression -> {
-          val mixinsCall = qualifier.methodExpression?.let { it as? JSReferenceExpression }
+          val mixinsCall = qualifier.methodExpression?.castSafelyTo<JSReferenceExpression>()
             ?.takeIf { !it.hasQualifier() }
           if (mixinsCall?.referenceName != null
               && JSStubBasedPsiTreeUtil.resolveLocally(mixinsCall.referenceName!!, mixinsCall)
-                ?.let { it as? ES6ImportedBinding }
-                ?.context?.let { it as? ES6ImportExportDeclaration }
+                ?.castSafelyTo<ES6ImportedBinding>()
+                ?.context?.castSafelyTo<ES6ImportExportDeclaration>()
                 ?.fromClause
                 ?.referenceText
                 ?.let { es6Unquote(it) } == "vue-typed-mixins") {
             for (arg in qualifier.arguments) {
-              (arg as? JSReferenceExpression)
+              arg.castSafelyTo<JSReferenceExpression>()
                 ?.takeIf { !it.hasQualifier() }
                 ?.let { recordExtends(outData, callExpression, it) }
             }
@@ -357,9 +358,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           .setUserStringWithData(
             this, VueCompositionAppIndex.JS_KEY,
             // Store reference name for resolution
-            (callExpression.arguments
+                                     callExpression.arguments
               .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
-              as? JSReferenceExpression)
+                                       .castSafelyTo<JSReferenceExpression>()
               ?.takeIf { it.qualifier == null }
               ?.referenceName
           )
@@ -566,7 +567,7 @@ fun findModule(element: PsiElement?, setup: Boolean): JSEmbeddedContent? =
   element
     ?.let { InjectedLanguageManager.getInstance(element.project) }
     ?.getTopLevelFile(element)
-    ?.let { it as? XmlFile }
+    ?.castSafelyTo<XmlFile>()
     ?.let { findScriptTag(it, setup) }
     ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
 

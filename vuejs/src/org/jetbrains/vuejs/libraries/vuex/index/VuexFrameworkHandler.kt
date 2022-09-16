@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.CREATE_STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_NAMESPACED
@@ -75,7 +76,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
     if (node.firstChildNode?.elementType === JSTokenTypes.TRUE_KEYWORD) {
       return node.treeParent?.psi
-        ?.let { it as? JSProperty }
+        ?.castSafelyTo<JSProperty>()
         ?.name
         ?.let { it == PROP_NAMESPACED || it == PROP_ROOT } == true
     }
@@ -100,7 +101,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun processCallExpression(callExpression: JSCallExpression, outData: JSElementIndexingData) {
     val reference = callExpression.methodExpression
-      ?.let { it as? JSReferenceExpression }
+      ?.castSafelyTo<JSReferenceExpression>()
     val referenceName = reference?.referenceName ?: return
     if ((callExpression is JSNewExpression
          && JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE))
@@ -113,7 +114,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
           .toImplicitElement())
     }
     else if (referenceName == REGISTER_MODULE) {
-      val type = (callExpression.arguments.getOrNull(1) as? JSReferenceExpression)
+      val type = callExpression.arguments.getOrNull(1).castSafelyTo<JSReferenceExpression>()
         ?.referenceName
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)

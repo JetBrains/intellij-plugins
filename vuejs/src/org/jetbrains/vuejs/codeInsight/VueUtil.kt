@@ -41,6 +41,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
+import com.intellij.util.castSafelyTo
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
@@ -143,7 +144,7 @@ fun getTextIfLiteral(holder: PsiElement?): String? =
     resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
   }
   else holder)
-    ?.let { it as? JSLiteralExpression }
+    ?.castSafelyTo<JSLiteralExpression>()
     ?.let { literalExpr ->
       when {
         (literalExpr as? StubBasedPsiElement<*>)?.stub != null -> literalExpr.significantValue?.let { es6Unquote(it) }
@@ -317,7 +318,7 @@ fun JSType.fixPrimitiveTypes(): JSType =
 
 private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
   (expression as? TypeScriptAsExpression)
-    ?.type?.jsType?.let { it as? JSGenericTypeImpl }
+    ?.type?.jsType?.castSafelyTo<JSGenericTypeImpl>()
     ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "PropType" }
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
@@ -421,7 +422,7 @@ fun resolveMergedInterfaceJSTypeFromNodeModule(scope: PsiElement?, moduleName: S
     val resolvedSymbols = modules
       .filterIsInstance<JSElement>()
       .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
-    val interfaces = resolvedSymbols
+    val interfaces =  resolvedSymbols
       .filter { it.element?.isValid == true }
       .mapNotNull { tryCast(it.element, TypeScriptInterface::class.java) }
 

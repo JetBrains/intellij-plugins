@@ -19,6 +19,7 @@ import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueIdIndex
@@ -47,7 +48,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
         .and(FilterPattern(object : ElementFilter {
           override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
             return VueModelManager.findComponentForThisResolve(
-              (element as? JSReferenceExpression)?.qualifier?.let { it as? JSThisExpression? } ?: return false) != null
+              element.castSafelyTo<JSReferenceExpression>()?.qualifier?.castSafelyTo() ?: return false) != null
           }
 
           override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
@@ -117,8 +118,8 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
       val ref = element
       val name = ref.referenceName
       if (name == null) return ResolveResult.EMPTY_ARRAY
-      return (ref.qualifier
-        as? JSThisExpression)
+      return ref.qualifier
+               .castSafelyTo<JSThisExpression>()
                ?.let { VueModelManager.findComponentForThisResolve(it) }
                ?.thisType
                ?.asRecordType()
@@ -159,7 +160,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
                                               PsiElement::class.java) { element ->
         (element as? XmlAttribute)
           ?.context
-          ?.let { it as? XmlTag }
+          ?.castSafelyTo<XmlTag>()
           ?.let { result.add(PsiElementResolveResult(it)) }
         true
       }
