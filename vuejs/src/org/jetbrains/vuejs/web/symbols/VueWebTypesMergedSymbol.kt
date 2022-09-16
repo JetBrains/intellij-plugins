@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.javascript.web._jsType
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.impl.merge
 import com.intellij.lang.documentation.DocumentationTarget
@@ -69,7 +70,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
     get() = symbols.asSequence().mapNotNull { it.proximity }.maxOrNull()
 
   override val jsType: JSType?
-    get() = symbols.firstNotNullOfOrNull { it.jsType }
+    get() = symbols.firstNotNullOfOrNull { it._jsType }
 
   override val attributeValue: WebSymbol.AttributeValue?
     get() = symbols.asSequence().map { it.attributeValue }.merge()

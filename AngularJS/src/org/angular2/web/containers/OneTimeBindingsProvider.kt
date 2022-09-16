@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
+import com.intellij.javascript.web._jsType
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.javascript.psi.JSType
@@ -75,7 +76,7 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
         return false
       }
       if (property.virtual) return true
-      val type = property.jsType ?: return true
+      val type = property._jsType ?: return true
       val source = (property as? PsiSourcedWebSymbol)?.source ?: return true
 
       return CachedValuesManager.getCachedValue(source) {
@@ -110,7 +111,7 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
 
 
     override val attributeValue: WebSymbol.AttributeValue?
-      get() = if (WebSymbolHtmlAttributeInfo.isBooleanType(jsType)) {
+      get() = if (WebSymbolHtmlAttributeInfo.isBooleanType(_jsType)) {
         WebSymbolHtmlAttributeValueData(WebSymbol.AttributeValueKind.PLAIN,
                                         WebSymbol.AttributeValueType.JAVASCRIPT, false,
                                         null,

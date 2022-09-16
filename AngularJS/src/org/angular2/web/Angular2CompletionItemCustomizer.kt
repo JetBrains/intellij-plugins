@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
+import com.intellij.javascript.web.decorateWithSymbolType
 import com.intellij.javascript.web.symbols.*
-import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItemCustomizer.Companion.decorateWithSymbolType
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES

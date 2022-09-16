@@ -2,6 +2,7 @@
 package org.angular2.navigation;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2;
+import com.intellij.javascript.web.JSWebTestUtil;
 import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
@@ -21,7 +22,7 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
   private void checkUsages(@NotNull String signature,
                            String @NotNull ... usages) {
     WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.SU, signature);
-    assertEquals(Arrays.asList(usages), WebTestUtil.usagesAtCaret(myFixture) );
+    assertEquals(Arrays.asList(usages), JSWebTestUtil.usagesAtCaret(myFixture) );
   }
 
   public void testPrivateComponentField() {
