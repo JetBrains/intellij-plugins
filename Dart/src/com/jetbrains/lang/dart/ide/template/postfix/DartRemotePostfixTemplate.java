@@ -29,7 +29,7 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
   }
 
   protected DartRemotePostfixTemplate(@NotNull String name, @NotNull String key, @NotNull String example) {
-    super(name, key, example);
+    super(null, name, key, example, null);
   }
 
   public static DartRemotePostfixTemplate createTemplate(PostfixTemplateDescriptor template) {
