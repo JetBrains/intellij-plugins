@@ -1,13 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,6 +17,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.io.URLUtil;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewSettings;
@@ -47,20 +50,34 @@ public class DartServerRootsHandler {
     assert (myIncludedRoots.isEmpty());
     assert (myExcludedRoots.isEmpty());
 
-    ProgressManager.getInstance().executeNonCancelableSection(() -> {
-      updateRoots();
-
-      final DartAnalysisServerService das = DartAnalysisServerService.getInstance(myProject);
+    scheduleDartRootsUpdate(() -> {
+      DartAnalysisServerService das = DartAnalysisServerService.getInstance(myProject);
       das.updateCurrentFile();
       das.updateVisibleFiles();
     });
   }
 
-  void updateRoots() {
+  void scheduleDartRootsUpdate(@Nullable Runnable onSuccess) {
+    ReadAction.nonBlocking(() -> calcIncludedAndExcludedDartRoots())
+      .coalesceBy(this)
+      .expireWith(DartAnalysisServerService.getInstance(myProject))
+      .finishOnUiThread(ModalityState.NON_MODAL, includedAndExcludedRoots -> {
+        if (includedAndExcludedRoots != null) {
+          sendSetAnalysisRootsRequest(includedAndExcludedRoots.first, includedAndExcludedRoots.second);
+
+          if (onSuccess != null) {
+            onSuccess.run();
+          }
+        }
+      })
+      .submit(AppExecutorUtil.getAppExecutorService());
+  }
+
+  private @Nullable Couple<List<String>> calcIncludedAndExcludedDartRoots() {
     final DartSdk sdk = DartSdk.getDartSdk(myProject);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
       DartAnalysisServerService.getInstance(myProject).stopServer();
-      return;
+      return null;
     }
 
     final List<String> newIncludedRoots = new SmartList<>();
@@ -74,7 +91,7 @@ public class DartServerRootsHandler {
       if (currentFile == null ||
           ProjectFileIndex.getInstance(myProject).isInLibraryClasses(currentFile) ||
           !currentFile.isInLocalFileSystem()) {
-        return; // keep server roots as is until another file is open
+        return null; // keep server roots as is until another file is open
       }
 
       newIncludedRoots.add(FileUtil.toSystemDependentName(getEnclosingDartPackageDirectory(currentFile)));
@@ -102,14 +119,20 @@ public class DartServerRootsHandler {
       }
     }
 
-    if (!myIncludedRoots.equals(newIncludedRoots) || !myExcludedRoots.equals(newExcludedRoots)) {
-      myIncludedRoots.clear();
-      myExcludedRoots.clear();
+    if (myIncludedRoots.equals(newIncludedRoots) && myExcludedRoots.equals(newExcludedRoots)) {
+      return null;
+    }
 
-      if (DartAnalysisServerService.getInstance(myProject).setAnalysisRoots(newIncludedRoots, newExcludedRoots)) {
-        myIncludedRoots.addAll(newIncludedRoots);
-        myExcludedRoots.addAll(newExcludedRoots);
-      }
+    return Couple.of(newIncludedRoots, newExcludedRoots);
+  }
+
+  private void sendSetAnalysisRootsRequest(@NotNull List<String> newIncludedRoots, @NotNull List<String> newExcludedRoots) {
+    myIncludedRoots.clear();
+    myExcludedRoots.clear();
+
+    if (DartAnalysisServerService.getInstance(myProject).setAnalysisRoots(newIncludedRoots, newExcludedRoots)) {
+      myIncludedRoots.addAll(newIncludedRoots);
+      myExcludedRoots.addAll(newExcludedRoots);
     }
   }
 

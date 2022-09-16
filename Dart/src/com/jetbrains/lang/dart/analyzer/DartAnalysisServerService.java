@@ -969,7 +969,7 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   public void ensureAnalysisRootsUpToDate() {
-    myRootsHandler.updateRoots();
+    myRootsHandler.scheduleDartRootsUpdate(null);
   }
 
   boolean setAnalysisRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
