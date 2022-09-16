@@ -46,12 +46,12 @@ import java.util.*;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 /**
- * {@link DartFileListener} helps to keep "Dart Packages" library (based on Dart-specific pubspec.yaml and .packages files) up-to-date.
+ * {@link DartFileListener} helps to keep "Dart Packages" library (based on Dart-specific pubspec.yaml and package_config.json files) up-to-date.
  * Also, it makes sure that Dart build output folder and related folders with Pub-specific cache are excluded.
  * Also, it updates the list of files visible for Analysis Server in case of move and rename.
  *
  * @see DartStartupActivity
- * @see DartModuleRootListener
+ * @see DartWorkspaceModelChangeListener
  */
 public class DartFileListener implements AsyncFileListener {
 

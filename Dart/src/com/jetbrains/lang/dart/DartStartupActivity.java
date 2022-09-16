@@ -30,10 +30,10 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 /**
  * {@link DartStartupActivity} configures "Dart Packages" library (based on Dart-specific pubspec.yaml and .packages files) on project open.
- * Afterwards the "Dart Packages" library is kept up-to-dated thanks to {@link DartFileListener} and {@link DartModuleRootListener}.
+ * Afterwards the "Dart Packages" library is kept up-to-dated thanks to {@link DartFileListener} and {@link DartWorkspaceModelChangeListener}.
  *
  * @see DartFileListener
- * @see DartModuleRootListener
+ * @see DartWorkspaceModelChangeListener
  */
 public final class DartStartupActivity implements StartupActivity.Background {
   @Override

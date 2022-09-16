@@ -22,6 +22,10 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SmartList;
+import com.intellij.workspaceModel.storage.bridgeEntities.api.LibraryId;
+import com.intellij.workspaceModel.storage.bridgeEntities.api.LibraryTableId;
+import com.intellij.workspaceModel.storage.bridgeEntities.api.ModuleDependencyItem;
+import com.intellij.workspaceModel.storage.bridgeEntities.api.ModuleEntity;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import org.jetbrains.annotations.NotNull;
 
@@ -221,6 +225,15 @@ public final class DartSdkLibUtil {
     return false;
   }
 
+  public static boolean isDartSdkEnabled(@NotNull ModuleEntity moduleEntity) {
+    for (ModuleDependencyItem dependencyItem : moduleEntity.getDependencies()) {
+      if (isDartSdkOrderEntry(dependencyItem)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static void enableDartSdk(@NotNull final Module module) {
     enableDartSdkAndReturnUndoingDisposable(module);
   }
@@ -326,6 +339,15 @@ public final class DartSdkLibUtil {
     return orderEntry instanceof LibraryOrderEntry &&
            LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
            DartSdk.DART_SDK_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
+  }
+
+  public static boolean isDartSdkOrderEntry(@NotNull ModuleDependencyItem dependencyItem) {
+    if (dependencyItem instanceof ModuleDependencyItem.Exportable.LibraryDependency) {
+      LibraryId libraryId = ((ModuleDependencyItem.Exportable.LibraryDependency)dependencyItem).getLibrary();
+      return libraryId.getTableId() instanceof LibraryTableId.ProjectLibraryTableId &&
+             libraryId.getName().equals(DartSdk.DART_SDK_LIB_NAME);
+    }
+    return false;
   }
 
   private static void commitModifiableModels(@NotNull final Project project,
