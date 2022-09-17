@@ -138,17 +138,10 @@ public class MeteorSpacebarsReferenceContributor extends PsiReferenceContributor
       String propertyName = hbElement.getText();
       if (StringUtil.isEmptyOrSpaces(propertyName)) return Holder.EMPTY_RESULT;
 
-      switch (myTagTypes) {
-        case BLOCK_TAG:
-        case TAG:
-          return wrap(new MeteorMustacheTagPsiReference(hbElement, propertyName));
-        case PARTIAL_TAG:
-          return wrap(new MeteorMustachePartialTagPsiReference(hbElement, propertyName));
-
-        default:
-          //cannot be
-      }
-      return PsiReference.EMPTY_ARRAY;
+      return wrap(switch (myTagTypes) {
+        case BLOCK_TAG, TAG -> new MeteorMustacheTagPsiReference(hbElement, propertyName);
+        case PARTIAL_TAG -> new MeteorMustachePartialTagPsiReference(hbElement, propertyName);
+      });
     }
 
     private static PsiReference[] wrap(PsiReference ref) {

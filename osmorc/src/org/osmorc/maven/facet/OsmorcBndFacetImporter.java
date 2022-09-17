@@ -112,15 +112,12 @@ public class OsmorcBndFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFac
 
     // Fix for IDEA-67088, preserve existing output path settings on reimport.
     switch (conf.getOutputPathType()) {
-      case OsgiOutputPath:
-        conf.setJarFileLocation(jarFileName, OutputPathType.OsgiOutputPath);
-        break;
-      case SpecificOutputPath:
+      case OsgiOutputPath -> conf.setJarFileLocation(jarFileName, OutputPathType.OsgiOutputPath);
+      case SpecificOutputPath -> {
         String path = new File(conf.getJarFilePath(), jarFileName).getPath();
         conf.setJarFileLocation(path, OutputPathType.SpecificOutputPath);
-        break;
-      default:
-        conf.setJarFileLocation(jarFileName, OutputPathType.CompilerOutputPath);
+      }
+      default -> conf.setJarFileLocation(jarFileName, OutputPathType.CompilerOutputPath);
     }
   }
 

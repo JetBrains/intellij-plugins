@@ -413,7 +413,7 @@ public final class BndProjectImporter {
     ExportableOrderEntry entry;
 
     switch (dependency.getType()) {
-      case PROJECT: {
+      case PROJECT -> {
         String name = dependency.getProject().getName();
         Module module = moduleModel.findModuleByName(name);
         if (module == null) {
@@ -424,10 +424,8 @@ public final class BndProjectImporter {
         if (entry == null) {
           entry = rootModel.addModuleOrderEntry(module);
         }
-        break;
       }
-
-      case REPO: {
+      case REPO -> {
         String name = BND_LIB_PREFIX + bsn + ":" + version;
         Library library = libraryModel.getLibraryByName(name);
         if (library == null) {
@@ -445,10 +443,8 @@ public final class BndProjectImporter {
         model.commit();
 
         entry = rootModel.addLibraryEntry(library);
-        break;
       }
-
-      case EXTERNAL: {
+      case EXTERNAL -> {
         Library library = rootModel.getModuleLibraryTable().createLibrary(file.getName());
         Library.ModifiableModel model = library.getModifiableModel();
         model.addRoot(url(file), OrderRootType.CLASSES);
@@ -459,11 +455,8 @@ public final class BndProjectImporter {
         model.commit();
         entry = rootModel.findLibraryOrderEntry(library);
         assert entry != null : library;
-        break;
       }
-
-      default:
-        throw new IllegalArgumentException("Unknown dependency '" + dependency + "' of type " + dependency.getType());
+      default -> throw new IllegalArgumentException("Unknown dependency '" + dependency + "' of type " + dependency.getType());
     }
 
     entry.setScope(scope);

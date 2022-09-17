@@ -54,22 +54,13 @@ public class MeteorImportPackagesDialog extends DialogWrapper {
     myImportNpm= new JBCheckBox(MeteorBundle.message("checkbox.import.npm"));
 
     for (CodeType code : myDefaultCodes) {
-      JBCheckBox currentSelected = null;
-      switch (code) {
-        case CLIENT:
-          currentSelected = myImportClient;
-          break;
-        case CORDOVA:
-          currentSelected = myImportCordova;
-          break;
-        case SERVER:
-          currentSelected = myImportServer;
-          break;
-        case NPM:
-          currentSelected = myImportNpm;
-          break;
-        default:
-      }
+      JBCheckBox currentSelected = switch (code) {
+        case CLIENT -> myImportClient;
+        case CORDOVA -> myImportCordova;
+        case SERVER -> myImportServer;
+        case NPM -> myImportNpm;
+        default -> null;
+      };
 
       if (currentSelected != null) {
         currentSelected.setSelected(true);

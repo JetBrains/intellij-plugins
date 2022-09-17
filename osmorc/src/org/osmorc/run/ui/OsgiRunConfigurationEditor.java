@@ -293,30 +293,22 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-      switch (columnIndex) {
-        case 0:
-          return String.class;
-        case 1:
-          return Integer.class;
-        case 2:
-          return Boolean.class;
-        default:
-          return Object.class;
-      }
+      return switch (columnIndex) {
+        case 0 -> String.class;
+        case 1 -> Integer.class;
+        case 2 -> Boolean.class;
+        default -> Object.class;
+      };
     }
 
     @Override
     public String getColumnName(int columnIndex) {
-      switch (columnIndex) {
-        case 0:
-          return message("run.configuration.col.bundle");
-        case 1:
-          return message("run.configuration.col.level");
-        case 2:
-          return message("run.configuration.col.start");
-        default:
-          return "";
-      }
+      return switch (columnIndex) {
+        case 0 -> message("run.configuration.col.bundle");
+        case 1 -> message("run.configuration.col.level");
+        case 2 -> message("run.configuration.col.start");
+        default -> "";
+      };
     }
 
     @Override
@@ -337,30 +329,21 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     @Override
     public Object getValueAt(int row, int column) {
       SelectedBundle bundle = getBundleAt(row);
-      switch (column) {
-        case 0:
-          return bundle.toString();
-        case 1:
-          return bundle.getStartLevel();
-        case 2:
-          return bundle.isStartAfterInstallation();
-        default:
-          throw new RuntimeException("Don't know column " + column);
-      }
+      return switch (column) {
+        case 0 -> bundle.toString();
+        case 1 -> bundle.getStartLevel();
+        case 2 -> bundle.isStartAfterInstallation();
+        default -> throw new RuntimeException("Don't know column " + column);
+      };
     }
 
     @Override
     public void setValueAt(Object o, int row, int column) {
       SelectedBundle bundle = getBundleAt(row);
       switch (column) {
-        case 1:
-          bundle.setStartLevel((Integer)o);
-          break;
-        case 2:
-          bundle.setStartAfterInstallation((Boolean)o);
-          break;
-        default:
-          throw new RuntimeException("Cannot edit column " + column);
+        case 1 -> bundle.setStartLevel((Integer)o);
+        case 2 -> bundle.setStartAfterInstallation((Boolean)o);
+        default -> throw new RuntimeException("Cannot edit column " + column);
       }
     }
 

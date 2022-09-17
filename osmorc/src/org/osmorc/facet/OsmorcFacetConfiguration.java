@@ -26,7 +26,6 @@ package org.osmorc.facet;
 
 import aQute.bnd.header.OSGiHeader;
 import aQute.bnd.header.Parameters;
-import com.intellij.compiler.server.BuildManager;
 import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
@@ -330,28 +329,28 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
       // not initialized
       return nullSafeLocation;
     }
-    switch (myOutputPathType) {
-      case CompilerOutputPath:
+    return switch (myOutputPathType) {
+      case CompilerOutputPath -> {
         String moduleCompilerOutputPath = CompilerPaths.getModuleOutputPath(myFacet.getModule(), false);
         if (moduleCompilerOutputPath != null) {
-          return PathUtil.getParentPath(moduleCompilerOutputPath) + '/' + nullSafeLocation;
+          yield PathUtil.getParentPath(moduleCompilerOutputPath) + '/' + nullSafeLocation;
         }
         else {
-          return nullSafeLocation;
+          yield nullSafeLocation;
         }
-      case OsgiOutputPath:
+      }
+      case OsgiOutputPath -> {
         ProjectSettings projectSettings = ProjectSettings.getInstance(myFacet.getModule().getProject());
         if (projectSettings != null) {
           String bundlesOutputPath = projectSettings.getBundlesOutputPath();
           if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
-            return bundlesOutputPath + "/" + nullSafeLocation;
+            yield bundlesOutputPath + "/" + nullSafeLocation;
           }
         }
-        return ProjectSettings.getDefaultBundlesOutputPath(myFacet.getModule().getProject()) + "/" + nullSafeLocation;
-      case SpecificOutputPath:
-      default:
-        return nullSafeLocation;
-    }
+        yield ProjectSettings.getDefaultBundlesOutputPath(myFacet.getModule().getProject()) + "/" + nullSafeLocation;
+      }
+      case SpecificOutputPath -> nullSafeLocation;
+    };
   }
 
   /**
@@ -362,18 +361,14 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     if (myOutputPathType == null) {
       return "";
     }
-    switch (myOutputPathType) {
-      case CompilerOutputPath:
-      case OsgiOutputPath:
-      case SpecificOutputPath:
+    return switch (myOutputPathType) {
+      case CompilerOutputPath, OsgiOutputPath, SpecificOutputPath -> {
         String completeOutputPath = getJarFileLocation();
 
         File f = new File(completeOutputPath);
-        return f.getName();
-      default:
-        // not initialized
-        return getJarFileLocation();
-    }
+        yield f.getName();
+      }
+    };
   }
 
   /**
@@ -384,21 +379,17 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     if (myOutputPathType == null) {
       return "";
     }
-    switch (myOutputPathType) {
-      case CompilerOutputPath:
-      case OsgiOutputPath:
-      case SpecificOutputPath:
+    return switch (myOutputPathType) {
+      case CompilerOutputPath, OsgiOutputPath, SpecificOutputPath -> {
         String completeOutputPath = getJarFileLocation();
         File f = new File(completeOutputPath);
         String parent = f.getParent();
         if (parent == null) {
-          return "";
+          yield "";
         }
-        return parent;
-      default:
-        // not initialized
-        return "";
-    }
+        yield parent;
+      }
+    };
   }
 
   /**

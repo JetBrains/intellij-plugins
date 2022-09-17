@@ -149,18 +149,10 @@ class ResolutionSucceedDialog extends DialogWrapper {
           renderVersion(attributes, this);
 
           switch (namespace) {
-            case PACKAGE_NAMESPACE:
-              setIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Package));
-              break;
-            case IDENTITY_NAMESPACE:
-              setIcon(AllIcons.Nodes.PpLib);
-              break;
-            case ContractNamespace.CONTRACT_NAMESPACE:
-            case ImplementationNamespace.IMPLEMENTATION_NAMESPACE:
-            case ExtenderNamespace.EXTENDER_NAMESPACE:
-            case ServiceNamespace.SERVICE_NAMESPACE:
+            case PACKAGE_NAMESPACE -> setIcon(IconManager.getInstance().getPlatformIcon(PlatformIcons.Package));
+            case IDENTITY_NAMESPACE -> setIcon(AllIcons.Nodes.PpLib);
+            case ContractNamespace.CONTRACT_NAMESPACE, ImplementationNamespace.IMPLEMENTATION_NAMESPACE, ExtenderNamespace.EXTENDER_NAMESPACE, ServiceNamespace.SERVICE_NAMESPACE ->
               setIcon(OsmorcIdeaIcons.Osgi);
-              break;
           }
         }
       }
