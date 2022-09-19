@@ -25,6 +25,7 @@
 package org.osmorc.settings;
 
 import com.intellij.ide.IdeBundle;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -124,6 +125,11 @@ public class LibraryBundlingEditorComponent {
           @Override
           public boolean isEnabled() {
             return myRulesList.getSelectedIndex() >= 0;
+          }
+
+          @Override
+          public @NotNull ActionUpdateThread getActionUpdateThread() {
+            return ActionUpdateThread.EDT;
           }
         })
         .createPanel(), BorderLayout.CENTER
