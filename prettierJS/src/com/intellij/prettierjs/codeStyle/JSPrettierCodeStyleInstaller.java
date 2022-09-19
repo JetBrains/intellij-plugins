@@ -66,13 +66,9 @@ public class JSPrettierCodeStyleInstaller implements PrettierCodeStyleInstaller 
 
   @NotNull
   private static JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierConfig.TrailingCommaOption option) {
-    switch (option) {
-      case none:
-        return JSCodeStyleSettings.TrailingCommaOption.Remove;
-      case all:
-      case es5:
-        return JSCodeStyleSettings.TrailingCommaOption.WhenMultiline;
-    }
-    return JSCodeStyleSettings.TrailingCommaOption.Remove;
+    return switch (option) {
+      case none -> JSCodeStyleSettings.TrailingCommaOption.Remove;
+      case all, es5 -> JSCodeStyleSettings.TrailingCommaOption.WhenMultiline;
+    };
   }
 }
