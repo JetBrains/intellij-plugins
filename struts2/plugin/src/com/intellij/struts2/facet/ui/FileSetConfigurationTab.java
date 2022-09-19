@@ -24,6 +24,7 @@ import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.TreeExpander;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
@@ -211,6 +212,11 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             BrowserUtil.browse("https://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
+          }
+
+          @Override
+          public @NotNull ActionUpdateThread getActionUpdateThread() {
+            return ActionUpdateThread.EDT;
           }
         })
 
