@@ -1,9 +1,9 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -40,12 +40,9 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
           holder.registerProblem(postCssCustomSelector, PostCssBundle.message("annotator.custom.selector.name.should.not.be.empty"));
         }
         else if (!StringUtil.startsWith(text, ":--")) {
-          CssAddPrefixQuickFix quickFix = new CssAddPrefixQuickFix(":--", PostCssCustomSelectorAtRule.class) {
-            @Override
-            public @IntentionFamilyName @NotNull String getFamilyName() {
-              return PostCssBundle.message("annotator.add.prefix.to.custom.selector.quickfix.name");
-            }
-          };
+          LocalQuickFix quickFix =
+            new CssAddPrefixQuickFix(":--", PostCssCustomSelectorAtRule.class,
+                                     PostCssBundle.message("annotator.add.prefix.to.custom.selector.quickfix.name"));
           String description = PostCssBundle.message("annotator.custom.selector.name.should.start.with");
           TextRange textRange = TextRange.from(postCssCustomSelector.getStartOffsetInParent(), postCssCustomSelector.getTextLength());
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(

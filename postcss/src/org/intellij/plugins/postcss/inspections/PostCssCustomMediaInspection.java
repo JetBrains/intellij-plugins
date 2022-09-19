@@ -1,9 +1,9 @@
 package org.intellij.plugins.postcss.inspections;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -16,17 +16,6 @@ import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomMediaInspection extends PostCssBaseInspection {
-
-  private static class Holder {
-    private static final CssAddPrefixQuickFix ADD_PREFIX_QUICK_FIX =
-      new CssAddPrefixQuickFix("--", PostCssCustomMediaAtRule.class) {
-        @Override
-        public @IntentionFamilyName @NotNull String getFamilyName() {
-          return PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name");
-        }
-      };
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -42,8 +31,10 @@ public class PostCssCustomMediaInspection extends PostCssBaseInspection {
         else if (!StringUtil.startsWith(text, "--")) {
           String description = PostCssBundle.message("annotator.custom.media.name.should.start.with");
           TextRange textRange = TextRange.from(customMedia.getStartOffsetInParent(), customMedia.getTextLength());
+          LocalQuickFix quickFix = new CssAddPrefixQuickFix("--", PostCssCustomMediaAtRule.class,
+                                                            PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name"));
           ProblemDescriptor problemDescriptor = holder.getManager().createProblemDescriptor(
-            postCssCustomMediaAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, Holder.ADD_PREFIX_QUICK_FIX);
+            postCssCustomMediaAtRule, textRange, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, true, quickFix);
           holder.registerProblem(problemDescriptor);
         }
       }
