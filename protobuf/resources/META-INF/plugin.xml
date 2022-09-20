@@ -110,6 +110,7 @@
                     implementationClass="com.intellij.protobuf.ide.editing.PbCommenter"/>
     <multiLangCommenter implementation="com.intellij.protobuf.ide.editing.ProtoCommentProvider"/>
     <lang.importOptimizer language="protobuf" implementationClass="com.intellij.protobuf.lang.refactoring.PbImportOptimizer"/>
+    <!--suppress PluginXmlCapitalization -->
     <localInspection language="protobuf"
                      bundle="messages.protobuf-lang"
                      key="inspection.duplicated.imports.name"
