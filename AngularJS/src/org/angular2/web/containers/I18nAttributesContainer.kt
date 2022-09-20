@@ -2,10 +2,10 @@
 package org.angular2.web.containers
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.javascript.web.symbols.SymbolKind
-import com.intellij.javascript.web.symbols.WebSymbol
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
-import com.intellij.javascript.web.symbols.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolsContainer
+import com.intellij.webSymbols.WebSymbolsNameMatchQueryParams
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement

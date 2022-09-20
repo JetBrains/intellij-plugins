@@ -2,8 +2,8 @@
 package org.angular2.web;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol;
-import com.intellij.javascript.web.symbols.WebSymbolsContainer;
+import com.intellij.webSymbols.PsiSourcedWebSymbol;
+import com.intellij.webSymbols.WebSymbolsContainer;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.text.SemVer;

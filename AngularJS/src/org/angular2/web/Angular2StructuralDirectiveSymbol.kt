@@ -1,12 +1,12 @@
 package org.angular2.web
 
-import com.intellij.javascript.web.symbols.*
 import com.intellij.model.Pointer
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
+import com.intellij.webSymbols.*
 import org.angular2.entities.Angular2Directive
 
 open class Angular2StructuralDirectiveSymbol private constructor(private val directive: Angular2Directive,

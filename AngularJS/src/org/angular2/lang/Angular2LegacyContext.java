@@ -4,7 +4,7 @@ package org.angular2.lang;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.javascript.web.context.WebFrameworkContext;
+import com.intellij.webSymbols.framework.WebFrameworkContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

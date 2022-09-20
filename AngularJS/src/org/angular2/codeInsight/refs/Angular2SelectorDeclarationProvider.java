@@ -1,9 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs;
 
-import com.intellij.javascript.web.symbols.WebSymbol;
-import com.intellij.javascript.web.symbols.WebSymbolDeclaration;
-import com.intellij.javascript.web.symbols.WebSymbolDeclarationProvider;
+import com.intellij.webSymbols.WebSymbol;
+import com.intellij.webSymbols.WebSymbolDeclaration;
+import com.intellij.webSymbols.WebSymbolDeclarationProvider;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;

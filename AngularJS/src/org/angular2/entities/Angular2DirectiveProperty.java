@@ -2,7 +2,7 @@
 package org.angular2.entities;
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo;
-import com.intellij.javascript.web.symbols.WebSymbolHtmlAttributeValueData;
+import com.intellij.webSymbols.WebSymbolHtmlAttributeValueData;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.psi.JSType;

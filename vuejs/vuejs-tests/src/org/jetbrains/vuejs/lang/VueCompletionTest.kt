@@ -19,6 +19,10 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.webSymbols.checkListByFile
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.noAutoComplete
+import com.intellij.webSymbols.renderLookupItems
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -690,12 +694,12 @@ export default {
 """)
     noAutoComplete {
       myFixture.completeBasic()
-      TestCase.assertNotNull(myFixture.lookupElements)
+      assertNotNull(myFixture.lookupElements)
       val item: LookupElement? = myFixture.lookupElements?.firstOrNull { "callMe" == it.lookupString }
-      TestCase.assertNotNull(item)
+      assertNotNull(item)
       val presentation = TestLookupElementPresentation.renderReal(item!!)
-      TestCase.assertEquals("number", presentation.typeText)
-      TestCase.assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
+      assertEquals("number", presentation.typeText)
+      assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
     }
   }
 

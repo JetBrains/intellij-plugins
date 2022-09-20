@@ -3,7 +3,6 @@ package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.json.psi.impl.JsonFileImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -12,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.webSymbols.WebTestUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
 import org.angular2.entities.metadata.psi.Angular2MetadataReference;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static com.intellij.javascript.web.WebTestUtil.webSymbolAtCaret;
+import static com.intellij.webSymbols.WebTestUtil.webSymbolAtCaret;
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.*;

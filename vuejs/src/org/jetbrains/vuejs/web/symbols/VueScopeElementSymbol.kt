@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.find.usages.api.SearchTarget
 import com.intellij.find.usages.api.UsageHandler
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.web.symbols.FrameworkId
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.webSymbols.FrameworkId
+import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.model.Pointer

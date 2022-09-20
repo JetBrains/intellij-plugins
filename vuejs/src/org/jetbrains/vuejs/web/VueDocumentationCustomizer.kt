@@ -2,8 +2,11 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.lang.js.renderJsTypeForDocs
-import com.intellij.javascript.web.symbols.*
 import com.intellij.openapi.util.text.Strings
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolDocumentation
+import com.intellij.webSymbols.WebSymbolDocumentationCustomizer
+import com.intellij.webSymbols.WebSymbolsContainer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 

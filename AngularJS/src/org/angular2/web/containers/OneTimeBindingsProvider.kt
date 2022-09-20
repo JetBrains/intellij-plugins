@@ -3,7 +3,6 @@ package org.angular2.web.containers
 
 import com.intellij.javascript.web.lang.js.jsType
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
-import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
@@ -18,6 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.util.containers.mapSmartSet
+import com.intellij.webSymbols.*
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_INPUTS

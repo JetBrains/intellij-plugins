@@ -1,13 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.web.assertUnresolvedReference
-import com.intellij.javascript.web.moveToOffsetBySignature
-import com.intellij.javascript.web.resolveReference
+import com.intellij.webSymbols.assertUnresolvedReference
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.resolveReference
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.util.containers.ContainerUtil
-import junit.framework.TestCase
 import java.util.Arrays.asList
 
 class VueCssClassTest : BasePlatformTestCase() {

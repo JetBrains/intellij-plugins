@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.web.refactoring.WebSymbolRenameTarget
-import com.intellij.javascript.web.symbols.WebSymbol
+import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Symbol
 import com.intellij.refactoring.rename.api.RenameTarget

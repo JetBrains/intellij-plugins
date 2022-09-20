@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.javascript.web.codeInsight.WebSymbolReferenceProvider
-import com.intellij.javascript.web.symbols.WebSymbol
+import com.intellij.webSymbols.codeInsight.WebSymbolReferenceProvider
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.suggested.startOffset

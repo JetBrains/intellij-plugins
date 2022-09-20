@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.lang.js.decorateWithSymbolType
-import com.intellij.javascript.web.symbols.*
+import com.intellij.webSymbols.*
 
 class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
   override fun customize(item: WebSymbolCodeCompletionItem,

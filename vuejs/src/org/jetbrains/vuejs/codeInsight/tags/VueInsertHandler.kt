@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.WebSymbolCodeCompletionItem
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment

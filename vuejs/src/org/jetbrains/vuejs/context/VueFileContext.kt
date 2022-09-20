@@ -9,7 +9,7 @@ import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
-import com.intellij.javascript.web.context.WebFrameworkContext
+import com.intellij.webSymbols.framework.WebFrameworkContext
 import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project

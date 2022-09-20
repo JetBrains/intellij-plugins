@@ -1,12 +1,12 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.javascript.web.symbols.*
-import com.intellij.javascript.web.symbols.patterns.ComplexPattern
-import com.intellij.javascript.web.symbols.patterns.ItemPattern
-import com.intellij.javascript.web.symbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.ComplexPattern
+import com.intellij.webSymbols.patterns.ItemPattern
+import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import org.angular2.Angular2Framework
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider
 

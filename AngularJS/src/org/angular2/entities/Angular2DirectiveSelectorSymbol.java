@@ -4,7 +4,7 @@ package org.angular2.entities;
 import com.intellij.find.usages.api.SearchTarget;
 import com.intellij.find.usages.api.UsageHandler;
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider;
-import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.webSymbols.WebSymbol;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.model.Pointer;
@@ -33,7 +33,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider.getHtmlNSDescriptor;
-import static com.intellij.javascript.web.symbols.WebSymbolsUtils.createPsiRangeNavigationItem;
+import static com.intellij.webSymbols.WebSymbolsUtils.createPsiRangeNavigationItem;
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;

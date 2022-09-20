@@ -1,9 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.web.symbols.SymbolKind
-import com.intellij.javascript.web.symbols.WebSymbolDelegate
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.WebSymbolDelegate
+import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.model.Pointer
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project

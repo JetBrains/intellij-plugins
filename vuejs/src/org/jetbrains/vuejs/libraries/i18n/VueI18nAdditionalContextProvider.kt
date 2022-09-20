@@ -1,7 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.i18n
 
-import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.Language
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -11,6 +10,7 @@ import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VueFramework

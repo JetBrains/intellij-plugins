@@ -1,9 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.web.symbols.*
-import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.HTML
-import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.JS
+import com.intellij.webSymbols.WebSymbolsContainer.Namespace.HTML
+import com.intellij.webSymbols.WebSymbolsContainer.Namespace.JS
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.navigation.NavigationTarget
@@ -16,6 +15,7 @@ import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.*
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils

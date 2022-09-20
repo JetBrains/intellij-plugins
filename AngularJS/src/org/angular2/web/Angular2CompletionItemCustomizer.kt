@@ -2,7 +2,7 @@
 package org.angular2.web
 
 import com.intellij.javascript.web.lang.js.decorateWithSymbolType
-import com.intellij.javascript.web.symbols.*
+import com.intellij.webSymbols.*
 import org.angular2.Angular2Framework
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS

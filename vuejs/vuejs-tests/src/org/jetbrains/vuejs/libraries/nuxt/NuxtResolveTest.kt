@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt
 
-import com.intellij.javascript.web.resolveReference
-import com.intellij.javascript.web.resolveToWebSymbolSource
+import com.intellij.webSymbols.resolveReference
+import com.intellij.webSymbols.resolveToWebSymbolSource
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule

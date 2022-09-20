@@ -11,7 +11,7 @@ import org.angularjs.AngularTestUtil;
 
 import java.util.Arrays;
 
-import static com.intellij.javascript.web.WebTestUtil.resolveWebSymbolReference;
+import static com.intellij.webSymbols.WebTestUtil.resolveWebSymbolReference;
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angularjs.AngularTestUtil.resolveReference;
 

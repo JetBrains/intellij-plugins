@@ -1,11 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.javascript.web.WebFramework;
+import com.intellij.javascript.web.JSWebFramework;
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider;
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsXmlExtension;
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor;
-import com.intellij.javascript.web.symbols.WebSymbolsUtils;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -15,6 +14,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
+import com.intellij.webSymbols.WebSymbolsUtils;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.Angular2Framework;
@@ -39,7 +39,7 @@ public final class Angular2HtmlExtension extends WebSymbolsXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
     return file != null
-           && WebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
+           && JSWebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
            && Angular2LangUtil.isAngular2Context(file);
   }
 

@@ -26,8 +26,8 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.web.moveToOffsetBySignature
-import com.intellij.javascript.web.renameWebSymbol
+import com.intellij.webSymbols.moveToOffsetBySignature
+import com.intellij.webSymbols.renameWebSymbol
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil

@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.model
 import com.intellij.javascript.web.lang.js.jsType
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.web.symbols.WebSymbol
-import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItem
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType

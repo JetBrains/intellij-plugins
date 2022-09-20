@@ -12,8 +12,8 @@ import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.inspections.AngularUndefinedTagInspection;
 import org.angularjs.AngularTestUtil;
 
-import static com.intellij.javascript.web.WebTestUtil.webSymbolAtCaret;
-import static com.intellij.javascript.web.WebTestUtil.webSymbolSourceAtCaret;
+import static com.intellij.webSymbols.WebTestUtil.webSymbolAtCaret;
+import static com.intellij.webSymbols.WebTestUtil.webSymbolSourceAtCaret;
 import static org.angular2.modules.Angular2TestModule.*;
 
 public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {

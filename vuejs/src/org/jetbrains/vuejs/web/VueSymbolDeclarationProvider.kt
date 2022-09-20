@@ -1,9 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.javascript.web.symbols.WebSymbol
-import com.intellij.javascript.web.symbols.WebSymbolDeclaration
-import com.intellij.javascript.web.symbols.WebSymbolDeclarationProvider
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolDeclaration
+import com.intellij.webSymbols.WebSymbolDeclarationProvider
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression

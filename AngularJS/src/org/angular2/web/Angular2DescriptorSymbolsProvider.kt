@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.web.symbols.WebSymbol
-import com.intellij.javascript.web.symbols.unwrapMatchedSymbols
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.unwrapMatchedSymbols
 import com.intellij.util.SmartList
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_BINDING_PATTERN

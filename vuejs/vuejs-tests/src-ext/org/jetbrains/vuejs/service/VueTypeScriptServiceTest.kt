@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase

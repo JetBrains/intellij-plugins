@@ -3,7 +3,7 @@ package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.codeInsight.navigation.actions.GotoTypeDeclarationAction;
-import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.webSymbols.WebSymbol;
 import com.intellij.model.psi.PsiSymbolService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Presentation;

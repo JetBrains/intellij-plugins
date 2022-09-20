@@ -3,11 +3,14 @@ package org.angular2.codeInsight.attributes
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
-import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.WebSymbolsContainer
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser

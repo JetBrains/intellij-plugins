@@ -4,9 +4,8 @@ package org.angular2.web.containers
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider
-import com.intellij.javascript.web.symbols.*
-import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.HTML
-import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.JS
+import com.intellij.webSymbols.WebSymbolsContainer.Namespace.HTML
+import com.intellij.webSymbols.WebSymbolsContainer.Namespace.JS
 import com.intellij.javascript.web.types.WebJSTypesUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
@@ -18,6 +17,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser

@@ -3,9 +3,9 @@ package org.angular2.navigation;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2;
 import com.intellij.javascript.web.JSWebTestUtil;
-import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.webSymbols.WebTestUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;

@@ -2,7 +2,6 @@
 package org.angular2.resharper;
 
 import com.intellij.codeInsight.TargetElementUtil;
-import com.intellij.javascript.web.WebTestUtil;
 import com.intellij.lang.resharper.ReSharperParameterizedTestCase;
 import com.intellij.lang.resharper.ReSharperTestUtil;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -15,6 +14,7 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.intellij.testFramework.Parameterized;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webSymbols.WebTestUtil;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.runner.RunWith;

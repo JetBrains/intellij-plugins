@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
-import com.intellij.javascript.web.assertUnresolvedReference
-import com.intellij.javascript.web.resolveReference
+import com.intellij.webSymbols.assertUnresolvedReference
+import com.intellij.webSymbols.resolveReference
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
 import com.intellij.lang.javascript.buildTools.webpack.createAndSetWebpackConfig

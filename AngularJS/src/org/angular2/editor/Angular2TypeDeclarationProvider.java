@@ -3,7 +3,7 @@ package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.SymbolTypeProvider;
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
-import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.webSymbols.WebSymbol;
 import com.intellij.model.Symbol;
 import com.intellij.model.psi.PsiSymbolService;
 import com.intellij.openapi.actionSystem.DataContext;

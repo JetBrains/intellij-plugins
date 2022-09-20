@@ -2,14 +2,14 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.javascript.web.lang.js.jsType
-import com.intellij.javascript.web.symbols.*
-import com.intellij.javascript.web.symbols.impl.merge
+import com.intellij.webSymbols.impl.merge
 import com.intellij.lang.documentation.DocumentationTarget
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.navigation.TargetPresentation
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 

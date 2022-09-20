@@ -1,10 +1,10 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
-import com.intellij.javascript.web.checkDocumentationAtCaret
-import com.intellij.javascript.web.checkLookupElementDocumentationAtCaret
-import com.intellij.javascript.web.checkNoDocumentationAtCaret
-import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.webSymbols.checkDocumentationAtCaret
+import com.intellij.webSymbols.checkLookupElementDocumentationAtCaret
+import com.intellij.webSymbols.checkNoDocumentationAtCaret
+import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase

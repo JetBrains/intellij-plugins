@@ -1,9 +1,9 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.javascript.web.symbols.SymbolKind
-import com.intellij.javascript.web.symbols.WebSymbol
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.model.Pointer
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider

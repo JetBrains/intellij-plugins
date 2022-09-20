@@ -4,7 +4,7 @@ package org.angular2.resharper;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.webSymbols.WebSymbol;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;

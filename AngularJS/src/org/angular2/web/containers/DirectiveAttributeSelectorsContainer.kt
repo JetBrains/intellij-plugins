@@ -1,12 +1,12 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.javascript.web.symbols.*
 import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag
 import org.angular2.entities.Angular2Directive
