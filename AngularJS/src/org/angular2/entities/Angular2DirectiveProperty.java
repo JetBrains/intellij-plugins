@@ -62,7 +62,7 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
 
   @Nullable
   @Override
-  default JSType getJsType() {
+  default JSType getType() {
     if (getKind().equals(KIND_NG_DIRECTIVE_OUTPUTS)) {
       return Angular2TypeUtils.extractEventVariableType(getRawJsType());
     }
@@ -87,7 +87,7 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
   @Nullable
   @Override
   default AttributeValue getAttributeValue() {
-    if (WebSymbolHtmlAttributeInfo.isBooleanType(getJsType())) {
+    if (WebSymbolHtmlAttributeInfo.isBooleanType(getType())) {
       return new WebSymbolHtmlAttributeValueData(
         null, null, false, null, null
       );

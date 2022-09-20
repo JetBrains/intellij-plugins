@@ -21,7 +21,7 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
   override val kind: SymbolKind
     get() = WebSymbol.KIND_JS_EVENTS
 
-  override val jsType: JSType?
+  override val type: JSType?
     get() = item.eventJSType
 
   override val priority: WebSymbol.Priority

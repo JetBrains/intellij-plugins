@@ -1,10 +1,9 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.web.decorateWithSymbolType
+import com.intellij.javascript.web.lang.js.decorateWithSymbolType
 import com.intellij.javascript.web.symbols.*
 import org.angular2.Angular2Framework
-import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
@@ -12,7 +11,6 @@ import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KI
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_SCOPE_PROXIMITY
 import org.angular2.web.containers.OneTimeBindingsProvider
 
 class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {

@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.javascript.web._jsType
+import com.intellij.javascript.web.lang.js.jsType
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.symbols.WebSymbol
@@ -48,7 +48,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.descriptor
     ?.asSafely<WebSymbolAttributeDescriptor>()
     ?.symbol
-    ?._jsType
+    ?.jsType
     ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =

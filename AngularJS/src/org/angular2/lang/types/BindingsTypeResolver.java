@@ -50,7 +50,6 @@ import static com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelatio
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
-import static org.angular2.lang.types.Angular2TypeUtils.extractEventVariableType;
 
 final class BindingsTypeResolver {
 
@@ -80,7 +79,7 @@ final class BindingsTypeResolver {
       Angular2DirectiveProperty property;
       if (myScope.contains(directive)
           && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
-        types.add(Angular2LibrariesHacks.hackNgModelChangeType(property.getJsType(), name));
+        types.add(Angular2LibrariesHacks.hackNgModelChangeType(property.getType(), name));
       }
     }
     return processAndMerge(types);
@@ -92,7 +91,7 @@ final class BindingsTypeResolver {
       Angular2DirectiveProperty property;
       if (myScope.contains(directive)
           && (property = find(directive.getInputs(), input -> input.getName().equals(key))) != null) {
-        types.add(property.getJsType());
+        types.add(property.getType());
       }
     }
     return processAndMerge(types);
@@ -189,7 +188,7 @@ final class BindingsTypeResolver {
       directive.getInputs().forEach(property -> {
         JSExpression inputExpression = inputsMap.get(property.getName());
         JSType propertyType;
-        if (inputExpression != null && (propertyType = property.getJsType()) != null) {
+        if (inputExpression != null && (propertyType = property.getType()) != null) {
           JSPsiBasedTypeOfType inputType = new JSPsiBasedTypeOfType(inputExpression, true);
           if (isAnyType(getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType)))) {
             // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.

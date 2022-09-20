@@ -19,7 +19,7 @@ class VueInputPropSymbol(property: VueInputProperty,
   override val kind: SymbolKind
     get() = VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS
 
-  override val jsType: JSType?
+  override val type: JSType?
     get() = item.jsType
 
   override val required: Boolean

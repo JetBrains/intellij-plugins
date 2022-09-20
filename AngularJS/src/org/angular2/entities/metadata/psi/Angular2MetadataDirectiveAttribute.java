@@ -41,7 +41,7 @@ public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttr
   }
 
   @Override
-  public @Nullable JSType getJsType() {
+  public @Nullable JSType getType() {
     return doIfNotNull(myParameter.getValue(), JSTypeOwner::getJSType);
   }
 

@@ -31,7 +31,7 @@ public class Angular2IvyDirectiveAttribute implements Angular2DirectiveAttribute
   }
 
   @Override
-  public @Nullable JSType getJsType() {
+  public @Nullable JSType getType() {
     return mySource.getJSType();
   }
 

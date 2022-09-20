@@ -18,7 +18,7 @@ public interface Angular2DirectiveAttribute extends Angular2PsiSourcedSymbol, An
 
   @Nullable
   @Override
-  JSType getJsType();
+  JSType getType();
 
   @NotNull
   @Override

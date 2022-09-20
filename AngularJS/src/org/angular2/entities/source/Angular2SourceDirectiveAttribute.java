@@ -29,7 +29,7 @@ public class Angular2SourceDirectiveAttribute implements Angular2DirectiveAttrib
   }
 
   @Override
-  public @Nullable JSType getJsType() {
+  public @Nullable JSType getType() {
     return myParameter.getJSType();
   }
 

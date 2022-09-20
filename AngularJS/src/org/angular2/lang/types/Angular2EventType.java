@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types;
 
-import com.intellij.javascript.web.JSWebSymbolUtils;
+import com.intellij.javascript.web.lang.js.JSWebSymbolUtils;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
@@ -41,7 +41,7 @@ public class Angular2EventType extends Angular2BaseType<XmlAttribute> {
     XmlAttribute attribute = getSourceElement();
     Angular2AttributeDescriptor descriptor = tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
     if (descriptor != null && isEmpty(descriptor.getSourceDirectives())) {
-      return JSWebSymbolUtils.get_jsType(descriptor.getSymbol());
+      return JSWebSymbolUtils.getJSType(descriptor.getSymbol());
     }
     return BindingsTypeResolver.resolve(attribute,
                                         Angular2EventType::isEventAttribute,

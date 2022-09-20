@@ -23,7 +23,7 @@ class VueSlotSymbol(slot: VueSlot,
   override val kind: SymbolKind
     get() = WebSymbol.KIND_HTML_SLOTS
 
-  override val jsType: JSType?
+  override val type: JSType?
     get() = item.scope
 
   override fun createPointer(): Pointer<VueNamedWebSymbol<VueSlot>> =

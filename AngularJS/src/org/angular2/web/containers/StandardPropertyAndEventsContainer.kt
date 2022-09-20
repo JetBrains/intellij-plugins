@@ -171,7 +171,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
       }
     }
 
-    override val jsType: JSType?
+    override val type: JSType?
       get() = source?.jsType
 
     override val namespace: WebSymbolsContainer.Namespace
@@ -220,7 +220,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
       }
     }
 
-    override val jsType: JSType?
+    override val type: JSType?
       get() = Angular2TypeUtils.extractEventVariableType(mainSource?.jsType) ?: mapSource?.jsType
 
     override val namespace: WebSymbolsContainer.Namespace
