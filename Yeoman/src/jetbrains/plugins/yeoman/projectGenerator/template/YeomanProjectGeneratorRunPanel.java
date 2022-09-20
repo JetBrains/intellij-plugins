@@ -49,14 +49,11 @@ public class YeomanProjectGeneratorRunPanel implements YeomanProjectGeneratorSub
         @Override
         public void handleEvent(YeomanRunGeneratorForm.EventTypes event) {
           switch (event) {
-            case RENDERED: {
+            case RENDERED -> {
               myIsEnable = true;
               myOwner.setMainButtonEnable(true);
-              break;
             }
-            case STARTING_ERROR:
-            case TERMINATED_OK:
-            case TERMINATED_ERROR: {
+            case STARTING_ERROR, TERMINATED_OK, TERMINATED_ERROR -> {
               myOwner.setMainButtonEnable(true);
               myOwner.setMainButtonName("Complete");
               myNextClose = true;
@@ -66,8 +63,6 @@ public class YeomanProjectGeneratorRunPanel implements YeomanProjectGeneratorSub
                 wrapper.add(myCheckBox, BorderLayout.NORTH);
                 myForm.getHolderPanel().setViewportView(wrapper);
               }
-
-              break;
             }
           }
         }

@@ -55,20 +55,16 @@ public class YeomanRunGeneratorDialog extends DialogWrapper {
         UIUtil.invokeLaterIfNeeded(() -> {
           ApplicationManager.getApplication().assertIsDispatchThread();
           switch (event) {
-            case RENDERED: {
-              getOKAction().setEnabled(true);
-              break;
-            }
-            case TERMINATED_OK:
-            case TERMINATED_ERROR: {
+            case RENDERED -> getOKAction().setEnabled(true);
+            case TERMINATED_OK, TERMINATED_ERROR -> {
               getOKAction().setEnabled(true);
               getOKAction().putValue(Action.NAME, YeomanBundle.message("yeoman.generator.run.action.close"));
               getCancelAction().setEnabled(false);
               myToClose = true;
-              break;
             }
-            default:
+            default -> {
               //nothing
+            }
           }
         });
       }

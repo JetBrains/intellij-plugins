@@ -44,48 +44,34 @@ public class StringLexer extends FlexAdapter {
     CharSequence sequenceText = lexer.yytext();
     CharSequence valueText =
         sequenceText.subSequence(lexer.lastStringTokenPos, sequenceText.length());
-    switch (lexer.lastStringTokenType) {
-      case SIMPLE:
-        switch (valueText.charAt(0)) {
-          case 'a':
-            return "\007"; // Bell;
-          case 'b':
-            return "\b";
-          case 'f':
-            return "\f";
-          case 'n':
-            return "\n";
-          case 'r':
-            return "\r";
-          case 't':
-            return "\t";
-          case 'v':
-            return "\013";
-          case '\\':
-            return "\\";
-          case '?':
-            return "?";
-          case '\'':
-            return "'";
-          case '"':
-            return "\"";
-          default:
-            // Not a valid escape character. This should not happen unless these switch cases don't
-            // match the lexer rules.
-            return "";
-        }
-      case OCTAL:
+    return switch (lexer.lastStringTokenType) {
+      case SIMPLE -> switch (valueText.charAt(0)) {
+        case 'a' -> "\007"; // Bell;
+        case 'b' -> "\b";
+        case 'f' -> "\f";
+        case 'n' -> "\n";
+        case 'r' -> "\r";
+        case 't' -> "\t";
+        case 'v' -> "\013";
+        case '\\' -> "\\";
+        case '?' -> "?";
+        case '\'' -> "'";
+        case '"' -> "\"";
+        default ->
+          // Not a valid escape character. This should not happen unless these switch cases don't
+          // match the lexer rules.
+          "";
+      };
+      case OCTAL -> {
         int octValue = Integer.parseInt(valueText.toString(), 8);
-        return new String(Character.toChars(octValue));
-      case HEX:
+        yield new String(Character.toChars(octValue));
+      }
+      case HEX -> {
         int hexValue = Integer.parseInt(valueText.toString(), 16);
-        return new String(Character.toChars(hexValue));
-      case INVALID:
-      case LITERAL:
-        return valueText;
-      default:
-        return "";
-    }
+        yield new String(Character.toChars(hexValue));
+      }
+      case INVALID, LITERAL -> valueText;
+    };
   }
 
   public boolean isCurrentTokenLiteral() {

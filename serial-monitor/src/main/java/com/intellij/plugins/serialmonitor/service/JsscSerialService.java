@@ -59,28 +59,16 @@ public class JsscSerialService implements Disposable {
                                    SerialConnectionListener connectListener) throws SerialMonitorException {
     String portName = settings.getPortName();
     int dataBits = settings.getBits();
-    int stopBits;
-    switch (settings.getStopBits()) {
-      case BITS_2:
-        stopBits = STOPBITS_2;
-        break;
-      case BITS_1_5:
-        stopBits = STOPBITS_1_5;
-        break;
-      default:
-        stopBits = STOPBITS_1;
-    }
-    int parity;
-    switch (settings.getParity()) {
-      case EVEN:
-        parity = PARITY_EVEN;
-        break;
-      case ODD:
-        parity = PARITY_ODD;
-        break;
-      default:
-        parity = PARITY_NONE;
-    }
+    int stopBits = switch (settings.getStopBits()) {
+      case BITS_2 -> STOPBITS_2;
+      case BITS_1_5 -> STOPBITS_1_5;
+      default -> STOPBITS_1;
+    };
+    int parity = switch (settings.getParity()) {
+      case EVEN -> PARITY_EVEN;
+      case ODD -> PARITY_ODD;
+      default -> PARITY_NONE;
+    };
     try {
       SerialPort port = new SerialPort(portName);
       port.openPort();

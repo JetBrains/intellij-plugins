@@ -191,14 +191,10 @@ public class PbCompletionContributor extends CompletionContributor {
           result.addAllElements(createMessageEntryStart());
           result.addAllElements(createMessageEntryStartNoSpace());
         }
-        switch (syntaxLevel) {
-          case PROTO2:
-            result.addAllElements(createProto2FieldLabels());
-            break;
-          case PROTO3:
-            result.addAllElements(createProto3FieldLabels());
-            break;
-        }
+        result.addAllElements(switch (syntaxLevel) {
+          case PROTO2 -> createProto2FieldLabels();
+          case PROTO3 -> createProto3FieldLabels();
+        });
       } else {
         // In proto2, we can have a "group" right after the field label.
         if (syntaxLevel == SyntaxLevel.PROTO2) {

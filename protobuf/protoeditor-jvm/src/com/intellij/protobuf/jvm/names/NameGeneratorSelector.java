@@ -50,19 +50,14 @@ public final class NameGeneratorSelector {
       //   option (proto2.FileOptions.java_package) = "com.foo.bar";
       String optionName = optionExpression.getOptionName().getText();
       switch (optionName) {
-        case "java_package":
-          NameGeneratorUtils.parseStringOption(optionExpression)
-            .ifPresent(s -> options.javaPackage = s);
-          break;
-        case "java_outer_classname":
-          NameGeneratorUtils.parseStringOption(optionExpression)
-            .ifPresent(s -> options.javaOuterClassname = s);
-          break;
-        case "java_multiple_files":
-          NameGeneratorUtils.parseBoolOption(optionExpression)
-            .ifPresent(b -> options.javaMultipleFiles = b);
-          break;
-        default:
+        case "java_package" -> NameGeneratorUtils.parseStringOption(optionExpression)
+          .ifPresent(s -> options.javaPackage = s);
+        case "java_outer_classname" -> NameGeneratorUtils.parseStringOption(optionExpression)
+          .ifPresent(s -> options.javaOuterClassname = s);
+        case "java_multiple_files" -> NameGeneratorUtils.parseBoolOption(optionExpression)
+          .ifPresent(b -> options.javaMultipleFiles = b);
+        default -> {
+        }
       }
     }
     return options;

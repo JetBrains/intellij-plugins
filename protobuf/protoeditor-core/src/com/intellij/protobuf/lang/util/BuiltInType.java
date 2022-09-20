@@ -145,49 +145,46 @@ public enum BuiltInType {
     @Override
     public ValueTester getValueTester(ValueTesterType type) {
       return value -> {
-        if (value instanceof ProtoIdentifierValue) {
+        if (value instanceof ProtoIdentifierValue identifierValue) {
           // getAsNumber() might return null, but the following instanceof check will catch it.
-          value = ((ProtoIdentifierValue) value).getAsNumber();
+          value = identifierValue.getAsNumber();
         }
-        if (!(value instanceof ProtoNumberValue)) {
+        if (!(value instanceof ProtoNumberValue number)) {
           return PbLangBundle.message("floating.point.value.expected");
         }
-        ProtoNumberValue number = (ProtoNumberValue) value;
         SourceType sourceType = number.getSourceType();
         if (sourceType == null) {
           return PbLangBundle.message("floating.point.value.expected");
         }
-        switch (number.getSourceType()) {
-          case INTEGER:
+        return switch (number.getSourceType()) {
+          case INTEGER -> {
             // text format integers must be decimal when used as floating point values.
-            if (type == ValueTester.ValueTesterType.TEXT
+            if (type == ValueTesterType.TEXT
                 && number.getIntegerFormat() != IntegerFormat.DEC) {
-              return PbLangBundle.message("integer.value.must.be.decimal");
+              yield PbLangBundle.message("integer.value.must.be.decimal");
             }
             boolean valid;
             if (number.isNegative()) {
               valid =
-                type == ValueTester.ValueTesterType.DEFAULT
+                type == ValueTesterType.DEFAULT
                 ? number.isValidInt65()
                 : number.isValidInt64();
-            } else {
+            }
+            else {
               valid = number.isValidUint64();
             }
-            return valid ? null : PbLangBundle.message("integer.value.out.of.range");
-          case FLOAT:
-            return number.isValidDouble()
-                   ? null
-                   : PbLangBundle.message("invalid.floating.point.value");
-          case INF:
-            return type == ValueTester.ValueTesterType.OPTION
-                   ? PbLangBundle.message("not.allowed.as.option.value", "inf")
-                   : null;
-          case NAN:
-            return type == ValueTester.ValueTesterType.OPTION
-                   ? PbLangBundle.message("not.allowed.as.option.value", "nan")
-                   : null;
-        }
-        return PbLangBundle.message("floating.point.value.expected");
+            yield valid ? null : PbLangBundle.message("integer.value.out.of.range");
+          }
+          case FLOAT -> number.isValidDouble()
+                        ? null
+                        : PbLangBundle.message("invalid.floating.point.value");
+          case INF -> type == ValueTesterType.OPTION
+                      ? PbLangBundle.message("not.allowed.as.option.value", "inf")
+                      : null;
+          case NAN -> type == ValueTesterType.OPTION
+                      ? PbLangBundle.message("not.allowed.as.option.value", "nan")
+                      : null;
+        };
       };
     }
   }

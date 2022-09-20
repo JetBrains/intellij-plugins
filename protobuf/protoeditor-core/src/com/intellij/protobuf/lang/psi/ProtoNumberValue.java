@@ -54,16 +54,12 @@ public interface ProtoNumberValue extends ProtoLiteral {
       }
       String numberText = numberElement.getText();
       int radix = ProtoNumberValueUtil.getRadix(numberText);
-      switch (radix) {
-        case 8:
-          return IntegerFormat.OCT;
-        case 10:
-          return IntegerFormat.DEC;
-        case 16:
-          return IntegerFormat.HEX;
-        default:
-          return null;
-      }
+      return switch (radix) {
+        case 8 -> IntegerFormat.OCT;
+        case 10 -> IntegerFormat.DEC;
+        case 16 -> IntegerFormat.HEX;
+        default -> null;
+      };
     }
     return null;
   }
@@ -154,27 +150,25 @@ public interface ProtoNumberValue extends ProtoLiteral {
     if (sourceType == null) {
       return null;
     }
-    switch (sourceType) {
-      case FLOAT:
+    return switch (sourceType) {
+      case FLOAT -> {
         PsiElement numberElement = getNumberElement();
         if (numberElement == null) {
-          return null;
+          yield null;
         }
         String numberText = numberElement.getText();
         String negativePrefix = isNegative() ? "-" : "";
         try {
-          return Double.parseDouble(negativePrefix + numberText);
-        } catch (NumberFormatException e) {
-          return null;
+          yield Double.parseDouble(negativePrefix + numberText);
         }
-      case INF:
-        return isNegative() ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-      case NAN:
-        return Double.NaN;
-      default:
-        break;
-    }
-    return null;
+        catch (NumberFormatException e) {
+          yield null;
+        }
+      }
+      case INF -> isNegative() ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+      case NAN -> Double.NaN;
+      default -> null;
+    };
   }
 
   /**
@@ -188,15 +182,13 @@ public interface ProtoNumberValue extends ProtoLiteral {
   default Number getNumber() {
     SourceType sourceType = getSourceType();
     if (sourceType != null) {
-      switch (getSourceType()) {
-        case FLOAT:
-        case INF:
-        case NAN:
-          return getDoubleValue();
-        case INTEGER:
+      return switch (getSourceType()) {
+        case FLOAT, INF, NAN -> getDoubleValue();
+        case INTEGER -> {
           Long longValue = getLongValue();
-          return longValue != null ? longValue : getUnsignedLongValue();
-      }
+          yield longValue != null ? longValue : getUnsignedLongValue();
+        }
+      };
     }
     return null;
   }

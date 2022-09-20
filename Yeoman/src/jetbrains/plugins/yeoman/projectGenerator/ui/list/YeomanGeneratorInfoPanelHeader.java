@@ -75,90 +75,58 @@ public class YeomanGeneratorInfoPanelHeader {
       @Override
       @NotNull
       protected Color getButtonForeground() {
-        switch (myState) {
-          case AVAILABLE: {
-            return new JBColor(Gray._240, Gray._210);
-          }
-          case GLOBAL_INSTALLED:
-          case LOCAL_INSTALLED: {
-            return new JBColor(Gray._0, Gray._210);
-          }
-          default:
-        }
-
-        return new JBColor(Gray._80, Gray._60);
+        return switch (myState) {
+          case AVAILABLE -> new JBColor(Gray._240, Gray._210);
+          case GLOBAL_INSTALLED, LOCAL_INSTALLED -> new JBColor(Gray._0, Gray._210);
+          case INCORRECT -> new JBColor(Gray._80, Gray._60);
+        };
       }
 
       @Override
       @NotNull
       protected Paint getBackgroundPaint() {
-        switch (myState) {
-          case AVAILABLE: {
-            return new JBGradientPaint(this,
-                                       new JBColor(new Color(96, 204, 105), new Color(81, 149, 87)),
-                                       new JBColor(new Color(50, 101, 41), new Color(40, 70, 47)));
-          }
-          case GLOBAL_INSTALLED:
-          case LOCAL_INSTALLED: {
+        return switch (myState) {
+          case AVAILABLE ->
+            new JBGradientPaint(this,
+                                new JBColor(new Color(96, 204, 105), new Color(81, 149, 87)),
+                                new JBColor(new Color(50, 101, 41), new Color(40, 70, 47)));
+          case GLOBAL_INSTALLED, LOCAL_INSTALLED ->
             //noinspection UnregisteredNamedColor
-            return StartupUiUtil.isUnderDarcula()
-                   ?
-                   ColorUtil.mix(JBColor.namedColor("Button.startBackground", JBColor.namedColor("Button.darcula.startColor", 0x4C5052)),
-                                 JBColor.namedColor("Button.endBackground", JBColor.namedColor("Button.darcula.endColor", 0x4C5052)), 0.5) : Gray._240;
-          }
-          default:
-        }
-
-        return Gray._238;
+            StartupUiUtil.isUnderDarcula()
+            ?
+            ColorUtil.mix(JBColor.namedColor("Button.startBackground", JBColor.namedColor("Button.darcula.startColor", 0x4C5052)),
+                          JBColor.namedColor("Button.endBackground", JBColor.namedColor("Button.darcula.endColor", 0x4C5052)), 0.5) : Gray._240;
+          case INCORRECT -> Gray._238;
+        };
       }
 
       @Override
       @NotNull
       protected Paint getBackgroundBorderPaint() {
-        switch (myState) {
-          case AVAILABLE: {
-            return new JBColor(new Color(201, 223, 201), Gray._70);
-          }
-          case GLOBAL_INSTALLED:
-          case LOCAL_INSTALLED: {
-            return new JBColor(Gray._220, Gray._100.withAlpha(180));
-          }
-          default:
-        }
-        return Gray._208;
+        return switch (myState) {
+          case AVAILABLE -> new JBColor(new Color(201, 223, 201), Gray._70);
+          case GLOBAL_INSTALLED, LOCAL_INSTALLED -> new JBColor(Gray._220, Gray._100.withAlpha(180));
+          case INCORRECT -> Gray._208;
+        };
       }
 
 
       @Override
       public String getText() {
-        switch (myState) {
-          case AVAILABLE: {
-            return YeomanBundle.message("yeoman.generators.dialog.install.generator");
-          }
-          case GLOBAL_INSTALLED:
-          case LOCAL_INSTALLED: {
-            return YeomanBundle.message("yeoman.generators.dialog.uninstall.generator");
-          }
-          default:
-        }
-
-        return super.getText();
+        return switch (myState) {
+          case AVAILABLE -> YeomanBundle.message("yeoman.generators.dialog.install.generator");
+          case GLOBAL_INSTALLED, LOCAL_INSTALLED -> YeomanBundle.message("yeoman.generators.dialog.uninstall.generator");
+          case INCORRECT -> super.getText();
+        };
       }
 
       @Override
       public Icon getIcon() {
-        switch (myState) {
-          case AVAILABLE: {
-            return AllIcons.Actions.Download;
-          }
-          case GLOBAL_INSTALLED:
-          case LOCAL_INSTALLED: {
-            return AllIcons.Actions.Cancel;
-          }
-          default:
-        }
-
-        return super.getIcon();
+        return switch (myState) {
+          case AVAILABLE -> AllIcons.Actions.Download;
+          case GLOBAL_INSTALLED, LOCAL_INSTALLED -> AllIcons.Actions.Cancel;
+          case INCORRECT -> super.getIcon();
+        };
       }
     };
 
@@ -169,17 +137,15 @@ public class YeomanGeneratorInfoPanelHeader {
         if (yeomanGeneratorInfo != null) {
           boolean updated = false;
           switch (myState) {
-            case AVAILABLE: {
+            case AVAILABLE -> {
               try {
                 updated = null != YeomanGeneratorInstaller.getInstance().install(yeomanGeneratorInfo, YeomanGlobalSettings.getInstance());
               }
               catch (RuntimeException ex) {
                 Messages.showErrorDialog(myParent.getMainPanel(), YeomanBundle.message("yeoman.generators.dialog.install.error", yeomanGeneratorInfo.getName()));
               }
-              break;
             }
-            case GLOBAL_INSTALLED:
-            case LOCAL_INSTALLED: {
+            case GLOBAL_INSTALLED, LOCAL_INSTALLED -> {
               if (Messages.YES != showYesNoDialog(myParent.getMainPanel(),
                                                   YeomanBundle.message("yeoman.generators.prompt.uninstall", yeomanGeneratorInfo.getName()),
                                                   YeomanBundle.message("yeoman.generators.prompt.uninstall.title"),
@@ -191,9 +157,8 @@ public class YeomanGeneratorInfoPanelHeader {
               if (installedGeneratorInfo != null) {
                 updated = YeomanGeneratorInstaller.getInstance().uninstall(installedGeneratorInfo);
               }
-              break;
             }
-            default:
+            case INCORRECT -> {}
           }
           if (updated) {
             myParent.handleUpdate();

@@ -80,21 +80,15 @@ public class VariableExpressionPsiTest extends PsiTestCase {
 
     final PsiElement resolveElement = reference.resolve();
     switch (resolveTarget) {
-      case NULL:
-        assertNull(resolveElement);
-        break;
-      case ELEMENT:
-        assertEquals(expectedResolveTarget, resolveElement);
-        break;
-      case SELF:
-        assertEquals(expression.getNavigationElement(), resolveElement);
-        break;
-      case TYPE:
+      case NULL -> assertNull(resolveElement);
+      case ELEMENT -> assertEquals(expectedResolveTarget, resolveElement);
+      case SELF -> assertEquals(expression.getNavigationElement(), resolveElement);
+      case TYPE -> {
         final String expectedType = (String)expectedResolveTarget;
         final PsiType type = getJavaFacade().getElementFactory().createTypeFromText(expectedType, expression);
         assertNotNull(type);
         assertEquals(expectedType, type.getCanonicalText());
-        break;
+      }
     }
   }
 }

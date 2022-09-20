@@ -243,24 +243,15 @@ public class PerforceChangeList implements CommittedChangeList {
       byte type = stream.readByte();
       long revision = stream.readLong();
       String depotPath = stream.readUTF();
-      Change change = null;
       FilePath filePath = createFilePath(depotPath, perforceClient, pathService);
-      switch(type) {
-        case 0:
-          change = new Change(PerforceContentRevision.create(myProject, depotPath, filePath, revision), null);
-          break;
-        case 1:
-          change = new Change(
-            PerforceContentRevision.create(myProject, depotPath, filePath, revision - 1),
-            PerforceContentRevision.create(myProject, depotPath, filePath, revision));
-          break;
-        case 2:
-          change = new Change(null,
-                              PerforceContentRevision.create(myProject, depotPath, filePath, revision));
-          break;
-        default:
-          assert false: "Unknown p4 change type " + type;
-      }
+      Change change = switch (type) {
+        case 0 -> new Change(PerforceContentRevision.create(myProject, depotPath, filePath, revision), null);
+        case 1 -> new Change(
+          PerforceContentRevision.create(myProject, depotPath, filePath, revision - 1),
+          PerforceContentRevision.create(myProject, depotPath, filePath, revision));
+        case 2 -> new Change(null, PerforceContentRevision.create(myProject, depotPath, filePath, revision));
+        default -> throw new IllegalStateException("Unknown p4 change type " + type);
+      };
       myIdeaChanges.add(change);
     }
   }

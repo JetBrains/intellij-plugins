@@ -207,15 +207,9 @@ public class P4MoveRenameOperation extends VcsOperation {
       else {
         int type = detectType(oldfstat, oldP4File, newPath);
         switch (type) {
-          case CYCLE:
-            processCycle(project, newP4File, oldP4File);
-            break;
-          case DOUBLE_RENAME:
-            processDoubleRename(project, oldfstat.fromFile, newP4File, oldP4File);
-            break;
-          case SIMPLE:
-            processRename(project, newP4File, oldP4File, context);
-            break;
+          case CYCLE -> processCycle(project, newP4File, oldP4File);
+          case DOUBLE_RENAME -> processDoubleRename(project, oldfstat.fromFile, newP4File, oldP4File);
+          case SIMPLE -> processRename(project, newP4File, oldP4File, context);
         }
       }
     }

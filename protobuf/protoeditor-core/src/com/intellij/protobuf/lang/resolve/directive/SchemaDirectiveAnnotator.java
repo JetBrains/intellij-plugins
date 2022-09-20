@@ -104,15 +104,10 @@ public class SchemaDirectiveAnnotator implements Annotator {
   @NotNull
   @InspectionMessage
   private static String missingNameWarning(SchemaComment.Type type) {
-    switch (type) {
-      case FILE:
-      case IMPORT:
-        return PbLangBundle.message("missing.filename");
-      case MESSAGE:
-        return PbLangBundle.message("missing.message.name");
-      default:
-        throw new AssertionError("Unknown SchemaComment.Type: " + type);
-    }
+    return PbLangBundle.message(switch (type) {
+      case FILE, IMPORT -> "missing.filename";
+      case MESSAGE -> "missing.message.name";
+    });
   }
 
   @InspectionMessage

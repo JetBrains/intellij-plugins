@@ -27,13 +27,10 @@ final class ProtoNumberValueUtil {
   }
 
   static String trimRadixPrefix(String value, int radix) {
-    switch (radix) {
-      case 16:
-        return value.substring(2);
-      case 8:
-        return value.substring(1);
-      default:
-        return value;
-    }
+    return switch (radix) {
+      case 16 -> value.substring(2);
+      case 8 -> value.substring(1);
+      default -> value;
+    };
   }
 }
