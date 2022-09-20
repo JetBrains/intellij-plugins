@@ -9,24 +9,19 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BooleanSupplier;
+
 /**
  * @author Maxim.Mossienko
  */
 public class FlexReferenceImporter implements ReferenceImporter {
   @Override
-  public boolean autoImportReferenceAtCursor(@NotNull final Editor editor, @NotNull final PsiFile file) {
-    int offset = editor.getCaretModel().getOffset();
-    return autoImportReferenceAtOffset(editor, file, offset);
-  }
-
-  @Override
-  public boolean autoImportReferenceAtOffset(@NotNull Editor editor, @NotNull PsiFile file, int offset) {
+  public BooleanSupplier computeAutoImportAtOffset(@NotNull Editor editor, @NotNull PsiFile file, int offset, boolean allowCaretNearReference) {
     JSReferenceExpression expression = JSImportHandlingUtil.findUnresolvedReferenceExpression(editor, file, offset);
     if (expression != null) {
-      new AddImportECMAScriptClassOrFunctionAction(editor, expression, true).execute();
-      return true;
+      return () -> new AddImportECMAScriptClassOrFunctionAction(editor, expression, true).execute();
     }
-    return false;
+    return null;
   }
 
   @Override
