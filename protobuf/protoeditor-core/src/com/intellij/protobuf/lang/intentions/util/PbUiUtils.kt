@@ -1,6 +1,8 @@
 package com.intellij.protobuf.lang.intentions.util
 
+import com.intellij.codeInsight.intention.preview.IntentionPreviewUtils
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -20,23 +22,29 @@ import javax.swing.ListCellRenderer
 internal fun selectItemAndApply(variants: List<PbImportIntentionVariant>,
                                 editor: Editor,
                                 project: Project) {
-  PsiDocumentManager.getInstance(project).commitAllDocuments()
-
   if (variants.isEmpty()) return
+
   if (instantlyInvokeSingleIntention(variants, project)) return
-  if (ApplicationManager.getApplication().isUnitTestMode) {
+  if (ApplicationManager.getApplication().isUnitTestMode || isPreview(editor, project)) {
     handleUnitTestMode(variants, project)
     return
   }
 
-  val customRenderer = createRenderer()
-  JBPopupFactory.getInstance().createListPopup(project, createPopup(variants, project)) {
-    ListCellRenderer<PbImportIntentionVariant> { list, value, index, isSelected, cellHasFocus ->
-      JPanel(BorderLayout()).apply {
-        add(customRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus))
+  invokeLater {
+    val customRenderer = createRenderer()
+    JBPopupFactory.getInstance().createListPopup(project, createPopup(variants, project)) {
+      ListCellRenderer<PbImportIntentionVariant> { list, value, index, isSelected, cellHasFocus ->
+        JPanel(BorderLayout()).apply {
+          add(customRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus))
+        }
       }
-    }
-  }.showInBestPositionFor(editor)
+    }.showInBestPositionFor(editor)
+  }
+}
+
+private fun isPreview(editor: Editor, project: Project): Boolean {
+  val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document)
+  return psiFile != null && IntentionPreviewUtils.isPreviewElement(psiFile)
 }
 
 private fun instantlyInvokeSingleIntention(variants: List<PbImportIntentionVariant>, project: Project): Boolean {
@@ -90,6 +98,7 @@ private fun createRenderer(): ListCellRenderer<PbImportIntentionVariant> {
           append(File.separator, SimpleTextAttributes.GRAYED_ATTRIBUTES)
           append(value.importPathData.originalImportStatement, SimpleTextAttributes.GRAYED_ATTRIBUTES)
         }
+
         is PbImportIntentionVariant.ManuallyConfigureImportPathsSettings -> {
           append(value.presentableName, SimpleTextAttributes.REGULAR_ATTRIBUTES)
         }

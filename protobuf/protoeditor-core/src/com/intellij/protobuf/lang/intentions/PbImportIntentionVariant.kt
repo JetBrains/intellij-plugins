@@ -1,5 +1,6 @@
 package com.intellij.protobuf.lang.intentions
 
+import com.intellij.codeInsight.intention.preview.IntentionPreviewUtils
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
@@ -46,6 +47,7 @@ internal sealed class PbImportIntentionVariant {
       get() = AllIcons.Actions.ModuleDirectory
 
     override fun invokeAction(project: Project) {
+      if (IntentionPreviewUtils.isIntentionPreviewActive()) return
       WriteCommandAction.runWriteCommandAction(
         project,
         PbLangBundle.message("intention.add.import.path.popup.title"),
@@ -69,15 +71,20 @@ internal sealed class PbImportIntentionVariant {
       } ?: return
 
       // Important to use the same command groupId so that underlying write actions would be merged together
-      WriteCommandAction.runWriteCommandAction(
-        project,
-        PbLangBundle.message("intention.add.import.path.popup.title"),
-        PbLangBundle.message("intention.fix.import.problems.familyName"),
-        {
-          if (!addImportStatement(project, targetPsiFile, importedPsiFile)) return@runWriteCommandAction
-          super.invokeAction(project)
-        }
-      )
+      if (IntentionPreviewUtils.isPreviewElement(targetPsiFile)) {
+        addImportStatement(project, targetPsiFile, importedPsiFile)
+      }
+      else {
+        WriteCommandAction.runWriteCommandAction(
+          project,
+          PbLangBundle.message("intention.add.import.path.popup.title"),
+          PbLangBundle.message("intention.fix.import.problems.familyName"),
+          {
+            if (!addImportStatement(project, targetPsiFile, importedPsiFile)) return@runWriteCommandAction
+            super.invokeAction(project)
+          }
+        )
+      }
     }
 
     private fun addImportStatement(project: Project, targetFile: PsiFile, protoFileToImport: PsiFile): Boolean {
@@ -87,6 +94,7 @@ internal sealed class PbImportIntentionVariant {
             "Both target and imported files should be PROTO files, got target = '${targetFile.fileType}' and imported = '${protoFileToImport.fileType}' instead")
           return false
         }
+
         targetFile.importStatements.isNotEmpty() ->
           addImportAndNewLineAfter(project, targetFile, protoFileToImport, targetFile.importStatements.last(), true)
 

@@ -1,8 +1,8 @@
 package com.intellij.protobuf.lang.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressManager
@@ -18,6 +18,11 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.IncorrectOperationException
 
 class PbAddImportPathIntention : IntentionAction {
+
+  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+    return IntentionPreviewInfo.EMPTY
+  }
+
   override fun getText(): String {
     return PbLangBundle.message("intention.add.import.path.name")
   }
@@ -47,7 +52,7 @@ class PbAddImportPathIntention : IntentionAction {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         val fixes = runReadAction { prepareQuickFixes(project, editor, file) }
-        invokeLater { selectItemAndApply(fixes, editor, project) }
+        selectItemAndApply(fixes, editor, project)
       },
       PbLangBundle.message("background.task.title.add.import.prepare.variants"),
       true,

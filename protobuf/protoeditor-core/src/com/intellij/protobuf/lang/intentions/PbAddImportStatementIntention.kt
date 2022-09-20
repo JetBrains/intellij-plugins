@@ -1,8 +1,9 @@
 package com.intellij.protobuf.lang.intentions
 
+import com.intellij.codeInsight.intention.FileModifier
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.preview.IntentionPreviewUtils
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
@@ -34,6 +35,14 @@ internal class PbAddImportStatementIntention : IntentionAction {
     return false
   }
 
+  override fun getFileModifierForPreview(target: PsiFile): FileModifier {
+    return this
+  }
+
+  override fun getElementToMakeWritable(currentFile: PsiFile): PsiElement? {
+    return currentFile
+  }
+
   override fun getText(): String {
     return PbLangBundle.message("intention.add.import.statement.name")
   }
@@ -51,7 +60,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
   override fun invoke(project: Project, editor: Editor, editedFile: PsiFile) {
     if (editedFile !is PbFile) return
 
-    if (ApplicationManager.getApplication().isUnitTestMode) {
+    if (ApplicationManager.getApplication().isUnitTestMode || IntentionPreviewUtils.isPreviewElement(editedFile)) {
       selectItemAndApply(prepareQuickFixes(project, editor, editedFile), editor, project)
       return
     }
@@ -59,7 +68,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         val fixes = runReadAction { prepareQuickFixes(project, editor, editedFile) }
-        invokeLater { selectItemAndApply(fixes, editor, project) }
+        selectItemAndApply(fixes, editor, project)
       },
       PbLangBundle.message("background.task.title.add.import.prepare.variants"),
       true,
@@ -84,7 +93,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
 
     if (suitableImportStatements.isEmpty()) {
       return protoFileCandidates.map {
-        val originalProtoFile = editedProtoFile.virtualFile
+        val originalProtoFile = editedProtoFile.viewProvider.virtualFile
         val importedProtoFile = it.virtualFile
         val project = editedProtoFile.project
         val presentablePath = ImportPathData.shortenPath(importedProtoFile, project)
@@ -149,7 +158,7 @@ internal class PbAddImportStatementIntention : IntentionAction {
                               thisLogger().warn("Empty import statement selected as suitable for import paths configuration")
                               return null
                             }
-    return PbImportPathResolver.findSuitableImportPaths(relativeProtoPath, editedProtoFile.virtualFile,
+    return PbImportPathResolver.findSuitableImportPaths(relativeProtoPath, editedProtoFile.viewProvider.virtualFile,
                                                         editedProtoFile.project).firstOrNull()
            ?: run {
              thisLogger().warn("Unable to find suitable PROTO file for specified import statement")
