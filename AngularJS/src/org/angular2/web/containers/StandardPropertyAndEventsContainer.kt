@@ -6,7 +6,7 @@ import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider
 import com.intellij.webSymbols.WebSymbolsContainer.Namespace.HTML
 import com.intellij.webSymbols.WebSymbolsContainer.Namespace.JS
-import com.intellij.javascript.web.types.WebJSTypesUtil
+import com.intellij.javascript.web.lang.js.WebJSTypesUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList

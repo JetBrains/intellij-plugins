@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.html.psi.impl
 
-import com.intellij.javascript.web.types.WebJSTypesUtil
+import com.intellij.javascript.web.lang.js.WebJSTypesUtil
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSVariable
