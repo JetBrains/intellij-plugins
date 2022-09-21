@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.javascript.web.lang.js.jsType
-import com.intellij.webSymbols.impl.merge
 import com.intellij.lang.documentation.DocumentationTarget
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
@@ -10,6 +9,8 @@ import com.intellij.navigation.TargetPresentation
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.utils.merge
+import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
@@ -92,12 +93,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
     }
 
   override fun getDocumentationTarget(): DocumentationTarget =
-    object : WebSymbolDocumentationTarget(this) {
-      override val presentation: TargetPresentation
-        get() = TargetPresentation.builder(originalName ?: name)
-          .icon(symbol.icon)
-          .presentation()
-    }
+    VueMergedSymbolDocumentationTarget(this, originalName ?: name)
 
   override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
                           kind: SymbolKind,
@@ -170,5 +166,23 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
     }
   }
 
+  class VueMergedSymbolDocumentationTarget(
+    override val symbol: WebSymbol,
+    @Nls val displayName: String,
+  ) : WebSymbolDocumentationTarget {
+
+    override val presentation: TargetPresentation
+      get() = TargetPresentation.builder(displayName)
+        .icon(symbol.icon)
+        .presentation()
+
+    override fun createPointer(): Pointer<out DocumentationTarget> {
+      val pointer = symbol.createPointer()
+      val displayName = this.displayName
+      return Pointer<DocumentationTarget> {
+        pointer.dereference()?.let { VueMergedSymbolDocumentationTarget(it, displayName) }
+      }
+    }
+  }
 
 }

@@ -4,10 +4,10 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsContainer
-import com.intellij.webSymbols.patterns.RegExpPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueSlot
@@ -18,7 +18,7 @@ class VueSlotSymbol(slot: VueSlot,
   : VueNamedWebSymbol<VueSlot>(slot, origin = origin, owner = owner) {
 
   override val pattern: WebSymbolsPattern?
-    get() = item.pattern?.let { RegExpPattern(it, true) }
+    get() = item.pattern?.let { WebSymbolsPatternFactory.createRegExMatch(it, true) }
 
   override val kind: SymbolKind
     get() = WebSymbol.KIND_HTML_SLOTS

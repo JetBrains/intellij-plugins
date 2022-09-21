@@ -2,7 +2,7 @@
 package org.angular2.web
 
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.unwrapMatchedSymbols
+import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.util.SmartList
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_BINDING_PATTERN

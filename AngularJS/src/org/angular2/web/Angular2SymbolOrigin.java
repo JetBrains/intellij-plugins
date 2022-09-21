@@ -47,7 +47,7 @@ public class Angular2SymbolOrigin implements WebSymbolsContainer.Origin {
 
   @Nullable
   @Override
-  public String getPackageName() {
+  public String getLibrary() {
     return getVersionAndName().first;
   }
 

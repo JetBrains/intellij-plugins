@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsContainer
-import com.intellij.webSymbols.patterns.RegExpPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.model.Pointer
+import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 
 class VueAnySymbol(override val origin: WebSymbolsContainer.Origin,
                    override val namespace: WebSymbolsContainer.Namespace,
@@ -14,7 +14,7 @@ class VueAnySymbol(override val origin: WebSymbolsContainer.Origin,
                    override val matchedName: String) : WebSymbol {
 
   override val pattern: WebSymbolsPattern
-    get() = RegExpPattern(".*", false)
+    get() = WebSymbolsPatternFactory.createRegExMatch(".*", false)
 
   override val properties: Map<String, Any> =
     mapOf(Pair(WebSymbol.PROP_HIDE_FROM_COMPLETION, true))

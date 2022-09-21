@@ -33,7 +33,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider.getHtmlNSDescriptor;
-import static com.intellij.webSymbols.WebSymbolsUtils.createPsiRangeNavigationItem;
+import static com.intellij.webSymbols.utils.WebSymbolUtils.createPsiRangeNavigationItem;
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;

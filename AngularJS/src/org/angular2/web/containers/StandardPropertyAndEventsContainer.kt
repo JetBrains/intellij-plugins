@@ -18,6 +18,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser

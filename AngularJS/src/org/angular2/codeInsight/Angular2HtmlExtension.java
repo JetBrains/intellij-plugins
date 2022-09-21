@@ -14,7 +14,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
-import com.intellij.webSymbols.WebSymbolsUtils;
+import com.intellij.webSymbols.utils.WebSymbolUtils;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.Angular2Framework;
@@ -49,7 +49,7 @@ public final class Angular2HtmlExtension extends WebSymbolsXmlExtension {
     XmlElementDescriptor descriptor = tag.getDescriptor();
     if (descriptor instanceof WebSymbolElementDescriptor) {
       boolean hasStandardSymbol = ContainerUtil.or(
-        () -> WebSymbolsUtils.unwrapMatchedSymbols(((WebSymbolElementDescriptor)descriptor).getSymbol()).iterator(),
+        () -> WebSymbolUtils.unwrapMatchedSymbols(((WebSymbolElementDescriptor)descriptor).getSymbol()).iterator(),
         it -> it instanceof WebSymbolsHtmlAdditionalContextProvider.StandardHtmlSymbol);
       if (!hasStandardSymbol) return true;
     }

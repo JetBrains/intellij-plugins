@@ -1,12 +1,14 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.webSymbols.patterns.ComplexPattern
-import com.intellij.webSymbols.patterns.ItemPattern
-import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.patterns.ComplexPatternOptions
+import com.intellij.webSymbols.patterns.WebSymbolsPattern
+import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
+import com.intellij.webSymbols.patterns.WebSymbolsPatternItemsProvider
+import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider
 
@@ -45,17 +47,17 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
     override fun createPointer(): Pointer<out WebSymbol> =
       Pointer.hardPointer(this)
 
-    override val pattern: WebSymbolsPattern = ComplexPattern(
-      { _, _ ->
-        ComplexPattern.ComplexPatternOptions(
-          null, false, true,
-          WebSymbol.Priority.HIGHEST, null, false, false,
-          PropertiesProvider)
-      }, false, defaultDisplayName = null, ItemPattern(null))
+    override val pattern: WebSymbolsPattern = WebSymbolsPatternFactory.createComplexPattern(
+      ComplexPatternOptions(
+        null, false, true,
+        WebSymbol.Priority.HIGHEST, null, false, false,
+        PropertiesProvider),
+      false,
+      WebSymbolsPatternFactory.createItemReferencePlaceholder(null))
 
   }
 
-  private object PropertiesProvider : WebSymbolsPattern.ItemsProvider {
+  private object PropertiesProvider : WebSymbolsPatternItemsProvider {
     override fun getSymbolTypes(context: WebSymbol?): Set<WebSymbol.SymbolType> = setOf(
       WebSymbol.SymbolType(WebSymbolsContainer.Namespace.JS, WebSymbol.KIND_JS_PROPERTIES),
       WebSymbol.SymbolType(WebSymbolsContainer.Namespace.JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)

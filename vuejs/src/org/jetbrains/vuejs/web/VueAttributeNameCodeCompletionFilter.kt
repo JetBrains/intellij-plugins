@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbolsRegistryManager
-import com.intellij.webSymbols.hideFromCompletion
+import com.intellij.webSymbols.utils.hideFromCompletion
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX

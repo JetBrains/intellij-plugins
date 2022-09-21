@@ -42,7 +42,7 @@ abstract class VueScopeElementSymbol<T : VueDocumentedItem>(matchedName: String,
       override val framework: FrameworkId
         get() = VueFramework.ID
 
-      override val packageName: String?
+      override val library: String?
         get() = info?.first
 
       override val version: String?

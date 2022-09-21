@@ -16,6 +16,8 @@ import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.utils.psiModificationCount
+import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
