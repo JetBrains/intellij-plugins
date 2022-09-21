@@ -4,13 +4,13 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOption
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts.DialogMessage;
 import com.intellij.util.xmlb.annotations.Transient;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PasswordStore {
@@ -37,7 +37,7 @@ public class PasswordStore {
    * key is either keystorePath or keystorePath + "*" + keyAlias
    */
   @Transient
-  private final Map<String, String> myStoredPasswords = new THashMap<>();
+  private final Map<String, String> myStoredPasswords = new HashMap<>();
 
   public static PasswordStore getInstance(final Project project) {
     return AirPackageProjectParameters.getPasswordStore(project);

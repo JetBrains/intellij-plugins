@@ -25,8 +25,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathsList;
 import com.intellij.util.SystemProperties;
-import gnu.trove.THashMap;
-import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
@@ -219,7 +217,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       final InputStreamReader reader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
       final List<String> filesForRefresh = new ArrayList<>(projects.size());
-      final THashMap<MavenProject, List<String>> sourceRoots = new THashMap<>(projects.size());
+      final Map<MavenProject, List<String>> sourceRoots = new HashMap<>(projects.size());
       try {
         char[] buf = new char[8196];
         int read;
@@ -292,10 +290,10 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
   private final static class RefreshConfigFiles implements Runnable {
     private final List<String> filesForRefresh;
-    private final THashMap<MavenProject, List<String>> sourceRoots;
+    private final Map<MavenProject, List<String>> sourceRoots;
     private final Project project;
 
-    RefreshConfigFiles(List<String> filesForRefresh, THashMap<MavenProject, List<String>> sourceRoots, Project project) {
+    RefreshConfigFiles(List<String> filesForRefresh, Map<MavenProject, List<String>> sourceRoots, Project project) {
       this.filesForRefresh = filesForRefresh;
       this.sourceRoots = sourceRoots;
       this.project = project;
@@ -322,22 +320,21 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         LocalFileSystem.getInstance().refreshFiles(virtualFiles);
 
         final MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(project);
-        sourceRoots.forEachEntry(new TObjectObjectProcedure<>() {
-          @Override
-          public boolean execute(MavenProject mavenProject, List<String> sourceRoots) {
-            final Module module = mavenProjectsManager.findModule(mavenProject);
-            if (module == null) return true;
-
-            IdeModifiableModelsProvider provider = ProjectDataManager.getInstance().createModifiableModelsProvider(project);
-            MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(mavenProject, module,
-                                                                                                    new ModifiableModelsProviderProxyWrapper(provider)));
-            for (String sourceRoot : sourceRoots) {
-              a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
-            }
-            provider.commit();
-            return true;
+        for (Map.Entry<MavenProject, List<String>> entry : sourceRoots.entrySet()) {
+          Module module = mavenProjectsManager.findModule(entry.getKey());
+          if (module == null) {
+            continue;
           }
-        });
+
+          IdeModifiableModelsProvider provider = ProjectDataManager.getInstance().createModifiableModelsProvider(project);
+          MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(entry.getKey(), module,
+                                                                                                  new ModifiableModelsProviderProxyWrapper(
+                                                                                                    provider)));
+          for (String sourceRoot : entry.getValue()) {
+            a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
+          }
+          provider.commit();
+        }
       });
     }
   }

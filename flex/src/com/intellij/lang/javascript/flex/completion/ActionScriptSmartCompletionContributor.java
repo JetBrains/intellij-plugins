@@ -40,8 +40,6 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Query;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,8 +49,7 @@ import java.util.*;
 import static com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.processWithStatic;
 import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 
-
-public class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
+public final class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
   @Nullable
   @Override
   public List<LookupElement> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
@@ -86,7 +83,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       JSClass clazz = expectedClassType.resolveClass();
 
       if (clazz != null && !JSGenericTypeImpl.isGenericActionScriptVectorType(expectedClassType)) {
-        final Set<String> processedCandidateNames = new THashSet<>(50);
+        final Set<String> processedCandidateNames = new HashSet<>(50);
         Query<JSClass> query;
 
         if (clazz.isInterface()) {
@@ -244,7 +241,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   public static Map<String, String> getEventsMap(JSClass clazzToProcess) {
     if (clazzToProcess == null) return Collections.emptyMap();
 
-    final Map<String, String> eventsMap = new THashMap<>();
+    final Map<String, String> eventsMap = new HashMap<>();
     class EventsDataCollector extends ResolveProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
 
       EventsDataCollector() {
@@ -351,12 +348,12 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     return qualifiedStaticVariantsStart;
   }
 
-  private static class MyEventSubclassesProcessor extends ResolveProcessor {
+  private static final class MyEventSubclassesProcessor extends ResolveProcessor {
     private final JavaScriptIndex index;
     private final PsiElement myExpr;
     private final List<LookupElement> myVariants;
     private final ResolveState state = new ResolveState();
-    private Map<String, String> myEventsMap = new THashMap<>();
+    private Map<String, String> myEventsMap = new HashMap<>();
 
     MyEventSubclassesProcessor(final PsiElement expr, final List<LookupElement> variants) {
       super(null);
@@ -433,7 +430,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         setToProcessMembers(true);
         setTypeContext(false);
 
-        final Set<String> visited = new THashSet<>();
+        final Set<String> visited = new HashSet<>();
         for (JSClass cls : JSClassSearch.searchClassInheritors((JSClass)eventClass2, true, expression.getResolveScope()).findAll()) {
           if (!visited.add(cls.getQualifiedName())) continue;
           process(cls);

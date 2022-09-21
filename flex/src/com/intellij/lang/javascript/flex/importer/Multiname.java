@@ -2,8 +2,8 @@ package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.util.containers.BidirectionalMap;
-import gnu.trove.THashMap;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +41,7 @@ class Multiname {
     return ns.equals(Abc.PRIVATE_NS) || ns.equals(AS3_VEC) || ns.indexOf('$') != -1 || ns.indexOf(':') != -1;
   }
 
-  private static final Map<String, String> predefined = new THashMap<>();
+  private static final Map<String, String> predefined = new HashMap<>();
   static {
     predefined.put("http://adobe.com/AS3/2006/builtin", "AS3");
     predefined.put("http://www.adobe.com/2006/flex/mx/internal", "mx_internal");

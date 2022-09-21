@@ -36,8 +36,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.IconUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,7 +123,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
   protected void doOKAction() {
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = myBCTree.getSelectedBCs();
 
-    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<>();
+    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new HashMap<>();
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCs) {
       moduleToModifiableModelMap.put(moduleAndBC.first, ModuleRootManager.getInstance(moduleAndBC.first).getModifiableModel());
     }
@@ -210,7 +208,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
                                                                     final FlexProjectConfigurationEditor flexConfigEditor,
                                                                     final Module module,
                                                                     final ModifiableFlexBuildConfiguration bc) {
-    final Set<VirtualFile> result = new THashSet<>(roots);
+    final Set<VirtualFile> result = new HashSet<>(roots);
 
     final DependencyEntry[] entries = bc.getDependencies().getEntries();
     for (DependencyEntry entry : entries) {

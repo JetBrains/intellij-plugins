@@ -47,21 +47,13 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-/**
- * @author Maxim.Mossienko
- */
-public class CodeContext {
+public final class CodeContext {
   private static final CodeContext EMPTY = new CodeContext(null, null, null);
   private static final String CLASS_FACTORY = "mx.core.ClassFactory";
 
@@ -82,10 +74,10 @@ public class CodeContext {
   final GlobalSearchScope scope;
   final String namespace;
   final Module module;
-  private final Set<Object> dependencies = new THashSet<>();
+  private final Set<Object> dependencies = new HashSet<>();
 
   CodeContext(String _namespace, Module _module, GlobalSearchScope scope) {
-    myNameToDescriptorsMap = new THashMap<>(100);
+    myNameToDescriptorsMap = new HashMap<>(100);
     namespace = _namespace;
     module = _module;
     this.scope = scope;
@@ -221,7 +213,7 @@ public class CodeContext {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) return;
 
-    final Map<String, CodeContext> contextsOfModule = new THashMap<>();
+    final Map<String, CodeContext> contextsOfModule = new HashMap<>();
     for (final VirtualFile file : sdk.getRootProvider().getFiles(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(file.getUrl(), JarFileSystem.JAR_SEPARATOR));
       if (BCUtils.getSdkEntryLinkageType(swcPath, bc) != null) {
@@ -238,7 +230,7 @@ public class CodeContext {
                                                             Module module,
                                                             GlobalSearchScope scope,
                                                             FlexBuildConfiguration bc) {
-    final Map<String, CodeContext> contextsOfModule = new THashMap<>();
+    final Map<String, CodeContext> contextsOfModule = new HashMap<>();
     final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
 
     // TODO: this code should not be invoked per ns!
@@ -436,9 +428,9 @@ public class CodeContext {
   }
 
   public XmlElementDescriptor[] getDescriptorsWithAllowedDeclaration() {
-    THashSet<XmlElementDescriptor> descriptors = new THashSet<>();
+    Set<XmlElementDescriptor> descriptors = new HashSet<>();
     appendDescriptorsWithAllowedDeclaration(descriptors);
-    return descriptors.toArray(new XmlElementDescriptor[descriptors.size()]);
+    return descriptors.toArray(new XmlElementDescriptor[0]);
   }
 
   public static boolean hasDefaultConstructor(final @NotNull JSClass jsClass) {

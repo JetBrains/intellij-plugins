@@ -38,7 +38,6 @@ import com.intellij.xml.*;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import com.intellij.xml.util.XmlUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,9 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
-/**
- * @author Maxim.Mossienko
- */
 public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   implements Validator<XmlElement>, AnnotationBackedDescriptor, XmlElementDescriptorAwareAboutChildren {
 
@@ -264,7 +260,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     if (predefined) return element;
 
     if (myOriginatingElementType == OriginatingElementType.IdAttribute) {
-      return findDeclarationByIdAttributeValue(parentDescriptorDeclaration, new THashSet<>());
+      return findDeclarationByIdAttributeValue(parentDescriptorDeclaration, new HashSet<>());
     }
 
     while (element instanceof XmlFile) {

@@ -52,8 +52,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.*;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import com.intellij.xml.util.XmlUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,9 +63,6 @@ import java.util.*;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
 
-/**
- * @author Maxim.Mossienko
-*/
 public class ClassBackedElementDescriptor extends IconProvider implements XmlElementDescriptor, Validator<XmlTag>,
                                                                           XmlElementDescriptorWithCDataContent,
                                                                           XmlElementDescriptorAwareAboutChildren
@@ -484,12 +479,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   public void addPredefinedMemberDescriptor(@NotNull AnnotationBackedDescriptor descriptor) {
     if (predefined) {
       if (myDescriptors == null) {
-        myDescriptors = new THashMap<>();
+        myDescriptors = new HashMap<>();
         myPackageToInternalDescriptors = Collections.emptyMap();
       }
       myDescriptors.put(descriptor.getName(), descriptor);
     } else {
-      if (myPredefinedDescriptors == null) myPredefinedDescriptors = new THashMap<>();
+      if (myPredefinedDescriptors == null) myPredefinedDescriptors = new HashMap<>();
       myPredefinedDescriptors.put(descriptor.getName(), descriptor);
     }
   }
@@ -503,8 +498,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       packageToInternalDescriptors = myPackageToInternalDescriptors;
       if (map != null && packageToInternalDescriptors != null) return;
 
-      map = new THashMap<>();
-      packageToInternalDescriptors = new THashMap<>();
+      map = new HashMap<>();
+      packageToInternalDescriptors = new HashMap<>();
       Set<PsiElement> processedElements = null;
 
       if (element instanceof XmlBackedJSClassImpl) {
@@ -519,7 +514,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         final XmlDocument document = ((XmlFile)element).getDocument();
         final XmlTag rootTag = document != null ? document.getRootTag():null;
         final XmlElementDescriptor descriptor = rootTag != null ? rootTag.getDescriptor():null;
-        if (processedElements == null) processedElements = new THashSet<>();
+        if (processedElements == null) processedElements = new HashSet<>();
         processedElements.add(element);
 
         element = descriptor != null ? descriptor.getDeclaration():null;
@@ -536,7 +531,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
             if (extendsList != null) {
               final JSClass clazz = (JSClass)jsClass;
               if (visited == null) {
-                visited = new THashSet<>();
+                visited = new HashSet<>();
               }
               visited.add(clazz);
 
@@ -737,7 +732,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         if (packageName != null) {
           Map<String, AnnotationBackedDescriptor> descriptorMap = packageToInternalDescriptors.get(packageName);
           if (descriptorMap == null) {
-            descriptorMap = new THashMap<>();
+            descriptorMap = new HashMap<>();
             packageToInternalDescriptors.put(packageName, descriptorMap);
           }
           descriptorMap.put(name, descriptor);
@@ -784,7 +779,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
         Map<String, AnnotationBackedDescriptor> descriptorMap = packageToInternalDescriptors.get(entry.getKey());
         if (descriptorMap == null) {
-          descriptorMap = new THashMap<>();
+          descriptorMap = new HashMap<>();
           packageToInternalDescriptors.put(entry.getKey(), descriptorMap);
         }
         descriptorMap.putAll(entry.getValue());
@@ -829,7 +824,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
           XmlUtil.doDuplicationCheckForElements(
             elements.toArray(XmlElement.EMPTY_ARRAY),
-            new THashMap<>(elements.size()), myDuplicationInfoProvider,
+            new HashMap<>(elements.size()), myDuplicationInfoProvider,
             host
           );
 

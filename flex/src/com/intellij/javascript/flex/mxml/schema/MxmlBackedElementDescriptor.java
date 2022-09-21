@@ -7,10 +7,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Maxim.Mossienko
-*/
-public class MxmlBackedElementDescriptor extends ClassBackedElementDescriptor {
+public final class MxmlBackedElementDescriptor extends ClassBackedElementDescriptor {
   private final VirtualFile file;
 
   MxmlBackedElementDescriptor(String _classname, CodeContext _context, Project _project, VirtualFile _file) {

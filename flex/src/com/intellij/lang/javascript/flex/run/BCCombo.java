@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,15 +20,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
-public class BCCombo extends JComboBox {
+public final class BCCombo extends JComboBox {
 
   private final Project myProject;
 
   private FlexBuildConfiguration[] myAllConfigs;
   private boolean mySingleModuleProject;
-  private Map<FlexBuildConfiguration, Module> myBCToModuleMap = new THashMap<>();
+  private Map<FlexBuildConfiguration, Module> myBCToModuleMap = new HashMap<>();
 
   public BCCombo(final Project project) {
     myProject = project;
@@ -128,20 +128,13 @@ public class BCCombo extends JComboBox {
     myBCToModuleMap = null;
   }
 
-  @Nullable
-  public FlexBuildConfiguration getBC() {
+  public @Nullable FlexBuildConfiguration getBC() {
     final Object selectedItem = getSelectedItem();
     return selectedItem instanceof FlexBuildConfiguration ? (FlexBuildConfiguration)selectedItem : null;
   }
 
-  @Nullable
-  public Module getModule() {
+  public @Nullable Module getModule() {
     final Object selectedItem = getSelectedItem();
     return selectedItem instanceof FlexBuildConfiguration ? myBCToModuleMap.get((FlexBuildConfiguration)selectedItem) : null;
-  }
-
-  private static String getPresentableText(final String moduleName, final String configName, final boolean singleModuleProject) {
-    if (moduleName.isEmpty() || configName.isEmpty()) return "[none]";
-    return singleModuleProject ? configName : configName + " (" + moduleName + ")";
   }
 }

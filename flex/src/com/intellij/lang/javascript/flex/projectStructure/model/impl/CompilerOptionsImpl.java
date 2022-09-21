@@ -26,22 +26,22 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectCompilerOptions {
+final class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectCompilerOptions {
 
   private final Project myProject;
   private final boolean myResetHighlightingOnCommit;
 
   private final EventDispatcher<CompilerOptionsListener> myDispatcher = EventDispatcher.create(CompilerOptionsListener.class);
 
-  private final Map<String, String> myOptions = new THashMap<>();
+  private final Map<String, String> myOptions = new HashMap<>();
   private @NotNull ResourceFilesMode myResourceFilesMode = ResourceFilesMode.All;
   private @NotNull String myFilesToIncludeInSWC = "";
   private @NotNull String myAdditionalConfigFilePath = "";
@@ -198,7 +198,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
   public static class State {
     @Property(surroundWithTag = false)
     @MapAnnotation
-    public Map<String, String> options = new THashMap<>();
+    public Map<String, String> options = new HashMap<>();
     public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String filesToIncludeInSWC = "";
     public String additionalConfigFilePath = "";

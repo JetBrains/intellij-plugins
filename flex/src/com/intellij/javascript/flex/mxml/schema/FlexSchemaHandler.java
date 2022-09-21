@@ -40,23 +40,15 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlSchemaProvider;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * @author Maxim.Mossienko
- */
-public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
+public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
   private static final Pattern prefixPattern = Pattern.compile("[a-z_][a-z_0-9]*");
 
   @Override
@@ -79,7 +71,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     if (ModuleType.get(module) == FlexModuleType.getInstance() || !CodeContext.isStdNamespace(uri)) {
       Map<String, ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
       if (descriptors == null) {
-        descriptors = new THashMap<>();
+        descriptors = new HashMap<>();
         module.putUserData(DESCRIPTORS_MAP_IN_MODULE, descriptors);
       }
 
@@ -125,8 +117,8 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(file.getVirtualFile());
     final Collection<String> illegalNamespaces = getIllegalNamespaces(file);
 
-    final Set<String> result = new THashSet<>();
-    final Set<String> componentsThatHaveNotPackageBackedNamespace = new THashSet<>();
+    final Set<String> result = new HashSet<>();
+    final Set<String> componentsThatHaveNotPackageBackedNamespace = new HashSet<>();
 
     for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module, _file.getResolveScope())) {
       if (!CodeContext.isPackageBackedNamespace(namespace) && !illegalNamespaces.contains(namespace)) {

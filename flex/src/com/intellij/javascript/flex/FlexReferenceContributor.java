@@ -14,7 +14,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.util.XmlTagUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,7 +128,7 @@ public final class FlexReferenceContributor {
 
     @Override
     public Object @NotNull [] getVariants() {
-      final Set<String> list = new THashSet<>();
+      final Set<String> list = new HashSet<>();
 
       process(new StateProcessor() {
         @Override

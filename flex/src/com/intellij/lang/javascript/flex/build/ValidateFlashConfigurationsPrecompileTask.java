@@ -46,7 +46,6 @@ import com.intellij.pom.Navigatable;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -623,7 +622,7 @@ public final class ValidateFlashConfigurationsPrecompileTask implements CompileT
   }
 
   private static boolean independentBCsExist(final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
-    final Set<FlexBuildConfiguration> bcs = new THashSet<>();
+    final Set<FlexBuildConfiguration> bcs = new HashSet<>();
 
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       bcs.add(moduleAndBC.second);

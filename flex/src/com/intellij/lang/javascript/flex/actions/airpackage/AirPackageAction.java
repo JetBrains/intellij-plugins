@@ -27,8 +27,6 @@ import com.intellij.openapi.util.text.HtmlBuilder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +87,7 @@ public class AirPackageAction extends DumbAwareAction {
     }
 
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = dialog.getSelectedBCs();
-    final Set<Module> modules = new THashSet<>();
+    final Set<Module> modules = new HashSet<>();
     for (Pair<Module, FlexBuildConfiguration> bc : modulesAndBCs) {
       modules.add(bc.first);
     }
@@ -155,7 +153,7 @@ public class AirPackageAction extends DumbAwareAction {
     final ExternalTask task = taskAndPackagePath.first;
     final String packagePath = taskAndPackagePath.second;
     final Consumer<List<String>> onSuccessRunnable =
-      createSuccessConsumer(project, iterator, packagePath, new THashMap<>());
+      createSuccessConsumer(project, iterator, packagePath, new HashMap<>());
     ExternalTask
       .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
                        onSuccessRunnable, createFailureConsumer(project, packagePath, task));

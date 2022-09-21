@@ -37,7 +37,6 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -45,14 +44,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FlexDocumentationProvider extends JSDocumentationProvider {
+public final class FlexDocumentationProvider extends JSDocumentationProvider {
 
   private static final Pattern ourMainContentDiv = Pattern.compile("<div.*?class=\"MainContent\">", Pattern.CASE_INSENSITIVE);
   private static final Pattern ourDetailBodyDiv = Pattern.compile("<div.*?class=\"detailBody\">", Pattern.CASE_INSENSITIVE);
@@ -93,7 +89,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   private static final Map<String, String> DOCUMENTED_ATTRIBUTES;
   static {
-    DOCUMENTED_ATTRIBUTES = new THashMap<>();
+    DOCUMENTED_ATTRIBUTES = new HashMap<>();
     DOCUMENTED_ATTRIBUTES.put("Event", "event:");
     DOCUMENTED_ATTRIBUTES.put("Style", "style:");
     DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");

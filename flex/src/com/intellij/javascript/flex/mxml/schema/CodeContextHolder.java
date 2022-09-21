@@ -5,16 +5,15 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.search.GlobalSearchScope;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class CodeContextHolder {
+public final class CodeContextHolder {
   private final Set<Module> myModulesWithSdkComponentsHandled = new HashSet<>();
   private final Map<String, Map<Module, CodeContext>> myStandardContexts = new HashMap<>();
-  private final Map<String, Map<Pair<Module, GlobalSearchScope>, CodeContext>> myNSToCodeContextMap = new THashMap<>();
+  private final Map<String, Map<Pair<Module, GlobalSearchScope>, CodeContext>> myNSToCodeContextMap = new HashMap<>();
 
   synchronized void clear() {
     myNSToCodeContextMap.clear();
@@ -31,7 +30,7 @@ public class CodeContextHolder {
   synchronized void putCodeContext(@NotNull String namespace, @NotNull Module module, @NotNull GlobalSearchScope scope, @NotNull CodeContext codeContext) {
     var map = myNSToCodeContextMap.get(namespace);
     if (map == null) {
-      map = new THashMap<>();
+      map = new HashMap<>();
       myNSToCodeContextMap.put(namespace, map);
     }
     map.put(Pair.create(module, scope), codeContext);

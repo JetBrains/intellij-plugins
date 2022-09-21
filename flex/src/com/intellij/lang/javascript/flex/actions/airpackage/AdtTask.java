@@ -13,9 +13,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -129,7 +129,7 @@ public abstract class AdtTask extends ExternalTask {
   }
 
   private static void appendANEPaths(final List<? super String> command, final Module module, final FlexBuildConfiguration bc) {
-    final Set<VirtualFile> extDirPaths = new THashSet<>();
+    final Set<VirtualFile> extDirPaths = new HashSet<>();
     for (VirtualFile aneFile : FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies())) {
       if (extDirPaths.add(aneFile.getParent())) {
         command.add("-extdir");

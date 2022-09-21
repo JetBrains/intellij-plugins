@@ -17,16 +17,12 @@ import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.stepping.PsiBackedSmartStepIntoVariant;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author Maxim.Mossienko
- */
-class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepIntoVariant> {
+final class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepIntoVariant> {
   private final FlexDebugProcess myDebugProcess;
 
   FlexSmartStepIntoHandler(FlexDebugProcess debugProcess) {
@@ -41,7 +37,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
     final SortedMap<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap =
       new TreeMap<>(Comparator.comparingInt(PsiElement::getTextOffset));
 
-    compute(document, element2candidateMap, new THashSet<>(), position.getLine(), position.getOffset());
+    compute(document, element2candidateMap, new HashSet<>(), position.getLine(), position.getOffset());
 
     final List<PsiBackedSmartStepIntoVariant> variants = new ArrayList<>();
 
@@ -57,7 +53,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
 
   private void compute(Document document,
                        final Map<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap,
-                       final THashSet<PsiElement> visited,
+                       final Set<PsiElement> visited,
                        final int line,
                        final int offset) {
     XDebuggerUtil.getInstance().iterateLine(myDebugProcess.getSession().getProject(), document, line, psiElement -> {
@@ -68,7 +64,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
 
   private void addVariants(PsiElement psiElement,
                            final Map<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap,
-                           final THashSet<PsiElement> visited,
+                           final Set<PsiElement> visited,
                            final int offset) {
     PsiLanguageInjectionHost injectionHost = PsiTreeUtil.getParentOfType(psiElement, PsiLanguageInjectionHost.class);
 

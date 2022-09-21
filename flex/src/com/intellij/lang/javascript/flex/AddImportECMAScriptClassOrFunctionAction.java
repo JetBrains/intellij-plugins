@@ -32,7 +32,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.util.SmartList;
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,10 +40,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-/**
- * @author Maxim.Mossienko
- */
-public class AddImportECMAScriptClassOrFunctionAction implements HintAction, QuestionAction, LocalQuickFix {
+public final class AddImportECMAScriptClassOrFunctionAction implements HintAction, QuestionAction, LocalQuickFix {
   private final PsiPolyVariantReference myReference;
   private Editor myEditor;
   private boolean isAvailable;
@@ -142,7 +139,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     if (myReference instanceof JSReferenceExpression && ((JSReferenceExpression)myReference).getQualifier() == null) {
       Collection<JSQualifiedNamedElement> c = getCandidates(file, myReference.getCanonicalText());
       filterCandidates(c);
-      candidates = new THashSet<>(c, JSPsiImplUtils.QUALIFIED_NAME_HASHING_STRATEGY);
+      candidates = new ObjectOpenCustomHashSet<>(c, JSPsiImplUtils.QUALIFIED_NAME_HASHING_STRATEGY);
     }
     else {
       JSQualifiedNamedElement invalidResult = null;

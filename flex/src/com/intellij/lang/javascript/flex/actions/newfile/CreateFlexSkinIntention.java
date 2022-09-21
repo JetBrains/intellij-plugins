@@ -19,12 +19,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
@@ -100,7 +100,7 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
 
   private static Collection<String> getSkinStates(final JSClass jsClass) {
     final Collection<String> skinStates = new ArrayList<>();
-    appendSkinStates(skinStates, jsClass, new THashSet<>());
+    appendSkinStates(skinStates, jsClass, new HashSet<>());
     return skinStates;
   }
 

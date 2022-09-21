@@ -14,7 +14,7 @@ import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
+final class FxDefinitionBackedDescriptor extends ClassBackedElementDescriptor {
   private final XmlTag myXmlTag;
 
   FxDefinitionBackedDescriptor(Module module, XmlTag xmlTag) {

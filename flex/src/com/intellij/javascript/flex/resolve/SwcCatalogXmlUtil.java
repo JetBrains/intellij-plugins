@@ -16,8 +16,8 @@ import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.Stack;
-import gnu.trove.THashMap;
-import gnu.trove.TObjectLongHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class SwcCatalogXmlUtil {
 
@@ -35,7 +37,7 @@ public final class SwcCatalogXmlUtil {
    * &nbsp;&nbsp;&nbsp;&nbsp;<code><b>key</b></code> is swf file name inside swc file (so far I have seen only <i>library.swf</i> name, but swc format allows any file name, it is mentioned in <i>catalog.xml</i>)<br>
    * &nbsp;&nbsp;&nbsp;&nbsp;<code><b>value</b></code> is map from FQN (of JSQualifiedElement) to its timestamp as written inside <i>catalog.xml</i>.
    */
-  private static final Key<Pair<Long, THashMap<String, TObjectLongHashMap<String>>>> MOD_STAMP_AND_SWF_NAME_TO_QNAME_WITH_TIMESTAMP_MAP =
+  private static final Key<Pair<Long, Map<String, Object2LongMap<String>>>> MOD_STAMP_AND_SWF_NAME_TO_QNAME_WITH_TIMESTAMP_MAP =
     Key.create("MOD_STAMP_AND_SWF_NAME_TO_QNAME_WITH_TIMESTAMP_MAP");
   private static final Key<Long> TIMESTAMP_IN_CATALOG_XML = Key.create("TIMESTAMP_IN_CATALOG_XML");
 
@@ -148,24 +150,24 @@ public final class SwcCatalogXmlUtil {
       return -1;
     }
 
-    Pair<Long, THashMap<String, TObjectLongHashMap<String>>> modStampAndSwfNameToQnameWithTimestampMap =
+    Pair<Long, Map<String, Object2LongMap<String>>> modStampAndSwfNameToQnameWithTimestampMap =
       catalogFile.getUserData(MOD_STAMP_AND_SWF_NAME_TO_QNAME_WITH_TIMESTAMP_MAP);
 
     if (modStampAndSwfNameToQnameWithTimestampMap == null
         || modStampAndSwfNameToQnameWithTimestampMap.first != catalogFile.getModificationStamp()) {
-      final THashMap<String, TObjectLongHashMap<String>> swfNameToQnameWithTimestampMap = parseTimestampsFromCatalogXml(catalogFile);
+      final Map<String, Object2LongMap<String>> swfNameToQnameWithTimestampMap = parseTimestampsFromCatalogXml(catalogFile);
       modStampAndSwfNameToQnameWithTimestampMap = Pair.create(catalogFile.getModificationStamp(), swfNameToQnameWithTimestampMap);
       catalogFile.putUserData(MOD_STAMP_AND_SWF_NAME_TO_QNAME_WITH_TIMESTAMP_MAP, modStampAndSwfNameToQnameWithTimestampMap);
     }
 
-    final TObjectLongHashMap<String> qnameWithTimestampMap = modStampAndSwfNameToQnameWithTimestampMap.second.get(swfFile.getName());
+    final Object2LongMap<String> qnameWithTimestampMap = modStampAndSwfNameToQnameWithTimestampMap.second.get(swfFile.getName());
     final long timestamp = qnameWithTimestampMap == null ? -1 : qnameWithTimestampMap.get(qName);
     psiElement.putUserData(TIMESTAMP_IN_CATALOG_XML, timestamp);
 
     return timestamp;
   }
 
-  private static THashMap<String, TObjectLongHashMap<String>> parseTimestampsFromCatalogXml(final @NotNull VirtualFile catalogFile) {
+  private static Map<String, Object2LongMap<String>> parseTimestampsFromCatalogXml(final @NotNull VirtualFile catalogFile) {
     //  <swc xmlns="http://www.adobe.com/flash/swccatalog/9">
     //    <libraries>
     //      <library path="library.swf">                                                                    take swf name here
@@ -174,7 +176,7 @@ public final class SwcCatalogXmlUtil {
     //          <def id="flash.sampler:clearSamples" />
     //          ...
 
-    final THashMap<String, TObjectLongHashMap<String>> swfNameToQnameWithTimestampMap = new THashMap<>(1);
+    final Map<String, Object2LongMap<String>> swfNameToQnameWithTimestampMap = new HashMap<>(1);
 
     try {
       final Element rootElement = JDOMUtil.load(catalogFile.getInputStream());
@@ -186,7 +188,7 @@ public final class SwcCatalogXmlUtil {
               continue;
             }
 
-            final TObjectLongHashMap<String> qNameWithTimestampMap = new TObjectLongHashMap<>();
+            final Object2LongMap<String> qNameWithTimestampMap = new Object2LongOpenHashMap<>();
             swfNameToQnameWithTimestampMap.put(swfName, qNameWithTimestampMap);
 
             for (final Element scriptElement : libraryElement.getChildren("script", libraryElement.getNamespace())) {

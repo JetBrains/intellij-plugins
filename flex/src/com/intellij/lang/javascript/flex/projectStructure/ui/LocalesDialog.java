@@ -11,7 +11,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.ListSpeedSearch;
 import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +18,7 @@ import javax.swing.*;
 import java.io.File;
 import java.util.*;
 
-public class LocalesDialog extends DialogWrapper {
+public final class LocalesDialog extends DialogWrapper {
   private JPanel myMainPanel;
   private JLabel myLabel;
   private CheckBoxList<String> myCheckBoxList;
@@ -47,7 +46,7 @@ public class LocalesDialog extends DialogWrapper {
   }
 
   private static Collection<String> getAvailableLocales(final Sdk sdk) {
-    final Collection<String> result = new THashSet<>();
+    final Collection<String> result = new HashSet<>();
     final File localeDir = new File(sdk.getHomePath() + "/frameworks/locale");
     if (localeDir.isDirectory()) {
       //noinspection ConstantConditions

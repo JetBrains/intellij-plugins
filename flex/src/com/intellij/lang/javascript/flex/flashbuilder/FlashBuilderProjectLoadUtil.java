@@ -12,7 +12,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -174,7 +173,7 @@ public final class FlashBuilderProjectLoadUtil {
   }
 
   private static Map<String, String> loadMapFromDotFxpPropertiesFile(final VirtualFile dotProjectFile) {
-    final Map<String, String> result = new THashMap<>();
+    final Map<String, String> result = new HashMap<>();
 
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;

@@ -49,7 +49,6 @@ import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -175,7 +174,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     myBCManager = myMode == Mode.BC ? FlexBuildConfigurationManager.getInstance(module) : null;
     myProjectLevelOptionsHolder = FlexProjectLevelCompilerOptionsHolder.getInstance(project);
     myModel = model;
-    myCurrentOptions = new THashMap<>();
+    myCurrentOptions = new HashMap<>();
     myFilesToIncludeInSWC = Collections.emptyList();
 
     myShowAllOptionsCheckBox.addActionListener(new ActionListener() {

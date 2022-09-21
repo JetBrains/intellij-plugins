@@ -57,6 +57,11 @@
     <external-library-path>
       <path-element>$FLEX_SDK$/frameworks/libs/player/11.1/playerglobal.swc</path-element>
     </external-library-path>
+    <locale>
+      <locale-element>ru_RU</locale-element>
+      <locale-element>en_US</locale-element>
+      <locale-element>fr_FR</locale-element>
+    </locale>
     <define>
       <name>a</name>
       <value>b</value>
@@ -65,11 +70,6 @@
       <name>c</name>
       <value>d</value>
     </define>
-    <locale>
-      <locale-element>ru_RU</locale-element>
-      <locale-element>en_US</locale-element>
-      <locale-element>fr_FR</locale-element>
-    </locale>
     <context-root>context-root</context-root>
   </compiler>
   <target-player>11.1</target-player>

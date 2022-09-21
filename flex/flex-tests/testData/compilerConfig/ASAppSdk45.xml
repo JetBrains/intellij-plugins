@@ -29,15 +29,15 @@
       <path-element>$FLEX_SDK$/frameworks/libs/player/10.3/playerglobal.swc</path-element>
     </external-library-path>
     <defaults-css-url>BC</defaults-css-url>
+    <keep-generated-actionscript>PROJECT</keep-generated-actionscript>
+    <context-root>MODULE</context-root>
     <defaults-css-files>
       <filename>BC</filename>
     </defaults-css-files>
-    <context-root>MODULE</context-root>
+    <services>BC</services>
     <keep-as3-metadata>
       <name>MODULE</name>
     </keep-as3-metadata>
-    <services>BC</services>
-    <keep-generated-actionscript>PROJECT</keep-generated-actionscript>
   </compiler>
   <target-player>10.3</target-player>
   <swf-version>12</swf-version>

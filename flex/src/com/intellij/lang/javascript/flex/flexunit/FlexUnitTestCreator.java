@@ -24,14 +24,14 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testIntegration.TestCreator;
 import com.intellij.util.Consumer;
-import gnu.trove.THashSet;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.intellij.lang.javascript.psi.JSFunction.FunctionKind;
 
-public class FlexUnitTestCreator implements TestCreator {
+public final class FlexUnitTestCreator implements TestCreator {
   @Override
   public boolean isAvailable(final Project project, final Editor editor, final PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
@@ -121,7 +121,7 @@ public class FlexUnitTestCreator implements TestCreator {
                                       : "[After]\npublic override function tearDown():void{\nsuper.tearDown();\n}"
                                     : "");
 
-    final Set<String> processedNames = new THashSet<>(); // because getters and setters have same name
+    final Set<String> processedNames = new HashSet<>(); // because getters and setters have same name
     for (final JSMemberInfo info : selectedMemberInfos) {
       final String name = info.getMember().getName();
       if (!processedNames.contains(name)) {

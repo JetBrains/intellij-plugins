@@ -10,14 +10,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
-public class NodeClassInfo {
+public final class NodeClassInfo {
 
   public final String myFqn;
   public final boolean myIsDynamic;
@@ -56,17 +56,17 @@ public class NodeClassInfo {
     final JSAttributeList classAttributes = jsClass.getAttributeList();
     final boolean dynamic = classAttributes != null && classAttributes.hasModifier(JSAttributeList.ModifierType.DYNAMIC);
 
-    final Map<String, Icon> ownStaticFields = new THashMap<>();
-    final Map<String, Icon> ownStaticProperties = new THashMap<>();
-    final Map<String, Icon> ownFields = new THashMap<>();
-    final Map<String, Icon> ownProperties = new THashMap<>();
-    final Map<String, Icon> inheritedStaticFields = new THashMap<>();
-    final Map<String, Icon> inheritedStaticProperties = new THashMap<>();
-    final Map<String, Icon> inheritedFields = new THashMap<>();
-    final Map<String, Icon> inheritedProperties = new THashMap<>();
+    final Map<String, Icon> ownStaticFields = new HashMap<>();
+    final Map<String, Icon> ownStaticProperties = new HashMap<>();
+    final Map<String, Icon> ownFields = new HashMap<>();
+    final Map<String, Icon> ownProperties = new HashMap<>();
+    final Map<String, Icon> inheritedStaticFields = new HashMap<>();
+    final Map<String, Icon> inheritedStaticProperties = new HashMap<>();
+    final Map<String, Icon> inheritedFields = new HashMap<>();
+    final Map<String, Icon> inheritedProperties = new HashMap<>();
 
     fillMapsForClass(jsClass, ownStaticFields, ownStaticProperties, ownFields, ownProperties);
-    fillMapsForSupersRecursively(jsClass, new THashSet<>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
+    fillMapsForSupersRecursively(jsClass, new HashSet<>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
                                  inheritedProperties);
 
     return new NodeClassInfo(normalizeIfVector(jsClass.getQualifiedName()), dynamic, ownStaticFields, ownStaticProperties, ownFields,
@@ -78,7 +78,7 @@ public class NodeClassInfo {
   }
 
   private static void fillMapsForSupersRecursively(final JSClass jsClass,
-                                                   final THashSet<? super JSClass> visited,
+                                                   final HashSet<? super JSClass> visited,
                                                    final Map<String, Icon> inheritedStaticFields,
                                                    final Map<String, Icon> inheritedStaticProperties,
                                                    final Map<String, Icon> inheritedFields,

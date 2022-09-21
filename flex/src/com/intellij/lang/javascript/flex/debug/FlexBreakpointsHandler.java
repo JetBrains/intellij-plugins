@@ -22,8 +22,8 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import gnu.trove.TIntObjectHashMap;
-import gnu.trove.TObjectIntHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,10 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author Maxim.Mossienko
- */
-public class FlexBreakpointsHandler {
+public final class FlexBreakpointsHandler {
 
   public interface BreakpointTypeProvider {
     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> getBreakpointTypeClass();
@@ -46,10 +43,8 @@ public class FlexBreakpointsHandler {
   private final FlexDebugProcess myDebugProcess;
   private int lastBreakpointId;
   private final Collection<XBreakpointHandler<?>> myBreakpointHandlers;
-  private final TObjectIntHashMap<XLineBreakpoint<XBreakpointProperties>> myBreakpointToIndexMap =
-    new TObjectIntHashMap<>();
-  private final TIntObjectHashMap<XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap =
-    new TIntObjectHashMap<>();
+  private final Object2IntOpenHashMap<XLineBreakpoint<XBreakpointProperties>> myBreakpointToIndexMap = new Object2IntOpenHashMap<>();
+  private final Int2ObjectOpenHashMap<XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap = new Int2ObjectOpenHashMap<>();
 
   FlexBreakpointsHandler(FlexDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
@@ -258,7 +253,7 @@ public class FlexBreakpointsHandler {
     @Override
     String getText() {
       if (myBreakpointIndex == UNKNOWN_ID) {
-        myBreakpointIndex = myBreakpointToIndexMap.get(myBreakpoint);
+        myBreakpointIndex = myBreakpointToIndexMap.getInt(myBreakpoint);
         return getRemoveBreakpointCommandText(myBreakpointIndex);
       }
       return super.getText();
@@ -266,7 +261,7 @@ public class FlexBreakpointsHandler {
 
     @Override
     CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
-      myBreakpointToIndexMap.remove(myBreakpoint);
+      myBreakpointToIndexMap.removeInt(myBreakpoint);
       myIndexToBreakpointMap.remove(myBreakpointIndex);
       return super.onTextAvailable(s);
     }

@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdkManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -34,7 +33,6 @@ import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -477,7 +475,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       // ---------------- modules entries ----------------------
-      final Set<Module> modulesToAdd = new THashSet<>();
+      final Set<Module> modulesToAdd = new HashSet<>();
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {

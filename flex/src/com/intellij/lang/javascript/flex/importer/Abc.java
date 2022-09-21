@@ -4,8 +4,7 @@ package com.intellij.lang.javascript.flex.importer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
-import gnu.trove.THashSet;
-import gnu.trove.TIntArrayList;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,10 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Maxim.Mossienko
- */
-class Abc {
+final class Abc {
   static final @NonNls String TAB = "  ";
   @NonNls static final String $CINIT = "$cinit";
   @NonNls static final String $ = "$";
@@ -472,10 +468,10 @@ class Abc {
     namespaces[0] = anyNs;
     strings[0] = "*"; // any name
 
-    class TypeNameInfo {
+    final class TypeNameInfo {
       int index;
       int base;
-      TIntArrayList genericIndices;
+      IntArrayList genericIndices;
     }
 
     final List<TypeNameInfo> typeNameInfos = new ArrayList<>();
@@ -500,7 +496,7 @@ class Abc {
           e.base = nameId;
 
           int count = readU32();
-          if (count > 0) e.genericIndices = new TIntArrayList();
+          if (count > 0) e.genericIndices = new IntArrayList();
 
           if (count > 0) {
             for (int k = 0; k < count; k++) {
@@ -525,14 +521,14 @@ class Abc {
           continue;
         }
 
-        String nsName = names[tni.base].toString();
+        StringBuilder nsName = new StringBuilder(names[tni.base].toString());
 
         if (tni.genericIndices != null) {
-          nsName += ".<";
+          nsName.append(".<");
           for (int k = 0; k < tni.genericIndices.size(); k++) {
-            if (k != 0) nsName += ",";
+            if (k != 0) nsName.append(",");
 
-            final Multiname typeArgName = names[tni.genericIndices.get(k)];
+            final Multiname typeArgName = names[tni.genericIndices.getInt(k)];
             if (typeArgName == null) continue NextType;
             String typeArgNameString;
 
@@ -546,16 +542,16 @@ class Abc {
             else {
               typeArgNameString = typeArgName.toString();
             }
-            nsName += typeArgNameString;
+            nsName.append(typeArgNameString);
           }
 
-          nsName += ">";
+          nsName.append(">");
         }
 
         final int index = nsName.indexOf("::");
 
         names[tni.index] =
-          new Multiname(index != -1 ? new String[]{nsName.substring(0, index)}:PUBLIC_NS_SET, index != -1 ? nsName.substring(index + 2) : nsName);
+          new Multiname(index != -1 ? new String[]{nsName.substring(0, index)}:PUBLIC_NS_SET, index != -1 ? nsName.substring(index + 2) : nsName.toString());
         doneSomething = true;
       }
     } while (hasSomething && doneSomething);
@@ -627,7 +623,7 @@ class Abc {
       if ((m.flags & HAS_ParamNames) != 0) {
         if (param_count > 0) {
           m.paramNames = new String[param_count];
-          Set<String> usedNames = new THashSet<>(m.paramNames.length);
+          Set<String> usedNames = new HashSet<>(m.paramNames.length);
           for (int k = 0; k < param_count; ++k) {
             final int index = readU32();
             final String name = strings[index];

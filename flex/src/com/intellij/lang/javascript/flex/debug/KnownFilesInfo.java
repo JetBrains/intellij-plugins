@@ -2,24 +2,23 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.BidirectionalMap;
-import gnu.trove.THashMap;
-import gnu.trove.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class KnownFilesInfo {
+public final class KnownFilesInfo {
 
   private final FlexDebugProcess myFlexDebugProcess;
 
   private boolean myUpToDate = false;
 
-  private final TIntObjectHashMap<BidirectionalMap<String, String>> myWorkerToFilePathToIdMap =
-    new TIntObjectHashMap<>();
+  private final Int2ObjectOpenHashMap<BidirectionalMap<String, String>> myWorkerToFilePathToIdMap =
+    new Int2ObjectOpenHashMap<>();
 
-  private final TIntObjectHashMap<Map<String, Collection<String>>> myWorkerToFileNameToPathsMap =
-    new TIntObjectHashMap<>();
+  private final Int2ObjectOpenHashMap<Map<String, Collection<String>>> myWorkerToFileNameToPathsMap =
+    new Int2ObjectOpenHashMap<>();
 
   public KnownFilesInfo(final FlexDebugProcess flexDebugProcess) {
     myFlexDebugProcess = flexDebugProcess;
@@ -132,7 +131,7 @@ public class KnownFilesInfo {
 
       Map<String, Collection<String>> fileNameToPaths = myWorkerToFileNameToPathsMap.get(worker);
       if (fileNameToPaths == null) {
-        fileNameToPaths = new THashMap<>();
+        fileNameToPaths = new HashMap<>();
         myWorkerToFileNameToPathsMap.put(worker, fileNameToPaths);
       }
       addToMap(fileNameToPaths, shortName, fullPath);

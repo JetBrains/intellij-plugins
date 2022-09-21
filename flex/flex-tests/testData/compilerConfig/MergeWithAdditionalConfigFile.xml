@@ -71,10 +71,10 @@
     <external-library-path>
       <path-element>$FLEX_SDK$/frameworks/libs/player/11.1/playerglobal.swc</path-element>
     </external-library-path>
+    <services>services</services>
     <locale>
       <locale-element>ja_JP</locale-element>
     </locale>
-    <services>services</services>
     <context-root />
   </compiler>
   <target-player>11.1</target-player>

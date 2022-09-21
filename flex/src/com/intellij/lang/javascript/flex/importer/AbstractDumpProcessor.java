@@ -2,21 +2,18 @@ package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.refactoring.ECMAL4NamesValidator;
 import com.intellij.openapi.util.text.StringUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Maxim.Mossienko
-*/
 abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor {
   protected @NonNls StringBuilder sb = new StringBuilder();
   private boolean firstMetaDataMember;
 
-  final Set<String> classNameTable = new THashSet<>();
+  final Set<String> classNameTable = new HashSet<>();
 
   String getResult() { return sb.toString(); }
 
