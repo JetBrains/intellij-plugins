@@ -138,34 +138,34 @@
                      enabledByDefault="true" level="WEAK WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedSlotInspection"
                      key="vue.inspection.display.name.unrecognized.slot" bundle="messages.VueBundle"/>
-    <javascript.web.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
+    <webSymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
                                           toolShortName="VueUnrecognizedSlot"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueUnrecognizedDirective"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedDirectiveInspection"
                      key="vue.inspection.display.name.unrecognized.directive" bundle="messages.VueBundle"/>
-    <javascript.web.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-directives"
+    <webSymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-directives"
                                           toolShortName="VueUnrecognizedDirective"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDeprecatedSymbol"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueDeprecatedSymbolInspection"
                      key="vue.inspection.display.name.deprecated.symbol" bundle="messages.VueBundle"/>
-    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
+    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
                                           toolShortName="VueDeprecatedSymbol"/>
-    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-components"
+    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-components"
                                           toolShortName="VueDeprecatedSymbol"/>
-    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-directives"
+    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-directives"
                                           toolShortName="VueDeprecatedSymbol"/>
-    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-special-properties"
+    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-special-properties"
                                           toolShortName="VueDeprecatedSymbol"/>
-    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-file-top-elements"
+    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-file-top-elements"
                                           toolShortName="VueDeprecatedSymbol"/>
-    <javascript.web.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
+    <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
                                           toolShortName="VueDeprecatedSymbol"/>
 
-    <javascript.web.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
+    <webSymbols.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
 
     <intentionAction>
       <language>Vue</language>
@@ -233,37 +233,37 @@
                                  anyReferenceClass="true"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <rename.symbolRenameTargetFactory implementation="org.jetbrains.vuejs.web.VueSymbolRenameTargetFactory"/>
-    <javascript.web.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
+    <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
-    <javascript.web.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
-    <javascript.web.context framework="vue"
+    <webSymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
+    <webSymbols.context framework="vue"
                             implementation="org.jetbrains.vuejs.context.VueFileContext"
                             id="vue.file"/>
-    <javascript.web.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
+    <webSymbols.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
                             id="vue.legacy" order="last"/>
 
-    <javascript.webTypes source="web-types/vue@1.0.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.0.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.1.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.1.8.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.2.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.3.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.4.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.5.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.6.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@2.7.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@3.0.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@3.1.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@3.2.0.web-types.json" enableByDefault="true"/>
-    <javascript.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.0.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.1.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.1.8.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.2.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.3.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.4.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.5.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.6.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@2.7.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@3.0.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@3.1.0.web-types.json"/>
+    <webSymbols.webTypes source="web-types/vue@3.2.0.web-types.json" enableByDefault="true"/>
+    <webSymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
 
-    <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
-    <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider" id="vue-i18n"/>
+    <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
+    <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider" id="vue-i18n"/>
 
-    <javascript.web.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
-    <javascript.web.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
-    <javascript.web.codeCompletionItemCustomizer
+    <webSymbols.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
+    <webSymbols.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
+    <webSymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>
 
     <vuejs.templateScopesProvider

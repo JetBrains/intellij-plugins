@@ -126,8 +126,8 @@
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher"/>
 
     <!-- Angular 2 contributions -->
-    <javascript.web.framework id="angular" implementation="org.angular2.Angular2Framework"/>
-    <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
+    <webSymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
+    <webSymbols.context framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
                             id="angular.legacy" order="last"/>
 
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
@@ -194,7 +194,7 @@
                                  hostLanguage="TypeScript"
                                  implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
-    <javascript.web.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationProvider"/>
+    <webSymbols.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationProvider"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
@@ -261,11 +261,11 @@
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
 
-    <javascript.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
-    <javascript.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
-    <javascript.web.additionalContextProvider implementation="org.angular2.web.Angular2WebSymbolsAdditionalContextProvider"/>
-    <javascript.web.scopeProvider implementation="org.angular2.web.Angular2WebSymbolsScope$Provider"/>
-    <javascript.web.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
+    <webSymbols.additionalContextProvider implementation="org.angular2.web.Angular2WebSymbolsAdditionalContextProvider"/>
+    <webSymbols.scopeProvider implementation="org.angular2.web.Angular2WebSymbolsScope$Provider"/>
+    <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
 
     <!-- Angular 2 SVG contributions -->
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
