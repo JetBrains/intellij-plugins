@@ -50,8 +50,8 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
 
   @NotNull
   @Override
-  default Namespace getNamespace() {
-    return Namespace.JS;
+  default String getNamespace() {
+    return NAMESPACE_JS;
   }
 
   @Nullable

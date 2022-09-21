@@ -6,6 +6,7 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.webSymbols.SymbolNamespace
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueEmitCall
@@ -15,8 +16,8 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
                         origin: WebSymbolsContainer.Origin)
   : VueNamedWebSymbol<VueEmitCall>(emitCall, origin = origin, owner = owner) {
 
-  override val namespace: WebSymbolsContainer.Namespace
-    get() = WebSymbolsContainer.Namespace.JS
+  override val namespace: SymbolNamespace
+    get() = WebSymbolsContainer.NAMESPACE_JS
 
   override val kind: SymbolKind
     get() = WebSymbol.KIND_JS_EVENTS

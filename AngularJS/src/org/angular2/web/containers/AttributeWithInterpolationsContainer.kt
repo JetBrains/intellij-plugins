@@ -19,12 +19,12 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
 
   override fun getModificationCount(): Long = 0
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML
         && kind == WebSymbol.KIND_HTML_ATTRIBUTES
         && name != null) {
       AttributeWithInterpolationsSymbol.match(name, context, params)
@@ -36,9 +36,9 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
     override val origin: WebSymbolsContainer.Origin =
       WebSymbolsContainer.OriginData(Angular2Framework.ID)
 
-    override val namespace: WebSymbolsContainer.Namespace
+    override val namespace: SymbolNamespace
       get() =
-        WebSymbolsContainer.Namespace.HTML
+        WebSymbolsContainer.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() =
@@ -59,8 +59,8 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
 
   private object PropertiesProvider : WebSymbolsPatternItemsProvider {
     override fun getSymbolTypes(context: WebSymbol?): Set<WebSymbol.SymbolType> = setOf(
-      WebSymbol.SymbolType(WebSymbolsContainer.Namespace.JS, WebSymbol.KIND_JS_PROPERTIES),
-      WebSymbol.SymbolType(WebSymbolsContainer.Namespace.JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
+      WebSymbol.SymbolType(WebSymbolsContainer.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
+      WebSymbol.SymbolType(WebSymbolsContainer.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
     )
 
     override val delegate: WebSymbol? get() = null

@@ -58,7 +58,7 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
     }
     else super.attributeValue
 
-  override val namespace: WebSymbolsContainer.Namespace
+  override val namespace: SymbolNamespace
     get() = delegate.namespace
 
   override val kind: SymbolKind

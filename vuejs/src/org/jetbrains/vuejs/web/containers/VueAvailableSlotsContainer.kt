@@ -20,23 +20,23 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
 
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if ((namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
+    if ((namespace == null || namespace == WebSymbolsContainer.NAMESPACE_HTML)
         && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_AVAILABLE_SLOTS
         && params.registry.allowResolve)
       getAvailableSlots(tag, name, true)
     else emptyList()
 
-  override fun getCodeCompletions(namespace: WebSymbolsContainer.Namespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace?,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
-    if ((namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
+    if ((namespace == null || namespace == WebSymbolsContainer.NAMESPACE_HTML)
         && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_AVAILABLE_SLOTS
         && params.registry.allowResolve)
       getAvailableSlotsCompletions(tag, name, params.position, true)

@@ -48,12 +48,12 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
     get() = mapOf(Pair(VueWebSymbolsAdditionalContextProvider.PROP_VUE_PROXIMITY, vueProximity), Pair(
       VueWebSymbolsAdditionalContextProvider.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: String,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
+    if (namespace == null || namespace == WebSymbolsContainer.NAMESPACE_HTML)
       when (kind) {
         VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS -> {
           val props = mutableListOf<VueInputProperty>()
@@ -73,7 +73,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
           ?: if (!name.isNullOrEmpty()
                  && ((item is VueContainer && item.template == null)
                      || item is VueUnresolvedComponent)) {
-            listOf(WebSymbolMatch.create(name, listOf(WebSymbol.NameSegment(0, name.length)), WebSymbolsContainer.Namespace.HTML,
+            listOf(WebSymbolMatch.create(name, listOf(WebSymbol.NameSegment(0, name.length)), WebSymbolsContainer.NAMESPACE_HTML,
                                          WebSymbol.KIND_HTML_SLOTS, this.origin))
           }
           else emptyList()
@@ -87,7 +87,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
         }
         else -> emptyList()
       }
-    else if (namespace == WebSymbolsContainer.Namespace.JS && kind == WebSymbol.KIND_JS_EVENTS) {
+    else if (namespace == WebSymbolsContainer.NAMESPACE_JS && kind == WebSymbol.KIND_JS_EVENTS) {
       (item as? VueContainer)
         ?.emits
         ?.mapWithNameFilter(name, params, context) { VueEmitCallSymbol(it, item, this.origin) }

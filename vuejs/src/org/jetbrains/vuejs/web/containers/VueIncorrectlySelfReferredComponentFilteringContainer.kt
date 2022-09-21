@@ -18,7 +18,7 @@ import java.util.*
 class VueIncorrectlySelfReferredComponentFilteringContainer(private val delegate: WebSymbolsContainer,
                                                             private val file: PsiFile) : WebSymbolsContainer {
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
@@ -26,7 +26,7 @@ class VueIncorrectlySelfReferredComponentFilteringContainer(private val delegate
     delegate.getSymbols(namespace, kind, name, params, context)
       .filter { isNotIncorrectlySelfReferred(it) }
 
-  override fun getCodeCompletions(namespace: WebSymbolsContainer.Namespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace?,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,

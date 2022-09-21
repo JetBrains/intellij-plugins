@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.context.isVueContext
 
 class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
   override fun customize(symbol: WebSymbol, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
-    if (symbol.namespace == WebSymbolsContainer.Namespace.HTML
+    if (symbol.namespace == WebSymbolsContainer.NAMESPACE_HTML
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
@@ -27,7 +27,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
         }
     }
     else {
-      if (symbol.namespace == WebSymbolsContainer.Namespace.HTML
+      if (symbol.namespace == WebSymbolsContainer.NAMESPACE_HTML
           && symbol.kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS) {
         symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name))?.let {
           return documentation.withDefinition(it)

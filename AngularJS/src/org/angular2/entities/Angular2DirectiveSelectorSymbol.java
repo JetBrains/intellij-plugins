@@ -99,8 +99,8 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
 
   @NotNull
   @Override
-  public Namespace getNamespace() {
-    return Namespace.JS;
+  public String getNamespace() {
+    return NAMESPACE_JS;
   }
 
   @NotNull

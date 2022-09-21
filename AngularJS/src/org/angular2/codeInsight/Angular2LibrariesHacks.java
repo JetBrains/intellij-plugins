@@ -169,8 +169,8 @@ public final class Angular2LibrariesHacks {
 
     @NotNull
     @Override
-    public Namespace getNamespace() {
-      return Namespace.HTML;
+    public String getNamespace() {
+      return NAMESPACE_HTML;
     }
 
     @NotNull

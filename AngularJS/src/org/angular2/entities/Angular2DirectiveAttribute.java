@@ -37,8 +37,8 @@ public interface Angular2DirectiveAttribute extends Angular2PsiSourcedSymbol, An
 
   @NotNull
   @Override
-  default Namespace getNamespace() {
-    return Namespace.JS;
+  default String getNamespace() {
+    return NAMESPACE_JS;
   }
 
   @NotNull

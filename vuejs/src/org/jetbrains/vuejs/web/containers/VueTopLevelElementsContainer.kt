@@ -8,12 +8,12 @@ import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
 
 object VueTopLevelElementsContainer : WebSymbolsContainer {
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.registry.runNameMatchQuery(
         listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
         context = context,
@@ -22,16 +22,16 @@ object VueTopLevelElementsContainer : WebSymbolsContainer {
         abstractSymbols = params.abstractSymbols,
       )
         .map {
-          WebSymbolMatch.create(it.name, it.nameSegments, WebSymbolsContainer.Namespace.HTML, WebSymbol.KIND_HTML_ELEMENTS, it.origin)
+          WebSymbolMatch.create(it.name, it.nameSegments, WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS, it.origin)
         }
     else emptyList()
 
-  override fun getCodeCompletions(namespace: WebSymbolsContainer.Namespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace?,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.registry.runCodeCompletionQuery(
         listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
         context = context,

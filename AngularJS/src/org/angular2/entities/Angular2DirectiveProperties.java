@@ -98,8 +98,8 @@ public class Angular2DirectiveProperties {
 
     @NotNull
     @Override
-    public Namespace getNamespace() {
-      return Namespace.JS;
+    public String getNamespace() {
+      return NAMESPACE_JS;
     }
 
     @NotNull

@@ -6,8 +6,8 @@ import com.intellij.webSymbols.*
 
 class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
   override fun customize(item: WebSymbolCodeCompletionItem,
-                         framework: FrameworkId?, namespace: WebSymbolsContainer.Namespace, kind: SymbolKind): WebSymbolCodeCompletionItem =
-    if (namespace == WebSymbolsContainer.Namespace.HTML && framework == VueFramework.ID)
+                         framework: FrameworkId?, namespace: SymbolNamespace, kind: SymbolKind): WebSymbolCodeCompletionItem =
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && framework == VueFramework.ID)
       when (kind) {
         WebSymbol.KIND_HTML_ATTRIBUTES ->
           item.symbol

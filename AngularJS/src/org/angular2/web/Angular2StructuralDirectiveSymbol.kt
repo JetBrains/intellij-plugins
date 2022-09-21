@@ -49,8 +49,8 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
   override val priority: WebSymbol.Priority?
     get() = WebSymbol.Priority.HIGH
 
-  override val namespace: WebSymbolsContainer.Namespace
-    get() = WebSymbolsContainer.Namespace.JS
+  override val namespace: SymbolNamespace
+    get() = WebSymbolsContainer.NAMESPACE_JS
 
   override val kind: SymbolKind
     get() = Angular2WebSymbolsAdditionalContextProvider.KIND_NG_STRUCTURAL_DIRECTIVES

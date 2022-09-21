@@ -26,12 +26,12 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
 
   override fun getModificationCount(): Long = 0
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, name))
     }
     else emptyList()
@@ -47,8 +47,8 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
                                                           tagName: String)
     : WebSymbolsContainerWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
 
-    override fun provides(namespace: WebSymbolsContainer.Namespace, kind: String): Boolean =
-      namespace == WebSymbolsContainer.Namespace.JS
+    override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
+      namespace == WebSymbolsContainer.NAMESPACE_JS
 
     override val name: String
       get() = key
@@ -59,8 +59,8 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
     override val origin: WebSymbolsContainer.Origin
       get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
 
-    override val namespace: WebSymbolsContainer.Namespace
-      get() = WebSymbolsContainer.Namespace.HTML
+    override val namespace: SymbolNamespace
+      get() = WebSymbolsContainer.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = WebSymbol.KIND_HTML_ELEMENTS

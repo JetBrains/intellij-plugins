@@ -17,9 +17,9 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
 
   override fun customize(item: WebSymbolCodeCompletionItem,
                          framework: FrameworkId?,
-                         namespace: WebSymbolsContainer.Namespace,
+                         namespace: SymbolNamespace,
                          kind: SymbolKind): WebSymbolCodeCompletionItem =
-    if (namespace == WebSymbolsContainer.Namespace.HTML && framework == Angular2Framework.ID)
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && framework == Angular2Framework.ID)
       when (kind) {
         WebSymbol.KIND_HTML_ATTRIBUTES ->
           item.symbol

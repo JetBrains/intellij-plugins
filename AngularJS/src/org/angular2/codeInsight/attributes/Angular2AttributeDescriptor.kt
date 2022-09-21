@@ -7,10 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolCodeCompletionItem
-import com.intellij.webSymbols.WebSymbolsContainer
+import com.intellij.webSymbols.*
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -48,8 +45,8 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
           get() = object: WebSymbol {
             override val origin: WebSymbolsContainer.Origin
               get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
-            override val namespace: WebSymbolsContainer.Namespace
-              get() = WebSymbolsContainer.Namespace.HTML
+            override val namespace: SymbolNamespace
+              get() = WebSymbolsContainer.NAMESPACE_HTML
             override val kind: SymbolKind
               get() = WebSymbol.KIND_HTML_ATTRIBUTES
             override fun createPointer(): Pointer<out WebSymbol> =

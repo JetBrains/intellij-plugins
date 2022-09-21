@@ -4,8 +4,6 @@ package org.angular2.web.containers
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider
-import com.intellij.webSymbols.WebSymbolsContainer.Namespace.HTML
-import com.intellij.webSymbols.WebSymbolsContainer.Namespace.JS
 import com.intellij.javascript.web.lang.js.WebJSTypesUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
@@ -18,6 +16,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
@@ -31,12 +31,12 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
 
   override fun getModificationCount(): Long = templateFile.project.psiModificationCount
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
+    if (namespace == NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", name))
     }
     else emptyList()
@@ -60,8 +60,8 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
     : WebSymbolsContainerWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
                                                                   templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
-    override fun provides(namespace: WebSymbolsContainer.Namespace, kind: String): Boolean =
-      namespace == JS && (kind == WebSymbol.KIND_JS_PROPERTIES || kind == WebSymbol.KIND_JS_EVENTS)
+    override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
+      namespace == NAMESPACE_JS && (kind == WebSymbol.KIND_JS_PROPERTIES || kind == WebSymbol.KIND_JS_EVENTS)
 
     override val name: String
       get() = key.second
@@ -72,8 +72,8 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
     override val origin: WebSymbolsContainer.Origin
       get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
 
-    override val namespace: WebSymbolsContainer.Namespace
-      get() = HTML
+    override val namespace: SymbolNamespace
+      get() = NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = WebSymbol.KIND_HTML_ELEMENTS
@@ -175,8 +175,8 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
     override val type: JSType?
       get() = source?.jsType
 
-    override val namespace: WebSymbolsContainer.Namespace
-      get() = JS
+    override val namespace: SymbolNamespace
+      get() = NAMESPACE_JS
 
     override val kind: SymbolKind
       get() = WebSymbol.KIND_JS_PROPERTIES
@@ -224,8 +224,8 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
     override val type: JSType?
       get() = Angular2TypeUtils.extractEventVariableType(mainSource?.jsType) ?: mapSource?.jsType
 
-    override val namespace: WebSymbolsContainer.Namespace
-      get() = JS
+    override val namespace: SymbolNamespace
+      get() = NAMESPACE_JS
 
     override val priority: WebSymbol.Priority
       get() = WebSymbol.Priority.NORMAL

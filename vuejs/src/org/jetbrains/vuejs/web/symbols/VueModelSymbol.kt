@@ -5,13 +5,14 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.model.Pointer
+import com.intellij.webSymbols.SymbolNamespace
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
 
 class VueModelSymbol(override val origin: WebSymbolsContainer.Origin,
                      private val vueModel: VueModelDirectiveProperties) : WebSymbol {
 
-  override val namespace: WebSymbolsContainer.Namespace get() = WebSymbolsContainer.Namespace.HTML
+  override val namespace: SymbolNamespace get() = WebSymbolsContainer.NAMESPACE_HTML
   override val kind: SymbolKind get() = VueWebSymbolsAdditionalContextProvider.KIND_VUE_MODEL
 
   override val properties: Map<String, Any>

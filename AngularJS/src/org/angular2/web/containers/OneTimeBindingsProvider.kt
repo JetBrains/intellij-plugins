@@ -27,12 +27,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsProvider : WebSymbolsContainer {
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.Namespace.JS
+    if (namespace == WebSymbolsContainer.NAMESPACE_JS
         && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
         && params.registry.allowResolve) {
       // Avoid any conflicts with attribute selectors over the attribute value

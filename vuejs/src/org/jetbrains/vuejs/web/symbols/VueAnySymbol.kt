@@ -6,10 +6,11 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.model.Pointer
+import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 
 class VueAnySymbol(override val origin: WebSymbolsContainer.Origin,
-                   override val namespace: WebSymbolsContainer.Namespace,
+                   override val namespace: SymbolNamespace,
                    override val kind: SymbolKind,
                    override val matchedName: String) : WebSymbol {
 

@@ -7,6 +7,7 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbolNamesProvider
 import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.SymbolNamespace
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -22,11 +23,11 @@ class VueFramework : JSWebFramework() {
   override val standaloneFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
   override val htmlFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
 
-  override fun getNames(namespace: WebSymbolsContainer.Namespace,
+  override fun getNames(namespace: SymbolNamespace,
                         kind: SymbolKind,
                         name: String,
                         target: WebSymbolNamesProvider.Target): List<String> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML)
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML)
       when (target) {
         WebSymbolNamesProvider.Target.NAMES_QUERY ->
           when (kind) {

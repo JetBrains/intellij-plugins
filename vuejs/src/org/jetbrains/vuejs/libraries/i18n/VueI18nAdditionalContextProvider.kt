@@ -48,13 +48,13 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-    override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+    override fun getSymbols(namespace: SymbolNamespace?,
                             kind: SymbolKind,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> {
       if (kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS
-          && namespace == WebSymbolsContainer.Namespace.HTML) {
+          && namespace == WebSymbolsContainer.NAMESPACE_HTML) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
                        ?: if (PsiTreeUtil.getChildOfType(tag, XmlTextImpl::class.java)
@@ -76,8 +76,8 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
     override val origin: WebSymbolsContainer.Origin =
       WebSymbolsContainer.OriginData(VueFramework.ID, "vue-i18n")
 
-    override val namespace: WebSymbolsContainer.Namespace
-      get() = WebSymbolsContainer.Namespace.HTML
+    override val namespace: SymbolNamespace
+      get() = WebSymbolsContainer.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = WebSymbol.KIND_HTML_ELEMENTS

@@ -7,12 +7,13 @@ import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.model.Pointer
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
+import com.intellij.webSymbols.SymbolNamespace
 
 abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : WebSymbolDelegate<T>(delegate), Angular2Symbol {
 
   abstract override fun createPointer(): Pointer<out Angular2SymbolDelegate<T>>
 
-  abstract override val namespace: WebSymbolsContainer.Namespace
+  abstract override val namespace: SymbolNamespace
 
   abstract override val kind: SymbolKind
 

@@ -1,8 +1,6 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.webSymbols.WebSymbolsContainer.Namespace.HTML
-import com.intellij.webSymbols.WebSymbolsContainer.Namespace.JS
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.navigation.NavigationTarget
@@ -16,6 +14,8 @@ import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.utils.psiModificationCount
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil
@@ -46,10 +46,10 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
 
   override fun apply(matches: List<WebSymbol>,
                      strict: Boolean,
-                     namespace: WebSymbolsContainer.Namespace?,
+                     namespace: SymbolNamespace?,
                      kind: SymbolKind,
                      name: String?): List<WebSymbol> =
-    if (namespace == JS && kinds.contains(kind)) {
+    if (namespace == NAMESPACE_JS && kinds.contains(kind)) {
       if (strict) {
         matches.filter { symbol ->
           symbol.properties[PROP_SYMBOL_DIRECTIVE].asSafely<Angular2Directive>()?.let { scope.contains(it) } != false
@@ -82,17 +82,17 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     else matches
 
   override fun apply(item: WebSymbolCodeCompletionItem,
-                     namespace: WebSymbolsContainer.Namespace?,
+                     namespace: SymbolNamespace?,
                      kind: SymbolKind): WebSymbolCodeCompletionItem? {
     // In svg context, only standard SVG elements, ng-container and ng-template works in the browser,
     // remove everything else from completion
     if (svgContext
-        && namespace == HTML
+        && namespace == NAMESPACE_HTML
         && kind == WebSymbol.KIND_HTML_ELEMENTS
         && item.name !in svgAllowedElements)
       return null
     val symbol = item.symbol
-    if (symbol == null || namespace != JS || !kinds.contains(kind)) return item
+    if (symbol == null || namespace != NAMESPACE_JS || !kinds.contains(kind)) return item
     val directives = symbol.unwrapMatchedSymbols()
       .mapNotNull { it.properties[PROP_SYMBOL_DIRECTIVE]?.asSafely<Angular2Directive>() }
       .toList()

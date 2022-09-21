@@ -2,10 +2,6 @@
 package org.angular2.web.containers
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsContainer
-import com.intellij.webSymbols.WebSymbolsNameMatchQueryParams
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -13,6 +9,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
+import com.intellij.webSymbols.*
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
@@ -21,12 +18,12 @@ import org.jetbrains.annotations.NonNls
 
 class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
+    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
@@ -84,8 +81,8 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
     override val project: Project
       get() = attribute.project
 
-    override val namespace: WebSymbolsContainer.Namespace
-      get() = WebSymbolsContainer.Namespace.HTML
+    override val namespace: SymbolNamespace
+      get() = WebSymbolsContainer.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = KIND_NG_I18N_ATTRIBUTES

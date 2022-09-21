@@ -95,7 +95,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
   override fun getDocumentationTarget(): DocumentationTarget =
     VueMergedSymbolDocumentationTarget(this, originalName ?: name)
 
-  override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+  override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
@@ -131,7 +131,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
       }
     ?: emptyList()
 
-  override fun getCodeCompletions(namespace: WebSymbolsContainer.Namespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace?,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
