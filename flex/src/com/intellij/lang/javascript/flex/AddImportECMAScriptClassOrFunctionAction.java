@@ -188,19 +188,6 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   }
 
   @Override
-  public boolean fixSilently(@NotNull Editor editor) {
-    if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
-
-    Collection<JSQualifiedNamedElement> candidates = getCandidates(myReference.getElement().getContainingFile());
-    if (candidates.size() == 1) {
-      JSQualifiedNamedElement element = candidates.iterator().next();
-      CommandProcessor.getInstance().runUndoTransparentAction(() -> doImport(element.getQualifiedName()));
-      return true;
-    }
-    return false;
-  }
-
-  @Override
   public @Nullable PsiElement getElementToMakeWritable(@NotNull PsiFile currentFile) {
     return currentFile;
   }
