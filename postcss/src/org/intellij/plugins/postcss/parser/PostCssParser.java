@@ -9,7 +9,6 @@ import com.intellij.psi.css.impl.parsing.CssParser2;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ArrayUtil;
-import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.PostCssStubElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
@@ -134,8 +133,7 @@ public class PostCssParser extends CssParser2 {
       return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType);
     }
     if (elementType == CssElementTypes.CSS_MEDIA_FEATURE) {
-      return parseMediaFeatureRange() ||
-             super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
     }
     myRulesetSeen = false;
     // Nesting
@@ -181,56 +179,6 @@ public class PostCssParser extends CssParser2 {
     }
     customMediaAtRule.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE);
     return true;
-  }
-
-  private boolean parseMediaFeatureRange() {
-    boolean startsWithValue = isNumberTermStart();
-    if (!startsWithValue && !(isIdent() && PostCssTokenTypes.COMPARISON_OPERATORS.contains(lookAhead(1)))) {
-      return false;
-    }
-    PsiBuilder.Marker mediaFeature = createCompositeElement();
-    if (startsWithValue) {
-      parseNumberTerm();
-      parseComparisonOperator();
-      addIdentOrError();
-      if (getTokenType() == CssElementTypes.CSS_RPAREN) {
-        mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
-        return true;
-      }
-    }
-    else {
-      addIdentOrError();
-    }
-    parseComparisonOperator();
-    parseNumberTerm();
-    mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
-    return true;
-  }
-
-  private void parseComparisonOperator() {
-    if (PostCssTokenTypes.COMPARISON_OPERATORS.contains(getTokenType())) {
-      addSingleToken();
-    }
-    else {
-      createErrorElement(PostCssBundle.message("parsing.error.operator.sign.expected"));
-    }
-  }
-
-  private boolean isNumberTermStart() {
-    return getTokenType() == CssElementTypes.CSS_NUMBER ||
-           getTokenType() == CssElementTypes.CSS_MINUS && lookAhead(1) == CssElementTypes.CSS_NUMBER;
-  }
-
-  private void parseNumberTerm() {
-    if (!isNumberTermStart()) {
-      createErrorElement(CssBundle.message("parsing.error.term.expected"));
-      return;
-    }
-    PsiBuilder.Marker numberTerm = createCompositeElement();
-    if (getTokenType() == CssElementTypes.CSS_MINUS) addSingleToken();
-    addSingleToken();
-    if (isIdent()) addSingleToken();
-    numberTerm.done(CssElementTypes.CSS_NUMBER_TERM);
   }
 
   @Override

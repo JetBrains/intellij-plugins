@@ -70,7 +70,7 @@ public class PostCssHighlightingLexer extends CssHighlighterLexer {
     IElementType next = lookAhead(1);
     boolean isRightContext = next == CssElementTypes.CSS_COLON;
     if (myAfterMediaOrSupports) {
-      isRightContext |= !afterNumber && (PostCssTokenTypes.COMPARISON_OPERATORS.contains(next) || next == CssElementTypes.CSS_RPAREN);
+      isRightContext |= !afterNumber && (CssElementTypes.COMPARISON_OPERATORS.contains(next) || next == CssElementTypes.CSS_RPAREN);
     }
     return !afterAmpersand && isRightContext && (super.isPropertyNameAllowed() || detachedRuleset);
   }

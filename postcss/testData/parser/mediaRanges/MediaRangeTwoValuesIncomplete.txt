@@ -15,11 +15,11 @@ PostCSS File:MediaRangeTwoValuesIncomplete.pcss
                       PsiElement(CSS_NUMBER)('200')
                       PsiElement(CSS_IDENT)('px')
                     PsiWhiteSpace(' ')
-                    PsiElement(POST_CSS_LE)('<=')
+                    PsiElement(CSS_LE)('<=')
                     PsiWhiteSpace(' ')
                     PsiElement(CSS_IDENT)('width')
                     PsiWhiteSpace(' ')
-                    PsiElement(POST_CSS_LT)('<')
+                    PsiElement(CSS_LT)('<')
                     PsiErrorElement:Term expected
                       <empty list>
                   PsiWhiteSpace(' ')

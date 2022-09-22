@@ -15,7 +15,7 @@ PostCSS File:MediaRangeValueName.pcss
                       PsiElement(CSS_NUMBER)('200')
                       PsiElement(CSS_IDENT)('px')
                     PsiWhiteSpace(' ')
-                    PsiElement(POST_CSS_LE)('<=')
+                    PsiElement(CSS_LE)('<=')
                     PsiWhiteSpace(' ')
                     PsiElement(CSS_IDENT)('height')
                   PsiElement(CSS_RPAREN)(')')

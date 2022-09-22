@@ -112,6 +112,9 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> "%" { return CssElementTypes.CSS_PERCENT; }
 <YYINITIAL> "." { return CssElementTypes.CSS_PERIOD; }
 <YYINITIAL> ">" { return CssElementTypes.CSS_GT; }
+<YYINITIAL> "<" { return CssElementTypes.CSS_LT; }
+<YYINITIAL> ">=" { return CssElementTypes.CSS_GE; }
+<YYINITIAL> "<=" { return CssElementTypes.CSS_LE; }
 <YYINITIAL> ">>>" { return CssElementTypes.CSS_GT_GT_GT; }
 <YYINITIAL> "/"{CSS_IDENT}"/" { return CssElementTypes.CSS_SLASHED_COMBINATOR; }
 <YYINITIAL> "+" { return CssElementTypes.CSS_PLUS; }
@@ -173,9 +176,6 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> "//".* { return PostCssTokenTypes.POST_CSS_COMMENT; }
 <YYINITIAL> "&" { return PostCssTokenTypes.AMPERSAND; }
 <YYINITIAL> "#" { return PostCssTokenTypes.HASH_SIGN; }
-<YYINITIAL> "<" { return PostCssTokenTypes.LT; }
-<YYINITIAL> "<=" { return PostCssTokenTypes.LE; }
-<YYINITIAL> ">=" { return PostCssTokenTypes.GE; }
 
 <YYINITIAL> {CSS_IDENT}"(" { yybegin(CSS_FUNCTION); yypushback(yylength()); }
 <YYINITIAL> {CSS_UNICODE_RANGE} { return CssElementTypes.CSS_UNICODE_RANGE; }

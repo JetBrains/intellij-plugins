@@ -12,7 +12,7 @@ PostCSS File:MediaRangeNameValue.pcss
                   PsiElement(CSS_MEDIA_FEATURE)
                     PsiElement(CSS_IDENT)('width')
                     PsiWhiteSpace(' ')
-                    PsiElement(POST_CSS_LT)('<')
+                    PsiElement(CSS_LT)('<')
                     PsiWhiteSpace(' ')
                     PsiElement(CSS_NUMBER_TERM)
                       PsiElement(CSS_NUMBER)('100')

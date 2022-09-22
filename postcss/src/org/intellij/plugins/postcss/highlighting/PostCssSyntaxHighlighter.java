@@ -89,9 +89,6 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     for (IElementType type : CssElementTypes.OPERATORS.getTypes()) {
       mapping.put(type, OPERATORS);
     }
-    mapping.put(PostCssTokenTypes.LT, OPERATORS);
-    mapping.put(PostCssTokenTypes.LE, OPERATORS);
-    mapping.put(PostCssTokenTypes.GE, OPERATORS);
   }
 
   @NotNull

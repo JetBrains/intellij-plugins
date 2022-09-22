@@ -20,7 +20,7 @@ PostCSS File:CustomMediaWithAnd.pcss
                   PsiElement(CSS_MEDIA_FEATURE)
                     PsiElement(CSS_IDENT)('width')
                     PsiWhiteSpace(' ')
-                    PsiElement(POST_CSS_LE)('<=')
+                    PsiElement(CSS_LE)('<=')
                     PsiWhiteSpace(' ')
                     PsiElement(CSS_NUMBER_TERM)
                       PsiElement(CSS_NUMBER)('20')

@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.intellij.psi.css.impl.CssElementTypes.*;
+
 public class PostCssMediaRangeInspection extends PostCssBaseInspection {
   private static final Logger LOG = Logger.getInstance(PostCssMediaRangeInspection.class);
 
@@ -47,9 +49,9 @@ public class PostCssMediaRangeInspection extends PostCssBaseInspection {
   private static int getComparisonOperatorDirection(@NotNull final PsiElement comparisonOperator) {
     final IElementType type = comparisonOperator.getNode().getElementType();
 
-    if (type == CssElementTypes.CSS_GT || type == PostCssTokenTypes.GE) return 1;
-    if (type == PostCssTokenTypes.LT || type == PostCssTokenTypes.LE) return -1;
-    if (type == CssElementTypes.CSS_EQ) return 0;
+    if (type == CSS_GT || type == CSS_GE) return 1;
+    if (type == CSS_LT || type == CSS_LE) return -1;
+    if (type == CSS_EQ) return 0;
 
     LOG.error("Expected comparison operator, got " + type);
     return 0;

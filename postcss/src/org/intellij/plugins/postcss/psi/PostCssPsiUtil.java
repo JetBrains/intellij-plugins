@@ -8,9 +8,9 @@ import com.intellij.psi.SyntaxTraverser;
 import com.intellij.psi.css.CssAtRule;
 import com.intellij.psi.css.CssMediaFeature;
 import com.intellij.psi.css.CssRuleset;
+import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.intellij.plugins.postcss.PostCssLanguage;
-import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,6 +88,6 @@ public final class PostCssPsiUtil {
 
   @Contract("null -> false")
   public static boolean isComparisonOperator(@Nullable PsiElement element) {
-    return element != null && PostCssTokenTypes.COMPARISON_OPERATORS.contains(element.getNode().getElementType());
+    return element != null && CssElementTypes.COMPARISON_OPERATORS.contains(element.getNode().getElementType());
   }
 }
