@@ -19,6 +19,7 @@ package com.thoughtworks.gauge.formatter;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -30,8 +31,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -43,14 +44,18 @@ import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public final class SpecFormatter extends AnAction {
   @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
+  }
+
+  @Override
   public void update(@NotNull AnActionEvent e) {
     boolean available = false;
 
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project != null) {
-      FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-      VirtualFile[] selectedFiles = fileEditorManager.getSelectedFiles();
-      if (selectedFiles.length > 0) {
+      VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+      if (selectedFiles != null && selectedFiles.length > 0) {
         VirtualFile selectedFile = selectedFiles[0];
         Document doc = FileDocumentManager.getInstance().getDocument(selectedFile);
         if (doc != null) {
