@@ -1,5 +1,7 @@
 package com.jetbrains.lang.makefile
 
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.*
 import com.intellij.lang.annotation.*
 import com.intellij.lang.annotation.HighlightSeverity.*
@@ -52,10 +54,17 @@ class MakefileAnnotator : Annotator {
         }
 
         if (!targetReferences && !fileReferenceResolved) {
+          val fix = CreateRuleFix()
+          val problemDescriptor = InspectionManager.getInstance(element.project).createProblemDescriptor(
+            element,
+            MakefileLangBundle.message("intention.name.create.rule"),
+            fix,
+            ProblemHighlightType.WEAK_WARNING,
+            true
+          )
           holder
             .newAnnotation(WEAK_WARNING, MakefileLangBundle.message("inspection.message.unresolved.prerequisite"))
-            .range(element)
-            .withFix(CreateRuleFix(element))
+            .newLocalQuickFix(fix, problemDescriptor).range(element.textRange).registerFix()
             .create()
         } else if (unresolvedFile != null) {
           holder

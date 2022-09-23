@@ -9,7 +9,7 @@ class MakefileCreateRuleQuickfixTest : BasePlatformTestCase() {
 
   fun doTest() {
     myFixture.configureByFile("$basePath/${getTestName(true)}.mk")
-    val intention = myFixture.findSingleIntention("Create Rule")
+    val intention = myFixture.findSingleIntention(MakefileLangBundle.message("intention.name.create.rule"))
     myFixture.launchAction(intention)
     myFixture.checkResultByFile("$basePath/${getTestName(true)}.gold.mk")
   }

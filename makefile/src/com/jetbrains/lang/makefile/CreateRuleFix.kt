@@ -1,28 +1,27 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.codeInsight.intention.impl.*
-import com.intellij.openapi.command.*
-import com.intellij.openapi.editor.*
-import com.intellij.openapi.project.*
-import com.intellij.pom.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.openapi.project.Project
+import com.jetbrains.lang.makefile.psi.MakefileElementFactory
 
-class CreateRuleFix(private val prerequisite: PsiElement) : BaseIntentionAction() {
-  override fun getText() = MakefileLangBundle.message("intention.name.create.rule")
-  override fun getFamilyName() = MakefileLangBundle.message("intention.family.name.create.rule")
+class CreateRuleFix : LocalQuickFix {
+  override fun getName(): String =
+    MakefileLangBundle.message("intention.name.create.rule")
 
-  override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
+  override fun getFamilyName(): String =
+    MakefileLangBundle.message("intention.family.name.create.rule")
 
-  override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-    WriteCommandAction.runWriteCommandAction(project) {
-      val file = psiFile as MakefileFile
-      val rule = MakefileElementFactory.createRule(project, prerequisite.text)
-      val anchor = prerequisite.parent.parent.parent.parent.nextSibling?.node
-      file.node.addChild(MakefileElementFactory.createEOL(project, "\n").node, anchor)
-      file.node.addChild(rule.node, anchor)
-      file.node.addChild(MakefileElementFactory.createEOL(project, "\n").node, anchor)
-      (rule.lastChild.navigationElement as Navigatable).navigate(true)
-    }
+  override fun startInWriteAction(): Boolean =
+    true
+
+  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    val prerequisite = descriptor.psiElement
+    val file = prerequisite.containingFile as? MakefileFile ?: return
+    val rule = MakefileElementFactory.createRule(project, prerequisite.text)
+    val anchor = prerequisite.parent.parent.parent.parent.nextSibling?.node
+    file.node.addChild(MakefileElementFactory.createEOL(project, "\n").node, anchor)
+    file.node.addChild(rule.node, anchor)
+    file.node.addChild(MakefileElementFactory.createEOL(project, "\n").node, anchor)
   }
 }
