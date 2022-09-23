@@ -225,7 +225,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
         if (baseClasses.length == 1 && !"Object".equals(baseClasses[0])) {
           baseClass = baseClasses[0];
         }
-        else if (baseClasses.length > 0) {
+        else {
           //
           for (String aClass : baseClasses) {
             if (ActionScriptClassResolver.findClassByQNameStatic(aClass, myElement) != null) {

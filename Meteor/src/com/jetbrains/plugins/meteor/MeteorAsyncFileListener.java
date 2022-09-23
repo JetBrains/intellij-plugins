@@ -173,7 +173,6 @@ public final class MeteorAsyncFileListener implements AsyncFileListener {
     @Override
     public void afterVfsChange() {
       Project[] projects = ProjectManager.getInstance().getOpenProjects();
-      if (projects.length == 0) return;
 
       for (Project project : projects) {
         ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
