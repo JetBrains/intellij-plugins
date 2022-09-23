@@ -71,7 +71,7 @@ HtmlFile:test.vue
               PsiElement(CSS_RULESET_LIST)
                 PsiErrorElement:Unexpected token
                   <empty list>
-                PsiElement(POST_CSS_LT)('<')
+                PsiElement(CSS_LT)('<')
                 PsiElement(CSS_RULESET)
                   PsiElement(CSS_SELECTOR_LIST)
                     PsiElement(CSS_SELECTOR)
@@ -85,7 +85,7 @@ HtmlFile:test.vue
                           <empty list>
                 PsiErrorElement:Unexpected token
                   <empty list>
-                PsiElement(POST_CSS_LT)('<')
+                PsiElement(CSS_LT)('<')
                 PsiElement(CSS_RULESET)
                   PsiElement(CSS_SELECTOR_LIST)
                     PsiElement(CSS_SELECTOR)

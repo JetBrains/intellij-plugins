@@ -65,7 +65,7 @@ HtmlFile:test.html
             PsiElement(CSS_RULESET_LIST)
               PsiErrorElement:Unexpected token
                 <empty list>
-              PsiElement(BAD_CHARACTER)('<')
+              PsiElement(CSS_LT)('<')
               PsiElement(CSS_RULESET)
                 PsiElement(CSS_SELECTOR_LIST)
                   PsiElement(CSS_SELECTOR)
@@ -76,8 +76,13 @@ HtmlFile:test.html
                     PsiElement(CSS_GT)('>')
                     PsiElement(CSS_SIMPLE_SELECTOR)
                       PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                        PsiErrorElement:Unexpected token
-                          PsiElement(BAD_CHARACTER)('<')
+                        <empty list>
+              PsiErrorElement:Unexpected token
+                <empty list>
+              PsiElement(CSS_LT)('<')
+              PsiElement(CSS_RULESET)
+                PsiElement(CSS_SELECTOR_LIST)
+                  PsiElement(CSS_SELECTOR)
                     PsiElement(CSS_SIMPLE_SELECTOR)
                       PsiElement(CSS_IDENT)('style')
                       PsiElement(CSS_SELECTOR_SUFFIX_LIST)
