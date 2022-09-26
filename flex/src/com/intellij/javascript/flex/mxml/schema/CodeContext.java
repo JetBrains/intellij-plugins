@@ -430,7 +430,7 @@ public final class CodeContext {
   public XmlElementDescriptor[] getDescriptorsWithAllowedDeclaration() {
     Set<XmlElementDescriptor> descriptors = new HashSet<>();
     appendDescriptorsWithAllowedDeclaration(descriptors);
-    return descriptors.toArray(new XmlElementDescriptor[0]);
+    return descriptors.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }
 
   public static boolean hasDefaultConstructor(final @NotNull JSClass jsClass) {
