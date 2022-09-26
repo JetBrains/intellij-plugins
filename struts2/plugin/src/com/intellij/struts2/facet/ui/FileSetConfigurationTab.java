@@ -42,7 +42,12 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.ToolbarDecorator;
-import com.intellij.ui.treeStructure.*;
+import com.intellij.ui.tree.AsyncTreeModel;
+import com.intellij.ui.tree.StructureTreeModel;
+import com.intellij.ui.treeStructure.SimpleNode;
+import com.intellij.ui.treeStructure.SimpleTree;
+import com.intellij.ui.treeStructure.SimpleTreeStructure;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +55,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -63,6 +67,7 @@ import java.util.Set;
  */
 public class FileSetConfigurationTab extends FacetEditorTab implements Disposable {
 
+  private final StructureTreeModel<SimpleTreeStructure> myModel;
   // GUI components -----------------------
   private JPanel myPanel;
 
@@ -72,7 +77,6 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   private JPanel myTreePanel;
 
   // GUI helpers
-  private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
     @Override
     public SimpleNode @NotNull [] getChildren() {
@@ -125,10 +129,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myTree.getEmptyText().setText(StrutsBundle.message("facet.fileset.no.filesets.defined"), SimpleTextAttributes.ERROR_ATTRIBUTES);
     myTreeExpander = new DefaultTreeExpander(myTree);
 
-    myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel)myTree.getModel(), structure, null) {
-      // unique class to simplify search through the logs
-    };
-    myBuilder.initRoot();
+    myModel = new StructureTreeModel<>(structure, this);
+    myTree.setModel(new AsyncTreeModel(myModel, this));
 
     final DumbService dumbService = DumbService.getInstance(facetEditorContext.getProject());
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
@@ -166,8 +168,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
               Disposer.register(strutsFacetConfiguration, editedFileSet);
               myBuffer.add(editedFileSet);
               myModified = true;
-              myBuilder.updateFromRoot();
-              selectFileSet(fileSet);
+              myModel.invalidateAsync().thenRun(() -> selectFileSet(editedFileSet));
             }
             IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myTree, true));
           }
@@ -177,7 +178,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
           public void run(AnActionButton button) {
             remove();
             myModified = true;
-            myBuilder.updateFromRoot();
+            myModel.invalidateAsync();
             IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myTree, true));
           }
         })
@@ -198,7 +199,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
                 Disposer.register(strutsFacetConfiguration, edited);
                 myBuffer.add(edited);
                 edited.setAutodetected(false);
-                myBuilder.updateFromRoot();
+                myModel.invalidateAsync();
                 selectFileSet(edited);
               }
               IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myTree, true));
@@ -260,17 +261,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   }
 
   private void selectFileSet(final StrutsFileSet fileSet) {
-    myTree.select(myBuilder, new SimpleNodeVisitor() {
-      @Override
-      public boolean accept(final SimpleNode simpleNode) {
-        if (simpleNode instanceof FileSetNode) {
-          if (((FileSetNode)simpleNode).mySet.equals(fileSet)) {
-            return true;
-          }
-        }
-        return false;
-      }
-    }, false);
+    SimpleNode simpleNode = ContainerUtil.find(myRootNode.getChildren(), node -> ((FileSetNode)node).mySet == fileSet);
+    assert simpleNode != null;
+    myModel.select(simpleNode, myTree, path -> {});
   }
 
   private void remove() {
@@ -344,13 +337,12 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     /*new StrutsFileSet(fileSet)*/
     myBuffer.addAll(sets);
 
-    myBuilder.updateFromRoot();
+    myModel.invalidateAsync();
     myTree.setSelectionRow(0);
   }
 
   @Override
   public void disposeUIResources() {
-    Disposer.dispose(myBuilder);
     Disposer.dispose(this);
   }
 
