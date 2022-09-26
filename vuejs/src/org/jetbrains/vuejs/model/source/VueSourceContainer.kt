@@ -85,7 +85,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   private abstract class MemberAccessor<T>(val extInfoAccessor: (VueContainerInfo) -> T?, val takeFirst: Boolean = false) {
 
     fun get(descriptor: VueSourceEntityDescriptor): T {
-      return VueContainerInfoProvider.getProviders()
+      return getContainerInfoProviders()
                .asSequence()
                .mapNotNull {
                  it.getInfo(descriptor)
@@ -97,6 +97,9 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
                }
              ?: empty()
     }
+
+    protected open fun getContainerInfoProviders(): List<VueContainerInfoProvider> =
+      VueContainerInfoProvider.getProviders()
 
     protected abstract fun empty(): T
 
@@ -169,6 +172,11 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
 
   private class DelimitersAccessor(extInfoAccessor: (VueContainerInfo) -> Pair<String, String>?)
     : MemberAccessor<Pair<String, String>?>(extInfoAccessor, true) {
+
+    // Delimiters accessor is called on UI thread. We should limit info providers
+    // to the ones, which actually can provide any value. Turns out it's just the default info provider.
+    override fun getContainerInfoProviders(): List<VueContainerInfoProvider> =
+      super.getContainerInfoProviders().filterIsInstance<VueDefaultContainerInfoProvider>()
 
     override fun empty(): Pair<String, String>? {
       return null
