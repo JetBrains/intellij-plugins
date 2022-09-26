@@ -502,7 +502,17 @@
                 ]
               },
               "#...",
-              "#item:CSS Property"
+              "#item:CSS Property",
+              {
+                "items": "/css/length-units",
+                "priority": "lowest",
+                "required": false,
+                "template": [
+                  ".",
+                  "#...",
+                  "#item:length unit"
+                ]
+              }
             ]
           }
         },

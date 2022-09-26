@@ -1157,4 +1157,16 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                     getTestName(true) + ".expected.txt",
                     false);
   }
+
+  public void testStyleUnitLengthCompletion() {
+    myFixture.configureByFiles("package.json");
+    WebTestUtil.doCompletionItemsTest(myFixture, "styleUnitLengthCompletion.html");
+  }
+
+  public void testStyleUnitLengthHighlighting() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("styleUnitLengthCompletionHighlighting.html", "package.json");
+    myFixture.checkHighlighting();
+  }
+
 }
