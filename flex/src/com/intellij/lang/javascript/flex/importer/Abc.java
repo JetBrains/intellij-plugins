@@ -70,7 +70,7 @@ final class Abc {
   static final @NonNls String[] constantKinds =
     {"0", "utf8", "2", "int", "uint", "private", "double", "qname", "namespace", "multiname", "false", "true", "null", "@qname",
       "@multiname", "rtqname", "@rtqname", "[qname]", "@[qname]", "[name]", "@[name]", "nsset"};
-  protected static final String SCRIPT_PREFIX = "script";
+  static final String SCRIPT_PREFIX = "script";
 
   enum TraitType {
     Slot, Method, Getter, Setter, Class, Function, Const
@@ -286,7 +286,7 @@ final class Abc {
 
   private final FlexByteCodeInformationProcessor processor;
   int totalSize;
-  final int opSizes[] = new int[256];
+  final int[] opSizes = new int[256];
 
   Abc(final @NotNull ByteBuffer _data, @NotNull FlexByteCodeInformationProcessor _processor) {
     data = _data;
@@ -372,11 +372,11 @@ final class Abc {
 
   final Object[][] defaults = new Object[Math.max(constantKinds.length, CONSTANT_MultinameLA + 1)][];
 
-  MethodInfo methods[];
-  Traits instances[];
-  Traits classes[];
+  MethodInfo[] methods;
+  Traits[] instances;
+  Traits[] classes;
   Traits[] scripts;
-  MetaData metadata[];
+  MetaData[] metadata;
 
   final int magic;
 
@@ -662,7 +662,7 @@ final class Abc {
       MetaData m = metadata[i] = new MetaData();
       m.name = strings[readU32()];
       int values_count = readU32();
-      String names[] = new String[values_count];
+      String[] names = new String[values_count];
 
       for (int q = 0; q < values_count; ++q) {
         names[q] = strings[readU32()]; // name
