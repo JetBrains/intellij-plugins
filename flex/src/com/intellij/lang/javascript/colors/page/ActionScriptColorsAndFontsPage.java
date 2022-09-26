@@ -85,40 +85,41 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
   }
 
   private static final String DEMO_TEXT =
-    "var globalVar : int = 123;\n" +
-    "\n" +
-    "function foo() : int {return 0;}\n" +
-    "\n" +
-    "package {\n" +
-    "import mx.messaging.messages.IMessage;\n" +
-    "\n" +
-    "public class HighlightingSample implements IMessage {\n" +
-    "    public var field : int;\n" +
-    "    public static var shared : String;\n" +
-    "\n" +
-    "    [Meta(name=\"abc\", type=\"def\")]\n" +
-    "    public function HighlightingSample() {\n" +
-    "        var strings :  Array = [\"One\", \"Two\"];\n" +
-    "        // Line comment\n" +
-    "        strings = \"\\u1111\\z\\n\\u22\";\n" +
-    "        /* Block comment */\n" +
-    "        var n : int = getField();\n" +
-    "        #\n" +
-    "    }\n" +
-    "\n" +
-    "    /**\n" +
-    "     * @param url parameter comment\n" +
-    "     */\n" +
-    "    public static function adjustUrl(url : String) : String {\n" +
-    "        return url.replace(/^\\s*(.*)/, \"$1\");\n" +
-    "    }\n" +
-    "\n" +
-    "    public function getField() : int {\n" +
-    "        adjustUrl(\"\");\n" +
-    "        return field;\n" +
-    "    }\n" +
-    "}\n" +
-    "}";
+    """
+      var globalVar : int = 123;
+
+      function foo() : int {return 0;}
+
+      package {
+      import mx.messaging.messages.IMessage;
+
+      public class HighlightingSample implements IMessage {
+          public var field : int;
+          public static var shared : String;
+
+          [Meta(name="abc", type="def")]
+          public function HighlightingSample() {
+              var strings :  Array = ["One", "Two"];
+              // Line comment
+              strings = "\\u1111\\z\\n\\u22";
+              /* Block comment */
+              var n : int = getField();
+              #
+          }
+
+          /**
+           * @param url parameter comment
+           */
+          public static function adjustUrl(url : String) : String {
+              return url.replace(/^\\s*(.*)/, "$1");
+          }
+
+          public function getField() : int {
+              adjustUrl("");
+              return field;
+          }
+      }
+      }""";
 
   @NotNull
   @Override

@@ -205,9 +205,11 @@ public final class Reveal {
       script += "   device name \"" + StringUtil.escapeQuotes(deviceName) + "\"";
     }
 
-    script += "   when available\n" +
-              "end repeat\n" +
-              "activate\n";
+    script += """
+         when available
+      end repeat
+      activate
+      """;
 
     try {
       AppleScript.tell("Reveal",

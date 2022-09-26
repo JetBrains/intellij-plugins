@@ -55,25 +55,26 @@ public class CfmlCodeStylePanel extends CodeStyleAbstractPanel {
 
   @Override
   protected String getPreviewText() {
-    return "<?cfml\n" +
-           "\n" +
-           "function foo($one, $two = 0, $three = \"String\")\n" +
-           "{\n" +
-           "    $f = \"The first value\";\n" +
-           "    $second = \"The second value\";\n" +
-           "    echo 'Hello, world!';\n" +
-           "    $t = \"The third value\";\n" +
-           "    $fourth = \"The fourth value\";\n" +
-           "    if (true) {\n" +
-           "        $x = array(\n" +
-           "            0 => \"zero\",\n" +
-           "            123 => \"one two three\",\n" +
-           "            25 => \"two five\"\n" +
-           "        );\n" +
-           "    }\n" +
-           "}\n" +
-           "\n" +
-           "?>";
+    return """
+      <?cfml
+
+      function foo($one, $two = 0, $three = "String")
+      {
+          $f = "The first value";
+          $second = "The second value";
+          echo 'Hello, world!';
+          $t = "The third value";
+          $fourth = "The fourth value";
+          if (true) {
+              $x = array(
+                  0 => "zero",
+                  123 => "one two three",
+                  25 => "two five"
+              );
+          }
+      }
+
+      ?>""";
   }
 
   @Override

@@ -108,13 +108,12 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDemoText() {
-    return "Manifest-Version: 1.0\n" +
-           "Bundle-Name: Osmorc Test\n" +
-           "Bundle-SymbolicName: org.osmorc.test<parameterSeparator>;</parameterSeparator>" +
-           "<directiveName>singleton</directiveName><directiveAssignment>:=</directiveAssignment><directiveValue>true</directiveValue>\n" +
-           "Bundle-Version: 0.1.0\n" +
-           "Require-Bundle: some.bundle<parameterSeparator>;</parameterSeparator>" +
-           "<attributeName>bundle-version</attributeName><attributeAssignment>=</attributeAssignment><attributeValue>\"2.0.0\"</attributeValue>" +
-           "<clauseSeparator>,</clauseSeparator>\n other.bundle";
+    return """
+      Manifest-Version: 1.0
+      Bundle-Name: Osmorc Test
+      Bundle-SymbolicName: org.osmorc.test<parameterSeparator>;</parameterSeparator><directiveName>singleton</directiveName><directiveAssignment>:=</directiveAssignment><directiveValue>true</directiveValue>
+      Bundle-Version: 0.1.0
+      Require-Bundle: some.bundle<parameterSeparator>;</parameterSeparator><attributeName>bundle-version</attributeName><attributeAssignment>=</attributeAssignment><attributeValue>"2.0.0"</attributeValue><clauseSeparator>,</clauseSeparator>
+       other.bundle""";
   }
 }

@@ -23,8 +23,10 @@ public class GherkinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
 
   @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
-    return "Feature: Formatting\n" +
-           "    Scenario: Reformat Cucumber file\n";
+    return """
+      Feature: Formatting
+          Scenario: Reformat Cucumber file
+      """;
   }
 
   @Override

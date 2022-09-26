@@ -61,25 +61,25 @@ final class SpecColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDemoText() {
-    return "# Specification Heading\n" +
-           "tags: first, second" +
-           "This comment explains what the spec intends to test\n" +
-           "in multi line\n" +
-           "|name                                     |type |\n" +
-           "|-----------------------------------------|-----|\n" +
-           "|manifest.json                            |file |\n" +
-           "|specs                                    |dir  |\n" +
-           "* This is a context\n" +
-           "## Scenario Heading\n" +
-           "Tags: tag3, tag4" +
-           "* Step 1 with \"arg\"\n" +
-           "* Step 2 with <dynamic arg>\n" +
-           "comments between steps\n" +
-           "* Step 2\n" +
-           "|id|filename|\n" +
-           "|1 |foo     |\n" +
-           "|2 |bar     |\n" +
-           "|3 |<name>  |\n";
+    return """
+      # Specification Heading
+      tags: first, secondThis comment explains what the spec intends to test
+      in multi line
+      |name                                     |type |
+      |-----------------------------------------|-----|
+      |manifest.json                            |file |
+      |specs                                    |dir  |
+      * This is a context
+      ## Scenario Heading
+      Tags: tag3, tag4* Step 1 with "arg"
+      * Step 2 with <dynamic arg>
+      comments between steps
+      * Step 2
+      |id|filename|
+      |1 |foo     |
+      |2 |bar     |
+      |3 |<name>  |
+      """;
   }
 
   @Nullable

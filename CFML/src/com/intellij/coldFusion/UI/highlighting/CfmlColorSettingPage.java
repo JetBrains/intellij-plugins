@@ -77,30 +77,31 @@ public class CfmlColorSettingPage implements ColorSettingsPage {
   @Override
   @NotNull
   public String getDemoText() {
-    return "<cffunction name=\"test\">\n" +
-           "\t<cfargument name=\"fred\" test=\"test\"/>\n" +
-           "\t<cfscript>\n" +
-           "\t\tWriteOutput(\"FREDFREDFRED\");\n" +
-           "\t</cfscript>\n" +
-           "\t<cfif thisisatest is 1>\n" +
-           "\t\t<cfoutput>asdfasdf</cfoutput>\n" +
-           "\t</cfif>\n" +
-           "</cffunction>\n" +
-           "<cfset somethinghere = 2/>\n" +
-           "<cfset test(fred)/>\n" +
-           "<cffunction name=\"test\" >\n" +
-           "\t<cfargument name=\"test\" default=\"#WriteOutput(\"\"?\"\")#\"/> <!--- I think this is valid! --->\n" +
-           "</cffunction>\n" +
-           "<cfoutput>\n" +
-           "\tThis is a test\n" +
-           "</cfoutput>\n" +
-           "<cfscript>\n" +
-           "\tif(find(\"some text\", agent ) and not find(\"some other\", agent ))\n" +
-           "\t{\n" +
-           "\t\t// comment string\n" +
-           "\t\tmyResult = reFind(\"some text ([5-9]\\.[0-9])\", sAgent, 1, true );\n" +
-           "\t}\n" +
-           "</cfscript>";
+    return """
+      <cffunction name="test">
+      \t<cfargument name="fred" test="test"/>
+      \t<cfscript>
+      \t\tWriteOutput("FREDFREDFRED");
+      \t</cfscript>
+      \t<cfif thisisatest is 1>
+      \t\t<cfoutput>asdfasdf</cfoutput>
+      \t</cfif>
+      </cffunction>
+      <cfset somethinghere = 2/>
+      <cfset test(fred)/>
+      <cffunction name="test" >
+      \t<cfargument name="test" default="#WriteOutput(""?"")#"/> <!--- I think this is valid! --->
+      </cffunction>
+      <cfoutput>
+      \tThis is a test
+      </cfoutput>
+      <cfscript>
+      \tif(find("some text", agent ) and not find("some other", agent ))
+      \t{
+      \t\t// comment string
+      \t\tmyResult = reFind("some text ([5-9]\\.[0-9])", sAgent, 1, true );
+      \t}
+      </cfscript>""";
   }
 
   @Override

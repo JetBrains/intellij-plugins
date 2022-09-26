@@ -164,25 +164,26 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     }
   }
   protected String getPreviewText() {
-    return "/*\n" +
-           " Multiline\n" +
-           " C-style\n" +
-           " Comment\n" +
-           " */\n" +
-           "var myLink = {\n" +
-           "      img: \"btn.gif\",\n" +
-           "      text: \"Button\",\n" +
-           "      width: 128\n" +
-           "    },\n" +
-           "    local = true,\n" +
-           "    initial = -1;\n" +
-           "var cssClasses = [\"bold\", \"red\",]\n" +
-           "var selector = \"#id\";\n" +
-           "\n" +
-           "var color = \"red\";\n" +
-           "var offset = 10;\n" +
-           "\n" +
-           "varName = val;";
+    return """
+      /*
+       Multiline
+       C-style
+       Comment
+       */
+      var myLink = {
+            img: "btn.gif",
+            text: "Button",
+            width: 128
+          },
+          local = true,
+          initial = -1;
+      var cssClasses = ["bold", "red",]
+      var selector = "#id";
+
+      var color = "red";
+      var offset = 10;
+
+      varName = val;""";
   }
 
   @Override
@@ -209,120 +210,128 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   }
 
   public final static String GENERAL_CODE_SAMPLE =
-    "package {\n" +
-    "class Foo {\n" +
-    "public function foo(x:int, z) {\n" +
-    "var arr = [\"zero\", \"one\"];\n" +
-    "var x = {0:\"zero\", 1:\"one\"};\n" +
-    "var y = (x ^ 0x123) << 2;\n" +
-    "var k = x > 15 ? 1 : 2;\n" +
-    "do {\n" +
-    "try {\n" +
-    "if (0 < x && x < 10) {\n" +
-    "while (x != y) {\n" +
-    "x = f(x * 3 + 5);\n" +
-    "}\n" +
-    "z += 2;\n" +
-    "} else if (x > 20) {\n" +
-    "z = x << 1;\n" +
-    "} else {\n" +
-    "z = x | 2;\n" +
-    "}\n" +
-    "switch (k) {\n" +
-    "case 0:\n" +
-    "var s1 = 'zero';\n" +
-    "break;\n" +
-    "case 2:\n" +
-    "var s1 = 'two';\n" +
-    "break;\n" +
-    "default:\n" +
-    "var s1 = 'other';\n" +
-    "}\n" +
-    "} catch (e:Exception) {\n" +
-    "var message = arr[0];\n" +
-    "}\n" +
-    "} while (x < 0);\n" +
-    "}\n" +
-    "\n" +
-    "    function sum(...args) {\n" +
-    "        for (var i:uint = 0; i < args.length; i++) {\n" +
-    "            trace(args[i]);\n" +
-    "        }\n" +
-    "    }" +
-    "\n" +
-    "}\n" +
-    "}";
+    """
+      package {
+      class Foo {
+      public function foo(x:int, z) {
+      var arr = ["zero", "one"];
+      var x = {0:"zero", 1:"one"};
+      var y = (x ^ 0x123) << 2;
+      var k = x > 15 ? 1 : 2;
+      do {
+      try {
+      if (0 < x && x < 10) {
+      while (x != y) {
+      x = f(x * 3 + 5);
+      }
+      z += 2;
+      } else if (x > 20) {
+      z = x << 1;
+      } else {
+      z = x | 2;
+      }
+      switch (k) {
+      case 0:
+      var s1 = 'zero';
+      break;
+      case 2:
+      var s1 = 'two';
+      break;
+      default:
+      var s1 = 'other';
+      }
+      } catch (e:Exception) {
+      var message = arr[0];
+      }
+      } while (x < 0);
+      }
+
+          function sum(...args) {
+              for (var i:uint = 0; i < args.length; i++) {
+                  trace(args[i]);
+              }
+          }
+      }
+      }""";
 
   public final static String WRAPPING_CODE_SAMPLE =
-    "function buzz() { return 0; }\n\n" +
-    "class Foo {\n" +
-    "\n" +
-    "numbers : ['one', 'two', 'three', 'four', 'five', 'six'];\n" +
-    "\n" +
-    "// function fBar (x,y);\n" +
-    "function fOne(argA, argB, argC, argD, argE, argF, argG, argH) {\n" +
-    "x = argA + argB + argC + argD + argE + argF + argG + argH;\n" +
-    "this.fTwo(argA, argB, argC, this.fThree(argD, argE, argF, argG, argH));\n" +
-    "var z = argA == 'Some string' ? 'yes' : 'no';\n" +
-    "var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];\n" +
-    "for (var colorIndex = 0; colorIndex < colors.length; colorIndex++) \n" +
-    "var colorString = this.numbers[colorIndex];\n" +
-    "}\n" +
-    "\n" +
-    "function fTwo(strA, strB, strC, strD) {\n" +
-    "if (true)\nreturn strC;\n" +
-    "if (strA == 'one' || \n" +
-    "strB == 'two' || strC == 'three') {\n" +
-    "return strA + strB + strC;\n" +
-    "} else return strD\n" +
-    "return strD;\n" +
-    "}\n" +
-    "\n" +
-    "function fThree(strA, strB, strC, strD, strE) {\n" +
-    "return strA + strB + strC + strD + strE;\n" +
-    "}\n" +
-    "/*\n" +
-    " Multiline\n" +
-    "   C-style\n" +
-    "     Comment\n" +
-    " */\n" +
-    "function fFour() {\n" +
-    "    var myLinkText = \"Button\",\n" +
-    "            local = true,\n" +
-    "            initial = -1;\n" +
-    "    var cssClasses = [\"bold\", \"red\",]\n" +
-    "    var selector = \"#id\";\n" +
-    "\n" +
-    "    var color = \"red\";\n" +
-    "    var offset = 10;\n" +
-    "    }" +
-    "}";
+    """
+      function buzz() { return 0; }
+
+      class Foo {
+
+      numbers : ['one', 'two', 'three', 'four', 'five', 'six'];
+
+      // function fBar (x,y);
+      function fOne(argA, argB, argC, argD, argE, argF, argG, argH) {
+      x = argA + argB + argC + argD + argE + argF + argG + argH;
+      this.fTwo(argA, argB, argC, this.fThree(argD, argE, argF, argG, argH));
+      var z = argA == 'Some string' ? 'yes' : 'no';
+      var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];
+      for (var colorIndex = 0; colorIndex < colors.length; colorIndex++)\s
+      var colorString = this.numbers[colorIndex];
+      }
+
+      function fTwo(strA, strB, strC, strD) {
+      if (true)
+      return strC;
+      if (strA == 'one' ||\s
+      strB == 'two' || strC == 'three') {
+      return strA + strB + strC;
+      } else return strD
+      return strD;
+      }
+
+      function fThree(strA, strB, strC, strD, strE) {
+      return strA + strB + strC + strD + strE;
+      }
+      /*
+       Multiline
+         C-style
+           Comment
+       */
+      function fFour() {
+          var myLinkText = "Button",
+                  local = true,
+                  initial = -1;
+          var cssClasses = ["bold", "red",]
+          var selector = "#id";
+
+          var color = "red";
+          var offset = 10;
+          }}""";
 
   public final static String BLANK_LINE_CODE_SAMPLE =
-    "package {\n" +
-    "import com.jetbrains.flex.Demo;\n" +
-    "import com.jetbrains.flex.Sample;\n" +
-    "class Foo {\n" +
-    "    var demo : Demo;\n" +
-    "    var sample : Sample;\n" +
-    "    public function foo(x:int, z) {\n" +
-    "        var y = x * z;\n\n\n" +
-    "        return y;\n" +
-    "    }\n" +
-    "    public function getSample() {\n" +
-    "        return sample;\n" +
-    "    }\n" +
-    "}\n" +
-    "\n" +
-    "}";
+    """
+      package {
+      import com.jetbrains.flex.Demo;
+      import com.jetbrains.flex.Sample;
+      class Foo {
+          var demo : Demo;
+          var sample : Sample;
+          public function foo(x:int, z) {
+              var y = x * z;
+
+
+              return y;
+          }
+          public function getSample() {
+              return sample;
+          }
+      }
+
+      }""";
 
   public final static String INDENT_CODE_SAMPLE =
-    "package {\n" +
-    "class Foo {\n" +
-    "    public function foo(x:int, z) {\n" +
-    "        var y = x * z;\n\n\n" +
-    "        return y;\n" +
-    "    }\n" +
-    "}\n" +
-    "}";
+    """
+      package {
+      class Foo {
+          public function foo(x:int, z) {
+              var y = x * z;
+
+
+              return y;
+          }
+      }
+      }""";
 }

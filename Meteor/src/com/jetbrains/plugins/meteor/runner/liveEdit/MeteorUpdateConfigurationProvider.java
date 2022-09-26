@@ -14,9 +14,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class MeteorUpdateConfigurationProvider extends UpdateConfigurationProvider {
   private static final String S = "(function(Npm, Assets){(function(){";
-  private static final String E = "\n})();\n" +
-                                  "\n" +
-                                  "})";
+  private static final String E = """
+
+    })();
+
+    })""";
 
   private static final UpdateConfiguration UPDATE_CONFIGURATION = new UpdateConfiguration() {
     @NotNull

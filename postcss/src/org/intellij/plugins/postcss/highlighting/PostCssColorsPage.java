@@ -17,31 +17,38 @@ import java.util.Map;
 
 public class PostCssColorsPage implements ColorSettingsPage {
   private static final Map<String, TextAttributesKey> ADDITIONAL_ATTRIBUTES_KEY_MAP = Map.of("tag", PostCssSyntaxHighlighter.TAG_NAME, "id", CssHighlighter.CSS_ID_SELECTOR, "class", CssHighlighter.CSS_CLASS_NAME, "attr", CssHighlighter.CSS_ATTRIBUTE_NAME);
-  private static final String DEMO_TEXT = "@import \"manual.css\";\n\n" +
-                                          "@font-face {\n" +
-                                          "  font-family: DroidSans;\n" +
-                                          "  src: url(DroidSans.ttf);\n" +
-                                          "  unicode-range: U+000-5FF, U+1e00-1fff, U+2000-2300;\n" +
-                                          "}\n\n" +
-                                          "@media (500px < width <= 1200px) and (height >= 400px){\n" +
-                                          "  color: red;\n" +
-                                          "}\n\n" +
-                                          "<tag>h1</tag>.<class>mystyle</class>:lang(en) {\n" +
-                                          "  color:blue; /* TODO: change THIS to yellow for next version! */\n" +
-                                          "  border:rgb(255,0,0);\n" +
-                                          "  background-color: #FAFAFA;\n" +
-                                          "  background:url(hello.jpg) !important;\n" +
-                                          "  @nest span &, #&-id {\n" +
-                                          "    color: yellow;\n" +
-                                          "  }\n" +
-                                          "}\n\n" +
-                                          "<tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [<attr>type</attr>=\"radio\"] {\n" +
-                                          "  width: 80%;\n" +
-                                          "}\n\n" +
-                                          "<id>#header</id>:after {\n" +
-                                          "  color: red;\n" +
-                                          "}\n\n" +
-                                          "!";
+  private static final String DEMO_TEXT = """
+    @import "manual.css";
+
+    @font-face {
+      font-family: DroidSans;
+      src: url(DroidSans.ttf);
+      unicode-range: U+000-5FF, U+1e00-1fff, U+2000-2300;
+    }
+
+    @media (500px < width <= 1200px) and (height >= 400px){
+      color: red;
+    }
+
+    <tag>h1</tag>.<class>mystyle</class>:lang(en) {
+      color:blue; /* TODO: change THIS to yellow for next version! */
+      border:rgb(255,0,0);
+      background-color: #FAFAFA;
+      background:url(hello.jpg) !important;
+      @nest span &, #&-id {
+        color: yellow;
+      }
+    }
+
+    <tag>div</tag> > <tag>p</tag>, <tag>p</tag> ~ <tag>ul</tag>, <tag>input</tag> [<attr>type</attr>="radio"] {
+      width: 80%;
+    }
+
+    <id>#header</id>:after {
+      color: red;
+    }
+
+    !""";
 
   private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
     new AttributesDescriptor(CssBundle.message("css.bad.character"), PostCssSyntaxHighlighter.BAD_CHARACTER),

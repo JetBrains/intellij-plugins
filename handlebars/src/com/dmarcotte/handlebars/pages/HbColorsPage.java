@@ -59,14 +59,16 @@ public class HbColorsPage implements ColorSettingsPage {
   @Override
   @NotNull
   public String getDemoText() {
-    return "{{identifier my-val=true my-other-val=42 my-string-val=\"a string\"}}\n" +
-           "{{! this is a comment }}\n" +
-           "{{!--\n" +
-           "    this is a Handlebars block comment,\n" +
-           "    which can comment out mustache expressions: {{ignored}}\n" +
-           "--}}\n" +
-           "{{@data}}\n" +
-           "\\{{escaped}}\n"
+    return """
+      {{identifier my-val=true my-other-val=42 my-string-val="a string"}}
+      {{! this is a comment }}
+      {{!--
+          this is a Handlebars block comment,
+          which can comment out mustache expressions: {{ignored}}
+      --}}
+      {{@data}}
+      \\{{escaped}}
+      """
       ;
   }
 

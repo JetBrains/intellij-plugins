@@ -32,9 +32,11 @@ class CmdLineAppTemplate extends DartProjectTemplate {
                                   "#  unittest: any\n").getBytes(StandardCharsets.UTF_8));
     final VirtualFile binDir = VfsUtil.createDirectoryIfMissing(baseDir, "bin");
     final VirtualFile mainFile = binDir.createChildData(this, StringUtil.toLowerCase(module.getName()) + ".dart");
-    mainFile.setBinaryContent(("void main() {\n" +
-                               "  print('Hello, World!');\n" +
-                               "}\n").getBytes(StandardCharsets.UTF_8));
+    mainFile.setBinaryContent(("""
+                                 void main() {
+                                   print('Hello, World!');
+                                 }
+                                 """).getBytes(StandardCharsets.UTF_8));
 
     createCmdLineRunConfiguration(module, mainFile);
 

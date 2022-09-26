@@ -16,10 +16,11 @@ import static org.jetbrains.plugins.cucumber.psi.GherkinLexer.PYSTRING_MARKER;
 
 public class GherkinPyStringManipulator extends AbstractElementManipulator<GherkinPystring> {
   private static final String PY_STRING_FILE_TEMPLATE =
-    "Feature: \n" +
-    "  Scenario: Test\n" +
-    "    Given step\n" +
-    "\"\"\"%s\"\"\"";
+    """
+      Feature:\s
+        Scenario: Test
+          Given step
+      ""\"%s""\"""";
 
   @Override
   public @NotNull TextRange getRangeInElement(@NotNull GherkinPystring element) {

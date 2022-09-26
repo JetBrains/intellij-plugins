@@ -133,106 +133,108 @@ public class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     return new SmartIndentOptionsEditor();
   }
 
-  private static final String SPACING_CODE_SAMPLE = "<cffunction name=\"test\">\n" +
-                                                    "\t<cfargument name=\"fred\" test=\"test\"/>\n" +
-                                                    "\t<cfscript>\n" +
-                                                    "\t\tWriteOutput(\"FREDFREDFRED\");\n" +
-                                                    "function foo(x,y,z) {\n" +
-                                                    "    bar(1,b);\n" +
-                                                    " if (Fm >= Fl){Fm=Fl;}\n" +
-                                                    " while (TC != Bl){Bo+=1;x++;}\n" +
-                                                    " if (Bo == 1){\n" +
-                                                    "  x=3*x-5 ;\n" +
-                                                    " }else{\n" +
-                                                    "     x=10;\n" +
-                                                    " }\n" +
-                                                    "x=0;\n" +
-                                                    " for (x1=0; x1<10; x1++) {\n" +
-                                                    "if (EX[x1] >= -50){\n" +
-                                                    "  x=1;\n" +
-                                                    " x = x1 && x; \n" +
-                                                    " }\n" +
-                                                    "}\n" +
-                                                    "switch(x) {\n" +
-                                                    " case 4:\n" +
-                                                    "WriteOutput(\"q\");\n" +
-                                                    " break; \n " +
-                                                    "case 2:  \n" +
-                                                    "   WriteOutput(\"a\");  \n" +
-                                                    "  break;\n " +
-                                                    "default: \n " +
-                                                    "   WriteOutput(\"c\"); \n" +
-                                                    "} \n" +
-                                                    " try\n" +
-                                                    "{ \n" +
-                                                    "somethingWrong= x== 2 ? true : false ;\n" +
-                                                    "c = b&d;\n" +
-                                                    "throw(\"ExampleErrorType\",\"Example Error message.\");\n" +
-                                                    "}" +
-                                                    "catch (Any e)" +
-                                                    "{ \n" +
-                                                    "}\n" +
-                                                    "do {Bo+=1;x++;\n}" +
-                                                    " while (TC != Bl);\n" +
-                                                    "\t</cfscript>\n" +
-                                                    "\t<cfif thisisatest is 1>\n" +
-                                                    "\t\t<cfoutput>asdfasdf</cfoutput>\n" +
-                                                    "\t</cfif>\n" +
-                                                    "</cffunction>\n" +
-                                                    "<cfscript>\n" +
-                                                    "\tif(find(\"some text\", agent ) and not find(\"some other\", agent ))\n" +
-                                                    "\t{\n" +
-                                                    "\t\t// comment string\n" +
-                                                    "\t}\n" +
-                                                    "</cfscript>";
+  private static final String SPACING_CODE_SAMPLE = """
+    <cffunction name="test">
+    \t<cfargument name="fred" test="test"/>
+    \t<cfscript>
+    \t\tWriteOutput("FREDFREDFRED");
+    function foo(x,y,z) {
+        bar(1,b);
+     if (Fm >= Fl){Fm=Fl;}
+     while (TC != Bl){Bo+=1;x++;}
+     if (Bo == 1){
+      x=3*x-5 ;
+     }else{
+         x=10;
+     }
+    x=0;
+     for (x1=0; x1<10; x1++) {
+    if (EX[x1] >= -50){
+      x=1;
+     x = x1 && x;\s
+     }
+    }
+    switch(x) {
+     case 4:
+    WriteOutput("q");
+     break;\s
+     case 2: \s
+       WriteOutput("a"); \s
+      break;
+     default:\s
+        WriteOutput("c");\s
+    }\s
+     try
+    {\s
+    somethingWrong= x== 2 ? true : false ;
+    c = b&d;
+    throw("ExampleErrorType","Example Error message.");
+    }catch (Any e){\s
+    }
+    do {Bo+=1;x++;
+    } while (TC != Bl);
+    \t</cfscript>
+    \t<cfif thisisatest is 1>
+    \t\t<cfoutput>asdfasdf</cfoutput>
+    \t</cfif>
+    </cffunction>
+    <cfscript>
+    \tif(find("some text", agent ) and not find("some other", agent ))
+    \t{
+    \t\t// comment string
+    \t}
+    </cfscript>""";
   private static final String GENERAL_CODE_SAMPLE = SPACING_CODE_SAMPLE;
-  private static final String BLANK_LINE_CODE_SAMPLE = "<cffunction name=\"test\">\n" +
-                                                       "\t<cfargument name=\"fred\" test=\"test\"/>\n" +
-                                                       "\n\n" +
-                                                       "</cffunction>\n" +
-                                                       "<cfoutput>\n" +
-                                                       "\tThis is a test\n" +
-                                                       "</cfoutput>\n";
+  private static final String BLANK_LINE_CODE_SAMPLE = """
+    <cffunction name="test">
+    \t<cfargument name="fred" test="test"/>
 
-  private static final String WRAPPING_CODE_SAMPLE = "<cffunction name=\"test\">\n" +
-                                                     "\t<cfargument name=\"fred\" test=\"test\"/>\n" +
-                                                     "\t<cfscript>\n" +
-                                                     "\t\tWriteOutput(\"FREDFREDFRED\");\n" +
-                                                     "function foo(x,y,z) {\n" +
-                                                     "    bar(1,b);\n" +
-                                                     " if (Fm >= Fl){Fm=Fl;}\n" +
-                                                     "do {Bo+=1;x++;\n}" +
-                                                     " while (TC != Bl);\n" +
-                                                     " if (Bo == 1){\n" +
-                                                     "  x=3*x-5 ;\n" +
-                                                     " }else{\n" +
-                                                     "     x=10;\n" +
-                                                     " }\n" +
-                                                     "x=0;\n" +
-                                                     " for (x1=0; x1<10; x1++) {\n" +
-                                                     "if (EX[x1] >= -50){\n" +
-                                                     "  x=1;\n" +
-                                                     " x = x1 && x; \n" +
-                                                     " }\n" +
-                                                     "}\n" +
-                                                     " try\n" +
-                                                     "{\n " +
-                                                     "somethingWrong= x== 2 ? true : false ;\n" +
-                                                     "c = b&d;\n" +
-                                                     "throw(\"ExampleErrorType\",\"Example Error message.\");\n" +
-                                                     "}\n" +
-                                                     "catch (Any e)" +
-                                                     "{ \n" +
-                                                     "}\n" +
-                                                     "\t</cfscript>\n" +
-                                                     "\t<cfif thisisatest is 1>\n" +
-                                                     "\t\t<cfoutput>asdfasdf</cfoutput>\n" +
-                                                     "\t</cfif>\n" +
-                                                     "</cffunction>\n" +
-                                                     "<cfscript>\n" +
-                                                     "\tif(find(\"some text\", agent ) and not find(\"some other\", agent ))\n" +
-                                                     "\t{\n" +
-                                                     "\t\t// comment string\n" +
-                                                     "\t}\n" +
-                                                     "</cfscript>";
+
+    </cffunction>
+    <cfoutput>
+    \tThis is a test
+    </cfoutput>
+    """;
+
+  private static final String WRAPPING_CODE_SAMPLE = """
+    <cffunction name="test">
+    \t<cfargument name="fred" test="test"/>
+    \t<cfscript>
+    \t\tWriteOutput("FREDFREDFRED");
+    function foo(x,y,z) {
+        bar(1,b);
+     if (Fm >= Fl){Fm=Fl;}
+    do {Bo+=1;x++;
+    } while (TC != Bl);
+     if (Bo == 1){
+      x=3*x-5 ;
+     }else{
+         x=10;
+     }
+    x=0;
+     for (x1=0; x1<10; x1++) {
+    if (EX[x1] >= -50){
+      x=1;
+     x = x1 && x;\s
+     }
+    }
+     try
+    {
+     somethingWrong= x== 2 ? true : false ;
+    c = b&d;
+    throw("ExampleErrorType","Example Error message.");
+    }
+    catch (Any e){\s
+    }
+    \t</cfscript>
+    \t<cfif thisisatest is 1>
+    \t\t<cfoutput>asdfasdf</cfoutput>
+    \t</cfif>
+    </cffunction>
+    <cfscript>
+    \tif(find("some text", agent ) and not find("some other", agent ))
+    \t{
+    \t\t// comment string
+    \t}
+    </cfscript>""";
 }

@@ -78,21 +78,15 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDemoText() {
-    return "%{booleanArray[3] == true ? this : 'nothing'}" +
-           "\n" +
-           "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2015 My Company\"}" +
-           "\n" +
-           "%{\"invalid escape: \\uXXX \"}" +
-           "\n" +
-           "%{ 1 shl 3 && 3 gt 5}" +
-           "\n" +
-           "%{myAction.method()}" +
-           "\n" +
-           "%{#myBigInteger * 452H}" +
-           "\n" +
-           "%{id not in {1, 2}}" +
-           "\n" +
-           "%{listeners.{? #this instanceof <fqnType>ActionListener</fqnType>}}";
+    return """
+      %{booleanArray[3] == true ? this : 'nothing'}
+      %{"valid escapes: My App\\nVersion 1.0 \\u00a9 2015 My Company"}
+      %{"invalid escape: \\uXXX "}
+      %{ 1 shl 3 && 3 gt 5}
+      %{myAction.method()}
+      %{#myBigInteger * 452H}
+      %{id not in {1, 2}}
+      %{listeners.{? #this instanceof <fqnType>ActionListener</fqnType>}}""";
   }
 
   @Override

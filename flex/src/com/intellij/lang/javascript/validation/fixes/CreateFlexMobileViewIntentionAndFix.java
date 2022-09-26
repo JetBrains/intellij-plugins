@@ -25,10 +25,12 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
 
   @Override
   protected String getFileText() {
-    return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-           "<s:View xmlns:fx=\"http://ns.adobe.com/mxml/2009\" xmlns:s=\"library://ns.adobe.com/flex/spark\">\n" +
-           "\n" +
-           "</s:View>\n";
+    return """
+      <?xml version="1.0" encoding="utf-8"?>
+      <s:View xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+
+      </s:View>
+      """;
   }
 
   @Override

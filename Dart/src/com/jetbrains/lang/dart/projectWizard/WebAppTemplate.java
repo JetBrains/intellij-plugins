@@ -38,20 +38,24 @@ class WebAppTemplate extends DartProjectTemplate {
     final VirtualFile webDir = VfsUtil.createDirectoryIfMissing(baseDir, "web");
 
     final VirtualFile dartFile = webDir.createChildData(this, lowercaseName + ".dart");
-    dartFile.setBinaryContent(("import 'dart:html';\n\n" +
-                               "void main() {\n" +
-                               "  querySelector('#sample_text_id')\n" +
-                               "    ..text = 'Click me!'\n" +
-                               "    ..onClick.listen(reverseText);\n" +
-                               "}\n\n" +
-                               "void reverseText(MouseEvent event) {\n" +
-                               "  var text = querySelector('#sample_text_id').text;\n" +
-                               "  var buffer = new StringBuffer();\n" +
-                               "  for (int i = text.length - 1; i >= 0; i--) {\n" +
-                               "    buffer.write(text[i]);\n" +
-                               "  }\n" +
-                               "  querySelector('#sample_text_id').text = buffer.toString();\n" +
-                               "}\n").getBytes(StandardCharsets.UTF_8));
+    dartFile.setBinaryContent(("""
+                                 import 'dart:html';
+
+                                 void main() {
+                                   querySelector('#sample_text_id')
+                                     ..text = 'Click me!'
+                                     ..onClick.listen(reverseText);
+                                 }
+
+                                 void reverseText(MouseEvent event) {
+                                   var text = querySelector('#sample_text_id').text;
+                                   var buffer = new StringBuffer();
+                                   for (int i = text.length - 1; i >= 0; i--) {
+                                     buffer.write(text[i]);
+                                   }
+                                   querySelector('#sample_text_id').text = buffer.toString();
+                                 }
+                                 """).getBytes(StandardCharsets.UTF_8));
 
     final VirtualFile htmlFile = webDir.createChildData(this, lowercaseName + ".html");
     htmlFile.setBinaryContent(("<!DOCTYPE html>\n\n" +
@@ -73,31 +77,36 @@ class WebAppTemplate extends DartProjectTemplate {
                                "</html>\n").getBytes(StandardCharsets.UTF_8));
 
     final VirtualFile cssFile = webDir.createChildData(this, lowercaseName + ".css");
-    cssFile.setBinaryContent(("body {\n" +
-                              "  background-color: #F8F8F8;\n" +
-                              "  font-family: 'Open Sans', sans-serif;\n" +
-                              "  font-size: 14px;\n" +
-                              "  font-weight: normal;\n" +
-                              "  line-height: 1.2em;\n" +
-                              "  margin: 15px;\n" +
-                              "}\n\n" +
-                              "h1, p {\n" +
-                              "  color: #333;\n" +
-                              "}\n\n" +
-                              "#sample_container_id {\n" +
-                              "  width: 100%;\n" +
-                              "  height: 400px;\n" +
-                              "  position: relative;\n" +
-                              "  border: 1px solid #ccc;\n" +
-                              "  background-color: #fff;\n" +
-                              "}\n\n" +
-                              "#sample_text_id {\n" +
-                              "  font-size: 24pt;\n" +
-                              "  text-align: center;\n" +
-                              "  margin-top: 140px;\n" +
-                              "  -webkit-user-select: none;\n" +
-                              "  user-select: none;\n" +
-                              "}\n").getBytes(StandardCharsets.UTF_8));
+    cssFile.setBinaryContent(("""
+                                body {
+                                  background-color: #F8F8F8;
+                                  font-family: 'Open Sans', sans-serif;
+                                  font-size: 14px;
+                                  font-weight: normal;
+                                  line-height: 1.2em;
+                                  margin: 15px;
+                                }
+
+                                h1, p {
+                                  color: #333;
+                                }
+
+                                #sample_container_id {
+                                  width: 100%;
+                                  height: 400px;
+                                  position: relative;
+                                  border: 1px solid #ccc;
+                                  background-color: #fff;
+                                }
+
+                                #sample_text_id {
+                                  font-size: 24pt;
+                                  text-align: center;
+                                  margin-top: 140px;
+                                  -webkit-user-select: none;
+                                  user-select: none;
+                                }
+                                """).getBytes(StandardCharsets.UTF_8));
 
     createWebRunConfiguration(module, htmlFile);
 

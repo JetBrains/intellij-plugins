@@ -20,26 +20,27 @@ import java.util.Map;
 public class GherkinColorsPage implements ColorSettingsPage {
 
  private static final String DEMO_TEXT =
-    "# language: en\n" +
-    "Feature: Cucumber Colors Settings Page\n" +
-    "  In order to customize Gherkin language (*.feature files) highlighting\n" +
-    "  Our users can use this settings preview pane\n" +
-    "\n" +
-    "  @wip\n" +
-    "  Scenario Outline: Different Gherkin language structures\n" +
-    "    Given Some feature file with content\n" +
-    "    \"\"\"\n" +
-    "    Feature: Some feature\n" +
-    "      Scenario: Some scenario\n" +
-    "    \"\"\"\n" +
-    "    And I want to add new cucumber step\n" +
-    "    And Also a step with \"<regexp_param>regexp</regexp_param>\" parameter\n" +
-    "    When I open <<outline_param>ruby_ide</outline_param>>\n" +
-    "    Then Steps autocompletion feature will help me with all these tasks\n" +
-    "\n" +
-    "  Examples:\n" +
-    "    | <th>ruby_ide</th> |\n" +
-    "    | RubyMine |";
+   """
+     # language: en
+     Feature: Cucumber Colors Settings Page
+       In order to customize Gherkin language (*.feature files) highlighting
+       Our users can use this settings preview pane
+
+       @wip
+       Scenario Outline: Different Gherkin language structures
+         Given Some feature file with content
+         ""\"
+         Feature: Some feature
+           Scenario: Some scenario
+         ""\"
+         And I want to add new cucumber step
+         And Also a step with "<regexp_param>regexp</regexp_param>" parameter
+         When I open <<outline_param>ruby_ide</outline_param>>
+         Then Steps autocompletion feature will help me with all these tasks
+
+       Examples:
+         | <th>ruby_ide</th> |
+         | RubyMine |""";
 
   private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
     new AttributesDescriptor(CucumberBundle.message("color.settings.gherkin.text"), GherkinHighlighter.TEXT),

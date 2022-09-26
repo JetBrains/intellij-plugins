@@ -9,20 +9,23 @@ public final class SourceTemplate {
   public static final SourceTemplate NONE = new SourceTemplate("", "");
   public static final SourceTemplate GENERIC = new SourceTemplate(
     "main.c",
-    "int main() {\n" +
-    "// write your code here\n" +
-    "}\n");
+    """
+      int main() {
+      // write your code here
+      }
+      """);
 
   public static final SourceTemplate ARDUINO = new SourceTemplate(
     "main.cpp",
-    "#include <Arduino.h>\n" +
-    "void setup() {\n" +
-    "// write your initialization code here\n" +
-    "}\n" +
-    "\n" +
-    "void loop() {\n" +
-    "// write your code here\n" +
-    "}");
+    """
+      #include <Arduino.h>
+      void setup() {
+      // write your initialization code here
+      }
+
+      void loop() {
+      // write your code here
+      }""");
   private final String fileName;
   private final byte[] content;
 

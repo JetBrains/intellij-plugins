@@ -68,16 +68,18 @@ public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPri
 
   @Override
   public @NotNull String getDemoText() {
-    return "<li attr=\"value\"\n" +
-           "    *ngFor=\"let hero of heroes as test\"\n" +
-           "    [class.selected]=\"hero === selectedHero\"\n" +
-           "    (click)=\"onSelect(hero)\">\n" +
-           "  {{hero.name}}\n" +
-           "</li>\n" +
-           "\n" +
-           "{heroes.length, plural, =0 {no heroes} =1 {one hero} other {{{heroes.length}} heroes}} found\n" +
-           "\n" +
-           "<input [(ngModel)]=\"hero.name\" #model=\"ngModel\"/>\n";
+    return """
+      <li attr="value"
+          *ngFor="let hero of heroes as test"
+          [class.selected]="hero === selectedHero"
+          (click)="onSelect(hero)">
+        {{hero.name}}
+      </li>
+
+      {heroes.length, plural, =0 {no heroes} =1 {one hero} other {{{heroes.length}} heroes}} found
+
+      <input [(ngModel)]="hero.name" #model="ngModel"/>
+      """;
   }
 
   @Override

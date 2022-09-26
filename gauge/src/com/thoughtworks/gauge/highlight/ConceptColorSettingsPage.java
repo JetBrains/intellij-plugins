@@ -60,16 +60,18 @@ public final class ConceptColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDemoText() {
-    return "# Concept Heading\n" +
-           "This comment explains what the spec intends to test\n" +
-           "* Step 1 with \"arg\"\n" +
-           "* Step 2 with <dynamic arg>\n" +
-           "comments between steps\n" +
-           "* Step 2\n" +
-           "|id|filename|\n" +
-           "|1 |foo     |\n" +
-           "|2 |bar     |\n" +
-           "|3 |<name>  |\n";
+    return """
+      # Concept Heading
+      This comment explains what the spec intends to test
+      * Step 1 with "arg"
+      * Step 2 with <dynamic arg>
+      comments between steps
+      * Step 2
+      |id|filename|
+      |1 |foo     |
+      |2 |bar     |
+      |3 |<name>  |
+      """;
   }
 
   @Nullable
