@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
@@ -24,19 +23,22 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext;
+import com.intellij.webSymbols.framework.impl.WebSymbolsFrameworkExtensionPoint;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.lang.Angular2ContextProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -237,10 +239,17 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testCustomContextProvider() {
     Disposable disposable = Disposer.newDisposable();
-    Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP
+    WebSymbolsFrameworkContext.WEB_FRAMEWORK_CONTEXT_EP
       .getPoint()
-      .registerExtension(psiDir -> CachedValueProvider.Result.create(true, ModificationTracker.EVER_CHANGED),
-                         disposable);
+      .registerExtension(
+        new WebSymbolsFrameworkExtensionPoint<>("angular", new WebSymbolsFrameworkContext() {
+          @NotNull
+          @Override
+          public CachedValueProvider.Result<Integer> isEnabled(@NotNull PsiDirectory directory) {
+            return CachedValueProvider.Result.create(1, ModificationTracker.EVER_CHANGED);
+          }
+        }),
+        disposable);
     myFixture.configureByFiles("inner/event.html", "inner/package.json", "inner/event.ts");
     checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
     Disposer.dispose(disposable);

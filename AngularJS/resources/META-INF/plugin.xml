@@ -41,10 +41,6 @@
   <depends>intellij.webpack</depends>
 
   <extensionPoints>
-    <!--suppress DeprecatedClassUsageInspection -->
-    <extensionPoint qualifiedName="org.angular2.contextProvider"
-                    interface="org.angular2.lang.Angular2ContextProvider"
-                    dynamic="true"/>
     <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
                     interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"
                     dynamic="true"/>
@@ -128,8 +124,6 @@
 
     <!-- Angular 2 contributions -->
     <webSymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
-    <webSymbols.frameworkContext framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
-                                 id="angular.legacy" order="last"/>
 
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>

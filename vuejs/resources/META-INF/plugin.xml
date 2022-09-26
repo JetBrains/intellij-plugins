@@ -47,10 +47,6 @@
     <extensionPoint qualifiedName="com.intellij.vuejs.templateScopesProvider"
                     interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"
                     dynamic="true"/>
-    <!--suppress DeprecatedClassUsageInspection -->
-    <extensionPoint qualifiedName="com.intellij.vuejs.contextProvider"
-                    interface="org.jetbrains.vuejs.context.VueContextProvider"
-                    dynamic="true"/>
     <extensionPoint qualifiedName="com.intellij.vuejs.containerInfoProvider"
                     interface="org.jetbrains.vuejs.model.source.VueContainerInfoProvider"
                     dynamic="true"/>
@@ -244,8 +240,6 @@
     <webSymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
     <webSymbols.frameworkContext framework="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
                                  id="vue.file"/>
-    <webSymbols.frameworkContext framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
-                                 id="vue.legacy" order="last"/>
 
     <webSymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue@2.0.0.web-types.json"/>

@@ -5,20 +5,19 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
+import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext
+import com.intellij.webSymbols.framework.impl.WebSymbolsFrameworkExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
-import org.jetbrains.vuejs.context.VueContextProvider
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -288,17 +287,15 @@ Vue.options.delimiters = ['<%', '%>']
 
     val disposable = Disposer.newDisposable()
     var forbid = true
-    VueContextProvider.VUE_CONTEXT_PROVIDER_EP
+    WebSymbolsFrameworkContext.WEB_FRAMEWORK_CONTEXT_EP
       .point
-      .registerExtension(object : VueContextProvider {
-        override fun isVueContext(directory: PsiDirectory): CachedValueProvider.Result<Boolean> {
-          return CachedValueProvider.Result.create(false, ModificationTracker.NEVER_CHANGED)
-        }
-
-        override fun isVueContextForbidden(contextFile: VirtualFile, project: Project): Boolean {
-          return forbid
-        }
-      }, disposable)
+      ?.registerExtension(
+        WebSymbolsFrameworkExtensionPoint<WebSymbolsFrameworkContext>(
+          "vue",
+          object : WebSymbolsFrameworkContext {
+            override fun isForbidden(contextFile: VirtualFile,
+                                     project: Project): Boolean = forbid
+          }), disposable)
     try {
       // Force reload of roots
       isVueContext(myFixture.file)
