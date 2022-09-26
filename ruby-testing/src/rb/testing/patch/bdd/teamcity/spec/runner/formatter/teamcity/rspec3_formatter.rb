@@ -123,19 +123,16 @@ module Spec
           my_running_example_desc = example_description(example)
           debug_log("example started [#{my_running_example_desc}]  #{example}")
 
-          current_group_description = @groups_stack.last
-          my_running_example_full_name = "#{current_group_description} #{my_running_example_desc}"
-
           # Send open event
-          debug_log("Example starting.. - full name = [#{my_running_example_full_name}], desc = [#{my_running_example_desc}]")
-          log(@message_factory.create_test_started(my_running_example_full_name, location_from_link(*extract_source_location_from_example(example))))
+          debug_log("Example starting.. - full name = [#{my_running_example_desc}], desc = [#{my_running_example_desc}]")
+          log(@message_factory.create_test_started("#{my_running_example_desc}", location_from_link(*extract_source_location_from_example(example))))
 
           # Start capturing...
           std_files = capture_output_start_external
 
           debug_log('Output capturing started.')
 
-          put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, '', *std_files))
+          put_data_to_storage(example, RunningExampleData.new("#{my_running_example_desc}", '', *std_files))
         end
 
         def example_passed(example_notification)
