@@ -35,9 +35,9 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     return new JsonElementVisitor() {
       @Override
       public void visitFile(@NotNull PsiFile file) {
-        if (PackageJsonUtil.isPackageJsonFile(file)
-            && AngularCliUtil.findCliJson(file.getVirtualFile().getParent()) != null) {
-          annotate((JsonFile)file, holder);
+        JsonFile packageJson = PackageJsonUtil.asPackageJsonFile(file);
+        if (packageJson != null && AngularCliUtil.findCliJson(file.getVirtualFile().getParent()) != null) {
+          annotate(packageJson, holder);
         }
       }
     };
