@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
-import com.intellij.javascript.web.JSWebFramework
+import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
@@ -16,7 +16,7 @@ import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2AttributeNameCodeCompletionFilter
 import javax.swing.Icon
 
-class Angular2Framework : JSWebFramework() {
+class Angular2Framework : WebFramework() {
 
   override val icon: Icon
     get() = AngularJSIcons.Angular2
@@ -46,7 +46,7 @@ class Angular2Framework : JSWebFramework() {
     const val ID = "angular"
 
     @JvmStatic
-    val instance: JSWebFramework
+    val instance: WebFramework
       get() = get(ID)
   }
 }

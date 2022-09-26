@@ -122,7 +122,7 @@
     <!-- works in IDEA -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/>
     <!-- works in new IDEA wizard -->
-    <moduleBuilder builderClass="org.jetbrains.vuejs.cli.VueCLIProjectModuleBuilder" />
+    <moduleBuilder builderClass="org.jetbrains.vuejs.cli.VueCLIProjectModuleBuilder"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"
@@ -139,31 +139,31 @@
                      implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedSlotInspection"
                      key="vue.inspection.display.name.unrecognized.slot" bundle="messages.VueBundle"/>
     <webSymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
-                                          toolShortName="VueUnrecognizedSlot"/>
+                                      toolShortName="VueUnrecognizedSlot"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueUnrecognizedDirective"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueUnrecognizedDirectiveInspection"
                      key="vue.inspection.display.name.unrecognized.directive" bundle="messages.VueBundle"/>
     <webSymbols.inspectionToolMapping problemKind="UnknownSymbol" symbolNamespace="html" symbolKind="vue-directives"
-                                          toolShortName="VueUnrecognizedDirective"/>
+                                      toolShortName="VueUnrecognizedDirective"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDeprecatedSymbol"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.VueDeprecatedSymbolInspection"
                      key="vue.inspection.display.name.deprecated.symbol" bundle="messages.VueBundle"/>
     <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-available-slots"
-                                          toolShortName="VueDeprecatedSymbol"/>
+                                      toolShortName="VueDeprecatedSymbol"/>
     <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-components"
-                                          toolShortName="VueDeprecatedSymbol"/>
+                                      toolShortName="VueDeprecatedSymbol"/>
     <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-directives"
-                                          toolShortName="VueDeprecatedSymbol"/>
+                                      toolShortName="VueDeprecatedSymbol"/>
     <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-special-properties"
-                                          toolShortName="VueDeprecatedSymbol"/>
+                                      toolShortName="VueDeprecatedSymbol"/>
     <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-file-top-elements"
-                                          toolShortName="VueDeprecatedSymbol"/>
+                                      toolShortName="VueDeprecatedSymbol"/>
     <webSymbols.inspectionToolMapping problemKind="DeprecatedSymbol" symbolNamespace="html" symbolKind="vue-model-modifiers"
-                                          toolShortName="VueDeprecatedSymbol"/>
+                                      toolShortName="VueDeprecatedSymbol"/>
 
     <webSymbols.documentationCustomizer implementation="org.jetbrains.vuejs.web.VueDocumentationCustomizer"/>
 
@@ -192,11 +192,16 @@
     <spellchecker.support language="Vue" implementationClass="org.jetbrains.vuejs.spellchecker.VueSpellcheckingStrategy"/>
 
     <liveTemplateContext contextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType"/>
-    <liveTemplateContext contextId="VUE_SCRIPT" baseContextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueScriptLiveTemplateContextType"/>
-    <liveTemplateContext contextId="VUE_COMPONENT_DESCRIPTOR" baseContextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueComponentDescriptorLiveTemplateContextType"/>
-    <liveTemplateContext contextId="VUE_TEMPLATE" baseContextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueTemplateLiveTemplateContextType"/>
-    <liveTemplateContext contextId="VUE_INSIDE_TAG" baseContextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueInsideTagLiveTemplateContextType"/>
-    <liveTemplateContext contextId="VUE_TOP_LEVEL" baseContextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
+    <liveTemplateContext contextId="VUE_SCRIPT" baseContextId="Vue"
+                         implementation="org.jetbrains.vuejs.liveTemplate.VueScriptLiveTemplateContextType"/>
+    <liveTemplateContext contextId="VUE_COMPONENT_DESCRIPTOR" baseContextId="Vue"
+                         implementation="org.jetbrains.vuejs.liveTemplate.VueComponentDescriptorLiveTemplateContextType"/>
+    <liveTemplateContext contextId="VUE_TEMPLATE" baseContextId="Vue"
+                         implementation="org.jetbrains.vuejs.liveTemplate.VueTemplateLiveTemplateContextType"/>
+    <liveTemplateContext contextId="VUE_INSIDE_TAG" baseContextId="Vue"
+                         implementation="org.jetbrains.vuejs.liveTemplate.VueInsideTagLiveTemplateContextType"/>
+    <liveTemplateContext contextId="VUE_TOP_LEVEL" baseContextId="Vue"
+                         implementation="org.jetbrains.vuejs.liveTemplate.VueTopLevelLiveTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/Vue"/>
     <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
     <completion.contributor language="any"
@@ -237,11 +242,10 @@
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
     <webSymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
-    <webSymbols.context framework="vue"
-                            implementation="org.jetbrains.vuejs.context.VueFileContext"
-                            id="vue.file"/>
-    <webSymbols.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
-                            id="vue.legacy" order="last"/>
+    <webSymbols.frameworkContext framework="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
+                                 id="vue.file"/>
+    <webSymbols.frameworkContext framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
+                                 id="vue.legacy" order="last"/>
 
     <webSymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue@2.0.0.web-types.json"/>
@@ -259,7 +263,8 @@
     <webSymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
 
     <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
-    <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider" id="vue-i18n"/>
+    <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider"
+                                          id="vue-i18n"/>
 
     <webSymbols.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
     <webSymbols.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>

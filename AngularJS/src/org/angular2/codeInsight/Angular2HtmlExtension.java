@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.javascript.web.JSWebFramework;
+import com.intellij.javascript.web.WebFramework;
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider;
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsXmlExtension;
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor;
@@ -39,7 +39,7 @@ public final class Angular2HtmlExtension extends WebSymbolsXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
     return file != null
-           && JSWebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
+           && WebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
            && Angular2LangUtil.isAngular2Context(file);
   }
 

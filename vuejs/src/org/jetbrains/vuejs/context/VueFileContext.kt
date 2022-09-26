@@ -9,7 +9,7 @@ import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.framework.WebFrameworkContext
+import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext
 import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueFileContext : WebFrameworkContext {
+class VueFileContext : WebSymbolsFrameworkContext {
 
   override fun isEnabled(file: VirtualFile, project: Project): Boolean {
     return FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)

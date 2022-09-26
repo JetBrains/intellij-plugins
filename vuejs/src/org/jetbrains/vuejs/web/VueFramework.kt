@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.javascript.web.JSWebFramework
+import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.WebSymbolNamesProvider
@@ -16,7 +16,7 @@ import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.
 import java.util.function.Predicate
 import javax.swing.Icon
 
-class VueFramework : JSWebFramework() {
+class VueFramework : WebFramework() {
 
   override val displayName: String = "Vue"
   override val icon: Icon = VuejsIcons.Vue

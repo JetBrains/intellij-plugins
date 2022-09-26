@@ -4,7 +4,7 @@ package org.angular2.lang;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.webSymbols.framework.WebFrameworkContext;
+import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @SuppressWarnings("deprecation")
-public class Angular2LegacyContext implements WebFrameworkContext {
+public class Angular2LegacyContext implements WebSymbolsFrameworkContext {
 
   @NotNull
   @Override

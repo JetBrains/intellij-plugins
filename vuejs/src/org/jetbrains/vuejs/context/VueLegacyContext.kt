@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.context
 
-import com.intellij.webSymbols.framework.WebFrameworkContext
+import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 
 @Suppress("DEPRECATION")
-internal class VueLegacyContext : WebFrameworkContext {
+internal class VueLegacyContext : WebSymbolsFrameworkContext {
   override fun isEnabled(file: PsiFile): Boolean {
     return VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensionList.any {
       it.isVueContextEnabled(file)

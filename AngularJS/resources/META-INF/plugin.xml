@@ -65,7 +65,8 @@
                                       order="first"/>
     <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider"/>
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>
-    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="before react, before web-symbols-react" id="AngularJS"/>
+    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="before react, before web-symbols-react"
+                      id="AngularJS"/>
 
     <defaultLiveTemplates file="liveTemplates/AngularJS"/>
 
@@ -127,8 +128,8 @@
 
     <!-- Angular 2 contributions -->
     <webSymbols.framework id="angular" implementation="org.angular2.Angular2Framework"/>
-    <webSymbols.context framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
-                            id="angular.legacy" order="last"/>
+    <webSymbols.frameworkContext framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
+                                 id="angular.legacy" order="last"/>
 
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
@@ -173,7 +174,7 @@
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angular2.AngularProjectTemplatesFactory"/>
     <!-- works in new IDEA wizard -->
-    <moduleBuilder builderClass="org.angular2.AngularCLIModuleBuilder" />
+    <moduleBuilder builderClass="org.angular2.AngularCLIModuleBuilder"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
@@ -212,7 +213,8 @@
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Html"/>
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
                        id="angular2"/>
-    <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before web-symbols-react" id="angular2"/>
+    <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html, before web-symbols-react"
+                      id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
@@ -322,7 +324,7 @@
 
     <!-- Angular 2 Expression language contributions -->
     <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="14"/>
-    <frameworkSpecificHandler language="" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler" />
+    <frameworkSpecificHandler language="" implementationClass="org.angular2.lang.expr.Angular2JSFrameworkSpecificHandler"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
