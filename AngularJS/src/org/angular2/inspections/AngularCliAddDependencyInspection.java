@@ -7,7 +7,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
-import com.intellij.javascript.nodejs.packageJson.codeInsight.PackageJsonMismatchedDependencyInspection;
 import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
@@ -48,7 +47,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     Project project = file.getProject();
     if (packageJson == null || !JSLibraryUtil.isUnderContentRootsAndOutsideOfLibraryRoots(project, packageJson)) return;
 
-    List<JsonProperty> properties = PackageJsonMismatchedDependencyInspection.getDependencies(file);
+    List<JsonProperty> properties = PackageJsonUtil.getDependencies(file, PackageJsonUtil.PROD_DEV_DEPENDENCIES);
     if (properties.isEmpty()) return;
     NodeInstalledPackageFinder finder = new NodeInstalledPackageFinder(project, packageJson);
     for (JsonProperty property : properties) {
