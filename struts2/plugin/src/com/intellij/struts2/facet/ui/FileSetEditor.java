@@ -28,20 +28,19 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.xml.config.ConfigFilesTreeBuilder;
-import java.awt.Component;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.awt.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class FileSetEditor extends DialogWrapper {
 
@@ -139,7 +138,9 @@ public class FileSetEditor extends DialogWrapper {
     if (StringUtil.isEmptyOrSpaces(mySetName.getText())) {
       return false;
     }
-
+    if (!Objects.equals(myFileSet.getName(), myOriginalSet.getName())) {
+      return true;
+    }
     final int selectedFilesCount = myFileSet.getFiles().size();
     if (selectedFilesCount == 0) {
       return false;
@@ -156,7 +157,7 @@ public class FileSetEditor extends DialogWrapper {
       }
     }
 
-    return !Objects.equals(myFileSet.getName(), myOriginalSet.getName());
+    return false;
   }
 
   @Override
