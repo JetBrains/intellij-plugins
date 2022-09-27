@@ -350,11 +350,12 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   public void dispose() {
   }
 
-  private static class FileSetNode extends SimpleNode {
+  private class FileSetNode extends SimpleNode {
 
     protected final StrutsFileSet mySet;
 
     FileSetNode(final StrutsFileSet fileSet) {
+      super(myRootNode);
       mySet = fileSet;
 
       final PresentationData presentationData = getPresentation();
