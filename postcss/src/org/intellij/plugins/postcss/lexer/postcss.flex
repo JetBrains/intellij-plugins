@@ -132,6 +132,7 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> "=" { return CssElementTypes.CSS_EQ; }
 <YYINITIAL> "!"{CSS_W}{I}{M}{P}{O}{R}{T}{A}{N}{T} { return CssElementTypes.CSS_IMPORTANT; }
 <YYINITIAL> @{M}{E}{D}{I}{A} { return CssElementTypes.CSS_MEDIA_SYM; }
+<YYINITIAL> @{C}{O}{N}{T}{A}{I}{N}{E}{R} { return CssElementTypes.CSS_CONTAINER_SYM; }
 <YYINITIAL> @{P}{A}{G}{E} { return CssElementTypes.CSS_PAGE_SYM; }
 <YYINITIAL> {WSP} { return CssElementTypes.CSS_WHITE_SPACE; }
 <YYINITIAL> "<!--" { return CssElementTypes.CSS_CDO; }
