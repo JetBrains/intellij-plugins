@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
+import com.intellij.webSymbols.WebSymbolHtmlAttributeValue
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -25,8 +25,8 @@ class VueInputPropSymbol(property: VueInputProperty,
   override val required: Boolean
     get() = item.required
 
-  override val attributeValue: WebSymbol.AttributeValue =
-    object : WebSymbol.AttributeValue {
+  override val attributeValue: WebSymbolHtmlAttributeValue =
+    object : WebSymbolHtmlAttributeValue {
       override val default: String?
         get() = item.defaultValue
     }

@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.javascript.web.lang.js.jsType
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
+import com.intellij.javascript.web.lang.js.jsType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
@@ -110,20 +110,20 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
               ?: super<WebSymbolDelegate>.properties
 
 
-    override val attributeValue: WebSymbol.AttributeValue?
+    override val attributeValue: WebSymbolHtmlAttributeValue?
       get() = if (WebSymbolHtmlAttributeInfo.isBooleanType(jsType)) {
-        WebSymbolHtmlAttributeValueData(WebSymbol.AttributeValueKind.PLAIN,
-                                        WebSymbol.AttributeValueType.COMPLEX, false,
-                                        null,
-                                        JSCompositeTypeFactory.createUnionType(
-                                          JSTypeSource.EXPLICITLY_DECLARED,
-                                          JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
-                                          JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
-                                          JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
-                                        ))
+        WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.PLAIN,
+                                           WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
+                                           null,
+                                           JSCompositeTypeFactory.createUnionType(
+                                             JSTypeSource.EXPLICITLY_DECLARED,
+                                             JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
+                                             JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
+                                             JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
+                                           ))
       }
       else if (!requiresValue)
-        WebSymbolHtmlAttributeValueData(required = false)
+        WebSymbolHtmlAttributeValue.create(required = false)
       else null
 
     override fun createPointer(): Pointer<out WebSymbol> {

@@ -73,7 +73,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
           ?: if (!name.isNullOrEmpty()
                  && ((item is VueContainer && item.template == null)
                      || item is VueUnresolvedComponent)) {
-            listOf(WebSymbolMatch.create(name, listOf(WebSymbol.NameSegment(0, name.length)), WebSymbolsContainer.NAMESPACE_HTML,
+            listOf(WebSymbolMatch.create(name, listOf(WebSymbolNameSegment(0, name.length)), WebSymbolsContainer.NAMESPACE_HTML,
                                          WebSymbol.KIND_HTML_SLOTS, this.origin))
           }
           else emptyList()

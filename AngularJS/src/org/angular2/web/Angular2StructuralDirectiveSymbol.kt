@@ -41,9 +41,9 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
       }
   }
 
-  override val attributeValue: WebSymbol.AttributeValue?
+  override val attributeValue: WebSymbolHtmlAttributeValue?
     get() = if (!hasInputsToBind)
-      WebSymbolHtmlAttributeValueData(required = false)
+      WebSymbolHtmlAttributeValue.create(required = false)
     else super.attributeValue
 
   override val priority: WebSymbol.Priority?

@@ -58,9 +58,9 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
   }
 
   private object PropertiesProvider : WebSymbolsPatternItemsProvider {
-    override fun getSymbolTypes(context: WebSymbol?): Set<WebSymbol.SymbolType> = setOf(
-      WebSymbol.SymbolType(WebSymbolsContainer.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
-      WebSymbol.SymbolType(WebSymbolsContainer.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
+    override fun getSymbolKinds(context: WebSymbol?): Set<WebSymbolQualifiedKind> = setOf(
+      WebSymbolQualifiedKind(WebSymbolsContainer.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
+      WebSymbolQualifiedKind(WebSymbolsContainer.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
     )
 
     override val delegate: WebSymbol? get() = null

@@ -52,9 +52,9 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
   override val priority: WebSymbol.Priority?
     get() = forcedPriority ?: super.priority
 
-  override val attributeValue: WebSymbol.AttributeValue?
+  override val attributeValue: WebSymbolHtmlAttributeValue?
     get() = if (delegate is Angular2DirectiveSelectorSymbol) {
-      WebSymbolHtmlAttributeValueData(required = false)
+      WebSymbolHtmlAttributeValue.create(required = false)
     }
     else super.attributeValue
 

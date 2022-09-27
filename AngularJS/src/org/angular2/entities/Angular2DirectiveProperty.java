@@ -2,7 +2,7 @@
 package org.angular2.entities;
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo;
-import com.intellij.webSymbols.WebSymbolHtmlAttributeValueData;
+import com.intellij.webSymbols.WebSymbolHtmlAttributeValue;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.psi.JSType;
@@ -86,9 +86,9 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
 
   @Nullable
   @Override
-  default AttributeValue getAttributeValue() {
+  default WebSymbolHtmlAttributeValue getAttributeValue() {
     if (WebSymbolHtmlAttributeInfo.isBooleanType(getType())) {
-      return new WebSymbolHtmlAttributeValueData(
+      return WebSymbolHtmlAttributeValue.create(
         null, null, false, null, null
       );
     }

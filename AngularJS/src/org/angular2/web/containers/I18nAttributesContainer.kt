@@ -70,7 +70,7 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
     override val name: String
       get() = attribute.name
 
-    override val nameSegments: List<WebSymbol.NameSegment> by lazy(LazyThreadSafetyMode.NONE) {
+    override val nameSegments: List<WebSymbolNameSegment> by lazy(LazyThreadSafetyMode.NONE) {
       (attribute.descriptor as? WebSymbolAttributeDescriptor)?.symbol?.nameSegments
       ?: super.nameSegments
     }

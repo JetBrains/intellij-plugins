@@ -32,8 +32,8 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
   override fun getModificationCount(): Long =
     symbols.sumOf { it.modificationCount }
 
-  override val nameSegments: List<WebSymbol.NameSegment>
-    get() = listOf(WebSymbol.NameSegment(
+  override val nameSegments: List<WebSymbolNameSegment>
+    get() = listOf(WebSymbolNameSegment(
       0, matchedName.length, symbols
     ))
 
@@ -73,7 +73,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
   override val type: JSType?
     get() = symbols.firstNotNullOfOrNull { it.jsType }
 
-  override val attributeValue: WebSymbol.AttributeValue?
+  override val attributeValue: WebSymbolHtmlAttributeValue?
     get() = symbols.asSequence().map { it.attributeValue }.merge()
 
   override val properties: Map<String, Any>
