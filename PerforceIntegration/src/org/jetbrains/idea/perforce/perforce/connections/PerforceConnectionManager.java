@@ -138,7 +138,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
 
   public void startListening(@NotNull Disposable parentDisposable) {
     MessageBusConnection busConnection = getProject().getMessageBus().connect(parentDisposable);
-    WorkspaceModelTopics.getInstance(getProject()).subscribeAfterModuleLoading(busConnection, new MyContentRootChangeListener());
+    busConnection.subscribe(WorkspaceModelTopics.CHANGED, new MyContentRootChangeListener());
     busConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this::updateConnections);
 
     VirtualFileManager.getInstance().addVirtualFileListener(new PerforceP4ConfigVirtualFileListener(this, myProject), parentDisposable);

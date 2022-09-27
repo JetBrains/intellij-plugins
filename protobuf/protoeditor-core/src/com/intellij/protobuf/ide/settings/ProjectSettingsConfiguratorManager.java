@@ -50,8 +50,7 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
 
   public ProjectSettingsConfiguratorManager(@NotNull Project project) {
     this.project = project;
-    MessageBusConnection connection = project.getMessageBus().connect(this);
-    WorkspaceModelTopics.getInstance(project).subscribeAfterModuleLoading(connection, new ProjectRootsListener(project));
+    project.getMessageBus().connect(this).subscribe(WorkspaceModelTopics.CHANGED, new ProjectRootsListener(project));
   }
 
   public static ProjectSettingsConfiguratorManager getInstance(Project project) {
