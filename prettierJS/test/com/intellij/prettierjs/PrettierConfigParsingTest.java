@@ -8,12 +8,13 @@ import com.intellij.util.LineSeparator;
 public class PrettierConfigParsingTest extends BasePlatformTestCase {
 
   public void testDefaultConfigs() {
-    doTest(PrettierConfig.DEFAULT, "package.json", "{\n" +
-                                                   "  \"devDependencies\":{\n" +
-                                                   "    \"prettier\":\"latest\"\n" +
-                                                   "  },\n" +
-                                                   "  \"prettier\": {}\n" +
-                                                   "}");
+    doTest(PrettierConfig.DEFAULT, "package.json", """
+      {
+        "devDependencies":{
+          "prettier":"latest"
+        },
+        "prettier": {}
+      }""");
     doTest(PrettierConfig.DEFAULT, ".prettierrc.json", "{}");
     doTest(PrettierConfig.DEFAULT, ".prettierrc.yml", "#comment");
   }
@@ -27,27 +28,29 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
                               3, PrettierConfig.TrailingCommaOption.all, true,
                               LineSeparator.CRLF.getSeparatorString(), true),
            ".prettierrc.json",
-           "{\n" +
-           "  \"semi\": false,\n" +
-           "  \"bracketSpacing\": false,\n" +
-           "  \"jsxBracketSameLine\": true,\n" +
-           "  \"printWidth\": 120,\n" +
-           "  \"singleQuote\": true,\n" +
-           "  \"tabWidth\": 3,\n" +
-           "  \"useTabs\": true,\n" +
-           "  \"trailingComma\": \"all\",\n" +
-           "  \"parser\": \"babylon\",\n" +
-           "  \"endOfLine\": \"crlf\",\n" +
-           "  \"vueIndentScriptAndStyle\": true\n" +
-           "}");
+           """
+             {
+               "semi": false,
+               "bracketSpacing": false,
+               "jsxBracketSameLine": true,
+               "printWidth": 120,
+               "singleQuote": true,
+               "tabWidth": 3,
+               "useTabs": true,
+               "trailingComma": "all",
+               "parser": "babylon",
+               "endOfLine": "crlf",
+               "vueIndentScriptAndStyle": true
+             }""");
   }
 
   public void testJsonWithAutoLineSeparator() {
     PrettierConfig parsed = doParse(".prettierrc.json",
-                                    "{\n" +
-                                    "  \"printWidth\": 113,\n" +
-                                    "  \"endOfLine\": \"auto\"\n" +
-                                    "}");
+                                    """
+                                      {
+                                        "printWidth": 113,
+                                        "endOfLine": "auto"
+                                      }""");
     assertEquals(113, parsed.printWidth);
     assertNull(parsed.lineSeparator);
   }
@@ -56,39 +59,41 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
     doTest(new PrettierConfig(true, false, 120, false, true,
                               3, PrettierConfig.TrailingCommaOption.all, true, null, false),
            "package.json",
-           "{\n" +
-           "  \"devDependencies\": {\n" +
-           "    \"prettier\": \"latest\"\n" +
-           "  },\n" +
-           "  \"prettier\": {\n" +
-           "    \"semi\": false,\n" +
-           "    \"bracketSpacing\": false,\n" +
-           "    \"jsxBracketSameLine\": true,\n" +
-           "    \"printWidth\": 120,\n" +
-           "    \"singleQuote\": true,\n" +
-           "    \"tabWidth\": 3,\n" +
-           "    \"useTabs\": true,\n" +
-           "    \"trailingComma\": \"all\",\n" +
-           "    \"parser\": \"babylon\"\n" +
-           "  }\n" +
-           "}");
+           """
+             {
+               "devDependencies": {
+                 "prettier": "latest"
+               },
+               "prettier": {
+                 "semi": false,
+                 "bracketSpacing": false,
+                 "jsxBracketSameLine": true,
+                 "printWidth": 120,
+                 "singleQuote": true,
+                 "tabWidth": 3,
+                 "useTabs": true,
+                 "trailingComma": "all",
+                 "parser": "babylon"
+               }
+             }""");
   }
 
   public void testYamlConfig() {
     doTest(new PrettierConfig(true, false, 120, false, true, 3, PrettierConfig.TrailingCommaOption.es5, true,
                               LineSeparator.CRLF.getSeparatorString(), true),
            ".prettierrc.yml",
-           "semi: false\n" +
-           "bracketSpacing: false\n" +
-           "jsxBracketSameLine: true\n" +
-           "printWidth: 120\n" +
-           "singleQuote: true\n" +
-           "tabWidth: 3\n" +
-           "useTabs: true\n" +
-           "trailingComma: es5\n" +
-           "parser: babylon\n" +
-           "endOfLine: crlf\n" +
-           "vueIndentScriptAndStyle: true"
+           """
+             semi: false
+             bracketSpacing: false
+             jsxBracketSameLine: true
+             printWidth: 120
+             singleQuote: true
+             tabWidth: 3
+             useTabs: true
+             trailingComma: es5
+             parser: babylon
+             endOfLine: crlf
+             vueIndentScriptAndStyle: true"""
     );
   }
 

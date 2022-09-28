@@ -1164,11 +1164,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCreateClassOrInterfaceAction7() throws Exception {
-    String newText = "package ${PACKAGE_NAME}#if (${PACKAGE_NAME} != \"\") #end{\n" +
-                     "${Access_modifier} class ${NAME} #if (${Super_class_name} != \"\")extends ${Super_class_name}#end #if (${Implemented_interface_name} != \"\")implements ${Implemented_interface_name}#end{\n" +
-                     " \n" +
-                     "}\n" +
-                     "}";
+    String newText = """
+      package ${PACKAGE_NAME}#if (${PACKAGE_NAME} != "") #end{
+      ${Access_modifier} class ${NAME} #if (${Super_class_name} != "")extends ${Super_class_name}#end #if (${Implemented_interface_name} != "")implements ${Implemented_interface_name}#end{
+      \s
+      }
+      }""";
     String prevText =
       JSTestUtils
         .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
@@ -1182,18 +1183,18 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCreateClassOrInterfaceAction8() throws Exception {
-    String newText = "package ${PACKAGE_NAME}#if (${PACKAGE_NAME} != \"\") #end{\n" +
-                     "${Access_modifier} class ${NAME} #if (${Super_class_name} != \"\")extends ${Super_class_name}#end #if (${Implemented_interface_name} != \"\")implements ${Implemented_interface_name}#end{\n" +
-                     " \n" +
-                     "/**\n" +
-                     "* constr\n" +
-                     "*/\n" +
-                     "    public function ${NAME}() {\n" +
-                     "        #if (${Super_class_name} != \"\")super();#end\n" +
-                     "        // body\n" +
-                     "    }" +
-                     "}\n" +
-                     "}";
+    String newText = """
+      package ${PACKAGE_NAME}#if (${PACKAGE_NAME} != "") #end{
+      ${Access_modifier} class ${NAME} #if (${Super_class_name} != "")extends ${Super_class_name}#end #if (${Implemented_interface_name} != "")implements ${Implemented_interface_name}#end{
+      \s
+      /**
+      * constr
+      */
+          public function ${NAME}() {
+              #if (${Super_class_name} != "")super();#end
+              // body
+          }}
+      }""";
     String prevText =
       JSTestUtils
         .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());

@@ -17,17 +17,20 @@ public class DartServerEditingTest extends CodeInsightFixtureTestCase {
 
   // fails because of https://github.com/dart-lang/sdk/issues/31456
   public void testInsertImportsOnPaste() {
-    myFixture.configureByText("foo.dart", "import 'dart:math';\n" +
-                                          "main() {\n" +
-                                          "  new Random();<caret>\n" +
-                                          "}");
+    myFixture.configureByText("foo.dart", """
+      import 'dart:math';
+      main() {
+        new Random();<caret>
+      }""");
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY);
     myFixture.configureByText("bar.dart", "main() {\n" +
                                           "<caret>}");
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE);
-    myFixture.checkResult("import 'dart:math';\n\n" +
-                          "main() {\n" +
-                          "  new Random();\n" +
-                          "<caret>}");
+    myFixture.checkResult("""
+                            import 'dart:math';
+
+                            main() {
+                              new Random();
+                            <caret>}""");
   }
 }

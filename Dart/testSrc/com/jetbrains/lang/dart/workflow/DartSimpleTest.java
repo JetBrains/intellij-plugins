@@ -72,11 +72,19 @@ public class DartSimpleTest extends TestCase {
     doTestDebuggerErrorText("a\nb\nc", "Cannot evaluate");
     doTestDebuggerErrorText("Error: '': error: line 1 pos 9: receiver 'this' is not in scope\n() => 1+this.foo();",
                             "receiver 'this' is not in scope");
-    doTestDebuggerErrorText("Error: Unhandled exception:\n\nNo top-level getter 'foo' declared.\n\n" +
-                            "NoSuchMethodError: method not found: 'foo'",
+    doTestDebuggerErrorText("""
+                              Error: Unhandled exception:
+
+                              No top-level getter 'foo' declared.
+
+                              NoSuchMethodError: method not found: 'foo'""",
                             "No top-level getter 'foo' declared.");
-    doTestDebuggerErrorText("Unhandled exception:\n\nNo top-level getter 'foo' declared.\n\n" +
-                            "NoSuchMethodError: method not found: 'foo'",
+    doTestDebuggerErrorText("""
+                              Unhandled exception:
+
+                              No top-level getter 'foo' declared.
+
+                              NoSuchMethodError: method not found: 'foo'""",
                             "No top-level getter 'foo' declared.");
   }
 

@@ -47,19 +47,20 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
   }
 
   public void testResolveInClassDynamic() {
-    String fileText = "public class T {\n" +
-                      "  public function m() : String {\n" +
-                      "    return \"m\";\n" +
-                      "  }\n" +
-                      "\n" +
-                      "  public function test() : String {\n" +
-                      "    function foo():String {\n" +
-                      "      return this.<caret>m();\n" +
-                      "    }\n" +
-                      "    return foo();\n" +
-                      "  }\n" +
-                      "}\n" +
-                      "function m() {}";
+    String fileText = """
+      public class T {
+        public function m() : String {
+          return "m";
+        }
+
+        public function test() : String {
+          function foo():String {
+            return this.<caret>m();
+          }
+          return foo();
+        }
+      }
+      function m() {}""";
 
     PsiPolyVariantReference ref = configureByFileText(fileText);
     ResolveResult[] results = ref.multiResolve(false);
@@ -67,48 +68,50 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
   }
 
   public void testResolveIt() {
-    String fileText = "package {\n" +
-                      "\n" +
-                      "public class Test {\n" +
-                      "  public function Test() {\n" +
-                      "    var describeType:XML = describe<caret>Type(Test);\n" +
-                      "  }\n" +
-                      "}\n" +
-                      "function describeType(x) {}";
+    String fileText = """
+      package {
+
+      public class Test {
+        public function Test() {
+          var describeType:XML = describe<caret>Type(Test);
+        }
+      }
+      function describeType(x) {}""";
 
     PsiPolyVariantReference ref = configureByFileText(fileText);
     assertTrue(ref.resolve() instanceof JSLocalVariable);
   }
 
   public void testResolveInClass() {
-    String fileText = "class A { function get aaa() {} function foo() {\n" +
-                      "  var bbb = a<caret>aa;\n}" +
-                      "}";
+    String fileText = """
+      class A { function get aaa() {} function foo() {
+        var bbb = a<caret>aa;
+      }}""";
 
     PsiPolyVariantReference ref = configureByFileText(fileText);
     assertTrue(ref.resolve() instanceof JSFunction);
   }
 
   public void testObjectProperties() {
-    String fileText = "package {\n" +
-                      "public class Foo {\n" +
-                      "    function bar() {" +
-                      "        var x:Object = {};\n" +
-                      "        x.toStri<caret>ng();\n" +
-                      "    }\n" +
-                      "}\n" +
-                      "}";
+    String fileText = """
+      package {
+      public class Foo {
+          function bar() {        var x:Object = {};
+              x.toStri<caret>ng();
+          }
+      }
+      }""";
     PsiPolyVariantReference ref = configureByFileText(fileText);
     final PsiElement resolved = ref.resolve();
     assertNotNull(resolved);
   }
 
   public void testResolveOfGetProperty() {
-    String fileText = "class A { public function get foo() : String { return \"foo\"; } }\n" +
-                      "function zzz() {\n" +
-                      "var a : A;\n" +
-                      "a.f<caret>oo" +
-                      "}";
+    String fileText = """
+      class A { public function get foo() : String { return "foo"; } }
+      function zzz() {
+      var a : A;
+      a.f<caret>oo}""";
 
     PsiReference ref = configureByFileText(fileText);
     PsiElement resolved = ref.resolve();
@@ -205,20 +208,21 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
   }
 
   public void testResolve26() {
-    String fileText = "dynamic class Object {}\n" +
-                      "package {\n" +
-                      "\timport flash.display.Sprite;\n" +
-                      "\tpublic class DoubleInterfaceResolve extends Sprite {\n" +
-                      "\t}\n" +
-                      "}\n" +
-                      "import flash.display.Sprite;\n" +
-                      "class FooView extends Sprite {\n" +
-                      "}\n" +
-                      "\n" +
-                      "interface ItfA {\n" +
-                      "    function f():It<caret>fB;\n" +
-                      "}\n" +
-                      "interface ItfB {}";
+    String fileText = """
+      dynamic class Object {}
+      package {
+      \timport flash.display.Sprite;
+      \tpublic class DoubleInterfaceResolve extends Sprite {
+      \t}
+      }
+      import flash.display.Sprite;
+      class FooView extends Sprite {
+      }
+
+      interface ItfA {
+          function f():It<caret>fB;
+      }
+      interface ItfB {}""";
     PsiReference ref = configureByFileText(fileText);
 
     PsiElement resolved = ref.resolve();
@@ -226,13 +230,14 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
   }
 
   public void testResolveVectorMember() {
-    String fileText = "package {\n" +
-                      "public class Vector$object {\n" +
-                      "    function reverse():Vector$object {}\n" +
-                      "}\n" +
-                      "}\n" +
-                      "var x:Vector.<int>\n" +
-                      "x.rev<caret>erse()";
+    String fileText = """
+      package {
+      public class Vector$object {
+          function reverse():Vector$object {}
+      }
+      }
+      var x:Vector.<int>
+      x.rev<caret>erse()""";
     PsiPolyVariantReference ref = configureByFileText(fileText);
     final PsiElement resolved = ref.resolve();
     assertNotNull(resolved);

@@ -138,155 +138,173 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testWEB_8315() {
     doTypingTest('\n',
-                 "class X {\n" +
-                 "  num x;<caret>\n" +
-                 "}",
-                 "class X {\n" +
-                 "  num x;\n" +
-                 "  <caret>\n" +
-                 "}");
+                 """
+                   class X {
+                     num x;<caret>
+                   }""",
+                 """
+                   class X {
+                     num x;
+                     <caret>
+                   }""");
   }
 
   public void testCaseAlignAfterColon1() {
     doTypingTest(':',
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1<caret>\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}",
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:<caret>\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1<caret>
+                       }
+                     }
+                   }""",
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:<caret>
+                       }
+                     }
+                   }""");
   }
 
   public void testCaseAlignAfterColon2() {
     doTypingTest(':',
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:\n" +
-                 "    case 2<caret>\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}",
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:\n" +
-                 "      case 2:<caret>\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:
+                       case 2<caret>
+                       }
+                     }
+                   }""",
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:
+                         case 2:<caret>
+                       }
+                     }
+                   }""");
   }
 
   public void testDefaultAlignAfterColon() {
     doTypingTest(':',
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:\n" +
-                 "    default<caret>\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}",
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:\n" +
-                 "      default:<caret>\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:
+                       default<caret>
+                       }
+                     }
+                   }""",
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:
+                         default:<caret>
+                       }
+                     }
+                   }""");
   }
 
   public void testCaseStringAlignAfterColon() {
     doTypingTest(':',
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:\n" +
-                 "    case '<caret>'\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}",
-                 "class X {\n" +
-                 "  void doit(x) {\n" +
-                 "    switch (x) {\n" +
-                 "      case 1:\n" +
-                 "    case ':<caret>'\n" +
-                 "    }\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:
+                       case '<caret>'
+                       }
+                     }
+                   }""",
+                 """
+                   class X {
+                     void doit(x) {
+                       switch (x) {
+                         case 1:
+                       case ':<caret>'
+                       }
+                     }
+                   }""");
   }
 
   public void testEnterInSwitch() {
     doTypingTest('\n',
-                 "void bar() {\n" +
-                 "  switch (1) {<caret>\n" +
-                 "}",
-                 "void bar() {\n" +
-                 "  switch (1) {\n" +
-                 "    <caret>\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   void bar() {
+                     switch (1) {<caret>
+                   }""",
+                 """
+                   void bar() {
+                     switch (1) {
+                       <caret>
+                     }
+                   }""");
   }
 
   public void testEnterAfterCase() {
     doTypingTest('\n',
-                 "void bar() {\n" +
-                 "  switch (1) {\n" +
-                 "    case 1+1: <caret>\n" +
-                 "      a;\n" +
-                 "    case 2:\n" +
-                 "  }\n" +
-                 "}",
-                 "void bar() {\n" +
-                 "  switch (1) {\n" +
-                 "    case 1+1: \n" +
-                 "      <caret>\n" +
-                 "      a;\n" +
-                 "    case 2:\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   void bar() {
+                     switch (1) {
+                       case 1+1: <caret>
+                         a;
+                       case 2:
+                     }
+                   }""",
+                 """
+                   void bar() {
+                     switch (1) {
+                       case 1+1:\s
+                         <caret>
+                         a;
+                       case 2:
+                     }
+                   }""");
   }
 
   public void testEnterAfterDefault() {
     doTypingTest('\n',
-                 "void bar() {\n" +
-                 "  switch (1) {\n" +
-                 "    case 1:\n" +
-                 "    default:<caret>\n" +
-                 "  }\n" +
-                 "}",
-                 "void bar() {\n" +
-                 "  switch (1) {\n" +
-                 "    case 1:\n" +
-                 "    default:\n" +
-                 "      <caret>\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   void bar() {
+                     switch (1) {
+                       case 1:
+                       default:<caret>
+                     }
+                   }""",
+                 """
+                   void bar() {
+                     switch (1) {
+                       case 1:
+                       default:
+                         <caret>
+                     }
+                   }""");
   }
 
   public void testEnterAfterBreakInCase() {
-    final String textBefore = "void bar() {\n" +
-                              "  switch (1) {\n" +
-                              "    case 1:\n" +
-                              "      break;<caret>\n" +
-                              "  }\n" +
-                              "}";
-    final String textAfter = "void bar() {\n" +
-                             "  switch (1) {\n" +
-                             "    case 1:\n" +
-                             "      break;\n" +
-                             "      <caret>\n" +
-                             "  }\n" +
-                             "}";
+    final String textBefore = """
+      void bar() {
+        switch (1) {
+          case 1:
+            break;<caret>
+        }
+      }""";
+    final String textAfter = """
+      void bar() {
+        switch (1) {
+          case 1:
+            break;
+            <caret>
+        }
+      }""";
 
     doTypingTest('\n', textBefore, textAfter);
     doTypingTest('\n', StringUtil.replace(textBefore, "break;", "continue;"), StringUtil.replace(textAfter, "break;", "continue;"));
@@ -297,34 +315,40 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testEnterInMapLiteral() {
-    doTypingTest('\n', "var data = {<caret>};", "var data = {\n" +
-                                                "  <caret>\n" +
-                                                "};");
+    doTypingTest('\n', "var data = {<caret>};", """
+      var data = {
+        <caret>
+      };""");
     doTypingTest('\n',
-                 "var data = {\n" +
-                 "  1:1,<caret>\n" +
-                 "};",
-                 "var data = {\n" +
-                 "  1:1,\n" +
-                 "  <caret>\n" +
-                 "};");
+                 """
+                   var data = {
+                     1:1,<caret>
+                   };""",
+                 """
+                   var data = {
+                     1:1,
+                     <caret>
+                   };""");
   }
 
   public void testEnterInListLiteral() {
     doTypingTest('\n',
                  "var data = [<caret>\n" +
                  "];",
-                 "var data = [\n" +
-                 "  <caret>\n" +
-                 "];");
+                 """
+                   var data = [
+                     <caret>
+                   ];""");
     doTypingTest('\n',
-                 "var data = [\n" +
-                 "  1,<caret>\n" +
-                 "];",
-                 "var data = [\n" +
-                 "  1,\n" +
-                 "  <caret>\n" +
-                 "];");
+                 """
+                   var data = [
+                     1,<caret>
+                   ];""",
+                 """
+                   var data = [
+                     1,
+                     <caret>
+                   ];""");
   }
 
   public void testLt() {
@@ -385,106 +409,123 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n', " ///q<caret> \t ///z", " ///q \t \n ///<caret>z");
 
     doTypingTest(HtmlFileType.INSTANCE, '\n',
-                 "<script type=\"application/dart\">\n" +
-                 "///   q<caret>   z\n" +
-                 "</script>",
-                 "<script type=\"application/dart\">\n" +
-                 "///   q\n///   <caret>z\n" +
-                 "</script>");
+                 """
+                   <script type="application/dart">
+                   ///   q<caret>   z
+                   </script>""",
+                 """
+                   <script type="application/dart">
+                   ///   q
+                   ///   <caret>z
+                   </script>""");
   }
 
   public void testEnterAfterSingleLineComment() {
     doTypingTest('\n',
-                 "Future main() async {\n" +
-                 "  Directory systemTempDir = Directory.systemTemp;\n" +
-                 "  // comment\n" +
-                 "  File file = await new File('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')\n" +
-                 "      .create(recursive: true);<caret>\n" +
-                 "  print(file.path);\n" +
-                 "}\n",
-                 "Future main() async {\n" +
-                 "  Directory systemTempDir = Directory.systemTemp;\n" +
-                 "  // comment\n" +
-                 "  File file = await new File('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')\n" +
-                 "      .create(recursive: true);\n" +
-                 "  <caret>\n" +
-                 "  print(file.path);\n" +
-                 "}\n");
+                 """
+                   Future main() async {
+                     Directory systemTempDir = Directory.systemTemp;
+                     // comment
+                     File file = await new File('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                         .create(recursive: true);<caret>
+                     print(file.path);
+                   }
+                   """,
+                 """
+                   Future main() async {
+                     Directory systemTempDir = Directory.systemTemp;
+                     // comment
+                     File file = await new File('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                         .create(recursive: true);
+                     <caret>
+                     print(file.path);
+                   }
+                   """);
   }
 
   public void testEnterAfterIncompleteStatement() {
     doTypingTest('\n',
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds<caret>\n" +
-                 "  }\n" +
-                 "}",
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds\n" +
-                 "        <caret>\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds<caret>
+                     }
+                   }""",
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds
+                           <caret>
+                     }
+                   }""");
   }
 
   public void testEnterBeforeIncompleteStatement() {
     doTypingTest('\n',
-                 "void _advanceParagraph(_currentParagraph, _currentIndentation, _currentListId) {\n" +
-                 "  _currentIndentation = null;<caret>\n" +
-                 "  _currentListId = _currentParagraph is bool ?\n" +
-                 "}",
-                 "void _advanceParagraph(_currentParagraph, _currentIndentation, _currentListId) {\n" +
-                 "  _currentIndentation = null;\n" +
-                 "  <caret>\n" +
-                 "  _currentListId = _currentParagraph is bool ?\n" +
-                 "}");
+                 """
+                   void _advanceParagraph(_currentParagraph, _currentIndentation, _currentListId) {
+                     _currentIndentation = null;<caret>
+                     _currentListId = _currentParagraph is bool ?
+                   }""",
+                 """
+                   void _advanceParagraph(_currentParagraph, _currentIndentation, _currentListId) {
+                     _currentIndentation = null;
+                     <caret>
+                     _currentListId = _currentParagraph is bool ?
+                   }""");
   }
 
   public void testEnterAfterCompleteStatement() {
     doTypingTest('\n',
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>\n" +
-                 "  }\n" +
-                 "}",
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
-                 "    <caret>\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>
+                     }
+                   }""",
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;
+                       <caret>
+                     }
+                   }""");
   }
 
   public void testEnterAfterBlankLine() {
     doTypingTest('\n',
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
-                 "    <caret>\n" +
-                 "  }\n" +
-                 "}",
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
-                 "    \n" +
-                 "    <caret>\n" +
-                 "  }\n" +
-                 "}");
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;
+                       <caret>
+                     }
+                   }""",
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;
+                      \s
+                       <caret>
+                     }
+                   }""");
   }
 
   public void testEnterAfterCompleteStatementInIncompleteBlock() {
     doTypingTest('\n',
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>\n" +
-                 "  }\n" +
-                 "",
-                 "class T {\n" +
-                 "  void r() {\n" +
-                 "    int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;\n" +
-                 "    <caret>\n" +
-                 "  }\n" +
-                 "");
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;<caret>
+                     }
+                   """,
+                 """
+                   class T {
+                     void r() {
+                       int criticalPathAB = overall.inMilliseconds - slowestRequest.inMilliseconds;
+                       <caret>
+                     }
+                   """);
   }
 
   public void testAutoWrapString() {
@@ -519,9 +560,10 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testEnterBetweenInterpolationsHtml() {
     doTypingTest(HtmlFileType.INSTANCE, '\n',
-                 "<script type=\"application/dart\">\n" +
-                 "var a = '$x and <caret> also $y';\n" +
-                 "</script>",
+                 """
+                   <script type="application/dart">
+                   var a = '$x and <caret> also $y';
+                   </script>""",
                  "<script type=\"application/dart\">\n" +
                  "var a = '$x and '\n" +
                  // 8 spaces continuation indent is taken from HTML language instead of Dart's 4 spaces. Fix expected result when it is fixed in Platform
@@ -553,9 +595,10 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   public void testEnterInEmptyMetadataArgList() {
     doTypingTest('\n',
                  "@Component(<caret>)",
-                 "@Component(\n" +
-                 "  <caret>\n" +
-                 ")");
+                 """
+                   @Component(
+                     <caret>
+                   )""");
   }
 
   public void testEnterBeforeMetadataNamedArg() {
@@ -567,22 +610,25 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testEnterAfterEQ() {
     doTypingTest('\n',
-                 "ms(toto)\n" +
-                 "  bool x =<caret> toto;\n" +
-                 "  return;\n" +
-                 "}",
-                 "ms(toto)\n" +
-                 "  bool x =\n" +
-                 "      <caret>toto;\n" +
-                 "  return;\n" +
-                 "}");
+                 """
+                   ms(toto)
+                     bool x =<caret> toto;
+                     return;
+                   }""",
+                 """
+                   ms(toto)
+                     bool x =
+                         <caret>toto;
+                     return;
+                   }""");
   }
 
   public void testEnterAfterLastArg() {
     doTypingTest('\n',
-                 "m(l) {\n" +
-                 "  List p = new List(l,<caret>);\n" +
-                 "}",
+                 """
+                   m(l) {
+                     List p = new List(l,<caret>);
+                   }""",
                  "m(l) {\n" +
                  "  List p = new List(l,\n" +
                  "  <caret>);\n" + // not sure it's the best possible behavior
@@ -591,83 +637,95 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testEnterInEmptyArg() {
     doTypingTest('\n',
-                 "m(l) {\n" +
-                 "  List p = new List(<caret>);\n" +
-                 "}",
-                 "m(l) {\n" +
-                 "  List p = new List(\n" +
-                 "    <caret>\n" +
-                 "  );\n" +
-                 "}");
+                 """
+                   m(l) {
+                     List p = new List(<caret>);
+                   }""",
+                 """
+                   m(l) {
+                     List p = new List(
+                       <caret>
+                     );
+                   }""");
   }
 
   public void testEnterInMultiLineArg() {
     doTypingTest('\n',
-                 "m(l) {\n" +
-                 "  return new X(<caret>1,\n" +
-                 "    2,\n" +
-                 "  );\n" +
-                 "}",
-                 "m(l) {\n" +
-                 "  return new X(\n" +
-                 "    <caret>1,\n" +
-                 "    2,\n" +
-                 "  );\n" +
-                 "}");
+                 """
+                   m(l) {
+                     return new X(<caret>1,
+                       2,
+                     );
+                   }""",
+                 """
+                   m(l) {
+                     return new X(
+                       <caret>1,
+                       2,
+                     );
+                   }""");
     doTypingTest('\n',
-                 "m(l) {\n" +
-                 "  return new X(\n" +
-                 "    1,\n" +
-                 "    2,<caret>\n" +
-                 "  );\n" +
-                 "}",
-                 "m(l) {\n" +
-                 "  return new X(\n" +
-                 "    1,\n" +
-                 "    2,\n" +
-                 "    <caret>\n" +
-                 "  );\n" +
-                 "}");
+                 """
+                   m(l) {
+                     return new X(
+                       1,
+                       2,<caret>
+                     );
+                   }""",
+                 """
+                   m(l) {
+                     return new X(
+                       1,
+                       2,
+                       <caret>
+                     );
+                   }""");
     doTypingTest('\n',
-                 "m(l) {\n" +
-                 "  return new X(\n" +
-                 "    1,\n" +
-                 "    2,<caret>);\n" +
-                 "}",
-                 "m(l) {\n" +
-                 "  return new X(\n" +
-                 "    1,\n" +
-                 "    2,\n" +
-                 "  <caret>);\n" +
-                 "}");
+                 """
+                   m(l) {
+                     return new X(
+                       1,
+                       2,<caret>);
+                   }""",
+                 """
+                   m(l) {
+                     return new X(
+                       1,
+                       2,
+                     <caret>);
+                   }""");
     doTypingTest('\n',
-                 "main() {\n" +
-                 "  new X(\n" +
-                 "    1,<caret>\n" +
-                 "    2,\n" +
-                 "  );\n" +
-                 "}",
-                 "main() {\n" +
-                 "  new X(\n" +
-                 "    1,\n" +
-                 "    <caret>\n" +
-                 "    2,\n" +
-                 "  );\n" +
-                 "}");
+                 """
+                   main() {
+                     new X(
+                       1,<caret>
+                       2,
+                     );
+                   }""",
+                 """
+                   main() {
+                     new X(
+                       1,
+                       <caret>
+                       2,
+                     );
+                   }""");
     doTypingTest('\n',
-                 "main() {\n" +
-                 "  new X(\n" +
-                 "      1,<caret>\n" +
-                 "      2\n" +
-                 "  );\n" +
-                 "}",
-                 "main() {\n" +
-                 "  new X(\n" +
-                 "      1,\n" +
-                 "      <caret>\n" +
-                 "      2\n" +
-                 "  );\n" +
-                 "}");
+                 """
+                   main() {
+                     new X(
+                         1,<caret>
+                         2
+                     );
+                   }""",
+                 """
+                   main() {
+                     new X(
+                         1,
+                         <caret>
+                         2
+                     );
+                   }""");
   }
 
   public void testEnterInMultilineString() {
@@ -718,21 +776,25 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testTrailingSpaces() {
     myFixture.configureByText("foo.dart",
-                              "var a = r'''   \n" +
-                              "trailing spaces     \n" +
-                              "''';   \n" +
-                              "var b = \"\"\"   \n" +
-                              "  ${''' \n" +
-                              "     '''  \n" +
-                              "}\"\"\";  \n");
+                              """
+                                var a = r'''  \s
+                                trailing spaces    \s
+                                ''';  \s
+                                var b = ""\"  \s
+                                  ${'''\s
+                                     ''' \s
+                                }""\"; \s
+                                """);
     WriteAction.run(() -> TrailingSpacesStripper.strip(myFixture.getDocument(myFixture.getFile()), false, false));
-    myFixture.checkResult("var a = r'''   \n" +
-                          "trailing spaces     \n" +
-                          "''';\n" +
-                          "var b = \"\"\"   \n" +
-                          "  ${''' \n" +
-                          "     '''\n" +
-                          "}\"\"\";\n", false);
+    myFixture.checkResult("""
+                            var a = r'''  \s
+                            trailing spaces    \s
+                            ''';
+                            var b = ""\"  \s
+                              ${'''\s
+                                 '''
+                            }""\";
+                            """, false);
   }
 
   public void testLineCommentIndent() {

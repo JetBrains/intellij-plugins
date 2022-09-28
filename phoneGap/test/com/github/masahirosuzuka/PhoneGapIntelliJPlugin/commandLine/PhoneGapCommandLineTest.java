@@ -55,9 +55,10 @@ public class PhoneGapCommandLineTest extends UsefulTestCase {
   }
 
   public void testNewPhonegapTwo() {
-    List<String> strings = PhoneGapCommandLine.parsePluginList("[phonegap] the following plugins are installed\n" +
-                                                               "com.phonegap.plugins.mapkit 0.9.2 \"MapKit\"\n" +
-                                                               "org.apache.cordova.console 0.2.9 \"Console\"");
+    List<String> strings = PhoneGapCommandLine.parsePluginList("""
+                                                                 [phonegap] the following plugins are installed
+                                                                 com.phonegap.plugins.mapkit 0.9.2 "MapKit"
+                                                                 org.apache.cordova.console 0.2.9 "Console\"""");
 
     assertSameElements(strings, "com.phonegap.plugins.mapkit 0.9.2 \"MapKit\"", "org.apache.cordova.console 0.2.9 \"Console\"");
   }

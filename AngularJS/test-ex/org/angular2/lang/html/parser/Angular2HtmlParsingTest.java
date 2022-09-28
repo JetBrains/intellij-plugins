@@ -267,17 +267,19 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   }
 
   public void testNgTextInterpolation() throws Exception {
-    doTestHtml("<div>my {{interpolated}} text</div>\n" +
-               "<div>my{{interpolated}}text</div>\n" +
-               "<div>my{{double}}{{interpolated}}text</div>\n" +
-               "<div>my{{double}}double{{interpolated}}text</div>");
+    doTestHtml("""
+                 <div>my {{interpolated}} text</div>
+                 <div>my{{interpolated}}text</div>
+                 <div>my{{double}}{{interpolated}}text</div>
+                 <div>my{{double}}double{{interpolated}}text</div>""");
   }
 
   public void testNgTextInterpolationWithLineBreaks() throws Exception {
-    doTestHtml("{{todo\n" +
-               "            | started : status\n" +
-               "            | search : term\n" +
-               "            }}");
+    doTestHtml("""
+                 {{todo
+                             | started : status
+                             | search : term
+                             }}""");
   }
 
   public void testNgIgnoredInterpolation() throws Exception {
@@ -294,35 +296,38 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
 
   public void testNgScriptWithEventAndAngularAttr() throws Exception {
-    doTestHtml("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
-               "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
-               "  console.log(2)\n" +
-               "</script>\n" +
-               "<div></div>");
+    doTestHtml("""
+                 <script src="//example.com" onerror="console.log(1)" (error)='console.log(1)'onload="console.log(1)" (load)='console.log(1)'>
+                   console.log(2)
+                 </script>
+                 <div></div>""");
   }
 
   public void testNgStyleTag() throws Exception {
-    doTestHtml("<style>\n" +
-               "  div {\n" +
-               "  }\n" +
-               "</style>\n" +
-               "<div></div>");
+    doTestHtml("""
+                 <style>
+                   div {
+                   }
+                 </style>
+                 <div></div>""");
   }
 
   public void testNgStyleAngularAttr() throws Exception {
-    doTestHtml("<style (load)='disabled=true'>\n" +
-               "  div {\n" +
-               "  }\n" +
-               "</style>\n" +
-               "<div></div>");
+    doTestHtml("""
+                 <style (load)='disabled=true'>
+                   div {
+                   }
+                 </style>
+                 <div></div>""");
   }
 
   public void testNgStyleWithEventAndAngularAttr() throws Exception {
-    doTestHtml("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
-               "  div {\n" +
-               "  }\n" +
-               "</style>\n" +
-               "<div></div>");
+    doTestHtml("""
+                 <style (load)='disabled=true' onload="this.disabled=true" (load)='disabled=true'>
+                   div {
+                   }
+                 </style>
+                 <div></div>""");
   }
 
   public void testNgContentSelect() throws Exception {
@@ -346,10 +351,12 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   }
 
   public void testNgNonQuotedAttrs() throws Exception {
-    doTestHtml("<div (click)=doIt()></div>\n" +
-               "<div [id]=foo></div>\n" +
-               "<div #foo=bar></div>\n" +
-               "<ng-content select=[header-content]></ng-content>\n");
+    doTestHtml("""
+                 <div (click)=doIt()></div>
+                 <div [id]=foo></div>
+                 <div #foo=bar></div>
+                 <ng-content select=[header-content]></ng-content>
+                 """);
   }
 
   public void testEmptyLetAndRef() throws Exception {

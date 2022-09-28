@@ -63,192 +63,199 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
   }
 
   public void testSwfSortByName() {
-    doTest(false, false, false, false, "-Project\n" +
-                                       " -PsiDirectory: lib\n" +
-                                       "  -library.swf\n" +
-                                       "   -b\n" +
-                                       "    -zz\n" +
-                                       "     -supb\n" +
-                                       "      -subp2\n" +
-                                       "       -subp3\n" +
-                                       "        -p4\n" +
-                                       "         Cl3\n" +
-                                       "        Cl2\n" +
-                                       "    Class1\n" +
-                                       "   -com\n" +
-                                       "    -foo\n" +
-                                       "     Abc\n" +
-                                       "   _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite\n" +
-                                       "   aClass\n" +
-                                       "   bClass\n" +
-                                       "   Interface1\n" +
-                                       "   myConst\n" +
-                                       "   myfunc\n" +
-                                       "   MyNs\n" +
-                                       "   myVar"
+    doTest(false, false, false, false, """
+      -Project
+       -PsiDirectory: lib
+        -library.swf
+         -b
+          -zz
+           -supb
+            -subp2
+             -subp3
+              -p4
+               Cl3
+              Cl2
+          Class1
+         -com
+          -foo
+           Abc
+         _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite
+         aClass
+         bClass
+         Interface1
+         myConst
+         myfunc
+         MyNs
+         myVar"""
     );
   }
 
   public void testSwfSortByNameWithMembers() {
-    doTest(false, false, false, true, "-Project\n" +
-                                      " -PsiDirectory: lib\n" +
-                                      "  -library.swf\n" +
-                                      "   -b\n" +
-                                      "    -zz\n" +
-                                      "     -supb\n" +
-                                      "      -subp2\n" +
-                                      "       -subp3\n" +
-                                      "        -p4\n" +
-                                      "         -Cl3\n" +
-                                      "          c:uint\n" +
-                                      "          Cl3()\n" +
-                                      "          foo1(String, Boolean, *):*\n" +
-                                      "          foo2(Array):void\n" +
-                                      "          foo3(Number):*\n" +
-                                      "          foo4():String\n" +
-                                      "          v1:*\n" +
-                                      "          v2:String\n" +
-                                      "          v3:*\n" +
-                                      "          v4:Object\n" +
-                                      "        -Cl2\n" +
-                                      "         Cl2()\n" +
-                                      "    -Class1\n" +
-                                      "     c:uint\n" +
-                                      "     Class1()\n" +
-                                      "     foo1(String, Boolean, *):*\n" +
-                                      "     foo2(Array):void\n" +
-                                      "     foo3(Number):*\n" +
-                                      "     v1:*\n" +
-                                      "     v2:String\n" +
-                                      "     v3:*\n" +
-                                      "     v4:Object\n" +
-                                      "   -com\n" +
-                                      "    -foo\n" +
-                                      "     -Abc\n" +
-                                      "      _field:String\n" +
-                                      "      Abc()\n" +
-                                      "      field:String\n" +
-                                      "      foo1(String, Boolean, *):*\n" +
-                                      "   -_f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite\n" +
-                                      "    _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite()\n" +
-                                      "    allowDomainInRSL(Array):void\n" +
-                                      "    allowInsecureDomainInRSL(Array):void\n" +
-                                      "    ExcludeClass\n" +
-                                      "   -aClass\n" +
-                                      "    aClass()\n" +
-                                      "   -bClass\n" +
-                                      "    bClass()\n" +
-                                      "   -Interface1\n" +
-                                      "    i1():String\n" +
-                                      "    i2():int\n" +
-                                      "   myConst\n" +
-                                      "   myfunc\n" +
-                                      "   MyNs\n" +
-                                      "   myVar"
+    doTest(false, false, false, true, """
+      -Project
+       -PsiDirectory: lib
+        -library.swf
+         -b
+          -zz
+           -supb
+            -subp2
+             -subp3
+              -p4
+               -Cl3
+                c:uint
+                Cl3()
+                foo1(String, Boolean, *):*
+                foo2(Array):void
+                foo3(Number):*
+                foo4():String
+                v1:*
+                v2:String
+                v3:*
+                v4:Object
+              -Cl2
+               Cl2()
+          -Class1
+           c:uint
+           Class1()
+           foo1(String, Boolean, *):*
+           foo2(Array):void
+           foo3(Number):*
+           v1:*
+           v2:String
+           v3:*
+           v4:Object
+         -com
+          -foo
+           -Abc
+            _field:String
+            Abc()
+            field:String
+            foo1(String, Boolean, *):*
+         -_f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite
+          _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite()
+          allowDomainInRSL(Array):void
+          allowInsecureDomainInRSL(Array):void
+          ExcludeClass
+         -aClass
+          aClass()
+         -bClass
+          bClass()
+         -Interface1
+          i1():String
+          i2():int
+         myConst
+         myfunc
+         MyNs
+         myVar"""
     );
   }
 
   public void testSwfSortByType() {
-    doTest(true, false, false, false, "-Project\n" +
-                                      " -PsiDirectory: lib\n" +
-                                      "  -library.swf\n" +
-                                      "   -b\n" +
-                                      "    -zz\n" +
-                                      "     -supb\n" +
-                                      "      -subp2\n" +
-                                      "       -subp3\n" +
-                                      "        -p4\n" +
-                                      "         Cl3\n" +
-                                      "        Cl2\n" +
-                                      "    Class1\n" +
-                                      "   -com\n" +
-                                      "    -foo\n" +
-                                      "     Abc\n" +
-                                      "   myConst\n" +
-                                      "   MyNs\n" +
-                                      "   myVar\n" +
-                                      "   myfunc\n" +
-                                      "   Interface1\n" +
-                                      "   _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite\n" +
-                                      "   aClass\n" +
-                                      "   bClass");
+    doTest(true, false, false, false, """
+      -Project
+       -PsiDirectory: lib
+        -library.swf
+         -b
+          -zz
+           -supb
+            -subp2
+             -subp3
+              -p4
+               Cl3
+              Cl2
+          Class1
+         -com
+          -foo
+           Abc
+         myConst
+         MyNs
+         myVar
+         myfunc
+         Interface1
+         _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite
+         aClass
+         bClass""");
   }
 
   public void testSwfHideEmptyMiddlePackages() {
-    doTest(true, true, false, false, "-Project\n" +
-                                     " -PsiDirectory: lib\n" +
-                                     "  -library.swf\n" +
-                                     "   -b\n" +
-                                     "    -zz.supb.subp2.subp3\n" +
-                                     "     -p4\n" +
-                                     "      Cl3\n" +
-                                     "     Cl2\n" +
-                                     "    Class1\n" +
-                                     "   -com.foo\n" +
-                                     "    Abc\n" +
-                                     "   myConst\n" +
-                                     "   MyNs\n" +
-                                     "   myVar\n" +
-                                     "   myfunc\n" +
-                                     "   Interface1\n" +
-                                     "   _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite\n" +
-                                     "   aClass\n" +
-                                     "   bClass");
+    doTest(true, true, false, false, """
+      -Project
+       -PsiDirectory: lib
+        -library.swf
+         -b
+          -zz.supb.subp2.subp3
+           -p4
+            Cl3
+           Cl2
+          Class1
+         -com.foo
+          Abc
+         myConst
+         MyNs
+         myVar
+         myfunc
+         Interface1
+         _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite
+         aClass
+         bClass""");
   }
 
   public void testSwfFlattenPackages() {
-    doTest(true, false, true, false, "-Project\n" +
-                                     " -PsiDirectory: lib\n" +
-                                     "  -library.swf\n" +
-                                     "   -b\n" +
-                                     "    Class1\n" +
-                                     "   -b.zz.supb.subp2.subp3\n" +
-                                     "    Cl2\n" +
-                                     "   -b.zz.supb.subp2.subp3.p4\n" +
-                                     "    Cl3\n" +
-                                     "   -com.foo\n" +
-                                     "    Abc\n" +
-                                     "   myConst\n" +
-                                     "   MyNs\n" +
-                                     "   myVar\n" +
-                                     "   myfunc\n" +
-                                     "   Interface1\n" +
-                                     "   _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite\n" +
-                                     "   aClass\n" +
-                                     "   bClass");
+    doTest(true, false, true, false, """
+      -Project
+       -PsiDirectory: lib
+        -library.swf
+         -b
+          Class1
+         -b.zz.supb.subp2.subp3
+          Cl2
+         -b.zz.supb.subp2.subp3.p4
+          Cl3
+         -com.foo
+          Abc
+         myConst
+         MyNs
+         myVar
+         myfunc
+         Interface1
+         _f88e99c07c4ddd0d4cc87856b293119472de97251391839c016c3581d9799c24_flash_display_Sprite
+         aClass
+         bClass""");
   }
 
   public void testMembers() {
-    doTest(true, false, false, true, "-Project\n" +
-                                     " -PsiDirectory: Members\n" +
-                                     "  -Class1.as\n" +
-                                     "   c:uint\n" +
-                                     "   v1:*\n" +
-                                     "   v2:String\n" +
-                                     "   v3:*\n" +
-                                     "   v4:Object\n" +
-                                     "   foo1(String, Boolean, *):*\n" +
-                                     "   foo2(Array):void\n" +
-                                     "   foo3(Number):*\n" +
-                                     "  -Class2.as\n" +
-                                     "   _field:String\n" +
-                                     "   field:String\n" +
-                                     "  -MyComp.mxml\n" +
-                                     "   outerField:int\n" +
-                                     "   v:*\n" +
-                                     "   bar(String, Array):int\n" +
-                                     "   foo(Application):*\n" +
-                                     "   outer():String\n" +
-                                     "  MyComp2.as");
+    doTest(true, false, false, true, """
+      -Project
+       -PsiDirectory: Members
+        -Class1.as
+         c:uint
+         v1:*
+         v2:String
+         v3:*
+         v4:Object
+         foo1(String, Boolean, *):*
+         foo2(Array):void
+         foo3(Number):*
+        -Class2.as
+         _field:String
+         field:String
+        -MyComp.mxml
+         outerField:int
+         v:*
+         bar(String, Array):int
+         foo(Application):*
+         outer():String
+        MyComp2.as""");
   }
 
   public void testMxmlWithCss() {
-    doTest(true, false, false, true, "-Project\n" +
-                                     " -PsiDirectory: MxmlWithCss\n" +
-                                     "  -Foo.mxml\n" +
-                                     "   #rSl s|Button#track\n" +
-                                     "   .myButtonStyle\n" +
-                                     "   namespace mx\n" +
-                                     "   namespace s");
+    doTest(true, false, false, true, """
+      -Project
+       -PsiDirectory: MxmlWithCss
+        -Foo.mxml
+         #rSl s|Button#track
+         .myButtonStyle
+         namespace mx
+         namespace s""");
   }
 }

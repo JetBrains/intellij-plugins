@@ -46,9 +46,11 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
   }
 
   public void testIntentionsOrder() {
-    myFixture.configureByText("foo.dart", "void f() {\n" +
-                                          "  <selection><caret>var x = 3;</selection>\n" +
-                                          "}\n");
+    myFixture.configureByText("foo.dart", """
+      void f() {
+        <selection><caret>var x = 3;</selection>
+      }
+      """);
     final List<String> intentions = ContainerUtil.map(myFixture.getAvailableIntentions(), intention -> intention.getText());
     assertOrderedEquals(intentions,
                         "Surround with block",

@@ -235,10 +235,11 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("genericParentClassMembers.html", "genericParentClassMembers.ts",
                                "ng_for_of.ts", "iterable_differs.ts", "package.json");
     myFixture.checkHighlighting();
-    assertEquals("{\n" +
-                 "  someName: string;\n" +
-                 "  someValue: number;\n" +
-                 "}",
+    assertEquals("""
+                   {
+                     someName: string;
+                     someValue: number;
+                   }""",
                  AngularTestUtil.resolveReference("item.some<caret>Name", myFixture).getParent().getText());
   }
 

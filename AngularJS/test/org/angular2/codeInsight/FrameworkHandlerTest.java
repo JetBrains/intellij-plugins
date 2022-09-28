@@ -61,16 +61,18 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("multi-module.ts", "package.json");
     myFixture.configureByText("template.html",
-                              "<app-foo></app-foo>\n" +
-                              "<<error descr=\"Component or directive matching app-bar element is out of scope of the current template\">app-bar</error>></app-bar>\n" +
-                              "<<warning descr=\"Unknown html tag foobar\">foobar</warning>></<warning descr=\"Unknown html tag foobar\">foobar</warning>>");
+                              """
+                                <app-foo></app-foo>
+                                <<error descr="Component or directive matching app-bar element is out of scope of the current template">app-bar</error>></app-bar>
+                                <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>""");
     myFixture.checkHighlighting();
 
     Disposer.dispose(disposable);
     myFixture.configureByText("template.html",
-                              "<<error descr=\"Component or directive matching app-foo element is out of scope of the current template\">app-foo</error>></app-foo>\n" +
-                              "<app-bar></app-bar>\n" +
-                              "<<warning descr=\"Unknown html tag foobar\">foobar</warning>></<warning descr=\"Unknown html tag foobar\">foobar</warning>>");
+                              """
+                                <<error descr="Component or directive matching app-foo element is out of scope of the current template">app-foo</error>></app-foo>
+                                <app-bar></app-bar>
+                                <<warning descr="Unknown html tag foobar">foobar</warning>></<warning descr="Unknown html tag foobar">foobar</warning>>""");
     myFixture.checkHighlighting();
   }
 

@@ -18,19 +18,23 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 public class GherkinTypingTest extends BasePlatformTestCase {
   public void testEnterAfterComment() {
     myFixture.configureByText("test.feature",
-                              "Feature: two\n" +
-                              "    Scenario: items count #1\n" +
-                              "      Given user has 100 items\n" +
-                              "#      |  20   |  5  |  15  |<caret>\n");
+                              """
+                                Feature: two
+                                    Scenario: items count #1
+                                      Given user has 100 items
+                                #      |  20   |  5  |  15  |<caret>
+                                """);
 
     myFixture.type("\n");
 
     myFixture.checkResult(
-      "Feature: two\n" +
-      "    Scenario: items count #1\n" +
-      "      Given user has 100 items\n" +
-      "#      |  20   |  5  |  15  |\n" +
-      "  <caret>\n"
+      """
+        Feature: two
+            Scenario: items count #1
+              Given user has 100 items
+        #      |  20   |  5  |  15  |
+          <caret>
+        """
     );
   }
 }

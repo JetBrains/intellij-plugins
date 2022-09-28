@@ -185,23 +185,25 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
   }
 
   protected static String repository() {
-    return "  <repositories>\n" +
-           "    <repository>\n" +
-           "      <id>flex-repository</id>\n" +
-           "      <url>https://repo.labs.intellij.net/flex</url>\n" +
-           "      <releases>\n" +
-           "        <enabled>true</enabled>\n" +
-           "      </releases>\n" +
-           "    </repository>\n" +
-           "  </repositories>\n" +
-           "  <pluginRepositories>\n" +
-           "    <pluginRepository>\n" +
-           "      <id>flex-repository</id>\n" +
-           "      <url>https://repo.labs.intellij.net/flex</url>\n" +
-           "      <releases>\n" +
-           "        <enabled>true</enabled>\n" +
-           "      </releases>\n" +
-           "    </pluginRepository>\n" +
-           "  </pluginRepositories>\n";
+    return """
+        <repositories>
+          <repository>
+            <id>flex-repository</id>
+            <url>https://repo.labs.intellij.net/flex</url>
+            <releases>
+              <enabled>true</enabled>
+            </releases>
+          </repository>
+        </repositories>
+        <pluginRepositories>
+          <pluginRepository>
+            <id>flex-repository</id>
+            <url>https://repo.labs.intellij.net/flex</url>
+            <releases>
+              <enabled>true</enabled>
+            </releases>
+          </pluginRepository>
+        </pluginRepositories>
+      """;
   }
 }

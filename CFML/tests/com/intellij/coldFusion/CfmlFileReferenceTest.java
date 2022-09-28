@@ -24,10 +24,11 @@ public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testRenameInScript() {
-    doRenameFileTest("newName.test.cfml", "<cfscript>\n" +
-                                          "    include \"renameInScript.test.cfml\";\n" +
-                                          "\n" +
-                                          "</cfscript>");
+    doRenameFileTest("newName.test.cfml", """
+      <cfscript>
+          include "renameInScript.test.cfml";
+
+      </cfscript>""");
   }
 
   public void testMoveOldFile() throws Throwable {
@@ -35,10 +36,11 @@ public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void testMoveOldFileInScript() throws Throwable {
-    doMoveFileTest("testDir", "<cfscript>\n" +
-                              "    include \"testDir/moveOldFileInScript.test.cfml\";\n" +
-                              "\n" +
-                              "</cfscript>");
+    doMoveFileTest("testDir", """
+      <cfscript>
+          include "testDir/moveOldFileInScript.test.cfml";
+
+      </cfscript>""");
   }
 
   public void testFileReferencesWithErrors() {

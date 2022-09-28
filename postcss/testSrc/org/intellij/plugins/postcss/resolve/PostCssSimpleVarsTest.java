@@ -30,10 +30,11 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
   }
 
   public void testResolvePropertyValue() {
-    doResolveTest("$foo: 10px;\n" +
-                  ".header {\n" +
-                  "    width: calc(4 * $<caret>foo);\n" +
-                  "}",
+    doResolveTest("""
+                    $foo: 10px;
+                    .header {
+                        width: calc(4 * $<caret>foo);
+                    }""",
                   "$foo: 10px;"
     );
   }
@@ -46,10 +47,11 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
   }
 
   public void testResolvePropertyValueInterpolation() {
-    doResolveTest("$foo: 10px;\n" +
-                  ".header {\n" +
-                  "    width: calc(4 * $(<caret>foo));\n" +
-                  "}",
+    doResolveTest("""
+                    $foo: 10px;
+                    .header {
+                        width: calc(4 * $(<caret>foo));
+                    }""",
                   "$foo: 10px;"
     );
   }
@@ -62,15 +64,16 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
   }
 
   public void testFindUsages() {
-    doTestFindUsages("$f<caret>oo: 10px;\n" +
-                     "$foo $(foo) {\n" +
-                     "    width: calc(4 * $foo);\n" +
-                     "    height: $foo;\n" +
-                     "    width: calc(4 * $(foo));\n" +
-                     "    height: $(foo);\n" +
-                     "    height: a$(foo);\n" +
-                     "    height: $(foo)b;\n" +
-                     "}",
+    doTestFindUsages("""
+                       $f<caret>oo: 10px;
+                       $foo $(foo) {
+                           width: calc(4 * $foo);
+                           height: $foo;
+                           width: calc(4 * $(foo));
+                           height: $(foo);
+                           height: a$(foo);
+                           height: $(foo)b;
+                       }""",
                      8
     );
   }
@@ -78,79 +81,89 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
   public void testFindUsagesInOtherFiles() {
     // 4 usages in one.pcss
     myFixture.addFileToProject("one.pcss",
-                               "$foo: 0;\n" +
-                               ".bar {\n" +
-                               "  x: $foo $foo $(foo) $(foo);\n" +
-                               "}");
+                               """
+                                 $foo: 0;
+                                 .bar {
+                                   x: $foo $foo $(foo) $(foo);
+                                 }""");
     // 8 usages in two.pcss.
     myFixture.addFileToProject("two.pcss",
-                               "@import 'one.pcss';\n" +
-                               ".bar {\n" +
-                               "  x: $foo $foo $foo $foo $foo $foo $foo $foo;\n" +
-                               "}");
+                               """
+                                 @import 'one.pcss';
+                                 .bar {
+                                   x: $foo $foo $foo $foo $foo $foo $foo $foo;
+                                 }""");
     // three.pcss doesn't import one.pcss, so no usages here
     myFixture.addFileToProject("three.pcss",
-                               ".bar {\n" +
-                               "  x: $foo $foo $foo $foo $(foo) $(foo) $(foo) $(foo);\n" +
-                               "  x: $foo $foo $foo $foo $(foo) $(foo) $(foo) $(foo);\n" +
-                               "}");
+                               """
+                                 .bar {
+                                   x: $foo $foo $foo $foo $(foo) $(foo) $(foo) $(foo);
+                                   x: $foo $foo $foo $foo $(foo) $(foo) $(foo) $(foo);
+                                 }""");
 
     // 6 usages in this file
-    doTestFindUsages("@import 'one.pcss';\n" +
-                     ".bar {\n" +
-                     "  x: $<caret>foo $foo $foo $(foo) $(foo) $(foo);\n" +
-                     "}",
+    doTestFindUsages("""
+                       @import 'one.pcss';
+                       .bar {
+                         x: $<caret>foo $foo $foo $(foo) $(foo) $(foo);
+                       }""",
                      18
     );
   }
 
   public void testRename() {
     myFixture.configureByText("foo.pcss",
-                              "$foo: 10px;\n" +
-                              "$foo, $(foo) {\n" +
-                              "    width: calc(4 * $foo);\n" +
-                              "    height: $fo<caret>o;\n" +
-                              "    width: calc(4 * $(foo));\n" +
-                              "    height: $(foo);\n" +
-                              "    height: a$(foo);\n" +
-                              "    height: $(foo)b;\n" +
-                              "}");
+                              """
+                                $foo: 10px;
+                                $foo, $(foo) {
+                                    width: calc(4 * $foo);
+                                    height: $fo<caret>o;
+                                    width: calc(4 * $(foo));
+                                    height: $(foo);
+                                    height: a$(foo);
+                                    height: $(foo)b;
+                                }""");
     myFixture.renameElementAtCaret("bar");
-    myFixture.checkResult("$bar: 10px;\n" +
-                          "$bar, $(bar) {\n" +
-                          "    width: calc(4 * $bar);\n" +
-                          "    height: $ba<caret>r;\n" +
-                          "    width: calc(4 * $(bar));\n" +
-                          "    height: $(bar);\n" +
-                          "    height: a$(bar);\n" +
-                          "    height: $(bar)b;\n" +
-                          "}");
+    myFixture.checkResult("""
+                            $bar: 10px;
+                            $bar, $(bar) {
+                                width: calc(4 * $bar);
+                                height: $ba<caret>r;
+                                width: calc(4 * $(bar));
+                                height: $(bar);
+                                height: a$(bar);
+                                height: $(bar)b;
+                            }""");
   }
 
   public void testFormat() {
     myFixture.configureByText("foo.pcss",
-                              "$dir: top; $blue: #056ef0;\n" +
-                              "$column: 200px;\n" +
-                              ".menu_link, a-$(dir) {\n" +
-                              "    width: calc(4 * $(foo));\n" +
-                              "    height: $(foo);\n" +
-                              "    margin-$(dir): 0;\n" +
-                              "    height: a$(foo);\n" +
-                              "    height: $(foo)b;\n" +
-                              "}\n");
+                              """
+                                $dir: top; $blue: #056ef0;
+                                $column: 200px;
+                                .menu_link, a-$(dir) {
+                                    width: calc(4 * $(foo));
+                                    height: $(foo);
+                                    margin-$(dir): 0;
+                                    height: a$(foo);
+                                    height: $(foo)b;
+                                }
+                                """);
     WriteCommandAction.runWriteCommandAction(getProject(), () -> {
       CodeStyleManager.getInstance(getProject()).reformat(myFixture.getFile());
     });
-    myFixture.checkResult("$dir: top;\n" +
-                          "$blue: #056ef0;\n" +
-                          "$column: 200px;\n" +
-                          "\n" +
-                          ".menu_link, a-$(dir) {\n" +
-                          "    width: calc(4 * $(foo));\n" +
-                          "    height: $(foo);\n" +
-                          "    margin-$(dir): 0;\n" +
-                          "    height: a$(foo);\n" +
-                          "    height: $(foo)b;\n" +
-                          "}\n");
+    myFixture.checkResult("""
+                            $dir: top;
+                            $blue: #056ef0;
+                            $column: 200px;
+
+                            .menu_link, a-$(dir) {
+                                width: calc(4 * $(foo));
+                                height: $(foo);
+                                margin-$(dir): 0;
+                                height: a$(foo);
+                                height: $(foo)b;
+                            }
+                            """);
   }
 }

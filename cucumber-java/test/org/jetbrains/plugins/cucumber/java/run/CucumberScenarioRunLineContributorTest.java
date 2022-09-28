@@ -15,9 +15,11 @@ import javax.swing.*;
 import java.util.Date;
 
 public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsightTestCase {
-  private static final String myTestFeature = "Feature: My feature\n\n" +
-                                              "  Scenario: test\n" +
-                                              "    Given a cat";
+  private static final String myTestFeature = """
+    Feature: My feature
+
+      Scenario: test
+        Given a cat""";
 
   public void testScenarioRunLineContributorWhenScenarioNeverHasBeenRan() {
     PsiFile file = myFixture.configureByText("test.feature", myTestFeature);

@@ -209,12 +209,13 @@ public class PerforceJobsTest extends PerforceTestCase {
 
   @Test
   public void testOptionalFields() throws VcsException {
-    verify(runP4(new String[]{"-c", "test", "jobspec", "-i"}, "Fields:\n" +
-                                                                "\t101 Job word 32 required\n" +
-                                                                "\t102 Status word 32 optional\n" +
-                                                                "\t103 User word 32 optional\n" +
-                                                                "\t104 Date date 0 optional\n" +
-                                                                ""));
+    verify(runP4(new String[]{"-c", "test", "jobspec", "-i"}, """
+      Fields:
+      \t101 Job word 32 required
+      \t102 Status word 32 optional
+      \t103 User word 32 optional
+      \t104 Date date 0 optional
+      """));
 
     verify(runP4(new String[]{"-c", "test", "job", "-i"},
                  PerforceRunner.createStringFormRepresentation(ContainerUtil.newHashMap(

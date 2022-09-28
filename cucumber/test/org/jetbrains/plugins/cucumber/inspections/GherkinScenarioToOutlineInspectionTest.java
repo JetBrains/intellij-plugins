@@ -14,12 +14,13 @@ public class GherkinScenarioToOutlineInspectionTest extends BasePlatformTestCase
 
     myFixture.configureByText(
       GherkinFileType.INSTANCE,
-      "Feature: test\n" +
-      "  <error descr=\"Only Scenario Outline could have an Examples\">Scenario</error>: b\n" +
-      "    Given step\n" +
-      "    Examples:\n" +
-      "      | target         | version |\n" +
-      "      | Object.desc    | <0.9.0  |"
+      """
+        Feature: test
+          <error descr="Only Scenario Outline could have an Examples">Scenario</error>: b
+            Given step
+            Examples:
+              | target         | version |
+              | Object.desc    | <0.9.0  |"""
     );
 
     myFixture.checkHighlighting(false, false, false);
@@ -29,13 +30,14 @@ public class GherkinScenarioToOutlineInspectionTest extends BasePlatformTestCase
     myFixture.launchAction(quickFix);
 
     myFixture.checkResult(
-      "Feature: test\n" +
-      "\n" +
-      "  Scenario Outline: b\n" +
-      "    Given step\n" +
-      "    Examples:\n" +
-      "      | target      | version |\n" +
-      "      | Object.desc | <0.9.0  |"
+      """
+        Feature: test
+
+          Scenario Outline: b
+            Given step
+            Examples:
+              | target      | version |
+              | Object.desc | <0.9.0  |"""
     );
   }
 }

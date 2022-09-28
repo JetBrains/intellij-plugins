@@ -36,14 +36,16 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(
         component.getTree(),
-        "-struts-structure.xml\n" +
-        " myBean\n" +
-        " myConstant\n" +
-        " struts2.xml\n" +
-        " -myPackage\n" +
-        "  -myAction\n" +
-        "   success\n" +
-        "   paramName\n");
+        """
+          -struts-structure.xml
+           myBean
+           myConstant
+           struts2.xml
+           -myPackage
+            -myAction
+             success
+             paramName
+          """);
     });
   }
 
@@ -54,13 +56,15 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(
         component.getTree(),
-        "-struts-structure.xml\n" +
-        " myBean\n" +
-        " myConstant\n" +
-        " struts2.xml\n" +
-        " -myPackage\n" +
-        "  -myAction\n" +
-        "   success\n");
+        """
+          -struts-structure.xml
+           myBean
+           myConstant
+           struts2.xml
+           -myPackage
+            -myAction
+             success
+          """);
     });
   }
 }

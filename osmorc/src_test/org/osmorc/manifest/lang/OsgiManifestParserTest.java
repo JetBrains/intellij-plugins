@@ -26,456 +26,500 @@ public class OsgiManifestParserTest extends LightIdeaTestCase {
   public void testEmptyHeader() {
     doTest("Import-Package: ",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+             """);
   }
 
   public void testSimpleClause() {
     doTest("Import-Package: com.acme\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "          ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                       ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testEmptyClause() {
     doTest("Import-Package: ,com.acme\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          <empty list>\n" +
-           "      ManifestToken:COMMA_TOKEN(',')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "          ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       <empty list>
+                   ManifestToken:COMMA_TOKEN(',')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                       ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttribute() {
     doTest("Import-Package: com.acme;version=\"1.0.0\"\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeWithoutName() {
     doTest("Import-Package: com.acme;=\"1.0.0\"\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:\n" +
-           "          HeaderValuePart\n" +
-           "            <empty list>\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:
+                       HeaderValuePart
+                         <empty list>
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeOutsideParameter() {
     doTest("Import-Package: ;version=\"1.0.0\"\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          <empty list>\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       <empty list>
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeWithoutNameOutsideParameter() {
     doTest("Import-Package: =\"1.0.0\"\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        Attribute:\n" +
-           "          HeaderValuePart\n" +
-           "            <empty list>\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     Attribute:
+                       HeaderValuePart
+                         <empty list>
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testDirective() {
     doTest("Import-Package: com.acme;resolution:=optional\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:resolution\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:resolution
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testDirectiveWithoutName() {
     doTest("Import-Package: com.acme;:=optional\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:\n" +
-           "          HeaderValuePart\n" +
-           "            <empty list>\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:
+                       HeaderValuePart
+                         <empty list>
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testDirectiveWithoutNameOutsideParameter() {
     doTest("Import-Package: :=optional\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        Directive:\n" +
-           "          HeaderValuePart\n" +
-           "            <empty list>\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     Directive:
+                       HeaderValuePart
+                         <empty list>
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testDirectiveInvalidAssignmentTokens() {
     doTest("Import-Package: com.acme;resolution: =optional\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:resolution\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN(' ')\n" +
-           "            ManifestToken:EQUALS_TOKEN('=')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:resolution
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')
+                       ManifestToken:COLON_TOKEN(':')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN(' ')
+                         ManifestToken:EQUALS_TOKEN('=')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testSplitDirectiveAtColon() {
-    doTest("Import-Package: com.acme;resolution:\n" +
-           " =optional\n",
+    doTest("""
+             Import-Package: com.acme;resolution:
+              =optional
+             """,
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:resolution\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:NEWLINE_TOKEN('\\n')\n" +
-           "          ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:resolution
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:NEWLINE_TOKEN('\\n')
+                       ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeAndDirective() {
     doTest("Import-Package: com.acme;version=\"1.0.0\";resolution:=optional\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:resolution\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:resolution
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeAndDirectiveWithContinuationBeforeSemicolon() {
-    doTest("Import-Package: com.acme;version=\"1.0.0\"\n" +
-           " ;resolution:=optional\n",
+    doTest("""
+             Import-Package: com.acme;version="1.0.0"
+              ;resolution:=optional
+             """,
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n" +
-           "            ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:resolution\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+                         ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:resolution
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeAndDirectiveWithContinuationAfterSemicolon() {
-    doTest("Import-Package: com.acme;version=\"1.0.0\";\n" +
-           " resolution:=optional\n",
+    doTest("""
+             Import-Package: com.acme;version="1.0.0";
+              resolution:=optional
+             """,
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Directive:resolution\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n" +
-           "            ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')\n" +
-           "          ManifestToken:COLON_TOKEN(':')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('optional')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.0.0')
+                         ManifestToken:QUOTE_TOKEN('"')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Directive:resolution
+                       HeaderValuePart
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+                         ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('resolution')
+                       ManifestToken:COLON_TOKEN(':')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('optional')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testAttributeAndDirectiveWithBadContinuationAfterAttributeName() {
-    doTest("Import-Package: com.acme;attr\n" +
-           "=attr_value;dir:=dir_value\n",
+    doTest("""
+             Import-Package: com.acme;attr
+             =attr_value;dir:=dir_value
+             """,
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('attr')\n" +
-           "          ManifestToken:NEWLINE_TOKEN('\\n')\n" +
-           "    Header:=attr_value;dir\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('=attr_value;dir')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      PsiErrorElement:Whitespace expected\n" +
-           "        <empty list>\n" +
-           "      HeaderValuePart\n" +
-           "        ManifestToken:EQUALS_TOKEN('=')\n" +
-           "        ManifestToken:HEADER_VALUE_PART_TOKEN('dir_value')\n" +
-           "        ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('attr')
+                       ManifestToken:NEWLINE_TOKEN('\\n')
+                 Header:=attr_value;dir
+                   ManifestToken:HEADER_NAME_TOKEN('=attr_value;dir')
+                   ManifestToken:COLON_TOKEN(':')
+                   PsiErrorElement:Whitespace expected
+                     <empty list>
+                   HeaderValuePart
+                     ManifestToken:EQUALS_TOKEN('=')
+                     ManifestToken:HEADER_VALUE_PART_TOKEN('dir_value')
+                     ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testTwoClauses() {
     doTest("Import-Package: com.acme.p;a=b,com.acme\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme.p')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:a\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('a')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('b')\n" +
-           "      ManifestToken:COMMA_TOKEN(',')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')\n" +
-           "          ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme.p')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:a
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('a')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('b')
+                   ManifestToken:COMMA_TOKEN(',')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme')
+                       ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   public void testVersionRange() {
     doTest("Import-Package: com.acme.p;version=\"(1.2.3,2.4.3]\",com.acme.l;version=\"[1.2.4,2.3.4)\"\n",
 
-           "ManifestFile:MANIFEST.MF\n" +
-           "  Section\n" +
-           "    Header:Import-Package\n" +
-           "      ManifestToken:HEADER_NAME_TOKEN('Import-Package')\n" +
-           "      ManifestToken:COLON_TOKEN(':')\n" +
-           "      ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme.p')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:OPENING_PARENTHESIS_TOKEN('(')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.2.3')\n" +
-           "            ManifestToken:COMMA_TOKEN(',')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('2.4.3')\n" +
-           "            ManifestToken:CLOSING_BRACKET_TOKEN(']')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "      ManifestToken:COMMA_TOKEN(',')\n" +
-           "      Clause\n" +
-           "        HeaderValuePart\n" +
-           "          ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme.l')\n" +
-           "        ManifestToken:SEMICOLON_TOKEN(';')\n" +
-           "        Attribute:version\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('version')\n" +
-           "          ManifestToken:EQUALS_TOKEN('=')\n" +
-           "          HeaderValuePart\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:OPENING_BRACKET_TOKEN('[')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('1.2.4')\n" +
-           "            ManifestToken:COMMA_TOKEN(',')\n" +
-           "            ManifestToken:HEADER_VALUE_PART_TOKEN('2.3.4')\n" +
-           "            ManifestToken:CLOSING_PARENTHESIS_TOKEN(')')\n" +
-           "            ManifestToken:QUOTE_TOKEN('\"')\n" +
-           "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
+           """
+             ManifestFile:MANIFEST.MF
+               Section
+                 Header:Import-Package
+                   ManifestToken:HEADER_NAME_TOKEN('Import-Package')
+                   ManifestToken:COLON_TOKEN(':')
+                   ManifestToken:SIGNIFICANT_SPACE_TOKEN(' ')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme.p')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:OPENING_PARENTHESIS_TOKEN('(')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.2.3')
+                         ManifestToken:COMMA_TOKEN(',')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('2.4.3')
+                         ManifestToken:CLOSING_BRACKET_TOKEN(']')
+                         ManifestToken:QUOTE_TOKEN('"')
+                   ManifestToken:COMMA_TOKEN(',')
+                   Clause
+                     HeaderValuePart
+                       ManifestToken:HEADER_VALUE_PART_TOKEN('com.acme.l')
+                     ManifestToken:SEMICOLON_TOKEN(';')
+                     Attribute:version
+                       HeaderValuePart
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('version')
+                       ManifestToken:EQUALS_TOKEN('=')
+                       HeaderValuePart
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:OPENING_BRACKET_TOKEN('[')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('1.2.4')
+                         ManifestToken:COMMA_TOKEN(',')
+                         ManifestToken:HEADER_VALUE_PART_TOKEN('2.3.4')
+                         ManifestToken:CLOSING_PARENTHESIS_TOKEN(')')
+                         ManifestToken:QUOTE_TOKEN('"')
+                         ManifestToken:NEWLINE_TOKEN('\\n')
+             """);
   }
 
   private void doTest(String source, String expected) {

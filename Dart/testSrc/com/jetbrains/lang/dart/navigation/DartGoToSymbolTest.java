@@ -24,15 +24,17 @@ public class DartGoToSymbolTest extends DartCodeInsightFixtureTestCase {
 
   public void testGoToSymbol() {
     myFixture.addFileToProject("foo.dart",
-                               "fooBarBaz1() {}\n" +
-                               "class fooBarBaz2 {\n" +
-                               "  var fooBarBaz3;\n" +
-                               "  fooBarBaz4(){}\n" +
-                               "}\n" +
-                               "mixin fooBarBaz5 {\n" +
-                               "  var fooBarBaz6;\n" +
-                               "  fooBarBaz7(){}\n" +
-                               "}\n");
+                               """
+                                 fooBarBaz1() {}
+                                 class fooBarBaz2 {
+                                   var fooBarBaz3;
+                                   fooBarBaz4(){}
+                                 }
+                                 mixin fooBarBaz5 {
+                                   var fooBarBaz6;
+                                   fooBarBaz7(){}
+                                 }
+                                 """);
 
     DartSymbolContributor contributor = new DartSymbolContributor();
     String[] allNames = contributor.getNames(getProject(), false);

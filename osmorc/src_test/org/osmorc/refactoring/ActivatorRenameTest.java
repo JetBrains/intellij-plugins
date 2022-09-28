@@ -25,12 +25,16 @@ public class ActivatorRenameTest extends LightOsgiFixtureTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     PsiFile activatorFile = myFixture.addFileToProject("src/t1/Activator.java",
-        "package t1;\n\n" +
-        "import org.osgi.framework.*;\n\n" +
-        "public class Activator  implements BundleActivator {\n" +
-        "    public void start(BundleContext context) throws Exception { }\n" +
-        "    public void stop(BundleContext context) throws Exception { }\n" +
-        "}\n");
+                                                       """
+                                                         package t1;
+
+                                                         import org.osgi.framework.*;
+
+                                                         public class Activator  implements BundleActivator {
+                                                             public void start(BundleContext context) throws Exception { }
+                                                             public void stop(BundleContext context) throws Exception { }
+                                                         }
+                                                         """);
     myActivator = ((PsiJavaFile)activatorFile).getClasses()[0];
   }
 
@@ -63,13 +67,15 @@ public class ActivatorRenameTest extends LightOsgiFixtureTestCase {
   private PsiFile setupManualManifest() {
     myFacet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
     return myFixture.addFileToProject("META-INF/MANIFEST.MF",
-        "Manifest-Version: 1.0\n" +
-        "Bundle-ManifestVersion: 2\n" +
-        "Bundle-Name: T1\n" +
-        "Bundle-SymbolicName: t1\n" +
-        "Bundle-Version: 1.0.0\n" +
-        "Import-Package: org.osgi.framework\n" +
-        "Bundle-Activator: t1.Activator\n");
+                                      """
+                                        Manifest-Version: 1.0
+                                        Bundle-ManifestVersion: 2
+                                        Bundle-Name: T1
+                                        Bundle-SymbolicName: t1
+                                        Bundle-Version: 1.0.0
+                                        Import-Package: org.osgi.framework
+                                        Bundle-Activator: t1.Activator
+                                        """);
   }
 
   private void renameClass() {

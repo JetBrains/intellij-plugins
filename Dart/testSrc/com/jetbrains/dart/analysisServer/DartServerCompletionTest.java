@@ -159,12 +159,13 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
 
   public void testSorting() {
     myFixture.configureByText("foo.dart",
-                              "enum AXX {one, two}\n" +
-                              "enum AXB {three, four}\n" +
-                              "void foo({AXX x}) {}\n" +
-                              "main() {\n" +
-                              "  foo(x: <caret>);\n" +
-                              "}");
+                              """
+                                enum AXX {one, two}
+                                enum AXB {three, four}
+                                void foo({AXX x}) {}
+                                main() {
+                                  foo(x: <caret>);
+                                }""");
     myFixture.doHighlighting();
     myFixture.completeBasic();
     myFixture.assertPreferredCompletionItems(0, "AXX", "AXX.one", "AXX.two", "const", "true", "false",
@@ -176,13 +177,15 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
 
   public void testNoCompletionAfterDigit() {
     myFixture.configureByText("foo.dart",
-                              "main() {\n" +
-                              "  return Foo(bar: 1<caret>, );\n" +
-                              "}\n" +
-                              "class Foo {\n" +
-                              "  final double bar, baz;\n" +
-                              "  const Foo({ this.bar, this.baz, });\n" +
-                              "}\n");
+                              """
+                                main() {
+                                  return Foo(bar: 1<caret>, );
+                                }
+                                class Foo {
+                                  final double bar, baz;
+                                  const Foo({ this.bar, this.baz, });
+                                }
+                                """);
     myFixture.doHighlighting();
     myFixture.completeBasic();
     assertNull(myFixture.getLookup());

@@ -79,24 +79,26 @@ public class HbBraceMatcherTest extends BasePlatformTestCase {
    * by string replace functions.
    */
   private static final String ourTestSource =
-    "{{# foo1 }}\n" +
-    "    {{ bar }}\n" +
-    "    {{^ }}\n" +
-    "    {{# foo2 }}\n" +
-    "        <div>\n" +
-    "            {{^ foo3 }}\n" +
-    "                Content\n" +
-    "            {{/ foo3 }}\n" +
-    "        </div>\n" +
-    "        {{{ baz }}}\n" +
-    "        {{ bat }}\n" +
-    "        {{> partial }}\n" +
-    "    {{/ foo2 }}\n" +
-    "{{/ foo1 }}\n" +
-    "\n" +
-    "{{^ foo4 }}\n" +
-    "    Content\n" +
-    "{{/ foo4 }}\n";
+    """
+      {{# foo1 }}
+          {{ bar }}
+          {{^ }}
+          {{# foo2 }}
+              <div>
+                  {{^ foo3 }}
+                      Content
+                  {{/ foo3 }}
+              </div>
+              {{{ baz }}}
+              {{ bat }}
+              {{> partial }}
+          {{/ foo2 }}
+      {{/ foo1 }}
+
+      {{^ foo4 }}
+          Content
+      {{/ foo4 }}
+      """;
 
   public void testSimpleMustache() {
     doBraceTest(

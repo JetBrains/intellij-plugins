@@ -36,12 +36,13 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     PsiElement resolve = WebTestUtil.resolveWebSymbolReference(myFixture, "my-cus<caret>tomer").getPsiContext();
     assertNotNull(resolve);
     assertEquals("custom.ts", resolve.getContainingFile().getName());
-    assertEquals("@Component({\n" +
-                 "    selector: 'my-customer',\n" +
-                 "    properties: {\n" +
-                 "        'id':'dependency'\n" +
-                 "    }\n" +
-                 "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertEquals("""
+                   @Component({
+                       selector: 'my-customer',
+                       properties: {
+                           'id':'dependency'
+                       }
+                   })""", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testCustomTagsResolve20TypeScriptDirective() {
@@ -49,12 +50,13 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     PsiElement resolve = WebTestUtil.resolveWebSymbolReference(myFixture, "my-cus<caret>tomer").getPsiContext();
     assertNotNull(resolve);
     assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
-    assertEquals("@Directive({\n" +
-                 "    selector: 'my-customer',\n" +
-                 "    properties: {\n" +
-                 "        'id':'dependency'\n" +
-                 "    }\n" +
-                 "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertEquals("""
+                   @Directive({
+                       selector: 'my-customer',
+                       properties: {
+                           'id':'dependency'
+                       }
+                   })""", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testDeepPseudoSelector() {

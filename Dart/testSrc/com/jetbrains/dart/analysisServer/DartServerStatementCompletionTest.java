@@ -27,27 +27,31 @@ public class DartServerStatementCompletionTest extends CodeInsightFixtureTestCas
 
   public void testIfBlock() {
     doTest(
-      "main() {\n" +
-      "  if (true)<caret>\n" +
-      "}",
-      "main() {\n" +
-      "  if (true) {\n" +
-      "    <caret>\n" +
-      "  }\n" +
-      "}"
+      """
+        main() {
+          if (true)<caret>
+        }""",
+      """
+        main() {
+          if (true) {
+            <caret>
+          }
+        }"""
     );
   }
 
   public void testWhileBlock() {
     doTest(
-      "main() {\n" +
-      "  while (true)<caret>\n" +
-      "}",
-      "main() {\n" +
-      "  while (true) {\n" +
-      "    <caret>\n" +
-      "  }\n" +
-      "}"
+      """
+        main() {
+          while (true)<caret>
+        }""",
+      """
+        main() {
+          while (true) {
+            <caret>
+          }
+        }"""
     );
   }
 }

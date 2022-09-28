@@ -35,39 +35,41 @@ public class GoToSymbolProviderTest extends BasicLightHighlightingTestCase {
   }
 
   public void testGotoAction() {
-    runGotoTest("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                "\n" +
-                "<!DOCTYPE struts PUBLIC\n" +
-                "    \"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN\"\n" +
-                "    \"http://struts.apache.org/dtds/struts-2.0.dtd\">\n" +
-                "\n" +
-                "<struts>\n" +
-                "\n" +
-                "  <package name=\"testPackage\" namespace=\"/Test\">\n" +
-                "    <action name=\"test1\"/>\n" +
-                "    <action name=\"test2\"/>\n" +
-                "    <action name=\"test3\"/>\n" +
-                "  </package>\n" +
-                "\n" +
-                "</struts>",
+    runGotoTest("""
+                  <?xml version="1.0" encoding="UTF-8" ?>
+
+                  <!DOCTYPE struts PUBLIC
+                      "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+                      "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+                  <struts>
+
+                    <package name="testPackage" namespace="/Test">
+                      <action name="test1"/>
+                      <action name="test2"/>
+                      <action name="test3"/>
+                    </package>
+
+                  </struts>""",
                 "test1", "test2", "test3");
   }
 
   public void testGotoPackage() {
-    runGotoTest("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-                "\n" +
-                "<!DOCTYPE struts PUBLIC\n" +
-                "    \"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN\"\n" +
-                "    \"http://struts.apache.org/dtds/struts-2.0.dtd\">\n" +
-                "\n" +
-                "<struts>\n" +
-                "\n" +
-                "  <package name=\"testPackage1\" namespace=\"/Test\">\n" +
-                "  </package>\n" +
-                "  <package name=\"testPackage2\" namespace=\"/Test2\">\n" +
-                "  </package>\n" +
-                "\n" +
-                "</struts>",
+    runGotoTest("""
+                  <?xml version="1.0" encoding="UTF-8" ?>
+
+                  <!DOCTYPE struts PUBLIC
+                      "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+                      "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+                  <struts>
+
+                    <package name="testPackage1" namespace="/Test">
+                    </package>
+                    <package name="testPackage2" namespace="/Test2">
+                    </package>
+
+                  </struts>""",
                 "testPackage1", "testPackage2");
   }
 

@@ -106,9 +106,10 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
   }
 
   public void testAvailability() {
-    final XmlFile htmlPsiFile = (XmlFile)myFixture.configureByText("foo.html", "<script type='application/dart'>\n" +
-                                                                               "  var <caret>foo;\n" +
-                                                                               "</script>");
+    final XmlFile htmlPsiFile = (XmlFile)myFixture.configureByText("foo.html", """
+      <script type='application/dart'>
+        var <caret>foo;
+      </script>""");
     final VirtualFile htmlVirtualFile = htmlPsiFile.getVirtualFile();
     final XmlTag htmlTag = htmlPsiFile.getRootTag();
     final PsiElement dartElementInHtmlFile = htmlPsiFile.findElementAt(getEditor().getCaretModel().getOffset());

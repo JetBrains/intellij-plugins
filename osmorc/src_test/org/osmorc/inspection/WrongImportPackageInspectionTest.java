@@ -8,11 +8,13 @@ public class WrongImportPackageInspectionTest extends LightOsgiFixtureTestCase {
     myFixture.enableInspections(new WrongImportPackageInspection());
     myFixture.configureByText(
       "MANIFEST.MF",
-      "Import-Package: aQute.bnd.deployer.http,\n" +
-      " aQute.bnd.deployer.repository.*,\n" +
-      " aQute.maven.api;version=1.1,\n" +
-      " javax.swing,\n" +
-      " <error descr=\"The package is not exported by the bundle dependencies\">aQute.lib.fileset</error>\n");
+      """
+        Import-Package: aQute.bnd.deployer.http,
+         aQute.bnd.deployer.repository.*,
+         aQute.maven.api;version=1.1,
+         javax.swing,
+         <error descr="The package is not exported by the bundle dependencies">aQute.lib.fileset</error>
+        """);
     myFixture.checkHighlighting(true, false, false);
   }
 }

@@ -32,13 +32,15 @@ public class HbCommentActionTest extends HbActionHandlerTest {
   public void testInsertLineComment2() {
     doLineCommentTest(
 
-      "{{#foo}}\n" +
-      "<caret>    {{bar}}\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+        <caret>    {{bar}}
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "<!--    {{bar}}-->\n" +
-      "<caret>{{/foo}}"
+      """
+        {{#foo}}
+        <!--    {{bar}}-->
+        <caret>{{/foo}}"""
     );
   }
 
@@ -54,13 +56,15 @@ public class HbCommentActionTest extends HbActionHandlerTest {
   public void testInsertBlockComment2() {
     doBlockCommentTest(
 
-      "{{#foo}}\n" +
-      "    <caret>{{bar}}\n" +
-      "{{/foo}",
+      """
+        {{#foo}}
+            <caret>{{bar}}
+        {{/foo}""",
 
-      "{{#foo}}\n" +
-      "    <!--<caret>-->{{bar}}\n" +
-      "{{/foo}"
+      """
+        {{#foo}}
+            <!--<caret>-->{{bar}}
+        {{/foo}"""
     );
   }
 
@@ -125,13 +129,15 @@ public class HbCommentActionTest extends HbActionHandlerTest {
 
     doLineCommentTest(
 
-      "{{#foo}}\n" +
-      "<caret>    {{bar}}\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+        <caret>    {{bar}}
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "{{!--    {{bar}}--}}\n" +
-      "<caret>{{/foo}}"
+      """
+        {{#foo}}
+        {{!--    {{bar}}--}}
+        <caret>{{/foo}}"""
     );
 
     HbConfig.setCommenterLanguage(prevCommenterLang);
@@ -157,13 +163,15 @@ public class HbCommentActionTest extends HbActionHandlerTest {
 
     doBlockCommentTest(
 
-      "{{#foo}}\n" +
-      "    <caret>{{bar}}\n" +
-      "{{/foo}",
+      """
+        {{#foo}}
+            <caret>{{bar}}
+        {{/foo}""",
 
-      "{{#foo}}\n" +
-      "    {{!--<caret>--}}{{bar}}\n" +
-      "{{/foo}"
+      """
+        {{#foo}}
+            {{!--<caret>--}}{{bar}}
+        {{/foo}"""
     );
 
     HbConfig.setCommenterLanguage(prevCommenterLang);

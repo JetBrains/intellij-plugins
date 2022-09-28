@@ -58,10 +58,12 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     final String testName = getTestName(false);
     myFixture.enableInspections(HtmlUnknownTargetInspection.class);
 
-    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
-                                               "dependencies:\n" +
-                                               "  PathPackage:\n" +
-                                               "    path: local_package\n");
+    myFixture.addFileToProject("pubspec.yaml", """
+      name: ProjectName
+      dependencies:
+        PathPackage:
+          path: local_package
+      """);
     myFixture.addFileToProject("lib/projectFile.dart", "");
     myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
     myFixture.addFileToProject("packages/browser/dart.js", "");
@@ -113,10 +115,12 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
 
   public void testSimplePolymer() {
     myFixture.enableInspections(HtmlUnknownTagInspection.class);
-    myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n" +
-                                               "dependencies:\n" +
-                                               "  PathPackage:\n" +
-                                               "    path: PathPackage\n");
+    myFixture.addFileToProject("pubspec.yaml", """
+      name: ThisProject
+      dependencies:
+        PathPackage:
+          path: PathPackage
+      """);
     myFixture.addFileToProject("lib/custom_element.html", "<polymer-element name='custom-element'/>");
     myFixture.addFileToProject("PathPackage/lib/in_path_package.html", "<polymer-element name='path-package-element'/>");
     addStandardPackage("polymer");

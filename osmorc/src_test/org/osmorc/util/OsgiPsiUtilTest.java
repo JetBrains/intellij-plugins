@@ -22,8 +22,10 @@ public class OsgiPsiUtilTest extends LightOsgiFixtureTestCase {
   public void testSetHeaderInNonEmptyManifest() {
     doTest(
       "Bundle-Version: 1.0\n",
-      "Bundle-Version: 1.0\n" +
-      "TestHeader: TestValue\n",
+      """
+        Bundle-Version: 1.0
+        TestHeader: TestValue
+        """,
       true);
   }
 
@@ -43,13 +45,17 @@ public class OsgiPsiUtilTest extends LightOsgiFixtureTestCase {
 
   public void testAppendToNonEmptyHeader() {
     doTest(
-      "TestHeader: \n" +
-      " OldValue1,\n" +
-      " OldValue2\n",
-      "TestHeader: \n" +
-      " OldValue1,\n" +
-      " OldValue2,\n" +
-      " TestValue\n",
+      """
+        TestHeader:\s
+         OldValue1,
+         OldValue2
+        """,
+      """
+        TestHeader:\s
+         OldValue1,
+         OldValue2,
+         TestValue
+        """,
       false);
   }
 

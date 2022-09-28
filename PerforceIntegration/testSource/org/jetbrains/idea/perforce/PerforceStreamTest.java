@@ -31,18 +31,20 @@ public class PerforceStreamTest extends PerforceTestCase {
   protected void setupWorkspace() {
     ensureNoEnvP4Config();
 
-    verify(runP4(new String[]{"depot", "-i"}, "Depot: streams\n" +
-                                              "Owner: test\n" +
-                                              "Type: stream\n" +
-                                              "Map: streams/..."));
+    verify(runP4(new String[]{"depot", "-i"}, """
+      Depot: streams
+      Owner: test
+      Type: stream
+      Map: streams/..."""));
     setupClient(buildTestClientSpecCore("test", myClientRoot.toString()) + " //streams/... //test/...");
-    verify(runP4(new String[]{"stream", "-i"}, "Stream: //streams/MAIN\n" +
-                                               "Name: MAIN\n" +
-                                               "Parent: none\n" +
-                                               "Owner: test\n" +
-                                               "Paths: share ...\n" +
-                                               "Options: allsubmit unlocked notoparent nofromparent mergedown\n" +
-                                               "Type: mainline"));
+    verify(runP4(new String[]{"stream", "-i"}, """
+      Stream: //streams/MAIN
+      Name: MAIN
+      Parent: none
+      Owner: test
+      Paths: share ...
+      Options: allsubmit unlocked notoparent nofromparent mergedown
+      Type: mainline"""));
     verify(runP4WithClient("workspace", "-s", "-f", "-S", "//streams/MAIN"));
     verify(runP4WithClient("sync", "..."));
   }
@@ -54,13 +56,14 @@ public class PerforceStreamTest extends PerforceTestCase {
     submitDefaultList("initial");
 
     assertTrue(VfsUtilCore.virtualToIoFile(file).exists());
-    verify(runP4(new String[]{"stream", "-i"}, "Stream: //streams/DEV\n" +
-                                               "Name: DEV\n" +
-                                               "Owner: test\n" +
-                                               "Type: development\n" +
-                                               "Paths: share ...\n" +
-                                               "Options: allsubmit unlocked toparent fromparent mergedown\n" +
-                                               "Parent: //streams/MAIN"));
+    verify(runP4(new String[]{"stream", "-i"}, """
+      Stream: //streams/DEV
+      Name: DEV
+      Owner: test
+      Type: development
+      Paths: share ...
+      Options: allsubmit unlocked toparent fromparent mergedown
+      Parent: //streams/MAIN"""));
     assertTrue(VfsUtilCore.virtualToIoFile(file).exists());
     switchToStream("DEV");
 

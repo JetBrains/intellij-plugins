@@ -75,11 +75,12 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMetaClassSig2() {
     doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>",
-           "@Meta('foo') class <caret>A {};\n" +
-           "class Meta {\n" +
-           "  final String name;\n" +
-           "  const Meta([this.name]);\n" +
-           "}");
+           """
+             @Meta('foo') class <caret>A {};
+             class Meta {
+               final String name;
+               const Meta([this.name]);
+             }""");
   }
 
   public void testLibraryClassDoc() {
@@ -206,10 +207,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testTopLevelVarDoc1() {
     doTest("<code><b>a.b.c</b><br>var <b>x</b><br><br></code>\n<p>docs1\ndocs2</p>",
-           "library a.b.c;\n" +
-           "/// docs1\n" +
-           "/// docs2\n" +
-           "<caret>@deprecated var x = 'foo';");
+           """
+             library a.b.c;
+             /// docs1
+             /// docs2
+             <caret>@deprecated var x = 'foo';""");
   }
 
   public void testTopLevelVarDoc2() {
@@ -229,83 +231,94 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "\n" +
            "<ul><li>this</li>\n" +
            "<li>that</li></ul>",
-           "/** Good for:\n\n" +
-           " * * this\n" +
-           " * * that\n" +
-           "*/\n" +
-           "\n<caret>void foo(int x) { }");
+           """
+             /** Good for:
+
+              * * this
+              * * that
+             */
+
+             <caret>void foo(int x) { }""");
   }
 
   public void testClassMultilineDoc1() {
-    doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n" +
-           "<pre><code>     doc1</code></pre>\n" +
-           "\n" +
-           "<p>doc2\n" +
-           " doc3</p>\n" +
-           "\n" +
-           "<p>   doc4</p>\n" +
-           "\n" +
-           "<pre><code>    code</code></pre>",
+    doTest("""
+             <code><b>test.dart</b><br>class <b>A</b><br><br></code>
+             <pre><code>     doc1</code></pre>
 
-           "/** 1 */\n" +
-           "/**\n" +
-           " *      doc1\n" +
-           " * doc2\n" +
-           " *  doc3\n" +
-           " *\n" +
-           " *    doc4\n" +
-           " * \n" +
-           " *     code\n" +
-           " */\n" +
-           "// non-doc\n" +
-           "<caret>class A{}");
+             <p>doc2
+              doc3</p>
+
+             <p>   doc4</p>
+
+             <pre><code>    code</code></pre>""",
+
+           """
+             /** 1 */
+             /**
+              *      doc1
+              * doc2
+              *  doc3
+              *
+              *    doc4
+              *\s
+              *     code
+              */
+             // non-doc
+             <caret>class A{}""");
   }
 
   public void testClassMultilineDoc2() {
-    doTest("<code><b>test.dart</b><br>abstract class <b>A</b><br><br></code>\n<p>doc1\n" +
-           "doc2\n" +
-           " doc3\n" +
-           "doc4\n" +
-           "doc5\n" +
-           " doc6</p>",
+    doTest("""
+             <code><b>test.dart</b><br>abstract class <b>A</b><br><br></code>
+             <p>doc1
+             doc2
+              doc3
+             doc4
+             doc5
+              doc6</p>""",
 
-           "@deprecated\n" +
-           "/**\n" +
-           "*doc1\n" +
-           "* doc2\n" +
-           "*  doc3\n" +
-           "     *doc4\n" +
-           "     * doc5\n" +
-           "     *  doc6\n" +
-           " */\n" +
-           "<caret>abstract class A{}");
+           """
+             @deprecated
+             /**
+             *doc1
+             * doc2
+             *  doc3
+                  *doc4
+                  * doc5
+                  *  doc6
+              */
+             <caret>abstract class A{}""");
   }
 
   public void testClassSingleLineDocs1() {
-    doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n" +
-           "<p>  doc1 <br />\n" +
-           "doc2   </p>",
+    doTest("""
+             <code><b>test.dart</b><br>class <b>A</b><br><br></code>
+             <p>  doc1 <br />
+             doc2   </p>""",
 
-           "// not doc \n" +
-           "///   doc1  \n" +
-           " /* not doc */\n" +
-           "   /// doc2   \n" +
-           " // not doc \n" +
-           "<caret>class A{}");
+           """
+             // not doc\s
+             ///   doc1 \s
+              /* not doc */
+                /// doc2  \s
+              // not doc\s
+             <caret>class A{}""");
   }
 
   public void testClassSingleLineDocs2() {
-    doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n" +
-           "<p>  doc1 <br />\n" +
-           "doc2   </p>",
+    doTest("""
+             <code><b>test.dart</b><br>class <b>A</b><br><br></code>
+             <p>  doc1 <br />
+             doc2   </p>""",
 
-           "@deprecated" +
-           "// not doc \n" +
-           "///   doc1  \n" +
-           " /* not doc */\n" +
-           "   ///doc2   \n" +
-           " // not doc \n" +
-           "<caret>class A{}");
+           """
+             @deprecated// not doc\s
+             ///   doc1 \s
+              /* not doc */
+                ///doc2  \s
+              // not doc\s
+             <caret>class A{}""");
   }
 
   public void testMethodMultilineDoc() {
@@ -320,20 +333,21 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
       "\n" +
       "<pre><code>    code</code></pre>",
 
-      "class A{\n" +
-      "/** 1 */\n" +
-      "/**\n" +
-      " *      doc1\n" +
-      " * doc2\n" +
-      " *  doc3\n" +
-      " *\n" +
-      " *    doc4\n" +
-      " * \n" +
-      " *     code\n" +
-      " */\n" +
-      "// non-doc\n" +
-      "<caret>foo(){}\n" +
-      "}");
+      """
+        class A{
+        /** 1 */
+        /**
+         *      doc1
+         * doc2
+         *  doc3
+         *
+         *    doc4
+         *\s
+         *     code
+         */
+        // non-doc
+        <caret>foo(){}
+        }""");
   }
 
   public void testMethodSingleLineDocs() {
@@ -342,16 +356,17 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "\n" +
            "<pre><code>    doc2   </code></pre>",
 
-           "class A{\n" +
-           "// not doc \n" +
-           "///   doc1  \n" +
-           " /* not doc */\n" +
-           "   ///\n" +
-           "   ///     doc2   \n" +
-           "   ///\n" +
-           " // not doc \n" +
-           "<caret>foo(){}\n" +
-           "}");
+           """
+             class A{
+             // not doc\s
+             ///   doc1 \s
+              /* not doc */
+                ///
+                ///     doc2  \s
+                ///
+              // not doc\s
+             <caret>foo(){}
+             }""");
   }
 
   public void testHyperlink() {
@@ -383,16 +398,17 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "    $ code continues</code></pre>\n" +
            "\n" +
            "<p>code done</p>",
-           "///    text\n" +
-           "///     code block\n" +
-           "/// ```\n" +
-           "///  code block too\n" +
-           "/// ```\n" +
-           "/// simple text\n" +
-           "///     $ code\n" +
-           "/// \t$ code continues\n" +
-           "/// code done\n" +
-           "<caret>foo(){}");
+           """
+             ///    text
+             ///     code block
+             /// ```
+             ///  code block too
+             /// ```
+             /// simple text
+             ///     $ code
+             /// \t$ code continues
+             /// code done
+             <caret>foo(){}""");
   }
 
   public void testInlineCodeBlocks() {
@@ -411,25 +427,27 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "    $ code continues [eight] </code></pre>\n" +
            "\n" +
            "<p>code done <code></code> <code>nine</code></p>",
-           "///    text [one] [two](www.example.com)\n" +
-           "///     code block [three]\n" +
-           "/// ```\n" +
-           "///  code block too [four]\n" +
-           "/// ```\n" +
-           "/// simple text [five] [six](www.example.com)\n" +
-           "///     $ code [seven]\n" +
-           "/// \t$ code continues [eight] \n" +
-           "/// code done [] [nine]\n" +
-           "<caret>foo(){}");
+           """
+             ///    text [one] [two](www.example.com)
+             ///     code block [three]
+             /// ```
+             ///  code block too [four]
+             /// ```
+             /// simple text [five] [six](www.example.com)
+             ///     $ code [seven]
+             /// \t$ code continues [eight]\s
+             /// code done [] [nine]
+             <caret>foo(){}""");
   }
 
   public void testMarkdownUtil_testRemoveImages() {
     doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
            "<p><img src=\"http://localhost/logo.png\" alt=\"logo\" />, \n" +
            "Hello, <a href=\"http://www.google.com\">Google</a></p>",
-           "/// ![logo](http://localhost/logo.png), \n" +
-           "/// Hello, [Google](http://www.google.com)\n" +
-           "<caret>foo(){}");
+           """
+             /// ![logo](http://localhost/logo.png),\s
+             /// Hello, [Google](http://www.google.com)
+             <caret>foo(){}""");
   }
 
   public void testMarkdownUtil_testReplaceHeaders() {
@@ -439,10 +457,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "<h2>Hello2</h2>\n" +
            "\n" +
            "<h2>Hello3</h2>",
-           "/// # Hello1\n" +
-           "/// ## Hello2##\n" +
-           "/// ## Hello3#\n" +
-           "<caret>foo(){}");
+           """
+             /// # Hello1
+             /// ## Hello2##
+             /// ## Hello3#
+             <caret>foo(){}""");
   }
 
   public void testMarkdownUtil_testGenerateLists() {
@@ -450,9 +469,10 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "<ul><li>red</li>\n" +
            "<li>green</li>\n" +
            "<li>blue</li></ul>",
-           "/// *   red\n" +
-           "/// *   green\n" +
-           "/// *   blue\n" +
-           "<caret>foo(){}");
+           """
+             /// *   red
+             /// *   green
+             /// *   blue
+             <caret>foo(){}""");
   }
 }

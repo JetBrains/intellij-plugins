@@ -71,10 +71,11 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
   }
 
   public void testBoolUsagesWithScope() {
-    final PsiFile psiFile1 = myFixture.configureByText("file.dart", "/// [bool]\n" +
-                                                                    "<caret>bool foo() {\n" +
-                                                                    "  var bool = #bool;\n" +
-                                                                    "}");
+    final PsiFile psiFile1 = myFixture.configureByText("file.dart", """
+      /// [bool]
+      <caret>bool foo() {
+        var bool = #bool;
+      }""");
     final PsiFile psiFile2 = myFixture.addFileToProject("file1.dart", "bool x;");
 
     myFixture.doHighlighting(); // warm up
@@ -102,19 +103,21 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
   }
 
   public void testDynamicAndNonCodeUsage() {
-    myFixture.configureByText("file.dart", "class Foo {\n" +
-                                           "  /**\n" +
-                                           "   * [bar] is awesome \n" +
-                                           "   */\n" +
-                                           "  var bar<caret>;\n" +
-                                           "}\n" +
-                                           "\n" +
-                                           "main () {\n" +
-                                           "  Foo x;\n" +
-                                           "  var y;\n" +
-                                           "  x.bar;  // hard reference \n" +
-                                           "  y.bar;  // potential usage \n" +
-                                           "}\n");
+    myFixture.configureByText("file.dart", """
+      class Foo {
+        /**
+         * [bar] is awesome\s
+         */
+        var bar<caret>;
+      }
+
+      main () {
+        Foo x;
+        var y;
+        x.bar;  // hard reference\s
+        y.bar;  // potential usage\s
+      }
+      """);
     myFixture.doHighlighting(); // warm up
     checkUsages(GlobalSearchScope.projectScope(getProject()),
                 "LeafPsiElement in " + getFile().getName() + "@24:27 (non-code usage) [<null> usage type]",
@@ -123,28 +126,32 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
   }
 
   public void testCascadeReadUsage() {
-    myFixture.configureByText("file.dart", "class Foo {\n" +
-                                           "  int someInt;\n" +
-                                           "}\n" +
-                                           "\n" +
-                                           "bar (Foo foo) {\n" +
-                                           "  foo\n" +
-                                           "  ..someInt<caret>;\n" +
-                                           "}\n");
+    myFixture.configureByText("file.dart", """
+      class Foo {
+        int someInt;
+      }
+
+      bar (Foo foo) {
+        foo
+        ..someInt<caret>;
+      }
+      """);
     myFixture.doHighlighting(); // warm up
     checkUsages(GlobalSearchScope.projectScope(getProject()),
                 "DartReferenceExpressionImpl in file.dart@56:63 [Value read]");
   }
 
   public void testCascadeWriteUsage() {
-    myFixture.configureByText("file.dart", "class Foo {\n" +
-                                           "  int someInt;\n" +
-                                           "}\n" +
-                                           "\n" +
-                                           "bar (Foo foo) {\n" +
-                                           "  foo\n" +
-                                           "  ..someInt<caret> = 1;\n" +
-                                           "}\n");
+    myFixture.configureByText("file.dart", """
+      class Foo {
+        int someInt;
+      }
+
+      bar (Foo foo) {
+        foo
+        ..someInt<caret> = 1;
+      }
+      """);
     myFixture.doHighlighting(); // warm up
     checkUsages(GlobalSearchScope.projectScope(getProject()),
                 "DartReferenceExpressionImpl in file.dart@56:63 [Value write]");

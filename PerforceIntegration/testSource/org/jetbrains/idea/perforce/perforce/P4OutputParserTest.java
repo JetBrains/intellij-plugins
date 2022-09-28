@@ -15,12 +15,29 @@ import java.util.*;
   private static final SyncDateFormat DATE_FORMAT = new SyncDateFormat(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault()));
 
   public void testLog() throws ParseException {
-    String output = "//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewClass.java\n" +
-                    "... #5 change 85 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)\n\n\ttest ''test2 test3\n\n" +
-                    "... #4 change 84 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)\n\n\t\n\n" +
-                    "... #3 change 83 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)\n\n\ttest test\n\n" +
-                    "... #2 change 82 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)\n\n\ttest test\n\n" +
-                    "... #1 change 36 add on 2004/08/18 14:00:53 by lesya@unit-037 (text)\n\n\ttest \n\n";
+    String output = """
+      //depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewClass.java
+      ... #5 change 85 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)
+
+      \ttest ''test2 test3
+
+      ... #4 change 84 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)
+
+      \t
+
+      ... #3 change 83 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)
+
+      \ttest test
+
+      ... #2 change 82 edit on 2004/11/03 14:00:53 by lesya@lesya-test (text)
+
+      \ttest test
+
+      ... #1 change 36 add on 2004/08/18 14:00:53 by lesya@unit-037 (text)
+
+      \ttest\s
+
+      """;
 
     List<P4Revision> revisions = OutputMessageParser.processLogOutput(output, true);
     assertEquals(5, revisions.size());
@@ -42,26 +59,28 @@ import java.util.*;
     assertTrue(OutputMessageParser.LOG_PATTERN.matcher("... #3 change 66879 edit on 2005/03/15 17:03:00 by Dallas@omega (text)").matches());
     assertTrue(OutputMessageParser.DEPOT_PATTERN.matcher("//depot/Fabrique/fabrique-activeLibraries/controls/source/jetbrains/fabrique/web/ui/LayoutImpl.java").matches());
 
-    String output = "//depot/Fabrique/fabrique-activeLibraries/controls/source/jetbrains/fabrique/web/ui/LayoutImpl.java\n" +
-                    "... #3 change 66879 edit on 2005/03/15 17:03:00 by Dallas@omega (text)\n" +
-                    "\n" +
-                    "\tMoved Styleable and CocktailComponent interfaces from WebControl to WebControlInternal\n" +
-                    "\n" +
-                    "... #2 change 66734 edit on 2005/03/14 18:03:57 by Andrey.Podgurskiy@halt (text)\n" +
-                    "\n" +
-                    "\tFBQP-2147: Default CSS class name properties are even applied to 'internal' controls of complex controls\n" +
-                    "\tFBQP-2174: ScrollPaneDemoPanel2 runtime exception\n" +
-                    "\n" +
-                    "... #1 change 66586 add on 2005/03/12 18:12:15 by AKireyev@illusion (text)\n" +
-                    "\n" +
-                    "\tMoved layout-related code to controls AL\n" +
-                    "\n" +
-                    "... ... branch from //depot/Fabrique/fabrique-framework/sourceWeb/jetbrains/fabrique/web/ui/LayoutImpl.java#1,#5\n" +
-                    "//depot/Fabrique/fabrique-framework/sourceWeb/jetbrains/fabrique/web/ui/LayoutImpl.java\n" +
-                    "... #5 change 66254 edit on 2005/03/10 14:34:33 by Dallas@omega (text)\n" +
-                    "\n" +
-                    "\tFBQP-1923: Web framework user API review / Review WebControl API\n" +
-                    "\n";
+    String output = """
+      //depot/Fabrique/fabrique-activeLibraries/controls/source/jetbrains/fabrique/web/ui/LayoutImpl.java
+      ... #3 change 66879 edit on 2005/03/15 17:03:00 by Dallas@omega (text)
+
+      \tMoved Styleable and CocktailComponent interfaces from WebControl to WebControlInternal
+
+      ... #2 change 66734 edit on 2005/03/14 18:03:57 by Andrey.Podgurskiy@halt (text)
+
+      \tFBQP-2147: Default CSS class name properties are even applied to 'internal' controls of complex controls
+      \tFBQP-2174: ScrollPaneDemoPanel2 runtime exception
+
+      ... #1 change 66586 add on 2005/03/12 18:12:15 by AKireyev@illusion (text)
+
+      \tMoved layout-related code to controls AL
+
+      ... ... branch from //depot/Fabrique/fabrique-framework/sourceWeb/jetbrains/fabrique/web/ui/LayoutImpl.java#1,#5
+      //depot/Fabrique/fabrique-framework/sourceWeb/jetbrains/fabrique/web/ui/LayoutImpl.java
+      ... #5 change 66254 edit on 2005/03/10 14:34:33 by Dallas@omega (text)
+
+      \tFBQP-1923: Web framework user API review / Review WebControl API
+
+      """;
     List<P4Revision> revisions = OutputMessageParser.processLogOutput(output, true);
     assertEquals(4, revisions.size());
 
@@ -81,36 +100,37 @@ import java.util.*;
       , revisions.get(3).getSubmitMessage());
     assertEquals("//depot/Fabrique/fabrique-framework/sourceWeb/jetbrains/fabrique/web/ui/LayoutImpl.java", revisions.get(3).getDepotPath());
 
-    output = "//mindreef/main/webapps/sos/web/error.mrv\n" +
-             "... #7 change 10910 edit on 2005/04/29 by aaron@Wyrmwood (text)\n" +
-             "\n" +
-             "\tbugfix3396\n" +
-             "\n" +
-             "... ... branch into //mindreef/bugfix/Sputnik1.0/webapps/sos/web/error.mrv#1\n" +
-             "... ... branch into //mindreef/sandbox/contractbuilder/webapps/sos/web/error.mrv#1\n" +
-             "... #6 change 10896 edit on 2005/04/29 by jim@Moray (text)\n" +
-             "\n" +
-             "\tLittle more padding on top of error page\n" +
-             "\n" +
-             "... #5 change 10839 edit on 2005/04/28 by jim@Moray (text)\n" +
-             "\n" +
-             "\tCleaned up exception pages.\n" +
-             "\n" +
-             "... #4 change 9786 edit on 2005/02/16 by aaron@Wyrmwood (text)\n" +
-             "\n" +
-             "\tremoved $link, solves the null pointer in tomcat window error\n" +
-             "\n" +
-             "... #3 change 9657 edit on 2005/02/07 by jim@Moray (text)\n" +
-             "\n" +
-             "\tServer setup pages\n" +
-             "\n" +
-             "... #2 change 9325 edit on 2005/01/01 by jim@Moray (text)\n" +
-             "\n" +
-             "\tInitial global-exception handlers for struts\n" +
-             "\n" +
-             "... #1 change 9324 add on 2005/01/01 by jim@Moray (text)\n" +
-             "\n" +
-             "\tTidy up the first WebTest.";
+    output = """
+      //mindreef/main/webapps/sos/web/error.mrv
+      ... #7 change 10910 edit on 2005/04/29 by aaron@Wyrmwood (text)
+
+      \tbugfix3396
+
+      ... ... branch into //mindreef/bugfix/Sputnik1.0/webapps/sos/web/error.mrv#1
+      ... ... branch into //mindreef/sandbox/contractbuilder/webapps/sos/web/error.mrv#1
+      ... #6 change 10896 edit on 2005/04/29 by jim@Moray (text)
+
+      \tLittle more padding on top of error page
+
+      ... #5 change 10839 edit on 2005/04/28 by jim@Moray (text)
+
+      \tCleaned up exception pages.
+
+      ... #4 change 9786 edit on 2005/02/16 by aaron@Wyrmwood (text)
+
+      \tremoved $link, solves the null pointer in tomcat window error
+
+      ... #3 change 9657 edit on 2005/02/07 by jim@Moray (text)
+
+      \tServer setup pages
+
+      ... #2 change 9325 edit on 2005/01/01 by jim@Moray (text)
+
+      \tInitial global-exception handlers for struts
+
+      ... #1 change 9324 add on 2005/01/01 by jim@Moray (text)
+
+      \tTidy up the first WebTest.""";
 
     revisions = OutputMessageParser.processLogOutput(output, false);
     assertEquals(7, revisions.size());
@@ -118,17 +138,19 @@ import java.util.*;
   }
 
   public void testChanges() throws Exception{
-    String output="Change 66853 on 2005/03/15 15:03:42 by lesya@lesya_new\n" +
-                  "\n" +
-                  "\tNon-closing tags formatting fixed\n" +
-                  "\n" +
-                  "Change 66843 on 2005/03/15 14:43:26 by lesya@lesya_new\n" +
-                  "\n" +
-                  "\tReformat code action moved into Code main menu group\n" +
-                  "\n" +
-                  "Change 66826 on 2005/03/15 14:01:15 by lesya@lesya_new\n" +
-                  "\n" +
-                  "\tStructuralReplaceTest rebombed\n";
+    String output= """
+      Change 66853 on 2005/03/15 15:03:42 by lesya@lesya_new
+
+      \tNon-closing tags formatting fixed
+
+      Change 66843 on 2005/03/15 14:43:26 by lesya@lesya_new
+
+      \tReformat code action moved into Code main menu group
+
+      Change 66826 on 2005/03/15 14:01:15 by lesya@lesya_new
+
+      \tStructuralReplaceTest rebombed
+      """;
 
     List<ChangeListData> changes = OutputMessageParser.processChangesOutput(output);
     assertEquals(3, changes.size());
@@ -151,16 +173,17 @@ import java.util.*;
   }
 
   public void testBranches() {
-    String branchesOutput = "Branch demetra 2005/09/28 'IDEA 6 '\n" +
-                            "Branch Eshop_dev 2005/03/10 'Created by rob. '\n" +
-                            "Branch ExAnalyser 2005/09/07 'Created by migger. '\n" +
-                            "Branch irida-5.0.2 2005/09/28 'Created by yole. '\n" +
-                            "Branch irida-i18n 2005/08/15 'Created by yole. '\n" +
-                            "Branch irida_to_i18n 2005/09/29 'Created by yole. '\n" +
-                            "Branch Omea2.0 2005/08/09 'Created by yole. '\n" +
-                            "Branch OmeaPro1.0 2004/11/27 'Branch for the Omea Pro 1.0 release '\n" +
-                            "Branch OmeaReader1.0 2004/09/28 'branch for Omea Reader 1.0 release '\n" +
-                            "Branch ReSharper-Release1.0 2004/07/17 'Created by dsha. '";
+    String branchesOutput = """
+      Branch demetra 2005/09/28 'IDEA 6 '
+      Branch Eshop_dev 2005/03/10 'Created by rob. '
+      Branch ExAnalyser 2005/09/07 'Created by migger. '
+      Branch irida-5.0.2 2005/09/28 'Created by yole. '
+      Branch irida-i18n 2005/08/15 'Created by yole. '
+      Branch irida_to_i18n 2005/09/29 'Created by yole. '
+      Branch Omea2.0 2005/08/09 'Created by yole. '
+      Branch OmeaPro1.0 2004/11/27 'Branch for the Omea Pro 1.0 release '
+      Branch OmeaReader1.0 2004/09/28 'branch for Omea Reader 1.0 release '
+      Branch ReSharper-Release1.0 2004/07/17 'Created by dsha. '""";
 
     List<String> branches = OutputMessageParser.processBranchesOutput(branchesOutput);
 
@@ -172,16 +195,17 @@ import java.util.*;
   }
 
   public void testReadChangeDescription() {
-    String changeDescription = "Change 104643 by ven@5.0 on 2005/10/06 16:14:20\n" +
-                               "\n" +
-                               "\tIDEADEV2626\n" +
-                               "\n" +
-                               "Affected files ...\n" +
-                               "\n" +
-                               "... //IDEA/source/com/intellij/psi/impl/source/resolve/PsiResolveHelperImpl.java#23 edit\n" +
-                               "... //IDEA/testData/codeInsight/completion/smartType/IDEADEV2626-out.java#1 add\n" +
-                               "... //IDEA/testData/codeInsight/completion/smartType/IDEADEV2626.java#1 add\n" +
-                               "... //IDEA/testSource/com/intellij/codeInsight/completion/SmartTypeCompletion15Test.java#5 edit";
+    String changeDescription = """
+      Change 104643 by ven@5.0 on 2005/10/06 16:14:20
+
+      \tIDEADEV2626
+
+      Affected files ...
+
+      ... //IDEA/source/com/intellij/psi/impl/source/resolve/PsiResolveHelperImpl.java#23 edit
+      ... //IDEA/testData/codeInsight/completion/smartType/IDEADEV2626-out.java#1 add
+      ... //IDEA/testData/codeInsight/completion/smartType/IDEADEV2626.java#1 add
+      ... //IDEA/testSource/com/intellij/codeInsight/completion/SmartTypeCompletion15Test.java#5 edit""";
     final ChangeListData changeList = new OutputMessageParser(changeDescription).loadChangeListDescription();
     assertNotNull(changeList);
     assertEquals(104643, changeList.NUMBER);

@@ -41,57 +41,65 @@ public class PbStructureViewTest extends PbCodeInsightFixtureTestCase {
   public void testExtends() {
     myFixture.configureByFile(getTestDataPath() + "Extends.proto");
     String expectedLines =
-        "-Extends.proto\n"
-            + " -Foo\n"
-            + "  field1\n"
-            + "  field2\n"
-            + "  extensions 100 to 199;\n"
-            + " -extend Foo\n"
-            + "  field126\n";
+      """
+        -Extends.proto
+         -Foo
+          field1
+          field2
+          extensions 100 to 199;
+         -extend Foo
+          field126
+        """;
     testStructureView(expectedLines);
   }
 
   public void testNestedMessage() {
     myFixture.configureByFile(getTestDataPath() + "NestedMessage.proto");
     String expectedLines =
-        "-NestedMessage.proto\n"
-            + " -WithoutNest\n"
-            + "  field1\n"
-            + "  field2\n"
-            + " -WithNest\n"
-            + "  field1\n"
-            + "  field2\n"
-            + "  +NestedMessage\n"
-            + "  +NestedEnum\n"
-            + "  msg_instance\n"
-            + "  enum_instance\n"
-            + "  +Group\n"
-            + "  +oneof_field\n";
+      """
+        -NestedMessage.proto
+         -WithoutNest
+          field1
+          field2
+         -WithNest
+          field1
+          field2
+          +NestedMessage
+          +NestedEnum
+          msg_instance
+          enum_instance
+          +Group
+          +oneof_field
+        """;
     testStructureView(expectedLines);
   }
 
   public void testReservedFields() {
     myFixture.configureByFile(getTestDataPath() + "ReservedFields.proto");
     String expectedLines =
-        "-ReservedFields.proto\n"
-            + " -TestReservedFields\n"
-            + "  field1\n"
-            + "  reserved 2, 15, 9 to 11;\n"
-            + "  reserved \"bar\", \"baz\";\n";
+      """
+        -ReservedFields.proto
+         -TestReservedFields
+          field1
+          reserved 2, 15, 9 to 11;
+          reserved "bar", "baz";
+        """;
     testStructureView(expectedLines);
   }
 
   public void testServiceRpc() {
     myFixture.configureByFile(getTestDataPath() + "ServiceRpc.proto");
     String expectedLines =
-        "-ServiceRpc.proto\n"
-            + " FooRequest\n"
-            + " FooResponse\n"
-            + " -TestService\n"
-            + "  Foo\n"
-            + "  Bar\n"
-            + " BarRequest\n"
-            + " BarResponse\n";
+      """
+        -ServiceRpc.proto
+         FooRequest
+         FooResponse
+         -TestService
+          Foo
+          Bar
+         BarRequest
+         BarResponse
+        """;
     testStructureView(expectedLines);
   }
 }

@@ -71,11 +71,11 @@ public class StrutsConventionImplicitUsageProviderTest extends BasicLightHighlig
 
   public void testConventionEndsWithAction() {
     doTest("EndsWithAction.java",
-           "public class EndsWithAction {" +
-           "  public void isActionClassMethod() {}\n" +
-           "  protected void <warning descr=\"Method 'checkProtected()' is never used\">checkProtected</warning>() {}\n" +
-           "  private void <warning descr=\"Private method 'checkPrivate()' is never used\">checkPrivate</warning>() {}\n" +
-           "}");
+           """
+             public class EndsWithAction {  public void isActionClassMethod() {}
+               protected void <warning descr="Method 'checkProtected()' is never used">checkProtected</warning>() {}
+               private void <warning descr="Private method 'checkPrivate()' is never used">checkPrivate</warning>() {}
+             }""");
   }
 
   public void testConventionAnnotatedWithAction() {

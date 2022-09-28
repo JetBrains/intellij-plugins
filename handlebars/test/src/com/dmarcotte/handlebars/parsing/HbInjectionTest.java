@@ -10,10 +10,11 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 public class HbInjectionTest extends BasePlatformTestCase {
   public void testHtmlSetContent() {
-    String fileText = "<script type=\"text/x-handlebars-template\">\n" +
-                  "    {{boo}}\n" +
-                  "    <label {{action \"editTodo\" on=\"doubleClick\"}}>{{title}}</label>\n" +
-                  "</script>";
+    String fileText = """
+      <script type="text/x-handlebars-template">
+          {{boo}}
+          <label {{action "editTodo" on="doubleClick"}}>{{title}}</label>
+      </script>""";
     PsiFile file = myFixture.configureByText(getTestName(false) + ".html",
                                              fileText);
     XmlTag tag = ((XmlFile)file).getRootTag();

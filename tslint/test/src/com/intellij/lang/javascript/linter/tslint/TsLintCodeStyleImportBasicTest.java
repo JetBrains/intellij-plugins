@@ -59,14 +59,15 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testSeverityOff() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"semicolon\": {\n" +
-               "      \"options\": [\"never\"],\n" +
-               "      \"severity\": \"off\"\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "semicolon": {
+                       "options": ["never"],
+                       "severity": "off"
+                     }
+                   }
+                 }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
       Assert.assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
@@ -74,14 +75,15 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testSeverityNone() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"semicolon\": {\n" +
-               "      \"options\": [\"never\"],\n" +
-               "      \"severity\": \"none\"\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "semicolon": {
+                       "options": ["never"],
+                       "severity": "none"
+                     }
+                   }
+                 }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertTrue(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
       Assert.assertFalse(tsSettings.FORCE_SEMICOLON_STYLE);
@@ -89,14 +91,15 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testWithSeverityAndSingleStringOption() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"semicolon\": {\n" +
-               "      \"options\": \"never\",\n" +
-               "      \"severity\": \"error\"\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "semicolon": {
+                       "options": "never",
+                       "severity": "error"
+                     }
+                   }
+                 }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertFalse(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
       Assert.assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
@@ -104,54 +107,61 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testWithOptionsObject() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"space-before-function-paren\": [true, {\"anonymous\": \"never\"}]\n" +
-               "  }\n" +
-               "}\n", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "space-before-function-paren": [true, {"anonymous": "never"}]
+                   }
+                 }
+                 """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
     });
   }
 
   public void testWithSeverityAndOptionsObject() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"space-before-function-paren\": {\n" +
-               "      \"severity\": \"error\",\n" +
-               "      \"options\": { \"anonymous\": \"never\" }\n" +
-               "    }\n" +
-               "  }\n" +
-               "}\n", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "space-before-function-paren": {
+                       "severity": "error",
+                       "options": { "anonymous": "never" }
+                     }
+                   }
+                 }
+                 """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
     });
   }
 
   public void testWithSeverityAndOptionsObjectInArray() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"space-before-function-paren\": {\n" +
-               "      \"severity\": \"error\",\n" +
-               "      \"options\": [{ \"anonymous\": \"never\" }\n" +
-               "      ]\n" +
-               "    }\n" +
-               "  }\n" +
-               "}\n", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "space-before-function-paren": {
+                       "severity": "error",
+                       "options": [{ "anonymous": "never" }
+                       ]
+                     }
+                   }
+                 }
+                 """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
     });
   }
   
   public void testWithSeverityAndStringArrayOption() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"semicolon\": {\n" +
-               "      \"options\": [\"never\"],\n" +
-               "      \"severity\": \"error\"\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "semicolon": {
+                       "options": ["never"],
+                       "severity": "error"
+                     }
+                   }
+                 }""", (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       Assert.assertFalse(tsSettings.USE_SEMICOLON_AFTER_STATEMENT);
       Assert.assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
@@ -159,43 +169,47 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testWithSeverityAndSingleNumberOption() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"max-line-length\": {\n" +
-               "      \"severity\": \"error\",\n" +
-               "      \"options\": 12\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "max-line-length": {
+                       "severity": "error",
+                       "options": 12
+                     }
+                   }
+                 }""", (settings) -> {
       CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
       assertEquals(12, tsSettings.RIGHT_MARGIN);
     });
   }
 
   public void testWithSeverityAndArrayNumberOption() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"max-line-length\": {\n" +
-               "      \"severity\": \"error\",\n" +
-               "      \"options\": [12]\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "max-line-length": {
+                       "severity": "error",
+                       "options": [12]
+                     }
+                   }
+                 }""", (settings) -> {
       CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
       assertEquals(12, tsSettings.RIGHT_MARGIN);
     });
   }
 
   public void testStringListRule() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"import-blacklist\": [\n" +
-               "      true,\n" +
-               "      \"foojs\",\n" +
-               "      \"barjs\"\n" +
-               "    ]\n" +
-               "  }\n" +
-               "}\n", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "import-blacklist": [
+                       true,
+                       "foojs",
+                       "barjs"
+                     ]
+                   }
+                 }
+                 """, (settings) -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       assertEquals("foojs,barjs", tsSettings.BLACKLIST_IMPORTS);
     });
@@ -207,46 +221,52 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testSimpleNumberValueYaml() {
-    doTestYaml("rules:\n" +
-               "    semicolon: [true, \"never\"]\n" +
-               "    max-line-length: [true, 12]", settings -> {
+    doTestYaml("""
+                 rules:
+                     semicolon: [true, "never"]
+                     max-line-length: [true, 12]""", settings -> {
       CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
       assertEquals(12, tsSettings.RIGHT_MARGIN);
     });
   }
 
   public void testStringValueFromOptionsYaml() {
-    doTestYaml("rules:\n" +
-               "    semicolon:\n" +
-               "        options:\n" +
-               "            - never", settings -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
+    doTestYaml("""
+                 rules:
+                     semicolon:
+                         options:
+                             - never""", settings -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
   public void testNumberValueFromOptionsYaml() {
-    doTestYaml("rules:\n" +
-               "    max-line-length:\n" +
-               "        options: 12", settings -> {
+    doTestYaml("""
+                 rules:
+                     max-line-length:
+                         options: 12""", settings -> {
       CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
       assertEquals(12, tsSettings.RIGHT_MARGIN);
     }); 
   }
 
   public void testNoneSeverityYaml() {
-    doTestYaml("rules:\n" +
-               "    max-line-length:\n" +
-               "        severity: \"none\"\n" +
-               "        options: 12", settings -> {
+    doTestYaml("""
+                 rules:
+                     max-line-length:
+                         severity: "none"
+                         options: 12""", settings -> {
       CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
       assertEquals(-1, tsSettings.RIGHT_MARGIN);
     });
   }
 
   public void testStringListRuleYaml() {
-    doTestYaml("rules:\n" +
-               "    import-blacklist:\n" +
-               "        options:\n" +
-               "            - foojs\n" +
-               "            - barjs\n", settings -> {
+    doTestYaml("""
+                 rules:
+                     import-blacklist:
+                         options:
+                             - foojs
+                             - barjs
+                 """, settings -> {
       TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
       assertEquals("foojs,barjs", tsSettings.BLACKLIST_IMPORTS);
     });
@@ -254,11 +274,12 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
 
   public void testIndentWithTabs() {
     int indentBefore = 7;
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"indent\": [true, \"tabs\"]\n" +
-               "  }\n" +
-               "}", (settings) -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "indent": [true, "tabs"]
+                   }
+                 }""", (settings) -> {
                  CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
                  CommonCodeStyleSettings.IndentOptions indentOptions = tsSettings.getIndentOptions();
                  indentOptions.INDENT_SIZE = indentBefore;
@@ -276,13 +297,14 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testIndentWithTabsInOptions() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"indent\": {\n" +
-               "      \"options\": \"tabs\"\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", settings -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "indent": {
+                       "options": "tabs"
+                     }
+                   }
+                 }""", settings -> {
       CommonCodeStyleSettings.IndentOptions indentOptions =
         settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).getIndentOptions();
       assertTrue(indentOptions.USE_TAB_CHARACTER);
@@ -290,11 +312,12 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testIndentWithSize() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"indent\": [true, \"spaces\", 2]\n" +
-               "  }\n" +
-               "}", settings -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "indent": [true, "spaces", 2]
+                   }
+                 }""", settings -> {
       CommonCodeStyleSettings.IndentOptions indentOptions = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).getIndentOptions();
       assertFalse(indentOptions.USE_TAB_CHARACTER);
       assertEquals(2, indentOptions.INDENT_SIZE);
@@ -303,13 +326,14 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   }
 
   public void testIndentWithSizeInOptions() {
-    doTestJson("{\n" +
-               "  \"rules\": {\n" +
-               "    \"indent\": {\n" +
-               "      \"options\": [\"spaces\", 2]\n" +
-               "    }\n" +
-               "  }\n" +
-               "}", settings -> {
+    doTestJson("""
+                 {
+                   "rules": {
+                     "indent": {
+                       "options": ["spaces", 2]
+                     }
+                   }
+                 }""", settings -> {
       CommonCodeStyleSettings.IndentOptions indentOptions =
         settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).getIndentOptions();
       assertFalse(indentOptions.USE_TAB_CHARACTER);

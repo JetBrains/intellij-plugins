@@ -11,15 +11,17 @@ public class CfmlOffsetsElementSignatureProviderTest extends BasePlatformTestCas
 
   public void testMultiRootFile() {
     String text =
-      "<cfcomponent>\n" +
-      "    <cffunction name=\"f\">\n" +
-      "        <table>\n" +
-      "            <tbody>\n" +
-      "                <span id=\"my-id\" <cfif shouldExpand>style=\"display:none;\"</cfif>><a href=\"javascript:expand()\">\n" +
-      "            </tbody>\n" +
-      "        </table>\n" +
-      "    </cffunction>\n" +
-      "</cfcomponent>\n";
+      """
+        <cfcomponent>
+            <cffunction name="f">
+                <table>
+                    <tbody>
+                        <span id="my-id" <cfif shouldExpand>style="display:none;"</cfif>><a href="javascript:expand()">
+                    </tbody>
+                </table>
+            </cffunction>
+        </cfcomponent>
+        """;
     myFixture.configureByText("test.cfc", text);
 
     int startOffset = text.indexOf("<cfif");

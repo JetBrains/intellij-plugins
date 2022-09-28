@@ -171,10 +171,12 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
     // Make sure that doesn't cause our goto handler to stack overflow.
     PsiClass badClass =
       myFixture.addClass(
-        "public class Rec extends Rec2 {\n"
-        + "  // EXPECT-NEXT: Rec2.java / Rec2\n"
-        + "  public static /* caretAfterThis */ Rec2 identity(Rec x) { return x; }\n"
-        + "}\n");
+        """
+          public class Rec extends Rec2 {
+            // EXPECT-NEXT: Rec2.java / Rec2
+            public static /* caretAfterThis */ Rec2 identity(Rec x) { return x; }
+          }
+          """);
     myFixture.addClass("public class Rec2 extends Rec {}");
     assertWithMessage("Number of markers (" + GotoExpectationMarker.EXPECT_MARKER + ")")
       .that(checkExpectations(badClass.getContainingFile().getVirtualFile()))

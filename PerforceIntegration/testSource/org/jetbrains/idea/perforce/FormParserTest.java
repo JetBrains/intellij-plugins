@@ -10,36 +10,37 @@ import java.util.Map;
 
 public class FormParserTest extends TestCase{
   public void test(){
-    String change = "# A Perforce Change Specification.\n" +
-                    "#\n" +
-                    "#  Change:      The change number. 'new' on a new changelist.  Read-only.\n" +
-                    "#  Date:        The date this specification was last modified.  Read-only.\n" +
-                    "#  Client:      The client on which the changelist was created.  Read-only.\n" +
-                    "#  User:        The user who created the changelist. Read-only.\n" +
-                    "#  Status:      Either 'pending' or 'submitted'. Read-only.\n" +
-                    "#  Description: Comments about the changelist.  Required.\n" +
-                    "#  Jobs:        What opened jobs are to be closed by this changelist.\n" +
-                    "#               You may delete jobs from this list.  (New changelists only.)\n" +
-                    "#  Files:       What opened files from the default changelist are to be added\n" +
-                    "#               to this changelist.  You may delete files from this list.\n" +
-                    "#               (New changelists only.)\n" +
-                    "\n" +
-                    "Change:\tnew\n" +
-                    "\n" +
-                    "Client:\tlesya-test\n" +
-                    "\n" +
-                    "User:\tlesya\n" +
-                    "\n" +
-                    "Status:\tnew\n" +
-                    "\n" +
-                    "Description:\n" +
-                    "\t<enter description here>\n" +
-                    "\n" +
-                    "Files:\n" +
-                    "\t//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/Entry.java\t# delete\n" +
-                    "\t//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewClass.java\t# edit\n" +
-                    "\t//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewFile3.txt\t# add\n" +
-                    "";
+    String change = """
+      # A Perforce Change Specification.
+      #
+      #  Change:      The change number. 'new' on a new changelist.  Read-only.
+      #  Date:        The date this specification was last modified.  Read-only.
+      #  Client:      The client on which the changelist was created.  Read-only.
+      #  User:        The user who created the changelist. Read-only.
+      #  Status:      Either 'pending' or 'submitted'. Read-only.
+      #  Description: Comments about the changelist.  Required.
+      #  Jobs:        What opened jobs are to be closed by this changelist.
+      #               You may delete jobs from this list.  (New changelists only.)
+      #  Files:       What opened files from the default changelist are to be added
+      #               to this changelist.  You may delete files from this list.
+      #               (New changelists only.)
+
+      Change:\tnew
+
+      Client:\tlesya-test
+
+      User:\tlesya
+
+      Status:\tnew
+
+      Description:
+      \t<enter description here>
+
+      Files:
+      \t//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/Entry.java\t# delete
+      \t//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewClass.java\t# edit
+      \t//depot/javacvs/src/javacvs/org/netbeans/lib/cvsclient/NewFile3.txt\t# add
+      """;
 
     Map<String, List<String>> changeForm = FormParser.execute(change, PerforceRunner.CHANGE_FORM_FIELDS);
 

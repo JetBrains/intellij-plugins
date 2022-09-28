@@ -843,7 +843,11 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
       super.complete();
 
-      assertEquals("\n" + "    var v = myButtonOne;\n" + "  ", myFixture.getEditor().getDocument().getText());
+      assertEquals("""
+
+                         var v = myButtonOne;
+                       \
+                     """, myFixture.getEditor().getDocument().getText());
 
       replace("myButtonOne", "myButton", myFixture.getEditor());
       replace("myButtonOne", "myButtonTwo", ((EditorWindow)myFixture.getEditor()).getDelegate());

@@ -37,128 +37,132 @@ import org.jetbrains.idea.perforce.perforce.MergedFileParser;
 public class MergeDataTest extends TestCase{
   public void test() throws Exception {
     final MergedFileParser parser =
-    new MergedFileParser("This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-                            "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "\n" +
-      ">>>> ORIGINAL readme2.txt#6\n" +
-      "change11\n" +
-      "change31\n" +
-      "==== THEIRS readme2.txt#7\n" +
-      "change13\n" +
-      "change33\n" +
-      "==== YOURS readme2.txt\n" +
-      "change12\n" +
-      "change32\n" +
-      "<<<<\n" +
-      "\n" +
-      "\n" +
-      "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-      "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "change1 ]\n" +
-      "\n" +
-      "\n" +
-      "\n" +
-      ">>>> ORIGINAL readme2.txt#6\n" +
-      "change11\n" +
-      "change31\n" +
-      "==== THEIRS readme2.txt#7\n" +
-      "change13\n" +
-      "change33\n" +
-      "==== YOURS readme2.txt\n" +
-      "change12\n" +
-      "change32\n" +
-      "<<<<\n" +
-      "\n" +
-      "\n" +
-      "");
+    new MergedFileParser("""
+                           This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+                           copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+                           and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+                           All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+                           implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+
+                           >>>> ORIGINAL readme2.txt#6
+                           change11
+                           change31
+                           ==== THEIRS readme2.txt#7
+                           change13
+                           change33
+                           ==== YOURS readme2.txt
+                           change12
+                           change32
+                           <<<<
 
 
-    final String expectedOriginal = "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-                            "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "\n" +
-      "change11\n" +
-      "change31\n" +
-      "\n" +
-      "\n" +
-      "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-      "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "change1 ]\n" +
-      "\n" +
-      "\n" +
-      "\n" +
-      "change11\n" +
-      "change31\n" +
-      "\n" +
-      "\n" +
-      "";
-    final String expectedLocal = "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-                            "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "\n" +
-      "change12\n" +
-      "change32\n" +
-      "\n" +
-      "\n" +
-      "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-      "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "change1 ]\n" +
-      "\n" +
-      "\n" +
-      "\n" +
-      "change12\n" +
-      "change32\n" +
-      "\n" +
-      "\n" +
-      "";
-    final String expectedLast = "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-                            "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "\n" +
-      "change13\n" +
-      "change33\n" +
-      "\n" +
-      "\n" +
-      "This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),\n" +
-      "copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint\n" +
-      "and Thomas Singer. Significant refactorings were done by Thomas Singer.\n" +
-      "\n" +
-      "All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code\n" +
-      "implies that you must ensure to comply to the SUN PUBLIC LICENSE.\n" +
-      "change1 ]\n" +
-      "\n" +
-      "\n" +
-      "\n" +
-      "change13\n" +
-      "change33\n" +
-      "\n" +
-      "\n" +
-      "";
+                           This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+                           copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+                           and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+                           All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+                           implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+                           change1 ]
+
+
+
+                           >>>> ORIGINAL readme2.txt#6
+                           change11
+                           change31
+                           ==== THEIRS readme2.txt#7
+                           change13
+                           change33
+                           ==== YOURS readme2.txt
+                           change12
+                           change32
+                           <<<<
+
+
+                           """);
+
+
+    final String expectedOriginal = """
+      This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+      copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+      and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+      All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+      implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+
+      change11
+      change31
+
+
+      This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+      copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+      and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+      All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+      implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+      change1 ]
+
+
+
+      change11
+      change31
+
+
+      """;
+    final String expectedLocal = """
+      This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+      copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+      and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+      All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+      implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+
+      change12
+      change32
+
+
+      This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+      copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+      and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+      All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+      implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+      change1 ]
+
+
+
+      change12
+      change32
+
+
+      """;
+    final String expectedLast = """
+      This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+      copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+      and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+      All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+      implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+
+      change13
+      change33
+
+
+      This package contains the modified source code of Netbeans' JavaCVS client library (http://javacvs.netbeans.org),
+      copyrighted by SUN. The initial developer is Robert Greig; parts of the code were contributed by Milos Kleint
+      and Thomas Singer. Significant refactorings were done by Thomas Singer.
+
+      All this source code is published under the SUN PUBLIC LICENSE, that is included. Using these source code
+      implies that you must ensure to comply to the SUN PUBLIC LICENSE.
+      change1 ]
+
+
+
+      change13
+      change33
+
+
+      """;
 
     assertEquals(expectedOriginal, parser.getOriginal());
     assertEquals(expectedLocal, parser.getLocal());

@@ -109,10 +109,11 @@ public class GherkinLexerTest extends TestCase {
   }
 
   public void testPyStringWithoutParameters() {
-    doTest("\"\"\"\n" +
-           "<\n" +
-           "\"\"\"\n" +
-           "And step", "PYSTRING_QUOTES:0-3", "PYSTRING_TEXT:3-6", "PYSTRING_QUOTES:6-9", "WHITE_SPACE:9-10", "STEP_KEYWORD:10-13", "WHITE_SPACE:13-14", "TEXT:14-18");
+    doTest("""
+             ""\"
+             <
+             ""\"
+             And step""", "PYSTRING_QUOTES:0-3", "PYSTRING_TEXT:3-6", "PYSTRING_QUOTES:6-9", "WHITE_SPACE:9-10", "STEP_KEYWORD:10-13", "WHITE_SPACE:13-14", "TEXT:14-18");
   }
 
   public void testPyStringWithParameter() {
@@ -135,19 +136,20 @@ public class GherkinLexerTest extends TestCase {
 
   public void testRules() {
     doTest(
-      "Feature: a sample rule\n" +
-      "  Background:\n" +
-      "    Given a sample project\n" +
-      "\n" +
-      "  Rule: the first rule in the project\n" +
-      "\n" +
-      "    Example: the first example in the Rule\n" +
-      "      Given step one\n" +
-      "      And step two\n" +
-      "\n" +
-      "    Example: the second example in the Rule\n" +
-      "      Given step three\n" +
-      "      And step four",
+      """
+        Feature: a sample rule
+          Background:
+            Given a sample project
+
+          Rule: the first rule in the project
+
+            Example: the first example in the Rule
+              Given step one
+              And step two
+
+            Example: the second example in the Rule
+              Given step three
+              And step four""",
 
       "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-22", "WHITE_SPACE:22-25", "BACKGROUND_KEYWORD:25-35", "COLON:35-36",
       "WHITE_SPACE:36-41", "STEP_KEYWORD:41-46", "WHITE_SPACE:46-47", "TEXT:47-63", "WHITE_SPACE:63-67", "RULE_KEYWORD:67-71",
@@ -161,9 +163,10 @@ public class GherkinLexerTest extends TestCase {
 
   public void testColonInStepName() {
     doTest(
-      "Feature: test\n" +
-      "  Scenario: test\n" +
-      "    Given my test value:",
+      """
+        Feature: test
+          Scenario: test
+            Given my test value:""",
       "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-13", "WHITE_SPACE:13-16", "SCENARIO_KEYWORD:16-24",
       "COLON:24-25", "WHITE_SPACE:25-26", "TEXT:26-30", "WHITE_SPACE:30-35", "STEP_KEYWORD:35-40", "WHITE_SPACE:40-41", "TEXT:41-55"
     );

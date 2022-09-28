@@ -97,17 +97,19 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testComplex() {
-    doTest("<div *ngFor=\"let contact of value; index as i\"\n" +
-           "  (click)=\"contact\"\n" +
-           "</div>\n" +
-           "\n" +
-           "<li *ngFor=\"let user of userObservable | async as users; index as i; first as isFirst\">\n" +
-           "  {{i}}/{{users.length}}. {{user}} <span *ngIf=\"isFirst\">default</span>\n" +
-           "</li>\n" +
-           "\n" +
-           "<tr [style]=\"{'visible': con}\" *ngFor=\"let contact of contacts; index as i\">\n" +
-           "  <td>{{i + 1}}</td>\n" +
-           "</tr>\n");
+    doTest("""
+             <div *ngFor="let contact of value; index as i"
+               (click)="contact"
+             </div>
+
+             <li *ngFor="let user of userObservable | async as users; index as i; first as isFirst">
+               {{i}}/{{users.length}}. {{user}} <span *ngIf="isFirst">default</span>
+             </li>
+
+             <tr [style]="{'visible': con}" *ngFor="let contact of contacts; index as i">
+               <td>{{i + 1}}</td>
+             </tr>
+             """);
   }
 
   public void testEscapes() {
@@ -155,86 +157,95 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testScriptSrc() {
-    doTest("<body>\n" +
-           "<script src=\"\">var i</script>\n" +
-           "foo\n" +
-           "</body>");
+    doTest("""
+             <body>
+             <script src="">var i</script>
+             foo
+             </body>""");
   }
 
   public void testScript() {
-    doTest("<body>\n" +
-           "<script>var i</script>\n" +
-           "foo\n" +
-           "</body>");
+    doTest("""
+             <body>
+             <script>var i</script>
+             foo
+             </body>""");
   }
 
   public void testScriptAngularAttr() {
-    doTest("<body>\n" +
-           "<script (foo)=\"\">var i</script>\n" +
-           "foo\n" +
-           "</body>");
+    doTest("""
+             <body>
+             <script (foo)="">var i</script>
+             foo
+             </body>""");
   }
 
   public void testScriptWithEventAndAngularAttr() {
-    doTest("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
-           "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
-           "  console.log(2)\n" +
-           "</script>\n" +
-           "<div></div>",
+    doTest("""
+             <script src="//example.com" onerror="console.log(1)" (error)='console.log(1)'onload="console.log(1)" (load)='console.log(1)'>
+               console.log(2)
+             </script>
+             <div></div>""",
            // TODO improve JS embedded lexer
            false);
   }
 
   public void testStyleTag() {
-    doTest("<style>\n" +
-           "  div {\n" +
-           "  }\n" +
-           "</style>\n" +
-           "<div></div>",
+    doTest("""
+             <style>
+               div {
+               }
+             </style>
+             <div></div>""",
            // TODO improve CSS lexer to have less states
            false);
   }
 
   public void testStyleAngularAttr() {
-    doTest("<style (load)='disabled=true'>\n" +
-           "  div {\n" +
-           "  }\n" +
-           "</style>\n" +
-           "<div></div>",
+    doTest("""
+             <style (load)='disabled=true'>
+               div {
+               }
+             </style>
+             <div></div>""",
            // TODO improve CSS lexer to have less states
            false);
   }
 
   public void testStyleWithEventAndAngularAttr() {
-    doTest("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
-           "  div {\n" +
-           "  }\n" +
-           "</style>\n" +
-           "<div></div>",
+    doTest("""
+             <style (load)='disabled=true' onload="this.disabled=true" (load)='disabled=true'>
+               div {
+               }
+             </style>
+             <div></div>""",
            // TODO improve CSS lexer to have less states
            false);
   }
 
   public void testStyleAfterBinding() {
-    doTest("<div *foo style=\"width: 13px\">\n" +
-           "  <span (click)=\"foo\"></span>\n" +
-           "</div>",
+    doTest("""
+             <div *foo style="width: 13px">
+               <span (click)="foo"></span>
+             </div>""",
            // TODO improve CSS lexer to have less states
            false);
   }
 
   public void testStyleAfterStyle() {
-    doTest("<div style style *foo='bar'>\n" +
-           "  <span style='width: 13px' (click)=\"foo\"></span>\n" +
-           "</div>",
+    doTest("""
+             <div style style *foo='bar'>
+               <span style='width: 13px' (click)="foo"></span>
+             </div>""",
            // TODO improve CSS lexer to have less states
            false);
   }
 
   public void testBindingAfterStyle() {
-    doTest("<div style *foo='bar'>\n" +
-           "  <span style='width: 13px' (click)=\"foo\"></span>\n" +
-           "</div>",
+    doTest("""
+             <div style *foo='bar'>
+               <span style='width: 13px' (click)="foo"></span>
+             </div>""",
            // TODO improve CSS lexer to have less states
            false);
   }

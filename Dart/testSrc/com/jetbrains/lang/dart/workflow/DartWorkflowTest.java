@@ -33,10 +33,11 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("dir1/lib/foo.txt", "");
     myFixture.addFileToProject("dir1/someFolder/lib/foo.dart", "");
 
-    final VirtualFile pubspec2 = myFixture.addFileToProject("dir2/pubspec.yaml", "name: project2\n" +
-                                                                                 "dependencies:\n" +
-                                                                                 "  project1:\n" +
-                                                                                 "    path: ../dir1").getVirtualFile();
+    final VirtualFile pubspec2 = myFixture.addFileToProject("dir2/pubspec.yaml", """
+      name: project2
+      dependencies:
+        project1:
+          path: ../dir1""").getVirtualFile();
     myFixture.addFileToProject("dir2/.pub/foo.txt", "");
     myFixture.addFileToProject("dir2/bin/foo.dart", "");
     myFixture.addFileToProject("dir2/bin/sub/foo.dart", "");
@@ -54,12 +55,13 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("dir2/build/sub/foo.dart", "");
 
     final VirtualFile pubspec3 = myFixture.addFileToProject("dir2/example/pubspec.yaml",
-                                                            "name: project3\n" +
-                                                            "dependencies:\n" +
-                                                            "  project2:\n" +
-                                                            "    path: ..\n" +
-                                                            "  outside_project:\n" +
-                                                            "    path: ../../dir1/someFolder").getVirtualFile();
+                                                            """
+                                                              name: project3
+                                                              dependencies:
+                                                                project2:
+                                                                  path: ..
+                                                                outside_project:
+                                                                  path: ../../dir1/someFolder""").getVirtualFile();
     myFixture.addFileToProject("dir2/example/lib/foo.dart", "");
     myFixture.addFileToProject("dir2/example/lib/sub/foo.dart", "");
     myFixture.addFileToProject("dir2/example/web/foo.dart", "");
@@ -134,10 +136,11 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
     myFixture.addFileToProject("pubspec.yaml", "name: RootProject");
     myFixture.addFileToProject("lib/rootlib.dart", "");
-    final VirtualFile nestedPubspec = myFixture.addFileToProject("example/pubspec.yaml", "name: NestedProject\n" +
-                                                                                         "dependencies:\n" +
-                                                                                         "  RootProject:\n" +
-                                                                                         "    path: ../").getVirtualFile();
+    final VirtualFile nestedPubspec = myFixture.addFileToProject("example/pubspec.yaml", """
+      name: NestedProject
+      dependencies:
+        RootProject:
+          path: ../""").getVirtualFile();
     myFixture.addFileToProject("example/lib/src/nestedlib.dart", "");
     myFixture.addFileToProject("example/packages/NestedProject/nestedlib.dart", "");
     myFixture.addFileToProject("example/packages/RootProject/rootlib.dart", "");

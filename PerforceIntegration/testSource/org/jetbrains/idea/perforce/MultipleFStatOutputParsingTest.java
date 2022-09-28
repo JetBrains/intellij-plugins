@@ -39,59 +39,66 @@ import java.util.Map;
 
 public class MultipleFStatOutputParsingTest extends TestCase{
   public void test() throws Exception {
-    final Map<File, String> map = FStat.splitOutputForEachFile("... depotFile //depot/created2.txt\n" +
-                                                                      "... clientFile C:\\PerforceTest1\\created2.txt\n" +
-                                                                      "... headAction add\n" +
-                                                                      "... headType text\n" +
-                                                                      "... headTime 1094486436\n" +
-                                                                      "... headRev 1\n" +
-                                                                      "... headChange 65\n" +
-                                                                      "... haveRev 1\n" +
-                                                                      "\n" +
-                                                                      "... depotFile //depot/modified.txt\n" +
-                                                                      "... clientFile C:\\PerforceTest1\\modified.txt\n" +
-                                                                      "... headAction edit\n" +
-                                                                      "... headType text\n" +
-                                                                      "... headTime 1094486436\n" +
-                                                                      "... headRev 3\n" +
-                                                                      "... headChange 65\n" +
-                                                                      "... haveRev 3\n" +
-                                                                      "\n" +
-                                                                      "... depotFile //depot/restored.txt\n" +
-                                                                      "... clientFile C:\\PerforceTest1\\restored.txt\n" +
-                                                                      "... headAction add\n" +
-                                                                      "... headType text\n" +
-                                                                      "... headTime 1094474794\n" +
-                                                                      "... headRev 1\n" +
-                                                                      "... headChange 60\n" +
-                                                                      "... haveRev 1\n" +
-                                                                      "");
+    final Map<File, String> map = FStat.splitOutputForEachFile("""
+                                                                 ... depotFile //depot/created2.txt
+                                                                 ... clientFile C:\\PerforceTest1\\created2.txt
+                                                                 ... headAction add
+                                                                 ... headType text
+                                                                 ... headTime 1094486436
+                                                                 ... headRev 1
+                                                                 ... headChange 65
+                                                                 ... haveRev 1
+
+                                                                 ... depotFile //depot/modified.txt
+                                                                 ... clientFile C:\\PerforceTest1\\modified.txt
+                                                                 ... headAction edit
+                                                                 ... headType text
+                                                                 ... headTime 1094486436
+                                                                 ... headRev 3
+                                                                 ... headChange 65
+                                                                 ... haveRev 3
+
+                                                                 ... depotFile //depot/restored.txt
+                                                                 ... clientFile C:\\PerforceTest1\\restored.txt
+                                                                 ... headAction add
+                                                                 ... headType text
+                                                                 ... headTime 1094474794
+                                                                 ... headRev 1
+                                                                 ... headChange 60
+                                                                 ... haveRev 1
+                                                                 """);
     assertEquals(3, map.size());
-    assertEquals(map.get(new File("C:\\PerforceTest1\\created2.txt")), "... depotFile //depot/created2.txt\n" +
-                                                                   "... clientFile C:\\PerforceTest1\\created2.txt\n" +
-                                                                   "... headAction add\n" +
-                                                                   "... headType text\n" +
-                                                                   "... headTime 1094486436\n" +
-                                                                   "... headRev 1\n" +
-                                                                   "... headChange 65\n" +
-                                                                   "... haveRev 1\n");
+    assertEquals(map.get(new File("C:\\PerforceTest1\\created2.txt")), """
+      ... depotFile //depot/created2.txt
+      ... clientFile C:\\PerforceTest1\\created2.txt
+      ... headAction add
+      ... headType text
+      ... headTime 1094486436
+      ... headRev 1
+      ... headChange 65
+      ... haveRev 1
+      """);
 
-    assertEquals(map.get(new File("C:\\PerforceTest1\\modified.txt")), "... depotFile //depot/modified.txt\n" +
-                                                                   "... clientFile C:\\PerforceTest1\\modified.txt\n" +
-                                                                   "... headAction edit\n" +
-                                                                   "... headType text\n" +
-                                                                   "... headTime 1094486436\n" +
-                                                                   "... headRev 3\n" +
-                                                                   "... headChange 65\n" +
-                                                                   "... haveRev 3\n");
+    assertEquals(map.get(new File("C:\\PerforceTest1\\modified.txt")), """
+      ... depotFile //depot/modified.txt
+      ... clientFile C:\\PerforceTest1\\modified.txt
+      ... headAction edit
+      ... headType text
+      ... headTime 1094486436
+      ... headRev 3
+      ... headChange 65
+      ... haveRev 3
+      """);
 
-    assertEquals(map.get(new File("C:\\PerforceTest1\\restored.txt")), "... depotFile //depot/restored.txt\n" +
-                                                                   "... clientFile C:\\PerforceTest1\\restored.txt\n" +
-                                                                   "... headAction add\n" +
-                                                                   "... headType text\n" +
-                                                                   "... headTime 1094474794\n" +
-                                                                   "... headRev 1\n" +
-                                                                   "... headChange 60\n" +
-                                                                   "... haveRev 1\n");
+    assertEquals(map.get(new File("C:\\PerforceTest1\\restored.txt")), """
+      ... depotFile //depot/restored.txt
+      ... clientFile C:\\PerforceTest1\\restored.txt
+      ... headAction add
+      ... headType text
+      ... headTime 1094474794
+      ... headRev 1
+      ... headChange 60
+      ... haveRev 1
+      """);
   }
 }

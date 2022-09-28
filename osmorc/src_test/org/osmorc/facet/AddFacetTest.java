@@ -45,11 +45,13 @@ public class AddFacetTest extends JavaCodeInsightFixtureTestCase {
       VirtualFile[] roots = ModuleRootManager.getInstance(getModule()).getContentRoots();
       VirtualFile metaInf = roots[0].createChildDirectory(this, "META-INF");
       VirtualFile manifest = metaInf.createChildData(this, "MANIFEST.MF");
-      VfsUtil.saveText(manifest, "Manifest-Version: 1.0\n" +
-                                 "Bundle-ManifestVersion: 2\n" +
-                                 "Bundle-Name: Test\n" +
-                                 "Bundle-SymbolicName: test\n" +
-                                 "Bundle-Version: 1.0.0\n");
+      VfsUtil.saveText(manifest, """
+        Manifest-Version: 1.0
+        Bundle-ManifestVersion: 2
+        Bundle-Name: Test
+        Bundle-SymbolicName: test
+        Bundle-Version: 1.0.0
+        """);
       PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
     });
 

@@ -9,36 +9,39 @@ import org.jetbrains.plugins.cucumber.psi.GherkinLanguage;
 public class GherkinInjectionTest extends BasePlatformTestCase {
   public void testJsonInjection() {
     doTest(
-      "Feature: test\n" +
-      "  Scenario: test\n" +
-      "    Given test step\n" +
-      "    \"\"\"json\n" +
-      "      {\"abc\":<caret>  \"def\"}\n" +
-      "    \"\"\"",
+      """
+        Feature: test
+          Scenario: test
+            Given test step
+            ""\"json
+              {"abc":<caret>  "def"}
+            ""\"""",
       true
     );
   }
 
   public void testYamlInjection() {
     doTest(
-      "Feature: test\n" +
-      "  Scenario: test\n" +
-      "    Given test step\n" +
-      "    \"\"\"xml\n" +
-      "      <tag><caret></tag>\n" +
-      "    \"\"\"",
+      """
+        Feature: test
+          Scenario: test
+            Given test step
+            ""\"xml
+              <tag><caret></tag>
+            ""\"""",
       true
     );
   }
 
   public void testSimplePystring() {
     doTest(
-      "Feature: test\n" +
-      "  Scenario: test\n" +
-      "    Given test step\n" +
-      "    \"\"\"\n" +
-      "      <tag><caret></tag>\n" +
-      "    \"\"\"",
+      """
+        Feature: test
+          Scenario: test
+            Given test step
+            ""\"
+              <tag><caret></tag>
+            ""\"""",
       false
     );
   }

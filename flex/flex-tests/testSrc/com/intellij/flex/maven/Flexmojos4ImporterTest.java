@@ -153,15 +153,16 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
                                                    "  <artifactId>app</artifactId>\n" +
                                                    "  <packaging>swf</packaging>\n" +
                                                    "\n" + dependencies("libA"));
-    createProjectSubFile("app/src/Main.as", "package {\n" +
-                                            "import flash.display.Sprite;\n" +
-                                            "\n" +
-                                            "public class Main extends Sprite {\n" +
-                                            "  public function Main() {\n" +
-                                            "    new B();\n" +
-                                            "  }\n" +
-                                            "}\n" +
-                                            "}");
+    createProjectSubFile("app/src/Main.as", """
+      package {
+      import flash.display.Sprite;
+
+      public class Main extends Sprite {
+        public function Main() {
+          new B();
+        }
+      }
+      }""");
 
     createModulePom("libA", parent() +
                             "  <artifactId>libA</artifactId>\n" +
@@ -238,24 +239,25 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
                      "    </dependency>\n" +
                      "  </dependencies>" +
                      repository() +
-                     plugins(null, "<plugin>\n" +
-                                   "        <groupId>org.codehaus.mojo</groupId>\n" +
-                                   "        <artifactId>build-helper-maven-plugin</artifactId>\n" +
-                                   "        <executions>\n" +
-                                   "          <execution>\n" +
-                                   "            <id>add-sources</id>\n" +
-                                   "            <phase>generate-sources</phase>\n" +
-                                   "            <goals>\n" +
-                                   "              <goal>add-source</goal>\n" +
-                                   "            </goals>\n" +
-                                   "            <configuration>\n" +
-                                   "              <sources>\n" +
-                                   "                <source>localAnotherSourceRoot</source>\n" +
-                                   "              </sources>\n" +
-                                   "            </configuration>\n" +
-                                   "          </execution>\n" +
-                                   "        </executions>\n" +
-                                   "      </plugin>"));
+                     plugins(null, """
+                       <plugin>
+                               <groupId>org.codehaus.mojo</groupId>
+                               <artifactId>build-helper-maven-plugin</artifactId>
+                               <executions>
+                                 <execution>
+                                   <id>add-sources</id>
+                                   <phase>generate-sources</phase>
+                                   <goals>
+                                     <goal>add-source</goal>
+                                   </goals>
+                                   <configuration>
+                                     <sources>
+                                       <source>localAnotherSourceRoot</source>
+                                     </sources>
+                                   </configuration>
+                                 </execution>
+                               </executions>
+                             </plugin>"""));
     createProjectSubDir("localAnotherSourceRoot");
     createProjectSubDir(SOURCE_DIR);
 

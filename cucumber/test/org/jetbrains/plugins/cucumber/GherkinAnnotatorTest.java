@@ -6,20 +6,22 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 public class GherkinAnnotatorTest extends BasePlatformTestCase {
   public void testTextInTheMiddleOfScenario() {
-    myFixture.configureByText(GherkinFileType.INSTANCE, 
-                              "Feature: test 1\n" +
-                              "  Scenario: test\n" +
-                              "    Given test\n" +
-                              "    <error descr=\"Unexpected element\">Given</error>");
+    myFixture.configureByText(GherkinFileType.INSTANCE,
+                              """
+                                Feature: test 1
+                                  Scenario: test
+                                    Given test
+                                    <error descr="Unexpected element">Given</error>""");
     myFixture.testHighlighting();
   }
 
   public void testTextAsScenarioDescription() {
     myFixture.configureByText(GherkinFileType.INSTANCE,
-                              "Feature: test 1\n" +
-                              "  Scenario: test\n" +
-                              "    Given\n" +
-                              "    Given test");
+                              """
+                                Feature: test 1
+                                  Scenario: test
+                                    Given
+                                    Given test""");
     myFixture.testHighlighting();
   }
 }

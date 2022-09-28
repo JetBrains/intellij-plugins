@@ -39,9 +39,10 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
 
       "{{#foo}}<caret>{{/foo}}",
 
-      "{{#foo}}\n" +
-      "<caret>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+        <caret>
+        {{/foo}}"""
     );
   }
 
@@ -55,10 +56,10 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
       "{{#foo}}<caret>{{/bar}}" +
       "stuff",
 
-      "{{#foo}}\n" +
-      "<caret>\n" +
-      "{{/bar}}" +
-      "stuff"
+      """
+        {{#foo}}
+        <caret>
+        {{/bar}}stuff"""
     );
   }
 
@@ -101,14 +102,16 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
   public void testTagAttributeIndent() {
     HbConfig.setFormattingEnabled(true);
     doEnterTest(
-      "{{#ffo fooo=\"1\"<caret>\n" +
-      "}}\n" +
-      "\n" +
-      "{{/ffo}}",
-      "{{#ffo fooo=\"1\"\n" +
-      "       <caret>\n" +
-      "}}\n" +
-      "\n" +
-      "{{/ffo}}");
+      """
+        {{#ffo fooo="1"<caret>
+        }}
+
+        {{/ffo}}""",
+      """
+        {{#ffo fooo="1"
+               <caret>
+        }}
+
+        {{/ffo}}""");
   }
 }

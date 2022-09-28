@@ -35,14 +35,16 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
       component.setActionActive(StructureViewTreeModel.getHideParamsId(), false);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                       "-validation-structure.xml\n" +
-                                       " -Validator\n" +
-                                       "  validatorParam\n" +
-                                       "  anything\n" +
-                                       " -myField\n" +
-                                       "  -fieldexpression\n" +
-                                       "   expression\n" +
-                                       "   anything\n");
+                                       """
+                                         -validation-structure.xml
+                                          -Validator
+                                           validatorParam
+                                           anything
+                                          -myField
+                                           -fieldexpression
+                                            expression
+                                            anything
+                                         """);
     });
   }
 
@@ -52,12 +54,14 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
       component.setActionActive(StructureViewTreeModel.getHideParamsId(), true);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(component.getTree(),
-                                       "-validation-structure.xml\n" +
-                                       " -Validator\n" +
-                                       "  anything\n" +
-                                       " -myField\n" +
-                                       "  -fieldexpression\n" +
-                                       "   anything\n");
+                                       """
+                                         -validation-structure.xml
+                                          -Validator
+                                           anything
+                                          -myField
+                                           -fieldexpression
+                                            anything
+                                         """);
     });
   }
 }

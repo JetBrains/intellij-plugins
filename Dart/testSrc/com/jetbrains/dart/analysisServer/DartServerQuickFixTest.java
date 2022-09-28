@@ -111,36 +111,56 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   }
 
   public void testHandleCrlf1() {
-    final String content = "\r\n\r\n \r\r \n\n" +
-                           "class A{\r\n" +
-                           "}\r\n" +
-                           "foo() {\r\n" +
-                           "  List a = new A().<caret>bar(1, true, '');\r\n" +
-                           "}";
-    final String after = "\n\n \n\n \n\n" +
-                         "class A{\n" +
-                         "  List<caret> bar(int i, bool param1, String s) {}\n" +
-                         "}\n" +
-                         "foo() {\n" +
-                         "  List a = new A().bar(1, true, '');\n" +
-                         "}";
+    final String content = """
+      \r
+      \r
+       \r\r\s
+
+      class A{\r
+      }\r
+      foo() {\r
+        List a = new A().<caret>bar(1, true, '');\r
+      }""";
+    final String after = """
+
+
+      \s
+
+      \s
+
+      class A{
+        List<caret> bar(int i, bool param1, String s) {}
+      }
+      foo() {
+        List a = new A().bar(1, true, '');
+      }""";
     doCrLfAwareTest(content, "Create method", after);
   }
 
   public void testHandleCrlf2() {
-    final String content = "\r\n\r\n \r\r \n\n" +
-                           "foo() {\r\n" +
-                           "  List a = new A().<caret>bar(1, true, '');\r\n" +
-                           "}\r\n" +
-                           "class A{\r\n" +
-                           "}";
-    final String after = "\n\n \n\n \n\n" +
-                         "foo() {\n" +
-                         "  List a = new A().bar(1, true, '');\n" +
-                         "}\n" +
-                         "class A{\n" +
-                         "  List<caret> bar(int i, bool param1, String s) {}\n" +
-                         "}";
+    final String content = """
+      \r
+      \r
+       \r\r\s
+
+      foo() {\r
+        List a = new A().<caret>bar(1, true, '');\r
+      }\r
+      class A{\r
+      }""";
+    final String after = """
+
+
+      \s
+
+      \s
+
+      foo() {
+        List a = new A().bar(1, true, '');
+      }
+      class A{
+        List<caret> bar(int i, bool param1, String s) {}
+      }""";
     doCrLfAwareTest(content, "Create method", after);
   }
 

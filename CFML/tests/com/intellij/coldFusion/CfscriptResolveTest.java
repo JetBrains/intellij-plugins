@@ -37,68 +37,74 @@ import java.util.Map;
  */
 public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
   static PsiClass addJavaClassTo(JavaCodeInsightTestFixture fixture) {
-     return fixture.addClass("import java.util.Collection;\n" +
-                              "import java.util.Collections;\n" +
-                              "import java.util.LinkedList;\n" +
-                              "\n" +
-                              "public class MyClass {\n" +
-                              "  private Collection<String> myCollection = new LinkedList<String>();\n" +
-                              "    \n" +
-                              "  public void add(String s) {\n" +
-                              "    myCollection.add(s);\n" +
-                              "  }\n" +
-                              "            \n" +
-                              "  public Collection<String> get() {\n" +
-                              "    return Collections.unmodifiableCollection(myCollection);\n" +
-                              "    \n" +
-                              "  }\n" +
-                              "}");
+     return fixture.addClass("""
+                               import java.util.Collection;
+                               import java.util.Collections;
+                               import java.util.LinkedList;
+
+                               public class MyClass {
+                                 private Collection<String> myCollection = new LinkedList<String>();
+                                  \s
+                                 public void add(String s) {
+                                   myCollection.add(s);
+                                 }
+                                          \s
+                                 public Collection<String> get() {
+                                   return Collections.unmodifiableCollection(myCollection);
+                                  \s
+                                 }
+                               }""");
   }
 
   static PsiFile addComponentsTo(JavaCodeInsightTestFixture fixture) {
     fixture.addFileToProject("ComponentWithConstructor.cfc",
-                                    "<cfcomponent>\n" +
-                                      "<cffunction name=\"init\">\n" +
-                                      "    <cfargument name=\"arg1\">\n" +
-                                      "    <cfargument name=\"arg2\">\n" +
-                                      "</cffunction>" +
-                                    "</cfcomponent>");
+                             """
+                               <cfcomponent>
+                               <cffunction name="init">
+                                   <cfargument name="arg1">
+                                   <cfargument name="arg2">
+                               </cffunction></cfcomponent>""");
     fixture.addFileToProject("MyComponentName.cfc",
-                                    "<cfcomponent>\n" +
-                                    "    <cffunction name=\"func\">\n" +
-                                    "    </cffunction>\n" +
-                                    "</cfcomponent>");
+                             """
+                               <cfcomponent>
+                                   <cffunction name="func">
+                                   </cffunction>
+                               </cfcomponent>""");
     fixture.addFileToProject("MyInterfaceName.cfc",
-                                    "<cfinterface>\n" +
-                                    "    <cffunction name=\"func\">\n" +
-                                    "    </cffunction>\n" +
-                                    "</cfinterface>");
-    fixture.addFileToProject("MyComponentToResolve.cfc", "<cfcomponent>\n" +
-                                                         "<cffunction name=\"init\">\n" +
-                                                         "    <cfreturn this>\n" +
-                                                         "</cffunction>\n" +
-                                                         "    <cffunction name=\"foo\">\n" +
-                                                         "</cffunction>\n" +
-                                                         "</cfcomponent>");
+                             """
+                               <cfinterface>
+                                   <cffunction name="func">
+                                   </cffunction>
+                               </cfinterface>""");
+    fixture.addFileToProject("MyComponentToResolve.cfc", """
+      <cfcomponent>
+      <cffunction name="init">
+          <cfreturn this>
+      </cffunction>
+          <cffunction name="foo">
+      </cffunction>
+      </cfcomponent>""");
     return fixture.addFileToProject("folder/subfolder/ComponentName.cfc",
-                                    "<cfcomponent name = \"ComponentName\" extends=\"folder.subfolder.OtherComponentName\">\n" +
-                                    "    <cfproperty name=\"MyProperty\" getter=\"true\">\n"+
-                                    "    <cffunction name=\"func1\">\n" +
-                                    "    </cffunction>\n" +
-                                    "\n" +
-                                    "    <cffunction name=\"func2\" returnType=\"MyComponentName\">\n" +
-                                    "    </cffunction>\n" +
-                                    "</cfcomponent>");
+                                    """
+                                      <cfcomponent name = "ComponentName" extends="folder.subfolder.OtherComponentName">
+                                          <cfproperty name="MyProperty" getter="true">
+                                          <cffunction name="func1">
+                                          </cffunction>
+
+                                          <cffunction name="func2" returnType="MyComponentName">
+                                          </cffunction>
+                                      </cfcomponent>""");
 
   }
 
   static PsiFile addScriptComponentsTo(JavaCodeInsightTestFixture fixture) {
     return fixture.addFileToProject("folder/subfolder/ComponentName.cfc",
-                                    "component {\n" +
-                                    "    function func1(){}\n" +
-                                    "\n" +
-                                    "    function func2() {}\n" +
-                                    "}");
+                                    """
+                                      component {
+                                          function func1(){}
+
+                                          function func2() {}
+                                      }""");
 
   }
 

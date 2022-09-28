@@ -50,11 +50,12 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
 
   static PsiFile addScriptComponentsTo(CodeInsightTestFixture fixture) {
     return fixture.addFileToProject("folder/subfolder/ComponentName.cfc",
-                                    "component {\n" +
-                                    "    function func1(){}\n" +
-                                    "\n" +
-                                    "    function func2() {}\n" +
-                                    "}");
+                                    """
+                                      component {
+                                          function func1(){}
+
+                                          function func2() {}
+                                      }""");
   }
 
   public void testSpellCheck() {

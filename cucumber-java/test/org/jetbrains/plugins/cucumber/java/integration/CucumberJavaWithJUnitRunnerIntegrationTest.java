@@ -14,18 +14,19 @@ import com.intellij.testFramework.PlatformTestUtil;
 @SuppressWarnings("unused")
 public abstract class CucumberJavaWithJUnitRunnerIntegrationTest extends JavaTestFrameworkIntegrationTest {
   private static final String EXPECTED_TREE_OF_TESTS =
-    "-[root]\n" +
-    " -test\n" +
-    "  test.passing\n" +
-    "  test.failing\n" +
-    "  test.failing comparison\n" +
-    "  test.pending\n" +
-    "  test.undefined\n" +
-    "  test.lambda passing\n" +
-    "  test.lambda failing\n" +
-    "  test.lambda pending\n" +
-    "  test.outline\n" +
-    "  test.outline";
+    """
+      -[root]
+       -test
+        test.passing
+        test.failing
+        test.failing comparison
+        test.pending
+        test.undefined
+        test.lambda passing
+        test.lambda failing
+        test.lambda pending
+        test.outline
+        test.outline""";
 
   public void testCucumber_java_5_0_junit() throws ExecutionException, InterruptedException {
     doTest(EXPECTED_TREE_OF_TESTS);

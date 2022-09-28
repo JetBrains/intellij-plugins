@@ -187,39 +187,45 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   public void testFormatOnCloseBlockCompleted1() {
     doCharTest('}',
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "    {{/foo}<caret>",
+               """
+                 {{#foo}}
+                     stuff
+                     {{/foo}<caret>""",
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "{{/foo}}<caret>");
+               """
+                 {{#foo}}
+                     stuff
+                 {{/foo}}<caret>""");
   }
 
   public void testFormatOnCloseBlockCompleted2() {
     doCharTest('}',
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "    {{/foo}<caret> other stuff",
+               """
+                 {{#foo}}
+                     stuff
+                     {{/foo}<caret> other stuff""",
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "{{/foo}}<caret> other stuff");
+               """
+                 {{#foo}}
+                     stuff
+                 {{/foo}}<caret> other stuff""");
   }
 
   public void testFormatOnCloseBlockCompleted3() {
     doCharTest('}',
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "    {{/foo}<caret>\n" +
-               "other stuff",
+               """
+                 {{#foo}}
+                     stuff
+                     {{/foo}<caret>
+                 other stuff""",
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "{{/foo}}<caret>\n" +
-               "other stuff");
+               """
+                 {{#foo}}
+                     stuff
+                 {{/foo}}<caret>
+                 other stuff""");
   }
 
   public void testFormatDisabledCloseBlockCompleted() {
@@ -228,13 +234,15 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
     doCharTest('}',
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "    {{/foo}<caret>",
+               """
+                 {{#foo}}
+                     stuff
+                     {{/foo}<caret>""",
 
-               "{{#foo}}\n" +
-               "    stuff\n" +
-               "    {{/foo}}<caret>");
+               """
+                 {{#foo}}
+                     stuff
+                     {{/foo}}<caret>""");
 
     HbConfig.setFormattingEnabled(previousFormatSetting);
   }
@@ -242,39 +250,45 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   public void testFormatOnSimpleInverseCompleted1() {
     doCharTest('}',
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "    {{else}<caret>",
+               """
+                 {{#if}}
+                     if stuff
+                     {{else}<caret>""",
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "{{else}}<caret>");
+               """
+                 {{#if}}
+                     if stuff
+                 {{else}}<caret>""");
   }
 
   public void testFormatOnSimpleInverseCompleted2() {
     doCharTest('}',
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "    {{else}<caret> other stuff",
+               """
+                 {{#if}}
+                     if stuff
+                     {{else}<caret> other stuff""",
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "{{else}}<caret> other stuff");
+               """
+                 {{#if}}
+                     if stuff
+                 {{else}}<caret> other stuff""");
   }
 
   public void testFormatOnSimpleInverseCompleted3() {
     doCharTest('}',
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "    {{else}<caret>\n" +
-               "other stuff",
+               """
+                 {{#if}}
+                     if stuff
+                     {{else}<caret>
+                 other stuff""",
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "{{else}}<caret>\n" +
-               "other stuff");
+               """
+                 {{#if}}
+                     if stuff
+                 {{else}}<caret>
+                 other stuff""");
   }
 
   public void testFormatDisabledSimpleInverseCompleted() {
@@ -283,13 +297,15 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
     doCharTest('}',
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "    {{else}<caret>",
+               """
+                 {{#if}}
+                     if stuff
+                     {{else}<caret>""",
 
-               "{{#if}}\n" +
-               "    if stuff\n" +
-               "    {{else}}<caret>");
+               """
+                 {{#if}}
+                     if stuff
+                     {{else}}<caret>""");
 
     HbConfig.setFormattingEnabled(previousFormatSetting);
   }
@@ -299,9 +315,10 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
       "{{#foo}}<caret>{{/foo}}",
 
-      "{{#foo}}\n" +
-      "    <caret>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+            <caret>
+        {{/foo}}"""
     );
   }
 
@@ -313,9 +330,10 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
       "{{#foo}}<caret>{{/foo}}",
 
-      "{{#foo}}\n" +
-      "<caret>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+        <caret>
+        {{/foo}}"""
     );
 
     HbConfig.setFormattingEnabled(previousFormatSetting);
@@ -334,24 +352,28 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   public void testFinishingClosingTag() {
     doCharTest(
       '/',
-      "<div class=\"entry\">\n" +
-      "    {{#if}}test{{<caret>\n" +
-      "</div>",
+      """
+        <div class="entry">
+            {{#if}}test{{<caret>
+        </div>""",
 
-      "<div class=\"entry\">\n" +
-      "    {{#if}}test{{/if}}<caret>\n" +
-      "</div>"
+      """
+        <div class="entry">
+            {{#if}}test{{/if}}<caret>
+        </div>"""
     );
 
     doCharTest(
       '/',
-      "<div class=\"entry\">\n" +
-      "    {{#if}}test{<caret>\n" +
-      "</div>",
+      """
+        <div class="entry">
+            {{#if}}test{<caret>
+        </div>""",
 
-      "<div class=\"entry\">\n" +
-      "    {{#if}}test{{/if}}<caret>\n" +
-      "</div>"
+      """
+        <div class="entry">
+            {{#if}}test{{/if}}<caret>
+        </div>"""
     );
   }
 }

@@ -27,12 +27,13 @@ public class CfmlImplementationsViewTest extends CfmlCodeInsightFixtureTestCase 
     assert element != null;
     final String newText = ImplementationViewComponent.getNewText(element.getNavigationElement());
     assertEquals(
-      "<cffunction name=\"testIncludeFile\" hint=\"test including a file\" access=\"public\" returntype=\"void\" output=\"false\">\n" +
-      "    <cfargument name=\"arg1\" type=\"numeric\">\n" +
-      "    <cfargument name=\"arg2\" type=\"numeric\">\n" +
-      "    <cfscript>\n" +
-      "    </cfscript>\n" +
-      "</cffunction>", newText);
+      """
+        <cffunction name="testIncludeFile" hint="test including a file" access="public" returntype="void" output="false">
+            <cfargument name="arg1" type="numeric">
+            <cfargument name="arg2" type="numeric">
+            <cfscript>
+            </cfscript>
+        </cffunction>""", newText);
   }
 
 

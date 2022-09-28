@@ -70,9 +70,11 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   }
 
   private void initServerDataTest() {
-    myFixture.configureByText(DartFileType.INSTANCE, "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n" +
-                                                     "import 'dart:core';\n");
+    myFixture.configureByText(DartFileType.INSTANCE, """
+      import 'dart:core';
+      import 'dart:core';
+      import 'dart:core';
+      """);
     myFixture.doHighlighting();
   }
 
@@ -336,26 +338,29 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     // test workaround for https://github.com/dart-lang/sdk/issues/25034
     myFixture.addFileToProject("main_part.dart", "class A{}");
     myFixture.configureByText("main.dart",
-                              "library test;\n" +
-                              "part <error descr=\"The included part ''main_part.dart'' must have a part-of directive.\">'main_part.dart'</error>;\n" +
-                              "class A {}");
+                              """
+                                library test;
+                                part <error descr="The included part ''main_part.dart'' must have a part-of directive.">'main_part.dart'</error>;
+                                class A {}""");
     myFixture.checkHighlighting();
   }
 
   public void _testAnalysisOptionsFile() {
     // do not use configureByText(), because that method creates file with different name (___.analysis_options)
     final PsiFile file = myFixture.addFileToProject(".analysis_options",
-                                                    "analyzer:\n" +
-                                                    "  errors:\n" +
-                                                    "    <warning>invalid-option</warning>: <warning>invalid-value</warning>");
+                                                    """
+                                                      analyzer:
+                                                        errors:
+                                                          <warning>invalid-option</warning>: <warning>invalid-value</warning>""");
     myFixture.openFileInEditor(file.getVirtualFile());
     myFixture.checkHighlighting();
   }
 
   public void testErrorsUpdatedOnTypingAndUndo() {
-    myFixture.configureByText("foo.dart", "main(){\n" +
-                                          "  Ra<caret>ndom r = new Random();\n" +
-                                          "}");
+    myFixture.configureByText("foo.dart", """
+      main(){
+        Ra<caret>ndom r = new Random();
+      }""");
     final List<HighlightInfo> initialHighlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
 
     myFixture.type(" ");
@@ -372,22 +377,27 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   }
 
   public void testInjectedHtmlWithStringTemplates() {
-    myFixture.configureByText("foo.dart", "main() {\n" +
-                                          "  var varNameLongerThanDart_string_template_placeholder;\n" +
-                                          "  var <warning>b</warning> = \"<a href='$varNameLongerThanDart_string_template_placeholder'></a>\";\n" +
-                                          "}");
+    myFixture.configureByText("foo.dart", """
+      main() {
+        var varNameLongerThanDart_string_template_placeholder;
+        var <warning>b</warning> = "<a href='$varNameLongerThanDart_string_template_placeholder'></a>";
+      }""");
     myFixture.checkHighlighting();
   }
 
   public void testFormatRegion() {
-    myFixture.configureByText("foo.dart", "  main ( )  {\n" +
-                                          "  <selection> Function ( ) <caret>a ; </selection>\n" +
-                                          " Function ( ) b ;\n" +
-                                          " }");
+    myFixture.configureByText("foo.dart", """
+        main ( )  {
+        <selection> Function ( ) <caret>a ; </selection>
+       Function ( ) b ;
+       }\
+      """);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
-    myFixture.checkResult("  main ( )  {\n" +
-                          "  Function() <caret>a;\n" +
-                          "  Function ( ) b ;\n" +
-                          " }");
+    myFixture.checkResult("""
+                              main ( )  {
+                              Function() <caret>a;
+                              Function ( ) b ;
+                             }\
+                            """);
   }
 }

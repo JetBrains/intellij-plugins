@@ -54,15 +54,16 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     settings.CLASS_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     settings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
-    doTest("package foo { class A { function foo() {} } }", "package foo\n" +
-                                                            "{\n" +
-                                                            "class A\n" +
-                                                            "{\n" +
-                                                            "    function foo()\n" +
-                                                            "    {\n" +
-                                                            "    }\n" +
-                                                            "}\n" +
-                                                            "}", "js2");
+    doTest("package foo { class A { function foo() {} } }", """
+      package foo
+      {
+      class A
+      {
+          function foo()
+          {
+          }
+      }
+      }""", "js2");
   }
 
   public void testReformatIf2() {
@@ -118,7 +119,17 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
 
   public void testECMAScript4() {
     doTest("import xxx.*;import yyy.*;class A { var X; function xxx() {} }",
-           "import xxx.*;\n\nimport yyy.*;\n\nclass A {\n" + "    var X;\n\n" + "    function xxx() {\n" + "    }\n" + "}",
+           """
+             import xxx.*;
+
+             import yyy.*;
+
+             class A {
+                 var X;
+
+                 function xxx() {
+                 }
+             }""",
            "as"
     );
   }
@@ -143,20 +154,22 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
 
 
   public void testMxml() {
-    doTest("<?xml version=\"1.0\" ?>\n" +
-           "<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\">\n" +
-           "    <mx:Script>\n" +
-           "<![CDATA[\n" +
-           "]]>\n" +
-           "</mx:Script>\n" +
-           "</mx:Application>",
-           "<?xml version=\"1.0\" ?>\n" +
-           "<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\">\n" +
-           "    <mx:Script>\n" +
-           "<![CDATA[\n" +
-           "]]>\n" +
-           "</mx:Script>\n" +
-           "</mx:Application>",
+    doTest("""
+             <?xml version="1.0" ?>
+             <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+                 <mx:Script>
+             <![CDATA[
+             ]]>
+             </mx:Script>
+             </mx:Application>""",
+           """
+             <?xml version="1.0" ?>
+             <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+                 <mx:Script>
+             <![CDATA[
+             ]]>
+             </mx:Script>
+             </mx:Application>""",
            "mxml"
     );
   }
@@ -164,18 +177,20 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   public void testMxml2() {
     try {
       myUseReformatText = true;
-      doTest("<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\">\n" +
-             "    <mx:Script>\n" +
-             "        <![CDATA[\n" +
-             "import mx.rpc.events.AbstractEvent;import mx.rpc.events.AbstractEvent\n" +
-             "        ]]></mx:Script>\n" +
-             "</mx:Application>", "<mx:Application xmlns:mx=\"http://www.adobe.com/2006/mxml\">\n" +
-                                  "    <mx:Script>\n" +
-                                  "        <![CDATA[\n" +
-                                  "        import mx.rpc.events.AbstractEvent;\n" +
-                                  "        import mx.rpc.events.AbstractEvent\n" +
-                                  "        ]]></mx:Script>\n" +
-                                  "</mx:Application>", "mxml");
+      doTest("""
+               <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+                   <mx:Script>
+                       <![CDATA[
+               import mx.rpc.events.AbstractEvent;import mx.rpc.events.AbstractEvent
+                       ]]></mx:Script>
+               </mx:Application>""", """
+               <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+                   <mx:Script>
+                       <![CDATA[
+                       import mx.rpc.events.AbstractEvent;
+                       import mx.rpc.events.AbstractEvent
+                       ]]></mx:Script>
+               </mx:Application>""", "mxml");
     }
     finally {
       myUseReformatText = false;
@@ -188,21 +203,23 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     int blankLines = settings.BLANK_LINES_AFTER_PACKAGE;
     settings.BLANK_LINES_AFTER_PACKAGE = 2;
     doTest(
-      "package {\n" +
-      "import com.jetbrains.flex.Demo;\n" +
-      "import com.jetbrains.flex.Sample;\n" +
-      "class Foo {\n" +
-      "}\n" +
-      "}",
-      "package {\n" +
-      "\n" +
-      "\n" +
-      "import com.jetbrains.flex.Demo;\n" +
-      "import com.jetbrains.flex.Sample;\n" +
-      "\n" +
-      "class Foo {\n" +
-      "}\n" +
-      "}",
+      """
+        package {
+        import com.jetbrains.flex.Demo;
+        import com.jetbrains.flex.Sample;
+        class Foo {
+        }
+        }""",
+      """
+        package {
+
+
+        import com.jetbrains.flex.Demo;
+        import com.jetbrains.flex.Sample;
+
+        class Foo {
+        }
+        }""",
       ".as");
     settings.BLANK_LINES_AFTER_PACKAGE = blankLines;
   }
@@ -212,25 +229,29 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     final JSCodeStyleSettings jsSettings = settings.getCustomSettings(ECMA4CodeStyleSettings.class);
     jsSettings.SPACE_AFTER_DOTS_IN_REST_PARAMETER = false;
     doTest(
-      "class Bar {\n" +
-      "    public function foo(...    rest):void {\n" +
-      "    }\n" +
-      "}",
-      "class Bar {\n" +
-      "    public function foo(...rest):void {\n" +
-      "    }\n" +
-      "}",
+      """
+        class Bar {
+            public function foo(...    rest):void {
+            }
+        }""",
+      """
+        class Bar {
+            public function foo(...rest):void {
+            }
+        }""",
       ".as");
     jsSettings.SPACE_AFTER_DOTS_IN_REST_PARAMETER = true;
     doTest(
-      "class Bar {\n" +
-      "    public function foo(...    rest):void {\n" +
-      "    }\n" +
-      "}",
-      "class Bar {\n" +
-      "    public function foo(... rest):void {\n" +
-      "    }\n" +
-      "}",
+      """
+        class Bar {
+            public function foo(...    rest):void {
+            }
+        }""",
+      """
+        class Bar {
+            public function foo(... rest):void {
+            }
+        }""",
       ".as");
   }
 
@@ -248,15 +269,17 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
 
   public void testNamespace() {
     doTest(
-      "package foo {\n" +
-      "\n" +
-      "public             namespace    MyNs     =             \"aaaa\";\n" +
-      "}",
+      """
+        package foo {
 
-      "package foo {\n" +
-      "\n" +
-      "public namespace MyNs = \"aaaa\";\n" +
-      "}",
+        public             namespace    MyNs     =             "aaaa";
+        }""",
+
+      """
+        package foo {
+
+        public namespace MyNs = "aaaa";
+        }""",
 
       ".as");
   }
@@ -265,27 +288,29 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     CommonCodeStyleSettings settings = getEcma4Settings();
     settings.IF_BRACE_FORCE = CommonCodeStyleSettings.FORCE_BRACES_ALWAYS;
     doTest(
-      "package mx.styles {\n" +
-      "public class A {\n" +
-      "private var virtualRendererIndices:Vector.<int>;\n" +
-      "public function A() {\n" +
-      "if (!virtualRendererIndices)\n" +
-      "  virtualRendererIndices = new Vector.<int>();\n" +
-      "}\n" +
-      "}\n" +
-      "}",
+      """
+        package mx.styles {
+        public class A {
+        private var virtualRendererIndices:Vector.<int>;
+        public function A() {
+        if (!virtualRendererIndices)
+          virtualRendererIndices = new Vector.<int>();
+        }
+        }
+        }""",
 
-      "package mx.styles {\n" +
-      "public class A {\n" +
-      "    private var virtualRendererIndices:Vector.<int>;\n" +
-      "\n" +
-      "    public function A() {\n" +
-      "        if (!virtualRendererIndices) {\n" +
-      "            virtualRendererIndices = new Vector.<int>();\n" +
-      "        }\n" +
-      "    }\n" +
-      "}\n" +
-      "}",
+      """
+        package mx.styles {
+        public class A {
+            private var virtualRendererIndices:Vector.<int>;
+
+            public function A() {
+                if (!virtualRendererIndices) {
+                    virtualRendererIndices = new Vector.<int>();
+                }
+            }
+        }
+        }""",
 
       ".as"
     );
@@ -299,28 +324,30 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     jsSettings.SPACE_BEFORE_TYPE_COLON = true;
     jsSettings.SPACE_AFTER_TYPE_COLON = false;
     doTest(
-      "package aaa {\n" +
-      "class XXX {\n" +
-      "    private var _field:int;\n" +
-      "    function get field():int {\n" +
-      "        return _field;\n" +
-      "    }\n" +
-      "\n" +
-      "    function set field(val:int):void {\n" +
-      "        varName = val;\n" +
-      "    }\n" +
-      "}",
-      "package aaa {\n" +
-      "class XXX {\n" +
-      "    private var _field :int;\n" +
-      "    function get field() :int {\n" +
-      "        return _field;\n" +
-      "    }\n" +
-      "\n" +
-      "    function set field(val :int) :void {\n" +
-      "        varName = val;\n" +
-      "    }\n" +
-      "}",
+      """
+        package aaa {
+        class XXX {
+            private var _field:int;
+            function get field():int {
+                return _field;
+            }
+
+            function set field(val:int):void {
+                varName = val;
+            }
+        }""",
+      """
+        package aaa {
+        class XXX {
+            private var _field :int;
+            function get field() :int {
+                return _field;
+            }
+
+            function set field(val :int) :void {
+                varName = val;
+            }
+        }""",
       ".as");
     jsSettings.SPACE_BEFORE_TYPE_COLON = spaceBeforeTypeColon;
     jsSettings.SPACE_AFTER_TYPE_COLON = spaceAfterTypeColon;
@@ -364,10 +391,11 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   public void testAlignOperations() {
     final CommonCodeStyleSettings styleSettings = getEcma4Settings();
     styleSettings.ALIGN_MULTILINE_EXTENDS_LIST = true;
-    doTest("class _X extends X, \n Y implements Z,\n T {}", "class _X extends X,\n" +
-                                                            "                 Y implements Z,\n" +
-                                                            "                              T {\n" +
-                                                            "}", JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2);
+    doTest("class _X extends X, \n Y implements Z,\n T {}", """
+      class _X extends X,
+                       Y implements Z,
+                                    T {
+      }""", JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2);
   }
 
 

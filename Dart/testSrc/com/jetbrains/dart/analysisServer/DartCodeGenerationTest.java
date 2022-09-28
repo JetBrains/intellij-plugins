@@ -27,117 +27,127 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
   }
 
   public void testEqualsAndHashcodeNoSuper() {
-    doEqualsAndHashcodeTest("class Interface {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Bar {}\n" +
-                            "class Baz implements Interface {}\n" +
-                            "class Foo extends Bar with Baz implements Interface {<caret>}\n",
+    doEqualsAndHashcodeTest("""
+                              class Interface {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Bar {}
+                              class Baz implements Interface {}
+                              class Foo extends Bar with Baz implements Interface {<caret>}
+                              """,
 
-                            "class Interface {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Bar {}\n" +
-                            "class Baz implements Interface {}\n" +
-                            "class Foo extends Bar with Baz implements Interface {\n" +
-                            "  @override\n" +
-                            "  bool operator ==(Object other) =>\n" +
-                            "      identical(this, other) ||\n" +
-                            "      other is Foo && runtimeType == other.runtimeType;\n" +
-                            "\n" +
-                            "  @override\n" +
-                            "  int get hashCode => 0;\n" +
-                            "}\n");
+                            """
+                              class Interface {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Bar {}
+                              class Baz implements Interface {}
+                              class Foo extends Bar with Baz implements Interface {
+                                @override
+                                bool operator ==(Object other) =>
+                                    identical(this, other) ||
+                                    other is Foo && runtimeType == other.runtimeType;
+
+                                @override
+                                int get hashCode => 0;
+                              }
+                              """);
   }
 
   public void testEqualsAndHashcodeWithSuper() {
-    doEqualsAndHashcodeTest("class Bar extends Baz {}\n" +
-                            "class Baz {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Foo extends Bar {<caret>}",
+    doEqualsAndHashcodeTest("""
+                              class Bar extends Baz {}
+                              class Baz {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Foo extends Bar {<caret>}""",
 
-                            "class Bar extends Baz {}\n" +
-                            "class Baz {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Foo extends Bar {\n" +
-                            "  @override\n" +
-                            "  bool operator ==(Object other) =>\n" +
-                            "      identical(this, other) ||\n" +
-                            "      super == other && other is Foo && runtimeType == other.runtimeType;\n" +
-                            "\n" +
-                            "  @override\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}");
+                            """
+                              class Bar extends Baz {}
+                              class Baz {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Foo extends Bar {
+                                @override
+                                bool operator ==(Object other) =>
+                                    identical(this, other) ||
+                                    super == other && other is Foo && runtimeType == other.runtimeType;
+
+                                @override
+                                int get hashCode => super.hashCode;
+                              }""");
   }
 
   public void testEqualsAndHashcodeWithFieldsNoSuper() {
-    doEqualsAndHashcodeTest("class Interface {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Foo extends Object implements Interface {\n" +
-                            "  Error e;\n" +
-                            "  bool b;\n" +
-                            "<caret>}",
+    doEqualsAndHashcodeTest("""
+                              class Interface {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Foo extends Object implements Interface {
+                                Error e;
+                                bool b;
+                              <caret>}""",
 
-                            "class Interface {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Foo extends Object implements Interface {\n" +
-                            "  Error e;\n" +
-                            "  bool b;\n" +
-                            "\n" +
-                            "  @override\n" +
-                            "  bool operator ==(Object other) =>\n" +
-                            "      identical(this, other) ||\n" +
-                            "      other is Foo &&\n" +
-                            "          runtimeType == other.runtimeType &&\n" +
-                            "          e == other.e &&\n" +
-                            "          b == other.b;\n" +
-                            "\n" +
-                            "  @override\n" +
-                            "  int get hashCode => e.hashCode ^ b.hashCode;\n" +
-                            "}");
+                            """
+                              class Interface {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Foo extends Object implements Interface {
+                                Error e;
+                                bool b;
+
+                                @override
+                                bool operator ==(Object other) =>
+                                    identical(this, other) ||
+                                    other is Foo &&
+                                        runtimeType == other.runtimeType &&
+                                        e == other.e &&
+                                        b == other.b;
+
+                                @override
+                                int get hashCode => e.hashCode ^ b.hashCode;
+                              }""");
   }
 
   public void testEqualsAndHashcodeWithFieldsAndSuper() {
-    doEqualsAndHashcodeTest("class Bar extends Baz {var qwe;}\n" +
-                            "class Baz {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Foo extends Bar {\n" +
-                            "  Error e;\n" +
-                            "  bool b;<caret>\n" +
-                            "}",
+    doEqualsAndHashcodeTest("""
+                              class Bar extends Baz {var qwe;}
+                              class Baz {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Foo extends Bar {
+                                Error e;
+                                bool b;<caret>
+                              }""",
 
-                            "class Bar extends Baz {var qwe;}\n" +
-                            "class Baz {\n" +
-                            "  bool operator ==(Object other) => super == other;\n" +
-                            "  int get hashCode => super.hashCode;\n" +
-                            "}\n" +
-                            "class Foo extends Bar {\n" +
-                            "  Error e;\n" +
-                            "  bool b;\n" +
-                            "\n" +
-                            "  @override\n" +
-                            "  bool operator ==(Object other) =>\n" +
-                            "      identical(this, other) ||\n" +
-                            "      super == other &&\n" +
-                            "          other is Foo &&\n" +
-                            "          runtimeType == other.runtimeType &&\n" +
-                            "          e == other.e &&\n" +
-                            "          b == other.b;\n" +
-                            "\n" +
-                            "  @override\n" +
-                            "  int get hashCode => super.hashCode ^ e.hashCode ^ b.hashCode;\n" +
-                            "}");
+                            """
+                              class Bar extends Baz {var qwe;}
+                              class Baz {
+                                bool operator ==(Object other) => super == other;
+                                int get hashCode => super.hashCode;
+                              }
+                              class Foo extends Bar {
+                                Error e;
+                                bool b;
+
+                                @override
+                                bool operator ==(Object other) =>
+                                    identical(this, other) ||
+                                    super == other &&
+                                        other is Foo &&
+                                        runtimeType == other.runtimeType &&
+                                        e == other.e &&
+                                        b == other.b;
+
+                                @override
+                                int get hashCode => super.hashCode ^ e.hashCode ^ b.hashCode;
+                              }""");
   }
 }

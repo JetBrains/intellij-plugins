@@ -12,22 +12,24 @@ public class Angular2HtmlHighlightingTest extends Angular2HtmlLexerTest {
   }
 
   public void testVarWith$() {
-    doTest("{{ publicUsedField }}\n" +
-           "<div [id]=\"privateUsedField\"></div>\n" +
-           "{{ publicUsedConstructorField }}\n" +
-           "<div [id]=\"privateUsedConstructorField\"></div>\n" +
-           "<div (click)=\"publicUsedMethod()\"></div>\n" +
-           "<div (click)=\"privateUsedMethod()\"></div>\n" +
-           "\n" +
-           "<div *ngIf=\"myObservable$ | async\"></div>\n" +
-           "\n" +
-           "{{ testFn() }}");
+    doTest("""
+             {{ publicUsedField }}
+             <div [id]="privateUsedField"></div>
+             {{ publicUsedConstructorField }}
+             <div [id]="privateUsedConstructorField"></div>
+             <div (click)="publicUsedMethod()"></div>
+             <div (click)="privateUsedMethod()"></div>
+
+             <div *ngIf="myObservable$ | async"></div>
+
+             {{ testFn() }}""");
   }
 
   public void testNestedInterpolations() {
-    doTest("<div *ngFor='let card of cards'>\n" +
-           "  {{card.name}} - {{card.damage}}\n" +
-           "  <button (click)='damage(card)'> Damage </button>\n" +
-           "</div>");
+    doTest("""
+             <div *ngFor='let card of cards'>
+               {{card.name}} - {{card.damage}}
+               <button (click)='damage(card)'> Damage </button>
+             </div>""");
   }
 }

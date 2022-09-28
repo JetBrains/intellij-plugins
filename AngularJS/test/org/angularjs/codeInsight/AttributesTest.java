@@ -215,18 +215,19 @@ public class AttributesTest extends BasePlatformTestCase {
   public void testIncorrectJSDoc() {
     //noinspection NonAsciiCharacters
     myFixture.configureByText(System.currentTimeMillis() + ".js",
-                              "/**\n" +
-                              " * @ngdoc directive\n" +
-                              " * @name yaSelect\n" +
-                              " * @restrict E\n" +
-                              " *\n" +
-                              " * @param description\n" +
-                              " *\n" +
-                              " * @description Р’С‹РІРѕРґРёС‚ select\n" +
-                              " *\n" +
-                              " * @param ngModel Assignable angular expression to data-bind to. sa\n" +
-                              " * bla bla bla l\n" +
-                              " */");
+                              """
+                                /**
+                                 * @ngdoc directive
+                                 * @name yaSelect
+                                 * @restrict E
+                                 *
+                                 * @param description
+                                 *
+                                 * @description Р’С‹РІРѕРґРёС‚ select
+                                 *
+                                 * @param ngModel Assignable angular expression to data-bind to. sa
+                                 * bla bla bla l
+                                 */""");
     myFixture.doHighlighting();
   }
 

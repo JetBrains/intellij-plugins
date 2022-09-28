@@ -49,11 +49,13 @@ public class HbStructureViewTest extends BasePlatformTestCase {
   public void testNestedBlocks() {
     doStructureViewTest(
 
-      "{{#foo}}\n" +
-      "    {{#bar}}\n" +
-      "        {{baz}}<caret>\n" +
-      "    {{/bar}}\n" +
-      "{{/foo}}\n",
+      """
+        {{#foo}}
+            {{#bar}}
+                {{baz}}<caret>
+            {{/bar}}
+        {{/foo}}
+        """,
 
       "-" + ourTestFileName + "\n" +
       " -foo\n" +
@@ -77,18 +79,20 @@ public class HbStructureViewTest extends BasePlatformTestCase {
   public void testAllConstructs() {
     doStructureViewTest(
 
-      "{{#block}}\n" +
-      "{{/block}}\n" +
-      "{{^inverse}}\n" +
-      "    {{else}}\n" +
-      "{{/inverse}}\n" +
-      "{{mustache}}\n" +
-      "{{>partial}}\n" +
-      "{{#>partialBlock}}\n" +
-      "{{/partialBlock}}\n" +
-      "{{@data}}\n" +
-      "{{^}}\n" +
-      "{{{unescaped}}\n",
+      """
+        {{#block}}
+        {{/block}}
+        {{^inverse}}
+            {{else}}
+        {{/inverse}}
+        {{mustache}}
+        {{>partial}}
+        {{#>partialBlock}}
+        {{/partialBlock}}
+        {{@data}}
+        {{^}}
+        {{{unescaped}}
+        """,
 
       "-" + ourTestFileName + "\n" +
       " block\n" +

@@ -19,26 +19,33 @@ public class DartImplementationsViewTest extends DartCodeInsightFixtureTestCase 
   }
 
   public void testVarInit() {
-    doTest("class Foo {\n" +
-           "  static final Bar _bar<caret> = const Bar(\n" +
-           "    zoom: 11.0,\n" +
-           "  );\n" +
-           "}",
-           "  static final Bar _bar = const Bar(\n" +
-           "    zoom: 11.0,\n" +
-           "  );");
+    doTest("""
+             class Foo {
+               static final Bar _bar<caret> = const Bar(
+                 zoom: 11.0,
+               );
+             }""",
+           """
+               static final Bar _bar = const Bar(
+                 zoom: 11.0,
+               );\
+             """);
   }
 
   public void testVarInit2() {
-    doTest("class Foo {\n" +
-           "  static var a,\n" +
-           "      <caret>b\n" +
-           "      =\n" +
-           "      1\n" +
-           "  ;\n" +
-           "}\n",
-           "      b\n" +
-           "      =\n" +
-           "      1");
+    doTest("""
+             class Foo {
+               static var a,
+                   <caret>b
+                   =
+                   1
+               ;
+             }
+             """,
+           """
+                   b
+                   =
+                   1\
+             """);
   }
 }

@@ -29,23 +29,25 @@ public class StrutsDomStubTest extends DomStubTest {
 
   public void testStrutsXml() {
     doBuilderTest("struts-stubs.xml",
-                  "File:struts\n" +
-                  "  Element:struts\n" +
-                  "    Element:struts namespace:constant\n" +
-                  "      Attribute:name:name\n" +
-                  "      Attribute:value:value\n" +
-                  "    Element:struts namespace:package\n" +
-                  "      Attribute:name:anotherPackage\n" +
-                  "    Element:struts namespace:package\n" +
-                  "      Attribute:name:name\n" +
-                  "      Attribute:extends:anotherPackage\n" +
-                  "      Attribute:namespace:namespace\n" +
-                  "      Element:struts namespace:result-types\n" +
-                  "        Element:result-type\n" +
-                  "          Attribute:name:resultType\n" +
-                  "          Attribute:class:MyClass\n" +
-                  "      Element:struts namespace:action\n" +
-                  "        Attribute:name:action\n" +
-                  "        Attribute:class:MyActionClass\n");
+                  """
+                    File:struts
+                      Element:struts
+                        Element:struts namespace:constant
+                          Attribute:name:name
+                          Attribute:value:value
+                        Element:struts namespace:package
+                          Attribute:name:anotherPackage
+                        Element:struts namespace:package
+                          Attribute:name:name
+                          Attribute:extends:anotherPackage
+                          Attribute:namespace:namespace
+                          Element:struts namespace:result-types
+                            Element:result-type
+                              Attribute:name:resultType
+                              Attribute:class:MyClass
+                          Element:struts namespace:action
+                            Attribute:name:action
+                            Attribute:class:MyActionClass
+                    """);
   }
 }

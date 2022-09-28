@@ -18,13 +18,17 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "{{bar}}\n" +
-      "{{/foo}}\n",
+      """
+        {{#foo}}
+        {{bar}}
+        {{/foo}}
+        """,
 
-      "{{#foo}}\n" +
-      "{{bar}}\n" +
-      "{{/foo}}\n"
+      """
+        {{#foo}}
+        {{bar}}
+        {{/foo}}
+        """
     );
 
     HbConfig.setFormattingEnabled(previousFormatterSetting);
@@ -39,17 +43,19 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "    <div>\n" +
-      "{{bar}}\n" +
-      "    </div>\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+            <div>
+        {{bar}}
+            </div>
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "  <div>\n" +
-      "    {{bar}}\n" +
-      "  </div>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+          <div>
+            {{bar}}
+          </div>
+        {{/foo}}"""
     );
 
     CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = previousHtmlIndent;
@@ -67,195 +73,219 @@ public class HbFormatterIndentTest extends HbFormatterTest {
   public void testSimpleBlock() {
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "{{bar}}\n" +
-      "{{/foo}}\n",
+      """
+        {{#foo}}
+        {{bar}}
+        {{/foo}}
+        """,
 
-      "{{#foo}}\n" +
-      "    {{bar}}\n" +
-      "{{/foo}}\n"
+      """
+        {{#foo}}
+            {{bar}}
+        {{/foo}}
+        """
     );
   }
 
   public void testNestedBlocks() {
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "{{#bar}}\n" +
-      "{{#bat}}\n" +
-      "{{baz}}\n" +
-      "{{/bat}}\n" +
-      "{{/bar}}\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+        {{#bar}}
+        {{#bat}}
+        {{baz}}
+        {{/bat}}
+        {{/bar}}
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "    {{#bar}}\n" +
-      "        {{#bat}}\n" +
-      "            {{baz}}\n" +
-      "        {{/bat}}\n" +
-      "    {{/bar}}\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+            {{#bar}}
+                {{#bat}}
+                    {{baz}}
+                {{/bat}}
+            {{/bar}}
+        {{/foo}}"""
     );
   }
 
   public void testSimpleStacheInDiv() {
     doStringBasedTest(
 
-      "<div>\n" +
-      "{{foo}}\n" +
-      "</div>",
+      """
+        <div>
+        {{foo}}
+        </div>""",
 
-      "<div>\n" +
-      "    {{foo}}\n" +
-      "</div>"
+      """
+        <div>
+            {{foo}}
+        </div>"""
     );
   }
 
   public void testMarkupInBlockStache() {
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "<span></span>\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+        <span></span>
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "    <span></span>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+            <span></span>
+        {{/foo}}"""
     );
   }
 
   public void testSimpleBlockInDiv() {
     doStringBasedTest(
 
-      "<div>\n" +
-      "{{#foo}}\n" +
-      "{{bar}}\n" +
-      "{{/foo}}\n" +
-      "</div>",
+      """
+        <div>
+        {{#foo}}
+        {{bar}}
+        {{/foo}}
+        </div>""",
 
-      "<div>\n" +
-      "    {{#foo}}\n" +
-      "        {{bar}}\n" +
-      "    {{/foo}}\n" +
-      "</div>"
+      """
+        <div>
+            {{#foo}}
+                {{bar}}
+            {{/foo}}
+        </div>"""
     );
   }
 
   public void testAttributeStaches() {
     doStringBasedTest(
 
-      "<div {{foo}}>\n" +
-      "<div class=\"{{bar}}\">\n" +
-      "sweeet\n" +
-      "</div>\n" +
-      "</div>",
+      """
+        <div {{foo}}>
+        <div class="{{bar}}">
+        sweeet
+        </div>
+        </div>""",
 
-      "<div {{foo}}>\n" +
-      "    <div class=\"{{bar}}\">\n" +
-      "        sweeet\n" +
-      "    </div>\n" +
-      "</div>"
+      """
+        <div {{foo}}>
+            <div class="{{bar}}">
+                sweeet
+            </div>
+        </div>"""
     );
   }
 
   public void testMixedContentInDiv1() {
     doStringBasedTest(
 
-      "<div>\n" +
-      "{{#foo}}\n" +
-      "<span class=\"{{bat}}\">{{bar}}</span>\n" +
-      "{{/foo}}\n" +
-      "</div>",
+      """
+        <div>
+        {{#foo}}
+        <span class="{{bat}}">{{bar}}</span>
+        {{/foo}}
+        </div>""",
 
-      "<div>\n" +
-      "    {{#foo}}\n" +
-      "        <span class=\"{{bat}}\">{{bar}}</span>\n" +
-      "    {{/foo}}\n" +
-      "</div>"
+      """
+        <div>
+            {{#foo}}
+                <span class="{{bat}}">{{bar}}</span>
+            {{/foo}}
+        </div>"""
     );
   }
 
   public void testMixedContentInDiv2() {
     doStringBasedTest(
 
-      "<div>\n" +
-      "{{#foo}}\n" +
-      "bar {{baz}}\n" +
-      "{{/foo}}\n" +
-      "</div>",
+      """
+        <div>
+        {{#foo}}
+        bar {{baz}}
+        {{/foo}}
+        </div>""",
 
-      "<div>\n" +
-      "    {{#foo}}\n" +
-      "        bar {{baz}}\n" +
-      "    {{/foo}}\n" +
-      "</div>"
+      """
+        <div>
+            {{#foo}}
+                bar {{baz}}
+            {{/foo}}
+        </div>"""
     );
   }
 
   public void testSimpleStacheInNestedDiv() {
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "    <div>\n" +
-      "{{bar}}\n" +
-      "    </div>\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+            <div>
+        {{bar}}
+            </div>
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "    <div>\n" +
-      "        {{bar}}\n" +
-      "    </div>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+            <div>
+                {{bar}}
+            </div>
+        {{/foo}}"""
     );
   }
 
   public void testBlockStacheInNestedDiv() {
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "<div>\n" +
-      "{{#bar}}\n" +
-      "stuff\n" +
-      "{{/bar}}\n" +
-      "</div>\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+        <div>
+        {{#bar}}
+        stuff
+        {{/bar}}
+        </div>
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "    <div>\n" +
-      "        {{#bar}}\n" +
-      "            stuff\n" +
-      "        {{/bar}}\n" +
-      "    </div>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+            <div>
+                {{#bar}}
+                    stuff
+                {{/bar}}
+            </div>
+        {{/foo}}"""
     );
   }
 
   public void testNestedDivsInBlock() {
     doStringBasedTest(
 
-      "{{#foo}}\n" +
-      "<div>\n" +
-      "<div>\n" +
-      "<div>\n" +
-      "{{bar}}\n" +
-      "{{#foo}}\n" +
-      "{{/foo}}\n" +
-      "</div>\n" +
-      "</div>\n" +
-      "</div>\n" +
-      "{{/foo}}",
+      """
+        {{#foo}}
+        <div>
+        <div>
+        <div>
+        {{bar}}
+        {{#foo}}
+        {{/foo}}
+        </div>
+        </div>
+        </div>
+        {{/foo}}""",
 
-      "{{#foo}}\n" +
-      "    <div>\n" +
-      "        <div>\n" +
-      "            <div>\n" +
-      "                {{bar}}\n" +
-      "                {{#foo}}\n" +
-      "                {{/foo}}\n" +
-      "            </div>\n" +
-      "        </div>\n" +
-      "    </div>\n" +
-      "{{/foo}}"
+      """
+        {{#foo}}
+            <div>
+                <div>
+                    <div>
+                        {{bar}}
+                        {{#foo}}
+                        {{/foo}}
+                    </div>
+                </div>
+            </div>
+        {{/foo}}"""
     );
   }
 
@@ -266,17 +296,19 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
     doStringBasedTest(
 
-      "<body>\n" +
-      "{{#foo}}\n" +
-      "<div></div>\n" +
-      "{{/foo}}\n" +
-      "</body>",
+      """
+        <body>
+        {{#foo}}
+        <div></div>
+        {{/foo}}
+        </body>""",
 
-      "<body>\n" +
-      "{{#foo}}\n" +
-      "    <div></div>\n" +
-      "{{/foo}}\n" +
-      "</body>"
+      """
+        <body>
+        {{#foo}}
+            <div></div>
+        {{/foo}}
+        </body>"""
     );
   }
 
@@ -287,15 +319,17 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
     doStringBasedTest(
 
-      "<body>\n" +
-      "{{foo}}\n" +
-      "<div></div>\n" +
-      "</body>",
+      """
+        <body>
+        {{foo}}
+        <div></div>
+        </body>""",
 
-      "<body>\n" +
-      "{{foo}}\n" +
-      "<div></div>\n" +
-      "</body>"
+      """
+        <body>
+        {{foo}}
+        <div></div>
+        </body>"""
     );
   }
 
@@ -306,25 +340,27 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
     doStringBasedTest(
 
-      "<span>\n" +
-      "{{#foo}}\n" +
-      "<span>\n" +
-      "{{^bar}}\n" +
-      "<span></span>\n" +
-      "{{/bar}}\n" +
-      "</span>\n" +
-      "{{/foo}}\n" +
-      "</span>",
+      """
+        <span>
+        {{#foo}}
+        <span>
+        {{^bar}}
+        <span></span>
+        {{/bar}}
+        </span>
+        {{/foo}}
+        </span>""",
 
-      "<span>\n" +
-      "{{#foo}}\n" +
-      "    <span>\n" +
-      "    {{^bar}}\n" +
-      "        <span></span>\n" +
-      "    {{/bar}}\n" +
-      "    </span>\n" +
-      "{{/foo}}\n" +
-      "</span>"
+      """
+        <span>
+        {{#foo}}
+            <span>
+            {{^bar}}
+                <span></span>
+            {{/bar}}
+            </span>
+        {{/foo}}
+        </span>"""
     );
   }
 

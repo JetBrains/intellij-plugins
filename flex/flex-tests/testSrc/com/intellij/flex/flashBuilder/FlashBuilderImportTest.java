@@ -284,9 +284,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   public void testRelativeOutputPath() throws Exception {
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler outputFolderPath='subdir/out'/>\n" +
-                  "</actionScriptProperties>");
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler outputFolderPath='subdir/out'/>
+                    </actionScriptProperties>""");
     checkCompilerOutputUrl(getBC(),
                            myFlashBuilderProjectDir.getUrl() + "/subdir/out");
   }
@@ -302,9 +303,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   public void testWebFlexApp() throws Exception {
     addFileWithContent("FlexApp.mxml", "", myFlashBuilderProjectDir);
     addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
-    importProject("<actionScriptProperties mainApplicationPath='FlexApp.mxml'>\n" +
-                  "  <compiler additionalCompilerArguments='-locale en_US&#10;-other' outputFolderPath='bin-debug' targetPlayerVersion='0.0.0'/>\n" +
-                  "</actionScriptProperties>");
+    importProject("""
+                    <actionScriptProperties mainApplicationPath='FlexApp.mxml'>
+                      <compiler additionalCompilerArguments='-locale en_US&#10;-other' outputFolderPath='bin-debug' targetPlayerVersion='0.0.0'/>
+                    </actionScriptProperties>""");
     final FlexBuildConfiguration bc = getBC("FlexApp", 1);
     assertEquals(TargetPlatform.Web, bc.getTargetPlatform());
     assertFalse(bc.isPureAs());
@@ -344,9 +346,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     final VirtualFile dir = VfsUtil.createDirectories(myFlashBuilderProjectDir.getPath() + "/src/foo");
     addFileWithContent("a.txt", "", dir);
 
-    importProject("<actionScriptProperties mainApplicationPath='does not matter'>\n" +
-                  "  <compiler outputFolderPath='bin' targetPlayerVersion='9.0.124' sourceFolderPath=\"src\"/>\n" +
-                  "</actionScriptProperties>");
+    importProject("""
+                    <actionScriptProperties mainApplicationPath='does not matter'>
+                      <compiler outputFolderPath='bin' targetPlayerVersion='9.0.124' sourceFolderPath="src"/>
+                    </actionScriptProperties>""");
     final String fbProjectName = getTestName(true);
     final FlexBuildConfiguration bc = getBC();
     assertEquals(TargetPlatform.Web, bc.getTargetPlatform());
@@ -368,9 +371,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
 
   public void testWebASLib() {
     final String flexLibPropertiesFileContent = "<flexLibProperties useMultiPlatformConfig='false'/>";
-    final String actionScriptPropertiesFileContent = "<actionScriptProperties mainApplicationPath='does not matter'>\n" +
-                                                     "  <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='false'/>\n" +
-                                                     "</actionScriptProperties>";
+    final String actionScriptPropertiesFileContent = """
+      <actionScriptProperties mainApplicationPath='does not matter'>
+        <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='false'/>
+      </actionScriptProperties>""";
     final TargetPlatform expectedTargetPlatform = TargetPlatform.Web;
 
     commonASLibTest(flexLibPropertiesFileContent, actionScriptPropertiesFileContent, expectedTargetPlatform);
@@ -378,9 +382,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
 
   public void testDesktopASLib() {
     final String flexLibPropertiesFileContent = "<flexLibProperties useMultiPlatformConfig='false'/>";
-    final String actionScriptPropertiesFileContent = "<actionScriptProperties mainApplicationPath='does not matter'>\n" +
-                                                     "  <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='true'/>\n" +
-                                                     "</actionScriptProperties>";
+    final String actionScriptPropertiesFileContent = """
+      <actionScriptProperties mainApplicationPath='does not matter'>
+        <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='true'/>
+      </actionScriptProperties>""";
     final TargetPlatform expectedTargetPlatform = TargetPlatform.Desktop;
 
     commonASLibTest(flexLibPropertiesFileContent, actionScriptPropertiesFileContent, expectedTargetPlatform);
@@ -389,9 +394,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   // not sure that mobile AS libs are supported by FB, but if they are - should be like this
   public void testMobileASLib() {
     final String flexLibPropertiesFileContent = "<flexLibProperties useMultiPlatformConfig='true'/>";
-    final String actionScriptPropertiesFileContent = "<actionScriptProperties mainApplicationPath='does not matter'>\n" +
-                                                     "  <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='true'/>\n" +
-                                                     "</actionScriptProperties>";
+    final String actionScriptPropertiesFileContent = """
+      <actionScriptProperties mainApplicationPath='does not matter'>
+        <compiler outputFolderPath='bin' useFlashSDK='true' useApolloConfig='true'/>
+      </actionScriptProperties>""";
     final TargetPlatform expectedTargetPlatform = TargetPlatform.Mobile;
 
     commonASLibTest(flexLibPropertiesFileContent, actionScriptPropertiesFileContent, expectedTargetPlatform);
@@ -464,13 +470,13 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   public void testBcDependencies() throws Exception {
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler>\n" +
-                  "    <libraryPath>\n" +
-                  "      <libraryPathEntry kind='3' path='/Another Module/bin/some.swc'/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "</actionScriptProperties>", Arrays.asList("Another Module"), null);
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler>
+                        <libraryPath>
+                          <libraryPathEntry kind='3' path='/Another Module/bin/some.swc'/>
+                        </libraryPath>  </compiler>
+                    </actionScriptProperties>""", Arrays.asList("Another Module"), null);
 
     final DependencyEntry[] entries = getBC().getDependencies().getEntries();
     assertEquals(1, entries.length);
@@ -508,13 +514,13 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   public void testDesktopFlexLibWithDefaultSdk() throws Exception {
     prepareSdkTest();
     addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, "", myFlashBuilderProjectDir);
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler useApolloConfig='true'>\n" +
-                  "    <libraryPath>\n" +
-                  "      <libraryPathEntry kind='4' path='does not matter'/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler useApolloConfig='true'>
+                        <libraryPath>
+                          <libraryPathEntry kind='4' path='does not matter'/>
+                        </libraryPath>  </compiler>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC();
@@ -532,13 +538,13 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     final String dotFlexLibPropertiesContent = "<flexLibProperties useMultiPlatformConfig=\"true\">" +
                                                "</flexLibProperties>";
     addFileWithContent(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES, dotFlexLibPropertiesContent, myFlashBuilderProjectDir);
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler additionalCompilerArguments='-other -locale=en_US,ja_JP' useApolloConfig='true'>\n" +
-                  "    <libraryPath>\n" +
-                  "      <libraryPathEntry kind='4' path='does not matter'/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler additionalCompilerArguments='-other -locale=en_US,ja_JP' useApolloConfig='true'>
+                        <libraryPath>
+                          <libraryPathEntry kind='4' path='does not matter'/>
+                        </libraryPath>  </compiler>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC();
@@ -552,27 +558,20 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
 
   public void testMobileASAndroidApp() throws Exception {
     prepareSdkTest();
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler useApolloConfig='true'>\n" +
-                  "    <libraryPath>\n" +
-                  "      <libraryPathEntry kind='4' path='does not matter'/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "  <buildTargets>\n" +
-                  "    <buildTarget buildTargetName=\"com.adobe.flexide.multiplatform.android.platform\">\n" +
-                  "      <airSettings airCertificatePath=\"android_cert.p12\"/>" +
-                  "      <multiPlatformSettings enabled=\"true\"/>" +
-                  "    </buildTarget>\n" +
-                  "    <buildTarget buildTargetName=\"default\">\n" +
-                  "      <airSettings airCertificatePath=\"not_applicable\"/>" +
-                  "    </buildTarget>\n" +
-                  "    <buildTarget buildTargetName=\"com.adobe.flexide.multiplatform.ios.platform\" " +
-                  "                 provisioningFile=\"ios.mobileprovision\">" +
-                  "      <airSettings airCertificatePath=\"ios_cert.p12\"/>" +
-                  "      <multiPlatformSettings enabled=\"false\"/>" +
-                  "    </buildTarget>\n" +
-                  "  </buildTargets>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler useApolloConfig='true'>
+                        <libraryPath>
+                          <libraryPathEntry kind='4' path='does not matter'/>
+                        </libraryPath>  </compiler>
+                      <buildTargets>
+                        <buildTarget buildTargetName="com.adobe.flexide.multiplatform.android.platform">
+                          <airSettings airCertificatePath="android_cert.p12"/>      <multiPlatformSettings enabled="true"/>    </buildTarget>
+                        <buildTarget buildTargetName="default">
+                          <airSettings airCertificatePath="not_applicable"/>    </buildTarget>
+                        <buildTarget buildTargetName="com.adobe.flexide.multiplatform.ios.platform"                  provisioningFile="ios.mobileprovision">      <airSettings airCertificatePath="ios_cert.p12"/>      <multiPlatformSettings enabled="false"/>    </buildTarget>
+                      </buildTargets>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC();
@@ -596,21 +595,19 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   public void testMobileFlexIOSApp() throws Exception {
     prepareSdkTest();
     addFileWithContent(FlashBuilderImporter.DOT_FLEX_PROPERTIES, "", myFlashBuilderProjectDir);
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler useApolloConfig='true'>\n" +
-                  "    <libraryPath>\n" +
-                  "      <libraryPathEntry kind='4' path='does not matter'/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "  <buildTargets>\n" +
-                  "    <buildTarget buildTargetName=\"com.adobe.flexide.multiplatform.android.platform\">\n" +
-                  "      <multiPlatformSettings enabled=\"false\"/>" +
-                  "    </buildTarget>\n" +
-                  "    <buildTarget buildTargetName=\"com.adobe.flexide.multiplatform.ios.platform\">\n" +
-                  "      <multiPlatformSettings enabled=\"true\"/>" +
-                  "    </buildTarget>\n" +
-                  "  </buildTargets>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler useApolloConfig='true'>
+                        <libraryPath>
+                          <libraryPathEntry kind='4' path='does not matter'/>
+                        </libraryPath>  </compiler>
+                      <buildTargets>
+                        <buildTarget buildTargetName="com.adobe.flexide.multiplatform.android.platform">
+                          <multiPlatformSettings enabled="false"/>    </buildTarget>
+                        <buildTarget buildTargetName="com.adobe.flexide.multiplatform.ios.platform">
+                          <multiPlatformSettings enabled="true"/>    </buildTarget>
+                      </buildTargets>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC();
@@ -627,17 +624,15 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   public void testMobileASAppBoth() throws Exception {
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler/>" +
-                  "  <buildTargets>\n" +
-                  "    <buildTarget buildTargetName='device' platformId=\"com.adobe.flexide.multiplatform.android.platform\">\n" +
-                  "      <multiPlatformSettings enabled=\"true\"/>" +
-                  "    </buildTarget>\n" +
-                  "    <buildTarget buildTargetName=\"device\">\n" +
-                  "      <multiPlatformSettings enabled=\"true\" platformID=\"com.adobe.flexide.multiplatform.ios.platform\"/>" +
-                  "    </buildTarget>\n" +
-                  "  </buildTargets>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler/>  <buildTargets>
+                        <buildTarget buildTargetName='device' platformId="com.adobe.flexide.multiplatform.android.platform">
+                          <multiPlatformSettings enabled="true"/>    </buildTarget>
+                        <buildTarget buildTargetName="device">
+                          <multiPlatformSettings enabled="true" platformID="com.adobe.flexide.multiplatform.ios.platform"/>    </buildTarget>
+                      </buildTargets>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC();
@@ -650,18 +645,17 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
 
   public void testDesktopASAppWithCustomSdk() throws Exception {
     prepareSdkTest();
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler useApolloConfig='true' flexSDK='custom sdk name'>\n" +
-                  "    <libraryPath>\n" +
-                  "      <libraryPathEntry kind='4'/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "  <buildTargets>\n" +
-                  "    <buildTarget buildTargetName=\"default\">\n" +
-                  "      <airSettings airCertificatePath=\"desktop.p12\"/>" +
-                  "    </buildTarget>\n" +
-                  "  </buildTargets>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler useApolloConfig='true' flexSDK='custom sdk name'>
+                        <libraryPath>
+                          <libraryPathEntry kind='4'/>
+                        </libraryPath>  </compiler>
+                      <buildTargets>
+                        <buildTarget buildTargetName="default">
+                          <airSettings airCertificatePath="desktop.p12"/>    </buildTarget>
+                      </buildTargets>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC();
@@ -687,10 +681,10 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     final VirtualFile locale2 = createChildDirectory(myFlashBuilderProjectDir, "locale");
     createChildDirectory(locale2, "ja_JP");
 
-    importProject("<actionScriptProperties>\n" +
-                  "  <compiler useApolloConfig='true' flexSDK='custom sdk name' sourceFolderPath=\"src\"" +
-                  "            additionalCompilerArguments='-locale en_US ja_JP -source-path locale/{locale} -allow-source-path-overlap true' />\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties>
+                      <compiler useApolloConfig='true' flexSDK='custom sdk name' sourceFolderPath="src"            additionalCompilerArguments='-locale en_US ja_JP -source-path locale/{locale} -allow-source-path-overlap true' />
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_installation");
 
     final FlexBuildConfiguration bc = getBC();
@@ -722,17 +716,16 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     addFileWithContent("com.adobe.flexbuilder.project.prefs", content, settingsDir);
 
     importProject(getStandardDotProjectFileContent(),
-                  "<actionScriptProperties>\n" +
-                  "  <compiler additionalCompilerArguments='-some -locale  en_US  ja_JP  -other '>\n" +
-                  "    <compilerSourcePath>\n" +
-                  "      <compilerSourcePathEntry kind=\"1\" path=\"${FLASH_BUILDER_PATH_VARIABLE}/src5\"/>\n" +
-                  "      <compilerSourcePathEntry kind=\"1\" path=\"locales\\{locale}\"/>\n" +
-                  "    </compilerSourcePath>" +
-                  "    <libraryPath defaultLinkType=\"0\">\n" +
-                  "      <libraryPathEntry kind=\"3\" linkType=\"1\" path=\"${FLASH_BUILDER_PATH_VARIABLE}/somelib/somelib.swc\" useDefaultLinkType=\"false\"/>\n" +
-                  "    </libraryPath>" +
-                  "  </compiler>\n" +
-                  "</actionScriptProperties>",
+                  """
+                    <actionScriptProperties>
+                      <compiler additionalCompilerArguments='-some -locale  en_US  ja_JP  -other '>
+                        <compilerSourcePath>
+                          <compilerSourcePathEntry kind="1" path="${FLASH_BUILDER_PATH_VARIABLE}/src5"/>
+                          <compilerSourcePathEntry kind="1" path="locales\\{locale}"/>
+                        </compilerSourcePath>    <libraryPath defaultLinkType="0">
+                          <libraryPathEntry kind="3" linkType="1" path="${FLASH_BUILDER_PATH_VARIABLE}/somelib/somelib.swc" useDefaultLinkType="false"/>
+                        </libraryPath>  </compiler>
+                    </actionScriptProperties>""",
                   new ArrayList<>(),
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
@@ -757,24 +750,25 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   public void testWebASAppsAndModules() throws Exception {
-    importProject("<actionScriptProperties mainApplicationPath='pack/App1.mxml'>\n" +
-                  "  <compiler outputFolderPath='bin-debug' sourceFolderPath='src'/>\n" +
-                  "  <applications>\n" +
-                  "    <application path='pack/App1.mxml'/>\n" +
-                  "    <application path=\"FlexUnitCompilerApplication.as\"/>\n" +
-                  "    <application path=\"FlexUnitApplication.as\"/>\n" +
-                  "    <application path='App2.mxml'/>\n" +
-                  "  </applications>\n" +
-                  "  <modules>\n" +
-                  "    <module application='src/pack/App1.mxml' destPath='modules/Module1.swf' optimize='true' sourcePath='src/modules/Module1.mxml'/>\n" +
-                  "    <module application='src/App2.mxml' destPath='Module2.swf' optimize='true' sourcePath='src/Module2.mxml'/>\n" +
-                  "    <module application='src/pack/App1.mxml' destPath='pack/ModuleNoOpt.swf' optimize='false' sourcePath='src/pack/ModuleNoOpt.as'/>\n" +
-                  "  </modules>\n" +
-                  "  <buildCSSFiles>\n" +
-                  "    <buildCSSFileEntry sourcePath='in_project_root.css'/>\n" +
-                  "    <buildCSSFileEntry sourcePath='src/pack/css_in_pack.css'/>\n" +
-                  "  </buildCSSFiles>\n" +
-                  "</actionScriptProperties>");
+    importProject("""
+                    <actionScriptProperties mainApplicationPath='pack/App1.mxml'>
+                      <compiler outputFolderPath='bin-debug' sourceFolderPath='src'/>
+                      <applications>
+                        <application path='pack/App1.mxml'/>
+                        <application path="FlexUnitCompilerApplication.as"/>
+                        <application path="FlexUnitApplication.as"/>
+                        <application path='App2.mxml'/>
+                      </applications>
+                      <modules>
+                        <module application='src/pack/App1.mxml' destPath='modules/Module1.swf' optimize='true' sourcePath='src/modules/Module1.mxml'/>
+                        <module application='src/App2.mxml' destPath='Module2.swf' optimize='true' sourcePath='src/Module2.mxml'/>
+                        <module application='src/pack/App1.mxml' destPath='pack/ModuleNoOpt.swf' optimize='false' sourcePath='src/pack/ModuleNoOpt.as'/>
+                      </modules>
+                      <buildCSSFiles>
+                        <buildCSSFileEntry sourcePath='in_project_root.css'/>
+                        <buildCSSFileEntry sourcePath='src/pack/css_in_pack.css'/>
+                      </buildCSSFiles>
+                    </actionScriptProperties>""");
     final String path = myFlashBuilderProjectDir.getPath();
 
     final FlexBuildConfiguration bc1 = getBC("App1", 2);
@@ -852,29 +846,26 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     final VirtualFile fooDir = createChildDirectory(src3, "foo");
     addFileWithContent("bar.txt", "", fooDir);
 
-    importProject("<actionScriptProperties mainApplicationPath=\"Main.as\">\n" +
-                  "  <compiler sourceFolderPath=\"src\">" +
-                  "    <compilerSourcePath>\n" +
-                  "      <compilerSourcePathEntry kind=\"1\" linkType=\"1\" path=\"src2\"/>\n" +
-                  "      <compilerSourcePathEntry kind=\"1\" linkType=\"1\" path=\"src3\"/>\n" +
-                  "    </compilerSourcePath>\n" +
-                  "  </compiler>" +
-                  "  <buildTargets>\n" +
-                  "    <buildTarget buildTargetName='device' platformId=\"com.adobe.flexide.multiplatform.android.platform\">\n" +
-                  "      <multiPlatformSettings enabled=\"true\"/>" +
-                  "      <airSettings airCertificatePath=\"\" airTimestamp=\"true\" anePathSet=\"true\" version=\"1\">\n" +
-                  "        <airExcludes>\n" +
-                  "          <pathEntry path=\"excluded1.xml\"/>\n" +
-                  "          <pathEntry path=\"sub1/excluded2.txt\"/>\n" +
-                  "          <pathEntry path=\"sub1/excluded_folder\"/>\n" +
-                  "        </airExcludes>\n" +
-                  "      </airSettings>\n" +
-                  "    </buildTarget>\n" +
-                  "    <buildTarget buildTargetName=\"device\">\n" +
-                  "      <multiPlatformSettings enabled=\"true\" platformID=\"com.adobe.flexide.multiplatform.ios.platform\"/>" +
-                  "    </buildTarget>\n" +
-                  "  </buildTargets>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties mainApplicationPath="Main.as">
+                      <compiler sourceFolderPath="src">    <compilerSourcePath>
+                          <compilerSourcePathEntry kind="1" linkType="1" path="src2"/>
+                          <compilerSourcePathEntry kind="1" linkType="1" path="src3"/>
+                        </compilerSourcePath>
+                      </compiler>  <buildTargets>
+                        <buildTarget buildTargetName='device' platformId="com.adobe.flexide.multiplatform.android.platform">
+                          <multiPlatformSettings enabled="true"/>      <airSettings airCertificatePath="" airTimestamp="true" anePathSet="true" version="1">
+                            <airExcludes>
+                              <pathEntry path="excluded1.xml"/>
+                              <pathEntry path="sub1/excluded2.txt"/>
+                              <pathEntry path="sub1/excluded_folder"/>
+                            </airExcludes>
+                          </airSettings>
+                        </buildTarget>
+                        <buildTarget buildTargetName="device">
+                          <multiPlatformSettings enabled="true" platformID="com.adobe.flexide.multiplatform.ios.platform"/>    </buildTarget>
+                      </buildTargets>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc = getBC("Main", 1);
@@ -920,16 +911,16 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     addFileWithContent("App2-app.xml", "", packDir); // descriptor - not included
     addFileWithContent("asset2", "", packDir); // included
 
-    importProject("<actionScriptProperties  mainApplicationPath=\"pack/App1.as\">\n" +
-                  "  <compiler sourceFolderPath=\"src\" useApolloConfig='true'/>" +
-                  "  <applications>\n" +
-                  "    <application path='pack/App1.as'/>\n" +
-                  "    <application path='pack/App2.mxml'/>\n" +
-                  "  </applications>\n" +
-                  "  <buildTargets>\n" +
-                  "    <buildTarget buildTargetName=\"default\" platformId=\"default\"/>\n" +
-                  "  </buildTargets>\n" +
-                  "</actionScriptProperties>",
+    importProject("""
+                    <actionScriptProperties  mainApplicationPath="pack/App1.as">
+                      <compiler sourceFolderPath="src" useApolloConfig='true'/>  <applications>
+                        <application path='pack/App1.as'/>
+                        <application path='pack/App2.mxml'/>
+                      </applications>
+                      <buildTargets>
+                        <buildTarget buildTargetName="default" platformId="default"/>
+                      </buildTargets>
+                    </actionScriptProperties>""",
                   myFlashBuilderProjectDir.getPath() + "/Flash_Builder_workspace");
 
     final FlexBuildConfiguration bc1 = getBC("App1", 2);
