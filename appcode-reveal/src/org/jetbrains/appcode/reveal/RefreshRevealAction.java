@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.util.ExecUtil;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -93,6 +94,11 @@ public class RefreshRevealAction extends DumbAwareAction {
     }
 
     e.getPresentation().setText(title, false);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override
