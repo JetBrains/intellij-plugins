@@ -12,7 +12,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.jetbrains.lang.dart.ide.DartClassContributor;
 import com.jetbrains.lang.dart.ide.DartSymbolContributor;
-import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallChild;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCalleeTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallerTreeStructure;
@@ -104,10 +103,10 @@ public class DartCallHierarchyTest extends DartHierarchyTestBase {
                 if (parent != null) {
                   type = parent.getNode().getElementType();
                   if (type == CALL_EXPRESSION) {
-                    List<DartCallChild> results = new ArrayList<>();
+                    List<PsiElement> results = new ArrayList<>();
                     DartCallHierarchyTreeStructure.collectDeclarations(reference.resolve(), results);
                     if (!results.isEmpty()) {
-                      result[0] = results.get(0).getElement();
+                      result[0] = results.get(0);
                       throw new ExitVisitor();
                     }
                   }

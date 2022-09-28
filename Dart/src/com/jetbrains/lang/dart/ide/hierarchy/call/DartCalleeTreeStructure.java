@@ -25,7 +25,7 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
     super(project, element, currentScopeType);
   }
 
-  private static void getCallees(@NotNull PsiElement element, @NotNull List<DartCallChild> results) {
+  private static void getCallees(@NotNull PsiElement element, @NotNull List<PsiElement> results) {
     DartComponentName name = (DartComponentName)element;
     DartComponent decl = (DartComponent)name.getParent();
     PsiFile file = decl.getContainingFile();
@@ -39,7 +39,7 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
 
   private static void resolveReferences(@NotNull DartComponent component,
                                         @NotNull List<DartNavigationRegion> regions,
-                                        @NotNull List<DartCallChild> results) {
+                                        @NotNull List<PsiElement> results) {
     component.acceptChildren(new DartRecursiveVisitor() {
       @Override
       public void visitReferenceExpression(@NotNull DartReferenceExpression reference) {
@@ -49,7 +49,7 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
           if (isExecutable(target)) {
             PsiElement element = getDeclaration(target, reference);
             if (element != null) {
-              results.add(new DartCallChild(element, null));
+              results.add(element);
             }
           }
         }
@@ -86,8 +86,8 @@ public class DartCalleeTreeStructure extends DartCallHierarchyTreeStructure {
 
   @NotNull
   @Override
-  protected List<DartCallChild> getChildren(@NotNull PsiElement element) {
-    final List<DartCallChild> list = new ArrayList<>();
+  protected List<PsiElement> getChildren(@NotNull PsiElement element) {
+    final List<PsiElement> list = new ArrayList<>();
     getCallees(element, list);
     return list;
   }

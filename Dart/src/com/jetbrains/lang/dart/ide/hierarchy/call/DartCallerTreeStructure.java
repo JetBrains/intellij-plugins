@@ -18,7 +18,7 @@ public class DartCallerTreeStructure extends DartCallHierarchyTreeStructure {
     super(project, element, currentScopeType);
   }
 
-  private static void getCallers(@NotNull PsiElement element, @NotNull List<DartCallChild> results, @NotNull GlobalSearchScope scope) {
+  private static void getCallers(@NotNull PsiElement element, @NotNull List<PsiElement> results, @NotNull GlobalSearchScope scope) {
     FindUsagesHandler finder = createFindUsageHandler(element);
     final CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<>();
     FindUsagesOptions options = new FindUsagesOptions(scope);
@@ -33,8 +33,8 @@ public class DartCallerTreeStructure extends DartCallHierarchyTreeStructure {
 
   @NotNull
   @Override
-  protected List<DartCallChild> getChildren(@NotNull PsiElement element) {
-    final List<DartCallChild> list = new ArrayList<>();
+  protected List<PsiElement> getChildren(@NotNull PsiElement element) {
+    final List<PsiElement> list = new ArrayList<>();
     getCallers(element, list, getScope());
     return list;
   }
