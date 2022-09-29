@@ -58,7 +58,6 @@ import org.jetbrains.idea.perforce.merge.PerforceMergeProvider;
 import org.jetbrains.idea.perforce.operations.P4EditOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
-import org.jetbrains.idea.perforce.perforce.FStat;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
@@ -81,7 +80,6 @@ public final class PerforceVcs extends AbstractVcs {
   private RollbackEnvironment myOfflineRollbackEnvironment;
   private PerforceCommittedChangesProvider myCommittedChangesProvider;
 
-  private final ChangeListManager myChangeListManager;
   private final MyEditFileProvider myMyEditFileProvider;
   private PerforceChangeProvider myChangeProvider;
   private ChangeProvider myOfflineChangeProvider;
@@ -100,16 +98,11 @@ public final class PerforceVcs extends AbstractVcs {
 
   private final Map<ConnectionKey, List<PerforceJob>> myDefaultAssociated = new HashMap<>();
   private final PerforceExceptionsHotFixer myHotFixer;
-  private final PerforceRunner myPerforceRunner;
-  private final PerforceBaseInfoWorker myPerforceBaseInfoWorker;
 
   private final ReentrantReadWriteLock myP4Lock = new ReentrantReadWriteLock();
 
   public PerforceVcs(@NotNull Project project) {
     super(project, NAME);
-    myPerforceRunner = PerforceRunner.getInstance(project);
-    myPerforceBaseInfoWorker = project.getService(PerforceBaseInfoWorker.class);
-    myChangeListManager = project.isDefault() ? null : ChangeListManager.getInstance(project);
     mySettings = PerforceSettings.getSettings(myProject);
     myMyEditFileProvider = new MyEditFileProvider();
     myAnnotationsVfsListener = new AnnotationsWriteableFilesVfsListener(project, getKey());
@@ -177,11 +170,11 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   private void autoEditVFile(final VirtualFile[] vFiles) {
+    ChangeListManager changeListManager = ChangeListManager.getInstance(myProject);
     // check whether it will be under any clientspec
-
     ApplicationManager.getApplication().runWriteAction(() -> {
       for (VirtualFile file : vFiles) {
-        PerforceVFSListener.updateLastUnchangedContent(file, myChangeListManager);
+        PerforceVFSListener.updateLastUnchangedContent(file, changeListManager);
         try {
           ReadOnlyAttributeUtil.setReadOnlyAttribute(file, false);
         }
@@ -194,20 +187,14 @@ public final class PerforceVcs extends AbstractVcs {
 
     List<VcsOperation> operations = new ArrayList<>();
     for(VirtualFile vFile: vFiles) {
-      LocalChangeList list = myChangeListManager.getChangeList(vFile);
+      LocalChangeList list = changeListManager.getChangeList(vFile);
       if (list == null) {
-        list = myChangeListManager.getDefaultChangeList();
+        list = changeListManager.getDefaultChangeList();
       }
       operations.add(new P4EditOperation(list.getName(), vFile));
     }
     VcsOperationLog.getInstance(myProject).queueOperations(operations, PerforceBundle.message("progress.title.perforce.edit"),
                                                            PerformInBackgroundOption.ALWAYS_BACKGROUND);
-  }
-
-  @Nullable
-  public FStat getFstatSafe(final P4File p4File) throws VcsException {
-    if (myProject.isDisposed()) return null;
-    return p4File.getFstat(myPerforceBaseInfoWorker, myChangeListManager, myPerforceRunner, true);
   }
 
   public void startAsyncEdit(VirtualFile... vFiles) {
