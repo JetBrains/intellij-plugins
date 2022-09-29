@@ -25,8 +25,17 @@ object ResourceTypesSaver {
     val resourceTypeLocations = fetchResourceTypeLocations()
     val predefinedParameters = fetchPredefinedParameters()
 
+    val unsupportedTypes = setOf( // broken links on web site
+      "AWS::EC2::VPNConnection",
+      "AWS::ElastiCache::SubnetGroup",
+      "AWS::ElasticBeanstalk::ApplicationVersion",
+      "AWS::IdentityStore::Group",
+      "AWS::IdentityStore::GroupMembership",
+      "AWS::M2::Application"
+    )
+
     val supportedTypeLocations = resourceTypeLocations.filter {
-      it.name != "AWS::MediaTailor::PlaybackConfiguration" // todo unsupported yet
+      !unsupportedTypes.contains(it.name)
     }
 
     val resourceTypes = supportedTypeLocations.pmap(numThreads = 10) {
