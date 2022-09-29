@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.javascript.web.lang.js.jsType
+import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
@@ -32,19 +32,19 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_JS
+    if (namespace == WebSymbol.NAMESPACE_JS
         && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
         && params.registry.allowResolve) {
       // Avoid any conflicts with attribute selectors over the attribute value
       val attributeSelectors = params.registry
-        .runNameMatchQuery(listOfNotNull(WebSymbolsContainer.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name),
+        .runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name),
                            context = context.toList())
         .filter { it.attributeValue?.required == false }
         .mapSmartSet { it.matchedName }
 
       params.registry
         .runNameMatchQuery(
-          listOfNotNull(WebSymbolsContainer.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name),
+          listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name),
           context = context.toList())
         .asSequence()
         .filter { isOneTimeBindingProperty(it) }
@@ -111,7 +111,7 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
 
 
     override val attributeValue: WebSymbolHtmlAttributeValue?
-      get() = if (WebSymbolHtmlAttributeInfo.isBooleanType(jsType)) {
+      get() = if (WebTypesTypeScriptSymbolTypeSupport.isBoolean(jsType)) {
         WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.PLAIN,
                                            WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
                                            null,

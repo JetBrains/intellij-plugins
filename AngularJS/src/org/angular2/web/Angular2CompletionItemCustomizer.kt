@@ -19,7 +19,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
                          framework: FrameworkId?,
                          namespace: SymbolNamespace,
                          kind: SymbolKind): WebSymbolCodeCompletionItem =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && framework == Angular2Framework.ID)
+    if (namespace == WebSymbol.NAMESPACE_HTML && framework == Angular2Framework.ID)
       when (kind) {
         WebSymbol.KIND_HTML_ATTRIBUTES ->
           item.symbol

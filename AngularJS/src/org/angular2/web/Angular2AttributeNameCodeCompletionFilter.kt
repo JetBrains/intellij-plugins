@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider
+import com.intellij.html.webSymbols.WebSymbolsHtmlAdditionalContextProvider
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -12,7 +12,7 @@ import org.angular2.lang.html.psi.PropertyBindingType.PROPERTY
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.EVENT_ATTR_PREFIX
 import java.util.function.Predicate
 
-class Angular2AttributeNameCodeCompletionFilter(tag: XmlTag): Predicate<String> {
+class Angular2AttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
 
   private val names = mutableSetOf<String>()
 

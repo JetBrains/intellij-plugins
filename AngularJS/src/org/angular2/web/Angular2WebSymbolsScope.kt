@@ -14,8 +14,8 @@ import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.utils.psiModificationCount
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil

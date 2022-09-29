@@ -1,11 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2
 
+import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
+import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
-import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
 import com.intellij.psi.xml.XmlTag
 import icons.AngularJSIcons

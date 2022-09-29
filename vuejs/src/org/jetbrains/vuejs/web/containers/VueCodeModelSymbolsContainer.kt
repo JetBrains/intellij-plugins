@@ -2,12 +2,6 @@
 package org.jetbrains.vuejs.web.containers
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolsContainerWithCache
-import com.intellij.webSymbols.WebSymbolsRegistryManager
-import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import com.intellij.lang.ecmascript6.psi.*
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
@@ -26,6 +20,12 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsContainerWithCache
+import com.intellij.webSymbols.WebSymbolsRegistryManager
+import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENTS

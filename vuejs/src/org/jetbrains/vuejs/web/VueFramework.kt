@@ -3,11 +3,11 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.WebSymbolNamesProvider
-import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolNamesProvider
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -27,7 +27,7 @@ class VueFramework : WebFramework() {
                         kind: SymbolKind,
                         name: String,
                         target: WebSymbolNamesProvider.Target): List<String> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML)
+    if (namespace == WebSymbol.NAMESPACE_HTML)
       when (target) {
         WebSymbolNamesProvider.Target.NAMES_QUERY ->
           when (kind) {

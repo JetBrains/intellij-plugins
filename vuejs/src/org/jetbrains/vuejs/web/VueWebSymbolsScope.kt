@@ -33,7 +33,7 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
                      kind: SymbolKind,
                      name: String?): List<WebSymbol> =
     matches.filter { symbol ->
-      if (namespace == WebSymbolsContainer.NAMESPACE_HTML
+      if (namespace == WebSymbol.NAMESPACE_HTML
           && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS)
         symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
         symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
@@ -43,7 +43,7 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
   override fun apply(item: WebSymbolCodeCompletionItem,
                      namespace: SymbolNamespace?,
                      kind: SymbolKind): WebSymbolCodeCompletionItem {
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML
+    if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source

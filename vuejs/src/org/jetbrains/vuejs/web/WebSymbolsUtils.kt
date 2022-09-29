@@ -1,12 +1,12 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
-import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Symbol
 import com.intellij.refactoring.rename.api.RenameTarget
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_MODEL

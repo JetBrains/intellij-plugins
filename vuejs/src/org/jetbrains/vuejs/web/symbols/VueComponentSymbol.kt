@@ -53,7 +53,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == null || namespace == WebSymbolsContainer.NAMESPACE_HTML)
+    if (namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
       when (kind) {
         VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS -> {
           val props = mutableListOf<VueInputProperty>()
@@ -73,7 +73,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
           ?: if (!name.isNullOrEmpty()
                  && ((item is VueContainer && item.template == null)
                      || item is VueUnresolvedComponent)) {
-            listOf(WebSymbolMatch.create(name, listOf(WebSymbolNameSegment(0, name.length)), WebSymbolsContainer.NAMESPACE_HTML,
+            listOf(WebSymbolMatch.create(name, listOf(WebSymbolNameSegment(0, name.length)), WebSymbol.NAMESPACE_HTML,
                                          WebSymbol.KIND_HTML_SLOTS, this.origin))
           }
           else emptyList()
@@ -87,7 +87,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
         }
         else -> emptyList()
       }
-    else if (namespace == WebSymbolsContainer.NAMESPACE_JS && kind == WebSymbol.KIND_JS_EVENTS) {
+    else if (namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_EVENTS) {
       (item as? VueContainer)
         ?.emits
         ?.mapWithNameFilter(name, params, context) { VueEmitCallSymbol(it, item, this.origin) }

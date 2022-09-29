@@ -1,12 +1,12 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolsRegistryManager
-import com.intellij.webSymbols.utils.hideFromCompletion
+import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsRegistryManager
+import com.intellij.webSymbols.utils.hideFromCompletion
 import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND

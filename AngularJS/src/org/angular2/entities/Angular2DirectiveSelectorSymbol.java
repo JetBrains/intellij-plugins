@@ -3,8 +3,7 @@ package org.angular2.entities;
 
 import com.intellij.find.usages.api.SearchTarget;
 import com.intellij.find.usages.api.UsageHandler;
-import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider;
-import com.intellij.webSymbols.WebSymbol;
+import com.intellij.html.webSymbols.WebSymbolsHtmlAdditionalContextProvider;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.model.Pointer;
@@ -19,6 +18,8 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.api.RenameTarget;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webSymbols.WebSymbol;
+import com.intellij.webSymbols.WebSymbolOrigin;
 import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.web.Angular2Symbol;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import static com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider.getHtmlNSDescriptor;
+import static com.intellij.html.webSymbols.WebSymbolsHtmlAdditionalContextProvider.getHtmlNSDescriptor;
 import static com.intellij.webSymbols.utils.WebSymbolUtils.createPsiRangeNavigationItem;
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
@@ -125,7 +126,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
 
   @NotNull
   @Override
-  public Origin getOrigin() {
+  public WebSymbolOrigin getOrigin() {
     return new Angular2SymbolOrigin(this);
   }
 
@@ -242,7 +243,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
   @Override
   public String validateName(@NotNull String name) {
     if (myIsElement) {
-      return TAG_NAME_PATTERN.matcher(name).matches() ? null : name +" is not a valid HTML element name.";
+      return TAG_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML element name.";
     }
     return ATTRIBUTE_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML attribute name.";
   }

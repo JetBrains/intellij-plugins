@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolsRegistryManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.impl.StartMarkAction
@@ -13,6 +11,8 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsRegistryManager
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
@@ -46,8 +46,8 @@ class VueExtractComponentRefactoring(private val project: Project,
         newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
       }
       VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
-        validator::validate,
-        startMarkAction!!).performInplaceRefactoring(linkedSetOf())
+                                    validator::validate,
+                                    startMarkAction!!).performInplaceRefactoring(linkedSetOf())
 
     }, refactoringName, GROUP_ID)
   }

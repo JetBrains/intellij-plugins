@@ -3,8 +3,9 @@ package org.angular2.web.containers
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
-import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider
+import com.intellij.html.webSymbols.WebSymbolsHtmlAdditionalContextProvider
 import com.intellij.javascript.web.lang.js.WebJSTypesUtil
+import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -16,8 +17,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolsContainer.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
@@ -69,8 +70,8 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
     override val extension: Boolean
       get() = true
 
-    override val origin: WebSymbolsContainer.Origin
-      get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
+    override val origin: WebSymbolOrigin
+      get() = WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = WebTypesTypeScriptSymbolTypeSupport())
 
     override val namespace: SymbolNamespace
       get() = NAMESPACE_HTML

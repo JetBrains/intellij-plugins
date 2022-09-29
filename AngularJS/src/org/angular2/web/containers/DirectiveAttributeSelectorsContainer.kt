@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
+import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
 import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -31,7 +32,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, name))
     }
     else emptyList()
@@ -48,7 +49,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
     : WebSymbolsContainerWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
 
     override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-      namespace == WebSymbolsContainer.NAMESPACE_JS
+      namespace == WebSymbol.NAMESPACE_JS
 
     override val name: String
       get() = key
@@ -56,11 +57,11 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
     override val extension: Boolean
       get() = true
 
-    override val origin: WebSymbolsContainer.Origin
-      get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
+    override val origin: WebSymbolOrigin
+      get() = WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = WebTypesTypeScriptSymbolTypeSupport())
 
     override val namespace: SymbolNamespace
-      get() = WebSymbolsContainer.NAMESPACE_HTML
+      get() = WebSymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = WebSymbol.KIND_HTML_ELEMENTS

@@ -25,7 +25,7 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if ((namespace == null || namespace == WebSymbolsContainer.NAMESPACE_HTML)
+    if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
         && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_AVAILABLE_SLOTS
         && params.registry.allowResolve)
       getAvailableSlots(tag, name, true)
@@ -36,7 +36,7 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
-    if ((namespace == null || namespace == WebSymbolsContainer.NAMESPACE_HTML)
+    if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
         && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_AVAILABLE_SLOTS
         && params.registry.allowResolve)
       getAvailableSlotsCompletions(tag, name, params.position, true)

@@ -4,13 +4,13 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.find.usages.api.SearchTarget
 import com.intellij.find.usages.api.UsageHandler
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.webSymbols.FrameworkId
-import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.model.Pointer
 import com.intellij.navigation.TargetPresentation
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.FrameworkId
+import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.VueScopeElement
@@ -21,8 +21,8 @@ abstract class VueScopeElementSymbol<T : VueDocumentedItem>(matchedName: String,
 
   abstract override fun createPointer(): Pointer<out VueScopeElementSymbol<T>>
 
-  override val origin: WebSymbolsContainer.Origin =
-    object : WebSymbolsContainer.Origin {
+  override val origin: WebSymbolOrigin =
+    object : WebSymbolOrigin {
 
       private val info: Pair<String?, String?>? by lazy(LazyThreadSafetyMode.NONE) {
         (item as VueScopeElement).parents

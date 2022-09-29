@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
+import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
@@ -24,7 +25,7 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML
+    if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == WebSymbol.KIND_HTML_ATTRIBUTES
         && name != null) {
       AttributeWithInterpolationsSymbol.match(name, context, params)
@@ -33,12 +34,12 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
 
   private object AttributeWithInterpolationsSymbol : WebSymbol {
 
-    override val origin: WebSymbolsContainer.Origin =
-      WebSymbolsContainer.OriginData(Angular2Framework.ID)
+    override val origin: WebSymbolOrigin =
+      WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = WebTypesTypeScriptSymbolTypeSupport())
 
     override val namespace: SymbolNamespace
       get() =
-        WebSymbolsContainer.NAMESPACE_HTML
+        WebSymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() =
@@ -59,8 +60,8 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
 
   private object PropertiesProvider : WebSymbolsPatternItemsProvider {
     override fun getSymbolKinds(context: WebSymbol?): Set<WebSymbolQualifiedKind> = setOf(
-      WebSymbolQualifiedKind(WebSymbolsContainer.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
-      WebSymbolQualifiedKind(WebSymbolsContainer.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
+      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
+      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
     )
 
     override val delegate: WebSymbol? get() = null
@@ -75,10 +76,10 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
                            contextStack: Stack<WebSymbolsContainer>,
                            registry: WebSymbolsRegistry): List<WebSymbol> =
       registry.runNameMatchQuery(
-        listOf(WebSymbolsContainer.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name),
+        listOf(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name),
         context = contextStack) +
       registry.runNameMatchQuery(
-        listOf(WebSymbolsContainer.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS, name),
+        listOf(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS, name),
         context = contextStack)
 
   }

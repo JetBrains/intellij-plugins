@@ -54,7 +54,7 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> {
       if (kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS
-          && namespace == WebSymbolsContainer.NAMESPACE_HTML) {
+          && namespace == WebSymbol.NAMESPACE_HTML) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
                        ?: if (PsiTreeUtil.getChildOfType(tag, XmlTextImpl::class.java)
@@ -73,11 +73,11 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
     override val matchedName: String
       get() = "i18n"
 
-    override val origin: WebSymbolsContainer.Origin =
-      WebSymbolsContainer.OriginData(VueFramework.ID, "vue-i18n")
+    override val origin: WebSymbolOrigin =
+      WebSymbolOrigin.create(VueFramework.ID, "vue-i18n")
 
     override val namespace: SymbolNamespace
-      get() = WebSymbolsContainer.NAMESPACE_HTML
+      get() = WebSymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = WebSymbol.KIND_HTML_ELEMENTS

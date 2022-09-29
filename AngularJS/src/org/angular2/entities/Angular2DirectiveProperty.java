@@ -1,8 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo;
-import com.intellij.webSymbols.WebSymbolHtmlAttributeValue;
+import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.psi.JSType;
@@ -12,6 +11,7 @@ import com.intellij.model.Pointer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.webSymbols.WebSymbolHtmlAttributeValue;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.lang.types.Angular2TypeUtils;
@@ -87,7 +87,7 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
   @Nullable
   @Override
   default WebSymbolHtmlAttributeValue getAttributeValue() {
-    if (WebSymbolHtmlAttributeInfo.isBooleanType(getType())) {
+    if (WebTypesTypeScriptSymbolTypeSupport.isBoolean(getType())) {
       return WebSymbolHtmlAttributeValue.create(
         null, null, false, null, null
       );

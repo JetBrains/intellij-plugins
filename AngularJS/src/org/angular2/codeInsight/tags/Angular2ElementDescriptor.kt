@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags
 
-import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolHtmlElementInfo
+import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.psi.xml.XmlTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DescriptorSymbolsProvider

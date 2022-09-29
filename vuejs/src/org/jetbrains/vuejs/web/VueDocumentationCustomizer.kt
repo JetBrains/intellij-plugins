@@ -6,13 +6,12 @@ import com.intellij.openapi.util.text.Strings
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolDocumentation
 import com.intellij.webSymbols.WebSymbolDocumentationCustomizer
-import com.intellij.webSymbols.WebSymbolsContainer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 
 class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
   override fun customize(symbol: WebSymbol, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
-    if (symbol.namespace == WebSymbolsContainer.NAMESPACE_HTML
+    if (symbol.namespace == WebSymbol.NAMESPACE_HTML
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID
             || symbol.psiContext.let { it != null && isVueContext(it) })) {
@@ -27,7 +26,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
         }
     }
     else {
-      if (symbol.namespace == WebSymbolsContainer.NAMESPACE_HTML
+      if (symbol.namespace == WebSymbol.NAMESPACE_HTML
           && symbol.kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS) {
         symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name))?.let {
           return documentation.withDefinition(it)

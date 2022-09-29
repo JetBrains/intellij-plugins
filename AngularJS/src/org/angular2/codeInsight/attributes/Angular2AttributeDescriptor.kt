@@ -1,9 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes
 
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTag
@@ -38,17 +37,18 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
                attributeName: String,
                @Suppress("UNUSED_PARAMETER")
                element: PsiElement): Angular2AttributeDescriptor {
-      return Angular2AttributeDescriptor(object: WebSymbolHtmlAttributeInfo{
+      return Angular2AttributeDescriptor(object : WebSymbolHtmlAttributeInfo {
         override val name: String
           get() = attributeName
         override val symbol: WebSymbol
-          get() = object: WebSymbol {
-            override val origin: WebSymbolsContainer.Origin
-              get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
+          get() = object : WebSymbol {
+            override val origin: WebSymbolOrigin
+              get() = WebSymbolOrigin.create(Angular2Framework.ID)
             override val namespace: SymbolNamespace
-              get() = WebSymbolsContainer.NAMESPACE_HTML
+              get() = WebSymbol.NAMESPACE_HTML
             override val kind: SymbolKind
               get() = WebSymbol.KIND_HTML_ATTRIBUTES
+
             override fun createPointer(): Pointer<out WebSymbol> =
               Pointer.hardPointer(this)
           }
@@ -60,7 +60,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
           get() = null
         override val strictEnumValues: Boolean
           get() = false
-        override val jsType: JSType?
+        override val type: Any?
           get() = null
         override val icon: Icon?
           get() = null
@@ -70,7 +70,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
           get() = null
         override val priority: WebSymbol.Priority
           get() = WebSymbol.Priority.NORMAL
-      },tag)
+      }, tag)
     }
   }
 

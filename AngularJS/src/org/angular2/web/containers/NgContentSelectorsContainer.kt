@@ -5,7 +5,10 @@ import com.intellij.model.Pointer
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolsContainerWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
@@ -15,7 +18,7 @@ class NgContentSelectorsContainer(tag: XmlTag)
   : WebSymbolsContainerWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
-    namespace == WebSymbolsContainer.NAMESPACE_JS
+    namespace == WebSymbol.NAMESPACE_JS
     && (kind == Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS || kind == Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
   override fun createPointer(): Pointer<NgContentSelectorsContainer> {

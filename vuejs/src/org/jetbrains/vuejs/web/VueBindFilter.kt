@@ -9,17 +9,17 @@ class VueBindFilter : WebSymbolsFilter {
                                      registry: WebSymbolsRegistry,
                                      context: List<WebSymbolsContainer>,
                                      properties: Map<String, Any>): List<WebSymbolCodeCompletionItem> {
-    val props = registry.runNameMatchQuery(listOf(WebSymbolsContainer.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
-                                           context = context).mapTo(HashSet()) {it.name}
-    return codeCompletions.filter { !it.name.startsWith("on") || props.contains(it.name)}
+    val props = registry.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
+                                           context = context).mapTo(HashSet()) { it.name }
+    return codeCompletions.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }
 
   override fun filterNameMatches(matches: List<WebSymbol>,
                                  registry: WebSymbolsRegistry,
                                  context: List<WebSymbolsContainer>,
                                  properties: Map<String, Any>): List<WebSymbol> {
-    val props = registry.runNameMatchQuery(listOf(WebSymbolsContainer.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
-                                           context = context).mapTo(HashSet()) {it.name}
+    val props = registry.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
+                                           context = context).mapTo(HashSet()) { it.name }
     return matches.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }
 }

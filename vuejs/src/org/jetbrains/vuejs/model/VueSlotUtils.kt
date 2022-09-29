@@ -1,18 +1,17 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.lang.js.jsType
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
-import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
-import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolCodeCompletionItem
-import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolCodeCompletionItem
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.types.asCompleteType
@@ -52,7 +51,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =
-  runNameMatchQuery(listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name))
+  runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name))
 
 private fun WebSymbolElementDescriptor.getSlotsCompletions(name: String?, position: Int): List<WebSymbolCodeCompletionItem> =
-  runCodeCompletionQuery(listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name), position)
+  runCodeCompletionQuery(listOfNotNull(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name), position)

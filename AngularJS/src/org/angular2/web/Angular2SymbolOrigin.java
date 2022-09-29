@@ -2,11 +2,11 @@
 package org.angular2.web;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.webSymbols.PsiSourcedWebSymbol;
-import com.intellij.webSymbols.WebSymbolsContainer;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.text.SemVer;
+import com.intellij.webSymbols.PsiSourcedWebSymbol;
+import com.intellij.webSymbols.WebSymbolOrigin;
 import icons.AngularJSIcons;
 import org.angular2.Angular2Framework;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import javax.swing.*;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 
-public class Angular2SymbolOrigin implements WebSymbolsContainer.Origin {
+public class Angular2SymbolOrigin implements WebSymbolOrigin {
 
   private final Angular2Symbol mySymbol;
 

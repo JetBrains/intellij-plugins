@@ -13,16 +13,16 @@ object VueTopLevelElementsContainer : WebSymbolsContainer {
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.registry.runNameMatchQuery(
-        listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
         context = context,
         virtualSymbols = params.virtualSymbols,
         strictScope = params.strictScope,
         abstractSymbols = params.abstractSymbols,
       )
         .map {
-          WebSymbolMatch.create(it.name, it.nameSegments, WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS, it.origin)
+          WebSymbolMatch.create(it.name, it.nameSegments, WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_ELEMENTS, it.origin)
         }
     else emptyList()
 
@@ -31,9 +31,9 @@ object VueTopLevelElementsContainer : WebSymbolsContainer {
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.registry.runCodeCompletionQuery(
-        listOfNotNull(WebSymbolsContainer.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
         context = context,
         position = params.position,
         virtualSymbols = params.virtualSymbols,

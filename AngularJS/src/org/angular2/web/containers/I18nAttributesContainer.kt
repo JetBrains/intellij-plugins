@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.containers
 
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -23,7 +23,7 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-    if (namespace == WebSymbolsContainer.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
+    if (namespace == WebSymbol.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
           val info = Angular2AttributeNameParser.parse(attr.name, tag)
@@ -82,7 +82,7 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
       get() = attribute.project
 
     override val namespace: SymbolNamespace
-      get() = WebSymbolsContainer.NAMESPACE_HTML
+      get() = WebSymbol.NAMESPACE_HTML
 
     override val kind: SymbolKind
       get() = KIND_NG_I18N_ATTRIBUTES
