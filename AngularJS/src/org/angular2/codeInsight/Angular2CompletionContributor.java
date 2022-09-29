@@ -3,7 +3,7 @@ package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.javascript.web.codeInsight.css.CssInBindingExpressionCompletionProvider;
+import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupElementInsertHandler;
 import com.intellij.lang.javascript.completion.JSLookupPriority;

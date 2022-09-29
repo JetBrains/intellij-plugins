@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.WebFramework
-import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
+import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace

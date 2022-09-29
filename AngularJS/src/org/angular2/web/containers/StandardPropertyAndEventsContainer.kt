@@ -4,7 +4,7 @@ package org.angular2.web.containers
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.html.webSymbols.WebSymbolsHtmlAdditionalContextProvider
-import com.intellij.javascript.web.lang.js.WebJSTypesUtil
+import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature

@@ -6,7 +6,7 @@ import com.intellij.html.webSymbols.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.WebFramework
-import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
+import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 import com.intellij.psi.xml.XmlTag
 import icons.AngularJSIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor

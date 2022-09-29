@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider
-import com.intellij.javascript.web.codeInsight.css.refs.CssClassInJSLiteralOrIdentifierReferenceProvider.Companion.getClassesFromEmbeddedContent
+import com.intellij.javascript.web.css.CssClassInJSLiteralOrIdentifierReferenceProvider.Companion.getClassesFromEmbeddedContent
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
