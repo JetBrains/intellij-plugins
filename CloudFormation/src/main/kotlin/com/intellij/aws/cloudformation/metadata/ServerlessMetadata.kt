@@ -32,6 +32,7 @@ val awsServerlessFunction = CloudFormationManualResourceType(
     url = "https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction",
     description = "Creates a Lambda function, IAM execution role, and event source mappings which trigger the function.",
     properties = listOf(
+        CloudFormationManualResourceProperty(name = "Architectures", type = "List of string", description = "The CPU architecture to run on (x86_64 or arm64), accepts only one value. Defaults to x86_64.", required = true),
         CloudFormationManualResourceProperty(name = "Handler", type = "string", description = "Function within your code that is called to begin execution", required = true),
         CloudFormationManualResourceProperty(name = "Runtime", type = "string", description = "The runtime environment", required = true),
         CloudFormationManualResourceProperty(name = "CodeUri", type = "string | S3 Location Object", description = "S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package. Either CodeUri or InlineCode must be specified.", required = false),
@@ -41,6 +42,7 @@ val awsServerlessFunction = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "MemorySize", type = "integer", description = "Size of the memory allocated per invocation of the function in MB. Defaults to 128."),
         CloudFormationManualResourceProperty(name = "Timeout", type = "integer", description = "Maximum time that the function can run before it is killed in seconds. Defaults to 3."),
         CloudFormationManualResourceProperty(name = "Role", type = "string", description = "ARN of an IAM role to use as this function's execution role. If omitted, a default role is created for this function.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "AssumeRolePolicyDocument", type = "IAM policy document object", description = "AssumeRolePolicyDocument of the default created role for this function."),
         CloudFormationManualResourceProperty(name = "Policies", type = "string | List of string | IAM policy document object | List of IAM policy document object", description = "Names of AWS managed IAM policies or IAM policy documents that this function needs, which should be appended to the default role for this function. If the Role property is set, this property has no meaning.", excludedFromGlobals = true),
         CloudFormationManualResourceProperty(name = "PermissionsBoundary", type = "string", description = "ARN of a permissions boundary to use for this function's execution role.", excludedFromGlobals = true),
         CloudFormationManualResourceProperty(name = "Environment", type = "Function environment object", description = "Configuration for the runtime environment."),
@@ -55,7 +57,8 @@ val awsServerlessFunction = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "AutoPublishAlias", type = "string", description = "Name of the Alias. Read AutoPublishAlias Guide for how it works"),
         CloudFormationManualResourceProperty(name = "VersionDescription", type = "string", description = "A string that specifies the Description field which will be added on the new lambda version"),
         CloudFormationManualResourceProperty(name = "ReservedConcurrentExecutions", type = "integer", description = "The maximum of concurrent executions you want to reserve for the function. For more information see AWS Documentation on managing concurrency"),
-        CloudFormationManualResourceProperty(name = "ProvisionedConcurrencyConfig", type = "ProvisionedConcurrencyConfig Object", description = "Configure provisioned capacity for a number of concurrent executions on Lambda Alias property.")
+        CloudFormationManualResourceProperty(name = "ProvisionedConcurrencyConfig", type = "ProvisionedConcurrencyConfig Object", description = "Configure provisioned capacity for a number of concurrent executions on Lambda Alias property."),
+        CloudFormationManualResourceProperty(name = "EventInvokeConfig", type = "EventInvokeConfig Object", description = "Configure options for asynchronous invocation on the function.")
     ),
     attributes = listOf(
         CloudFormationManualResourceAttribute("Arn", "The ARN of the Lambda function.")
