@@ -44,7 +44,6 @@ import com.intellij.openapi.vcs.merge.MergeProvider;
 import com.intellij.openapi.vcs.rollback.RollbackEnvironment;
 import com.intellij.openapi.vcs.update.UpdateEnvironment;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
@@ -95,15 +94,12 @@ public final class PerforceVcs extends AbstractVcs {
   private final Set<VirtualFile> myAsyncEditFiles = new HashSet<>();
 
   private final Map<ConnectionKey, List<PerforceJob>> myDefaultAssociated = new HashMap<>();
-  private final PerforceExceptionsHotFixer myHotFixer;
 
   private final ReentrantReadWriteLock myP4Lock = new ReentrantReadWriteLock();
 
   public PerforceVcs(@NotNull Project project) {
     super(project, NAME);
     myMyEditFileProvider = new MyEditFileProvider();
-
-    myHotFixer = new PerforceExceptionsHotFixer(project);
   }
 
   @Override
@@ -473,7 +469,7 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Override
   public VcsExceptionsHotFixer getVcsExceptionsHotFixer() {
-    return myHotFixer;
+    return myProject.getService(PerforceExceptionsHotFixer.class);
   }
 
   public static VcsKey getKey() {
