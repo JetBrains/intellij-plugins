@@ -88,7 +88,6 @@ public final class PerforceVcs extends AbstractVcs {
   private PerforceDiffProvider myDiffProvider;
   private PerforceTreeDiffProvider myTreeDiffProvider;
 
-  private final VirtualFileListener myAnnotationsVfsListener;
   private MergeProvider myMergeProvider;
 
   private Disposable myDisposable;
@@ -103,7 +102,6 @@ public final class PerforceVcs extends AbstractVcs {
   public PerforceVcs(@NotNull Project project) {
     super(project, NAME);
     myMyEditFileProvider = new MyEditFileProvider();
-    myAnnotationsVfsListener = new AnnotationsWriteableFilesVfsListener(project, getKey());
 
     myHotFixer = new PerforceExceptionsHotFixer(project);
   }
@@ -382,7 +380,7 @@ public final class PerforceVcs extends AbstractVcs {
     ReadonlyStatusIsVisibleActivationCheck.check(myProject, NAME);
     initChangeProvider();
     myChangeProvider.activate(disposable);
-    VirtualFileManager.getInstance().addVirtualFileListener(myAnnotationsVfsListener, disposable);
+    VirtualFileManager.getInstance().addVirtualFileListener(new AnnotationsWriteableFilesVfsListener(myProject, getKey()), disposable);
   }
 
   @Override
