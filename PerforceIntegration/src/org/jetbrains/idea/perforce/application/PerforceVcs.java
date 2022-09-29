@@ -87,7 +87,6 @@ public final class PerforceVcs extends AbstractVcs {
   private PerforceAnnotationProvider myAnnotationProvider;
   private PerforceDiffProvider myDiffProvider;
   private PerforceTreeDiffProvider myTreeDiffProvider;
-  private final PerforceSettings mySettings;
 
   private final VirtualFileListener myAnnotationsVfsListener;
   private MergeProvider myMergeProvider;
@@ -103,7 +102,6 @@ public final class PerforceVcs extends AbstractVcs {
 
   public PerforceVcs(@NotNull Project project) {
     super(project, NAME);
-    mySettings = PerforceSettings.getSettings(myProject);
     myMyEditFileProvider = new MyEditFileProvider();
     myAnnotationsVfsListener = new AnnotationsWriteableFilesVfsListener(project, getKey());
 
@@ -125,12 +123,12 @@ public final class PerforceVcs extends AbstractVcs {
 
   @Nullable
   private <T> T validProvider(T initialValue) {
-    return mySettings.ENABLED ? initialValue : null;
+    return getSettings().ENABLED ? initialValue : null;
   }
 
   @Override
   public boolean allowsRemoteCalls(@NotNull VirtualFile file) {
-    return mySettings.ENABLED;
+    return getSettings().ENABLED;
   }
 
   @Override
@@ -230,7 +228,7 @@ public final class PerforceVcs extends AbstractVcs {
   }
 
   public PerforceSettings getSettings() {
-    return mySettings;
+    return PerforceSettings.getSettings(myProject);
   }
 
   @Nullable
@@ -284,7 +282,7 @@ public final class PerforceVcs extends AbstractVcs {
 
     final PerforceManager perforceManager = PerforceManager.getInstance(getProject());
 
-    if (! mySettings.ENABLED) {
+    if (! getSettings().ENABLED) {
       return true;
     }
 
@@ -339,7 +337,7 @@ public final class PerforceVcs extends AbstractVcs {
   @Override
   @NotNull
   public ChangeProvider getChangeProvider() {
-    if (mySettings.ENABLED) {
+    if (getSettings().ENABLED) {
       return getOnlineChangeProvider();
     }
     else {
