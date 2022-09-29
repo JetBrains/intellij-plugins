@@ -16,7 +16,6 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -116,8 +115,6 @@ public final class PerforceVcs extends AbstractVcs {
     myAnnotationsVfsListener = new AnnotationsWriteableFilesVfsListener(project, getKey());
 
     myHotFixer = new PerforceExceptionsHotFixer(project);
-    // remove used some time before old notification group ids
-    NotificationsConfigurationImpl.remove("PerforceId", "ourP4ConfigNotFoundGroupId");
   }
 
   @Override
