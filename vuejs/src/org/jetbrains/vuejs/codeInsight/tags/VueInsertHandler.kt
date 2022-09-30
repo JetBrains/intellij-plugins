@@ -33,6 +33,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -92,6 +93,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     else element
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, elementToImport, context.editor, isClass)
+      PostprocessReformattingAspect.getInstance(context.project).doPostponedFormatting()
     }
   }
 

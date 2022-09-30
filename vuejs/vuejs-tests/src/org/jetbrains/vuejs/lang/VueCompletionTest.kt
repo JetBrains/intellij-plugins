@@ -1960,6 +1960,14 @@ export default {
                  locations = listOf("props.<caret>key", "{<caret>selected,"))
   }
 
+  fun testAutoImportInsertion() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.HEADLESS_UI_1_4_1)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.completeBasic()
+    myFixture.type("al\n")
+    myFixture.checkResultByFile(getTestName(true) + ".after.vue")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
