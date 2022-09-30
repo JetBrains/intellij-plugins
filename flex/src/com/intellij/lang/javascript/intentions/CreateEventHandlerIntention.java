@@ -3,15 +3,15 @@ package com.intellij.lang.javascript.intentions;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.generation.ActionScriptGenerateEventHandler;
+import com.intellij.lang.javascript.generation.ActionScriptGenerateEventHandler.EventConstantInfo;
 import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSExpressionStatement;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CreateEventHandlerIntention extends BaseIntentionAction {
 
@@ -40,13 +40,8 @@ public class CreateEventHandlerIntention extends BaseIntentionAction {
       return true;
     }
 
-    final Trinity<JSExpressionStatement, String, String> eventConstantInfo =
-      ActionScriptGenerateEventHandler.getEventConstantInfo(file, editor);
-    if (eventConstantInfo != null) {
-      return true;
-    }
-
-    return false;
+    final @Nullable EventConstantInfo eventConstantInfo = ActionScriptGenerateEventHandler.getEventConstantInfo(file, editor);
+    return eventConstantInfo != null;
   }
 
   @Override

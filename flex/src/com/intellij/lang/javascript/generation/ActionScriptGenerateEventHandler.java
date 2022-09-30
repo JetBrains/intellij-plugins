@@ -36,7 +36,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -125,7 +124,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
     if (params.length > 0 &&
         ((params[0] instanceof JSReferenceExpression && ((JSReferenceExpression)params[0]).getQualifier() != null) ||
          (params[0] instanceof JSLiteralExpression && ((JSLiteralExpression)params[0]).isQuotedLiteral()))) {
-      if (params.length == 1 || params.length > 1 && isUnresolvedReference(params[1])) {
+      if (params.length == 1 || isUnresolvedReference(params[1])) {
         return callExpression;
       }
     }
@@ -147,12 +146,14 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
   }
 
   /**
-   * Trinity.first is JSExpressionStatement (if it looks like ButtonEvent.CLICK),
-   * Trinity.second is event class FQN (like "flash.events.MouseEvent"),
-   * Trinity.third is event name (like "click")
+   * @param expr JSExpressionStatement (if it looks like ButtonEvent.CLICK),
+   * @param eventClass event class FQN (like "flash.events.MouseEvent")
+   * @param eventName is event name (like "click")
    */
+  public record EventConstantInfo(@NotNull JSExpressionStatement expr, String eventClass, @NotNull String eventName) {}
+
   @Nullable
-  public static Trinity<JSExpressionStatement, String, String> getEventConstantInfo(final PsiFile psiFile, final Editor editor) {
+  public static EventConstantInfo getEventConstantInfo(final PsiFile psiFile, final Editor editor) {
     if (!(psiFile instanceof JSFile)) {
       return null;
     }
@@ -190,14 +191,16 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
     }
 
     final PsiElement expressionResolve = refExpression.resolve();
-    if (expressionResolve instanceof JSVariable) {
-      final JSAttributeList varAttributes = ((JSVariable)expressionResolve).getAttributeList();
-      final String text = ((JSVariable)expressionResolve).getLiteralOrReferenceInitializerText();
+    if (expressionResolve instanceof JSVariable variable) {
+      final JSAttributeList varAttributes = variable.getAttributeList();
+      final String text = variable.getLiteralOrReferenceInitializerText();
       if (varAttributes != null &&
           varAttributes.hasModifier(JSAttributeList.ModifierType.STATIC) &&
           varAttributes.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
           text != null && StringUtil.isQuotedString(text)) {
-        return Trinity.create(expressionStatement, ((JSClass)qualifierResolve).getQualifiedName(), initializerToPartialMethodName(text));
+        return new EventConstantInfo(expressionStatement,
+                                     ((JSClass)qualifierResolve).getQualifiedName(),
+                                     initializerToPartialMethodName(text));
       }
     }
 
@@ -274,12 +277,12 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
         return;
       }
 
-      final Trinity<JSExpressionStatement, String, String> eventConstantInfo = getEventConstantInfo(psiFile, editor);
+      final EventConstantInfo eventConstantInfo = getEventConstantInfo(psiFile, editor);
       if (eventConstantInfo != null) {
         inEventConstantExpression = true;
-        eventConstantExpression = eventConstantInfo.first;
-        eventClassFqn = eventConstantInfo.second;
-        final String eventName = eventConstantInfo.third;
+        eventConstantExpression = eventConstantInfo.expr();
+        eventClassFqn = eventConstantInfo.eventClass();
+        final String eventName = eventConstantInfo.eventName();
         eventHandlerName = eventName + "Handler";
         eventHandlerName2 = "on" + (eventName.isEmpty() ? "Event" : Character.toUpperCase(eventName.charAt(0)) + eventName.substring(1));
         return;
