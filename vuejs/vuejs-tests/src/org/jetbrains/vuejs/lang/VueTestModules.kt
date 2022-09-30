@@ -57,6 +57,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   NUXT_2_13_2("nuxt/2.13.2", "nuxt", "@nuxt/types"),
   NUXT_2_15_6("nuxt/2.15.6", "nuxt", "@nuxt/types"),
   PRIMEVUE_3_8_2("primevue/3.8.2", "primevue"),
+  PINIA_2_0_22("pinia/2.0.22", "pinia", "vue-demi"),
   QUASAR_2_6_5("quasar/2.6.5", "quasar"),
   SHARDS_VUE_1_0_5("shards-vue", "@shards/vue"),
   VUE_2_5_3("vue/2.5.3", "vue"),
@@ -68,6 +69,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   VUETIFY_0_17_2("vuetify/0.17.2", "vuetify"),
   VUETIFY_1_2_10("vuetify/1.2.10", "vuetify"),
   VUETIFY_1_3_7("vuetify/1.3.7", "vuetify"),
+  VUEUSE_9_3_0("vueuse/9.3.0", "@vueuse/core"),
   VUEX_3_1_0("vuex/3.1.0", "vuex"),
   VUEX_4_0_0("vuex/4.0.0", "vuex");
 
