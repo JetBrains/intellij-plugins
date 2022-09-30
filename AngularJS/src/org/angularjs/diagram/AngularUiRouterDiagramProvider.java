@@ -22,7 +22,6 @@ import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.graph.settings.GraphSettings;
 import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.SmartPsiElementPointer;
@@ -530,8 +529,9 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         myAction.actionPerformed(e);
       }
       else {
-        final List<Trinity<String, SmartPsiElementPointer, Icon>> children = ContainerUtil
-          .map(childrenList, ch -> Trinity.create(ch.getType().name() + ": " + ch.getName(), ch.getNavigationTarget(), null));
+        final List<JSModulesDiagramUtils.ChildData> children = ContainerUtil
+          .map(childrenList, ch -> new JSModulesDiagramUtils.ChildData(ch.getType().name() + ": " + ch.getName(),
+                                                                       ch.getNavigationTarget(), null));
         JSModulesDiagramUtils.showMembersSelectionPopup(
           main.getType().name() + ": " + main.getName(), //NON-NLS
           main.getNavigationTarget(), null, children, e.getDataContext());
