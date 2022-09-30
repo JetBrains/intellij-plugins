@@ -26,7 +26,6 @@ import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -307,13 +306,12 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       property, localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))) {
       return localOutData;
     }
-    Trinity<JSCallExpression, Integer, Boolean> wrappingCall = findWrappingCall(property);
+    @Nullable WrappingCall wrappingCall = findWrappingCall(property);
     if (wrappingCall == null) {
       return outData;
     }
-    final JSCallExpression callExpression = wrappingCall.first;
-    final int level = wrappingCall.second;
-    boolean immediate = wrappingCall.third;
+    final JSCallExpression callExpression = wrappingCall.call();
+    boolean immediate = wrappingCall.immediate();
 
     final JSExpression methodExpression = callExpression.getMethodExpression();
     if (!(methodExpression instanceof JSReferenceExpression) || ((JSReferenceExpression)methodExpression).getQualifier() == null) {
@@ -328,7 +326,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       return localOutData;
     }
     // for 'standard' properties, keep indexing only for properties - immediate children of function calls parameters
-    if (level > 1 || !immediate) return outData;
+    if (wrappingCall.level() > 1 || !immediate) return outData;
 
     final PsiElement parent = property.getParent();
     final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(command);
@@ -340,7 +338,9 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static @Nullable Trinity<JSCallExpression, Integer, Boolean> findWrappingCall(@NotNull JSProperty property) {
+  private record WrappingCall(@NotNull JSCallExpression call, int level, boolean immediate) {}
+
+  private static @Nullable WrappingCall findWrappingCall(@NotNull JSProperty property) {
     PsiElement current = property.getParent();
     int level = 0;
     boolean immediate = true;
@@ -367,9 +367,8 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (current instanceof JSArrayLiteralExpression) {
         current = current.getParent();
       }
-      if (current instanceof JSArgumentList) {
-        final PsiElement callExpression = current.getParent();
-        if (callExpression instanceof JSCallExpression) return Trinity.create((JSCallExpression)callExpression, level, immediate);
+      if (current instanceof JSArgumentList && current.getParent() instanceof JSCallExpression call) {
+        return new WrappingCall(call, level, immediate);
       }
       return null;
     }
@@ -797,9 +796,9 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (parent instanceof JSObjectLiteralExpression && parent.getParent() instanceof JSProperty
         && propertyName.equals(((JSProperty)parent.getParent()).getName())
         && property.getName() != null) {
-      Trinity<JSCallExpression, Integer, Boolean> call = findWrappingCall(property);
+      WrappingCall call = findWrappingCall(property);
       assert call != null;
-      JSExpression[] arguments = call.first.getArguments();
+      JSExpression[] arguments = call.call().getArguments();
       if (arguments.length < 2 ||
           !(arguments[0] instanceof JSLiteralExpression) ||
           !((JSLiteralExpression)arguments[0]).isQuotedLiteral()) {
