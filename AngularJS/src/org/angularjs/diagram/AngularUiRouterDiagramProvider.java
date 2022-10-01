@@ -61,7 +61,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
   private final AbstractDiagramElementManager<DiagramObject> myElementManager;
 
-  public AngularUiRouterDiagramProvider() {
+  AngularUiRouterDiagramProvider() {
     myElementManager = new AbstractDiagramElementManager<>() {
       @Override
       public Object @NotNull [] getNodeItems(DiagramObject parent) {
@@ -93,7 +93,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @Nullable @Nls String getNodeTooltip(DiagramObject element) {
+      public @Nls @NotNull String getNodeTooltip(DiagramObject element) {
         final List<String> errors = element.getErrors();
         final List<String> warnings = element.getWarnings();
         final List<String> notes = element.getNotes();
@@ -206,7 +206,6 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       private final Map<Integer, Integer> myEdgesPositions = new HashMap<>();
-      private final Set<AngularUiRouterEdge> myVisibleEdges = new HashSet<>();
 
       @Override
       public EdgeLabel @NotNull [] getEdgeLabels(@Nullable DiagramEdge umlEdge, @NotNull String label) {
@@ -215,7 +214,6 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         if (!getSettings().isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
         }
-        //if (!myVisibleEdges.contains(umlEdge)) return EMPTY_LABELS;
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
         final Edge edge = builder.getEdge(umlEdge);
         final EdgeRealizer edgeRealizer = getEdgeRealizer(umlEdge);
@@ -326,7 +324,6 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       private void updateBySelection(DiagramNode node) {
-        myVisibleEdges.clear();
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
         final List<DiagramNode<?>> nodes = new ArrayList<>(GraphSelectionService.getInstance().getSelectedModelNodes(builder));
         if (node != null && !nodes.contains(node)) nodes.add(node);
@@ -362,7 +359,6 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
           if (getSettings().isShowEdgeLabels() &&
               selected != null &&
               (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
-            myVisibleEdges.add((AngularUiRouterEdge)edge);
             graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge)edge).getLabel());
           }
           else {
@@ -412,7 +408,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
                                       @NotNull List<DiagramNode<DiagramObject>> list,
                                       @NotNull DiagramBuilder builder) {
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
-          final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
+          final SmartPsiElementPointer<?> target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
         }
         else if (JSModulesDiagramUtils.DIAGRAM_BUILDER.is(dataId)) {
@@ -530,7 +526,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
       else {
         final List<JSModulesDiagramUtils.ChildData> children = ContainerUtil
-          .map(childrenList, ch -> new JSModulesDiagramUtils.ChildData(ch.getType().name() + ": " + ch.getName(),
+          .map(childrenList, ch -> new JSModulesDiagramUtils.ChildData(ch.getType().name() + ": " + ch.getName(), //NON-NLS
                                                                        ch.getNavigationTarget(), null));
         JSModulesDiagramUtils.showMembersSelectionPopup(
           main.getType().name() + ": " + main.getName(), //NON-NLS
