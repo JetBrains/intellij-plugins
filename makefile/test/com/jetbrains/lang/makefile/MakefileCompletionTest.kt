@@ -9,6 +9,7 @@ class MakefileCompletionTest : BasePlatformTestCase() {
   fun testFunctions() = doTest(*functions)
   fun testVariables() = doTest("a", "b", "c", *functions)
   fun testCurly() = doTest("a", "b", "c")
+  fun testComment() = doTest()
 
   fun doTest(vararg variants: String) = myFixture.testCompletionVariants("$basePath/$testFilename", *variants)
 

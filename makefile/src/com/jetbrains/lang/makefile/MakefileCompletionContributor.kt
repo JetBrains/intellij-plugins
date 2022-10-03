@@ -26,7 +26,21 @@ class MakefileCompletionContributor : CompletionContributor() {
   }
 
   init {
-    extend(CompletionType.BASIC, StandardPatterns.or(psiElement().afterLeaf(psiElement(EOL)), psiElement().isNull), KeywordCompletionProvider)
-    extend(CompletionType.BASIC, psiElement().afterLeaf(psiElement(OPEN_PAREN).afterLeafSkipping(psiElement(OPEN_PAREN), psiElement(DOLLAR))), FunctionCompletionProvider)
+    extend(
+      CompletionType.BASIC,
+      StandardPatterns.or(
+        psiElement().afterLeaf(psiElement(EOL)).andNot(psiComment()),
+        psiElement().isNull
+      ),
+      KeywordCompletionProvider
+    )
+
+    extend(
+      CompletionType.BASIC,
+      psiElement()
+        .afterLeaf(psiElement(OPEN_PAREN).afterLeafSkipping(psiElement(OPEN_PAREN), psiElement(DOLLAR)))
+        .andNot(psiComment()),
+      FunctionCompletionProvider
+    )
   }
 }
