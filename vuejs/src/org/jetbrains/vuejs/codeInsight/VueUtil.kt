@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
+import com.intellij.lang.javascript.psi.resolve.QualifiedItemProcessor
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
@@ -258,12 +259,12 @@ fun collectMembers(element: JSObjectLiteralExpression): List<Pair<String, JSElem
 fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
   type?.asRecordType()
     ?.properties
-    ?.mapNotNull { prop ->
-      prop.takeIf { it.hasValidName() }
-        ?.memberSource
-        ?.singleElement
-        ?.let { it as? JSElement }
-        ?.let { Pair(prop.memberName, it) }
+    ?.filter { it.hasValidName() }
+    ?.flatMap { prop ->
+      QualifiedItemProcessor
+        .getElementsForTypeMember(prop, null, false)
+        .filterIsInstance<JSElement>()
+        .map { Pair(prop.memberName, it) }
     }
   ?: emptyList()
 

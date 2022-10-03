@@ -63,4 +63,13 @@ class PiniaTest : BasePlatformTestCase() {
     )
   }
 
+  fun testUseWithMappers() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.copyDirectoryToProject(getTestName(false), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PINIA_2_0_22)
+
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.checkHighlighting()
+  }
+
 }

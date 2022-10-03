@@ -237,6 +237,12 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     init {
       var provider = sourceElement
       val returnType = when (sourceElement) {
+        is JSImplicitElement -> {
+          provider = sourceElement.context ?: sourceElement
+          sourceElement.jsType?.let {
+            JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement, false))
+          }
+        }
         is JSFunctionProperty -> sourceElement.returnType
         is JSProperty -> {
           val functionInitializer = sourceElement.tryGetFunctionInitializer()
