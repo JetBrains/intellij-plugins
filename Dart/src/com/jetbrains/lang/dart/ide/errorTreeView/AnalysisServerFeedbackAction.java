@@ -3,10 +3,14 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.SendFeedbackAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -53,12 +57,18 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
     final boolean isEAP = appInfo.isEAP();
     final String intellijBuild = isEAP ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
     final String sdkVersion = getSdkVersion(project);
-    final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(project), ";", " ").trim();
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, IdeBundle.message("reportProblemAction.progress.title.submitting")) {
 
-    final String url = DartBundle.message("dart.feedback.url", urlEncode("Analyzer Feedback from IntelliJ"));
-    String body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription);
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(project, indicator), ";", " ").trim();
 
-    BrowserUtil.browse(url + urlEncode(body + "\n"), project);
+        final String url = DartBundle.message("dart.feedback.url", urlEncode("Analyzer Feedback from IntelliJ"));
+        String body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription);
+
+        BrowserUtil.browse(url + urlEncode(body + "\n"), project);
+      }
+    });
   }
 
   protected String getSdkVersion(@NotNull Project project) {
