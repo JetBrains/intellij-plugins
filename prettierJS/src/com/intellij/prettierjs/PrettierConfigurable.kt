@@ -14,7 +14,6 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.dsl.builder.EMPTY_LABEL
 import com.intellij.ui.dsl.builder.MutableProperty
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
@@ -70,7 +69,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
           .component
       }
 
-      row(EMPTY_LABEL) {
+      row("") {
         checkBox(PrettierBundle.message("on.code.reformat.label"))
           .bindSelected(
             { prettierConfiguration.isRunOnReformat },
@@ -80,7 +79,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
       }
 
-      row(EMPTY_LABEL) {
+      row("") {
         runOnSaveCheckBox = checkBox(PrettierBundle.message("on.save.label"))
           .bindSelected(
             { prettierConfiguration.isRunOnSave },
