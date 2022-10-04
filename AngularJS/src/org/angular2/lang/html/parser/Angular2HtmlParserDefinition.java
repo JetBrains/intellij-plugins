@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
+import org.angular2.lang.html.Angular2HtmlFile;
 import org.angular2.lang.html.Angular2HtmlFileElementType;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorElementType;
@@ -35,7 +35,7 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
 
   @Override
   public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
-    return new HtmlFileImpl(viewProvider, Angular2HtmlFileElementType.INSTANCE);
+    return new Angular2HtmlFile(viewProvider);
   }
 
   @Override

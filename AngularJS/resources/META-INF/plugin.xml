@@ -313,6 +313,8 @@
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.inspections.AngularJSAnalysisHandlersFactory"/>
 
+    <tsConfigCustomizer implementation="org.angular2.codeInsight.Angular2TypeScriptConfigCustomizer"/>
+
     <!-- Angular2 HTML language contributions -->
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 

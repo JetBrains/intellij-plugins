@@ -1,0 +1,20 @@
+0(1) element: null
+1(2) element: HtmlTag:p
+2(3,4) element: JSReferenceExpression Read(heroLoadingState)
+3(5) element: JSReferenceExpression condition: true, reachable
+4(9) element: JSReferenceExpression condition: false, reachable
+5(6) element: HtmlTag:p IF (branch) true
+6(7) element: JSReferenceExpression Read(heroLoadingState)
+7(8) element: JSReferenceExpression Read(data)
+8(10) element: JSReferenceExpression Read(name)
+9(10) element: HtmlTag:p IF (branch) false
+10(11) element: HtmlTag:p
+11(12,13) element: JSReferenceExpression Read(heroLoadingState)
+12(14) element: JSReferenceExpression condition: true, reachable
+13(18) element: JSReferenceExpression condition: false, reachable
+14(15) element: HtmlTag:p IF (branch) true
+15(16) element: JSReferenceExpression Read(heroLoadingState)
+16(17) element: JSReferenceExpression Read(data)
+17(19) element: JSReferenceExpression Read(data)
+18(19) element: HtmlTag:p IF (branch) false
+19() element: null

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
@@ -21,6 +22,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
 import org.angular2.Angular2DecoratorUtil;
+import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2Bundle;
@@ -29,18 +31,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-import static org.angular2.Angular2DecoratorUtil.isPrivateMember;
+import static org.angular2.Angular2DecoratorUtil.COMPONENT_DEC;
+import static org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC;
+
 
 public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
 
   @Override
   public boolean isImplicitUsage(@NotNull PsiElement element) {
-    if (element instanceof TypeScriptFunction) {
-      if (((TypeScriptFunction)element).isSetProperty()
-          || ((TypeScriptFunction)element).isGetProperty()) {
+    if (element instanceof TypeScriptFunction || element instanceof TypeScriptField) {
+      var name = ((JSAttributeListOwner)element).getName();
+      if (name != null && ("ngTemplateContextGuard".equals(name) || name.startsWith(Angular2ControlFlowBuilder.CUSTOM_GUARD_PREFIX))) {
+        // ngTemplateGuard_ suffix should actually match the name of directive input, but it does not matter much
+        JSClass cls = JSUtils.getMemberContainingClass(element);
+        return null != Angular2DecoratorUtil.findDecorator(cls, COMPONENT_DEC, DIRECTIVE_DEC);
+      }
+    }
+
+    if (element instanceof TypeScriptFunction function) {
+      if (function.isSetProperty() || function.isGetProperty()) {
         Ref<JSFunction> theOtherOne = new Ref<>();
-        Angular2ReferenceExpressionResolver.findPropertyAccessor(
-          (TypeScriptFunction)element, ((TypeScriptFunction)element).isGetProperty(), theOtherOne::set);
+        Angular2ReferenceExpressionResolver.findPropertyAccessor(function, function.isGetProperty(), theOtherOne::set);
         if (!theOtherOne.isNull() && Angular2DecoratorUtil.findDecorator(
           theOtherOne.get(), Angular2DecoratorUtil.INPUT_DEC, Angular2DecoratorUtil.OUTPUT_DEC) != null) {
           return true;
@@ -52,7 +63,7 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
     if (element instanceof TypeScriptFunction
         || ((element instanceof TypeScriptField
              || element instanceof TypeScriptParameterImpl)
-            && isPrivateMember((JSPsiElementBase)element))) {
+            && Angular2DecoratorUtil.isPrivateMember((JSPsiElementBase)element))) {
       JSClass cls = JSUtils.getMemberContainingClass(element);
       if (cls instanceof TypeScriptClass && Angular2LangUtil.isAngular2Context(element)) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(cls);

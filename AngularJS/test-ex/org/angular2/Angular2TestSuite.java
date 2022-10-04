@@ -72,6 +72,7 @@ import org.junit.runners.Suite;
   AngularChangeSignatureTest.class,
   Angular2InaccessibleMemberAotQuickFixesTest.class,
   Angular2InaccessibleMemberAotInspectionTest.class,
+  Angular2ControlFlowTest.class,
   AngularFindUsagesTest.class,
   DirectiveRenameTest.class,
   MoveTest.class,
