@@ -2000,6 +2000,12 @@ export default class UsageComponent extends Vue {
     }
   }
 
+  fun testScriptSetupPropShadowing() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFiles("scriptSetupPropShadowing.vue")
+    myFixture.checkGotoDeclaration("{{<caret>foo}}", 31)
+  }
+
   fun testCreateApp() {
     myFixture.copyDirectoryToProject("../common/createApp", ".")
     myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)

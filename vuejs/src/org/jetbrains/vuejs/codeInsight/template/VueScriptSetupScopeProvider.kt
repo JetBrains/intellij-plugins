@@ -14,9 +14,11 @@ import java.util.function.Consumer
 
 class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
 
-  override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> = findModule(element, true)?.let {
-    listOf(VueScriptSetupScope(it))
-  } ?: emptyList()
+  override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
+    return findModule(element, true)?.let {
+      listOf(VueScriptSetupScope(it))
+    } ?: emptyList()
+  }
 
   private class VueScriptSetupScope constructor(private val module: JSEmbeddedContent) : VueTemplateScope(null) {
 

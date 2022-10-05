@@ -94,7 +94,28 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       module.getStubSafeDefineCalls().forEach { call ->
         when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
           DEFINE_PROPS_FUN -> {
-            props = analyzeDefineProps(call, listOf())
+            val parent = call.context
+            val defaults = when { // todo is there a spread here?
+              //parent is JSCallExpression && isDefinePropsCallExpression(parent) -> {
+              //  val objectLiteral = parent.arguments.getOrNull(1) as? JSObjectLiteralExpression
+              //  objectLiteral?.properties?.mapNotNull { it.name } ?: listOf()
+              //}
+              parent is JSDestructuringElement -> {
+                // parent.target could be an JSDestructuringArray, but Vue does not support it
+                val objectDestructure = parent.target as? JSDestructuringObject
+                objectDestructure?.properties?.mapNotNull { destructuringProperty ->
+                  val element = destructuringProperty.destructuringElement
+                  if (!destructuringProperty.isRest && element is JSVariable && element.hasOwnInitializer()) {
+                    element.name
+                  }
+                  else {
+                    null // aliased prop without default value
+                  }
+                } ?: listOf()
+              }
+              else -> listOf()
+            }
+            props = analyzeDefineProps(call, defaults)
           }
           WITH_DEFAULTS_FUN -> {
             val definePropsCall = call.getInnerDefineProps().firstOrNull()
@@ -175,7 +196,9 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             is JSCallExpression -> sequenceOf(psi)
             is JSStatement -> {
               stub.childrenStubs.asSequence()
-                .filter { it.stubType == JSStubElementTypes.VARIABLE || it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE }
+                .filter { it.stubType == JSStubElementTypes.VARIABLE ||
+                          it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
+                          it.stubType == JSStubElementTypes.DESTRUCTURING_ELEMENT  }
                 .flatMap { it.childrenStubs.asSequence() }
                 .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
                 .mapNotNull { it.psi as? JSCallExpression }
@@ -187,7 +210,13 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
       return this.children.asSequence().filterIsInstance<JSStatement>()
         .flatMap { it.children.asSequence() }
-        .map { if (it is JSVariable) it.initializer else it }
+        .map {
+          when (it) {
+            is JSVariable -> it.initializer
+            is JSDestructuringElement -> it.initializer
+            else -> it
+          }
+        }
         .filterIsInstance<JSCallExpression>()
         .mapNotNull { call ->
           when ((call.methodExpression as? JSReferenceExpression)?.referenceName) {

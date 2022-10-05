@@ -83,6 +83,10 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest()
 
+  fun testPropsDestructureTypeDeclarationTS() = doTest()
+
+  fun testPropsDestructureRuntimeDeclarationJS() = doTest()
+
   fun testBothScriptsJS() = doTest()
 
   /**
