@@ -15,7 +15,11 @@ public class FlexDocumentationBuilder extends JSDocumentationBuilder {
   }
 
   @Override
-  public boolean fillEvaluatedType() {
+  public void fillEvaluatedType() {
+  }
+
+  @Override
+  public boolean showDoc() {
     return false;
   }
 }
