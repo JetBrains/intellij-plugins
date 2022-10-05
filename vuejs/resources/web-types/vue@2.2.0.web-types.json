@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../plugins/JavaScriptLanguage/web-platform/web-types-gen/resources/web-types.json",
+  "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
   "framework": "vue",
   "name": "vue",
   "version": "2.2.0",
