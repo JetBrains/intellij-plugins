@@ -13,7 +13,7 @@ import com.intellij.webSymbols.*
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_I18N_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
 class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {

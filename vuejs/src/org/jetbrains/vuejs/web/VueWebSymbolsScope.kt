@@ -8,11 +8,13 @@ import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_COMPOSITION_COMPONENT
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_COMPOSITION_COMPONENT
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_PROXIMITY
 
 class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
 
@@ -34,7 +36,7 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
                      name: String?): List<WebSymbol> =
     matches.filter { symbol ->
       if (namespace == WebSymbol.NAMESPACE_HTML
-          && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS)
+          && kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS)
         symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
         symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
       else true
@@ -44,7 +46,7 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
                      namespace: SymbolNamespace?,
                      kind: SymbolKind): WebSymbolCodeCompletionItem {
     if (namespace == WebSymbol.NAMESPACE_HTML
-        && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS) {
+        && kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
@@ -76,13 +78,11 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
     context.hashCode()
 
   class Provider : WebSymbolsScopeProvider {
-
-    override fun get(context: PsiElement, framework: FrameworkId?): WebSymbolsScope? =
-      framework
-        ?.takeIf { it == VueFramework.ID }
-        ?.let { VueWebSymbolsScope(context) }
+    override fun get(location: PsiElement, context: WebSymbolsContext): WebSymbolsScope? =
+      if (context.framework == VueFramework.ID)
+        VueWebSymbolsScope(location)
+      else null
 
   }
-
 
 }

@@ -30,8 +30,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext;
-import com.intellij.webSymbols.framework.impl.WebSymbolsFrameworkExtensionPoint;
+import com.intellij.webSymbols.context.WebSymbolsContext;
+import com.intellij.webSymbols.context.WebSymbolsContextProvider;
+import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
@@ -45,6 +46,7 @@ import java.util.List;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.prepend;
 import static com.intellij.util.containers.ContainerUtil.sorted;
+import static com.intellij.webSymbols.context.WebSymbolsContext.KIND_FRAMEWORK;
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
@@ -239,10 +241,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testCustomContextProvider() {
     Disposable disposable = Disposer.newDisposable();
-    WebSymbolsFrameworkContext.WEB_FRAMEWORK_CONTEXT_EP
+    WebSymbolsContext.WEB_SYMBOLS_CONTEXT_EP
       .getPoint()
       .registerExtension(
-        new WebSymbolsFrameworkExtensionPoint<>("angular", new WebSymbolsFrameworkContext() {
+        new WebSymbolsContextProviderExtensionPoint(KIND_FRAMEWORK, "angular", new WebSymbolsContextProvider() {
           @NotNull
           @Override
           public CachedValueProvider.Result<Integer> isEnabled(@NotNull PsiDirectory directory) {

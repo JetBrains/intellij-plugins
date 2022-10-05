@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.codeInsight.ATTR_ARGUMENT_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_SLOT_SHORTHAND
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_DIRECTIVE_ARGUMENT
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_DIRECTIVE_ARGUMENT
 import java.util.function.Predicate
 
 class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {

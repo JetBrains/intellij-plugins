@@ -9,7 +9,7 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
 class VueInputPropSymbol(property: VueInputProperty,
                          owner: VueComponent,
@@ -17,7 +17,7 @@ class VueInputPropSymbol(property: VueInputProperty,
   : VueNamedWebSymbol<VueInputProperty>(property, owner, origin) {
 
   override val kind: SymbolKind
-    get() = VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS
+    get() = VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENT_PROPS
 
   override val type: JSType?
     get() = item.jsType

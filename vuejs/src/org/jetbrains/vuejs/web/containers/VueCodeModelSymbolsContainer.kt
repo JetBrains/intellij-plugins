@@ -28,8 +28,8 @@ import com.intellij.webSymbols.WebSymbolsRegistryManager
 import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_DIRECTIVES
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.asWebSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol

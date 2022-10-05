@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
 class VueComponentSymbol(matchedName: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
@@ -21,7 +21,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
   private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
 
   override val kind: SymbolKind
-    get() = VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENTS
+    get() = VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS
 
   override val name: String
     get() = matchedName
@@ -45,8 +45,8 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
     item.source?.let { listOf(VueComponentSourceNavigationTarget(it)) } ?: emptyList()
 
   override val properties: Map<String, Any>
-    get() = mapOf(Pair(VueWebSymbolsAdditionalContextProvider.PROP_VUE_PROXIMITY, vueProximity), Pair(
-      VueWebSymbolsAdditionalContextProvider.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
+    get() = mapOf(Pair(VueWebSymbolsRegistryExtension.PROP_VUE_PROXIMITY, vueProximity), Pair(
+      VueWebSymbolsRegistryExtension.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
   override fun getSymbols(namespace: SymbolNamespace?,
                           kind: String,
@@ -55,7 +55,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
     if (namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
       when (kind) {
-        VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS -> {
+        VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENT_PROPS -> {
           val props = mutableListOf<VueInputProperty>()
           // TODO ambiguous resolution in case of duplicated names
           item.acceptPropertiesAndMethods(object : VueModelVisitor() {
@@ -78,7 +78,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
           }
           else emptyList()
         }
-        VueWebSymbolsAdditionalContextProvider.KIND_VUE_MODEL -> {
+        VueWebSymbolsRegistryExtension.KIND_VUE_MODEL -> {
           (item as? VueContainer)
             ?.collectModelDirectiveProperties()
             ?.takeIf { it.prop != null || it.event != null }

@@ -11,7 +11,7 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternItemsProvider
 import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider
+import org.angular2.web.Angular2WebSymbolsRegistryExtension
 
 object AttributeWithInterpolationsContainer : WebSymbolsContainer {
 
@@ -61,7 +61,7 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
   private object PropertiesProvider : WebSymbolsPatternItemsProvider {
     override fun getSymbolKinds(context: WebSymbol?): Set<WebSymbolQualifiedKind> = setOf(
       WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
-      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS)
+      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS)
     )
 
     override val delegate: WebSymbol? get() = null
@@ -79,7 +79,7 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
         listOf(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name),
         context = contextStack) +
       registry.runNameMatchQuery(
-        listOf(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS, name),
+        listOf(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS, name),
         context = contextStack)
 
   }

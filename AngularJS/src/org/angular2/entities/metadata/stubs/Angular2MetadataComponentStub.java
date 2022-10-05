@@ -26,8 +26,8 @@ import java.util.List;
 
 import static org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ATTR_SELECT;
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_CONTENT;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ATTR_SELECT;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ELEMENT_NG_CONTENT;
 
 public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStubBase<Angular2MetadataComponent> {
 

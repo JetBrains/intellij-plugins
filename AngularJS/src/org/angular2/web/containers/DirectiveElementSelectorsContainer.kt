@@ -11,8 +11,8 @@ import com.intellij.webSymbols.WebSymbolsContainerWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.Angular2DirectiveSymbolWrapper
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
 
 internal class DirectiveElementSelectorsContainer(project: Project)
   : WebSymbolsContainerWithCache<Project, Unit>(Angular2Framework.ID, project, project, Unit) {

@@ -17,11 +17,11 @@ public final class Angular2LangUtil {
   @NonNls public static final String OUTPUT_CHANGE_SUFFIX = "Change";
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {
-    return Angular2Framework.getInstance().isContext(context);
+    return Angular2Framework.getInstance().isInContext(context);
   }
 
   public static boolean isAngular2Context(@NotNull Project project, @NotNull VirtualFile context) {
-    return Angular2Framework.getInstance().isContext(context, project);
+    return Angular2Framework.getInstance().isInContext(context, project);
   }
 
 }

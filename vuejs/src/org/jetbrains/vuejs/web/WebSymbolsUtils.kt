@@ -9,9 +9,9 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_MODEL
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_MODEL_EVENT
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.PROP_VUE_MODEL_PROP
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_MODEL
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_MODEL_EVENT
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_MODEL_PROP
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol

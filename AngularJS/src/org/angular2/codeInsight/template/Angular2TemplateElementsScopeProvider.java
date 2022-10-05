@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.intellij.util.ObjectUtils.notNull;
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ELEMENT_NG_TEMPLATE;
 
 public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScopesProvider {
 

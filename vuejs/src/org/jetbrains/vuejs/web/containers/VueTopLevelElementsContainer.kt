@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.web.containers
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
 object VueTopLevelElementsContainer : WebSymbolsContainer {
 
@@ -15,7 +15,7 @@ object VueTopLevelElementsContainer : WebSymbolsContainer {
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.registry.runNameMatchQuery(
-        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsRegistryExtension.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
         context = context,
         virtualSymbols = params.virtualSymbols,
         strictScope = params.strictScope,
@@ -33,7 +33,7 @@ object VueTopLevelElementsContainer : WebSymbolsContainer {
                                   context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
       params.registry.runCodeCompletionQuery(
-        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsRegistryExtension.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
         context = context,
         position = params.position,
         virtualSymbols = params.virtualSymbols,

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.webSymbols.*
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENT_PROPS
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_COMPONENT_PROPS
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(codeCompletions: List<WebSymbolCodeCompletionItem>,

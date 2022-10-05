@@ -21,9 +21,9 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VueFramework
 
 
-fun isVueContext(context: PsiElement): Boolean = VueFramework.instance.isContext(context)
+fun isVueContext(context: PsiElement): Boolean = VueFramework.instance.isInContext(context)
 
-fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = VueFramework.instance.isContext(contextFile, project)
+fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = VueFramework.instance.isInContext(contextFile, project)
 
 fun hasVueFiles(project: Project): Boolean =
   CachedValuesManager.getManager(project).getCachedValue(project) {

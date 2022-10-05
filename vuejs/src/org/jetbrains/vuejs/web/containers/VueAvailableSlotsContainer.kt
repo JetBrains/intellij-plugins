@@ -8,7 +8,7 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
 class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer {
 
@@ -26,7 +26,7 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
                           params: WebSymbolsNameMatchQueryParams,
                           context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
     if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
-        && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_AVAILABLE_SLOTS
+        && kind == VueWebSymbolsRegistryExtension.KIND_VUE_AVAILABLE_SLOTS
         && params.registry.allowResolve)
       getAvailableSlots(tag, name, true)
     else emptyList()
@@ -37,7 +37,7 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
     if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
-        && kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_AVAILABLE_SLOTS
+        && kind == VueWebSymbolsRegistryExtension.KIND_VUE_AVAILABLE_SLOTS
         && params.registry.allowResolve)
       getAvailableSlotsCompletions(tag, name, params.position, true)
     else emptyList()

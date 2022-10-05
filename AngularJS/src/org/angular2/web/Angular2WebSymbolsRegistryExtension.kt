@@ -1,25 +1,27 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.webSymbols.WebSymbolsAdditionalContextProvider
+import com.intellij.webSymbols.WebSymbolsRegistryExtension
 import com.intellij.webSymbols.WebSymbolsContainer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
 import org.angular2.Angular2Framework
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.web.containers.*
 
-class Angular2WebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
+class Angular2WebSymbolsRegistryExtension : WebSymbolsRegistryExtension {
 
-  override fun getAdditionalContext(project: Project,
-                                    element: PsiElement?,
-                                    framework: String?,
-                                    allowResolve: Boolean): List<WebSymbolsContainer> =
-    if (framework == Angular2Framework.ID && element != null) {
+  override fun getContainers(project: Project,
+                             element: PsiElement?,
+                             context: WebSymbolsContext,
+                             allowResolve: Boolean): List<WebSymbolsContainer> =
+    if (context.framework == Angular2Framework.ID && element != null) {
       val result = mutableListOf(DirectiveElementSelectorsContainer(element.project),
                                  DirectiveAttributeSelectorsContainer(element.project))
       ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {

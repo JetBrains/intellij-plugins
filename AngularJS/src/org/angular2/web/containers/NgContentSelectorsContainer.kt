@@ -12,14 +12,14 @@ import com.intellij.webSymbols.WebSymbolsContainerWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider
+import org.angular2.web.Angular2WebSymbolsRegistryExtension
 
 class NgContentSelectorsContainer(tag: XmlTag)
   : WebSymbolsContainerWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
     namespace == WebSymbol.NAMESPACE_JS
-    && (kind == Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS || kind == Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
+    && (kind == Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS || kind == Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
   override fun createPointer(): Pointer<NgContentSelectorsContainer> {
     val tag = dataHolder.createSmartPointer()

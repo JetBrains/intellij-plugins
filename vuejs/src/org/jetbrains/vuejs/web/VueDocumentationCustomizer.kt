@@ -27,7 +27,7 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
     }
     else {
       if (symbol.namespace == WebSymbol.NAMESPACE_HTML
-          && symbol.kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_COMPONENT_PROPS) {
+          && symbol.kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENT_PROPS) {
         symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name))?.let {
           return documentation.withDefinition(it)
         }

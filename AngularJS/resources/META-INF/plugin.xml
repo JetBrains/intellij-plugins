@@ -259,7 +259,7 @@
 
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
-    <webSymbols.additionalContextProvider implementation="org.angular2.web.Angular2WebSymbolsAdditionalContextProvider"/>
+    <webSymbols.registryExtension implementation="org.angular2.web.Angular2WebSymbolsRegistryExtension"/>
     <webSymbols.scopeProvider implementation="org.angular2.web.Angular2WebSymbolsScope$Provider"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
 

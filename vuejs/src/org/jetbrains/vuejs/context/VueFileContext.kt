@@ -1,25 +1,25 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.context
 
+import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.lang.javascript.library.JSCDNLibManager
+import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlRecursiveElementVisitor
 import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
-import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext
-import com.intellij.lang.html.HtmlCompatibleFile
-import com.intellij.openapi.fileTypes.FileTypeRegistry
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.webSymbols.context.WebSymbolsContextProvider
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueFileContext : WebSymbolsFrameworkContext {
+class VueFileContext : WebSymbolsContextProvider {
 
   override fun isEnabled(file: VirtualFile, project: Project): Boolean {
     return FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)

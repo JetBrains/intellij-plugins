@@ -2,12 +2,8 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
-import com.intellij.openapi.fileTypes.LanguageFileType
-import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.VuejsIcons
-import javax.swing.Icon
 
-class VueFileType private constructor(): WebFrameworkHtmlFileType(VueLanguage.INSTANCE, "Vue.js", "vue") {
+class VueFileType private constructor() : WebFrameworkHtmlFileType(VueLanguage.INSTANCE, "Vue.js", "vue") {
   companion object {
     @JvmField
     val INSTANCE: VueFileType = VueFileType()

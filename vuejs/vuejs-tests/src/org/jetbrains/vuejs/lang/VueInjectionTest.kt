@@ -5,7 +5,6 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
@@ -14,8 +13,10 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
-import com.intellij.webSymbols.framework.WebSymbolsFrameworkContext
-import com.intellij.webSymbols.framework.impl.WebSymbolsFrameworkExtensionPoint
+import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
+import com.intellij.webSymbols.context.WebSymbolsContextProvider
+import com.intellij.webSymbols.context.impl.WebSymbolsContextProviderExtensionPoint
 import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
 import org.jetbrains.vuejs.context.isVueContext
@@ -287,12 +288,13 @@ Vue.options.delimiters = ['<%', '%>']
 
     val disposable = Disposer.newDisposable()
     var forbid = true
-    WebSymbolsFrameworkContext.WEB_FRAMEWORK_CONTEXT_EP
+    WebSymbolsContext.WEB_SYMBOLS_CONTEXT_EP
       .point
       ?.registerExtension(
-        WebSymbolsFrameworkExtensionPoint<WebSymbolsFrameworkContext>(
+        WebSymbolsContextProviderExtensionPoint(
+          KIND_FRAMEWORK,
           "vue",
-          object : WebSymbolsFrameworkContext {
+          object : WebSymbolsContextProvider {
             override fun isForbidden(contextFile: VirtualFile,
                                      project: Project): Boolean = forbid
           }), disposable)

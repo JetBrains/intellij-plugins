@@ -5,9 +5,9 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.util.SmartList
 import org.angular2.entities.Angular2Directive
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_BINDING_PATTERN
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_ERROR_SYMBOL
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_SYMBOL_DIRECTIVE
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_BINDING_PATTERN
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_ERROR_SYMBOL
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SYMBOL_DIRECTIVE
 
 // TODO - This is a bridge between old and new API - when time comes, this should be removed.
 class Angular2DescriptorSymbolsProvider(symbol: WebSymbol) {

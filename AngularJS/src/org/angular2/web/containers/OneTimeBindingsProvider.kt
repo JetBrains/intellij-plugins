@@ -19,9 +19,9 @@ import com.intellij.util.containers.Stack
 import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 

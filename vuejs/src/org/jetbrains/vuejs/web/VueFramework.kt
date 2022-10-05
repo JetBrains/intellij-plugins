@@ -11,8 +11,8 @@ import com.intellij.webSymbols.WebSymbolNamesProvider
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENTS
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENT_PROPS
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_COMPONENT_PROPS
 import java.util.function.Predicate
 import javax.swing.Icon
 

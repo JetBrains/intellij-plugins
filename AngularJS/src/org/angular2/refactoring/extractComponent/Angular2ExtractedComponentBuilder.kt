@@ -27,7 +27,7 @@ import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.*
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.ELEMENT_NG_CONTENT
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.ELEMENT_NG_CONTENT
 
 
 class Angular2ExtractedComponentBuilder(private val sourceFile: PsiFile, private val selectionStart: Int, private val selectionEnd: Int) {

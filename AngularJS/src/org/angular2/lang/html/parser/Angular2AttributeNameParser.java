@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.*;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.*;
 
 public final class Angular2AttributeNameParser {
 

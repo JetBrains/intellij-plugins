@@ -238,8 +238,8 @@
     <vetoRenameCondition implementation="org.jetbrains.vuejs.web.VueRenameHandlerVeto"/>
 
     <webSymbols.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
-    <webSymbols.frameworkContext framework="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
-                                 id="vue.file"/>
+    <webSymbols.context kind="framework" name="vue" implementation="org.jetbrains.vuejs.context.VueFileContext"
+                        id="vue.file"/>
 
     <webSymbols.webTypes source="web-types/vue@1.0.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue@2.0.0.web-types.json"/>
@@ -256,8 +256,8 @@
     <webSymbols.webTypes source="web-types/vue@3.2.0.web-types.json" enableByDefault="true"/>
     <webSymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
 
-    <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
-    <webSymbols.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider"
+    <webSymbols.registryExtension implementation="org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension" id="vue"/>
+    <webSymbols.registryExtension implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NRegistryExtension"
                                           id="vue-i18n"/>
 
     <webSymbols.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>

@@ -11,7 +11,7 @@ import org.angular2.inspections.quickfixes.RemoveTagContentQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_CONTENT;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ELEMENT_NG_CONTENT;
 
 public class AngularNonEmptyNgContentInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 

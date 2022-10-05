@@ -18,7 +18,7 @@ import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandi
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2StructuralDirectiveSymbol
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider
+import org.angular2.web.Angular2WebSymbolsRegistryExtension
 
 class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsContainer {
 
@@ -141,7 +141,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
         }
       }
       if (!isTemplateTag) {
-        for (candidate in findElementDirectivesCandidates(project, Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE)) {
+        for (candidate in findElementDirectivesCandidates(project, Angular2WebSymbolsRegistryExtension.ELEMENT_NG_TEMPLATE)) {
           if (candidate.directiveKind.isStructural) {
             processStructuralDirective(candidate)
           }

@@ -50,8 +50,8 @@ import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.angular2.modules.Angular2TestModule.*;
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.PROP_BINDING_PATTERN;
-import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.PROP_ERROR_SYMBOL;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.PROP_BINDING_PATTERN;
+import static org.angular2.web.Angular2WebSymbolsRegistryExtension.PROP_ERROR_SYMBOL;
 import static org.angularjs.AngularTestUtil.*;
 
 public class AttributesTest extends Angular2CodeInsightFixtureTestCase {

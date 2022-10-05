@@ -11,18 +11,20 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
-class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
+class VueI18NRegistryExtension : WebSymbolsRegistryExtension {
 
-  override fun getAdditionalContext(project: Project,
-                                    element: PsiElement?,
-                                    framework: String?,
-                                    allowResolve: Boolean): List<WebSymbolsContainer> =
-    if (framework == VueFramework.ID
+  override fun getContainers(project: Project,
+                             element: PsiElement?,
+                             context: WebSymbolsContext,
+                             allowResolve: Boolean): List<WebSymbolsContainer> =
+    if (context.framework == VueFramework.ID
         && element is HtmlTag
         && element.name == "i18n"
         && element.parentTag == null
@@ -53,7 +55,7 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> {
-      if (kind == VueWebSymbolsAdditionalContextProvider.KIND_VUE_TOP_LEVEL_ELEMENTS
+      if (kind == VueWebSymbolsRegistryExtension.KIND_VUE_TOP_LEVEL_ELEMENTS
           && namespace == WebSymbol.NAMESPACE_HTML) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }

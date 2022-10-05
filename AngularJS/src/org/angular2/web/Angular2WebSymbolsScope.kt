@@ -16,6 +16,8 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
+import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.context.WebSymbolsContext.Companion.KIND_FRAMEWORK
 import com.intellij.webSymbols.utils.psiModificationCount
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil
@@ -26,17 +28,17 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_IN_OUTS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_STRUCTURAL_DIRECTIVES
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_ERROR_SYMBOL
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_SCOPE_PROXIMITY
-import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.PROP_SYMBOL_DIRECTIVE
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_STRUCTURAL_DIRECTIVES
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_ERROR_SYMBOL
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SCOPE_PROXIMITY
+import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
 class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
@@ -145,10 +147,10 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
     context.project.psiModificationCount
 
   class Provider : WebSymbolsScopeProvider {
-    override fun get(context: PsiElement, framework: FrameworkId?): WebSymbolsScope? =
-      framework
-        ?.takeIf { it == Angular2Framework.ID }
-        ?.let { Angular2WebSymbolsScope(context) }
+    override fun get(location: PsiElement, context: WebSymbolsContext): WebSymbolsScope? =
+      if (context.framework == Angular2Framework.ID)
+        Angular2WebSymbolsScope(location)
+      else null
 
   }
 
