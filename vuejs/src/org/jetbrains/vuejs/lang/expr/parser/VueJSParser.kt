@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.VueBundle.message
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
@@ -21,7 +22,7 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_LEFT_SIDE_A
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_REFERENCE_EXPRESSION
 
 class VueJSParser(builder: PsiBuilder)
-  : ES6Parser<VueJSParser.VueJSExpressionParser, VueJSParser.VueJSStatementParser, ES6FunctionParser<*>,
+  : ES6Parser<VueJSParser.VueJSExpressionParser, ES6StatementParser<*>, ES6FunctionParser<*>,
   JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
 
   companion object {
@@ -39,22 +40,24 @@ class VueJSParser(builder: PsiBuilder)
   }
 
   init {
-    myStatementParser = VueJSStatementParser(this)
     myExpressionParser = VueJSExpressionParser(this)
   }
+
+  protected val extraParser = VueJSExtraParser(this)
 
   fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
     val rootMarker = builder.mark()
     val statementMarker = builder.mark()
-    statementParser.parseEmbeddedExpression(attributeInfo)
+    extraParser.parseEmbeddedExpression(attributeInfo)
     // we need to consume rest of the tokens, even if they are not valid
-    statementParser.parseRest()
+    extraParser.parseRest()
     statementMarker.done(VueJSElementTypes.EMBEDDED_EXPR_STATEMENT)
     rootMarker.done(root)
   }
 
 
-  class VueJSStatementParser(parser: VueJSParser) : ES6StatementParser<VueJSParser>(parser) {
+  class VueJSExtraParser(parser: VueJSParser) : JavaScriptParserBase<VueJSParser>(parser) {
+    private val statementParser get() = myJavaScriptParser.statementParser
 
     fun parseEmbeddedExpression(attributeInfo: VueAttributeInfo?) {
       when (attributeInfo?.kind) {
@@ -88,7 +91,7 @@ class VueJSParser(builder: PsiBuilder)
         if (builder.tokenType === JSTokenTypes.SEMICOLON) {
           builder.advanceLexer()
         }
-        else if (!parseExpressionStatement()) {
+        else if (!statementParser.parseExpressionStatement()) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
           if (!builder.eof()) {
             builder.advanceLexer()
