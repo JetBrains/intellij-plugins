@@ -43,7 +43,7 @@ class VueJSParser(builder: PsiBuilder)
     myExpressionParser = VueJSExpressionParser(this)
   }
 
-  protected val extraParser = VueJSExtraParser(this)
+  protected val extraParser = VueJSExtraParser(this, ::parseFilterOptional)
 
   fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
     val rootMarker = builder.mark()
@@ -55,8 +55,10 @@ class VueJSParser(builder: PsiBuilder)
     rootMarker.done(root)
   }
 
+  private fun parseFilterOptional() = expressionParser.parseFilterOptional()
 
-  class VueJSExtraParser(parser: VueJSParser) : JavaScriptParserBase<VueJSParser>(parser) {
+  class VueJSExtraParser(parser: ES6Parser<*, *, *, *>,
+                         private val parseFilterOptional: () -> Boolean) : JavaScriptParserBase<ES6Parser<*, *, *, *>>(parser) {
     private val statementParser get() = myJavaScriptParser.statementParser
 
     fun parseEmbeddedExpression(attributeInfo: VueAttributeInfo?) {
@@ -78,7 +80,7 @@ class VueJSParser(builder: PsiBuilder)
     }
 
     private fun parseRegularExpression() {
-      if (!myJavaScriptParser.expressionParser.parseFilterOptional() && !builder.eof()) {
+      if (!parseFilterOptional() && !builder.eof()) {
         val mark = builder.mark()
         builder.advanceLexer()
         mark.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
@@ -101,7 +103,7 @@ class VueJSParser(builder: PsiBuilder)
     }
 
     private fun parseVBind() {
-      if (!myJavaScriptParser.expressionParser.parseFilterOptional()) {
+      if (!parseFilterOptional()) {
         val mark = builder.mark()
         if (!builder.eof()) {
           builder.advanceLexer()
