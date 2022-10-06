@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
+  "name": "vue-store-contexts",
+  "version": "0.0.0",
+  "contexts-config": {
+    "vuex": {
+      "kind": "vue-store",
+      "enable-when": {
+        "node-packages": [
+          "vuex"
+        ],
+        "ide-libraries": [
+          "vuex"
+        ]
+      }
+    },
+    "pinia": {
+      "kind": "vue-store",
+      "enable-when": {
+        "node-packages": [
+          "pinia"
+        ]
+      }
+    }
+  }
+}

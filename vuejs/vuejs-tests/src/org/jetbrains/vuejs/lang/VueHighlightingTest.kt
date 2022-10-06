@@ -421,7 +421,7 @@ const props = {seeMe: {}}
     }
   }
 
-  fun testCommonJSSupport() = doTest("")
+  fun testCommonJSSupport() = doTest(""" "vuex":"*" """)
 
   fun testComputedTypeTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
 

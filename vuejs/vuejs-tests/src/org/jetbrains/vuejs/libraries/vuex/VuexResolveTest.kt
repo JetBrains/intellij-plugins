@@ -9,6 +9,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
@@ -437,6 +438,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   fun testStoreModuleCaching() {
     val constFragment = "const counterModule"
 
+    createPackageJsonWithVueDependency(myFixture, """ "vuex":"*" """)
     val storeModuleFile = myFixture.configureByFile("storeModuleCaching/store/counter/index.js")
     myFixture.configureByFile("storeModuleCaching/store/index.js")
     val appFile = myFixture.configureByFile("storeModuleCaching/App.vue")

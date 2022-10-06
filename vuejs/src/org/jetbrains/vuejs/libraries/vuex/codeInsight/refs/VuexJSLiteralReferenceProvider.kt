@@ -33,6 +33,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isActionContextParameter
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
 abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
@@ -41,6 +42,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_INDEXED_ACCESS_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
+        if (!isVuexContext(element)) return null
         val reference = element.context.asSafely<JSIndexedPropertyAccessExpression>()
                           ?.qualifier
                           ?.asSafely<JSReferenceExpression>()
@@ -90,6 +92,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_DECORATOR_ARGUMENT_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
+        if (!isVuexContext(element)) return null
         val decoratorName = PsiTreeUtil.getContextOfType(element, ES6Decorator::class.java)
           ?.decoratorName
         val accessor = when (decoratorName) {
@@ -109,6 +112,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_ARRAY_ITEM_OR_OBJECT_PROP_VALUE_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
+        if (!isVuexContext(element)) return null
         val functionName = when (val context = element.context) {
           is JSProperty -> context.context?.context
           is JSArrayLiteralExpression -> context.context
@@ -133,6 +137,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_DISPATCH_COMMIT_OBJECT_ARG_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
+        if (!isVuexContext(element)) return null
         return element.context?.asSafely<JSProperty>()
           ?.takeIf { it.name == PROP_TYPE }
           ?.context
@@ -142,6 +147,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     val VUEX_CALL_ARGUMENT_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
+        if (!isVuexContext(element)) return null
         val functionRef = getFunctionReference(element.context) ?: return null
         val functionName = functionRef.referenceName!!
         val accessor = when (functionName) {

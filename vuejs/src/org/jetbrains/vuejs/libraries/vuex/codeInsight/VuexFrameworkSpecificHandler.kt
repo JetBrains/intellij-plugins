@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 
 class VuexFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
@@ -22,7 +23,8 @@ class VuexFrameworkSpecificHandler : JSFrameworkSpecificHandler {
         ?.context
         ?.asSafely<TypeScriptInterface>()
         ?.name
-        ?.let { it == "ActionTree" || it == "GetterTree" || it == "MutationTree" || it == "ModuleTree" }) {
+        ?.let { it == "ActionTree" || it == "GetterTree" || it == "MutationTree" || it == "ModuleTree" }
+        && VuexUtils.isVuexContext(targetElement)) {
       val project = editor?.project ?: return targetElement
 
       val document = editor.document

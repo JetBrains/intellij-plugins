@@ -34,8 +34,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     "RenameFileToTSX",
     "ExportSpecifierGlobalThing",
     "NestedModuleAugmentation",
-    "ExtendStandardInterface",
-    "MappedTypesKeyofUnionOverSpread", // TODO: WEB-57547
+    "ExtendStandardInterface"
   )
 
   override fun doTestFor(checkWeakWarnings: Boolean,

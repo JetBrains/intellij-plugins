@@ -29,16 +29,14 @@ const diversion = {
 
 export default defineComponent({
   methods: {
-    // WEB-57547 - "Cannot resolve Vuex action add" should not be shown here
-    ...mapActions(useCartStore, {foo: '<weak_warning descr="Cannot resolve Vuex action add">add</weak_warning>'}),
+    ...mapActions(useCartStore, {foo: 'add'}),
     test() {
       this.foo(12)
     }
   },
   computed: {
     ...mapStores(useCartStore),
-    // WEB-57547 - "Cannot resolve Vuex state formattedCart" should not be shown here
-    ...mapState(useCartStore, ['<weak_warning descr="Cannot resolve Vuex state formattedCart">formattedCart</weak_warning>']),
+    ...mapState(useCartStore, ['formattedCart']),
   },
   created() {
     let a: string = <error descr="Initializer type CartPreview[] is not assignable to variable type string">this.cartStore.formattedCart</error>
