@@ -2,8 +2,8 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.webSymbols.WebSymbol;
-import com.intellij.webSymbols.WebSymbolDeclaration;
-import com.intellij.webSymbols.WebSymbolDeclarationProvider;
+import com.intellij.webSymbols.declarations.WebSymbolDeclaration;
+import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;

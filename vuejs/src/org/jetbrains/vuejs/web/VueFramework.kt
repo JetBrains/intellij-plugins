@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolNamesProvider
+import com.intellij.webSymbols.registry.WebSymbolNamesProvider
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType

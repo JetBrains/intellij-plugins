@@ -262,7 +262,7 @@
                                           id="vue-i18n"/>
 
     <webSymbols.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
-    <webSymbols.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
+    <webSymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <webSymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>
 

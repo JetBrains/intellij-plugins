@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SYMBOL_DIRECTIVE

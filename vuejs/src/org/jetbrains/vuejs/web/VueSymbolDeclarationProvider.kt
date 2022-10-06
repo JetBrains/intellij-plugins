@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolDeclaration
-import com.intellij.webSymbols.WebSymbolDeclarationProvider
+import com.intellij.webSymbols.declarations.WebSymbolDeclaration
+import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
 import com.intellij.lang.javascript.psi.JSArgumentList
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression

@@ -5,10 +5,13 @@ import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSuppo
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternItemsProvider
+import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.registry.WebSymbolsRegistry
 import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
 import org.angular2.web.Angular2WebSymbolsRegistryExtension

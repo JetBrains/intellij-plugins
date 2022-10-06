@@ -7,6 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.registry.WebSymbolMatch
+import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp

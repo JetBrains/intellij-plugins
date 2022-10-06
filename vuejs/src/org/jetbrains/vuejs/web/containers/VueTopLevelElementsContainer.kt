@@ -4,6 +4,10 @@ package org.jetbrains.vuejs.web.containers
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.registry.WebSymbolMatch
+import com.intellij.webSymbols.registry.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
 object VueTopLevelElementsContainer : WebSymbolsContainer {

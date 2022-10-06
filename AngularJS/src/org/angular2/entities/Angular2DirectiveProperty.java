@@ -11,7 +11,7 @@ import com.intellij.model.Pointer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.webSymbols.WebSymbolHtmlAttributeValue;
+import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.lang.types.Angular2TypeUtils;

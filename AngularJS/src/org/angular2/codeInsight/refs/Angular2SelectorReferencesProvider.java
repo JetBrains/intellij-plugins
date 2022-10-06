@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.webSymbols.WebSymbol;
-import com.intellij.webSymbols.WebSymbolReference;
+import com.intellij.webSymbols.references.WebSymbolReference;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.model.Symbol;
 import com.intellij.model.psi.PsiExternalReferenceHost;

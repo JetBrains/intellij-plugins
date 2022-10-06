@@ -2,6 +2,9 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
+import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
+import com.intellij.webSymbols.registry.WebSymbolsRegistry
 import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_COMPONENT_PROPS
 
 class VueBindFilter : WebSymbolsFilter {

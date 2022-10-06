@@ -18,6 +18,8 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_INPUTS

@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.js.renderJsTypeForDocs
 import com.intellij.openapi.util.text.Strings
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolDocumentation
-import com.intellij.webSymbols.WebSymbolDocumentationCustomizer
+import com.intellij.webSymbols.documentation.WebSymbolDocumentation
+import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 
