@@ -19,7 +19,7 @@ object VueTemplateScopesResolver {
     if (!checkLanguage(original)) {
       return
     }
-    val expressionIsInjected = original.containingFile.language.`is`(VueJSLanguage.INSTANCE)
+    val expressionIsInjected = original.containingFile.language == VueJSLanguage.INSTANCE
     val hostElement: PsiElement?
     if (expressionIsInjected) {
       //we are working within injection
@@ -37,12 +37,12 @@ object VueTemplateScopesResolver {
       .findFirst { s -> !s.processAllScopesInHierarchy(processor) }
   }
 
-  private fun checkLanguage(element: PsiElement): Boolean =
-    element.language.let {
-      it.`is`(VueJSLanguage.INSTANCE) || it.`is`(VueLanguage.INSTANCE) || it.isKindOf(CSSLanguage.INSTANCE)
+  private fun checkLanguage(element: PsiElement): Boolean {
+    return element.language.let {
+      it == VueJSLanguage.INSTANCE || it == VueLanguage.INSTANCE || it.isKindOf(CSSLanguage.INSTANCE)
+    } || element.parent?.language.let {
+      it == VueJSLanguage.INSTANCE || it == VueLanguage.INSTANCE
     }
-    || element.parent?.language?.let {
-      it.`is`(VueJSLanguage.INSTANCE) || it.`is`(VueLanguage.INSTANCE)
-    } == true
+  }
 
 }
