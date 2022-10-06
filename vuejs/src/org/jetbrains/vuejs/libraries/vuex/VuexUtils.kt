@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
 import com.intellij.webSymbols.context.WebSymbolsContext
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.KIND_VUE_STORE
 import org.jetbrains.vuejs.libraries.VUE_STORE_VUEX
 

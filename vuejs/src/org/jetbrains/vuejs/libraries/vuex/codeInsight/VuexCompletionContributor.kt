@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexArrayItemPattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexCallArgumentPattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexDecoratorArgumentPattern
@@ -46,7 +47,7 @@ class VuexCompletionContributor : CompletionContributor() {
   private class VuexCallReferenceCompletionProvider(private val provider: VuexJSLiteralReferenceProvider) : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
       val ref = parameters.position.containingFile.findReferenceAt(parameters.offset)
-      if (ref is JSReferenceExpression && isVueContext(ref)) {
+      if (ref is JSReferenceExpression && isVuexContext(ref)) {
         val settings = provider.getSettings(ref) ?: return
         result.addAllElements(VuexStoreSymbolStringReference.getLookupItems(
           ref, settings.baseNamespace, settings.symbolAccessor, "", true, settings.includeMembers))

@@ -30,6 +30,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_MAPPERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_NAMESPACE
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.types.VuexStoreTypeProvider
 
 class VuexFrameworkHandler : FrameworkIndexingHandler() {
@@ -135,9 +136,8 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
-  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean {
-    return VuexStoreTypeProvider.addTypeFromResolveResult(evaluator, result)
-  }
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean =
+    VuexStoreTypeProvider.addTypeFromResolveResult(evaluator, result)
 
   override fun computeJSImplicitElementUserStringKeys(): Set<String> {
     return setOf(VuexStoreIndex.JS_KEY)

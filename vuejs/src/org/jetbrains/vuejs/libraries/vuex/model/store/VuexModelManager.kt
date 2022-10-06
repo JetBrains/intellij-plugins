@@ -20,12 +20,13 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex
 
 object VuexModelManager {
 
   fun getVuexStoreContext(element: PsiElement): VuexStoreContext? {
-    if (!isVueContext(element)) return null
+    if (!isVuexContext(element)) return null
     var stores = getAllVuexStores(element.project)
     // Introduce extension point if another provider would need to be added
     NuxtModelManager.getApplication(element)?.vuexStore?.let {

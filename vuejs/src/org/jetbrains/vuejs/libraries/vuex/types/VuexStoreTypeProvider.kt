@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_PACKAGE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isActionContextParameter
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStaticNamespace
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
 import org.jetbrains.vuejs.libraries.vuex.model.store.getNamespaceForGettersOrState
@@ -23,7 +24,7 @@ object VuexStoreTypeProvider {
   fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, result: PsiElement): Boolean {
     if (result is TypeScriptField) {
       val typeConstructor = getTypeConstructor(result.name) ?: return false
-      if (!isStoreField(result) || !isVueContext(result)) return false
+      if (!isStoreField(result) || !isVuexContext(result)) return false
       evaluator.addType(typeConstructor(result, VuexStaticNamespace.EMPTY))
       return true
     }
@@ -32,14 +33,14 @@ object VuexStoreTypeProvider {
           .let { it != null && !JSTypeUtils.isAnyType(it) })
         return false
       if (isActionContextParameter(result)) {
-        if (!isVueContext(result)) return false
+        if (!isVuexContext(result)) return false
         evaluator.addType(VuexActionContextType(result))
         return true
       }
       val name = result.name
       val typeConstructor = getTypeConstructor(name) ?: return false
       val namespace: VuexStoreNamespace = getNamespaceForGettersOrState(result, name!!) ?: return false
-      if (!isVueContext(result)) return false
+      if (!isVuexContext(result)) return false
       evaluator.addType(typeConstructor(result, namespace))
       return true
     }
