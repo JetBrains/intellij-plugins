@@ -20,11 +20,9 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_EXPRESSION
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_LEFT_SIDE_ARGUMENT
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_REFERENCE_EXPRESSION
 
-class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
+class VueJSParser(builder: PsiBuilder)
   : ES6Parser<VueJSParser.VueJSExpressionParser, VueJSParser.VueJSStatementParser, ES6FunctionParser<*>,
   JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
-
-  constructor(builder: PsiBuilder) : this(builder, true)
 
   companion object {
     fun parseEmbeddedExpression(builder: PsiBuilder, root: IElementType, attributeInfo: VueAttributeInfo?) {
@@ -45,7 +43,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
           VueAttributeKind.SCRIPT_SETUP -> VueJSStatementParser::parseScriptSetupExpression
           else -> VueJSStatementParser::parseRegularExpression
         }
-      VueJSParser(builder, false).statementParser.let {
+      VueJSParser(builder).statementParser.let {
         parseAction(it)
         // we need to consume rest of the tokens, even if they are invalid
         it.parseRest()
