@@ -25,7 +25,7 @@ import org.angular2.lang.html.parser.Angular2HtmlParsingTest;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest;
 import org.angular2.metadata.IvyMetadataTest;
 import org.angular2.metadata.JsonMetadataTest;
-import org.angular2.navigation.FindUsagesTest;
+import org.angular2.navigation.AngularFindUsagesTest;
 import org.angular2.navigation.GotoRelatedTest;
 import org.angular2.navigation.GotoSymbolTest;
 import org.angular2.refactoring.*;
@@ -72,7 +72,7 @@ import org.junit.runners.Suite;
   AngularChangeSignatureTest.class,
   Angular2InaccessibleMemberAotQuickFixesTest.class,
   Angular2InaccessibleMemberAotInspectionTest.class,
-  FindUsagesTest.class,
+  AngularFindUsagesTest.class,
   DirectiveRenameTest.class,
   MoveTest.class,
   RenameTest.class,

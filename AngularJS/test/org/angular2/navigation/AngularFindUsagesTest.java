@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
+public class AngularFindUsagesTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
