@@ -14,6 +14,14 @@ p {
   @apply --my
 }
 
+@font-palette-values Cooler {  font-family: Bixa; }
+@container custom-name style(not (not (width: 1px))) {}
+@layer layer1, layer2, layer3 {
+  .links {
+    display: none;
+  }
+}
+
 @apply 1 2,3 (a) b,c {}
 {@apply}
 @apply

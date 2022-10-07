@@ -134,6 +134,7 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> @{M}{E}{D}{I}{A} { return CssElementTypes.CSS_MEDIA_SYM; }
 <YYINITIAL> @{C}{O}{N}{T}{A}{I}{N}{E}{R} { return CssElementTypes.CSS_CONTAINER_SYM; }
 <YYINITIAL> @{L}{A}{Y}{E}{R} { return CssElementTypes.CSS_LAYER_SYM; }
+<YYINITIAL> @{F}{O}{N}{T}-{P}{A}{L}{E}{T}{T}{E}-{V}{A}{L}{U}{E}{S} { return CssElementTypes.CSS_FONT_PALETTE_VALUES_SYM; }
 <YYINITIAL> @{P}{A}{G}{E} { return CssElementTypes.CSS_PAGE_SYM; }
 <YYINITIAL> {WSP} { return CssElementTypes.CSS_WHITE_SPACE; }
 <YYINITIAL> "<!--" { return CssElementTypes.CSS_CDO; }
