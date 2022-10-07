@@ -1,5 +1,7 @@
 package com.jetbrains.lang.makefile.toolWindow
 
+import com.intellij.ui.ColoredTreeCellRenderer
+import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.lang.makefile.*
 import com.jetbrains.lang.makefile.psi.*
 import java.util.*
@@ -25,4 +27,12 @@ class MakefileTargetNode(val target: MakefileTarget) : MakefileTreeNode(target.n
   override fun getIndex(node: TreeNode) = 0
 
   override fun getAllowsChildren() = false
+
+  override fun renderName(renderer: ColoredTreeCellRenderer) {
+    if (target.isSpecialTarget) {
+      renderer.append(name, SimpleTextAttributes.REGULAR_ITALIC_ATTRIBUTES)
+    } else {
+      super.renderName(renderer)
+    }
+  }
 }
