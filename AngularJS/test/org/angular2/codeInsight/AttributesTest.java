@@ -55,6 +55,14 @@ import static org.angular2.web.Angular2WebSymbolsRegistryExtension.PROP_ERROR_SY
 import static org.angularjs.AngularTestUtil.*;
 
 public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    // Let's ensure we don't get WebSymbols registry stack overflows randomly
+    WebTestUtil.enableIdempotenceChecksOnEveryCache(this);
+  }
+
   @Override
   protected String getTestDataPath() {
     return getBaseTestDataPath(getClass()) + "attributes";

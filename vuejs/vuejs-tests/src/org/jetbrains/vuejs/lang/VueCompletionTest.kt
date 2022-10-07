@@ -13,22 +13,26 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.webSymbols.checkListByFile
-import com.intellij.webSymbols.moveToOffsetBySignature
-import com.intellij.webSymbols.noAutoComplete
-import com.intellij.webSymbols.renderLookupItems
+import com.intellij.webSymbols.*
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
 
 class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/completion/"
+
+  override fun setUp() {
+    super.setUp()
+    // Let's ensure we don't get WebSymbols registry stack overflows randomly
+    this.enableIdempotenceChecksOnEveryCache();
+  }
 
   fun testCompleteCssClasses() {
     myFixture.configureByText("a.css", ".externalClass {}")
