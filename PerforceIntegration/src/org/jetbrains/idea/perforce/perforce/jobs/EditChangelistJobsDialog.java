@@ -279,7 +279,7 @@ public class EditChangelistJobsDialog extends DialogWrapper {
 
     @Override
     public void refreshJobs(final PerforceJob job) throws VcsException {
-      assert !ApplicationManager.getApplication().isDispatchThread();
+      ApplicationManager.getApplication().assertIsNonDispatchThread();
       final List<PerforceJob> jobs = myWorker.getJobsForList(mySpecification, myList, myConnection, myKey);
       ApplicationManager.getApplication().invokeLater(() -> {
         myMainTable.fillTree(jobs, job);

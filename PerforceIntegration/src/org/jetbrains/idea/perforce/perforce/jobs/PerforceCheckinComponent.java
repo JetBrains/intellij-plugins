@@ -78,7 +78,7 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
 
   @Override
   public void refreshJobs(PerforceJob job) {
-    assert !ApplicationManager.getApplication().isDispatchThread();
+    ApplicationManager.getApplication().assertIsNonDispatchThread();
     if (! myCurrent.hasDefaultName()) {
       final Map<ConnectionKey, List<PerforceJob>> data = loadOnSelect(myCurrent);
       myCache.put(myCurrent, data);
