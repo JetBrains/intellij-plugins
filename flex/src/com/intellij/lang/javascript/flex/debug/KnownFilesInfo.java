@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.BidirectionalMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -14,11 +15,9 @@ public final class KnownFilesInfo {
 
   private boolean myUpToDate = false;
 
-  private final Int2ObjectOpenHashMap<BidirectionalMap<String, String>> myWorkerToFilePathToIdMap =
-    new Int2ObjectOpenHashMap<>();
+  private final Int2ObjectMap<BidirectionalMap<String, String>> myWorkerToFilePathToIdMap = new Int2ObjectOpenHashMap<>();
 
-  private final Int2ObjectOpenHashMap<Map<String, Collection<String>>> myWorkerToFileNameToPathsMap =
-    new Int2ObjectOpenHashMap<>();
+  private final Int2ObjectMap<Map<String, Collection<String>>> myWorkerToFileNameToPathsMap = new Int2ObjectOpenHashMap<>();
 
   public KnownFilesInfo(final FlexDebugProcess flexDebugProcess) {
     myFlexDebugProcess = flexDebugProcess;

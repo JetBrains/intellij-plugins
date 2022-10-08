@@ -22,7 +22,9 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -43,8 +45,8 @@ public final class FlexBreakpointsHandler {
   private final FlexDebugProcess myDebugProcess;
   private int lastBreakpointId;
   private final Collection<XBreakpointHandler<?>> myBreakpointHandlers;
-  private final Object2IntOpenHashMap<XLineBreakpoint<XBreakpointProperties>> myBreakpointToIndexMap = new Object2IntOpenHashMap<>();
-  private final Int2ObjectOpenHashMap<XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap = new Int2ObjectOpenHashMap<>();
+  private final Object2IntMap<XLineBreakpoint<XBreakpointProperties>> myBreakpointToIndexMap = new Object2IntOpenHashMap<>();
+  private final Int2ObjectMap<XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap = new Int2ObjectOpenHashMap<>();
 
   FlexBreakpointsHandler(FlexDebugProcess debugProcess) {
     myDebugProcess = debugProcess;

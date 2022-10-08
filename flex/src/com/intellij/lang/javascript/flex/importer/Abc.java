@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -471,7 +472,7 @@ final class Abc {
     final class TypeNameInfo {
       int index;
       int base;
-      IntArrayList genericIndices;
+      IntList genericIndices;
     }
 
     final List<TypeNameInfo> typeNameInfos = new ArrayList<>();
