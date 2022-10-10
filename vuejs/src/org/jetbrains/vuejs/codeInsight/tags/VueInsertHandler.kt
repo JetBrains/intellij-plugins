@@ -6,7 +6,6 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -28,7 +27,6 @@ import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -37,6 +35,7 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VUE_CLASS_COMPONENT_MODULE
@@ -154,7 +153,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val scriptTag = findScriptTag(file, false)
       val fileName = FileUtil.getNameWithoutExtension(file.name)
       if (scriptTag == null) {
-        val dummyScript = createDummyScript(file.project, null, isClass, fileName)
+        val dummyScript = createDummyScript(file, null, isClass, fileName)
         val addedScript = file.addAfter(dummyScript, file.lastChild)
         forReformat(addedScript)
         val addedContent = PsiTreeUtil.findChildOfType(addedScript, JSEmbeddedContent::class.java)!!
@@ -172,7 +171,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
         val addedExport: JSExportAssignment
         val lang = scriptTag.getAttribute(LANG_ATTRIBUTE_NAME)?.value
-        val dummyScript = createDummyScript(file.project, lang, isClass, fileName)
+        val dummyScript = createDummyScript(file, lang, isClass, fileName)
         if (content != null && content.children.any { it !is PsiWhiteSpace && it !is PsiComment }) {
           val dummyContent = PsiTreeUtil.findChildOfType(dummyScript, JSEmbeddedContent::class.java)!!
           val dummyExport = ES6PsiUtil.findDefaultExport(dummyContent) as JSExportAssignment
@@ -218,12 +217,13 @@ class VueInsertHandler : XmlTagInsertHandler() {
       ES6CreateImportUtil.findPlaceAndInsertES6Import(content, dummyImport, module, null)
     }
 
-    private fun createDummyScript(project: Project,
+    private fun createDummyScript(context: XmlFile,
                                   lang: String?,
                                   isClass: Boolean,
                                   fileName: String): XmlTag {
+      val project = context.project
       val langText = if (lang != null) " lang=\"$lang\"" else ""
-      val exportText = if (isClass && hasVueClassComponentLibrary(project)) {
+      val exportText = if (isClass && hasVueClassComponentLibrary(context)) {
         "@Component\nexport default class $fileName extends Vue"
       }
       else {

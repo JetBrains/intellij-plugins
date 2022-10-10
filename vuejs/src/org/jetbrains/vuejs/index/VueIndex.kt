@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -19,6 +20,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
+import com.intellij.webSymbols.context.WebSymbolsContext
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
@@ -61,23 +63,8 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
   return result
 }
 
-fun hasVueClassComponentLibrary(project: Project): Boolean {
-  if (DumbService.isDumb(project)) return false
-  return CachedValuesManager.getManager(project).getCachedValue(project) {
-    val packageJsonFiles = FilenameIndex.getVirtualFilesByName(PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
-
-    var recordedDependency = packageJsonFiles.any { PackageJsonData.getOrCreate(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
-    if (!recordedDependency) {
-      val psiManager = PsiManager.getInstance(project)
-      recordedDependency = packageJsonFiles.any {
-        val psiFile = psiManager.findFile(it) ?: return@any false
-        NodePackageUtil.hasAnyOfPluginsInstalled(psiFile, listOf(VUE_CLASS_COMPONENT_MODULE))
-      }
-    }
-    CachedValueProvider.Result(recordedDependency, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                               ProjectRootModificationTracker.getInstance(project))
-  }
-}
+fun hasVueClassComponentLibrary(location: PsiElement): Boolean =
+  WebSymbolsContext.get(VUE_CLASS_COMPONENT_MODULE, location) == VUE_CLASS_COMPONENT_MODULE
 
 internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 

@@ -21,6 +21,14 @@
           "pinia"
         ]
       }
+    },
+    "vue-class-component": {
+      "kind": "vue-class-component",
+      "enable-when": {
+        "node-packages": [
+          "vue-class-component"
+        ]
+      }
     }
   }
 }
