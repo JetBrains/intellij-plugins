@@ -37,7 +37,7 @@ class VueControlFlowTest : BaseJSControlFlowTest() {
       myFixture.checkHighlighting()
       file as XmlFile
 
-      file.document?.children?.find(JSControlFlowService::isControlFlowScope) as JSExecutionScope?
+      file.document?.children?.find { it is JSExecutionScope } as JSExecutionScope?
     }
   }
 
