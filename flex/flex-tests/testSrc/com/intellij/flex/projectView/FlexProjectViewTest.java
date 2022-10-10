@@ -3,7 +3,7 @@ package com.intellij.flex.projectView;
 
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane;
+import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewImpl;
 import com.intellij.projectView.BaseProjectViewTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
@@ -16,7 +16,7 @@ import org.junit.runners.MethodSorters;
 public class FlexProjectViewTest extends BaseProjectViewTestCase {
 
   private static final String PANE_ID = "";
-  protected AbstractProjectViewPSIPane myPane;
+  protected AbstractProjectViewPane myPane;
 
   @Override
   protected void setUp() throws Exception {
