@@ -12,7 +12,7 @@ class VueTemplateTagImpl : HtmlStubBasedTagImpl, JSExecutionScope {
   constructor(stub: XmlTagStubImpl, nodeType: IStubElementType<out XmlTagStubImpl?, out HtmlStubBasedTagImpl?>) : super(stub, nodeType)
   constructor(node: ASTNode) : super(node)
 
-  override fun isTopmostExecutionScope() = true
+  override fun isTopmostControlFlowScope() = true
 
   override fun subtreeChanged() {
     super.subtreeChanged()

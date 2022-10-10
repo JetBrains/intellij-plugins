@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.codeInsight.controlflow
 
 import com.intellij.codeInsight.controlflow.Instruction
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
 import com.intellij.lang.javascript.psi.controlflow.instruction.JSBranchInstruction.BranchOwner
@@ -57,7 +57,7 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
     addDelayedPendingEdge(owner, instruction)
   }
 
-  override fun doBuild(scope: JSElement) {
+  override fun doBuild(scope: JSControlFlowScope) {
     super.doBuild(scope)
     visitingModeOverrides.clear()
   }

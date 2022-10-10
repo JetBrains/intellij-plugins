@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.controlflow.ControlFlow
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
-import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.vuejs.codeInsight.controlflow.VueControlFlowBuilder
@@ -14,7 +14,7 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
                                                  ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
     VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
 
-  override fun getControlFlow(scope: JSElement): ControlFlow {
+  override fun getControlFlow(scope: JSControlFlowScope): ControlFlow {
     return VueControlFlowBuilder().buildControlFlow(scope)
   }
 }
