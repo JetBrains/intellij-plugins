@@ -94,13 +94,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       module.getStubSafeDefineCalls().forEach { call ->
         when (VueFrameworkHandler.getFunctionNameFromVueIndex(call)) {
           DEFINE_PROPS_FUN -> {
-            val parent = call.context
-            val defaults = when { // todo is there a spread here?
-              //parent is JSCallExpression && isDefinePropsCallExpression(parent) -> {
-              //  val objectLiteral = parent.arguments.getOrNull(1) as? JSObjectLiteralExpression
-              //  objectLiteral?.properties?.mapNotNull { it.name } ?: listOf()
-              //}
-              parent is JSDestructuringElement -> {
+            val defaults = when (val parent = call.context) {
+              is JSDestructuringElement -> {
                 // parent.target could be an JSDestructuringArray, but Vue does not support it
                 val objectDestructure = parent.target as? JSDestructuringObject
                 objectDestructure?.properties?.mapNotNull { destructuringProperty ->
@@ -109,7 +104,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
                     element.name
                   }
                   else {
-                    null // aliased prop without default value
+                    null // e.g. aliased prop without default value
                   }
                 } ?: listOf()
               }
