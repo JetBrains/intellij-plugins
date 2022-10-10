@@ -18,7 +18,7 @@ import org.intellij.markdown.parser.markerblocks.MarkerBlockProvider
 import org.intellij.markdown.parser.markerblocks.providers.*
 import org.intellij.markdown.parser.sequentialparsers.SequentialParser
 import org.intellij.markdown.parser.sequentialparsers.SequentialParserManager
-import org.intellij.plugins.markdown.lang.parser.CommentAwareLinkReferenceDefinitionProvider
+import org.intellij.plugins.markdown.lang.parser.blocks.CommentAwareLinkReferenceDefinitionProvider
 import java.net.URI
 
 object MdxFlavourDescriptor : CommonMarkFlavourDescriptor() {
