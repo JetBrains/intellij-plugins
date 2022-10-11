@@ -292,6 +292,18 @@ val JSCallExpression.stubSafeCallArguments: List<PsiElement>
     return emptyList()
   }
 
+val JSArrayLiteralExpression.stubSafeElements: List<PsiElement>
+  get() {
+    if (isStubBased(this)) {
+      (this as StubBasedPsiElementBase<*>).stub
+        ?.childrenStubs
+        ?.map { it.psi }
+        ?.let { return it }
+      return expressions.filter { isStubBased(it) }.toList()
+    }
+    return emptyList()
+  }
+
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {
     is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
@@ -423,7 +435,7 @@ fun resolveMergedInterfaceJSTypeFromNodeModule(scope: PsiElement?, moduleName: S
     val resolvedSymbols = modules
       .filterIsInstance<JSElement>()
       .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
-    val interfaces =  resolvedSymbols
+    val interfaces = resolvedSymbols
       .filter { it.element?.isValid == true }
       .mapNotNull { tryCast(it.element, TypeScriptInterface::class.java) }
 

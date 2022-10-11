@@ -26,13 +26,13 @@ class VueSlotSymbol(slot: VueSlot,
   override val type: JSType?
     get() = item.scope
 
-  override fun createPointer(): Pointer<VueNamedWebSymbol<VueSlot>> =
-    object : NamedSymbolPointer<VueSlot>(this) {
+  override fun createPointer(): Pointer<VueSlotSymbol> =
+    object : NamedSymbolPointer<VueSlot, VueSlotSymbol>(this) {
 
       override fun locateSymbol(owner: VueComponent): VueSlot? =
         (owner as? VueContainer)?.slots?.find { it.name == name }
 
-      override fun createWrapper(owner: VueComponent, symbol: VueSlot): VueNamedWebSymbol<VueSlot> =
+      override fun createWrapper(owner: VueComponent, symbol: VueSlot): VueSlotSymbol =
         VueSlotSymbol(symbol, owner, origin)
 
     }

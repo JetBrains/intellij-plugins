@@ -1,0 +1,2 @@
+<componentEmitsDefinitions.vue:(0,451):(122,125)>	foo
+<componentEmitsDefinitions.vue:(0,451):(28,31)>	foo

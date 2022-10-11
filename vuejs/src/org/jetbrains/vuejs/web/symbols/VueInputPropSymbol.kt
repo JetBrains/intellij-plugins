@@ -4,8 +4,8 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
@@ -31,8 +31,8 @@ class VueInputPropSymbol(property: VueInputProperty,
         get() = item.defaultValue
     }
 
-  override fun createPointer(): Pointer<VueNamedWebSymbol<VueInputProperty>> =
-    object : NamedSymbolPointer<VueInputProperty>(this) {
+  override fun createPointer(): Pointer<VueInputPropSymbol> =
+    object : NamedSymbolPointer<VueInputProperty, VueInputPropSymbol>(this) {
 
       override fun locateSymbol(owner: VueComponent): VueInputProperty? {
         var result: VueInputProperty? = null
@@ -48,7 +48,7 @@ class VueInputPropSymbol(property: VueInputProperty,
         return result
       }
 
-      override fun createWrapper(owner: VueComponent, symbol: VueInputProperty): VueNamedWebSymbol<VueInputProperty> =
+      override fun createWrapper(owner: VueComponent, symbol: VueInputProperty): VueInputPropSymbol =
         VueInputPropSymbol(symbol, owner, origin)
 
     }

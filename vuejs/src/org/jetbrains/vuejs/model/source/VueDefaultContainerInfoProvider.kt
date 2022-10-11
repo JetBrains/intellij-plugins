@@ -32,6 +32,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val computed: List<VueComputedProperty> get() = get(COMPUTED)
     override val methods: List<VueMethod> get() = get(METHODS)
     override val props: List<VueInputProperty> get() = get(PROPS)
+    override val emits: List<VueEmitCall> get() = get(EMITS)
 
     override val model: VueModelDirectiveProperties get() = get(MODEL)
 
@@ -50,6 +51,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val Props: MemberReader = MemberReader(PROPS_PROP, true)
       val Computed = MemberReader(COMPUTED_PROP)
       val Methods = MemberReader(METHODS_PROP)
+      val Emits = MemberReader(EMITS_PROP, true, false)
       val Directives = MemberReader(DIRECTIVES_PROP)
       val Components = MemberReader(COMPONENTS_PROP)
       val Filters = MemberReader(FILTERS_PROP)
@@ -70,6 +72,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty)
     private val COMPUTED = SimpleMemberAccessor(ContainerMember.Computed, ::VueSourceComputedProperty)
     private val METHODS = SimpleMemberAccessor(ContainerMember.Methods, ::VueSourceMethod)
+    private val EMITS = SimpleMemberAccessor(ContainerMember.Emits, ::VueSourceEmitDefinition)
 
     private val MODEL = ModelAccessor()
   }
@@ -268,4 +271,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                 override val source: PsiElement?) : VueMethod {
     override val jsType: JSType? get() = (source as? JSProperty)?.jsType
   }
+
+  private class VueSourceEmitDefinition(override val name: String,
+                                        override val source: PsiElement?) : VueEmitCall
 }

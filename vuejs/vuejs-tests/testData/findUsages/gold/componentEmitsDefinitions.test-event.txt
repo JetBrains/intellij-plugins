@@ -1,0 +1,3 @@
+<componentEmitsDefinitions.vue:(0,451):(187,197)>	test-event
+<componentEmitsDefinitions.vue:(0,451):(72,82)>	test-event
+<defineComponent.vue:(0,233):(29,39)>	test-event

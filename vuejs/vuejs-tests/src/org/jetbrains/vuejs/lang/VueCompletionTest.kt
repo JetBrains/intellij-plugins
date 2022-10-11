@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.javascript.web.*
+import com.intellij.javascript.web.nonHtmlLookupFilter
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
@@ -1970,6 +1969,12 @@ export default {
     myFixture.completeBasic()
     myFixture.type("al\n")
     myFixture.checkResultByFile(getTestName(true) + ".after.vue")
+  }
+
+  fun testComponentEmitsDefinitions() {
+    doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, renderTypeText = false,
+                 locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>"),
+                 filter = { it.startsWith("!") })
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {

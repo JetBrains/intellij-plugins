@@ -69,4 +69,17 @@ class VueFindUsagesTest : BasePlatformTestCase() {
 
   }
 
+  fun testComponentEmitsDefinitions() {
+    val testName = getTestName(true)
+    myFixture.copyDirectoryToProject(testName, ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+
+    myFixture.configureFromTempProjectFile("defineComponent.vue")
+    myFixture.checkUsages("\"test<caret>-event", "$testName.test-event")
+
+    myFixture.configureFromTempProjectFile("defineEmits.vue")
+    myFixture.checkUsages("'f<caret>oo", "$testName.foo")
+
+  }
+
 }

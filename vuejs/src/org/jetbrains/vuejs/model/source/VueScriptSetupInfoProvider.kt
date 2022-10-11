@@ -17,11 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.asSafely
-import com.intellij.util.containers.sequenceOfNotNull
-import org.jetbrains.vuejs.codeInsight.collectMembers
-import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
@@ -88,7 +84,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
 
       var props: List<VueInputProperty> = emptyList()
-      val emits: List<VueEmitCall> = emptyList()
+      var emits: List<VueEmitCall> = emptyList()
       var rawBindings: List<VueNamedSymbol> = emptyList()
 
       module.getStubSafeDefineCalls().forEach { call ->
@@ -113,7 +109,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             props = analyzeDefineProps(call, defaults)
           }
           WITH_DEFAULTS_FUN -> {
-            val definePropsCall = call.getInnerDefineProps().firstOrNull()
+            val definePropsCall = call.getInnerDefineProps()
             if (definePropsCall != null) {
               // Vue can throw Error: [@vue/compiler-sfc] The 2nd argument of withDefaults must be an object literal.
               // Let's be more forgiving here and try to interpret props without defaults
@@ -124,7 +120,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             }
           }
           DEFINE_EMITS_FUN -> {
-            // TODO
+            emits = analyzeDefineEmits(call)
           }
           DEFINE_EXPOSE_FUN -> {
             rawBindings = call.stubSafeCallArguments
@@ -191,9 +187,11 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             is JSCallExpression -> sequenceOf(psi)
             is JSStatement -> {
               stub.childrenStubs.asSequence()
-                .filter { it.stubType == JSStubElementTypes.VARIABLE ||
-                          it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
-                          it.stubType == JSStubElementTypes.DESTRUCTURING_ELEMENT  }
+                .filter {
+                  it.stubType == JSStubElementTypes.VARIABLE ||
+                  it.stubType == TypeScriptStubElementTypes.TYPESCRIPT_VARIABLE ||
+                  it.stubType == JSStubElementTypes.DESTRUCTURING_ELEMENT
+                }
                 .flatMap { it.childrenStubs.asSequence() }
                 .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
                 .mapNotNull { it.psi as? JSCallExpression }
@@ -223,19 +221,22 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         }
     }
 
-    private fun JSCallExpression.getInnerDefineProps(): Sequence<JSCallExpression> {
-      (this as? JSStubElementImpl<*>)?.stub?.let { callStub ->
-        return callStub.childrenStubs.asSequence()
-          .filter { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
-          .mapNotNull { it.psi as? JSCallExpression }
-          .filter { innerCall -> VueFrameworkHandler.getFunctionNameFromVueIndex(innerCall) == DEFINE_PROPS_FUN }
-      }
+    private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> =
+      call.stubSafeCallArguments.getOrNull(0)
+        .asSafely<JSArrayLiteralExpression>()
+        ?.stubSafeElements
+        ?.mapNotNull { literal ->
+          (literal as? JSLiteralExpression)
+            ?.significantValue
+            ?.let { VueScriptSetupLiteralBasedEvent(es6Unquote(it), literal) }
+        }
+      ?: emptyList()
 
-      return sequenceOfNotNull(this.arguments.getOrNull(0)
-                                 .asSafely<JSCallExpression>()
-                                 ?.takeIf { (it.methodExpression as? JSReferenceExpression)?.referenceName == DEFINE_PROPS_FUN }
-      )
-    }
+    private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
+      stubSafeCallArguments
+        .getOrNull(0)
+        .asSafely<JSCallExpression>()
+        ?.takeIf { VueFrameworkHandler.getFunctionNameFromVueIndex(it) == DEFINE_PROPS_FUN }
 
   }
 
@@ -263,5 +264,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     }
 
   }
+
+  private class VueScriptSetupLiteralBasedEvent(override val name: String,
+                                                override val source: JSLiteralExpression) : VueEmitCall
 
 }
