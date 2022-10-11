@@ -112,9 +112,9 @@
     <lang.importOptimizer language="protobuf" implementationClass="com.intellij.protobuf.lang.refactoring.PbImportOptimizer"/>
     <!--suppress PluginXmlCapitalization -->
     <localInspection language="protobuf"
-                     bundle="messages.protobuf-lang"
+                     bundle="messages.ProtobufLangBundle"
                      key="inspection.duplicated.imports.name"
-                     groupBundle="messages.protobuf-lang"
+                     groupBundle="messages.ProtobufLangBundle"
                      groupKey="protobuf.inspections.group.name"
                      enabledByDefault="true"
                      implementationClass="com.intellij.protobuf.lang.inspection.PbDuplicatedImportsInspection"/>
@@ -222,5 +222,5 @@
       <add-to-group group-id="EditorPopupMenu"/>
     </action>
   </actions>
-  <resource-bundle>messages.protobuf-ide</resource-bundle>
+  <resource-bundle>messages.ProtobufIdeBundle</resource-bundle>
 </idea-plugin>

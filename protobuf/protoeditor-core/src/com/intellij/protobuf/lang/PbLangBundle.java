@@ -15,39 +15,27 @@
  */
 package com.intellij.protobuf.lang;
 
-import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ResourceBundle;
-
-/** Resource bundle for proto messages. */
-public class PbLangBundle {
-
-  private static Reference<ResourceBundle> ourBundle;
-
+/**
+ * Resource bundle for proto messages.
+ */
+public class PbLangBundle extends DynamicBundle {
   @NonNls
-  private static final String BUNDLE = "messages.protobuf-lang";
+  private static final String BUNDLE = "messages.ProtobufLangBundle";
 
-  private PbLangBundle() {}
+  private static final PbLangBundle INSTANCE = new PbLangBundle();
 
-  @Nls
-  public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
-    return AbstractBundle.message(getBundle(), key, params);
+  public PbLangBundle() {
+    super(BUNDLE);
   }
 
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = null;
-    if (ourBundle != null) {
-      bundle = ourBundle.get();
-    }
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(BUNDLE);
-      ourBundle = new SoftReference<>(bundle);
-    }
-    return bundle;
+  @Nls
+  public static String message(@PropertyKey(resourceBundle = BUNDLE) @NotNull @NonNls String key, Object @NotNull ... params) {
+    return INSTANCE.getMessage(key, params);
   }
 }

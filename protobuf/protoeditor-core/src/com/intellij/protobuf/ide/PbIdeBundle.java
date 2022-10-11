@@ -24,7 +24,7 @@ public final class PbIdeBundle extends DynamicBundle {
   private static final PbIdeBundle INSTANCE = new PbIdeBundle();
 
   @NonNls
-  private static final String BUNDLE = "messages.protobuf-ide";
+  private static final String BUNDLE = "messages.ProtobufIdeBundle";
 
   private PbIdeBundle() {
     super(BUNDLE);
