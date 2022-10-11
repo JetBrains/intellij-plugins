@@ -34,7 +34,7 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
   override val presentation: TargetPresentation
     get() = super.presentation
 
-  override val usageHandler: UsageHandler<*>
+  override val usageHandler: UsageHandler
     get() = UsageHandler.createEmptyUsageHandler(name)
 
   override fun createPointer(): Pointer<VueEmitCallSymbol> =

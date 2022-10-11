@@ -49,7 +49,7 @@ abstract class VueScopeElementSymbol<T : VueDocumentedItem>(matchedName: String,
         get() = info?.second
     }
 
-  override val usageHandler: UsageHandler<*>
+  override val usageHandler: UsageHandler
     get() = UsageHandler.createEmptyUsageHandler(presentation.presentableText)
 
   override val presentation: TargetPresentation

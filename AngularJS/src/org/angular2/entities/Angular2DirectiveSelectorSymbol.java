@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities;
 
 import com.intellij.find.usages.api.SearchTarget;
@@ -223,7 +223,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
 
   @NotNull
   @Override
-  public UsageHandler<?> getUsageHandler() {
+  public UsageHandler getUsageHandler() {
     return UsageHandler.createEmptyUsageHandler(getName());
   }
 
