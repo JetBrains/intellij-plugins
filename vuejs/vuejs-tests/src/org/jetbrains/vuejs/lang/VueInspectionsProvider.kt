@@ -39,6 +39,7 @@ class VueInspectionsProvider : InspectionToolProvider {
       JSCheckFunctionSignaturesInspection::class.java,
       JSUnresolvedVariableInspection::class.java,
       JSUnresolvedFunctionInspection::class.java,
+      JSUndeclaredVariableInspection::class.java,
       JSUnusedLocalSymbolsInspection::class.java,
       JSValidateTypesInspection::class.java,
       JSIncompatibleTypesComparisonInspection::class.java,

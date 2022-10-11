@@ -561,6 +561,11 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED))
   }
 
+  fun testPropertyReferenceInLambda() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doTest()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
