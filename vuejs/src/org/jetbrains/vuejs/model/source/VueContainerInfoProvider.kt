@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSElement
@@ -14,10 +14,8 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
-  @JvmDefault
   fun getAdditionalComponents(scope: GlobalSearchScope, sourceComponents: ComponentsInfo): ComponentsInfo? = null
 
-  @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
                             standardProperties: MutableMap<String, PropertySignature>)
     : Collection<PropertySignature> = emptyList()

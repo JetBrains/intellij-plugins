@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
@@ -20,11 +20,9 @@ import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Function
 
 interface EntityContainerInfoProvider<T> {
 
-  @JvmDefault
   fun getInfo(descriptor: VueSourceEntityDescriptor): T? = null
 
   abstract class DecoratedContainerInfoProvider<T>(val createInfo: (clazz: JSClass) -> T) : EntityContainerInfoProvider<T> {
