@@ -29,7 +29,7 @@ class VueComponentSourceNavigationTarget(private val myElement: PsiElement) : Na
       ?: EmptyNavigatable.INSTANCE
     }?.navigationRequest()
 
-  override fun getTargetPresentation(): TargetPresentation = targetPresentation(myElement)
+  override fun presentation(): TargetPresentation = targetPresentation(myElement)
 
   override fun equals(other: Any?): Boolean =
     this === other ||

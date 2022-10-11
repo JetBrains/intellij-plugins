@@ -52,7 +52,7 @@ abstract class VueScopeElementSymbol<T : VueDocumentedItem>(matchedName: String,
   override val usageHandler: UsageHandler
     get() = UsageHandler.createEmptyUsageHandler(presentation.presentableText)
 
-  override val presentation: TargetPresentation
-    get() = super.presentation
-
+  override fun presentation(): TargetPresentation {
+    return presentation
+  }
 }

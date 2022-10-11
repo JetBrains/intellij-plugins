@@ -75,6 +75,12 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
 
   @NotNull
   @Override
+  public TargetPresentation presentation() {
+    return getPresentation();
+  }
+
+  @NotNull
+  @Override
   public DocumentationTarget getDocumentationTarget() {
     var clazz = PsiTreeUtil.getContextOfType(getSource(), TypeScriptClass.class);
     if (clazz == null) {
@@ -271,7 +277,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     }
 
     @Override
-    public @NotNull TargetPresentation getTargetPresentation() {
+    public @NotNull TargetPresentation presentation() {
       return mySymbol.getPresentation();
     }
 

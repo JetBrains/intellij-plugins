@@ -177,10 +177,11 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
     @Nls val displayName: String,
   ) : WebSymbolDocumentationTarget {
 
-    override val presentation: TargetPresentation
-      get() = TargetPresentation.builder(displayName)
+    override fun presentation(): TargetPresentation {
+      return TargetPresentation.builder(displayName)
         .icon(symbol.icon)
         .presentation()
+    }
 
     override fun createPointer(): Pointer<out DocumentationTarget> {
       val pointer = symbol.createPointer()

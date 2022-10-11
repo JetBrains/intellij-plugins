@@ -31,8 +31,9 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
   override val priority: WebSymbol.Priority
     get() = WebSymbol.Priority.HIGHEST
 
-  override val presentation: TargetPresentation
-    get() = super.presentation
+  override fun presentation(): TargetPresentation {
+    return presentation
+  }
 
   override val usageHandler: UsageHandler
     get() = UsageHandler.createEmptyUsageHandler(name)
