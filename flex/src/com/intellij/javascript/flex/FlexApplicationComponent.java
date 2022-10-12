@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -33,7 +33,7 @@ public final class FlexApplicationComponent implements MetaDataContributor, Stan
   public static final String[] AIR_VERSIONS =
     {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7",
       "3.8", "3.9", "4.0", "13.0", "14.0", "15.0", "16.0", "17.0", "18.0", "19.0", "20.0", "21.0", "22.0", "23.0", "24.0", "25.0", "26.0",
-      "27.0", "28.0", "29.0", "30.0", "31.0", "32.0", "33.0", "33.1", "34.0", "35.0"};
+      "27.0", "28.0", "29.0", "30.0", "31.0", "32.0", "33.0", "33.1", "50.0", "50.1", "51.0"};
 
   @Override
   public void contributeMetaData(@NotNull final MetaDataRegistrar registrar) {
