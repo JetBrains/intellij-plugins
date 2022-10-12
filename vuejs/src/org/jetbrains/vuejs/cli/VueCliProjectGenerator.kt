@@ -33,7 +33,8 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   private val DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED = true
   private val DEFAULT_PROJECT_SETUP_KEY = Key.create<Boolean>("vue.project.generator.default.setup")
 
-  private val PACKAGE_NAME = "@vue/cli"
+  private val CREATE_VUE_PACKAGE_NAME = "create-vue"
+  private val VUE_CLI_PACKAGE_NAME = "@vue/cli"
   private val VUE_EXECUTABLE = "vue"
   private val CREATE_COMMAND = "create"
 
@@ -78,9 +79,16 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
 
   override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry) {}
 
-  override fun generatorArgs(project: Project?, dir: VirtualFile?, settings: Settings?): Array<String> {
-    val default = settings?.getUserData(DEFAULT_PROJECT_SETUP_KEY) ?: DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED
-    return if (default) arrayOf(CREATE_COMMAND, "--default", ".") else arrayOf(CREATE_COMMAND, ".")
+  override fun generatorArgs(project: Project?, dir: VirtualFile, settings: Settings): Array<String> {
+    val default = settings.getUserData(DEFAULT_PROJECT_SETUP_KEY) ?: DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED
+    val workingDir = if (generateInTemp()) dir.name else "."
+
+    val packageName = settings.myPackage.name
+    if (packageName.contains(CREATE_VUE_PACKAGE_NAME)) {
+      return if (default) arrayOf(workingDir, "--default") else arrayOf(workingDir)
+    }
+
+    return if (default) arrayOf(CREATE_COMMAND, "--default", workingDir) else arrayOf(CREATE_COMMAND, workingDir)
   }
 
   override fun generatorArgs(project: Project, baseDir: VirtualFile): Array<String> {
@@ -96,7 +104,11 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   }
 
   override fun packageName(): String {
-    return PACKAGE_NAME
+    return CREATE_VUE_PACKAGE_NAME
+  }
+
+  override fun packageNames(): List<String> {
+    return listOf(CREATE_VUE_PACKAGE_NAME, VUE_CLI_PACKAGE_NAME)
   }
 
   override fun presentablePackageName(): String {
@@ -104,7 +116,10 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   }
 
   override fun getNpxCommands(): List<NpxPackageDescriptor.NpxCommand> {
-    return listOf(NpxPackageDescriptor.NpxCommand(PACKAGE_NAME, VUE_EXECUTABLE))
+    return listOf(
+      NpxPackageDescriptor.NpxCommand(CREATE_VUE_PACKAGE_NAME, CREATE_VUE_PACKAGE_NAME),
+      NpxPackageDescriptor.NpxCommand(VUE_CLI_PACKAGE_NAME, VUE_EXECUTABLE),
+    )
   }
 
   override fun validateProjectPath(path: String): String? {
@@ -139,4 +154,5 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     CreateRunConfigurationUtil.npmConfiguration(project, "serve")
   }
 
+  override fun generateInTemp(): Boolean = true
 }
