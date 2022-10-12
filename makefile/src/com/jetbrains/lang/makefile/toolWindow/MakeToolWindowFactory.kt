@@ -45,7 +45,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
           return null
         }
       }.apply {
-        cellRenderer = MakefileCellRenderer()
+        cellRenderer = MakefileCellRenderer(project)
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
         isRootVisible = false
         showsRootHandles = true
