@@ -5,9 +5,6 @@ import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 
-/**
- * @author peter
- */
 class PerforceShelf(private val myProject: Project) {
   private val myCache = MultiMap.create<Pair<ConnectionKey, Long>, ShelvedChange>()
 

@@ -15,9 +15,6 @@ import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection
 import org.junit.Before
 import org.junit.Test
-/**
- * @author peter
- */
 class PerforceUpdateTest extends PerforceTestCase {
   @Override
   @Before

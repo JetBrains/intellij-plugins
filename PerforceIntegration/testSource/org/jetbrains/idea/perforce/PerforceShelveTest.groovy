@@ -15,9 +15,6 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner
 import org.junit.Test
 
 import static com.intellij.testFramework.UsefulTestCase.assertOneElement
-/**
- * @author peter
- */
 class PerforceShelveTest extends PerforceTestCase {
 
   @Override

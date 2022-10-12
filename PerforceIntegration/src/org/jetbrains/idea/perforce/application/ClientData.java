@@ -10,9 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author peter
- */
 class ClientData {
   private final Map<String, List<String>> myData;
   private volatile List<View> myViews;

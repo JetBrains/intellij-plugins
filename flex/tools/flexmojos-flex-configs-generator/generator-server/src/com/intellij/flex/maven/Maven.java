@@ -44,7 +44,6 @@ final class Maven {
 
   /**
    * Copied from com.intellij.openapi.util.*
-   * @author peter
    */
   private abstract class AtomicNotNullLazyValue<T> {
     private volatile T myValue;

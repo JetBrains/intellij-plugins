@@ -16,9 +16,6 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import java.io.File;
 import java.util.Collection;
 
-/**
- * @author peter
- */
 public final class FileGrouper {
   private static <T> MultiMap<P4Connection, T> distributeByConnection(Collection<? extends T> files, NullableFunction<? super T, ? extends P4Connection> fun) {
     //todo P4ParametersConnection.equals should be based on client+server+user

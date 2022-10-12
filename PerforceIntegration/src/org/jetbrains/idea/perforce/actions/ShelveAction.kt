@@ -19,9 +19,6 @@ import org.jetbrains.idea.perforce.perforce.P4File
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 
-/**
- * @author peter
- */
 class ShelveAction : AbstractCommitChangesAction() {
 
   override fun update(e: AnActionEvent) {

@@ -18,9 +18,6 @@ import java.util.Arrays;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static junit.framework.Assert.assertEquals;
 
-/**
- * @author peter
- */
 public class PerforceAltRootTest extends PerforceTestCase {
   @Override
   public void before() throws Exception {

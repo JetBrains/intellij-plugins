@@ -2,9 +2,6 @@ package org.jetbrains.idea.perforce
 import com.intellij.testFramework.HeavyPlatformTestCase
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionCalculator
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters
-/**
- * @author peter
- */
 class PerforceConfigReadingTest extends HeavyPlatformTestCase {
 
   void testSlashInUserName() throws Exception {

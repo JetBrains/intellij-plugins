@@ -14,9 +14,6 @@ import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
-/**
- * @author peter
- */
 public class PerforceConnectionProblemsTest extends PerforceTestCase {
   @Override
   public void before() throws Exception {

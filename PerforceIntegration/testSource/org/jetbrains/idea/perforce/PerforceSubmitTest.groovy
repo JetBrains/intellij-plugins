@@ -9,9 +9,6 @@ import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.PerforceChange
 import org.junit.Assert
 import org.junit.Test
-/**
- * @author peter
- */
 class PerforceSubmitTest extends PerforceTestCase {
   @Override
   void before() throws Exception {

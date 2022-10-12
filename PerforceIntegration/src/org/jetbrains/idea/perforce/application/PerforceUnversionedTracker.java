@@ -31,9 +31,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author peter
- */
 public class PerforceUnversionedTracker {
   private static final Logger LOG = Logger.getInstance(PerforceUnversionedTracker.class);
   private final Set<VirtualFile> myUnversionedFiles = ContainerUtil.newConcurrentSet();

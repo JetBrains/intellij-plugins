@@ -9,9 +9,6 @@ import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
-/**
- * @author peter
- */
 public class PerforcePasswordNotAllowedException extends VcsConnectionProblem {
   private final Project myProject;
   private final P4Connection myConnection;

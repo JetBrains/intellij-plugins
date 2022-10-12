@@ -11,9 +11,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
 
-/**
- * @author peter
- */
 public class ShelvedChange extends PerforceAbstractChange {
   private final String myDepotPath;
   private final long myRevision;

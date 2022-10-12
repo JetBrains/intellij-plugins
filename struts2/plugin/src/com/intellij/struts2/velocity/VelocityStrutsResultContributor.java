@@ -33,7 +33,6 @@ import java.util.List;
 /**
  * Provides path to {@code .vm}-files.
  *
- * @author peter
  * @author Yann C&eacute;bron
  */
 final class VelocityStrutsResultContributor extends StrutsResultContributor {

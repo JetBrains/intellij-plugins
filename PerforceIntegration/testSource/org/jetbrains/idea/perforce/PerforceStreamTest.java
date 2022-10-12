@@ -11,9 +11,6 @@ import java.io.IOException;
 
 import static com.intellij.testFramework.UsefulTestCase.*;
 
-/**
- * @author peter
- */
 public class PerforceStreamTest extends PerforceTestCase {
 
   @Override

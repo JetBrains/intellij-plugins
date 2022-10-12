@@ -32,9 +32,6 @@ import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait
 import static com.intellij.testFramework.UsefulTestCase.*
 import static org.junit.Assert.assertEquals
 
-/**
- * @author peter
- */
 class PerforceHistoryTest extends PerforceTestCase {
   @Override
   void before() throws Exception {

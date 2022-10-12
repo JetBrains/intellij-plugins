@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
-* @author peter
-*/
 public class PathsHelper {
   private final PerforceManager myPerforceManager;
   private final Collection<FilePath> myRecursivePaths = new ArrayList<>();

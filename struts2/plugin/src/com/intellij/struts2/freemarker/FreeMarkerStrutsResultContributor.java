@@ -33,8 +33,6 @@ import java.util.Objects;
 
 /**
  * Provides path to {@code .ftl}-files.
- *
- * @author peter
  */
 final class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
   @NonNls

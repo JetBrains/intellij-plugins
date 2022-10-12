@@ -24,7 +24,6 @@ import java.util.*;
 
 /**
  * @author Irina Chernushina
- * @author peter
  */
 public abstract class UnversionedScopeScanner {
   private static final Logger LOG = Logger.getInstance(UnversionedScopeScanner.class);

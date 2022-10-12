@@ -13,9 +13,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionProblemsNotifier;
 
-/**
- * @author peter
- */
 class LoginNotifier extends GenericNotifierImpl<P4Connection, ConnectionId> {
   private static final String INSPECT = Notifier.INSPECT;
   private static final String FIX = Notifier.FIX;

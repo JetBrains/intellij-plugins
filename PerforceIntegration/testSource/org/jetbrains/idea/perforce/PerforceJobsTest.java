@@ -23,9 +23,6 @@ import java.util.*;
 import static com.intellij.testFramework.UsefulTestCase.assertOneElement;
 import static org.junit.Assert.*;
 
-/**
- * @author peter
- */
 public class PerforceJobsTest extends PerforceTestCase {
   @Override
   public void before() throws Exception {

@@ -5,9 +5,6 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import org.jetbrains.idea.perforce.perforce.connections.P4ParametersConnection
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager
 import org.junit.Test
-/**
- * @author peter
- */
 class Perforce2016Test extends PerforceTestCase {
   @Override
   protected String getPerforceVersion() {

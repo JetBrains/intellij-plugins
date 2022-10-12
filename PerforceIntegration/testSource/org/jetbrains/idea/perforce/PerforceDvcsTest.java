@@ -12,9 +12,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author peter
- */
 public class PerforceDvcsTest extends PerforceTestCase {
 
   @Override

@@ -25,9 +25,6 @@ import org.jetbrains.idea.perforce.merge.PerforceMergeProvider
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 
-/**
- * @author peter
- */
 object ShelfUtils {
 
   private val LOG = Logger.getInstance(ShelfUtils::class.java)

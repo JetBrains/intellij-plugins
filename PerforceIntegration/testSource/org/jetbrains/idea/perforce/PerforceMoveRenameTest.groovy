@@ -25,9 +25,6 @@ import org.junit.Test
 import static com.intellij.testFramework.UsefulTestCase.*
 import static junit.framework.TestCase.*
 
-/**
- * @author peter
- */
 class PerforceMoveRenameTest extends PerforceTestCase {
   private static final Logger LOG = Logger.getInstance(PerforceMoveRenameTest.class)
   @Override

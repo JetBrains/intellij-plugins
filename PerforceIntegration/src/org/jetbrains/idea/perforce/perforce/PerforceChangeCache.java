@@ -18,9 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author peter
- */
 public class PerforceChangeCache {
   private final PerforceRunner myRunner;
   private final PerforceManager myPerforceManager;

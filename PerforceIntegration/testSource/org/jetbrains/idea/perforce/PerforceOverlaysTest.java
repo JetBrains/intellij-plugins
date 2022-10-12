@@ -11,9 +11,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author peter
- */
 public class PerforceOverlaysTest extends PerforceTestCase {
 
   @Override

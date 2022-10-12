@@ -16,9 +16,6 @@ import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager
 import org.junit.Assume
 import org.junit.Test
 
-/**
- * @author peter
- */
 
 class PerforceAuthenticationTest extends PerforceTestCase {
   @Override

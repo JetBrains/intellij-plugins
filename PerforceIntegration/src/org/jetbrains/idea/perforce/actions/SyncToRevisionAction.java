@@ -26,9 +26,6 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 
 import java.util.Set;
 
-/**
- * @author peter
- */
 public class SyncToRevisionAction extends DumbAwareAction {
 
   public SyncToRevisionAction() {

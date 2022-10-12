@@ -21,9 +21,6 @@ import com.intellij.freemarker.inspections.FtlReferencesInspection;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author peter
- */
 public class FreemarkerIntegrationTest extends BasicLightHighlightingTestCase {
 
   @NotNull
