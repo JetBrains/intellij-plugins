@@ -32,6 +32,8 @@ class SerialProfileService : PersistentStateComponent<SerialProfilesState> {
   fun getProfiles(): Map<String, SerialPortProfile> = myState.profiles
   fun copyDefaultProfile(): SerialPortProfile = myState.defaultProfile.copy()
 
+  fun defaultBaudRate(): Int = myState.defaultProfile.baudRate
+
   enum class Parity(private val displayKey: String) {
     ODD("uart.parity.odd"), EVEN("uart.parity.even"), NONE("uart.parity.none");
 

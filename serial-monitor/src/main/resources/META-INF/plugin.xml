@@ -28,14 +28,16 @@
                 factoryClass="com.intellij.plugins.serialmonitor.SerialMonitorToolWindowFactory"
                 canCloseContents="true" secondary="false"/>
 
-    <notificationGroup id="Serial Monitor Notification" toolWindowId="Serial Monitor" displayType="TOOL_WINDOW"/>
+    <notificationGroup id="Serial Monitor Notification" toolWindowId="Serial Monitor" displayType="TOOL_WINDOW"
+                       bundle="messages.SerialMonitorBundle" key="notification.group.serial.monitor.notification"/>
 
     <applicationService serviceImplementation="com.intellij.plugins.serialmonitor.service.JsscSerialService"/>
     <applicationConfigurable groupId="tools" id="serialmonitor.settings"
                              provider="com.intellij.plugins.serialmonitor.ui.SerialSettingsConfigurableProvider"
                              bundle="messages.SerialMonitorBundle" key="settings.display.name"/>
 
-
+      <statistics.counterUsagesCollector implementationClass="com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector"/>
+      <statistics.applicationUsagesCollector implementation="com.intellij.plugins.serialmonitor.SerialMonitorNumProfilesCollector"/>
   </extensions>
   <actions>
     <group id="com.intellij.plugins.serialmonitor.connect" class="com.intellij.plugins.serialmonitor.ui.actions.ConnectActionGroup"

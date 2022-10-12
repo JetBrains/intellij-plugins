@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.plugins.serialmonitor.SerialMonitorConnectCollector;
 import com.intellij.plugins.serialmonitor.SerialMonitorException;
 import com.intellij.plugins.serialmonitor.SerialPortProfile;
 import com.intellij.plugins.serialmonitor.ui.SerialMonitorBundle;
@@ -74,12 +75,15 @@ public class JsscSerialService implements Disposable {
       port.openPort();
       boolean res = port.setParams(settings.getBaudRate(), dataBits, stopBits, parity, true, true);
       if (!res) {
+        SerialMonitorConnectCollector.logConnect(settings.getBaudRate(), false);
         throw new SerialMonitorException(SerialMonitorBundle.message("serial.port.parameters.wrong"));
       }
       port.addEventListener(new MySerialPortEventListener(port, dataListener, connectListener), MASK_ERR | MASK_RXCHAR);
       openPorts.put(portName, new SerialConnection(port, connectListener));
+      SerialMonitorConnectCollector.logConnect(settings.getBaudRate(), true);
     }
     catch (SerialPortException e) {
+      SerialMonitorConnectCollector.logConnect(settings.getBaudRate(), false);
       SerialPort port = e.getPort();
       if (port != null &&
           port.getPortName().startsWith("/dev") &&
