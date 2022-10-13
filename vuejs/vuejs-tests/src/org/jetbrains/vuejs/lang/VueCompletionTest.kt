@@ -1996,6 +1996,35 @@ export default {
                  filter = { it.startsWith("!") })
   }
 
+  fun testExternalSymbolsImport() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+
+    fun doTest() {
+      myFixture.moveToOffsetBySignature(":style=\"<caret>\"")
+      myFixture.completeBasic()
+      myFixture.type("Col\n.r")
+      myFixture.completeBasic()
+      myFixture.type("\n")
+
+      myFixture.moveToOffsetBySignature("key) in i<caret>")
+      myFixture.completeBasic()
+      myFixture.type("tems\n")
+
+      myFixture.moveToOffsetBySignature(" {{ <caret> }}")
+      myFixture.completeBasic()
+      myFixture.type("getTe\n")
+    }
+
+    myFixture.configureFromTempProjectFile("HelloWorld.vue")
+    doTest()
+    myFixture.checkResultByFile(getTestName(true) + "/HelloWorld.after.vue")
+
+    myFixture.configureFromTempProjectFile("HelloWorldClassic.vue")
+    doTest()
+    myFixture.checkResultByFile(getTestName(true) + "/HelloWorldClassic.after.vue")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

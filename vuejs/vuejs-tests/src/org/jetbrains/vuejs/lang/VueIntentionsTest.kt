@@ -13,12 +13,13 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.webSymbols.moveToOffsetBySignature
 import junit.framework.TestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
@@ -65,13 +66,44 @@ class VueIntentionsTest : BasePlatformTestCase() {
   fun testExpandVModel() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("expandVModel.vue")
-    for (signature in listOf("v-<caret>model=","v-<caret>model.lazy","v-<caret>model.number","v-<caret>model.trim")) {
+    for (signature in listOf("v-<caret>model=", "v-<caret>model.lazy", "v-<caret>model.number", "v-<caret>model.trim")) {
       myFixture.moveToOffsetBySignature(signature)
       val intention = myFixture.findSingleIntention("Expand v-model")
       TestCase.assertTrue(intention.startInWriteAction())
       WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
     }
     myFixture.checkResultByFile("expandVModel.after.vue")
+  }
+
+  fun testExternalSymbolsImport() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+
+    fun doTest() {
+      for (signature in listOf("\"Co<caret>lor.", "in it<caret>ems", "get<caret>Text()")) {
+        myFixture.moveToOffsetBySignature(signature)
+        val intention = myFixture.availableIntentions
+                          .singleOrNull { it.text.startsWith("Insert \"import") || it.text.startsWith("Insert \'import") }
+                        ?: throw AssertionError("Failed to find single 'insert import' intention for $signature. " +
+                                                "Available intentions: ${
+                                                  myFixture.availableIntentions.map {
+                                                    StringUtil.shortenPathWithEllipsis(it.text, 25)
+                                                  }
+                                                }")
+        TestCase.assertTrue(intention.startInWriteAction())
+        WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+      }
+    }
+
+    myFixture.configureFromTempProjectFile("HelloWorld.vue")
+    doTest()
+    myFixture.checkResultByFile("${getTestName(true)}/HelloWorld.after.vue")
+
+
+    myFixture.configureFromTempProjectFile("HelloWorldClassic.vue")
+    doTest()
+    myFixture.checkResultByFile("${getTestName(true)}/HelloWorldClassic.after.vue")
   }
 
   private fun doIntentionTest(name: String) {

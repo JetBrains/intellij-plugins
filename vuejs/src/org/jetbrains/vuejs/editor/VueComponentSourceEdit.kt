@@ -76,14 +76,11 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     file.asSafely<XmlFile>()
       ?.let { findScriptTag(it, true) } != null
 
-  fun addMethodReference(referenceName: String): Boolean =
-    getOrCreateSpecializedComponentEdit()?.addMethodReference(referenceName) == true
+  fun addClassicPropertyReference(kind: String, referenceName: String): Boolean =
+    getOrCreateObjectLiteralBasedComponentEdit()?.addClassicPropertyReference(kind, referenceName) == true
 
-  fun addComputedProperty(name: String, contents: String): Boolean =
-    getOrCreateSpecializedComponentEdit()?.addComputedProperty(name, contents) == true
-
-  fun addComponentReference(referenceName: String): Boolean =
-    getOrCreateSpecializedComponentEdit()?.addComponentReference(referenceName) == true
+  fun addClassicPropertyFunction(kind: String, name: String, contents: String): Boolean =
+    getOrCreateObjectLiteralBasedComponentEdit()?.addClassicPropertyFunction(kind, name, contents) == true
 
   fun insertComponentImport(name: String,
                             elementToImport: PsiElement) {
@@ -100,7 +97,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
     val scriptScope = getOrCreateScriptScope() ?: return
 
-    if (isScriptSetup() || addComponentReference(capitalizedName)) {
+    if (isScriptSetup() || addClassicPropertyReference(COMPONENTS_PROP, capitalizedName)) {
       ES6ImportPsiUtil.insertJSImport(scriptScope, info, elementToImport)
     }
   }
@@ -135,7 +132,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       .also { reformat(it) }
   }
 
-  private fun getOrCreateSpecializedComponentEdit(): SpecializedComponentEdit? {
+  private fun getOrCreateObjectLiteralBasedComponentEdit(): ObjectLiteralBasedComponentEdit? {
     val scriptScope = getOrCreateScriptScope()
     val scriptTag = scriptScope?.context.asSafely<XmlTag>()
     if (scriptScope == null || scriptTag.isScriptSetupTag())
@@ -224,44 +221,27 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     formatFixers.add(FormatFixer.create(element, FormatFixer.Mode.Reformat))
   }
 
-  private interface SpecializedComponentEdit {
-    fun addMethodReference(referenceName: String): Boolean
-    fun addComputedProperty(name: String, contents: String): Boolean
-    fun addComponentReference(referenceName: String): Boolean
-  }
+  private inner class ObjectLiteralBasedComponentEdit(private val literal: JSObjectLiteralExpression) {
 
-  private inner class ObjectLiteralBasedComponentEdit(private val literal: JSObjectLiteralExpression) : SpecializedComponentEdit {
-
-    override fun addMethodReference(referenceName: String): Boolean {
-      val methods = getOrCreateObjectLiteralProperty(literal, METHODS_PROP).value as? JSObjectLiteralExpression ?: return false
-
-      if (methods.findProperty(referenceName) != null) return false
-
-      val newProperty = JSPsiElementFactory.createJSExpression("{ $referenceName }", literal,
+    fun addClassicPropertyFunction(kind: String, name: String, contents: String): Boolean {
+      val items = getOrCreateObjectLiteralProperty(literal, kind).value as? JSObjectLiteralExpression ?: return false
+      if (items.findProperty(name) != null
+          || (kind == COMPONENTS_PROP && items.findProperty(StringUtil.decapitalize(name)) != null)) return false
+      val newProperty = JSPsiElementFactory.createJSExpression("{ $name() {\n$contents} }", literal,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
-      addProperty(newProperty, methods, false)
+      addProperty(newProperty, items, false)
       return true
     }
 
-    override fun addComputedProperty(name: String, contents: String): Boolean {
-      val computedProps = getOrCreateObjectLiteralProperty(literal, COMPUTED_PROP).value as? JSObjectLiteralExpression ?: return false
-      if (computedProps.findProperty(name) != null) return false
+    fun addClassicPropertyReference(kind: String, referenceName: String): Boolean {
+      val items = getOrCreateObjectLiteralProperty(literal, kind).value as? JSObjectLiteralExpression ?: return false
 
-      val newProperty = JSPsiElementFactory.createJSExpression("{ $name: function() {\n$contents} }", literal,
-                                                               JSObjectLiteralExpression::class.java).firstProperty!!
-      addProperty(newProperty, computedProps, false)
-      return true
-    }
-
-    override fun addComponentReference(referenceName: String): Boolean {
-      val components = getOrCreateObjectLiteralProperty(literal, COMPONENTS_PROP).value as? JSObjectLiteralExpression ?: return false
-
-      if (components.findProperty(referenceName) != null
-          || components.findProperty(StringUtil.decapitalize(referenceName)) != null) return false
+      if (items.findProperty(referenceName) != null
+          || (kind == COMPONENTS_PROP && items.findProperty(StringUtil.decapitalize(referenceName)) != null)) return false
 
       val newProperty = JSPsiElementFactory.createJSExpression("{ $referenceName }", literal,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
-      addProperty(newProperty, components, false)
+      addProperty(newProperty, items, false)
       return true
     }
 
