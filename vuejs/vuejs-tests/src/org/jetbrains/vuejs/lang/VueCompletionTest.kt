@@ -23,6 +23,7 @@ import com.intellij.webSymbols.*
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.VUE_CLASS_COMPONENT_MODULE
 
 class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/completion/"
@@ -97,6 +98,7 @@ import compUI from 'compUI.vue'
 </template>
 <script>
 import ToImport from "./toImport.vue";
+
 export default {
   components: {ToImport}
 }
@@ -122,6 +124,7 @@ export default {
 </template>
 <script>
 import ToImport from "./toImport";
+
 export default {
   components: {ToImport}
 }
@@ -228,20 +231,23 @@ export default {
 <ToImport<caret>></ToImport>
 </template>
 <script>
+import {defineComponent} from "vue";
 import ToImport from "./toImport.vue";
-export default {
+
+export default defineComponent({
   components: {ToImport}
-}
+})
 </script>
 """)
     }
   }
 
   fun testCompleteWithImportCreateScript() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByText("toImport.vue", """
 <script>
 export default {
-  name: 'toImport'
+  name: 'toBeImported'
 }
 </script>
 """)
@@ -253,22 +259,24 @@ export default {
 
     noAutoComplete {
       myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-be-imported")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
-<to-import
+<to-be-imported
 </template>
 <script>
-import ToImport from "./toImport.vue";
+import ToBeImported from "./toImport.vue";
+
 export default {
-  components: {ToImport}
+  components: {ToBeImported}
 }
 </script>""")
     }
   }
 
   fun testCompleteWithImportCreateScriptNoExport() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByText("toImport.vue", """
 """)
     myFixture.configureByText("CompleteWithImportCreateScript.vue", """
@@ -287,6 +295,7 @@ export default {
 </template>
 <script>
 import ToImport from "./toImport.vue";
+
 export default {
   components: {ToImport}
 }
@@ -981,6 +990,8 @@ $script""")
   }
 
   fun testComponentInsertion() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
+    createPackageJsonWithVueDependency(myFixture, """"$VUE_CLASS_COMPONENT_MODULE": "*"""")
     val data = listOf(
       Pair("""<template>
   <Sho<caret>
@@ -992,6 +1003,7 @@ $script""")
 import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
+
 @Component({
   components: {ShortComponent}
 })
@@ -1009,6 +1021,7 @@ export default class ComponentInsertion extends Vue {
 import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
+
 @Component({
   components: {ShortComponent}
 })
@@ -1029,6 +1042,7 @@ import Vue from "vue";
 import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
+
 @Component({
   components: {ShortComponent}
 })
@@ -1050,6 +1064,7 @@ import {Component} from "vue-class-component";
 import {Component} from "vue-class-component";
 import Vue from "vue";
 import ShortComponent from "./ShortComponent.vue";
+
 @Component({
   components: {ShortComponent}
 })
@@ -1717,6 +1732,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testImportEmptyObjectInitializerComponent() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByText("FooBar.vue", "<script>export default {}</script>")
     myFixture.configureByText("check.vue", "<template><<caret></template>")
     myFixture.completeBasic()
@@ -1724,6 +1740,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.checkResult("""<template><foo-bar</template>
 <script>
 import FooBar from "./FooBar.vue";
+
 export default {
   components: {FooBar}
 }
@@ -1731,6 +1748,7 @@ export default {
   }
 
   fun testImportFunctionPropertyObjectInitializerComponent() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByText("FooBar.vue", "<script>export default {data(){}}</script>")
     myFixture.configureByText("check.vue", "<template><<caret></template>")
     myFixture.completeBasic()
@@ -1738,6 +1756,7 @@ export default {
     myFixture.checkResult("""<template><foo-bar</template>
 <script>
 import FooBar from "./FooBar.vue";
+
 export default {
   components: {FooBar}
 }
@@ -1849,7 +1868,7 @@ export default {
 
   fun testTypedComponentsImportClassic() {
     myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
-    myFixture.configureByText("text.vue", "<template><Dial<caret></template>")
+    myFixture.configureByText("text.vue", "<template><Dial<caret></template>\n<script></script>")
     myFixture.completeBasic()
     myFixture.type('\n')
     myFixture.checkResultByFile("typedComponentsImportClassic.vue")
@@ -1857,7 +1876,7 @@ export default {
 
   fun testTypedComponentsImportScriptSetup() {
     myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
-    myFixture.configureByText("text.vue", "<template><Dial<caret></template>\n<script setup>\n</script>")
+    myFixture.configureByText("text.vue", "<template><Dial<caret></template>")
     myFixture.completeBasic()
     myFixture.type('\n')
     myFixture.checkResultByFile("typedComponentsImportScriptSetup.vue")

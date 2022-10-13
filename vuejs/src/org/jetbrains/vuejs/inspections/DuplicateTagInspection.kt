@@ -15,7 +15,7 @@ import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -29,9 +29,9 @@ class DuplicateTagInspection : LocalInspectionTool() {
         val scriptTag = HtmlUtil.isScriptTag(tag)
         if (!templateTag && !scriptTag) return
         val parent = tag.parent as? XmlDocument ?: return
-        val isScriptSetup = scriptTag && tag.getAttribute(SETUP_ATTRIBUTE_NAME) != null
+        val isScriptSetup = tag.isScriptSetupTag()
         if (parent.childrenOfType<XmlTag>().any {
-            it != tag && ((scriptTag && HtmlUtil.isScriptTag(it) && isScriptSetup == (it.getAttribute(SETUP_ATTRIBUTE_NAME) != null))
+            it != tag && ((scriptTag && HtmlUtil.isScriptTag(it) && isScriptSetup == it.isScriptSetupTag())
                           || (templateTag && it.name == TEMPLATE_TAG_NAME))
           }) {
           val tagName = XmlTagUtil.getStartTagNameElement(tag)

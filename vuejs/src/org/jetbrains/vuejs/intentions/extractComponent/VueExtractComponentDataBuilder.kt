@@ -30,11 +30,13 @@ import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
+import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.model.VueModelManager
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val containingFile = list[0].containingFile
@@ -231,8 +233,9 @@ export default {
     return members.joinToString("")
   }
 
-  fun modifyCurrentComponent(newComponentName: String, currentFile: PsiFile, newPsiFile: PsiFile, editor: Editor) {
-    VueInsertHandler.InsertHandlerWorker().insertComponentImport(currentFile, newComponentName, newPsiFile, editor)
+  fun modifyCurrentComponent(newComponentName: String, currentFile: PsiFile, newPsiFile: PsiFile) {
+    VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(currentFile))
+      ?.insertComponentImport(newComponentName, newPsiFile)
     optimizeUnusedComponentsAndImports(currentFile)
   }
 

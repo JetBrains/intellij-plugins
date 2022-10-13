@@ -51,6 +51,8 @@ import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
 
@@ -576,6 +578,15 @@ fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =
   findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME) {
     setup xor (it.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) == null)
   }
+
+@StubSafe
+@OptIn(ExperimentalContracts::class)
+fun XmlTag?.isScriptSetupTag(): Boolean {
+  contract {
+    returns(true) implies (this@isScriptSetupTag != null)
+  }
+  return this != null && name == SCRIPT_TAG_NAME && stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null
+}
 
 @StubSafe
 fun findAttribute(tag: XmlTag, attributeName: String): XmlAttribute? =

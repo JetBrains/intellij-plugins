@@ -15,16 +15,20 @@ class VueExtractComponentTest : BasePlatformTestCase() {
   fun testExtractSingleTag() = doExtractTest(
     """<template>
 <selection><p>Paragraph!</p></selection>
-</template>""",
+</template>
+<script>
+</script>""",
 
     """<template>
     <NewComponent/>
 </template>
 <script>
+import {defineComponent} from "vue";
 import NewComponent from "./NewComponent.vue";
-export default {
+
+export default defineComponent({
     components: {NewComponent}
-}
+})
 </script>""",
 
     """<template>
@@ -1042,11 +1046,8 @@ header {
 <style lang="stylus">
   @import './stylus/main'
 </style>
-<script>
+<script setup>
 import NewComponent from "./NewComponent.vue";
-export default {
-    components: {NewComponent}
-}
 </script>""",
 
     """<template>

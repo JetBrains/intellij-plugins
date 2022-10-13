@@ -131,7 +131,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
             CommandProcessor.getInstance().addAffectedFiles(myProject, virtualFile)
             newPsiFile = PsiManager.getInstance(containingFile.project).findFile(virtualFile)
 
-            data.modifyCurrentComponent(insertedName, containingFile, newPsiFile!!, myEditor)
+            data.modifyCurrentComponent(insertedName, containingFile, newPsiFile!!)
             reformatElement(myElementToRename)
           }
 

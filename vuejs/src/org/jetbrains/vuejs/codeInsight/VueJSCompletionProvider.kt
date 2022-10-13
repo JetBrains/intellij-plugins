@@ -40,15 +40,17 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
           val priority = lookupElement.priority.toInt()
           val proximity = lookupElement.explicitProximity
 
-          val maxLookupPriority = if (allowGlobalSymbols)
-            RELEVANT_SMARTNESS_PRIORITY
-          else
-            NO_RELEVANT_NO_SMARTNESS_PRIORITY
+          // Filter some keywords
+          if ((priority == NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
+               || priority == LOWEST_PRIORITY.priorityValue)
+              && FILTERED_NON_CONTEXT_KEYWORDS.contains(lookupElement.lookupString))
+            return@runRemainingContributors
 
-          if (priority < maxLookupPriority.priorityValue
-              || (priority == maxLookupPriority.priorityValue && proximity <= maxLookupPriority.proximityValue)
-              || (priority == NON_CONTEXT_KEYWORDS_PRIORITY.priorityValue
-                  && FILTERED_NON_CONTEXT_KEYWORDS.contains(lookupElement.lookupString)))
+          val maxLookupPriority = NO_RELEVANT_NO_SMARTNESS_PRIORITY
+
+          if (!allowGlobalSymbols
+              && (priority < maxLookupPriority.priorityValue
+                  || (priority == maxLookupPriority.priorityValue && proximity <= maxLookupPriority.proximityValue)))
             return@runRemainingContributors
         }
         result.withRelevanceSorter(completionResult.sorter)
