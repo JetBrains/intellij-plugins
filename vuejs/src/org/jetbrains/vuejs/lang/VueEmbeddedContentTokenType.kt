@@ -2,21 +2,22 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.embedding.EmbeddingElementType
-import com.intellij.lang.ASTNode
-import com.intellij.lang.Language
-import com.intellij.lang.PsiBuilder
-import com.intellij.lang.PsiBuilderFactory
+import com.intellij.lang.*
+import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LazyParseableElement
 import com.intellij.psi.tree.ICustomParsingType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementTypeBase
+import com.intellij.psi.tree.ILightLazyParseableElementType
 import com.intellij.util.CharTable
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.annotations.NonNls
 
 abstract class VueEmbeddedContentTokenType protected constructor(@NonNls debugName: String, language: Language?, register: Boolean)
-  : IElementType(debugName, language, register), EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase {
+  : IElementType(debugName, language, register), EmbeddingElementType, ICustomParsingType,
+    ILazyParseableElementTypeBase, ILightLazyParseableElementType {
 
   override fun parse(text: CharSequence, table: CharTable): ASTNode {
     return LazyParseableElement(this, text)
@@ -25,6 +26,15 @@ abstract class VueEmbeddedContentTokenType protected constructor(@NonNls debugNa
   override fun parseContents(chameleon: ASTNode): ASTNode {
     val builder = doParseContents(chameleon)
     return builder.treeBuilt.firstChildNode
+  }
+
+  override fun parseContents(chameleon: LighterLazyParseableNode): FlyweightCapableTreeStructure<LighterASTNode> {
+    val file = chameleon.containingFile ?: error("Let's add LighterLazyParseableNode#getProject() method")
+    val project = file.project
+    val lexer = createLexer()
+    val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, language, chameleon.text)
+    parse(builder)
+    return builder.lightTree
   }
 
   private fun doParseContents(chameleon: ASTNode): PsiBuilder {
