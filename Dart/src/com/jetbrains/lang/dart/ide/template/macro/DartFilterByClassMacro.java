@@ -1,6 +1,9 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.Expression;
+import com.intellij.codeInsight.template.ExpressionContext;
+import com.intellij.codeInsight.template.PsiElementResult;
+import com.intellij.codeInsight.template.Result;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -13,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-public abstract class DartFilterByClassMacro extends Macro {
+public abstract class DartFilterByClassMacro extends DartMacroBase {
   @Override
   public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     final PsiElement at = context.getPsiElementAtStartOffset();

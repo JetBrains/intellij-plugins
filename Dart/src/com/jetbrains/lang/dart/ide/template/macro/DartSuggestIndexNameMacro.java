@@ -1,6 +1,9 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.Expression;
+import com.intellij.codeInsight.template.ExpressionContext;
+import com.intellij.codeInsight.template.Result;
+import com.intellij.codeInsight.template.TextResult;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.lang.dart.util.DartRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +13,7 @@ import java.util.Set;
 /**
  * @author Fedor.Korotkov
  */
-public class DartSuggestIndexNameMacro extends Macro {
+public class DartSuggestIndexNameMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartSuggestIndexName";
