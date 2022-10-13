@@ -65,6 +65,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     6196, // '{0}' is declared but never used.
     6198, // All destructured elements are unused.
     6199, // All variables are unused.
+    1184, // Modifiers cannot appear here. // Actually covers both type and value declarations, TODO reimplement only for value declarations as an inspection
   )
 
   private fun skipScriptSetupError(error: JSLanguageServiceAnnotationResult): Boolean {

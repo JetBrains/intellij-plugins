@@ -6,6 +6,8 @@ class C {
   used = 1
 }
 
+export interface Demo {}
+
 const user = {
   id: 42,
   isVerified: true
