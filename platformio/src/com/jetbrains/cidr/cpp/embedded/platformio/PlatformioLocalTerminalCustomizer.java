@@ -31,6 +31,6 @@ public class PlatformioLocalTerminalCustomizer extends LocalTerminalCustomizer {
         }
       }
     }
-    return super.customizeCommandAndEnvironment(project, command, envs);
+    return super.customizeCommandAndEnvironment(project, workingDirectory, command, envs);
   }
 }
