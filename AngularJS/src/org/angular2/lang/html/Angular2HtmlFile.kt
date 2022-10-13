@@ -12,6 +12,6 @@ class Angular2HtmlFile(viewProvider: FileViewProvider) : HtmlFileImpl(viewProvid
 
   override fun subtreeChanged() {
     super.subtreeChanged()
-    JSControlFlowService.getService(project).resetFlow(this)
+    JSControlFlowService.getService(project).resetControlFlow(this)
   }
 }

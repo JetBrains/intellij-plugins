@@ -16,6 +16,6 @@ class VueTemplateTagImpl : HtmlStubBasedTagImpl, JSExecutionScope {
 
   override fun subtreeChanged() {
     super.subtreeChanged()
-    JSControlFlowService.getService(project).resetFlow(this)
+    JSControlFlowService.getService(project).resetControlFlow(this)
   }
 }

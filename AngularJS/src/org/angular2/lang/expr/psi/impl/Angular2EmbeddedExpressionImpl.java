@@ -42,7 +42,7 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl
   @Override
   public void subtreeChanged() {
     super.subtreeChanged();
-    JSControlFlowService.getService(getProject()).resetFlow(this);
+    JSControlFlowService.getService(getProject()).resetControlFlow(this);
   }
 
   @Override

@@ -27,7 +27,7 @@ public class XmlASTWrapperPsiElement extends ASTWrapperPsiElement implements Xml
   @Override
   public void subtreeChanged() {
     super.subtreeChanged();
-    JSControlFlowService.getService(getProject()).resetFlow(this);
+    JSControlFlowService.getService(getProject()).resetControlFlow(this);
   }
 
   @Override
