@@ -14,10 +14,10 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.MutableProperty
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.text.SemVer
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
@@ -43,7 +43,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
       row(PrettierBundle.message("prettier.package.label")) {
         cell(packageField)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .bind({ it.selectedRef }, { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
                 MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
           )
@@ -52,7 +52,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       row(PrettierBundle.message("run.for.files.label")) {
         runForFilesField = textField()
           .comment(PrettierBundle.message("files.pattern.comment"))
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .bind({ textField -> textField.text.trim() },
                 JTextComponent::setText,
                 MutableProperty({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it }))

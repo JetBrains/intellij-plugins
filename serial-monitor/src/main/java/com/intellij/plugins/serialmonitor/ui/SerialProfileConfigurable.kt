@@ -11,11 +11,7 @@ import com.intellij.plugins.serialmonitor.SerialPortProfile
 import com.intellij.plugins.serialmonitor.SerialProfileService
 import com.intellij.plugins.serialmonitor.service.JsscSerialService
 import com.intellij.ui.ComboboxSpeedSearch
-import com.intellij.ui.dsl.builder.RowLayout
-import com.intellij.ui.dsl.builder.bindItem
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.builder.toNullableProperty
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.UIUtil
 import java.nio.charset.Charset
@@ -101,7 +97,7 @@ class SerialProfileConfigurable(var name: @NlsContexts.ConfigurableName String,
               .label(SerialMonitorBundle.message("label.port"))
               .enabled(portNameSelectable)
               .applyIfEnabled()
-              .horizontalAlign(HorizontalAlign.FILL)
+              .align(AlignX.FILL)
           }.layout(RowLayout.PARENT_GRID)
         }
         row {
