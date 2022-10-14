@@ -2025,6 +2025,13 @@ export default {
     myFixture.checkResultByFile(getTestName(true) + "/HelloWorldClassic.after.vue")
   }
 
+  fun testImportComponentFromTextContext() {
+    myFixture.copyDirectoryToProject(getTestName(false), ".")
+    myFixture.configureFromTempProjectFile("Check.vue")
+    myFixture.completeBasic()
+    myFixture.checkResultByFile("${getTestName(false)}/Check.after.vue")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

@@ -49,7 +49,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val location = PsiTreeUtil.findElementOfClassAtOffset(context.file, context.startOffset, PsiElement::class.java, false)
       val componentSourceEdit = location?.let { VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(it)) }
                                 ?: return@runWithoutCancellingSyncTagsEditing
-      componentSourceEdit.insertComponentImport(item.lookupString, elementToImport)
+      componentSourceEdit.insertComponentImport(item.lookupString.removePrefix("<"), elementToImport)
       componentSourceEdit.reformatChanges()
       PostprocessReformattingAspect.getInstance(context.project).doPostponedFormatting()
     }
