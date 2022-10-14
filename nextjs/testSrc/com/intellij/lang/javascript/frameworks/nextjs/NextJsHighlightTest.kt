@@ -26,4 +26,14 @@ class NextJsHighlightTest : JSDaemonAnalyzerLightTestCase() {
                                "}")
     myFixture.testHighlighting("pages/smth/component1.js")
   }
+
+  fun testUnusedStaticVariable() {
+    myFixture.addFileToProject("pages/smth/component1.js",
+                               "export const getStaticProps = (context) => {\n" +
+                               "  return {\n" +
+                               "    props: {}, // will be passed to the page component as props\n" +
+                               "  }\n" +
+                               "}")
+    myFixture.testHighlighting("pages/smth/component1.js")
+  }
 }
