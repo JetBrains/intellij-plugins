@@ -1867,7 +1867,7 @@ export default {
   }
 
   fun testTypedComponentsImportClassic() {
-    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0, VueTestModule.HEADLESS_UI_1_4_1)
     myFixture.configureByText("text.vue", "<template><Dial<caret></template>\n<script></script>")
     myFixture.completeBasic()
     myFixture.type('\n')

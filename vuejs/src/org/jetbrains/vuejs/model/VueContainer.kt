@@ -3,10 +3,8 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
-import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
-import org.jetbrains.vuejs.context.VUE_3_0_0
-import org.jetbrains.vuejs.context.detectVueVersion
+import org.jetbrains.vuejs.context.isVue3
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -32,14 +30,11 @@ data class VueModelDirectiveProperties(
     private val DEFAULT_V2 = VueModelDirectiveProperties("value", "input")
     private val DEFAULT_V3 = VueModelDirectiveProperties("modelValue", "update:modelValue")
 
-    fun getDefault(version: SemVer?): VueModelDirectiveProperties =
-      if (version == null || version >= VUE_3_0_0)
+    fun getDefault(context: PsiElement): VueModelDirectiveProperties =
+      if (isVue3(context))
         DEFAULT_V3
       else
         DEFAULT_V2
-
-    fun getDefault(context: PsiElement): VueModelDirectiveProperties =
-      getDefault(detectVueVersion(context))
   }
 }
 

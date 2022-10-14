@@ -5,10 +5,7 @@ import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.contextOfType
-import com.intellij.webSymbols.context.WebSymbolsContext
-import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.libraries.KIND_VUE_STORE
-import org.jetbrains.vuejs.libraries.VUE_STORE_VUEX
+import org.jetbrains.vuejs.context.hasVuex
 
 object VuexUtils {
 
@@ -49,7 +46,7 @@ object VuexUtils {
   val VUEX_DEC_MAPPERS = setOf(GETTER_DEC, STATE_DEC, ACTION_DEC, MUTATION_DEC)
 
   fun isVuexContext(element: PsiElement): Boolean =
-    WebSymbolsContext.get(KIND_VUE_STORE, element) == VUE_STORE_VUEX
+    hasVuex(element)
 
   fun isActionContextParameter(parameter: PsiElement?): Boolean {
     return (parameter as? JSParameter)?.name == CONTEXT

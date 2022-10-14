@@ -15,9 +15,13 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.indexing.FileBasedIndexImpl
 import com.intellij.util.text.SemVer
+import com.intellij.webSymbols.context.WebSymbolsContext
 import org.jetbrains.vuejs.codeInsight.withoutPreRelease
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.KIND_VUE_STORE
+import org.jetbrains.vuejs.libraries.VUE_STORE_PINIA
+import org.jetbrains.vuejs.libraries.VUE_STORE_VUEX
 import org.jetbrains.vuejs.web.VueFramework
 
 
@@ -36,9 +40,20 @@ fun hasVueFiles(project: Project): Boolean =
     )
   }
 
-val VUE_3_0_0 = SemVer("3.0.0", 3, 0, 0)
+fun hasPinia(context: PsiElement) =
+  WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_PINIA
 
-fun detectVueVersion(context: PsiElement): SemVer? {
+fun hasVuex(context: PsiElement) =
+  WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_VUEX
+
+fun isVue3(context: PsiElement): Boolean =
+  isVueContext(context) && detectVueVersion(context).let {
+    it == null || it >= VUE_3_0_0
+  }
+
+private val VUE_3_0_0 = SemVer("3.0.0", 3, 0, 0)
+
+private fun detectVueVersion(context: PsiElement): SemVer? {
   val vf = context.containingFile.originalFile.virtualFile ?: return null
   var fromRange: SemVer? = null
   var exact: SemVer? = null
@@ -49,7 +64,7 @@ fun detectVueVersion(context: PsiElement): SemVer? {
       ?.parseVersion()
     exact = pkgJson.parent.findFileByRelativePath(NodeModuleUtil.NODE_MODULES + "/" + VUE_MODULE + "/" + PackageJsonUtil.FILE_NAME)
       ?.let { PackageJsonData.getOrCreate(it).version }
-    fromRange != null&& exact != null
+    fromRange != null && exact != null
   }
   return (exact ?: fromRange)?.withoutPreRelease()
 }

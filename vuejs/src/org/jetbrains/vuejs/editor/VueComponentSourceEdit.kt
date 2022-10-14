@@ -33,6 +33,7 @@ import com.intellij.webSymbols.registry.WebSymbolsRegistryManager
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueEntitiesContainer
@@ -108,12 +109,6 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
   private val file: PsiFile? get() = component.dereference()?.source?.containingFile
   private val formatFixers = mutableListOf<FormatFixer>()
-  private val hasScriptSetup get() = file
-    ?.let { WebSymbolsRegistryManager.get(it, false)}
-    ?.takeIf { it.framework == VueFramework.ID }
-    ?.runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME,
-                               KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME))
-    ?.firstOrNull() != null
 
   private fun createScriptTag(file: XmlFile): XmlTag {
     val dummyScript = createEmptyScript(file)
@@ -122,6 +117,13 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
   private fun createEmptyScript(context: XmlFile): XmlTag {
     val project = context.project
+
+    val hasScriptSetup = file
+      ?.let { WebSymbolsRegistryManager.get(it, false) }
+      ?.takeIf { it.framework == VueFramework.ID }
+      ?.runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME,
+                                 KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME))
+      ?.firstOrNull() != null
 
     val hasTypeScript = TypeScriptService.getForFile(context.project, context.virtualFile) != null
     val langText = if (hasTypeScript) " lang=\"ts\"" else ""
@@ -154,7 +156,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val fileName = FileUtil.getNameWithoutExtension(scriptScope.containingFile.name)
 
     val isTs = DialectDetector.isTypeScript(scriptScope)
-    val isVue3 = hasScriptSetup
+    val isVue3 = isVue3(scriptScope)
 
     @Suppress("UnnecessaryVariable")
     val useDefineComponent = isVue3
