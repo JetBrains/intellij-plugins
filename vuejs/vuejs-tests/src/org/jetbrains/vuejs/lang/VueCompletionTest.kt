@@ -2026,10 +2026,10 @@ export default {
   }
 
   fun testImportComponentFromTextContext() {
-    myFixture.copyDirectoryToProject(getTestName(false), ".")
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("Check.vue")
     myFixture.completeBasic()
-    myFixture.checkResultByFile("${getTestName(false)}/Check.after.vue")
+    myFixture.checkResultByFile("${getTestName(true)}/Check.after.vue")
   }
 
   fun testImportNoScriptOrScriptSetupComponentInCode() {

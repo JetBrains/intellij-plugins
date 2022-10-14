@@ -44,6 +44,9 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
@@ -56,6 +59,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import org.jetbrains.vuejs.types.asCompleteType
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -472,3 +476,11 @@ fun SemVer.withoutPreRelease() =
   if (this.preRelease != null)
     SemVer("${this.major}.${this.minor}.${this.patch}", this.major, this.minor, this.patch)
   else this
+
+fun WebSymbol.extractComponentSymbol(): WebSymbol? =
+  this.takeIf { it.namespace == NAMESPACE_HTML }
+    ?.unwrapMatchedSymbols()
+    ?.toList()
+    ?.takeIf { it.size == 2 && it[0].pattern != null }
+    ?.get(1)
+    ?.takeIf { it.kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS }

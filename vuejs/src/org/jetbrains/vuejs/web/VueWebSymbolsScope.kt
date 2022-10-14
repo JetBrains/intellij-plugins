@@ -1,13 +1,19 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
+import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension
+import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension.Companion.hasOnlyStandardHtmlSymbols
+import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension.Companion.hasOnlyStandardHtmlSymbolsOrExtensions
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.registry.WebSymbolsScope
@@ -35,14 +41,22 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
                      strict: Boolean,
                      namespace: SymbolNamespace?,
                      kind: SymbolKind,
-                     name: String?): List<WebSymbol> =
-    matches.filter { symbol ->
-      if (namespace == WebSymbol.NAMESPACE_HTML
-          && kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS)
-        symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
-        symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
-      else true
+                     name: String?): List<WebSymbol> {
+    if (namespace != WebSymbol.NAMESPACE_HTML) return matches
+
+    if (kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS) {
+      if (!strict) return matches
     }
+    else if (kind == WebSymbol.KIND_HTML_ELEMENTS) {
+      val hasStandardHtmlSymbols = matches.any { it is WebSymbolsHtmlRegistryExtension.StandardHtmlSymbol }
+      if (!hasStandardHtmlSymbols) return matches
+    }
+
+    return matches.filter { symbol ->
+      symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
+      symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
+    }
+  }
 
   override fun apply(item: WebSymbolCodeCompletionItem,
                      namespace: SymbolNamespace?,

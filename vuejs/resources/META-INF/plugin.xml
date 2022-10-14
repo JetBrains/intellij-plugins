@@ -129,6 +129,10 @@
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"
                      key="vue.inspection.display.name.duplicate.tag" bundle="messages.VueBundle"/>
+    <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueMissingComponentImportInspection"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="org.jetbrains.vuejs.inspections.VueMissingComponentImportInspection"
+                     key="vue.inspection.display.name.missing.component.import" bundle="messages.VueBundle"/>
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueUnrecognizedSlot"
                      enabledByDefault="true" level="WEAK WARNING"
@@ -171,7 +175,13 @@
     </intentionAction>
     <intentionAction>
       <language>Vue</language>
-      <className>org.jetbrains.vuejs.intentions.expandVModel.VueExpandVModelIntention</className>
+      <className>org.jetbrains.vuejs.intentions.VueExpandVModelIntention</className>
+      <!--suppress PluginXmlI18n -->
+      <category>VueJS</category>
+    </intentionAction>
+    <intentionAction>
+      <language>Vue</language>
+      <className>org.jetbrains.vuejs.intentions.VueImportComponentIntention</className>
       <!--suppress PluginXmlI18n -->
       <category>VueJS</category>
     </intentionAction>

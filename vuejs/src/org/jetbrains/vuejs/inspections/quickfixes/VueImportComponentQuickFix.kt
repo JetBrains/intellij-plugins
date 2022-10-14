@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.inspections.quickfixes
 
+import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.openapi.project.Project
@@ -9,15 +10,20 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.WebSymbol
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
 class VueImportComponentQuickFix(element: PsiElement,
                                  private val importName: String,
                                  elementToImport: PsiElement) : LocalQuickFixOnPsiElement(element) {
 
+  @SafeFieldForPreview
   private val elementToImportPtr = elementToImport.createSmartPointer()
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
@@ -42,4 +48,5 @@ class VueImportComponentQuickFix(element: PsiElement,
     componentSourceEdit.insertComponentImport(importName, adjustedElementToImport)
     componentSourceEdit.reformatChanges()
   }
+
 }

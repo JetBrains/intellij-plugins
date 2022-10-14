@@ -1,6 +1,6 @@
 <template>
   <<warning descr="Element CompForClass doesn't have required attribute prop-from-a2">CompForClass</warning> />
-  <<warning descr="Unknown html tag OtherCompForClass">OtherCompForClass</warning>/>
+  <<warning descr="Component OtherCompForClass is not imported">OtherCompForClass</warning>/>
 </template>
 
 <script>

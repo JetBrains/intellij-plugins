@@ -1,4 +1,4 @@
-package org.jetbrains.vuejs.intentions.expandVModel
+package org.jetbrains.vuejs.intentions
 
 import com.intellij.codeInsight.intention.FileModifier.SafeFieldForPreview
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor

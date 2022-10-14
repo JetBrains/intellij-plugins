@@ -1,0 +1,6 @@
+<template>
+   <my-global-component/>
+</template>
+<script setup>
+   import MyGlobalComponent from "@/src/MyGlobalComponent.vue"
+</script>

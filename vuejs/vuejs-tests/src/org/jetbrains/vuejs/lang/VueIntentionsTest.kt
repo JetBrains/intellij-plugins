@@ -120,6 +120,38 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.ts")
   }
 
+  fun testImportGlobalComponent() {
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2, VueTestModule.PRIMEVUE_3_8_2)
+    myFixture.configureFromTempProjectFile("test.vue")
+
+    for (signature in listOf("<F<caret>oo", "<A<caret>vatar")) {
+      myFixture.moveToOffsetBySignature(signature)
+      val intention = try {
+        myFixture.findSingleIntention("Import component locally")
+      } catch (e: AssertionError) {
+        throw AssertionError("Failed for $signature: ${e.message}", e)
+      }
+      WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+    }
+
+    myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
+  }
+
+  fun testAddMissingComponentImport() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+
+    myFixture.configureFromTempProjectFile("test.vue")
+    myFixture.moveToOffsetBySignature("to-be-<caret>imported")
+
+    val intention = myFixture.findSingleIntention("Import 'ToBeImported' component")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+
+    myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
+  }
+
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
     if (intention == null) {
