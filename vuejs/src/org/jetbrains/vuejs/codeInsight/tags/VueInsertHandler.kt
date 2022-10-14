@@ -6,13 +6,7 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
-import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
-import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ImportExportType
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.vfs.VirtualFile
@@ -20,12 +14,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
-import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.editor.VueComponentSourceEdit
-import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.inspections.quickfixes.VueImportComponentQuickFix
 
 class VueInsertHandler : XmlTagInsertHandler() {
 
@@ -41,16 +32,11 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()
-    val elementToImport = if (importedFile is XmlFile
-                              || ES6PsiUtil.findDefaultExports(importedFile).any { PsiTreeUtil.isContextAncestor(it, element, false) })
-      importedFile
-    else element
+
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       val location = PsiTreeUtil.findElementOfClassAtOffset(context.file, context.startOffset, PsiElement::class.java, false)
-      val componentSourceEdit = location?.let { VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(it)) }
-                                ?: return@runWithoutCancellingSyncTagsEditing
-      componentSourceEdit.insertComponentImport(item.lookupString.removePrefix("<"), elementToImport)
-      componentSourceEdit.reformatChanges()
+                     ?: return@runWithoutCancellingSyncTagsEditing
+      VueImportComponentQuickFix(location, item.lookupString.removePrefix("<"), element).applyFix()
       PostprocessReformattingAspect.getInstance(context.project).doPostponedFormatting()
     }
   }

@@ -353,6 +353,7 @@
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
     <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueScriptCandidatesProvider$Companion"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.VueComponentImportCandidatesProvider$Companion"/>
   </extensions>
 
   <extensions defaultExtensionNs="intellij.webpack">

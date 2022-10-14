@@ -2032,6 +2032,35 @@ export default {
     myFixture.checkResultByFile("${getTestName(false)}/Check.after.vue")
   }
 
+  fun testImportNoScriptOrScriptSetupComponentInCode() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureByFile("test.ts")
+
+    myFixture.moveToOffsetBySignature("foo: No<caret>")
+    myFixture.completeBasic()
+    myFixture.type("ScriptC\n")
+
+    myFixture.moveToOffsetBySignature("bar: Sc<caret>")
+    myFixture.completeBasic()
+    myFixture.type("riptSet\n")
+
+    myFixture.checkResultByFile("${getTestName(true)}/test.after.ts")
+
+    myFixture.configureByFile("imports.ts")
+
+    myFixture.moveToOffsetBySignature("import No<caret>")
+    myFixture.completeBasic()
+    myFixture.type("ScriptC\n")
+
+    myFixture.moveToOffsetBySignature("import Sc<caret>")
+    myFixture.completeBasic()
+    myFixture.type("riptSet\n")
+
+    myFixture.checkResultByFile("${getTestName(true)}/imports.after.ts")
+
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

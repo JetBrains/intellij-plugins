@@ -135,7 +135,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
-  override fun findModule(result: PsiElement): PsiElement? = findModule(result, true) ?: findModule(result, false)
+  override fun findModule(result: PsiElement): PsiElement? =
+    findModule(result, true) ?: findModule(result, false)
 
   override fun getMarkers(elementToIndex: PsiElement): List<String> =
     if (elementToIndex is TypeScriptVariable

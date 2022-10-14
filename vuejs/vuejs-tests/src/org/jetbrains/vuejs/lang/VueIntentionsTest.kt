@@ -106,6 +106,20 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/HelloWorldClassic.after.vue")
   }
 
+  fun testImportNoScriptOrScriptSetupComponentInCode() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+
+    myFixture.configureFromTempProjectFile("test.ts")
+    for (signature in listOf("NoScript<caret>Component", "Script<caret>SetupComponent")) {
+      myFixture.moveToOffsetBySignature(signature)
+      val intention = myFixture.findSingleIntention("Add import statement")
+      WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+    }
+    myFixture.checkResultByFile("${getTestName(true)}/test.after.ts")
+  }
+
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
     if (intention == null) {
