@@ -314,4 +314,10 @@ public class MeteorReferenceContributor implements JSModuleReferenceContributor 
 
     return Collections.emptyList();
   }
+
+  @Override
+  public @NotNull Collection<?> getDependencies(@NotNull String unquoted, @NotNull PsiElement host) {
+    //should be enough ProjectRootManager.getInstance(host.getProject()) from getAllDependencies
+    return JSModuleReferenceContributor.super.getDependencies(unquoted, host);
+  }
 }
