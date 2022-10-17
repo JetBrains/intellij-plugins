@@ -1,5 +1,5 @@
 plugins {
-  id 'org.jetbrains.intellij' version '1.1.2'
+  id 'org.jetbrains.intellij' version '1.9.0'
   id 'java'
 }
 
@@ -28,15 +28,17 @@ def ideaPath = properties.getProperty('idea.path')
 
 intellij {
   if (ideaPath == null) {
-    version = '2021.2'
+    version = '223-EAP-SNAPSHOT'
   } else {
     localPath = ideaPath
   }
 
   plugins = ['java', 'properties', 'maven', 'gradle']
 }
+
 patchPluginXml {
 }
+
 test {
   useJUnitPlatform()
 }
