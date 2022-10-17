@@ -1,0 +1,61 @@
+plugins {
+  id 'org.jetbrains.intellij' version '1.9.0'
+  id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+  id 'java'
+}
+
+group 'org.jetbrains'
+version '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+}
+
+def properties = new Properties()
+def file = rootProject.file('local.properties')
+
+if (file.exists()) {
+  properties.load(file.newDataInputStream())
+}
+
+def ideaPath = properties.getProperty('idea.path')
+
+intellij {
+  type = 'IU'
+
+  if (ideaPath == null) {
+    version = '223-EAP-SNAPSHOT'
+  } else {
+    localPath = ideaPath
+  }
+
+  plugins = ['java']
+}
+
+patchPluginXml {
+}
+
+test {
+  useJUnitPlatform()
+}
+
+sourceSets {
+  main {
+    java.srcDirs = ['src', 'gen']
+    resources.srcDirs = ['resources']
+  }
+  test {
+    java.srcDirs = ['tests/src']
+    resources.srcDirs = []
+  }
+}
+
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of('17'))
+  }
+}
