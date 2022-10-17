@@ -1,10 +1,3 @@
-<!--
-Expected Component Model:
-Prop(name=prop1, required=true, presentableType=number)
-Prop(name=prop2, required=false, presentableType=number)
-Prop(name=prop3, required=false, presentableType=number | undefined)
-Prop(name=prop4, required=false, presentableType=number | undefined)
--->
 <script setup lang="ts">
 const {
   prop2 = 1,

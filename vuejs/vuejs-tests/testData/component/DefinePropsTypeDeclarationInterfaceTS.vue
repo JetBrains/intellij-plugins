@@ -1,9 +1,5 @@
-<!--
-Expected Component Model:
-Prop(name=optional, required=false, presentableType=string | undefined)
-Prop(name=required, required=true, presentableType=string)
--->
 <script setup lang="ts">
+// TODO Props should not be recognized as a component
 interface Props {
   optional?: string,
   required: string,

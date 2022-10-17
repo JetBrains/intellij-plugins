@@ -1,0 +1,20 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefinePropsTypeDeclarationWithAssignmentTS: <recursive value of class VueSourceComponent>,
+ },
+ props: [
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "optional",
+   jsType: "string | undefined",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "required",
+   jsType: "string",
+   required: true,
+  },
+ ],
+}

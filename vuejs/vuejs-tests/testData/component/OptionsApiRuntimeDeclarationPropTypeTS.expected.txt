@@ -1,0 +1,12 @@
+{
+ class: "VueSourceComponent",
+ defaultName: "TestComponent",
+ props: [
+  {
+   class: "VueSourceInputProperty",
+   name: "book",
+   jsType: "Book",
+   required: true,
+  },
+ ],
+}

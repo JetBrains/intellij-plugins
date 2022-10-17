@@ -1,0 +1,30 @@
+{
+ class: "VueSourceComponent",
+ defaultName: "TestComponent",
+ props: [
+  {
+   class: "VueSourceInputProperty",
+   name: "optional",
+   jsType: "string",
+   required: false,
+  },
+  {
+   class: "VueSourceInputProperty",
+   name: "optionalUnion",
+   jsType: "string | number",
+   required: false,
+  },
+  {
+   class: "VueSourceInputProperty",
+   name: "required",
+   jsType: "string",
+   required: true,
+  },
+  {
+   class: "VueSourceInputProperty",
+   name: "requiredUnion",
+   jsType: "string | number",
+   required: true,
+  },
+ ],
+}

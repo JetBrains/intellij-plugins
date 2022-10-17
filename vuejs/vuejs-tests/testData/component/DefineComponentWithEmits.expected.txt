@@ -1,0 +1,10 @@
+{
+ class: "VueSourceComponent",
+ defaultName: "TestComponent",
+ emits: [
+  {
+   class: "VueSourceEmitDefinition",
+   name: "test-event",
+  },
+ ],
+}

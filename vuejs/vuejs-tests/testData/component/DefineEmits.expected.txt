@@ -1,0 +1,12 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefineEmits: <recursive value of class VueSourceComponent>,
+ },
+ emits: [
+  {
+   class: "VueScriptSetupLiteralBasedEvent",
+   name: "test-event",
+  },
+ ],
+}

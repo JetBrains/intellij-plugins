@@ -1,7 +1,3 @@
-<!--
-Expected Component Model:
-Prop(name=book, required=true, presentableType=Book)
--->
 <script lang="ts">
 import { PropType } from 'vue'
 

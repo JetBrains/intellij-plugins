@@ -1,0 +1,36 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefinePropsTypeDeclarationInterfaceTS: <recursive value of class VueSourceComponent>,
+  Props: {
+   class: "VueLocallyDefinedRegularComponent",
+   defaultName: "Props",
+   data: [
+    {
+     class: "VueDecoratedDataProperty",
+     name: "optional",
+     jsType: "string",
+    },
+    {
+     class: "VueDecoratedDataProperty",
+     name: "required",
+     jsType: "string",
+    },
+   ],
+  },
+ },
+ props: [
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "optional",
+   jsType: "string | undefined",
+   required: false,
+  },
+  {
+   class: "VueScriptSetupInputProperty",
+   name: "required",
+   jsType: "string",
+   required: true,
+  },
+ ],
+}

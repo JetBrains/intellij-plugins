@@ -1,7 +1,3 @@
-<!--
-Expected Component Model:
-Prop(name=optional, required=false, presentableType=Struct)
--->
 <script>
 export class Struct {
   a = 1;

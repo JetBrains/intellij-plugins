@@ -1,7 +1,3 @@
-<!--
-Expected Component Model:
-Prop(name=prop, required=true, presentableType=number | undefined)
--->
 <script setup lang="ts">
 const defaults = {
   prop: 1,

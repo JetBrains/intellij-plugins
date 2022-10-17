@@ -1,0 +1,18 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefinePropsRuntimeDeclarationArrayTS: <recursive value of class VueSourceComponent>,
+ },
+ props: [
+  {
+   class: "VueSourceInputProperty",
+   name: "optional",
+   required: false,
+  },
+  {
+   class: "VueSourceInputProperty",
+   name: "required",
+   required: false,
+  },
+ ],
+}

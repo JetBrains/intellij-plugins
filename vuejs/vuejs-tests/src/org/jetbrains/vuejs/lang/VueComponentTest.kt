@@ -7,16 +7,15 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
-import com.intellij.psi.util.descendantsOfType
-import com.intellij.psi.xml.XmlComment
-import com.intellij.rt.execution.junit.FileComparisonFailure
-import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.source.VueSourceComponent
+import com.intellij.webSymbols.DebugOutputPrinter
+import com.intellij.webSymbols.checkTextByFile
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.model.*
 
 /**
  * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
@@ -61,153 +60,92 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testOptionsApiRuntimeDeclarationArrayJS() = doTest()
 
-  fun testDefinePropsRuntimeDeclarationTS() = doTest()
+  fun testDefinePropsRuntimeDeclarationTS() = doTest(true)
 
-  fun testDefinePropsRuntimeDeclarationWithAssignmentTS() = doTest()
+  fun testDefinePropsRuntimeDeclarationWithAssignmentTS() = doTest(true)
 
   fun testDefinePropsRuntimeDeclarationArrayTS() = doTest()
 
-  fun testDefinePropsTypeDeclarationTS() = doTest()
+  fun testDefinePropsTypeDeclarationTS() = doTest(true)
 
-  fun testDefinePropsTypeDeclarationWithAssignmentTS() = doTest()
+  fun testDefinePropsTypeDeclarationWithAssignmentTS() = doTest(true)
 
-  fun testDefinePropsTypeDeclarationInterfaceTS() = doTest()
+  fun testDefinePropsTypeDeclarationInterfaceTS() = doTest(true)
 
-  fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest()
+  fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest(true)
 
-  fun testWithDefaultsTypeDeclarationTS() = doTest()
+  fun testWithDefaultsTypeDeclarationTS() = doTest(true)
 
-  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doTest()
+  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doTest(true)
 
   fun testWithDefaultsTypeDeclarationPartialTS() = doTest()
 
-  fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest()
+  fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest(true)
 
-  fun testPropsDestructureTypeDeclarationTS() = doTest()
+  fun testPropsDestructureTypeDeclarationTS() = doTest(true)
 
   fun testPropsDestructureRuntimeDeclarationJS() = doTest()
 
   fun testBothScriptsJS() = doTest()
 
+  fun testDefineEmits() = doTest()
+
+  fun testDefineComponentWithEmits() = doTest()
+
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
    */
-  private fun doTest(addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_2_2)) {
+  private fun doTest(strictNullChecksDiffer: Boolean = false, addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_2_2)) {
     var file = configureTestProject(addNodeModules) as PsiFileImpl
 
-    val comment = file.descendantsOfType<XmlComment>().firstOrNull()
-                  ?: throw AssertionError("HTML Comment with the expected model is missing.\n" +
-                                          "Add `<!-- -->` to the beginning of the file if you want the test framework to fill it for you.")
-    val expectedCommentContent = getExpectedText(comment)
     val textWithMarkers = file.text
 
     // first, check the component model with TSConfig(strictNullChecks=false)
     TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
-    file = doTestInner(file, expectedCommentContent, false)
+    file = doTestInner(file, false)
 
     // reset file contents
     runWriteAction {
       PsiDocumentManager.getInstance(project).getDocument(file)!!.setText(textWithMarkers)
     }
 
-    // check another time, with TSConfig(strictNullChecks=true), to make sure that the result does not change
+    // check another time, with TSConfig(strictNullChecks=true)
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
-    file = doTestInner(file, expectedCommentContent, true)
+    PsiManager.getInstance(project).dropPsiCaches()
+    file = doTestInner(file, strictNullChecksDiffer)
   }
 
   /**
    * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
    */
-  private fun doTestInner(_file: PsiFileImpl, expectedCommentContent: String, strictNullChecks: Boolean): PsiFileImpl {
+  private fun doTestInner(_file: PsiFileImpl, strictNullChecks: Boolean): PsiFileImpl {
     var file = _file
 
     file.node // ensure that the AST is loaded
     assertNull(file.stub)
 
-    val highlightingFailure = runCatching {
-      myFixture.checkHighlighting()
-    }.exceptionOrNull() as? FileComparisonFailure
+    myFixture.checkHighlighting()
 
-    val astBasedCommentContent = serializeComponentModel(buildComponentModel(file))
-
-    val modelFailed = astBasedCommentContent != expectedCommentContent
-    if (highlightingFailure != null || modelFailed) {
-      val combinedMessage = listOfNotNull(
-        "Props mismatch (strictNullChecks=$strictNullChecks)".takeIf { modelFailed },
-        highlightingFailure?.message
-      ).joinToString("\n")
-
-      val fileText = file.text
-      val filePath = file.virtualFile.getUserData(VfsTestUtil.TEST_DATA_FILE_PATH)
-      throw FileComparisonFailure(
-        combinedMessage,
-        highlightingFailure?.expected ?: fileText,
-        replaceComment(highlightingFailure?.actual ?: fileText, astBasedCommentContent),
-        filePath
-      )
-    }
+    val newModel = buildComponentModel(file)
+    val expectedFile = "${getTestName(false)}.${if (strictNullChecks) "strictNullChecks." else ""}expected.txt"
+    myFixture.checkTextByFile(newModel, expectedFile)
 
     assertNull(file.stub)
     file = unloadAst(file)
     assertNotNull(file.stub)
 
     PsiManagerEx.getInstanceEx(project).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, testRootDisposable)
-    val stubBasedComponentModel = buildComponentModel(file)
     assertNotNull(file.stub)
     PsiManagerEx.getInstanceEx(project).setAssertOnFileLoadingFilter(VirtualFileFilter.NONE, testRootDisposable)
-    // serialization is not always stub safe, but that's fine: those operations don't run as often as component model building
-    val stubBasedCommentContent = serializeComponentModel(stubBasedComponentModel)
 
-    assertEquals(
-      "The Stub-based model differs from the AST-based model (strictNullChecks=$strictNullChecks)",
-      astBasedCommentContent,
-      stubBasedCommentContent
-    )
+    myFixture.checkTextByFile(buildComponentModel(file), expectedFile)
 
     return file
   }
 
-  private fun buildComponentModel(file: PsiFile): ComponentModel {
-    val component = VueModelManager.findEnclosingContainer(file) as? VueSourceComponent
-                    ?: throw AssertionError("VueSourceComponent not found")
-
-    val model = ComponentModel(
-      props = component.props.sortedBy { it.name }.map {
-        Prop(name = it.name, required = it.required, jsType = it.jsType) // Ensures that getters are executed eagerly
-      }
-    )
-
-    return model
-  }
-
-  private fun serializeComponentModel(model: ComponentModel): String {
-    return buildString {
-      append("Expected Component Model:")
-      append("\n")
-      model.props.joinTo(this, "\n") {
-        with(it) {
-          val presentableType = jsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
-          //"Prop(name=$name, required=$required, presentableType=${presentableType}, jsType=${jsType})"
-          "Prop(name=$name, required=$required, presentableType=${presentableType})"
-        }
-      }
-    }
-  }
-
-  private data class ComponentModel(val props: List<Prop>)
-  private data class Prop(val name: String, val required: Boolean, val jsType: JSType?)
-
-  private fun getExpectedText(comment: XmlComment): String {
-    // we can't use comment.commentText since it stops on the [ character
-    return comment.text.removeSurrounding("<!--", "-->").trimIndent()
-  }
-
-  private fun replaceComment(text: String, commentText: String): String {
-    return text.replaceFirst(
-      Regex("<!--.*?-->", RegexOption.DOT_MATCHES_ALL),
-      Regex.escapeReplacement("<!--\n$commentText\n-->")
-    )
-  }
+  private fun buildComponentModel(file: PsiFile): String =
+    ComponentModelDebugOutputPrinter(false)
+      .printValue(VueModelManager.findEnclosingContainer(file))
 
   private fun configureTestProject(addNodeModules: List<VueTestModule> = emptyList(), extension: String = "vue"): PsiFile {
     if (addNodeModules.isNotEmpty()) {
@@ -227,5 +165,93 @@ class VueComponentTest : BasePlatformTestCase() {
     assertFalse(file.isValid)
     return newFile
   }
+
+  private class ComponentModelDebugOutputPrinter(val printSources: Boolean) : DebugOutputPrinter() {
+    override fun printValueImpl(builder: StringBuilder, level: Int, value: Any?): StringBuilder =
+      when (value) {
+        is VueSourceElement -> builder.printVueSourceElement(level, value)
+        is VueModelDirectiveProperties -> builder.printVueModelDirectiveProperties(level, value)
+        is VueTemplate<*> -> builder.printVueTemplate(level, value)
+        is JSType -> builder.printJSType(level, value)
+        else -> super.printValueImpl(builder, level, value)
+      }
+
+    private fun StringBuilder.printVueTemplate(topLevel: Int, template: VueTemplate<*>): StringBuilder =
+      printObject(topLevel) { level ->
+        printProperty(level, "source", template.source)
+      }
+
+    private fun StringBuilder.printVueModelDirectiveProperties(topLevel: Int, model: VueModelDirectiveProperties): StringBuilder =
+      printObject(topLevel) { level ->
+        printProperty(level, "prop", model.prop)
+        printProperty(level, "event", model.event)
+      }
+
+    private fun StringBuilder.printJSType(level: Int, type: JSType): StringBuilder =
+      this.printValue(level, type.substitute().getTypeText(JSType.TypeTextFormat.PRESENTABLE))
+
+    private fun StringBuilder.printVueSourceElement(topLevel: Int, sourceElement: VueSourceElement): StringBuilder =
+      printObject(topLevel) { level ->
+        printProperty(level, "class", sourceElement.javaClass.simpleName)
+        if (sourceElement is VueNamedSymbol)
+          printProperty(level, "name", sourceElement.name)
+        if (sourceElement is VueNamedEntity)
+          printProperty(level, "defaultName", sourceElement.defaultName)
+        if (sourceElement is VueDocumentedItem)
+          printProperty(level, "description", sourceElement.description)
+        if (printSources) {
+          printProperty(level, "source", sourceElement.source)
+          printProperty(level, "rawSource", sourceElement.rawSource.takeIf { it != sourceElement.source })
+        }
+        if (sourceElement is VueDirective) {
+          printProperty(level, "jsType", sourceElement.jsType)
+          printProperty(level, "modifiers", sourceElement.modifiers.takeIf { it.isNotEmpty() })
+          printProperty(level, "argument", sourceElement.argument)
+        }
+        if (sourceElement is VueDirectiveArgument) {
+          printProperty(level, "pattern", sourceElement.pattern)
+          printProperty(level, "required", sourceElement.required)
+        }
+        if (sourceElement is VueDirectiveModifier) {
+          printProperty(level, "pattern", sourceElement.pattern)
+        }
+        if (sourceElement is VueEntitiesContainer) {
+          printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }?.toSortedMap())
+          printProperty(level, "directives", sourceElement.directives.takeIf { it.isNotEmpty() }?.toSortedMap())
+          printProperty(level, "mixins", sourceElement.mixins.takeIf { it.isNotEmpty() })
+        }
+        if (sourceElement is VueContainer) {
+          printProperty(level, "data", sourceElement.data.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          printProperty(level, "computed", sourceElement.computed.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          printProperty(level, "methods", sourceElement.methods.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          printProperty(level, "props", sourceElement.props.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          printProperty(level, "emits", sourceElement.emits.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          printProperty(level, "slots", sourceElement.slots.takeIf { it.isNotEmpty() }?.sortedWith(Comparator.comparing { it.name }))
+          if (printSources) {
+            printProperty(level, "template", sourceElement.template)
+          }
+          printProperty(level, "element", sourceElement.element)
+          printProperty(level, "extends", sourceElement.extends.takeIf { it.isNotEmpty() })
+          printProperty(level, "delimiters", sourceElement.delimiters)
+          printProperty(level, "model", sourceElement.model?.takeIf { it.event != null && it.prop != null })
+        }
+        if (sourceElement is VueProperty) {
+          printProperty(level, "jsType", sourceElement.jsType)
+        }
+        if (sourceElement is VueInputProperty) {
+          printProperty(level, "required", sourceElement.required)
+          printProperty(level, "defaultValue", sourceElement.defaultValue)
+        }
+        if (sourceElement is VueSlot) {
+          printProperty(level, "scope", sourceElement.scope)
+          printProperty(level, "pattern", sourceElement.pattern)
+        }
+        if (sourceElement is VueEmitCall) {
+          printProperty(level, "eventJSType", sourceElement.eventJSType)
+        }
+      }
+  }
+
 }
+
 
