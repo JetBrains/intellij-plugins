@@ -81,7 +81,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
   override fun isServiceCreated() = withServer { isRunning || isMalfunctioned } ?: false
 
-  override fun showStatusBar() = withServer { totalFilesOpened != 0 } ?: false
+  override fun showStatusBar() = withServer { isRunning } ?: false
 
   override fun getStatusText() = withServer {
     when {
