@@ -1,0 +1,334 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"Move Bat"')
+    PsiWhiteSpace(' ')
+    RULE_ATTRIBUTES
+      ATTRIBUTE
+        PsiElement(agenda-group)('agenda-group')
+        PsiWhiteSpace(' ')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Move"')
+    PsiWhiteSpace(' ')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n    ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                NAME_ID
+                  PsiElement(JAVA_IDENTIFIER)('ui')
+                PsiWhiteSpace(' ')
+                PsiElement(:)(':')
+                PsiWhiteSpace(' ')
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('PongUI')
+                  PsiElement(()('(')
+                  PsiWhiteSpace(' ')
+                  PsiElement())(')')
+        PsiWhiteSpace('\n    ')
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                NAME_ID
+                  PsiElement(JAVA_IDENTIFIER)('bat')
+                PsiWhiteSpace(' ')
+                PsiElement(:)(':')
+                PsiWhiteSpace(' ')
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('Bat')
+                  PsiElement(()('(')
+                  PsiElement())(')')
+        PsiWhiteSpace('\n    ')
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                NAME_ID
+                  PsiElement(JAVA_IDENTIFIER)('$r')
+                PsiWhiteSpace(' ')
+                PsiElement(:)(':')
+                PsiWhiteSpace(' ')
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('Run')
+                  PsiElement(()('(')
+                  PsiElement())(')')
+        PsiWhiteSpace('\n    ')
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_NAMED_CONSEQUENCE
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(()('(')
+                PsiWhiteSpace(' ')
+                EQUALITY_EXPR
+                  ADDITIVE_EXPR
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('bat')
+                      PsiElement(.)('.')
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('y')
+                    PsiWhiteSpace(' ')
+                    PsiElement(+)('+')
+                    PsiWhiteSpace(' ')
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('bat')
+                      PsiElement(.)('.')
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('dy')
+                  PsiWhiteSpace(' ')
+                  PsiElement(<=)('<=')
+                  PsiWhiteSpace(' ')
+                  PRIMARY_EXPR
+                    IDENTIFIER
+                      PsiElement(JAVA_IDENTIFIER)('pconf')
+                    PsiElement(.)('.')
+                    IDENTIFIER
+                      PsiElement(JAVA_IDENTIFIER)('boundedTop')
+                PsiWhiteSpace(' ')
+                PsiElement())(')')
+                PsiWhiteSpace(' ')
+                PsiElement(break)('break')
+                PsiElement([)('[')
+                CONSEQUENCE_ID
+                  NAME_ID
+                    PsiElement(JAVA_IDENTIFIER)('boundedTop')
+                PsiElement(])(']')
+        PsiWhiteSpace('\n    ')
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_NAMED_CONSEQUENCE
+                PsiElement(if)('if')
+                PsiWhiteSpace(' ')
+                PsiElement(()('(')
+                PsiWhiteSpace(' ')
+                EQUALITY_EXPR
+                  ADDITIVE_EXPR
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('bat')
+                      PsiElement(.)('.')
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('y')
+                    PsiWhiteSpace(' ')
+                    PsiElement(+)('+')
+                    PsiWhiteSpace(' ')
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('bat')
+                      PsiElement(.)('.')
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('dy')
+                    PsiWhiteSpace(' ')
+                    PsiElement(+)('+')
+                    PsiWhiteSpace(' ')
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('bat')
+                      PsiElement(.)('.')
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('height')
+                  PsiWhiteSpace(' ')
+                  PsiElement(>=)('>=')
+                  PsiWhiteSpace(' ')
+                  PRIMARY_EXPR
+                    IDENTIFIER
+                      PsiElement(JAVA_IDENTIFIER)('pconf')
+                    PsiElement(.)('.')
+                    IDENTIFIER
+                      PsiElement(JAVA_IDENTIFIER)('boundedBottom')
+                PsiElement())(')')
+                PsiWhiteSpace(' ')
+                PsiElement(break)('break')
+                PsiElement([)('[')
+                CONSEQUENCE_ID
+                  NAME_ID
+                    PsiElement(JAVA_IDENTIFIER)('boundedBottom')
+                PsiElement(])(']')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n    ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiDeclarationStatement
+            PsiLocalVariable:foo
+              PsiModifierList:
+                <empty list>
+              PsiTypeElement:int
+                PsiKeyword:int('int')
+              PsiWhiteSpace(' ')
+              PsiIdentifier:foo('foo')
+              PsiWhiteSpace(' ')
+              PsiJavaToken:EQ('=')
+              PsiWhiteSpace(' ')
+              PsiLiteralExpression:123
+                PsiJavaToken:INTEGER_LITERAL('123')
+              PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n    ')
+      MODIFY_RHS_STATEMENT
+        PsiElement(modify)('modify')
+        PAR_EXPR
+          PsiElement(()('(')
+          PsiWhiteSpace(' ')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('bat')
+          PsiWhiteSpace(' ')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        ASSIGNMENT_EXPR
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('y')
+          PsiWhiteSpace(' ')
+          ASSIGNMENT_OPERATOR
+            PsiElement(=)('=')
+          PsiWhiteSpace('  ')
+          ADDITIVE_EXPR
+            PRIMARY_EXPR
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('bat')
+              PsiElement(.)('.')
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('y')
+            PsiWhiteSpace(' ')
+            PsiElement(+)('+')
+            PsiWhiteSpace(' ')
+            PRIMARY_EXPR
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('bat')
+              PsiElement(.)('.')
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('dy')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+      PsiElement(;)(';')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiElement([)('[')
+      CONSEQUENCE_ID
+        NAME_ID
+          PsiElement(JAVA_IDENTIFIER)('boundedTop')
+      PsiElement(])(']')
+      PsiWhiteSpace('\n    ')
+      MODIFY_RHS_STATEMENT
+        PsiElement(modify)('modify')
+        PAR_EXPR
+          PsiElement(()('(')
+          PsiWhiteSpace(' ')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('bat')
+          PsiWhiteSpace(' ')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        ASSIGNMENT_EXPR
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('y')
+          PsiWhiteSpace(' ')
+          ASSIGNMENT_OPERATOR
+            PsiElement(=)('=')
+          PsiWhiteSpace('  ')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('pconf')
+            PsiElement(.)('.')
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('boundedTop')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+      PsiElement(;)(';')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiElement([)('[')
+      CONSEQUENCE_ID
+        NAME_ID
+          PsiElement(JAVA_IDENTIFIER)('boundedBottom')
+      PsiElement(])(']')
+      PsiWhiteSpace('\n    ')
+      MODIFY_RHS_STATEMENT
+        PsiElement(modify)('modify')
+        PAR_EXPR
+          PsiElement(()('(')
+          PsiWhiteSpace(' ')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('bat')
+          PsiWhiteSpace(' ')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        ASSIGNMENT_EXPR
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('y')
+          PsiWhiteSpace(' ')
+          ASSIGNMENT_OPERATOR
+            PsiElement(=)('=')
+          PsiWhiteSpace('  ')
+          ADDITIVE_EXPR
+            PRIMARY_EXPR
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('pconf')
+              PsiElement(.)('.')
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('boundedBottom')
+            PsiWhiteSpace(' ')
+            PsiElement(-)('-')
+            PsiWhiteSpace(' ')
+            PRIMARY_EXPR
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('pconf')
+              PsiElement(.)('.')
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('batHeight')
+        PsiWhiteSpace('   ')
+        PsiElement(})('}')
+      PsiElement(;)(';')
+      PsiWhiteSpace('\n    ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiDeclarationStatement
+            PsiLocalVariable:foo
+              PsiModifierList:
+                <empty list>
+              PsiTypeElement:int
+                PsiKeyword:int('int')
+              PsiWhiteSpace(' ')
+              PsiIdentifier:foo('foo')
+              PsiWhiteSpace(' ')
+              PsiJavaToken:EQ('=')
+              PsiWhiteSpace(' ')
+              PsiLiteralExpression:123
+                PsiJavaToken:INTEGER_LITERAL('123')
+              PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n')
+    PsiElement(end)('end')

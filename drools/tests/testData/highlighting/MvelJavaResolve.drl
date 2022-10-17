@@ -1,0 +1,11 @@
+package examples
+
+import examples.resolve.Foo
+
+rule "test"  dialect "mvel"
+when
+    f :  Foo()
+then
+    System.out.println(f.x);
+    f.x = 12;
+end

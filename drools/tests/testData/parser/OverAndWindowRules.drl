@@ -1,0 +1,22 @@
+rule KeyListenerRule dialect "mvel"
+when
+    $keyEvent : KeyEvent() over window:length(1) from entry-point "KeyListener"
+    $char     : Character( name == "Pacman" )
+    $l        : Location( character == $char )
+    $newD     : Direction() from createDirection( $l.character, $keyEvent )
+    not Direction(character == $newD.character, horizontal == $newD.horizontal, vertical == $newD.vertical )
+    $target   : Cell( row == ($l.row + $newD.vertical), col == ($l.col + $newD.horizontal) )
+                CellContents( cell == $target, cellType != CellType.WALL )
+then
+    exitPoints["ConsoleExitPoint" ].insert( "insert direction " + $newD + "\n" );
+    insert( $newD );
+end
+
+rule KeyEventCount dialect "mvel" salience -5
+when
+   $n : Number() from accumulate(
+           $keyEvent : KeyEvent() from entry-point "KeyListener",
+            count( $keyEvent ) )
+then
+    System.out.println( "count : " + $n ) ;
+end

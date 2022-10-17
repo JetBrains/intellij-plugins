@@ -1,0 +1,16 @@
+package examples
+dialect "mvel"
+
+// this will cause "Cannot resolve symbol 'Fact'" error in IntelliJ IDEA
+// but Drools will process the file correctly
+//import examples.com.acme.objects.*;
+// THIS WOULD REMOVE ERROR: 
+ import examples.com.acme.objects.*;
+
+rule "test"
+no-loop
+then
+    // this class is not recognized if asterisk is used in 'import'
+    Fact f = new Fact();
+    insertLogical(f);
+end

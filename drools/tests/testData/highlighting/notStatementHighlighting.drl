@@ -1,0 +1,6 @@
+rule "test"
+when
+    not (<error>Fact</error>() && <error>Fact</error>())
+then
+    // ...
+end

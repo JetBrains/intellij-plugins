@@ -1,0 +1,10 @@
+package com.intellij.plugins.drools.lang.psi;
+
+import java.util.List;
+
+public interface DroolsRule extends DroolsNamedElement {
+
+  List<DroolsAttribute> getAttributes();
+
+  //DroolsTimer getTimer();
+}

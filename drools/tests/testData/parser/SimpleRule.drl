@@ -1,0 +1,8 @@
+rule Calculate
+    when
+        Fibonacci( sequence == (s1 + 1))
+    then
+        System.out.println( s3 + " == " + f3.value ); // see how you can access pattern and field  bindings
+end
+
+

@@ -1,0 +1,43 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"single quotes do not"')
+    PsiWhiteSpace('\n')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n  ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                NAME_ID
+                  PsiElement(JAVA_IDENTIFIER)('x')
+                PsiWhiteSpace(' ')
+                PsiElement(:)(':')
+                PsiWhiteSpace(' ')
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('String')
+                  PsiElement(()('(')
+                  CONSTRAINT
+                    ASSIGNMENT_EXPR
+                      PRIMARY_EXPR
+                        PsiElement(this)('this')
+                      PsiWhiteSpace(' ')
+                      ASSIGNMENT_OPERATOR
+                        PsiElement(=)('=')
+                      PsiWhiteSpace(' ')
+                      STRING_LITERAL
+                        PsiElement(STRING_TOKEN)('"a"')
+                  PsiElement())(')')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')

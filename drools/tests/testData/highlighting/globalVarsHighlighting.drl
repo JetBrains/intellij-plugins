@@ -1,0 +1,16 @@
+package examples.fibonacci
+
+import examples.fibonacci.FibonacciExample.Fibonacci;
+global java.lang.Integer fooInt;
+
+query "testQuery"
+    f1 : Fibonacci( value != fooInt)
+end
+
+rule Calculate
+    when
+        f1 : Fibonacci( s1 : sequence, value != fooInt)
+    then
+       Fibonacci fib = new Fibonacci();
+       fooInt = 123;
+end

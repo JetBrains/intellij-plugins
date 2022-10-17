@@ -1,0 +1,7 @@
+rule "test"
+when
+    // keyword 'not' is marked red with message "'not' unexpected"
+    not (Fact() && Fact())
+then
+    // ... 
+end

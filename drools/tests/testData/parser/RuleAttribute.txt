@@ -1,0 +1,7 @@
+Drools File
+  ATTRIBUTE
+    PsiElement(lock-on-active)('lock-on-active')
+    PsiWhiteSpace(' ')
+    BOOLEAN_LITERAL
+      PsiElement(TRUE)('true')
+  PsiElement(;)(';')

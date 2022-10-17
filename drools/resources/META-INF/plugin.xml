@@ -1,0 +1,65 @@
+<idea-plugin package="com.intellij.plugins.drools">
+  <id>com.intellij.drools</id>
+  <name>Drools</name>
+  <category>JVM Frameworks</category>
+  <description><![CDATA[
+  Adds support for <a href="https://www.drools.org/">JBoss Drools</a> business rules management system.
+  ]]></description>
+
+  <vendor>JetBrains</vendor>
+  <resource-bundle>messages.DroolsBundle</resource-bundle>
+
+  <dependencies>
+    <plugin id="com.intellij.java"/>
+    <plugin id="com.intellij.modules.ultimate"/>
+  </dependencies>
+
+  <actions>
+    <action id="Drools.CreateRuleFile" class="com.intellij.plugins.drools.actions.CreateRuleFileAction">
+      <add-to-group group-id="NewGroup" anchor="last"/>
+    </action>
+  </actions>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType language="Drools" extensions="drl" fieldName="DROOLS_FILE_TYPE" name="Drools"
+              implementationClass="com.intellij.plugins.drools.DroolsFileType"/>
+    <lang.findUsagesProvider language="Drools"
+                             implementationClass="com.intellij.plugins.drools.lang.psi.searchers.DroolsFindUsagesProvider"/>
+    <lang.parserDefinition language="Drools" implementationClass="com.intellij.plugins.drools.lang.parser.DroolsParserDefinition"/>
+    <lang.syntaxHighlighter language="Drools"
+                            implementationClass="com.intellij.plugins.drools.lang.highlight.DroolsSyntaxHighlighter"/>
+    <colorSettingsPage implementation="com.intellij.plugins.drools.lang.highlight.DroolsColorsAndFontsPage"/>
+    <annotator language="Drools" implementationClass="com.intellij.plugins.drools.lang.highlight.DroolsColorAnnotator"/>
+    <annotator language="Drools" implementationClass="com.intellij.plugins.drools.lang.highlight.DroolsReferenceResolveAnnotator"/>
+
+    <fileBasedIndex implementation="com.intellij.plugins.drools.lang.psi.indexes.DroolsDeclareStatementScalarIndex"/>
+
+    <braceMatcher filetype="Drools" implementationClass="com.intellij.plugins.drools.lang.support.DroolsPairedBraceMatcher"/>
+    <lang.commenter language="Drools" implementationClass="com.intellij.plugins.drools.lang.support.DroolsCommenter"/>
+    <lang.foldingBuilder language="Drools" implementationClass="com.intellij.plugins.drools.lang.support.DroolsFoldingBuilder"/>
+
+    <completion.contributor language="any" implementationClass="com.intellij.plugins.drools.completion.DroolsCompletionContributor"/>
+
+    <renameHandler implementation="com.intellij.plugins.drools.lang.support.DroolsPropertyRenameHandler"/>
+    <referencesSearch implementation="com.intellij.plugins.drools.lang.psi.searchers.DroolsFilesSearcher"/>
+    <java.elementFinder implementation="com.intellij.plugins.drools.lang.psi.searchers.DroolsClassFinder"/>
+    <methodReferencesSearch implementation="com.intellij.plugins.drools.lang.psi.searchers.DroolsMethodUsageSearcher"/>
+    <methodReferencesSearch implementation="com.intellij.plugins.drools.lang.psi.searchers.DroolsFunctionMethodUsageSearcher"/>
+    <pom.declarationSearcher implementation="com.intellij.plugins.drools.lang.psi.searchers.DroolsFunctionDeclarationSearcher"/>
+
+    <useScopeEnlarger implementation="com.intellij.plugins.drools.lang.support.DroolsRhsScopeEnlarger"/>
+
+    <lang.psiStructureViewFactory language="Drools" implementationClass="com.intellij.plugins.drools.structure.DroolsStructureViewFactory"/>
+
+    <fileTemplateGroup implementation="com.intellij.plugins.drools.actions.DroolsTemplatesFactory"/>
+
+    <refactoring.moveAllClassesInFileHandler implementation="com.intellij.plugins.drools.lang.psi.util.MoveDroolsLightClassesInFileHandler"
+                                             id="drools"/>
+
+    <custom.exception.handler implementation="com.intellij.plugins.drools.lang.highlight.DroolsExceptionHandler"/>
+
+    <editorHighlighterProvider filetype="Drools" implementationClass="com.intellij.plugins.drools.DroolsEditorHighlighterProvider"/>
+
+    <dependencySupport coordinate="org.drools:drools-core" kind="java" displayName="Drools"/>
+  </extensions>
+
+</idea-plugin>

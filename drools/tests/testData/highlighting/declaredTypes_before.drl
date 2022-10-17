@@ -1,0 +1,55 @@
+declare Person
+    name    : String       = "john"     @key
+    age     : int          = 18
+    weight  : Double       = 75.4
+end
+
+
+declare  Student12 extends Person
+    school  : String
+end
+
+
+declare Worker extends Person
+    wage    : int
+end
+
+
+rule "Zero"
+when
+then
+    insert( new Person() );
+end
+
+
+rule "Students and Workers"
+no-loop
+when
+    $p :  Person ($name :  name, $age : age < 25, $weight : weight )
+then
+    retract( $p );
+    insert( new Student12( $name, $age, $weight, "SomeSchool" ) );
+    insert( new Worker( $name, $age, $weight, 1200 ) );
+
+    Student12 s = new Stud<caret>ent12();
+end
+
+
+rule "Welcome"
+salience 10
+when
+    $s : Student12( $school : school, $name  :  name )
+then
+    System.out.println( "Dear "+ $name + ", welcome to " + $school );
+end
+
+rule "Hard toil"
+salience 5
+when
+    $w : Worker( $name : name, $weight : weight,    $wage  : wage )
+then
+    System.out.println( "Work harder, " + $name );
+
+     $w.setWage($wage + 100 );
+     $w.setWeight($weight -  10 );
+end

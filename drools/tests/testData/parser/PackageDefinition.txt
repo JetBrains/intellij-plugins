@@ -1,0 +1,21 @@
+Drools File
+  PACKAGE_STATEMENT
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    NAMESPACE
+      PsiElement(JAVA_IDENTIFIER)('aa')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('bbb')
+    PsiElement(;)(';')
+  PsiWhiteSpace('\n')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    IMPORT_QUALIFIER
+      QUALIFIED_IDENTIFIER
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('aaa')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('ccc')
+  PsiElement(;)(';')

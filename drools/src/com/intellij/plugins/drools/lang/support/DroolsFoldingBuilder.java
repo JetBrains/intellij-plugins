@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2000-2005 by JetBrains s.r.o. All Rights Reserved.
+ * Use is subject to license terms.
+ */
+package com.intellij.plugins.drools.lang.support;
+
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.folding.FoldingBuilder;
+import com.intellij.lang.folding.FoldingDescriptor;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes;
+import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
+
+  @Override
+  public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull final ASTNode node, @NotNull final Document document) {
+    final PsiElement element = node.getPsi();
+    if (element instanceof DroolsFile) {
+      final DroolsFile file = (DroolsFile)element;
+      List<FoldingDescriptor> descriptors = new ArrayList<>();
+      for (DroolsRuleStatement rule : file.getRules()) {
+        addRuleFoldingDescriptors(descriptors, rule);
+      }
+
+      for (DroolsDeclareStatement declareStatement : file.getDeclarations()) {
+        addDeclareFoldingDescriptors(descriptors, declareStatement);
+      }
+
+      for (DroolsQueryStatement queryStatement : file.getQueries()) {
+        addQueryFoldingDescriptors(descriptors, queryStatement);
+      }
+
+      for (DroolsFunctionStatement functionStatement : file.getFunctions()) {
+        DroolsBlock block = functionStatement.getBlock();
+        if (block != null) {
+          final int start = block.getTextRange().getStartOffset() + 1;
+          final int end = block.getTextRange().getEndOffset() - 1;
+          if (start + 1 < end) {
+            descriptors.add(new FoldingDescriptor(functionStatement.getNode(), new TextRange(start, end)));
+          }
+        }
+      }
+      return descriptors.toArray(FoldingDescriptor.EMPTY);
+    }
+    return FoldingDescriptor.EMPTY;
+  }
+
+  private static void addRuleFoldingDescriptors(final List<FoldingDescriptor> descriptors, final DroolsRuleStatement rule) {
+    if (!rule.textContains('\n')) return;
+
+    PsiElement nameElement = rule.getRuleName();
+
+    final int start = nameElement.getTextRange().getEndOffset();
+    final int end = rule.getTextRange().getEndOffset();
+    if (start + 1 < end) {
+      descriptors.add(new FoldingDescriptor(rule.getNode(), new TextRange(start, end)));
+    }
+  }
+
+  private static void addDeclareFoldingDescriptors(final List<FoldingDescriptor> descriptors, final DroolsDeclareStatement statement) {
+    if (!statement.textContains('\n')) return;
+
+    DroolsTypeDeclaration declaration = statement.getTypeDeclaration();
+    if (declaration != null) {
+      PsiElement nameElement = declaration.getTypeName();
+
+      final int start = nameElement.getTextRange().getEndOffset();
+      final int end = statement.getTextRange().getEndOffset();
+      if (start + 1 < end) {
+        descriptors.add(new FoldingDescriptor(statement.getNode(), new TextRange(start, end)));
+      }
+    }
+  }
+
+  private static void addQueryFoldingDescriptors(final List<FoldingDescriptor> descriptors, final DroolsQueryStatement statement) {
+    if (!statement.textContains('\n')) return;
+
+    PsiElement nameElement = statement.getStringId();
+
+    final int start = nameElement.getTextRange().getEndOffset();
+    final int end = statement.getTextRange().getEndOffset();
+    if (start + 1 < end) {
+      descriptors.add(new FoldingDescriptor(statement.getNode(), new TextRange(start, end)));
+    }
+  }
+
+  @Override
+  public String getPlaceholderText(@NotNull final ASTNode node) {
+    if (node.getElementType() == DroolsTokenTypes.RULE_STATEMENT) return "<~>";
+
+    return "...";
+  }
+
+  @Override
+  public boolean isCollapsedByDefault(@NotNull final ASTNode node) {
+    return false;
+  }
+}

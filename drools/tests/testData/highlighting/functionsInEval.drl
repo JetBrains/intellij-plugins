@@ -1,0 +1,10 @@
+rule simple_rule
+   when
+     eval(testFunc())
+     eval(<error>unknownFunc</error>())
+   then
+   System.out.println("got it!");
+end
+function boolean testFunc(){
+    // some code here
+}

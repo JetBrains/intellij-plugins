@@ -1,0 +1,22 @@
+Drools File
+  ATTRIBUTE
+    PsiElement(dialect)('dialect')
+    PsiWhiteSpace('  ')
+    STRING_LITERAL
+      PsiElement(STRING_TOKEN)('"java"')
+  PsiWhiteSpace('\n')
+  PsiComment(SINGLE_LINE_COMMENT_DEPR)('# deprecated comment')
+  PsiWhiteSpace('\n')
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"foo"')
+    PsiWhiteSpace('\n')
+    PsiComment(SINGLE_LINE_COMMENT_DEPR)('#  deprecated  comment')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')

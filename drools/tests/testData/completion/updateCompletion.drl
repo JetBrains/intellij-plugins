@@ -1,0 +1,10 @@
+package examples.fibonacci
+
+import examples.fibonacci.FibonacciExample.Fibonacci;
+
+rule Calculate
+    when
+        f1 : Fibonacci( s1 : sequence, value != -1 ) // here we bind sequence
+    then
+       upd<caret>
+end

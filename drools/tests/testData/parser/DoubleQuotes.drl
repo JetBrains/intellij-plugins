@@ -1,0 +1,5 @@
+rule "single quotes do not"
+when
+  x : String(this = "a")
+then
+end

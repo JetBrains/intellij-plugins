@@ -1,0 +1,4 @@
+duration ('duration')
+WHITE_SPACE (' ')
+( ('(')
+) (')')

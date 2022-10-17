@@ -1,0 +1,8 @@
+function ('function')
+WHITE_SPACE (' ')
+void ('void')
+WHITE_SPACE (' ')
+JAVA_IDENTIFIER ('foo')
+( ('(')
+) (')')
+{ ('{')

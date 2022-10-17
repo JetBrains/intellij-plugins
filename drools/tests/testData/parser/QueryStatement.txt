@@ -1,0 +1,149 @@
+Drools File
+  PACKAGE_STATEMENT
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    NAMESPACE
+      PsiElement(JAVA_IDENTIFIER)('org')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('drools')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('examples')
+      PsiElement(.)('.')
+      PsiElement(JAVA_IDENTIFIER)('backwardchaining')
+    PsiElement(;)(';')
+  PsiWhiteSpace('\n\n')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    IMPORT_QUALIFIER
+      QUALIFIED_IDENTIFIER
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('org')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('drools')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('examples')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('backwardchaining')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('Location')
+  PsiElement(;)(';')
+  PsiWhiteSpace('\n\n')
+  QUERY_STATEMENT
+    PsiElement(query)('query')
+    PsiWhiteSpace(' ')
+    STRING_ID
+      IDENTIFIER
+        PsiElement(JAVA_IDENTIFIER)('isContainedIn')
+    PsiWhiteSpace(' ')
+    PARAMETERS
+      PsiElement(()('(')
+      PARAMETER
+        TYPE
+          QUALIFIED_IDENTIFIER
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        NAME_ID
+          PsiElement(JAVA_IDENTIFIER)('x')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      PARAMETER
+        TYPE
+          QUALIFIED_IDENTIFIER
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        NAME_ID
+          PsiElement(JAVA_IDENTIFIER)('y')
+      PsiElement())(')')
+    PsiWhiteSpace('\n  ')
+    QUERY_EXPRESSION
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('Location')
+                  PsiElement(()('(')
+                  CONSTRAINT
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('x')
+                  PsiElement(,)(',')
+                  PsiWhiteSpace('   ')
+                  CONSTRAINT
+                    PRIMARY_EXPR
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('y')
+                  PsiElement(;)(';')
+                  PsiWhiteSpace(' ')
+                  PsiElement())(')')
+          PsiWhiteSpace(' ')
+          PsiElement(or)('or')
+          PsiWhiteSpace(' ')
+          LHS_AND
+            LHS_UNARY
+              PsiElement(()('(')
+              PsiWhiteSpace(' ')
+              LHS_OR
+                LHS_AND
+                  LHS_UNARY
+                    LHS_PATTERN_BIND
+                      LHS_PATTERN
+                        LHS_PATTERN_TYPE
+                          QUALIFIED_IDENTIFIER
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('Location')
+                        PsiElement(()('(')
+                        PsiWhiteSpace(' ')
+                        CONSTRAINT
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('z')
+                        PsiElement(,)(',')
+                        PsiWhiteSpace(' ')
+                        CONSTRAINT
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('y')
+                        PsiElement(;)(';')
+                        PsiWhiteSpace(' ')
+                        PsiElement())(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(and)('and')
+                  PsiWhiteSpace(' ')
+                  LHS_UNARY
+                    LHS_PATTERN_BIND
+                      LHS_PATTERN
+                        LHS_PATTERN_TYPE
+                          QUALIFIED_IDENTIFIER
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('isContainedIn')
+                        PsiElement(()('(')
+                        PsiWhiteSpace(' ')
+                        CONSTRAINT
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('x')
+                        PsiElement(,)(',')
+                        PsiWhiteSpace(' ')
+                        CONSTRAINT
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('z')
+                        PsiElement(;)(';')
+                        PsiWhiteSpace(' ')
+                        PsiElement())(')')
+              PsiWhiteSpace(' ')
+              PsiElement())(')')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')

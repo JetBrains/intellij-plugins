@@ -1,0 +1,5 @@
+duration ('duration')
+WHITE_SPACE (' ')
+( ('(')
+CHUNK_BLOCK ('((aaa+11))')
+) (')')

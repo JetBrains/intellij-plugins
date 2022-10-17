@@ -1,0 +1,25 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('aaa')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n   ')
+      MODIFY_RHS_STATEMENT
+        PsiElement(modify)('modify')
+        PAR_EXPR
+          PsiElement(()('(')
+          PRIMARY_EXPR
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('$edgIntellijIdeaRulezzze')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement({)('{')
+        PsiElement(})('}')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')

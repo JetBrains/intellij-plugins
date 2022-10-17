@@ -1,0 +1,34 @@
+package org.drools.examples.fibonacci ;
+
+import org.drools.examples.fibonacci.FibonacciExample.Fibonacci;
+
+//dialect "mvel"
+salience 10
+rule "Recurse"
+    //salience 10
+    //when
+    //    not ( Fibonacci ( sequence == 1 ) )    
+    //    f : Fibonacci ( value == -1 )
+    then
+       // insert( new Fibonacci( f.sequence - 1 ) );
+       // System.out.println( "recurse for " + f.sequence );
+end
+
+/*rule Bootstrap
+    when
+        f : Fibonacci( sequence == 1 || == 2, value == -1 ) // this is a multi-restriction || on a single field
+    then 
+        modify ( f ){ value = 1 };
+        System.out.println( f.sequence + " == " + f.value );
+end
+
+package examples.fibonacci
+
+import examples.fibonacci.FibonacciExample.Fibonacci;
+
+rule Calculate
+    when
+        f1 : Fibonacci( s1 : sequence, value != -1 ) // here we bind sequence
+    then
+        mo<caret>
+end  */

@@ -1,0 +1,71 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('Calculate')
+    PsiWhiteSpace('\n')
+    RULE_ATTRIBUTES
+      ATTRIBUTE
+        PsiElement(duration)('duration')
+        PsiWhiteSpace(' ')
+        CHUNK
+          PsiElement(()('(')
+          PsiElement(CHUNK_BLOCK)('abc+1')
+          PsiElement())(')')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n   ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiExpressionStatement
+            PsiMethodCallExpression:System.out.println( s3 + " == " + f3.value )
+              PsiReferenceExpression:System.out.println
+                PsiReferenceExpression:System.out
+                  PsiReferenceExpression:System
+                    PsiReferenceParameterList
+                      <empty list>
+                    PsiIdentifier:System('System')
+                  PsiJavaToken:DOT('.')
+                  PsiReferenceParameterList
+                    <empty list>
+                  PsiIdentifier:out('out')
+                PsiJavaToken:DOT('.')
+                PsiReferenceParameterList
+                  <empty list>
+                PsiIdentifier:println('println')
+              PsiExpressionList
+                PsiJavaToken:LPARENTH('(')
+                PsiWhiteSpace(' ')
+                PsiPolyadicExpression: s3 + " == " + f3.value
+                  PsiReferenceExpression:s3
+                    PsiReferenceParameterList
+                      <empty list>
+                    PsiIdentifier:s3('s3')
+                  PsiWhiteSpace(' ')
+                  PsiJavaToken:PLUS('+')
+                  PsiWhiteSpace(' ')
+                  PsiLiteralExpression:" == "
+                    PsiJavaToken:STRING_LITERAL('" == "')
+                  PsiWhiteSpace(' ')
+                  PsiJavaToken:PLUS('+')
+                  PsiWhiteSpace(' ')
+                  PsiReferenceExpression:f3.value
+                    PsiReferenceExpression:f3
+                      PsiReferenceParameterList
+                        <empty list>
+                      PsiIdentifier:f3('f3')
+                    PsiJavaToken:DOT('.')
+                    PsiReferenceParameterList
+                      <empty list>
+                    PsiIdentifier:value('value')
+                PsiWhiteSpace(' ')
+                PsiJavaToken:RPARENTH(')')
+            PsiJavaToken:SEMICOLON(';')
+            PsiWhiteSpace(' ')
+            PsiComment(END_OF_LINE_COMMENT)('// see how you can access pattern and field  bindings')
+          PsiWhiteSpace('\n')
+    PsiElement(end)('end')

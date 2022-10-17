@@ -1,0 +1,103 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"Free Fish Food Sample"')
+    PsiWhiteSpace('\n    ')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n        ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_NOT
+                PsiElement(not)('not')
+                PsiWhiteSpace(' ')
+                CONDITIONAL_ELEMENT
+                  PsiElement(()('(')
+                  PsiWhiteSpace(' ')
+                  LHS_PATTERN_BIND
+                    NAME_ID
+                      PsiElement(JAVA_IDENTIFIER)('$p')
+                    PsiWhiteSpace(' ')
+                    PsiElement(:)(':')
+                    PsiWhiteSpace(' ')
+                    LHS_PATTERN
+                      LHS_PATTERN_TYPE
+                        QUALIFIED_IDENTIFIER
+                          IDENTIFIER
+                            PsiElement(JAVA_IDENTIFIER)('Product')
+                      PsiElement(()('(')
+                      PsiWhiteSpace(' ')
+                      CONSTRAINT
+                        EQUALITY_EXPR
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('name')
+                          PsiWhiteSpace(' ')
+                          PsiElement(EQ)('==')
+                          PsiWhiteSpace(' ')
+                          STRING_LITERAL
+                            PsiElement(STRING_TOKEN)('"Fish Food"')
+                      PsiElement())(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(&&)('&&')
+                  PsiWhiteSpace(' ')
+                  LHS_PATTERN_BIND
+                    LHS_PATTERN
+                      LHS_PATTERN_TYPE
+                        QUALIFIED_IDENTIFIER
+                          IDENTIFIER
+                            PsiElement(JAVA_IDENTIFIER)('Purchase')
+                      PsiElement(()('(')
+                      PsiWhiteSpace(' ')
+                      CONSTRAINT
+                        EQUALITY_EXPR
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('product')
+                          PsiWhiteSpace(' ')
+                          PsiElement(EQ)('==')
+                          PsiWhiteSpace(' ')
+                          PRIMARY_EXPR
+                            IDENTIFIER
+                              PsiElement(JAVA_IDENTIFIER)('$p')
+                      PsiWhiteSpace(' ')
+                      PsiElement())(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement())(')')
+    PsiWhiteSpace('\n    ')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n        ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiExpressionStatement
+            PsiMethodCallExpression:System.out.println( "Adding free Fish Food Sample to cart" )
+              PsiReferenceExpression:System.out.println
+                PsiReferenceExpression:System.out
+                  PsiReferenceExpression:System
+                    PsiReferenceParameterList
+                      <empty list>
+                    PsiIdentifier:System('System')
+                  PsiJavaToken:DOT('.')
+                  PsiReferenceParameterList
+                    <empty list>
+                  PsiIdentifier:out('out')
+                PsiJavaToken:DOT('.')
+                PsiReferenceParameterList
+                  <empty list>
+                PsiIdentifier:println('println')
+              PsiExpressionList
+                PsiJavaToken:LPARENTH('(')
+                PsiWhiteSpace(' ')
+                PsiLiteralExpression:"Adding free Fish Food Sample to cart"
+                  PsiJavaToken:STRING_LITERAL('"Adding free Fish Food Sample to cart"')
+                PsiWhiteSpace(' ')
+                PsiJavaToken:RPARENTH(')')
+            PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n')
+    PsiElement(end)('end')

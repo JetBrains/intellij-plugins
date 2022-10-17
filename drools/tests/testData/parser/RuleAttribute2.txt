@@ -1,0 +1,7 @@
+Drools File
+  ATTRIBUTE
+    PsiElement(salience)('salience')
+    PsiWhiteSpace(' ')
+    NUMBER_LITERAL
+      PsiElement(INT_TOKEN)('10')
+  PsiElement(;)(';')

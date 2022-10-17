@@ -1,0 +1,499 @@
+{
+    parserClass="com.intellij.plugins.drools.lang.parser.DroolsParser"
+    parserUtilClass="com.intellij.lang.parser.GeneratedParserUtilBase"
+
+    implements="com.intellij.plugins.drools.lang.psi.DroolsPsiCompositeElement"
+    extends="com.intellij.plugins.drools.lang.psi.impl.DroolsPsiCompositeElementImpl"
+
+    psiClassPrefix="Drools"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.intellij.plugins.drools.lang.psi"
+    psiImplPackage="com.intellij.plugins.drools.lang.psi.impl"
+
+    elementTypeHolderClass="com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes"
+    elementTypePrefix=""
+    elementTypeClass="com.intellij.plugins.drools.lang.lexer.DroolsElementType"
+    tokenTypeClass="com.intellij.plugins.drools.lang.lexer.DroolsElementType"
+    tokenTypeFactory="com.intellij.plugins.drools.lang.lexer.DroolsElementFactory.getTokenType"
+
+    generateFirstCheck=50
+
+    tokens = [
+      TRUE="true"
+      FALSE="false"
+      NULL="null"
+      LOCK_ON_ACTIVE="lock-on-active"
+      DATE_EFFECTIVE="date-effective"
+      DATE_EXPIRES="date-expires"
+      NO_LOOP="no-loop"
+      AUTO_FOCUS="auto-focus"
+      ACTIVATION_GROUP="activation-group"
+      AGENDA_GROUP="agenda-group"
+      RULEFLOW_GROUP="ruleflow-group"
+      ENTRY_POINT="entry-point"
+      DURATION="duration"
+      TIMER="timer"
+      CALENDARS="calendars"
+      PACKAGE="package"
+      IMPORT="import"
+      DIALECT="dialect"
+      SALIENCE="salience"
+      ENABLED="enabled"
+      ATTRIBUTES="attributes"
+      RULE="rule"
+      EXTENDS="extends"
+      WHEN="when"
+      THEN="then"
+      TEMPLATE="template"
+      QUERY="query"
+      DECLARE="declare"
+      FUNCTION="function"
+      GLOBAL="global"
+      EVAL="eval"
+      NOT="not"
+      IN="in"
+      OR="or"
+      AND="and"
+      EXISTS="exists"
+      FORALL="forall"
+      ACCUMULATE="accumulate"
+      COLLECT="collect"
+      FROM="from"
+      ACTION="action"
+      REVERSE="reverse"
+      RESULT="result"
+      END="end"
+      OVER="over"
+      INIT="init"
+      MODIFY="modify"
+      UPDATE="update"
+      RETRACT="retract"
+      INSERT="insert"
+      INSERT_LOGICAL="insertLogical"
+      ATTRIBUTES="attributes"
+      IF="if"
+      BREAK="break"
+      DO="do"
+
+      LBRACE="{"
+      RBRACE="}"
+      LBRACKET="["
+      RBRACKET="]"
+      LPAREN="("
+      RPAREN=")"
+
+      SEMICOLON=";"
+      COLON=":"
+      COMMA=","
+      DOT="."
+      QUEST="?"
+
+      OP_PLUS="+"
+      OP_MINUS="-"
+      OP_MUL="*"
+      OP_DIV="/"
+      OP_REMAINDER="%"
+      OP_AT="@"
+
+      OP_ASSIGN="="
+      OP_PLUS_ASSIGN="+="
+      OP_MINUS_ASSIGN="-="
+      OP_MUL_ASSIGN="*="
+      OP_DIV_ASSIGN="/="
+      OP_BIT_AND_ASSIGN="&="
+      OP_BIT_OR_ASSIGN="|="
+      OP_BIT_XOR_ASSIGN="^="
+      OP_REMAINDER_ASSIGN="%="
+      OP_SL_ASSIGN="<<="
+      OP_SR_ASSIGN=">>="
+      OP_BSR_ASSIGN=">>>="
+
+      OP_EQ="=="
+      OP_NOT_EQ="!="
+      OP_NOT="!"
+      OP_COMPLEMENT="~"
+      OP_PLUS_PLUS="++"
+      OP_MINUS_MINUS="--"
+
+      OP_COND_OR="||"
+      OP_COND_AND="&&"
+      OP_BIT_OR="|"
+      OP_BIT_AND="&"
+      OP_BIT_XOR="^"
+
+      OP_LESS="<"
+      OP_LESS_OR_EQUAL="<="
+      OP_GREATER=">"
+      OP_GREATER_OR_EQUAL=">="
+
+      BOOLEAN="boolean"
+      CHAR="char"
+      BYTE="byte"
+      SHORT="short"
+      INT="int"
+      LONG="long"
+      FLOAT="float"
+      DOUBLE="double"
+      VOID="void"
+
+      CONTAINS="contains"
+      MEMBEROF="memberOf"
+      MATCHES="matches"
+      SOUNDSLIKE="soundslike"
+      IS_A="isA"
+
+      THIS="this"
+    ]
+
+    extends(".*(Expr|Literal)")=expression
+    extends(".*RhsStatement")=simpleRhsStatement
+}
+compilationUnit ::= packageStatement? ( statement ";"? )*
+
+packageStatement ::= "package" namespace ";"?  {pin=2}
+namespace ::= JAVA_IDENTIFIER ("." JAVA_IDENTIFIER)*
+
+private statement ::= importStatement
+    |  globalStatement
+    |  declareStatement
+    |  ruleStatement
+    |  ruleAttribute
+    |  functionStatement
+    |  queryStatement
+    {recoverWhile="top_level_recover"}
+
+private top_level_recover ::= !(';' | 'activation-group' | 'agenda-group' | 'auto-focus' |
+                                'calendars' | 'date-effective' | 'date-expires' | 'declare' |
+                                'dialect' | 'duration' | 'enabled' |
+                                'function' | 'global' | 'import' | 'lock-on-active' |
+                                'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer')
+
+globalStatement ::= "global" varType nameId {pin=3 mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsGlobalVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
+varType ::= type
+
+declareStatement ::= "declare" (entryPointDeclaration | windowDeclaration | enumDeclaration | typeDeclaration) "end"  {pin=1}
+
+entryPointDeclaration ::= "entry-point" entryPointName annotation* {pin=2}
+entryPointName ::=stringId
+
+windowDeclaration ::= "window" simpleName annotation* lhsPatternBind  {pin=2}
+simpleName ::=identifier
+
+enumDeclaration ::= "enum" qualifiedName annotation* enumerative+ field*   {pin=2}
+
+typeDeclaration ::= "type"? traitable? typeName ("extends" superType)? annotation* field*
+{pin=3  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsPsiClassImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsPsiClass"}
+
+traitable ::= "trait"
+
+typeName ::= qualifiedName
+superType ::= qualifiedName
+qualifiedName ::= qualifiedIdentifier
+
+enumerative ::= identifier ( "(" exprList ")" )?
+private exprList ::= () expression ("," expression)* {pin(".*")=1}
+
+field ::= fieldName ":" fieldType ("=" conditionalExpr)? annotation* ";"?
+{pin=1  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsPsiFieldImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsPsiField"}
+fieldName ::= JAVA_IDENTIFIER
+fieldType ::= primitiveType | type
+
+functionStatement ::= "function" ( primitiveType ("[" "]")* | type)? nameId parameters block {
+  pin=3
+  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsFunctionImpl"
+  implements="com.intellij.plugins.drools.lang.psi.DroolsFunction"
+  methods=[
+    functionParameters="parameters"
+  ]
+}
+
+parameter ::= (type | primitiveType)? nameId ("[" "]")*
+{recoverWhile="parameter_recover" pin=2}
+private parameter_recover ::= !(')' | ',' )
+
+ruleName ::= stringId
+stringId ::= ( identifier | STRING_TOKEN | CHARACTER_LITERAL )
+
+importStatement ::= "import" ("function"|"static")? importQualifier
+{pin=3 mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsImportImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsImport"}
+importQualifier ::= qualifiedIdentifier ("." "*")?
+
+ruleAttributes ::= ("attributes" ":"?)? attribute ( ","? attribute )*
+
+private ruleAttribute ::= attribute
+
+attribute ::= conditionalAttrName conditionalExpr
+    | booleanAttrName  booleanLiteral?
+    | stringAttrName stringLiteral
+    | stringsAttrName stringLiteral ( "," stringLiteral)*
+    | decimalOrChunkAttrName ( decimal | chunk )
+{mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsAbstractAttributeImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsSimpleAttribute"}
+private conditionalAttrName ::=  salience | enabled
+private booleanAttrName ::= "no-loop" | "auto-focus" | "lock-on-active"| "refract"
+private stringAttrName ::=  "agenda-group" | "activation-group" | "ruleflow-group" | "date-effective" | "date-expires" | "dialect"
+private stringsAttrName ::=  "calendars"
+private decimalOrChunkAttrName ::=  "timer" | "duration"
+
+queryStatement ::= query stringId parameters? annotation* queryExpression end  {
+  pin=2
+  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsQueryImpl"
+  implements="com.intellij.plugins.drools.lang.psi.DroolsQuery"
+  methods=[
+    queryParameters="parameters"
+  ]
+}
+queryExpression ::= lhsExpression {pin=1  recoverWhile="queryExpression_recover"}
+private queryExpression_recover ::= ! (';' | 'activation-group' | 'agenda-group' | 'auto-focus' | 'calendars' | 'date-effective' | 'date-expires' | 'declare' | 'dialect' | 'duration' | 'enabled' | 'function' | 'global' | 'import' | 'lock-on-active' | 'no-loop' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | end | query)
+
+ruleStatement ::= "rule" ruleName ("extends" parentRule)? annotation* ruleAttributes? lhs? rhs* end {pin=2 }
+lhs ::= "when" ":"? lhsExpression  {pin=1 recoverWhile=lhs_recover}
+private lhs_recover ::= !(';' | 'activation-group' | 'agenda-group' | 'auto-focus' | 'calendars' | 'date-effective' | 'date-expires' | 'declare' | 'dialect' | 'duration' | 'enabled' | 'function' | 'global' | 'import' | 'lock-on-active' | 'no-loop' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'then' | 'timer' | query)
+parentRule ::= stringId
+
+lhsExpression ::= lhsOr*
+
+lhsOr ::= (lhsAnd (or lhsAnd)*)
+
+lhsAnd ::= ("(" and lhsUnary+ ")") | (lhsUnary ("and" lhsUnary)*)
+
+lhsUnary ::=
+( lhsExists
+| lhsNot
+| lhsEval
+| lhsForall
+| lhsAccumulate
+| lhsNamedConsequence
+| "(" lhsOr ")"
+| lhsPatternBind
+)";"?
+{recoverWhile="unary_recover"}
+private unary_recover ::= !('(' | ')' | ',' | ';' | '?' | 'accumulate' | 'and' | 'end' | 'eval' | 'exists' | 'forall' | 'not' | 'or' | 'then' | 'if' | JAVA_IDENTIFIER)
+
+lhsExists ::=  "exists" conditionalElement {pin=1}
+
+lhsNot ::= "not" conditionalElement  {pin=1}
+
+lhsForall ::= "forall" "(" lhsPatternBind+ ")" {pin =1}
+
+lhsEval ::= "eval" "(" expression ")"  {pin =1}
+
+lhsNamedConsequence ::= "if" "(" expression ")" ("do" | "break") "[" + consequenceId +"]"  {pin =1}
+consequenceId ::= nameId
+
+lhsParen ::= "(" lhsOr ")"
+
+lhsPatternBind ::= [nameId ":"] ( ("(" lhsPattern ("or" lhsPattern)* ")") | lhsPattern )   annotation?
+{mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsLhsPatternBindVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
+nameId ::= JAVA_IDENTIFIER
+
+conditionalElement ::=  ("(" lhsPatternBind (("or"|"||"| "and"|"&&") lhsPatternBind)* ")") | lhsPatternBind
+
+lhsAccumulate ::= "accumulate" "(" lhsAnd (","|";") accumulateFunctionBinding ("," accumulateFunctionBinding)* (";" constraints)? ")" ";"?
+
+lhsPattern ::= "?"? lhsPatternType "(" positionalConstraints? constraints? ")" (patternFilter)? (patternSource)?
+lhsPatternType ::= qualifiedIdentifier
+
+label ::= identifier ":"
+
+private positionalConstraints ::= constraint ("," constraint)* ";"
+
+private constraints ::= constraint ("," constraint)*
+
+constraint ::= expression
+
+patternFilter ::= "over" filterDef {pin=1}
+
+filterDef ::= label identifier "(" parameters ")"
+
+patternSource ::= "from" ( fromAccumulate | fromCollect | fromEntryPoint | fromWindow | fromExpression ) {pin=1}
+
+fromExpression ::= expression
+
+fromEntryPoint ::= "entry-point" stringId  {pin=2}
+
+fromWindow ::= "window" identifier   {pin=2}
+
+fromCollect ::= "collect" "(" lhsPatternBind ")"
+
+fromAccumulate ::= "accumulate" "(" lhsAnd "," ( "init" chunk "," "action" chunk "," ( "reverse" chunk ",")? "result" chunk | accumulateFunction ) ")"  {pin=1}
+
+accumulateFunctionBinding ::= label accumulateFunction
+
+accumulateFunction ::= label? functionName accumulateParameters
+private functionName ::="average" | "min"| "max"| "count" | "sum"| "collectList"| "collectSet"
+
+accumulateParameters ::= "(" (conditionalExpr ("," conditionalExpr)* )? ")"
+parameters ::= "(" ( parameter ( "," parameter )* )? ")"  {pin=2}
+
+rhs ::= "then" ("["+consequenceId "]")? rhsStatements*  {pin=1 recoverWhile="rhs_recover"}
+private rhs_recover ::= !(';' | 'activation-group' | 'agenda-group' | 'auto-focus' | 'calendars' | 'date-effective' | 'date-expires' | 'declare' | 'dialect' | 'duration' | 'enabled' | 'function' | 'global' | 'import' | 'lock-on-active' | 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'then' |'end')
+
+private rhsStatements ::= ( javaRhsStatement | modifyRhsStatement | updateRhsStatement | retractRhsStatement | insertRhsStatement | insertLogicalRhsStatement) ";"?
+
+fake simpleRhsStatement ::=
+
+javaRhsStatement ::= JAVA_STATEMENT
+
+modifyRhsStatement ::= "modify" modifyParExpr "{" ( &"}" | exprList) "}"  {pin=1}
+
+updateRhsStatement ::= "update" parExpr {pin=1}
+
+retractRhsStatement ::= "retract" parExpr {pin=1}
+
+insertRhsStatement ::= "insert" parExpr  {pin=1}
+
+insertLogicalRhsStatement ::= "insertLogical" "(" expression (',' expression)*  ")" {pin=1}
+
+annotation ::= "@" identifier (elementValuePairs | chunk )?
+
+elementValuePairs ::= "(" elementValuePair ("," elementValuePair)* ")"
+
+elementValuePair ::= identifier "=" elementValue
+
+elementValue ::= elementValueArrayInitializer | conditionalExpr
+
+elementValueArrayInitializer ::= "{" (elementValue ("," elementValue )*)? "}"
+
+type ::= qualifiedIdentifier typeArguments? ("[" "]")*
+
+typeArguments ::= "<" typeArgument ("," typeArgument)* ">"
+
+typeArgument ::= "?" (( "extends" | "super" ) type )? | type
+
+qualifiedIdentifier ::= identifier ("." identifier)*
+
+chunk ::= "(" CHUNK_BLOCK ")"
+
+block ::= BLOCK_EXPRESSION
+
+assignmentOperator ::= "=" | "+=" | "-=" | "*=" | "/=" | "&=" | "|=" | "^=" | "%=" | "<<=" | ">>>=" | ">>="
+
+operator ::= EQ | "!=" | relationalOperator
+
+relationalOperator ::= "<=" | ">=" | "<" | ">" |  ("not"? ( "contains" | "memberOf" | "matches"| "soundslike" | "isA") ) | "str" squareArguments?
+
+expression ::= assignmentExpr
+  | conditionalExpr
+  | conditionalOrExpr
+  | conditionalAndExpr
+  | inclusiveOrExpr
+  | exclusiveOrExpr
+  | andExpr
+  | equalityExpr
+  | instanceOfExpr
+  | inExpr
+  | relationalExpr
+  | shiftExpr
+  | additiveExpr
+  | multiplicativeExpr
+  | unaryExpr
+  | unary2Expr
+  | unaryNotPlusMinusExpr
+  | castExpr | unaryAssignExpr | primaryExpr
+
+assignmentExpr ::= expression (assignmentOperator expression) +
+conditionalExpr ::= expression "?" expression ":" expression
+conditionalOrExpr ::= expression ("||" expression ) +
+conditionalAndExpr ::= expression ( "&&" expression ) +
+inclusiveOrExpr ::= expression ( "|" expression ) +
+exclusiveOrExpr ::= expression ( "^" expression ) +
+andExpr ::= expression ( "&" expression ) +
+equalityExpr ::= expression equality  expression (( "&&" | "||" ) equality expression)*
+private equality ::= "==" | "!=" | "<=" | ">=" | "<" | ">"
+instanceOfExpr ::= expression "instanceof" type
+inExpr ::= expression "not"? "in" "(" exprList ")"
+relationalExpr ::= expression orRestriction +
+
+private orRestriction ::= andRestriction ( "||" andRestriction ) *
+private andRestriction ::= singleRestriction ( "&&" singleRestriction ) *
+private singleRestriction ::= operator shiftExpr | "(" orRestriction ")"
+
+shiftExpr ::= expression ( shiftOp expression ) +
+private shiftOp ::= "<<" | ">>>" | ">>"
+
+additiveExpr ::= expression ( (plus_minus) expression ) +
+
+multiplicativeExpr ::= expression ( ("/" | "%" | "*") expression ) +
+unaryExpr ::= ( plus_minus ) expression
+unary2Expr ::= ( "++" | "--" ) primaryExpr
+unaryNotPlusMinusExpr ::= ( "~" | "!" ) expression
+
+unaryAssignExpr ::= nameId ( ":=" | ":" ) primaryExpr selector* [ "++" | "--" ]
+{mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsUnaryAssignVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
+
+castExpr ::= ( "(" primitiveType ")" expression ) | ( "(" type ")" unaryNotPlusMinusExpr )
+
+primitiveType ::= "boolean" | "char" | "byte" | "short" | "int" | "long" | "float" | "double" | "void"
+
+primaryExpr ::= parExpr |
+        nonWildcardTypeArguments ( explicitGenericInvocationSuffix | ( "this" arguments ) ) |
+        literal |
+        "super" superSuffix |
+        "new" creator |
+        primitiveType ( "[" "]" )* "." "class" |
+        inlineMapExpr |
+        inlineListExpr |
+        "this" |
+        identifier identifierSuffix? ( "." identifier identifierSuffix? )*
+        {mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsPrimaryExprVarImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsPrimaryExprVar"}
+
+private inlineListExpr ::= "[" expressionList? "]"
+
+private inlineMapExpr ::= "[" mapExpressionList "]"
+
+mapExpressionList ::= mapEntry ( "," mapEntry )* { pin(".*")=1}
+
+mapEntry ::= expression ":" expression
+
+modifyParExpr ::= parExpr
+parExpr ::= "(" expression ")"
+
+identifierSuffix ::= ( "[" "]" )* "." "class" | "[" expression "]" | arguments
+
+creator ::= nonWildcardTypeArguments? createdName ( arrayCreatorRest | classCreatorRest )
+
+private createdName ::= createdQualifiedIdentifier | primitiveType
+createdQualifiedIdentifier ::= qualifiedIdentifier typeArguments?
+
+innerCreator ::= identifier classCreatorRest
+
+arrayCreatorRest ::= "[" ( "]" ( "[" "]" )* arrayInitializer ) | ( expression "]" ( "[" expression "]" )* ( "[" "]" )* )
+
+variableInitializer ::= arrayInitializer | expression
+
+arrayInitializer ::= "{" ( variableInitializer ( "," variableInitializer )* ","? )? "}"
+
+classCreatorRest ::= arguments
+
+explicitGenericInvocation ::= nonWildcardTypeArguments arguments
+
+nonWildcardTypeArguments ::= "<" ( type (","  type)* ) ">"
+
+explicitGenericInvocationSuffix ::= ( "super" superSuffix ) | identifier arguments
+
+selector ::= ( "." "super" superSuffix ) |
+        ( "." "new" nonWildcardTypeArguments? innerCreator ) |
+        ( "." identifier arguments? ) |
+        ( "[" expression "]" )
+
+superSuffix ::= arguments | ( "." identifier arguments? )
+
+squareArguments ::= "[" expressionList? "]"
+
+arguments ::= "(" expressionList? ")"
+
+private expressionList ::= expression ( "," expression )*   { pin(".*")=1}
+
+decimal	::= INT_TOKEN  integerTypeSuffix?
+
+private literal ::= numberLiteral | booleanLiteral | stringLiteral | nullLiteral
+private plus_minus ::= "+" | "-"
+numberLiteral ::= plus_minus? (INT_TOKEN | FLOAT_TOKEN)
+nullLiteral ::= NULL
+booleanLiteral ::= FALSE | TRUE
+stringLiteral ::= STRING_TOKEN | CHARACTER_LITERAL
+
+private integerTypeSuffix ::= "l" | "L" | "I"
+
+identifier::= JAVA_IDENTIFIER
+{mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsReferenceImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsReference"}

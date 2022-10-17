@@ -1,0 +1,41 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('aaa')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n   ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiDeclarationStatement
+            PsiLocalVariable:a
+              PsiModifierList:
+                <empty list>
+              PsiTypeElement:int
+                PsiKeyword:int('int')
+              PsiWhiteSpace(' ')
+              PsiIdentifier:a('a')
+              PsiJavaToken:EQ('=')
+              PsiLiteralExpression:2
+                PsiJavaToken:INTEGER_LITERAL('2')
+              PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n   ')
+          PsiDeclarationStatement
+            PsiLocalVariable:b
+              PsiModifierList:
+                <empty list>
+              PsiTypeElement:int
+                PsiKeyword:int('int')
+              PsiWhiteSpace(' ')
+              PsiIdentifier:b('b')
+              PsiJavaToken:EQ('=')
+              PsiLiteralExpression:2
+                PsiJavaToken:INTEGER_LITERAL('2')
+              PsiJavaToken:SEMICOLON(';')
+          PsiWhiteSpace('\n')
+    PsiElement(end)('end')

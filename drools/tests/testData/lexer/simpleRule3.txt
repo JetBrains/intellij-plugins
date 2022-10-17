@@ -1,0 +1,8 @@
+rule ('rule')
+WHITE_SPACE (' ')
+JAVA_IDENTIFIER ('Calculate')
+WHITE_SPACE ('\n')
+then ('then')
+WHITE_SPACE ('\n    ')
+JAVA_STATEMENT ('int value = 1;\n')
+end ('end')

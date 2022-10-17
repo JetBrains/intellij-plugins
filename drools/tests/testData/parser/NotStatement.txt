@@ -1,0 +1,51 @@
+Drools File
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"test"')
+    PsiWhiteSpace('\n')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n    ')
+      PsiComment(SINGLE_LINE_COMMENT)('// keyword 'not' is marked red with message "'not' unexpected"')
+      PsiWhiteSpace('\n    ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_NOT
+                PsiElement(not)('not')
+                PsiWhiteSpace(' ')
+                CONDITIONAL_ELEMENT
+                  PsiElement(()('(')
+                  LHS_PATTERN_BIND
+                    LHS_PATTERN
+                      LHS_PATTERN_TYPE
+                        QUALIFIED_IDENTIFIER
+                          IDENTIFIER
+                            PsiElement(JAVA_IDENTIFIER)('Fact')
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(&&)('&&')
+                  PsiWhiteSpace(' ')
+                  LHS_PATTERN_BIND
+                    LHS_PATTERN
+                      LHS_PATTERN_TYPE
+                        QUALIFIED_IDENTIFIER
+                          IDENTIFIER
+                            PsiElement(JAVA_IDENTIFIER)('Fact')
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                  PsiElement())(')')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+      PsiWhiteSpace('\n    ')
+      JAVA_RHS_STATEMENT
+        DroolsCompositeJavaStatementElement(JAVA_STATEMENT)
+          PsiComment(END_OF_LINE_COMMENT)('// ... ')
+          PsiWhiteSpace('\n')
+    PsiElement(end)('end')

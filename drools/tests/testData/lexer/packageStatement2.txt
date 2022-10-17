@@ -1,0 +1,8 @@
+package ('package')
+WHITE_SPACE (' ')
+JAVA_IDENTIFIER ('or')
+. ('.')
+JAVA_IDENTIFIER ('and')
+. ('.')
+JAVA_IDENTIFIER ('foo')
+; (';')

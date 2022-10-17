@@ -1,0 +1,8 @@
+package ('package')
+WHITE_SPACE (' ')
+JAVA_IDENTIFIER ('aaa')
+. ('.')
+JAVA_IDENTIFIER ('bbb')
+. ('.')
+JAVA_IDENTIFIER ('ccc')
+; (';')

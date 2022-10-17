@@ -1,0 +1,6 @@
+rule "Free Fish Food Sample"
+    when
+        not ( $p : Product( name == "Fish Food") && Purchase( product == $p ) )
+    then
+        System.out.println( "Adding free Fish Food Sample to cart" );
+end

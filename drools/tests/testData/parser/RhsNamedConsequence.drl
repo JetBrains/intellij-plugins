@@ -1,0 +1,15 @@
+rule "Move Bat" agenda-group "Move" when
+    ui : PongUI( )
+    bat : Bat()
+    $r : Run()
+    if ( bat.y + bat.dy <= pconf.boundedTop ) break[boundedTop]
+    if ( bat.y + bat.dy + bat.height >= pconf.boundedBottom) break[boundedBottom]
+then
+    int foo = 123;
+    modify( bat ) { y =  bat.y + bat.dy };
+then[boundedTop]
+    modify( bat ) { y =  pconf.boundedTop };
+then[boundedBottom]
+    modify( bat ) { y =  pconf.boundedBottom - pconf.batHeight   };
+    int foo = 123;
+end
