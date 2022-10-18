@@ -1,3 +1,4 @@
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.lang.javascript.linter.tslint.fix;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -25,8 +26,8 @@ import java.util.Comparator;
 
 public class TsLintErrorFixAction extends JSLinterFixSingleErrorBaseAction {
 
-  @NotNull
-  private final TsLinterError myError;
+  @SafeFieldForPreview
+  private final @NotNull TsLinterError myError;
 
   private static final Comparator<TsLintFixInfo.TsLintFixReplacements> REPLACEMENTS_COMPARATOR =
     Comparator
