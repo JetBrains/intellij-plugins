@@ -13,6 +13,7 @@
     ]]>
   </description>
   <vendor>JetBrains</vendor>
+  <depends>com.intellij.modules.platform</depends>
   <depends>JavaScript</depends>
   <extensions defaultExtensionNs="com.intellij">
     <directoryIndexExcludePolicy implementation="com.intellij.lang.javascript.frameworks.nextjs.NextJsExcludePolicy"/>
