@@ -81,5 +81,4 @@ class VueFindUsagesTest : BasePlatformTestCase() {
     myFixture.checkUsages("'f<caret>oo", "$testName.foo")
 
   }
-
 }
