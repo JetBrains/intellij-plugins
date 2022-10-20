@@ -25,10 +25,7 @@ import com.intellij.openapi.vcs.update.UpdatedFiles;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.perforce.ExecResult;
-import org.jetbrains.idea.perforce.perforce.P4File;
-import org.jetbrains.idea.perforce.perforce.ParticularConnectionSettings;
-import org.jetbrains.idea.perforce.perforce.PerforceSettings;
+import org.jetbrains.idea.perforce.perforce.*;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 
@@ -91,11 +88,11 @@ public class PerforceIntegrateEnvironment extends AbstractUpdateEnvironment {
 
     final String integrateChangeListNum = connectionSettings.INTEGRATE_CHANGE_LIST ? connectionSettings.INTEGRATED_CHANGE_LIST_NUMBER : null;
 
-    return myRunner.integrate(connectionSettings.INTEGRATE_BRANCH_NAME,
-                              p4Dir,
-                              connectionSettings.INTEGRATE_TO_CHANGELIST_NUM,
-                              integrateChangeListNum, connectionSettings.INTEGRATE_REVERSE,
-                              connection);
+    return PerforceRunner.getInstance(myProject).integrate(connectionSettings.INTEGRATE_BRANCH_NAME,
+                                                           p4Dir,
+                                                           connectionSettings.INTEGRATE_TO_CHANGELIST_NUM,
+                                                           integrateChangeListNum, connectionSettings.INTEGRATE_REVERSE,
+                                                           connection);
   }
 
   @Override

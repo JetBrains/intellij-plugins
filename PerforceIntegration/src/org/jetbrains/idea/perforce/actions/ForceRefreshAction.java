@@ -6,9 +6,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.VcsKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceChangeProvider;
@@ -33,7 +31,7 @@ public class ForceRefreshAction extends DumbAwareAction {
     if (project == null) return;
     final PerforceVcs vcs = PerforceVcs.getInstance(project);
     // mark everything dirty is inside
-    ((PerforceChangeProvider) vcs.getChangeProvider()).discardCache();
+    ((PerforceChangeProvider)vcs.getChangeProvider()).discardCache();
   }
 
   /**
@@ -54,18 +52,8 @@ public class ForceRefreshAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
-    if (project == null || !PerforceSettings.getSettings(project).ENABLED) {
-      e.getPresentation().setVisible(false);
-      return;
-    }
-    AbstractVcs[] vcss = ProjectLevelVcsManager.getInstance(project).getAllActiveVcss();
-    boolean shouldBeVisible = false;
-    VcsKey key = PerforceVcs.getKey();
-    for (AbstractVcs vcs : vcss) {
-      if (vcs == null) continue;
-      shouldBeVisible = key.equals(vcs.getKeyInstanceMethod());
-      if (shouldBeVisible) break;
-    }
-    e.getPresentation().setVisible(shouldBeVisible);
+    e.getPresentation().setVisible(project != null &&
+                                   ProjectLevelVcsManager.getInstance(project).checkVcsIsActive(PerforceVcs.NAME) &&
+                                   PerforceSettings.getSettings(project).ENABLED);
   }
 }

@@ -46,11 +46,9 @@ import java.util.*;
 
 abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
   protected final Project myProject;
-  protected final PerforceRunner myRunner;
 
   AbstractUpdateEnvironment(final Project project) {
     myProject = project;
-    myRunner = PerforceRunner.getInstance(project);
   }
 
   protected static void processOutput(final String output,
@@ -95,7 +93,7 @@ abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
   }
 
   private void resolveAutomatically(final P4File contentRoot) throws VcsException {
-    myRunner.resolveAutomatically(contentRoot);
+    PerforceRunner.getInstance(myProject).resolveAutomatically(contentRoot);
   }
 
   @Override
@@ -117,7 +115,7 @@ abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
         if (isRevertUnchanged(settings)) {
           List<String> paths = ContainerUtil.map2List(map.get(connection), path -> P4File.create(path).getRecursivePath());
           try {
-            myRunner.revertUnchanged(connection, paths);
+            PerforceRunner.getInstance(myProject).revertUnchanged(connection, paths);
           }
           catch (final VcsConnectionProblem e) {
             vcsExceptions.add(e);
@@ -171,16 +169,16 @@ abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
         for (FilePath root : map.get(connection)) {
           VirtualFile file = root.getVirtualFile();
           if (file != null) {
-            filesToResolve.addAll(filterByServerVersion(myRunner.getResolvedWithConflicts(connection, file)));
+            filesToResolve.addAll(filterByServerVersion(PerforceRunner.getInstance(myProject).getResolvedWithConflicts(connection, file)));
           }
         }
       }
-      if (! filesToResolve.isEmpty()) {
+      if (!filesToResolve.isEmpty()) {
         WaitForProgressToShow.runOrInvokeAndWaitAboveProgress(() -> new PerforceMergeProvider(myProject).showMergeDialog(filesToResolve));
       }
     }
     catch (VcsException e) {
-       //ignore
+      //ignore
     }
   }
 
