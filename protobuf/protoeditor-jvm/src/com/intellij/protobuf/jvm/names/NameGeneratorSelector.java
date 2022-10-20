@@ -78,7 +78,8 @@ public final class NameGeneratorSelector {
           "NameSelector using "
           + contributor.getClass().getName()
           + " for protobuf name generators");
-        return contributor.contributeGenerators(file, JavaNameGenerator.class);
+        return ImmutableList.copyOf(
+            contributor.contributeGenerators(file, JavaNameGenerator.class));
       }
     }
     return contributeDefaultGenerators(file);
