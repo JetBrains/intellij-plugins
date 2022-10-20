@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
+import com.intellij.lang.javascript.buildTools.bundler.WebBundlerCssReferenceContributor
 import com.intellij.lang.javascript.modules.NodeModuleUtil.NODE_MODULES
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.fileTypes.FileType
@@ -24,7 +25,9 @@ import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 class VueReferenceContributor : PsiReferenceContributor() {
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(createSrcAttrValuePattern(STYLE_TAG_NAME), STYLE_REF_PROVIDER)
+    registrar.registerReferenceProvider(STYLE_PATTERN, STYLE_REF_PROVIDER)
+    registrar.registerReferenceProvider(STYLE_PATTERN, WebBundlerCssReferenceContributor.REFERENCE_PROVIDER)
+
     registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), BASIC_REF_PROVIDER)
     registrar.registerReferenceProvider(
       XmlPatterns.xmlAttributeValue().withParent(VueRefAttribute::class.java),
@@ -33,6 +36,8 @@ class VueReferenceContributor : PsiReferenceContributor() {
   }
 
   companion object {
+
+    val STYLE_PATTERN = createSrcAttrValuePattern(STYLE_TAG_NAME)
 
     private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
