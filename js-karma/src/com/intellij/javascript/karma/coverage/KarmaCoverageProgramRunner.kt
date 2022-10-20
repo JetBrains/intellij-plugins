@@ -17,6 +17,7 @@ import com.intellij.javascript.karma.execution.KarmaRunConfiguration
 import com.intellij.javascript.karma.execution.KarmaRunProgramRunner
 import com.intellij.javascript.karma.server.KarmaServer
 import com.intellij.javascript.karma.util.KarmaUtil
+import com.intellij.javascript.nodejs.execution.NodeTargetRun
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
@@ -47,7 +48,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
         server.onBrowsersReady { ExecutionUtil.restartIfActive(descriptor) }
       }
       else {
-        listenForCoverageFile(environment, server)
+        listenForCoverageFile(environment, server, NodeTargetRun.getTargetRun(executionResult.processHandler))
       }
       return@then descriptor
     }
@@ -56,7 +57,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
   companion object {
     private val COVERAGE_RUNNER_ID = KarmaCoverageProgramRunner::class.java.simpleName
 
-    private fun listenForCoverageFile(env: ExecutionEnvironment, server: KarmaServer) {
+    private fun listenForCoverageFile(env: ExecutionEnvironment, server: KarmaServer, targetRun: NodeTargetRun) {
       val runConfiguration = env.runProfile as RunConfigurationBase<*>
       val coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration)
       CoverageHelper.resetCoverageSuit(runConfiguration)
@@ -68,7 +69,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
             val project = env.project
             if (!project.isDisposed) {
               if (lcovFile != null) {
-                processLcovInfoFile(lcovFile, coverageFilePath, env, server, runConfiguration)
+                processLcovInfoFile(lcovFile, coverageFilePath, env, server, runConfiguration, targetRun)
                 return@run
               }
               ApplicationManager.getApplication().invokeLater(
@@ -91,7 +92,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
                           ReadAction.run<RuntimeException> {
                             if (!project.isDisposed) {
                               processLcovInfoFile(it, coverageFilePath, env, server,
-                                                  runConfiguration)
+                                                  runConfiguration, targetRun)
                             }
                           }
                         }
@@ -111,7 +112,8 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
                                     toCoverageFilePath: String,
                                     env: ExecutionEnvironment,
                                     karmaServer: KarmaServer,
-                                    runConfiguration: RunConfigurationBase<*>) {
+                                    runConfiguration: RunConfigurationBase<*>,
+                                    targetRun: NodeTargetRun) {
       try {
         FileUtil.copy(lcovInfoFile, File(toCoverageFilePath))
       }
@@ -122,6 +124,7 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
       env.runnerSettings?.let {
         val coverageRunner = KarmaCoverageRunner.getInstance()
         coverageRunner.setKarmaServer(karmaServer)
+        coverageRunner.setTargetRun(targetRun)
         CoverageDataManager.getInstance(env.project).processGatheredCoverage(runConfiguration, it)
       }
     }
