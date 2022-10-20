@@ -30,10 +30,10 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.List;
 
-public final class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
+public final class GaugeReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   private final ReferenceSearchHelper helper;
 
-  public ReferenceSearch() {
+  public GaugeReferenceSearch() {
     this.helper = new ReferenceSearchHelper();
   }
 
