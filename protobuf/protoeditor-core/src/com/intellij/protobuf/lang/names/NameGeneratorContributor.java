@@ -15,10 +15,10 @@
  */
 package com.intellij.protobuf.lang.names;
 
-import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.util.concurrency.annotations.RequiresReadLock;
+import java.util.List;
 
 /** Extension point for things that provide names for a protobuf generated class. */
 public interface NameGeneratorContributor {
@@ -41,5 +41,5 @@ public interface NameGeneratorContributor {
    * @return a list of name generators for the provided file
    */
   @RequiresReadLock
-  <T> ImmutableList<T> contributeGenerators(PbFile file, Class<T> generatorClass);
+  <T> List<T> contributeGenerators(PbFile file, Class<T> generatorClass);
 }
