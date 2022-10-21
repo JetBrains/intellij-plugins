@@ -7,6 +7,9 @@ import javax.swing.tree.*
 
 class MakefileToolWindowShowSpecialAction(private val options: MakefileToolWindowOptions, private val model: DefaultTreeModel) :
     ToggleAction(MakefileLangBundle.message("action.show.special.targets.text"), null, AllIcons.Actions.ToggleVisibility) {
+  override fun getActionUpdateThread(): ActionUpdateThread =
+    ActionUpdateThread.BGT
+
   override fun isSelected(e: AnActionEvent): Boolean = options.showSpecialTargets
 
   override fun setSelected(e: AnActionEvent, state: Boolean) {

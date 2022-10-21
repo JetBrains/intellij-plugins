@@ -12,6 +12,9 @@ class MakefileToolWindowAutoscrollToSourceAction(
     private val tree: JComponent)
   : ToggleAction(MakefileLangBundle.message("action.autoscroll.to.source.text"), null, AllIcons.General.AutoscrollToSource) {
 
+  override fun getActionUpdateThread(): ActionUpdateThread =
+    ActionUpdateThread.BGT
+
   override fun isSelected(e: AnActionEvent): Boolean = options.autoScrollToSource
 
   override fun setSelected(e: AnActionEvent, state: Boolean) {

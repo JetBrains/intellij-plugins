@@ -7,6 +7,9 @@ import javax.swing.tree.*
 
 class MakefileToolWindowSortAlphabeticallyAction(private val options: MakefileToolWindowOptions, private val model: DefaultTreeModel) :
     ToggleAction(MakefileLangBundle.message("action.sort.alphabetically.text"), null, AllIcons.ObjectBrowser.Sorted) {
+  override fun getActionUpdateThread(): ActionUpdateThread =
+    ActionUpdateThread.BGT
+
   override fun isSelected(e: AnActionEvent): Boolean = options.sortAlphabetically
 
   override fun setSelected(e: AnActionEvent, state: Boolean) {
