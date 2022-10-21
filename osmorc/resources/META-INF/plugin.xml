@@ -152,7 +152,7 @@
     <listener class="org.osmorc.run.OsmorcModuleRenameHandler" topic="com.intellij.openapi.project.ModuleListener"/>
     <listener class="org.osmorc.run.OsmorcFrameworkDefinitionListener" topic="org.osmorc.settings.FrameworkDefinitionListener"/>
     <listener class="org.osmorc.impl.AdditionalJARContentsWatcherManager$FacetListener" topic="com.intellij.facet.FacetManagerListener"/>
-    <listener class="org.osmorc.impl.AdditionalJARContentsWatcherManager$ProjectListener" topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    <listener class="org.osmorc.impl.AdditionalJARContentsWatcherManager$ProjectListener" topic="com.intellij.openapi.project.ProjectCloseListener"/>
   </projectListeners>
 
   <actions>
