@@ -102,6 +102,10 @@ class AngularCliGenerateAction : DumbAwareAction() {
       override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = !reloadingList
       }
+
+      override fun getActionUpdateThread(): ActionUpdateThread =
+        ActionUpdateThread.BGT
+
     }
     refresh.registerCustomShortcutSet(refresh.shortcutSet, list)
     actionGroup.addAction(refresh)

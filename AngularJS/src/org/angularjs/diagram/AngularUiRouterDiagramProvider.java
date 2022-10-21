@@ -497,6 +497,11 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.BGT;
+    }
+
+    @Override
     public void update(@NotNull AnActionEvent e) {
       final Project project = e.getData(CommonDataKeys.PROJECT);
       if (project == null) {
