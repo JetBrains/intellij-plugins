@@ -43,7 +43,7 @@ import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SCOPE
 import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
-class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
+class Angular2WebSymbolsScope private constructor(private val context: PsiElement) : WebSymbolsScope {
 
   private val scope = Angular2DeclarationsScope(context.containingFile)
   private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
@@ -150,7 +150,7 @@ class Angular2WebSymbolsScope(private val context: PsiElement) : WebSymbolsScope
 
   class Provider : WebSymbolsScopeProvider {
     override fun get(location: PsiElement, context: WebSymbolsContext): WebSymbolsScope? =
-      if (context.framework == Angular2Framework.ID)
+      if (context.framework == Angular2Framework.ID && location.containingFile != null)
         Angular2WebSymbolsScope(location)
       else null
 
