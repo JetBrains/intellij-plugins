@@ -7,6 +7,8 @@ import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.util.CollectConsumer
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.idea.perforce.application.PerforceBaseInfoWorker
+import org.jetbrains.idea.perforce.application.PerforceInfoAndClient
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection
 import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper
@@ -26,9 +28,7 @@ class PerforceAuthenticationTest extends PerforceTestCase {
 
   @Test
   void "test one authentication for several P4CONFIG roots"() {
-    TestLoggerFactory.enableDebugLogging(myTestRootDisposable,
-                                         "#org.jetbrains.idea.perforce.application.PerforceBaseInfoWorker",
-                                         "#org.jetbrains.idea.perforce.application.PerforceInfoAndClient")
+    TestLoggerFactory.enableDebugLogging(myTestRootDisposable, PerforceBaseInfoWorker.class, PerforceInfoAndClient.class)
 
 
     int count = 4
