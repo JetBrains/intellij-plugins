@@ -19,7 +19,7 @@
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
     <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>
-    <localInspection groupPath="JavaScript and TypeScript"
+    <localInspection groupPathKey="js.inspection.group.path"
                      groupBundle="messages.JavaScriptBundle" groupKey="js.testing.inspection.group.name"
                      key="inspection.karma.config"
                      bundle="messages.KarmaBundle"
