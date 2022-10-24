@@ -1,6 +1,10 @@
 package com.intellij.deno.entities
 
 import com.intellij.workspaceModel.storage.*
+import com.intellij.workspaceModel.storage.EntitySource
+import com.intellij.workspaceModel.storage.GeneratedCodeApiVersion
+import com.intellij.workspaceModel.storage.MutableEntityStorage
+import com.intellij.workspaceModel.storage.WorkspaceEntity
 import com.intellij.workspaceModel.storage.url.VirtualFileUrl
 import org.jetbrains.deft.ObjBuilder
 import org.jetbrains.deft.Type

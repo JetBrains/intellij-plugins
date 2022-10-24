@@ -35,6 +35,9 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
   override val denoTypes: VirtualFileUrl?
     get() = dataSource.denoTypes
 
+  override val entitySource: EntitySource
+    get() = dataSource.entitySource
+
   override fun connectionIdList(): List<ConnectionId> {
     return connections
   }
@@ -135,7 +138,6 @@ class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
       modifiable.diff = diff
       modifiable.snapshot = diff
       modifiable.id = createEntityId()
-      modifiable.entitySource = this.entitySource
     }
     modifiable.changedProperty.clear()
     return modifiable
@@ -144,7 +146,6 @@ class DenoEntityData : WorkspaceEntityData<DenoEntity>() {
   override fun createEntity(snapshot: EntityStorage): DenoEntity {
     return getCached(snapshot) {
       val entity = DenoEntityImpl(this)
-      entity.entitySource = entitySource
       entity.snapshot = snapshot
       entity.id = createEntityId()
       entity
