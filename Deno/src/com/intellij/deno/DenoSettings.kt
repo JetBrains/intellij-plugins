@@ -1,8 +1,9 @@
 package com.intellij.deno
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.deno.roots.createDenoEntity
+import com.intellij.deno.roots.removeDenoEntity
 import com.intellij.deno.service.DenoLspSupportProvider
-import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lsp.LspServerManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
@@ -100,6 +101,11 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
       LspServerManager.getInstance(project).unloadProvider(denoLspSupportProvider)
       setUseDeno(useDeno)
       LspServerManager.getInstance(project).loadProvider(denoLspSupportProvider)
+      if (useDeno) {
+        createDenoEntity(project)
+      } else {
+        removeDenoEntity(project)
+      }
     }
 
     WriteAction.run(

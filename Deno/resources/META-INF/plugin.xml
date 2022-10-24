@@ -29,6 +29,16 @@ To learn more about how to get started with Deno, check out <a href="https://blo
 
     <lsp.serverSupportProvider implementationClass="com.intellij.deno.service.DenoLspSupportProvider" language="TypeScript"/>
     <editorTabTitleProvider implementation="com.intellij.deno.editor.DenoEditorTabTitleProvider"/>
+
+    <customEntityProjectModelInfoProvider implementation="com.intellij.deno.roots.DenoCustomEntityProjectModelInfoProvider"/>
+    <projectView.externalLibraries.workspaceModelNodesProvider
+      implementation="com.intellij.deno.roots.DenoExternalLibrariesWorkspaceModelNodesProvider"/>
+    <postStartupActivity implementation="com.intellij.deno.DenoStartupActivity"/>
+    <indexableEntityProvider implementation="com.intellij.deno.roots.DenoIndexableEntityProvider"/>
+    <indexableIteratorBuilderHandler implementation="com.intellij.deno.roots.DenoIndexableIteratorBuilderHandler"/>
+    <roots.watchedRootsProvider implementation="com.intellij.deno.roots.DenoWatchedRootsProvider"/>
+    <registryKey key="deno.use.workspace.model.roots" defaultValue="true" restartRequired="true"
+                 description="Enable workspace model integration for deno plugin"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
