@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.libraries.nuxt.codeInsight
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.lang.javascript.buildTools.webpack.WebpackConfigLocator
+import com.intellij.webpack.WebpackConfigLocator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement

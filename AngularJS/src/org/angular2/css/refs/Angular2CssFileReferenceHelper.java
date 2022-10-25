@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.css.refs;
 
-import com.intellij.lang.javascript.buildTools.webpack.WebpackCssFileReferenceHelper;
+import com.intellij.webpack.WebpackCssFileReferenceHelper;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.model.ModelBranch;

@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.libraries.nuxt
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerConfig
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolve
 import com.intellij.lang.javascript.buildTools.bundler.WebBundlerResolveAlias
-import com.intellij.lang.javascript.buildTools.webpack.WebpackConfigManager
+import com.intellij.webpack.WebpackConfigManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
