@@ -34,7 +34,7 @@ import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
+import com.jetbrains.performancePlugin.yourkit.YourKitProfilerHandler;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;

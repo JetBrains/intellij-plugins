@@ -7,7 +7,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
+import com.jetbrains.performancePlugin.yourkit.YourKitProfilerHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerTestCase {
