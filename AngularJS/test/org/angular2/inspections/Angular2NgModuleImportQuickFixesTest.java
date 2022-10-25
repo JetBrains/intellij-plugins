@@ -4,6 +4,7 @@ package org.angular2.inspections;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
@@ -358,12 +359,15 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     if (importName != null) {
       myFixture.getEditor().putUserData(NAME_TO_IMPORT, importName);
     }
+    PsiFile psiFile = myFixture.getFile();
+    assertNotNull(psiFile);
     runnable.run();
     if (!hasPkgJson) {
       WriteAction.runAndWait(() -> {
         myFixture.getTempDirFixture().getFile(PACKAGE_JSON).delete(null);
       });
     }
+    assertTrue(psiFile.isValid());
   }
 
   private void initInspections() {
