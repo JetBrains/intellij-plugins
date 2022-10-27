@@ -19,10 +19,10 @@ JSFile:XmlDef2.js2
           PsiWhiteSpace(' ')
           JSEmbeddedContent:JS:XML_JS_SCRIPT
             JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-              PsiElement(JS:LBRACE)('{')
+              PsiElement(JS:XML_LBRACE)('{')
               PsiErrorElement:Expression expected
                 <empty list>
-              PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:XML_RBRACE)('}')
           PsiWhiteSpace(' ')
           PsiErrorElement:XML element expected
             PsiElement(BAD_CHARACTER)('&')
@@ -31,7 +31,7 @@ JSFile:XmlDef2.js2
           PsiWhiteSpace(' ')
           JSEmbeddedContent:JS:XML_JS_SCRIPT
             JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-              PsiElement(JS:LBRACE)('{')
+              PsiElement(JS:XML_LBRACE)('{')
               PsiWhiteSpace(' ')
               JSAssignmentExpression
                 JSDefinitionExpression
@@ -52,7 +52,7 @@ JSFile:XmlDef2.js2
               PsiElement(JS:NUMERIC_LITERAL)('2')
               PsiElement(JS:SEMICOLON)(';')
               PsiWhiteSpace(' ')
-              PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:XML_RBRACE)('}')
           XmlToken:XML_END_TAG_START('</')
           XmlToken:XML_TAG_NAME('zzz')
           XmlToken:XML_TAG_END('>')
