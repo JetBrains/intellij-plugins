@@ -28,7 +28,7 @@ internal fun createDenoEntity(project: Project) {
   }
 
   runWriteAction {
-    WorkspaceModel.getInstance(project).updateProjectModel { newBuilder ->
+    WorkspaceModel.getInstance(project).updateProjectModel("Create Deno entity") { newBuilder ->
       newBuilder.replaceBySource({ it is DenoEntitySource }, builder)
     }
   }
@@ -37,7 +37,7 @@ internal fun createDenoEntity(project: Project) {
 internal fun removeDenoEntity(project: Project) {
   if (!useWorkspaceModel()) return
   runWriteAction {
-    WorkspaceModel.getInstance(project).updateProjectModel { builder ->
+    WorkspaceModel.getInstance(project).updateProjectModel("Remove Deno entity") { builder ->
       builder.entitiesBySource { it is DenoEntitySource }.values.flatMap { it.values }.flatten().forEach { builder.removeEntity(it) }
     }
   }
