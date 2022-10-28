@@ -37,7 +37,10 @@ To learn more about how to get started with Deno, check out <a href="https://blo
     <indexableEntityProvider implementation="com.intellij.deno.roots.DenoIndexableEntityProvider"/>
     <indexableIteratorBuilderHandler implementation="com.intellij.deno.roots.DenoIndexableIteratorBuilderHandler"/>
     <roots.watchedRootsProvider implementation="com.intellij.deno.roots.DenoWatchedRootsProvider"/>
-    <registryKey key="deno.use.workspace.model.roots" defaultValue="true" restartRequired="true"
+
+    <!-- WIP Please take a look at WM-CR-25 review before turning this on -->
+    <!-- https://jetbrains.team/im/review/PVGJ115BwTp?message=9NaUW0SkJLM&channel=4DbgBf4gBMiD -->
+    <registryKey key="deno.use.workspace.model.roots" defaultValue="false" restartRequired="true"
                  description="Enable workspace model integration for deno plugin"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
