@@ -61,7 +61,7 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
 
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(project, indicator), ";", " ").trim();
+        final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(project), ";", " ").trim();
 
         final String url = DartBundle.message("dart.feedback.url", urlEncode("Analyzer Feedback from IntelliJ"));
         String body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription);
