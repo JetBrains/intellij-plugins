@@ -13,6 +13,7 @@ import com.intellij.ui.content.impl.*
 import com.intellij.ui.treeStructure.*
 import com.intellij.util.ui.tree.*
 import com.jetbrains.lang.makefile.*
+import com.jetbrains.lang.makefile.psi.MakefileTarget
 import java.awt.*
 import java.awt.event.*
 import java.awt.event.MouseEvent.*
@@ -35,6 +36,13 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
       val tree = object : Tree(model), DataProvider {
         override fun getData(dataId: String): Any? {
+          if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.`is`(dataId)) {
+            return DataProvider { slowData(it) }
+          }
+          return null
+        }
+
+        private fun slowData(dataId: String): MakefileTarget? {
           if (PSI_ELEMENT.`is`(dataId)) {
             val selectedNodes = getSelectedNodes(MakefileTargetNode::class.java, {true})
             if (selectedNodes.any()) {
@@ -44,6 +52,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
           }
           return null
         }
+
       }.apply {
         cellRenderer = MakefileCellRenderer(project)
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
