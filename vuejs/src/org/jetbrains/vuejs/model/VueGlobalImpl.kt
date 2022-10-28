@@ -157,8 +157,9 @@ internal class VueGlobalImpl(override val project: Project, override val package
     }
 
     private fun isVueLibrary(data: PackageJsonData): Boolean =
-      data.name == "vue"
-      || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
+      data.name != "@vue/cli-service"
+      && (data.name == "vue"
+          || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler"))
 
   }
 }
