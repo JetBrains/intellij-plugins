@@ -17,13 +17,14 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExcludeFolder;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiDirectory;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -247,7 +248,7 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
         new WebSymbolsContextProviderExtensionPoint(KIND_FRAMEWORK, "angular", new WebSymbolsContextProvider() {
           @NotNull
           @Override
-          public CachedValueProvider.Result<Integer> isEnabled(@NotNull PsiDirectory directory) {
+          public CachedValueProvider.Result<Integer> isEnabled(@NotNull Project project, @NotNull VirtualFile directory) {
             return CachedValueProvider.Result.create(1, ModificationTracker.EVER_CHANGED);
           }
         }),
