@@ -7,14 +7,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.registry.WebSymbolMatch
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolMatch
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
 class VueComponentSymbol(matchedName: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
@@ -23,7 +23,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
   private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
 
   override val kind: SymbolKind
-    get() = VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS
+    get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS
 
   override val name: String
     get() = matchedName
@@ -47,17 +47,17 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
     item.source?.let { listOf(VueComponentSourceNavigationTarget(it)) } ?: emptyList()
 
   override val properties: Map<String, Any>
-    get() = mapOf(Pair(VueWebSymbolsRegistryExtension.PROP_VUE_PROXIMITY, vueProximity), Pair(
-      VueWebSymbolsRegistryExtension.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
+    get() = mapOf(Pair(VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY, vueProximity), Pair(
+      VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
   override fun getSymbols(namespace: SymbolNamespace?,
                           kind: String,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
       when (kind) {
-        VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENT_PROPS -> {
+        VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS -> {
           val props = mutableListOf<VueInputProperty>()
           // TODO ambiguous resolution in case of duplicated names
           item.acceptPropertiesAndMethods(object : VueModelVisitor() {
@@ -66,12 +66,12 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
               return true
             }
           })
-          props.mapWithNameFilter(name, params, context) { VueInputPropSymbol(it, item, this.origin) }
+          props.mapWithNameFilter(name, params, scope) { VueInputPropSymbol(it, item, this.origin) }
         }
         WebSymbol.KIND_HTML_SLOTS -> {
           (item as? VueContainer)
             ?.slots
-            ?.mapWithNameFilter(name, params, context) { VueSlotSymbol(it, item, this.origin) }
+            ?.mapWithNameFilter(name, params, scope) { VueSlotSymbol(it, item, this.origin) }
           ?: if (!name.isNullOrEmpty()
                  && ((item is VueContainer && item.template == null)
                      || item is VueUnresolvedComponent)) {
@@ -80,7 +80,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
           }
           else emptyList()
         }
-        VueWebSymbolsRegistryExtension.KIND_VUE_MODEL -> {
+        VueWebSymbolsQueryConfigurator.KIND_VUE_MODEL -> {
           (item as? VueContainer)
             ?.collectModelDirectiveProperties()
             ?.takeIf { it.prop != null || it.event != null }
@@ -92,7 +92,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
     else if (namespace == WebSymbol.NAMESPACE_JS && kind == WebSymbol.KIND_JS_EVENTS) {
       (item as? VueContainer)
         ?.emits
-        ?.mapWithNameFilter(name, params, context) { VueEmitCallSymbol(it, item, this.origin) }
+        ?.mapWithNameFilter(name, params, scope) { VueEmitCallSymbol(it, item, this.origin) }
       ?: emptyList()
     }
     else emptyList()
@@ -109,7 +109,7 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
 
   private fun <T> List<T>.mapWithNameFilter(name: String?,
                                             params: WebSymbolsNameMatchQueryParams,
-                                            context: Stack<WebSymbolsContainer>,
+                                            context: Stack<WebSymbolsScope>,
                                             mapper: (T) -> WebSymbol): List<WebSymbol> =
     if (name != null) {
       asSequence()

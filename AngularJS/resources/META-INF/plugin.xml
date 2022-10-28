@@ -259,8 +259,8 @@
 
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
-    <webSymbols.registryExtension implementation="org.angular2.web.Angular2WebSymbolsRegistryExtension"/>
-    <webSymbols.scopeProvider implementation="org.angular2.web.Angular2WebSymbolsScope$Provider"/>
+    <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2WebSymbolsQueryResultsCustomizer$Factory"/>
     <webSymbols.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
 
     <!-- Angular 2 SVG contributions -->

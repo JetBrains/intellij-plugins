@@ -6,7 +6,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsContainerWithCache
+import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
@@ -15,13 +15,13 @@ import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2Symbol
 
-class MatchedDirectivesContainer(tag: XmlTag)
-  : WebSymbolsContainerWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+class MatchedDirectivesScope(tag: XmlTag)
+  : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
-  override fun createPointer(): Pointer<MatchedDirectivesContainer> {
+  override fun createPointer(): Pointer<MatchedDirectivesScope> {
     val tag = dataHolder.createSmartPointer()
     return Pointer {
-      tag.dereference()?.let { MatchedDirectivesContainer(it) }
+      tag.dereference()?.let { MatchedDirectivesScope(it) }
     }
   }
 

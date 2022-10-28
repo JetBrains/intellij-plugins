@@ -7,18 +7,18 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
-import com.intellij.webSymbols.registry.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.getAvailableSlots
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
-class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer {
+class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun hashCode(): Int = tag.hashCode()
 
   override fun equals(other: Any?): Boolean =
-    other is VueAvailableSlotsContainer
+    other is VueAvailableSlotsScope
     && other.tag == tag
 
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
@@ -27,10 +27,10 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
-        && kind == VueWebSymbolsRegistryExtension.KIND_VUE_AVAILABLE_SLOTS
-        && params.registry.allowResolve)
+        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
+        && params.queryExecutor.allowResolve)
       getAvailableSlots(tag, name, true)
     else emptyList()
 
@@ -38,17 +38,17 @@ class VueAvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer 
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
-                                  context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
-        && kind == VueWebSymbolsRegistryExtension.KIND_VUE_AVAILABLE_SLOTS
-        && params.registry.allowResolve)
+        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
+        && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, name, params.position, true)
     else emptyList()
 
-  override fun createPointer(): Pointer<VueAvailableSlotsContainer> {
+  override fun createPointer(): Pointer<VueAvailableSlotsScope> {
     val tag = this.tag.createSmartPointer()
     return Pointer {
-      tag.dereference()?.let { VueAvailableSlotsContainer(it) }
+      tag.dereference()?.let { VueAvailableSlotsScope(it) }
     }
   }
 }

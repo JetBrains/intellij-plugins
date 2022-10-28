@@ -1,8 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
-import com.intellij.webSymbols.registry.WebSymbolsRegistryExtension
-import com.intellij.webSymbols.WebSymbolsContainer
+import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
@@ -14,27 +14,27 @@ import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.web.containers.*
 
-class Angular2WebSymbolsRegistryExtension : WebSymbolsRegistryExtension {
+class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
-  override fun getContainers(project: Project,
-                             element: PsiElement?,
-                             context: WebSymbolsContext,
-                             allowResolve: Boolean): List<WebSymbolsContainer> =
+  override fun getScope(project: Project,
+                        element: PsiElement?,
+                        context: WebSymbolsContext,
+                        allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == Angular2Framework.ID && element != null) {
-      val result = mutableListOf(DirectiveElementSelectorsContainer(element.project),
-                                 DirectiveAttributeSelectorsContainer(element.project))
+      val result = mutableListOf(DirectiveElementSelectorsScope(element.project),
+                                 DirectiveAttributeSelectorsScope(element.project))
       ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
         result.addAll(listOf(
           OneTimeBindingsProvider(),
-          StandardPropertyAndEventsContainer(it.containingFile),
-          NgContentSelectorsContainer(it),
-          MatchedDirectivesContainer(it),
-          I18nAttributesContainer(it),
+          StandardPropertyAndEventsScope(it.containingFile),
+          NgContentSelectorsScope(it),
+          MatchedDirectivesScope(it),
+          I18NAttributesScope(it),
         ))
       }
       if (element is Angular2HtmlPropertyBinding
           && Angular2AttributeNameParser.parse(element.name).type == Angular2AttributeType.REGULAR) {
-        result.add(AttributeWithInterpolationsContainer)
+        result.add(AttributeWithInterpolationsScope)
       }
       result
     }

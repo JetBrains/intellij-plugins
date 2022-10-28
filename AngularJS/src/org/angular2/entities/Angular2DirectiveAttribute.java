@@ -8,7 +8,7 @@ import org.angular2.web.Angular2PsiSourcedSymbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ATTRIBUTES;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ATTRIBUTES;
 
 public interface Angular2DirectiveAttribute extends Angular2PsiSourcedSymbol, Angular2Element {
 

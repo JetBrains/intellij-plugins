@@ -18,8 +18,8 @@ import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.registry.WebSymbolsScope
-import com.intellij.webSymbols.registry.WebSymbolsScopeProvider
+import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
+import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import com.intellij.webSymbols.utils.psiModificationCount
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import com.intellij.xml.util.HtmlUtil
@@ -30,20 +30,20 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_IN_OUTS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_STRUCTURAL_DIRECTIVES
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_ERROR_SYMBOL
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SCOPE_PROXIMITY
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SYMBOL_DIRECTIVE
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_STRUCTURAL_DIRECTIVES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_ERROR_SYMBOL
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SCOPE_PROXIMITY
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
-class Angular2WebSymbolsScope private constructor(private val context: PsiElement) : WebSymbolsScope {
+class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
   private val scope = Angular2DeclarationsScope(context.containingFile)
   private val svgContext = PsiTreeUtil.getParentOfType(context, XmlTag::class.java)?.namespace == HtmlUtil.SVG_NAMESPACE
@@ -130,16 +130,16 @@ class Angular2WebSymbolsScope private constructor(private val context: PsiElemen
                               KIND_NG_DIRECTIVE_ELEMENT_SELECTORS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> {
+  override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { Angular2WebSymbolsScope(it) }
+      contextPtr.dereference()?.let { Angular2WebSymbolsQueryResultsCustomizer(it) }
     }
   }
 
   override fun equals(other: Any?): Boolean =
     other === this ||
-    other is Angular2WebSymbolsScope
+    other is Angular2WebSymbolsQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
@@ -148,10 +148,10 @@ class Angular2WebSymbolsScope private constructor(private val context: PsiElemen
   override fun getModificationCount(): Long =
     context.project.psiModificationCount
 
-  class Provider : WebSymbolsScopeProvider {
-    override fun get(location: PsiElement, context: WebSymbolsContext): WebSymbolsScope? =
+  class Factory : WebSymbolsQueryResultsCustomizerFactory {
+    override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =
       if (context.framework == Angular2Framework.ID && location.containingFile != null)
-        Angular2WebSymbolsScope(location)
+        Angular2WebSymbolsQueryResultsCustomizer(location)
       else null
 
   }

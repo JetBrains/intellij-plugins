@@ -8,23 +8,23 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsContainerWithCache
+import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2CodeInsightUtils
 import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.web.Angular2WebSymbolsRegistryExtension
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 
-class NgContentSelectorsContainer(tag: XmlTag)
-  : WebSymbolsContainerWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
+class NgContentSelectorsScope(tag: XmlTag)
+  : WebSymbolsScopeWithCache<XmlTag, Unit>(Angular2Framework.ID, tag.project, tag, Unit) {
 
   override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
     namespace == WebSymbol.NAMESPACE_JS
-    && (kind == Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS || kind == Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
+    && (kind == Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS || kind == Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
-  override fun createPointer(): Pointer<NgContentSelectorsContainer> {
+  override fun createPointer(): Pointer<NgContentSelectorsScope> {
     val tag = dataHolder.createSmartPointer()
     return Pointer {
-      tag.dereference()?.let { NgContentSelectorsContainer(it) }
+      tag.dereference()?.let { NgContentSelectorsScope(it) }
     }
   }
 

@@ -29,7 +29,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.registry.WebSymbolsRegistryManager
+import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -39,7 +39,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_TOP_LEVEL_ELEMENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_TOP_LEVEL_ELEMENTS
 
 class VueComponentSourceEdit private constructor(private val component: Pointer<VueSourceComponent>) {
 
@@ -119,7 +119,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val project = context.project
 
     val hasScriptSetup = file
-      ?.let { WebSymbolsRegistryManager.get(it, false) }
+      ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
       ?.takeIf { it.framework == VueFramework.ID }
       ?.runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME,
                                  KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME))

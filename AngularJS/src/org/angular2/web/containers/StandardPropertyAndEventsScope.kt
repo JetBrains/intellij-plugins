@@ -3,7 +3,7 @@ package org.angular2.web.containers
 
 import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
-import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.javascript.web.js.WebJSTypesUtil
 import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
@@ -19,17 +19,17 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.EVENT_ATTR_PREFIX
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.EVENT_ATTR_PREFIX
 import java.util.*
 
-class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : WebSymbolsContainer {
+class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSymbolsScope {
 
   override fun getModificationCount(): Long = templateFile.project.psiModificationCount
 
@@ -37,21 +37,21 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
       listOf(HtmlElementStandardPropertyAndEventsExtension(templateFile, "", name))
     }
     else emptyList()
 
-  override fun createPointer(): Pointer<StandardPropertyAndEventsContainer> {
+  override fun createPointer(): Pointer<StandardPropertyAndEventsScope> {
     val templateFile = this.templateFile.createSmartPointer()
     return Pointer {
-      templateFile.dereference()?.let { StandardPropertyAndEventsContainer(it) }
+      templateFile.dereference()?.let { StandardPropertyAndEventsScope(it) }
     }
   }
 
   override fun equals(other: Any?): Boolean =
-    other is StandardPropertyAndEventsContainer
+    other is StandardPropertyAndEventsScope
     && other.templateFile == templateFile
 
   override fun hashCode(): Int =
@@ -59,8 +59,8 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
 
   private class HtmlElementStandardPropertyAndEventsExtension(
     templateFile: PsiFile, tagNamespace: String, tagName: String)
-    : WebSymbolsContainerWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
-                                                                  templateFile, Pair(tagNamespace, tagName)), WebSymbol {
+    : WebSymbolsScopeWithCache<PsiFile, Pair<String, String>>(Angular2Framework.ID, templateFile.project,
+                                                              templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
     override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
       namespace == NAMESPACE_JS && (kind == WebSymbol.KIND_JS_PROPERTIES || kind == WebSymbol.KIND_JS_EVENTS)
@@ -199,7 +199,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
                                       override val project: Project,
                                       private val mainSource: TypeScriptPropertySignature?,
                                       private val mapSource: TypeScriptPropertySignature?)
-    : WebSymbolsHtmlRegistryExtension.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
+    : WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
 
     override val source: PsiElement?
       get() = mainSource ?: mapSource

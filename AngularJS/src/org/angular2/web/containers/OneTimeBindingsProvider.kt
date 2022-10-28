@@ -19,35 +19,35 @@ import com.intellij.util.containers.Stack
 import com.intellij.util.containers.mapSmartSet
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_INPUTS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class OneTimeBindingsProvider : WebSymbolsContainer {
+internal class OneTimeBindingsProvider : WebSymbolsScope {
 
   override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_JS
         && kind == KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
-        && params.registry.allowResolve) {
+        && params.queryExecutor.allowResolve) {
       // Avoid any conflicts with attribute selectors over the attribute value
-      val attributeSelectors = params.registry
+      val attributeSelectors = params.queryExecutor
         .runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name),
-                           context = context.toList())
+                           scope = scope.toList())
         .filter { it.attributeValue?.required == false }
         .mapSmartSet { it.matchedName }
 
-      params.registry
+      params.queryExecutor
         .runNameMatchQuery(
           listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name),
-          context = context.toList())
+          scope = scope.toList())
         .asSequence()
         .filter { isOneTimeBindingProperty(it) }
         .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.matchedName)) }
@@ -55,7 +55,7 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
     }
     else emptyList()
 
-  override fun createPointer(): Pointer<out WebSymbolsContainer> =
+  override fun createPointer(): Pointer<out WebSymbolsScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0

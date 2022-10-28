@@ -4,18 +4,18 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
 class VueDirectiveSymbol(matchedName: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueDirective>(fromAsset(matchedName), directive) {
 
   override val kind: SymbolKind
-    get() = VueWebSymbolsRegistryExtension.KIND_VUE_DIRECTIVES
+    get() = VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVES
 
   override val name: String
     get() = matchedName
@@ -27,9 +27,9 @@ class VueDirectiveSymbol(matchedName: String, directive: VueDirective, private v
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
-        && (kind == VueWebSymbolsRegistryExtension.KIND_VUE_DIRECTIVE_ARGUMENT || (name != null && kind == VueWebSymbolsRegistryExtension.KIND_VUE_DIRECTIVE_MODIFIERS))) {
+        && (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT || (name != null && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_MODIFIERS))) {
       listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, kind, name ?: "Vue directive argument"))
     }
     else emptyList()

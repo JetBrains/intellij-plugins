@@ -12,8 +12,8 @@ import com.intellij.webSymbols.WebSymbol.Companion.KIND_JS_EVENTS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_JS
 import com.intellij.webSymbols.declarations.WebSymbolDeclaration
 import com.intellij.webSymbols.declarations.WebSymbolDeclarationProvider
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsRegistryManager
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.model.VueModelManager
@@ -51,7 +51,7 @@ class VueSymbolDeclarationProvider : WebSymbolDeclarationProvider {
           ?.let { VueModelManager.findEnclosingComponent(it) }
           ?.asWebSymbol("", VueModelVisitor.Proximity.LOCAL)
           ?.getSymbols(NAMESPACE_JS, KIND_JS_EVENTS, name,
-                       WebSymbolsNameMatchQueryParams(WebSymbolsRegistryManager.get(parent, false)),
+                       WebSymbolsNameMatchQueryParams(WebSymbolsQueryExecutorFactory.create(parent, false)),
                        Stack())
           ?.getOrNull(0)
           ?.asSafely<WebSymbol>()

@@ -13,8 +13,8 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import com.intellij.webSymbols.registry.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.merge
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -88,7 +88,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
       .distinctBy { it.key }
       .associateBy({ it.key }, { it.value })
 
-  override val contextContainers: Sequence<WebSymbolsContainer>
+  override val queryScope: Sequence<WebSymbolsScope>
     get() = sequenceOf(this)
 
   override val documentation: WebSymbolDocumentation
@@ -105,14 +105,14 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     symbols
       .flatMap {
-        it.getSymbols(namespace, kind, name, params, context)
+        it.getSymbols(namespace, kind, name, params, scope)
       }
       .takeIf { it.isNotEmpty() }
       ?.let { list ->
-        val containers = mutableListOf<WebSymbolsContainer>()
+        val containers = mutableListOf<WebSymbolsScope>()
         var psiSourcedWebSymbol: PsiSourcedWebSymbol? = null
         val webSymbols = mutableListOf<WebSymbol>()
         for (item in list) {
@@ -141,9 +141,9 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
-                                  context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     symbols.asSequence()
-      .flatMap { it.getCodeCompletions(namespace, kind, name, params, context) }
+      .flatMap { it.getCodeCompletions(namespace, kind, name, params, scope) }
       .groupBy { it.name }
       .values
       .map { items ->

@@ -34,8 +34,8 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
 import static org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_OUTPUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS;
 
 public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBase<?>> extends Angular2MetadataElement<Stub> {
   public Angular2MetadataClassBase(@NotNull Stub element) {

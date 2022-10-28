@@ -42,8 +42,8 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
 import static org.angular2.entities.Angular2EntityUtils.*;
 import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_OUTPUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 

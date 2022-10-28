@@ -13,7 +13,7 @@ class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustom
       when (kind) {
         WebSymbol.KIND_HTML_ATTRIBUTES ->
           item.symbol
-            ?.takeIf { it.kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENT_PROPS || it.kind == WebSymbol.KIND_JS_EVENTS }
+            ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS || it.kind == WebSymbol.KIND_JS_EVENTS }
             ?.let { item.decorateWithSymbolType(it) }
           ?: item
         else -> item

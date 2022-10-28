@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.PROP_SYMBOL_DIRECTIVE;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE;
 
 public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider, SymbolTypeProvider {
 

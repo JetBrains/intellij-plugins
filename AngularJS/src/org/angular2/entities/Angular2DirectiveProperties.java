@@ -18,7 +18,7 @@ import java.util.*;
 
 import static org.angular2.entities.Angular2DirectiveProperty.hasNonPrivateDocComment;
 import static org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_IN_OUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_IN_OUTS;
 
 public class Angular2DirectiveProperties {
 

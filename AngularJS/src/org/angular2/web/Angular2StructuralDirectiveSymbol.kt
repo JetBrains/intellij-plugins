@@ -54,10 +54,10 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
     get() = WebSymbol.NAMESPACE_JS
 
   override val kind: SymbolKind
-    get() = Angular2WebSymbolsRegistryExtension.KIND_NG_STRUCTURAL_DIRECTIVES
+    get() = Angular2WebSymbolsQueryConfigurator.KIND_NG_STRUCTURAL_DIRECTIVES
 
   override val properties: Map<String, Any>
-    get() = super.properties + Pair(Angular2WebSymbolsRegistryExtension.PROP_SYMBOL_DIRECTIVE, directive)
+    get() = super.properties + Pair(Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE, directive)
 
   override fun createPointer(): Pointer<Angular2StructuralDirectiveSymbol> {
     val directivePtr = directive.createPointer()

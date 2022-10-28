@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension;
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator;
 import com.intellij.html.webSymbols.WebSymbolsXmlExtension;
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor;
 import com.intellij.javascript.web.WebFramework;
@@ -50,7 +50,7 @@ public final class Angular2HtmlExtension extends WebSymbolsXmlExtension {
     if (descriptor instanceof WebSymbolElementDescriptor) {
       boolean hasStandardSymbol = ContainerUtil.or(
         () -> WebSymbolUtils.unwrapMatchedSymbols(((WebSymbolElementDescriptor)descriptor).getSymbol()).iterator(),
-        it -> it instanceof WebSymbolsHtmlRegistryExtension.StandardHtmlSymbol);
+        it -> it instanceof WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol);
       if (!hasStandardSymbol) return true;
     }
     return super.isSelfClosingTagAllowed(tag);
