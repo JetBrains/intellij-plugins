@@ -10,14 +10,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.WebSymbol
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
 
 class VueImportComponentQuickFix(element: PsiElement,
                                  private val importName: String,

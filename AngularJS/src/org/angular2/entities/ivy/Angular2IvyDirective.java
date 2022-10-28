@@ -29,8 +29,8 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
 import static org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity;
 import static org.angular2.entities.source.Angular2SourceDirective.getDirectiveKindNoCache;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_OUTPUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS;
 
 public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymbolDef.Directive> implements Angular2Directive {
 

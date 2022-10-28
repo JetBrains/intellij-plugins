@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.PROP_ERROR_SYMBOL;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.PROP_ERROR_SYMBOL;
 
 public final class AngularTestUtil {
 

@@ -3,7 +3,7 @@ package org.angular2.entities;
 
 import com.intellij.find.usages.api.SearchTarget;
 import com.intellij.find.usages.api.UsageHandler;
-import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension;
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.model.Pointer;
@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import static com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension.getHtmlNSDescriptor;
+import static com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator.getHtmlNSDescriptor;
 import static com.intellij.webSymbols.utils.WebSymbolUtils.createPsiRangeNavigationItem;
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;
 
 public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTarget, RenameTarget {
 
@@ -148,7 +148,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
         var elementDescriptor = nsDescriptor.getElementDescriptorByName(getName());
         if (elementDescriptor != null) {
           return Collections.singletonList(
-            new WebSymbolsHtmlRegistryExtension.HtmlElementDescriptorBasedSymbol(elementDescriptor, null));
+            new WebSymbolsHtmlQueryConfigurator.HtmlElementDescriptorBasedSymbol(elementDescriptor, null));
         }
       }
       else {
@@ -165,7 +165,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
           var attributeDescriptor = elementDescriptor.getAttributeDescriptor(getName(), null);
           if (attributeDescriptor != null) {
             return Collections.singletonList(
-              new WebSymbolsHtmlRegistryExtension.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName));
+              new WebSymbolsHtmlQueryConfigurator.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName));
           }
         }
       }

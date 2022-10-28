@@ -4,25 +4,25 @@ package org.jetbrains.vuejs.web
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.webTypes.filters.WebSymbolsFilter
-import com.intellij.webSymbols.registry.WebSymbolsRegistry
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.KIND_VUE_COMPONENT_PROPS
+import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENT_PROPS
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(codeCompletions: List<WebSymbolCodeCompletionItem>,
-                                     registry: WebSymbolsRegistry,
-                                     context: List<WebSymbolsContainer>,
+                                     queryExecutor: WebSymbolsQueryExecutor,
+                                     scope: List<WebSymbolsScope>,
                                      properties: Map<String, Any>): List<WebSymbolCodeCompletionItem> {
-    val props = registry.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
-                                           context = context).mapTo(HashSet()) { it.name }
+    val props = queryExecutor.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
+                                                scope = scope).mapTo(HashSet()) { it.name }
     return codeCompletions.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }
 
   override fun filterNameMatches(matches: List<WebSymbol>,
-                                 registry: WebSymbolsRegistry,
-                                 context: List<WebSymbolsContainer>,
+                                 queryExecutor: WebSymbolsQueryExecutor,
+                                 scope: List<WebSymbolsScope>,
                                  properties: Map<String, Any>): List<WebSymbol> {
-    val props = registry.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
-                                           context = context).mapTo(HashSet()) { it.name }
+    val props = queryExecutor.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
+                                                scope = scope).mapTo(HashSet()) { it.name }
     return matches.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }
 }

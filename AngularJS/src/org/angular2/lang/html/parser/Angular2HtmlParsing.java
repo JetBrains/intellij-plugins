@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ATTR_NG_NON_BINDABLE;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ATTR_NG_NON_BINDABLE;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 

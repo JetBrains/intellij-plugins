@@ -7,21 +7,21 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsContainerWithCache
+import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.web.Angular2DirectiveSymbolWrapper
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
 
-internal class DirectiveElementSelectorsContainer(project: Project)
-  : WebSymbolsContainerWithCache<Project, Unit>(Angular2Framework.ID, project, project, Unit) {
+internal class DirectiveElementSelectorsScope(project: Project)
+  : WebSymbolsScopeWithCache<Project, Unit>(Angular2Framework.ID, project, project, Unit) {
 
   override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
     namespace == WebSymbol.NAMESPACE_JS
     && (kind == KIND_NG_DIRECTIVE_ELEMENT_SELECTORS || kind == KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS)
 
-  override fun createPointer(): Pointer<DirectiveElementSelectorsContainer> =
+  override fun createPointer(): Pointer<DirectiveElementSelectorsScope> =
     Pointer.hardPointer(this)
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {

@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
-import com.intellij.webSymbols.WebSymbolsContainer
+import com.intellij.webSymbols.WebSymbolsScope
 
-abstract class VueWebSymbolBase : WebSymbolsContainer {
+abstract class VueWebSymbolBase : WebSymbolsScope {
 
   open val namespace: SymbolNamespace
     get() = WebSymbol.NAMESPACE_HTML

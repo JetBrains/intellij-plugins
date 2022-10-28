@@ -267,11 +267,11 @@
     <webSymbols.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
     <webSymbols.webTypes source="web-types/vue-contexts@0.0.0.web-types.json" enableByDefault="true"/>
 
-    <webSymbols.registryExtension implementation="org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension" id="vue"/>
-    <webSymbols.registryExtension implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NRegistryExtension"
+    <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator" id="vue"/>
+    <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NQueryConfigurator"
                                           id="vue-i18n"/>
 
-    <webSymbols.scopeProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsScope$Provider"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VueWebSymbolsQueryResultsCustomizer$Provider"/>
     <webSymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <webSymbols.codeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueSymbolsCodeCompletionItemCustomizer"/>

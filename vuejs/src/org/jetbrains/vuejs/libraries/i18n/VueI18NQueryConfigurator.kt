@@ -12,19 +12,19 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsRegistryExtension
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
-class VueI18NRegistryExtension : WebSymbolsRegistryExtension {
+class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
-  override fun getContainers(project: Project,
-                             element: PsiElement?,
-                             context: WebSymbolsContext,
-                             allowResolve: Boolean): List<WebSymbolsContainer> =
+  override fun getScope(project: Project,
+                        element: PsiElement?,
+                        context: WebSymbolsContext,
+                        allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == VueFramework.ID
         && element is HtmlTag
         && element.name == "i18n"
@@ -34,7 +34,7 @@ class VueI18NRegistryExtension : WebSymbolsRegistryExtension {
     }
     else emptyList()
 
-  private class I18nTagInjectionKind(private val tag: HtmlTag) : WebSymbolsContainer {
+  private class I18nTagInjectionKind(private val tag: HtmlTag) : WebSymbolsScope {
     override fun equals(other: Any?): Boolean =
       other is I18nTagInjectionKind
       && other.tag == tag
@@ -55,8 +55,8 @@ class VueI18NRegistryExtension : WebSymbolsRegistryExtension {
                             kind: SymbolKind,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
-                            context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> {
-      if (kind == VueWebSymbolsRegistryExtension.KIND_VUE_TOP_LEVEL_ELEMENTS
+                            scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
+      if (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS
           && namespace == WebSymbol.NAMESPACE_HTML) {
         val language = tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
                          ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }

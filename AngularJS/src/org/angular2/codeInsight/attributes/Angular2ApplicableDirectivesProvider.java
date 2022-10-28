@@ -16,7 +16,7 @@ import java.util.*;
 
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ELEMENT_NG_TEMPLATE;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE;
 
 /**
  * @see Angular2EntitiesProvider

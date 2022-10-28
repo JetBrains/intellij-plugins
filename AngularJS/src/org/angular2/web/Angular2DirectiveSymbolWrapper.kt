@@ -12,7 +12,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.PROP_SYMBOL_DIRECTIVE
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
 import java.util.*
 
 open class Angular2DirectiveSymbolWrapper private constructor(private val directive: Angular2Directive,

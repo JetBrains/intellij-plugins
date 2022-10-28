@@ -59,7 +59,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import org.jetbrains.vuejs.types.asCompleteType
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -483,4 +483,4 @@ fun WebSymbol.extractComponentSymbol(): WebSymbol? =
     ?.toList()
     ?.takeIf { it.size == 2 && it[0].pattern != null }
     ?.get(1)
-    ?.takeIf { it.kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS }
+    ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS }

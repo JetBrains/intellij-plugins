@@ -10,15 +10,15 @@ import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 import com.intellij.webSymbols.patterns.WebSymbolsPatternItemsProvider
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsRegistry
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
 import org.angular2.Angular2Framework
-import org.angular2.web.Angular2WebSymbolsRegistryExtension
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 
-object AttributeWithInterpolationsContainer : WebSymbolsContainer {
+object AttributeWithInterpolationsScope : WebSymbolsScope {
 
-  override fun createPointer(): Pointer<out WebSymbolsContainer> =
+  override fun createPointer(): Pointer<out WebSymbolsScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
@@ -27,11 +27,11 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == WebSymbol.KIND_HTML_ATTRIBUTES
         && name != null) {
-      AttributeWithInterpolationsSymbol.match(name, context, params)
+      AttributeWithInterpolationsSymbol.match(name, scope, params)
     }
     else emptyList()
 
@@ -64,26 +64,26 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
   private object PropertiesProvider : WebSymbolsPatternItemsProvider {
     override fun getSymbolKinds(context: WebSymbol?): Set<WebSymbolQualifiedKind> = setOf(
       WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
-      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS)
+      WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS)
     )
 
     override val delegate: WebSymbol? get() = null
 
     override fun codeCompletion(name: String,
                                 position: Int,
-                                contextStack: Stack<WebSymbolsContainer>,
-                                registry: WebSymbolsRegistry): List<WebSymbolCodeCompletionItem> =
+                                scopeStack: Stack<WebSymbolsScope>,
+                                queryExecutor: WebSymbolsQueryExecutor): List<WebSymbolCodeCompletionItem> =
       emptyList()
 
     override fun matchName(name: String,
-                           contextStack: Stack<WebSymbolsContainer>,
-                           registry: WebSymbolsRegistry): List<WebSymbol> =
-      registry.runNameMatchQuery(
+                           scopeStack: Stack<WebSymbolsScope>,
+                           queryExecutor: WebSymbolsQueryExecutor): List<WebSymbol> =
+      queryExecutor.runNameMatchQuery(
         listOf(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name),
-        context = contextStack) +
-      registry.runNameMatchQuery(
-        listOf(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsRegistryExtension.KIND_NG_DIRECTIVE_INPUTS, name),
-        context = contextStack)
+        scope = scopeStack) +
+      queryExecutor.runNameMatchQuery(
+        listOf(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS, name),
+        scope = scopeStack)
 
   }
 }

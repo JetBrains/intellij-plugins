@@ -5,22 +5,22 @@ import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
-import com.intellij.webSymbols.registry.WebSymbolMatch
-import com.intellij.webSymbols.registry.WebSymbolsCodeCompletionQueryParams
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension
+import com.intellij.webSymbols.query.WebSymbolMatch
+import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
-object VueTopLevelElementsContainer : WebSymbolsContainer {
+object VueTopLevelElementsScope : WebSymbolsScope {
 
   override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
-      params.registry.runNameMatchQuery(
-        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsRegistryExtension.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
-        context = context,
+      params.queryExecutor.runNameMatchQuery(
+        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+        scope = scope,
         virtualSymbols = params.virtualSymbols,
         strictScope = params.strictScope,
         abstractSymbols = params.abstractSymbols,
@@ -34,17 +34,17 @@ object VueTopLevelElementsContainer : WebSymbolsContainer {
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
-                                  context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
+                                  scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS)
-      params.registry.runCodeCompletionQuery(
-        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsRegistryExtension.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
-        context = context,
+      params.queryExecutor.runCodeCompletionQuery(
+        listOfNotNull(WebSymbol.NAMESPACE_HTML, VueWebSymbolsQueryConfigurator.KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+        scope = scope,
         position = params.position,
         virtualSymbols = params.virtualSymbols,
       )
     else emptyList()
 
-  override fun createPointer(): Pointer<out WebSymbolsContainer> = Pointer.hardPointer(this)
+  override fun createPointer(): Pointer<out WebSymbolsScope> = Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
 

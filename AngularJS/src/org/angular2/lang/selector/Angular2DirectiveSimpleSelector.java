@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.web.Angular2WebSymbolsRegistryExtension.ELEMENT_NG_TEMPLATE;
+import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE;
 
 public class Angular2DirectiveSimpleSelector {
 

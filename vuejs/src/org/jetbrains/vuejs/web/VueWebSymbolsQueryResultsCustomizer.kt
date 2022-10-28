@@ -1,9 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension
-import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension.Companion.hasOnlyStandardHtmlSymbols
-import com.intellij.html.webSymbols.WebSymbolsHtmlRegistryExtension.Companion.hasOnlyStandardHtmlSymbolsOrExtensions
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -16,24 +14,24 @@ import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
-import com.intellij.webSymbols.registry.WebSymbolsScope
-import com.intellij.webSymbols.registry.WebSymbolsScopeProvider
+import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
+import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_COMPOSITION_COMPONENT
-import org.jetbrains.vuejs.web.VueWebSymbolsRegistryExtension.Companion.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_COMPOSITION_COMPONENT
+import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_PROXIMITY
 
-class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
+class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
   private val scriptLanguage by lazy(LazyThreadSafetyMode.NONE) {
     detectVueScriptLanguage(context.containingFile)
   }
 
-  override fun createPointer(): Pointer<out WebSymbolsScope> {
+  override fun createPointer(): Pointer<out WebSymbolsQueryResultsCustomizer> {
     val contextPtr = context.createSmartPointer()
     return Pointer {
-      contextPtr.dereference()?.let { VueWebSymbolsScope(it) }
+      contextPtr.dereference()?.let { VueWebSymbolsQueryResultsCustomizer(it) }
     }
   }
 
@@ -44,11 +42,11 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
                      name: String?): List<WebSymbol> {
     if (namespace != WebSymbol.NAMESPACE_HTML) return matches
 
-    if (kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS) {
+    if (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
       if (!strict) return matches
     }
     else if (kind == WebSymbol.KIND_HTML_ELEMENTS) {
-      val hasStandardHtmlSymbols = matches.any { it is WebSymbolsHtmlRegistryExtension.StandardHtmlSymbol }
+      val hasStandardHtmlSymbols = matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
       if (!hasStandardHtmlSymbols) return matches
     }
 
@@ -62,7 +60,7 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
                      namespace: SymbolNamespace?,
                      kind: SymbolKind): WebSymbolCodeCompletionItem {
     if (namespace == WebSymbol.NAMESPACE_HTML
-        && kind == VueWebSymbolsRegistryExtension.KIND_VUE_COMPONENTS) {
+        && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
       val proximity = item.symbol?.properties?.get(PROP_VUE_PROXIMITY)
       val element = (item.symbol as? PsiSourcedWebSymbol)?.source
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
@@ -87,16 +85,16 @@ class VueWebSymbolsScope(private val context: PsiElement) : WebSymbolsScope {
   override fun getModificationCount(): Long = 0
 
   override fun equals(other: Any?): Boolean =
-    other is VueWebSymbolsScope
+    other is VueWebSymbolsQueryResultsCustomizer
     && other.context == context
 
   override fun hashCode(): Int =
     context.hashCode()
 
-  class Provider : WebSymbolsScopeProvider {
-    override fun get(location: PsiElement, context: WebSymbolsContext): WebSymbolsScope? =
+  class Provider : WebSymbolsQueryResultsCustomizerFactory {
+    override fun create(location: PsiElement, context: WebSymbolsContext): WebSymbolsQueryResultsCustomizer? =
       if (context.framework == VueFramework.ID)
-        VueWebSymbolsScope(location)
+        VueWebSymbolsQueryResultsCustomizer(location)
       else null
 
   }

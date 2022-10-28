@@ -10,20 +10,20 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
-import org.angular2.web.Angular2WebSymbolsRegistryExtension.Companion.KIND_NG_I18N_ATTRIBUTES
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
-class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
+class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun getSymbols(namespace: SymbolNamespace?,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == KIND_NG_I18N_ATTRIBUTES) {
       tag.attributes
         .mapNotNull { attr ->
@@ -36,17 +36,17 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
     else emptyList()
 
 
-  override fun createPointer(): Pointer<out WebSymbolsContainer> {
+  override fun createPointer(): Pointer<out WebSymbolsScope> {
     val tag = this.tag.createSmartPointer()
     return Pointer {
-      tag.dereference()?.let { I18nAttributesContainer(it) }
+      tag.dereference()?.let { I18NAttributesScope(it) }
     }
   }
 
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
   override fun equals(other: Any?): Boolean =
-    other is I18nAttributesContainer
+    other is I18NAttributesScope
     && other.tag == tag
 
   override fun hashCode(): Int =

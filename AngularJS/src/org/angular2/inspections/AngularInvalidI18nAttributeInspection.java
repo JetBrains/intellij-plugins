@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.angular2.web.containers.I18nAttributesContainer.isI18nCandidate;
+import static org.angular2.web.containers.I18NAttributesScope.isI18nCandidate;
 
 public class AngularInvalidI18nAttributeInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 

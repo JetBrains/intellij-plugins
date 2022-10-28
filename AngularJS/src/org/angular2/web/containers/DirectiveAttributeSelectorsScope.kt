@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
-import com.intellij.webSymbols.registry.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag
@@ -19,11 +19,11 @@ import org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandi
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2StructuralDirectiveSymbol
 import org.angular2.web.Angular2Symbol
-import org.angular2.web.Angular2WebSymbolsRegistryExtension
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 
-class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsContainer {
+class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
 
-  override fun createPointer(): Pointer<out WebSymbolsContainer> =
+  override fun createPointer(): Pointer<out WebSymbolsScope> =
     Pointer.hardPointer(this)
 
   override fun getModificationCount(): Long = 0
@@ -32,14 +32,14 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
-                          context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+                          scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
     if (namespace == WebSymbol.NAMESPACE_HTML && kind == WebSymbol.KIND_HTML_ELEMENTS && name != null) {
       listOf(HtmlAttributeDirectiveAttributeSelectorsExtension(project, name))
     }
     else emptyList()
 
   override fun equals(other: Any?): Boolean =
-    other is DirectiveAttributeSelectorsContainer
+    other is DirectiveAttributeSelectorsScope
     && other.project == project
 
   override fun hashCode(): Int =
@@ -47,7 +47,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
 
   class HtmlAttributeDirectiveAttributeSelectorsExtension(project: Project,
                                                           tagName: String)
-    : WebSymbolsContainerWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
+    : WebSymbolsScopeWithCache<Project, String>(Angular2Framework.ID, project, project, tagName), WebSymbol {
 
     override fun provides(namespace: SymbolNamespace, kind: SymbolKind): Boolean =
       namespace == WebSymbol.NAMESPACE_JS
@@ -142,7 +142,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
         }
       }
       if (!isTemplateTag) {
-        for (candidate in findElementDirectivesCandidates(project, Angular2WebSymbolsRegistryExtension.ELEMENT_NG_TEMPLATE)) {
+        for (candidate in findElementDirectivesCandidates(project, Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE)) {
           if (candidate.directiveKind.isStructural) {
             processStructuralDirective(candidate)
           }
