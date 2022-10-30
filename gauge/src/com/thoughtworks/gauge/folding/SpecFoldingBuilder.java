@@ -34,7 +34,7 @@ final class SpecFoldingBuilder extends GaugeFoldingBuilder {
     addNodes(astNode, descriptors, SpecTokenTypes.SPEC_DETAIL, SpecTokenTypes.SPEC_HEADING);
     addNodes(astNode, descriptors, SpecTokenTypes.SCENARIO, SpecTokenTypes.SCENARIO_HEADING);
     addNodes(astNode, descriptors, SpecTokenTypes.TEARDOWN, SpecTokenTypes.TEARDOWN_IDENTIFIER);
-    return descriptors.toArray(FoldingDescriptor.EMPTY);
+    return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
   private static void addNodes(@NotNull ASTNode astNode, List<FoldingDescriptor> descriptors, IElementType pNode, IElementType cNode) {

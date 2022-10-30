@@ -57,7 +57,7 @@ public class ProtoFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     }
     ProtoFoldingUtils.addIfNotNull(descriptors, grouper.buildBlock());
 
-    return descriptors.toArray(FoldingDescriptor.EMPTY);
+    return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
   @Nullable

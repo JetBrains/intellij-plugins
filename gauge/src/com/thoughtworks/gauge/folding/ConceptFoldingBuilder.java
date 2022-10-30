@@ -33,6 +33,6 @@ final class ConceptFoldingBuilder extends GaugeFoldingBuilder {
     for (ASTNode node : astNode.getChildren(TokenSet.create(ConceptTokenTypes.CONCEPT))) {
       addNode(descriptors, node, node.findChildByType(ConceptTokenTypes.CONCEPT_HEADING));
     }
-    return descriptors.toArray(FoldingDescriptor.EMPTY);
+    return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 }

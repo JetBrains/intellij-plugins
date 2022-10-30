@@ -59,9 +59,9 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
           result.addAll(descriptors);
         }
       }
-      return result.toArray(FoldingDescriptor.EMPTY);
+      return result.toArray(FoldingDescriptor.EMPTY_ARRAY);
     }
-    return FoldingDescriptor.EMPTY;
+    return FoldingDescriptor.EMPTY_ARRAY;
   }
 
   private static void addFoldingDescriptorsFromChildren(List<FoldingDescriptor> descriptors,

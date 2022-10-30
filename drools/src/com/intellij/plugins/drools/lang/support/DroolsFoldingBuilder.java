@@ -45,9 +45,9 @@ public class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
           }
         }
       }
-      return descriptors.toArray(FoldingDescriptor.EMPTY);
+      return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
     }
-    return FoldingDescriptor.EMPTY;
+    return FoldingDescriptor.EMPTY_ARRAY;
   }
 
   private static void addRuleFoldingDescriptors(final List<FoldingDescriptor> descriptors, final DroolsRuleStatement rule) {

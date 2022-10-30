@@ -24,7 +24,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     List<FoldingDescriptor> descriptors = new ArrayList<>();
     appendDescriptors(node.getPsi(), descriptors, document);
-    return descriptors.toArray(FoldingDescriptor.EMPTY);
+    return descriptors.toArray(FoldingDescriptor.EMPTY_ARRAY);
   }
 
   private void appendDescriptors(PsiElement psi, List<FoldingDescriptor> descriptors, Document document) {
