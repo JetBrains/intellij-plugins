@@ -10,7 +10,7 @@ import static org.angular2.lang.html.psi.Angular2HtmlAttrVariable.Kind.REFERENCE
 
 public interface Angular2HtmlStubElementTypes {
 
-  int STUB_VERSION = 1;
+  int STUB_VERSION = 2;
 
   String EXTERNAL_ID_PREFIX = "NG-HTML:";
 
