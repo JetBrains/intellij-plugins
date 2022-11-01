@@ -13,7 +13,7 @@ import com.intellij.psi.xml.HtmlFileElementType
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLanguage.INSTANCE) {
+class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("vue.file", VueLanguage.INSTANCE) {
   companion object {
     @JvmStatic
     val INSTANCE: VueFileElementType = VueFileElementType()
