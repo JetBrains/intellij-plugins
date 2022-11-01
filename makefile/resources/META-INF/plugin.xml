@@ -72,6 +72,7 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <postStartupActivity implementation="com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowRegistrar"/>
 
     <internalFileTemplate name="Makefile" />
+    <iconMapper mappingFile="MakefileIconMappings.json"/>
   </extensions>
 
   <extensionPoints>

@@ -1,0 +1,8 @@
+{
+  "icons": {
+    "expui": {
+      "makefile.svg": "icons/makefile.svg",
+      "makefileToolWindow.svg": "icons/makefileToolWindow.svg"
+    }
+  }
+}
