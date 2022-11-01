@@ -1,5 +1,6 @@
 package com.jetbrains.plugins.meteor.tsStubs;
 
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
@@ -10,22 +11,28 @@ public class MeteorTemplatesResolveTest extends CodeInsightFixtureTestCase {
     return MeteorTestUtil.getBasePath() + "/testResolve/";
   }
 
+  @Override
+  protected boolean runInDispatchThread() {
+    return false;
+  }
+
   private PsiPolyVariantReference configureByFileText(String text) {
     myFixture.configureByText("testResolve.js", text);
-    return (PsiPolyVariantReference)myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
+    return (PsiPolyVariantReference)ReadAction.compute(() -> myFixture.getFile().findReferenceAt(myFixture.getCaretOffset()));
   }
 
   public void testResolved() {
     myFixture.copyDirectoryToProject("module", "module");
     PsiPolyVariantReference expression = configureByFileText("var a = Template.myTemp<caret>late1;");
-    ResolveResult[] results = expression.multiResolve(false);
+    ResolveResult[] results = ReadAction.compute(() -> expression.multiResolve(false));
     assertEquals(1, results.length);
   }
 
   public void testNotResolved() {
     myFixture.copyDirectoryToProject("module", "module");
     PsiPolyVariantReference expression = configureByFileText("var a = Template.myTemp<caret>late;");
-    ResolveResult[] results = expression.multiResolve(false);
+    ResolveResult[] results = ReadAction.compute(() -> expression.multiResolve(false));
+
     assertEquals(0, results.length);
   }
 

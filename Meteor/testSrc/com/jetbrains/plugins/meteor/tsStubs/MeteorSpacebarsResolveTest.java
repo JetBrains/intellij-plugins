@@ -3,14 +3,19 @@ package com.jetbrains.plugins.meteor.tsStubs;
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
-  
-  
+
+  @Override
+  protected boolean runInDispatchThread() {
+    return false;
+  }
+
   @Override
   protected String getBasePath() {
     return MeteorTestUtil.getBasePath() + "/testResolveHelpers/";
@@ -55,7 +60,8 @@ public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
   public void testResolveTemplate() {
     PsiElement resolve = resolveElement();
     assertNotNull(resolve);
-    assertEquals("\"templateForResolving\"", resolve.getText());
+    String text = ReadAction.compute(() -> resolve.getText());
+    assertEquals("\"templateForResolving\"", text);
   }
 
   public void testResolveForBodyTag() {
@@ -76,9 +82,11 @@ public class MeteorSpacebarsResolveTest extends CodeInsightFixtureTestCase {
     VirtualFile templates = directory.findFileByRelativePath("templates.html");
     assertNotNull(templates);
     myFixture.configureFromExistingVirtualFile(templates);
-    int offset = myFixture.getCaretOffset();
-    PsiReference reference = myFixture.getFile().findReferenceAt(offset);
-    return reference.resolve();
+    return ReadAction.compute(() -> {
+      int offset = myFixture.getCaretOffset();
+      PsiReference reference = myFixture.getFile().findReferenceAt(offset);
+      return reference.resolve();
+    });
   }
 
   @Override

@@ -2,7 +2,7 @@ package com.jetbrains.plugins.meteor.tsStubs;
 
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.util.ArrayUtil;
 
@@ -15,7 +15,7 @@ public class MeteorGotoTemplateSymbolTest extends MeteorProjectTestBase {
   }
 
   private void runGotoTest(final String... expectedSymbols) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
+    WriteAction.runAndWait(() -> {
       ChooseByNameModel model2 = new GotoSymbolModel2(getProject(), myFixture.getTestRootDisposable());
       String[] names = model2.getNames(false);
 
