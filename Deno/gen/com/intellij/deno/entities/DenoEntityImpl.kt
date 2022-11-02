@@ -42,7 +42,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
     return connections
   }
 
-  class Builder(var result: DenoEntityData?) : ModifiableWorkspaceEntityBase<DenoEntity>(), DenoEntity.Builder {
+  class Builder(result: DenoEntityData?) : ModifiableWorkspaceEntityBase<DenoEntity, DenoEntityData>(result), DenoEntity.Builder {
     constructor() : this(DenoEntityData())
 
     override fun applyToBuilder(builder: MutableEntityStorage) {
@@ -62,7 +62,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
       this.id = getEntityData().createEntityId()
       // After adding entity data to the builder, we need to unbind it and move the control over entity data to builder
       // Builder may switch to snapshot at any moment and lock entity data to modification
-      this.result = null
+      this.currentEntityData = null
 
       index(this, "depsFile", this.depsFile)
       index(this, "denoTypes", this.denoTypes)
@@ -97,7 +97,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
       get() = getEntityData().entitySource
       set(value) {
         checkModificationAllowed()
-        getEntityData().entitySource = value
+        getEntityData(true).entitySource = value
         changedProperty.add("entitySource")
 
       }
@@ -106,7 +106,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
       get() = getEntityData().depsFile
       set(value) {
         checkModificationAllowed()
-        getEntityData().depsFile = value
+        getEntityData(true).depsFile = value
         changedProperty.add("depsFile")
         val _diff = diff
         if (_diff != null) index(this, "depsFile", value)
@@ -116,13 +116,12 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
       get() = getEntityData().denoTypes
       set(value) {
         checkModificationAllowed()
-        getEntityData().denoTypes = value
+        getEntityData(true).denoTypes = value
         changedProperty.add("denoTypes")
         val _diff = diff
         if (_diff != null) index(this, "denoTypes", value)
       }
 
-    override fun getEntityData(): DenoEntityData = result ?: super.getEntityData() as DenoEntityData
     override fun getEntityClass(): Class<DenoEntity> = DenoEntity::class.java
   }
 }
