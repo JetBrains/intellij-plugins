@@ -17,6 +17,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.api.RenameTarget;
+import com.intellij.refactoring.rename.api.RenameValidationResult;
+import com.intellij.refactoring.rename.api.RenameValidator;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webSymbols.WebSymbol;
 import com.intellij.webSymbols.WebSymbolOrigin;
@@ -24,6 +26,7 @@ import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.web.Angular2Symbol;
 import org.angular2.web.Angular2SymbolOrigin;
+import org.angularjs.AngularJSBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -245,13 +248,10 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     return SearchTarget.super.getMaximalSearchScope();
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public String validateName(@NotNull String name) {
-    if (myIsElement) {
-      return TAG_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML element name.";
-    }
-    return ATTRIBUTE_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML attribute name.";
+  public RenameValidator validator() {
+    return new MyRenameValidator(myIsElement);
   }
 
   private static class DirectiveSelectorSymbolNavigationTarget implements NavigationTarget {
@@ -284,6 +284,28 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     @Override
     public @Nullable NavigationRequest navigationRequest() {
       return getNavigatable().navigationRequest();
+    }
+  }
+
+  private static class MyRenameValidator implements RenameValidator {
+
+    private final boolean myIsElement;
+
+    MyRenameValidator(boolean isElement){
+      myIsElement = isElement;
+    }
+
+    @NotNull
+    @Override
+    public RenameValidationResult validate(@NotNull String newName) {
+      if (myIsElement) {
+        return TAG_NAME_PATTERN.matcher(newName).matches()
+               ? RenameValidationResult.ok()
+               : RenameValidationResult.invalid(AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.element.name", newName));
+      }
+      return ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()
+             ? RenameValidationResult.ok()
+             : RenameValidationResult.invalid(AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.attribute.name", newName));
     }
   }
 }
