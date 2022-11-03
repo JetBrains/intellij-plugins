@@ -1216,9 +1216,9 @@ export default class ComponentInsertion extends Vue {
     myFixture.completeBasic()
     myFixture.assertPreferredCompletionItems(0, // first 3 items come from the BAlert component
                                              "@dismiss-count-down", "@dismissed", "@input",
-                                             "@abort", "@auxclick", "@blur", "@cancel", "@canplay",
-                                             "@canplaythrough", "@change", "@click", "@close", "@contextmenu",
-                                             "@copy", "@cuechange", "@cut", "@dblclick")
+                                             "@abort", "@auxclick", "@beforeinput", "@beforematch", "@blur", "@cancel", "@canplay",
+                                             "@canplaythrough", "@change", "@click", "@close", "@contextlost", "@contextmenu",
+                                             "@contextrestored", "@copy", "@cuechange", "@cut", "@dblclick")
 
     myFixture.configureByText("foo.vue", "<template> <BAlert @inp<caret> </template>")
     myFixture.completeBasic()
@@ -1227,7 +1227,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.configureByText("foo.vue", "<template> <div @c<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "@copy", "@cancel", "@click", "@canplaythrough", "@close",
-                       "@change", "@canplay", "@cut", "@cuechange", "@contextmenu", ".capture",
+                       "@change", "@canplay", "@cut", "@cuechange", "@contextlost", "@contextmenu", "@contextrestored", ".capture",
                        ".once", ".passive", ".prevent", ".self", ".stop")
   }
 
@@ -1239,7 +1239,7 @@ export default class ComponentInsertion extends Vue {
 
     myFixture.configureByText("foo.vue", "<template> <div v-on:<caret> </template>")
     myFixture.completeBasic()
-    myFixture.assertPreferredCompletionItems(0, "abort", "auxclick", "blur",
+    myFixture.assertPreferredCompletionItems(0, "abort", "auxclick", "beforeinput", "beforematch", "blur",
                                              "cancel", "canplay", "canplaythrough", "change", "click")
   }
 
@@ -1277,7 +1277,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.assertPreferredCompletionItems(0, "v-on:", "v-on")
     (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
     // new completion must start
-    myFixture.assertPreferredCompletionItems(0, "abort", "auxclick", "blur", "cancel", "canplay")
+    myFixture.assertPreferredCompletionItems(0, "abort", "auxclick", "beforeinput", "beforematch", "blur", "cancel", "canplay")
     (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
     myFixture.checkResult("<div v-on:abort=\"<caret>\">")
   }

@@ -112,6 +112,9 @@
 (webkitfullscreenerror)%null#null#50
 (webkittransitionend)%null#Event#50
 (wheel)%null#WheelEvent#50
+(beforematch)%null#null#50
+(contextlost)%null#null#50
+(contextrestored)%null#null#50
 (pan)%null#HammerInput#50
 (pancancel)%null#HammerInput#50
 (pandown)%null#HammerInput#50
@@ -198,8 +201,10 @@ datasrc%null#null#0
 datatype%null#null#0
 dir%null#null#0
 draggable%null#null#0
+enterkeyhint%null#null#0
 hidden%null#null#0
 id%null#null#0
+inert%null#null#0
 inlist%null#null#0
 inputmode%null#null#0
 is%null#null#0

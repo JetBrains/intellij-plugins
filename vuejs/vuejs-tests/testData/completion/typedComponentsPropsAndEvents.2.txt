@@ -1,13 +1,17 @@
 !close#boolean#100
 abort#null#1
 auxclick#null#1
+beforeinput#null#1
+beforematch#null#1
 blur#null#1
 cancel#null#1
 canplay#null#1
 canplaythrough#null#1
 change#null#1
 click#null#1
+contextlost#null#1
 contextmenu#null#1
+contextrestored#null#1
 copy#null#1
 cuechange#null#1
 cut#null#1

@@ -45,8 +45,10 @@ datasrc#0+0
 datatype#0+0
 dir#0+0
 draggable#0+0
+enterkeyhint#0+0
 hidden#0+0
 id#0+0
+inert#0+0
 inlist#0+0
 inputmode#0+0
 itemid#0+0
