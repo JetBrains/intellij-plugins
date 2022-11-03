@@ -19,8 +19,10 @@ datasrc#null#1
 datatype#null#1
 dir#null#1
 draggable#null#1
+enterkeyhint#null#1
 hidden#null#1
 id#null#1
+inert#null#1
 inlist#null#1
 inputmode#null#1
 itemid#null#1

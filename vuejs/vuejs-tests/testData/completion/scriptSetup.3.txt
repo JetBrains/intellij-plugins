@@ -20,8 +20,10 @@ v-slot:#null
 :datatype#null
 :dir#null
 :draggable#null
+:enterkeyhint#null
 :hidden#null
 :id#null
+:inert#null
 :inlist#null
 :inputmode#null
 :itemid#null

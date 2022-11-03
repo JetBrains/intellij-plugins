@@ -24,8 +24,10 @@ datasrc#1+11
 datatype#1+11
 dir#1+11
 draggable#1+11
+enterkeyhint#1+11
 hidden#1+11
 id#1+11
+inert#1+11
 inlist#1+11
 inputmode#1+11
 itemid#1+11
