@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
@@ -46,7 +47,7 @@ class VueJSAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
         PsiDocumentManager.getInstance(place.project).commitAllDocuments()
         val element = JSStubBasedPsiTreeUtil.resolveLocally(info.effectiveName, scope) ?: return@runUndoTransparentWriteAction
         val type = JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element).firstOrNull()
-          ?.let { JSTypeUtils.getTypeOfElement(it) }
+          ?.let { JSResolveUtil.getElementJSType(it) }
           ?.substitute()
         if (type != null && JSTypeUtils.hasFunctionType(type, false, element)) {
           componentEdit.addClassicPropertyReference(METHODS_PROP, info.effectiveName)

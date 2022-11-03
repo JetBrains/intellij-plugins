@@ -152,6 +152,20 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
+  fun testAddMissingFunctionImport() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+
+    myFixture.configureFromTempProjectFile("components/Test.vue")
+    myFixture.moveToOffsetBySignature("get<caret>Client()")
+
+    val intention = myFixture.findSingleIntention("Insert 'import")
+    WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+
+    myFixture.checkResultByFile("${getTestName(true)}/components/Test.after.vue")
+  }
+
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
     if (intention == null) {
