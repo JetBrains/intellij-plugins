@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HbParseDefinition implements ParserDefinition {
 
-  public static final IFileElementType FILE_ELEMENT_TYPE = new IStubFileElementType<>("hb.FILE", HbLanguage.INSTANCE);
+  public static final IFileElementType FILE_ELEMENT_TYPE = new IStubFileElementType<>("handlebars", HbLanguage.INSTANCE);
 
   @Override
   @NotNull

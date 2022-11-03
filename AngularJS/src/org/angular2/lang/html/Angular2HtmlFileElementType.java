@@ -13,7 +13,7 @@ public final class Angular2HtmlFileElementType extends IStubFileElementType<PsiF
   public static final IStubFileElementType<PsiFileStub<HtmlFileImpl>> INSTANCE = new Angular2HtmlFileElementType();
 
   private Angular2HtmlFileElementType() {
-    super("html.angular2.FILE", Angular2HtmlLanguage.INSTANCE);
+    super("html.angular2", Angular2HtmlLanguage.INSTANCE);
   }
 
   @Override

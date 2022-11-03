@@ -12,7 +12,8 @@ public final class Angular2SvgFileElementType extends IStubFileElementType<PsiFi
   public static final IStubFileElementType<PsiFileStub<HtmlFileImpl>> INSTANCE = new Angular2SvgFileElementType();
 
   private Angular2SvgFileElementType() {
-    super("svg.angular2.file", Angular2SvgLanguage.INSTANCE);
+    super("svg.angular2" +
+          "", Angular2SvgLanguage.INSTANCE);
   }
 
   @Override
