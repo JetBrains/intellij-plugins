@@ -16,11 +16,13 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizer
 import com.intellij.webSymbols.query.WebSymbolsQueryResultsCustomizerFactory
+import com.intellij.webSymbols.webTypes.WebTypesSymbol
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_COMPOSITION_COMPONENT
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_PROXIMITY
+import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 
 class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : WebSymbolsQueryResultsCustomizer {
 
@@ -42,15 +44,27 @@ class VueWebSymbolsQueryResultsCustomizer(private val context: PsiElement) : Web
                      name: String?): List<WebSymbol> {
     if (namespace != WebSymbol.NAMESPACE_HTML) return matches
 
+    var result = matches
     if (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS) {
-      if (!strict) return matches
+      if (name != null && result.size > 1) {
+        val mergedSymbol = result.find { it is VueWebTypesMergedSymbol } as? VueWebTypesMergedSymbol
+        if (mergedSymbol != null) {
+          val mergedWebTypes = mergedSymbol.webTypesSymbols
+          // The check can get very expensive with more web-types merged
+          // Limit checks to some reasonable sizes. Usually it should be only one merged.
+          if (mergedWebTypes.size < 5) {
+            result = result.filter { it !is WebTypesSymbol || mergedWebTypes.none { merged -> merged.isEquivalentTo(it) } }
+          }
+        }
+      }
+      if (!strict) return result
     }
     else if (kind == WebSymbol.KIND_HTML_ELEMENTS) {
-      val hasStandardHtmlSymbols = matches.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
-      if (!hasStandardHtmlSymbols) return matches
+      val hasStandardHtmlSymbols = result.any { it is WebSymbolsHtmlQueryConfigurator.StandardHtmlSymbol }
+      if (!hasStandardHtmlSymbols) return result
     }
 
-    return matches.filter { symbol ->
+    return result.filter { symbol ->
       symbol.properties[PROP_VUE_PROXIMITY] != VueModelVisitor.Proximity.OUT_OF_SCOPE ||
       symbol.properties[PROP_VUE_COMPOSITION_COMPONENT] == true
     }

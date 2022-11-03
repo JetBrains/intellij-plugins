@@ -20,8 +20,9 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
-class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
-                              webTypesSymbols: Collection<WebSymbol>)
+class VueWebTypesMergedSymbol(override val matchedName: String,
+                              sourceSymbol: PsiSourcedWebSymbol,
+                              val webTypesSymbols: Collection<WebSymbol>)
   : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol) {
 
   private val symbols: List<WebSymbol> = sequenceOf(sourceSymbol)
@@ -31,6 +32,9 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
     get() = symbols.getOrNull(1)
       ?.name
       ?.takeIf { toAsset(it) != toAsset(name) }
+
+  override val name: String
+    get() = matchedName
 
   override val origin: WebSymbolOrigin
     get() = symbols.getOrNull(1)?.origin ?: super.origin
@@ -128,7 +132,7 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
           }
         }
         if (psiSourcedWebSymbol != null) {
-          containers.add(VueWebTypesMergedSymbol(psiSourcedWebSymbol, webSymbols))
+          containers.add(VueWebTypesMergedSymbol(psiSourcedWebSymbol.matchedName, psiSourcedWebSymbol, webSymbols))
         }
         else {
           containers.addAll(webSymbols)
@@ -158,16 +162,18 @@ class VueWebTypesMergedSymbol(sourceSymbol: PsiSourcedWebSymbol,
             else symbols.add(it)
           }
           psiSourcedWebSymbol?.let {
-            items[0].withSymbol(VueWebTypesMergedSymbol(it, symbols))
+            items[0].withSymbol(VueWebTypesMergedSymbol(it.matchedName, it, symbols))
           } ?: items[0]
         }
       }
 
   override fun createPointer(): Pointer<out WebSymbol> {
     val pointers = symbols.map { it.createPointer() }
+    val matchedName = matchedName
     return Pointer {
       val symbols = pointers.map { it.dereference() ?: return@Pointer null }
-      VueWebTypesMergedSymbol(symbols[0] as? PsiSourcedWebSymbol ?: return@Pointer null,
+      VueWebTypesMergedSymbol(matchedName,
+                              symbols[0] as? PsiSourcedWebSymbol ?: return@Pointer null,
                               symbols.subList(1, symbols.size))
     }
   }

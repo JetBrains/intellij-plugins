@@ -12,6 +12,8 @@ import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
+import org.jetbrains.vuejs.model.source.VueSourceContainer
+import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
@@ -21,6 +23,9 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
   VueScopeElementSymbol<VueComponent>(matchedName, component) {
 
   private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
+
+  val sourceDescriptor: VueSourceEntityDescriptor?
+    get() = (item as? VueSourceContainer)?.descriptor
 
   override val kind: SymbolKind
     get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS

@@ -58,16 +58,18 @@ class VueHighlightingTest : BasePlatformTestCase() {
     return myFixture.configureByFile(getTestName(true) + "." + extension)
   }
 
-  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null) {
+  private fun doDirTest(addNodeModules: List<VueTestModule> = emptyList(), fileName: String? = null, vararg additionalFilesToCheck: String) {
     val testName = getTestName(true)
     if (addNodeModules.isNotEmpty()) {
       myFixture.configureVueDependencies(*addNodeModules.toTypedArray())
     }
     myFixture.copyDirectoryToProject(testName, ".")
-    val actualFileName = fileName ?: "$testName.vue"
-    myFixture.configureFromTempProjectFile(actualFileName)
-      .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$actualFileName")
-    myFixture.checkHighlighting()
+
+    for (toCheck in sequenceOf(fileName ?: "$testName.vue").plus(additionalFilesToCheck)) {
+      myFixture.configureFromTempProjectFile(toCheck)
+        .virtualFile.putUserData(VfsTestUtil.TEST_DATA_FILE_PATH, "$testDataPath/$testName/$toCheck")
+      myFixture.checkHighlighting()
+    }
   }
 
   fun testDirectivesWithoutParameters() = doTest()
@@ -559,6 +561,11 @@ const props = {seeMe: {}}
   fun testInferPropType() {
     myFixture.enableInspections(VueInspectionsProvider())
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2, VueTestModule.NAIVE_UI_2_33_2_PATCHED))
+  }
+
+  fun testLocalWebTypes() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doDirTest(emptyList(), "main.vue", "main2.vue")
   }
 
   fun testPropertyReferenceInLambda() {
