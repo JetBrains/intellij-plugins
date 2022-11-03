@@ -16,9 +16,7 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.api.RenameTargetWithValidation;
-import com.intellij.refactoring.rename.api.RenameValidationResult;
-import com.intellij.refactoring.rename.api.RenameValidator;
+import com.intellij.refactoring.rename.api.RenameTarget;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webSymbols.WebSymbol;
 import com.intellij.webSymbols.WebSymbolOrigin;
@@ -26,7 +24,6 @@ import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.web.Angular2Symbol;
 import org.angular2.web.Angular2SymbolOrigin;
-import org.angularjs.AngularJSBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +39,7 @@ import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
 import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;
 
-public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTarget, RenameTargetWithValidation {
+public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTarget, RenameTarget {
 
   private static final Pattern TAG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*");
   private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\\p{Space}\"'>/=\\p{Cntrl}]+");
@@ -248,10 +245,13 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     return SearchTarget.super.getMaximalSearchScope();
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public RenameValidator getRenameValidator() {
-    return new MyRenameValidator(myIsElement);
+  public String validateName(@NotNull String name) {
+    if (myIsElement) {
+      return TAG_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML element name.";
+    }
+    return ATTRIBUTE_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML attribute name.";
   }
 
   private static class DirectiveSelectorSymbolNavigationTarget implements NavigationTarget {
@@ -284,34 +284,6 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     @Override
     public @Nullable NavigationRequest navigationRequest() {
       return getNavigatable().navigationRequest();
-    }
-  }
-
-  private static class MyRenameValidator implements RenameValidator {
-
-    private final boolean myIsElement;
-
-    MyRenameValidator(boolean isElement){
-      myIsElement = isElement;
-    }
-
-    @NotNull
-    @Override
-    public Pointer<? extends RenameValidator> createPointer() {
-      return Pointer.hardPointer(this);
-    }
-
-    @NotNull
-    @Override
-    public RenameValidationResult validate(@NotNull String newName) {
-      if (myIsElement) {
-        return TAG_NAME_PATTERN.matcher(newName).matches()
-               ? RenameValidationResult.ok()
-               : RenameValidationResult.invalid(AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.element.name", newName));
-      }
-      return ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()
-             ? RenameValidationResult.ok()
-             : RenameValidationResult.invalid(AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.attribute.name", newName));
     }
   }
 }
