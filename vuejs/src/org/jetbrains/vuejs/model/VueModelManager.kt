@@ -128,13 +128,19 @@ class VueModelManager {
         context = element.context
         if (context is JSCallExpression
             || (context is JSProperty && context.name != "name")) {
-          getVueIndexData(element)
+          val indexData = getVueIndexData(element)
+          indexData
             ?.descriptorQualifiedReference
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
             ?.asSafely<VueSourceEntityDescriptor>()
             ?.let { return it }
 
           if (context is JSProperty) {
+            if (indexData != null) {
+              context.parent.asSafely<JSObjectLiteralExpression>()?.let {
+                return VueSourceEntityDescriptor(it)
+              }
+            }
             return VueSourceEntityDescriptor(source = element)
           }
         }

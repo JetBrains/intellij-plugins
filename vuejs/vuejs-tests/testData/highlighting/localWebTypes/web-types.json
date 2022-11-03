@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/web-types",
+  "framework": "vue",
+  "name": "webstorm-vue-web-types-bug",
+  "version": "1.0.0",
+  "js-types-syntax": "typescript",
+  "contributions": {
+    "html": {
+      "vue-components": [
+        {
+          "name": "TestFoo2",
+          "source": {
+            "module": "./Test2.vue",
+            "symbol": "default"
+          },
+          "props": [
+            {
+              "name": "bar",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "name": "TestFoo1",
+          "source": {
+            "module": "./Test1.vue",
+            "symbol": "default"
+          },
+          "props": [
+            {
+              "name": "bar",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

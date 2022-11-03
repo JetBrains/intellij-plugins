@@ -16,7 +16,9 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import com.intellij.util.containers.MultiMap
@@ -31,6 +33,7 @@ import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_DIRECTIVES
 import org.jetbrains.vuejs.web.asWebSymbol
+import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDocumentedItemSymbol
 import org.jetbrains.vuejs.web.symbols.VueWebTypesMergedSymbol
 import java.util.*
@@ -95,14 +98,14 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
         component.asWebSymbol(name, forcedProximity)
           ?.tryMergeWithWebTypes(webTypesContributions)
-          ?.let(consumer)
+          ?.forEach(consumer)
         return true
       }
 
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         directive.asWebSymbol(name, forcedProximity)
           ?.tryMergeWithWebTypes(webTypesContributions)
-          ?.let(consumer)
+          ?.forEach(consumer)
         return true
       }
 
@@ -140,15 +143,25 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
     return result
   }
 
-  private fun WebSymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>): WebSymbol {
+  private fun WebSymbol.tryMergeWithWebTypes(webTypesContributions: MultiMap<WebTypesSymbolLocation, WebSymbol>): List<WebSymbol> {
+    if (this !is VueDocumentedItemSymbol<*>) return listOf(this)
+
     val source =
-      (this as? VueDocumentedItemSymbol<*>)?.rawSource
+      (this as? VueComponentSymbol)
+        ?.sourceDescriptor
+        ?.source
+        ?.let {
+          it.contextOfType(ES6ExportDefaultAssignment::class)
+          ?: it as? HtmlFileImpl
+        }
+      ?: this.rawSource
         ?.let { source ->
           if (source is JSProperty)
             JSPsiImplUtils.getInitializerReference(source)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, source) }
           else source
         }
-      ?: return this
+      ?: return listOf(this)
+
 
     val locations =
       when (source) {
@@ -156,13 +169,24 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
         is ES6ImportSpecifier -> symbolLocationsFromSpecifier(source, kind)
         is ES6ImportedBinding -> symbolLocationsForModule(source, source.declaration?.fromClause?.referenceText, "default", kind)
         is TypeScriptPropertySignature -> symbolLocationFromPropertySignature(source, kind)?.let { listOf(it) }
+        is ES6ExportDefaultAssignment, is HtmlFileImpl -> source.containingFile.virtualFile?.url?.let {
+          listOf(WebTypesSymbolLocation(it, "default", kind))
+        }
         else -> null
       } ?: emptyList()
 
     val toMerge = locations.flatMap { webTypesContributions[it] }
-    if (toMerge.isNotEmpty())
-      return VueWebTypesMergedSymbol(this, toMerge)
-    return this
+    if (toMerge.isNotEmpty()) {
+      if (source is ES6ExportDefaultAssignment || source is HtmlFileImpl) {
+        // Merge with the source component - we need to merge both ways
+        val names = toMerge.asSequence().map { it.matchedName }.plus(this.matchedName).toSet()
+        return names.map { VueWebTypesMergedSymbol(it, this, toMerge) }
+      }
+      else {
+        return listOf(VueWebTypesMergedSymbol(this.matchedName, this, toMerge))
+      }
+    }
+    return listOf(this)
   }
 
   private fun symbolLocationsFromSpecifier(specifier: ES6ImportSpecifier?, symbolKind: String): List<WebTypesSymbolLocation> {

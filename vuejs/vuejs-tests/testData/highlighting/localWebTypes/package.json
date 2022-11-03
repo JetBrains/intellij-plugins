@@ -1,0 +1,7 @@
+{
+  "name": "webstorm-vue-web-types-bug",
+  "web-types": "web-types.json",
+  "dependencies": {
+    "vue": "3.1.5"
+  }
+}
