@@ -1992,7 +1992,8 @@ export default {
 
   fun testComponentEmitsDefinitions() {
     doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, renderTypeText = false,
-                 locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>"),
+                 locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>",
+                                    "define-emits-with-type @<caret>"),
                  filter = { it.startsWith("!") })
   }
 

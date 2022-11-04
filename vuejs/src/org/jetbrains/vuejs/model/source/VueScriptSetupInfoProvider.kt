@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.NlsSafe
@@ -222,13 +224,28 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
     }
 
     private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> =
-      call.stubSafeCallArguments.getOrNull(0)
+      call.stubSafeCallArguments
+        .getOrNull(0)
         .asSafely<JSArrayLiteralExpression>()
         ?.stubSafeElements
         ?.mapNotNull { literal ->
           (literal as? JSLiteralExpression)
             ?.significantValue
             ?.let { VueScriptSetupLiteralBasedEvent(es6Unquote(it), literal) }
+        }
+      ?: JSResolveUtil
+        .getElementJSType(call)
+        ?.asRecordType()
+        ?.callSignatures
+        ?.mapNotNull { callSignature ->
+          callSignature
+            .functionType
+            .parameters.getOrNull(0)
+            ?.inferredType
+            ?.asSafely<JSStringLiteralTypeImpl>()
+            ?.let {
+              VueScriptSetupLiteralBasedEvent(es6Unquote(it.valueAsString), it.sourceElement)
+            }
         }
       ?: emptyList()
 
@@ -266,6 +283,6 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
   }
 
   private class VueScriptSetupLiteralBasedEvent(override val name: String,
-                                                override val source: JSLiteralExpression) : VueEmitCall
+                                                override val source: PsiElement?) : VueEmitCall
 
 }
