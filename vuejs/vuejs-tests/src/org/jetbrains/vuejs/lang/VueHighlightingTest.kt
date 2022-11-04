@@ -561,6 +561,11 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testSourceScopedSlots() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "Catalogue.vue")
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

@@ -35,6 +35,7 @@ class VueInspectionsProvider : InspectionToolProvider {
       CheckEmptyTagInspection::class.java,
       JSAnnotatorInspection::class.java,
       JSCheckFunctionSignaturesInspection::class.java,
+      JSConstantReassignmentInspection::class.java,
       JSUnresolvedVariableInspection::class.java,
       JSUnresolvedFunctionInspection::class.java,
       JSUndeclaredVariableInspection::class.java,
