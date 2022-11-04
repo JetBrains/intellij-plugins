@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
+  "name": "angular-hacks",
+  "version": "0.0.0",
+  "framework": "angular",
+  "contributions": {
+    "js": {
+      "ng-one-time-bindings": [
+        {
+          "name": "mat-sort-header",
+          "extension": true,
+          "attribute-value": {
+            "required": false
+          }
+        }
+      ]
+    }
+  }
+}

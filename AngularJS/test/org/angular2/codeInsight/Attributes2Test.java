@@ -1177,4 +1177,11 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testMatSortHeader() {
+    configureCopy(myFixture, ANGULAR_MATERIAL_14_2_5_MIXED);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("matSortHeader.html");
+    myFixture.checkHighlighting();
+  }
+
 }
