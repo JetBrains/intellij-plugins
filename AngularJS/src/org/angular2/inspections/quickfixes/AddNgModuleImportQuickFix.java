@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes;
 
+import com.intellij.codeInsight.intention.FileModifier;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.openapi.editor.Editor;
@@ -72,5 +73,10 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
     if (candidates.size() == 1 || editor != null) {
       action.execute();
     }
+  }
+
+  @Override
+  public @Nullable FileModifier getFileModifierForPreview(@NotNull PsiFile target) {
+    return null;
   }
 }

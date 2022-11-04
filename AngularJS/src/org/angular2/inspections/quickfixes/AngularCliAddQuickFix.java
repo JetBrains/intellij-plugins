@@ -1,16 +1,19 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes;
 
+import com.intellij.codeInsight.intention.FileModifier;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import org.angular2.cli.AngularCliUtil;
 import org.angular2.cli.actions.AngularCliAddDependencyAction;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction {
   private final VirtualFile myPackageJson;
@@ -48,5 +51,10 @@ public class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction 
       AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(),
                                                   Angular2Bundle.message("angular.quickfix.json.ng-add.error.cant-run"));
     }
+  }
+
+  @Override
+  public @Nullable FileModifier getFileModifierForPreview(@NotNull PsiFile target) {
+    return null;
   }
 }
