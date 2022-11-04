@@ -32,6 +32,7 @@ public enum Angular2TestModule {
   ANGULAR_FORMS_8_2_14("@angular/forms", "8.2.14"),
   ANGULAR_MATERIAL_7_2_1("@angular/material", "7.2.1"),
   ANGULAR_MATERIAL_8_2_3_MIXED("@angular/material", "8.2.3-mixed"),
+  ANGULAR_MATERIAL_14_2_5_MIXED("@angular/material", "14.2.5"),
   ANGULAR_PLATFORM_BROWSER_4_0_0("@angular/platform-browser", "4.0.0"),
   ANGULAR_ROUTER_4_0_0("@angular/router", "4.0.0"),
   ANGULAR_L10N_4_2_0("angular-l10n", "4.2.0"),

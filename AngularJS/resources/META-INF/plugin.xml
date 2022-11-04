@@ -258,6 +258,7 @@
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
 
     <webSymbols.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/angular-hacks.web-types.json"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.angular2.web.Angular2WebSymbolsQueryConfigurator"/>
     <webSymbols.queryResultsCustomizerFactory implementation="org.angular2.web.Angular2WebSymbolsQueryResultsCustomizer$Factory"/>
