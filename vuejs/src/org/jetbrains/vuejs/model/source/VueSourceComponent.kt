@@ -3,22 +3,24 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findExpressionInAttributeValue
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.stubSafeAttributes
 import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.types.VueSourceSlotScopeType
 
 class VueSourceComponent(sourceElement: JSImplicitElement,
                          descriptor: VueSourceEntityDescriptor,
@@ -64,7 +66,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
       val result = mutableListOf<VueSlot>()
       template.safeVisitTags { tag ->
         if (tag.name == SLOT_TAG_NAME) {
-          PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java)
+          tag.stubSafeAttributes
             .asSequence()
             .filter { !it.value.isNullOrBlank() }
             .mapNotNull { attr ->
@@ -111,13 +113,19 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
     }
   }
 
-  private class VueSourceRegexSlot(override val pattern: String?,
-                                   override val source: PsiElement) : VueSlot {
+  private class VueSourceRegexSlot(override val pattern: String,
+                                   override val source: XmlTag) : VueSlot {
     override val name: String
       get() = "Dynamic slot"
+
+    override val scope: JSType
+      get() = VueSourceSlotScopeType(source, "$name /$pattern/")
 
   }
 
   private class VueSourceSlot(override val name: String,
-                              override val source: PsiElement) : VueSlot
+                              override val source: XmlTag) : VueSlot {
+    override val scope: JSType
+      get() = VueSourceSlotScopeType(source, name)
+  }
 }
