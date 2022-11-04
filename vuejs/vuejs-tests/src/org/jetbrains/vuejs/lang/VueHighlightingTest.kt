@@ -161,24 +161,12 @@ const props = {seeMe: {}}
 
   fun testNoDoubleSpellCheckingInAttributesWithEmbeddedContents() {
     myFixture.enableInspections(SpellCheckingInspection())
-    myFixture.configureByText(VueFileType.INSTANCE, """
-<template>
-    <div>
-        <ul>
-            <li v-for="somewordd in someObject">{{ somewordd }}
-        </ul>
-    </div>
-</template>
-<script>
-    var someObject = []
-</script>
-""")
-    val list = myFixture.doHighlighting().filter { it.severity.name == "TYPO" }
-    val typoRanges: MutableSet<Pair<Int, Int>> = mutableSetOf()
-    for (info in list) {
-      val pair = Pair(info.startOffset, info.endOffset)
-      if (!typoRanges.add(pair)) TestCase.assertTrue("Duplicate $pair", false)
-    }
+    doTest()
+  }
+
+  fun testNoSpellcheckInEnumeratedAttributes() {
+    myFixture.enableInspections(SpellCheckingInspection())
+    doTest()
   }
 
   fun testTypeScriptTypesAreResolved() = doTest()
