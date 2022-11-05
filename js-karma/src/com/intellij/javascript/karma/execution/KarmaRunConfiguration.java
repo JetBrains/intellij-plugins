@@ -22,7 +22,6 @@ import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -50,14 +49,12 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
   }
 
   @Override
-  public void readExternal(@NotNull Element element) throws InvalidDataException {
-    super.readExternal(element);
+  public void readConfiguration(@NotNull Element element) throws InvalidDataException {
     myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element);
   }
 
   @Override
-  public void writeExternal(@NotNull Element element) throws WriteExternalException {
-    super.writeExternal(element);
+  public void writeConfiguration(@NotNull Element element) {
     KarmaRunSettingsSerializationUtil.writeXml(element, myRunSettings);
   }
 
