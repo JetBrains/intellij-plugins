@@ -166,7 +166,8 @@ public final class KarmaServer {
                                                         @NotNull ConsoleCommandLineFolder commandLineFolder)
     throws IOException, ExecutionException {
     NodeTargetRun targetRun =
-      new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null, NodeTargetRun.createOptions(ThreeState.NO, List.of()));
+      new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null,
+                        NodeTargetRun.createOptions(ThreeState.NO, List.of(), false, null, serverSettings.getRunConfiguration()));
     targetRun.setEnvData(serverSettings.getEnvData());
     TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
     commandLine.setWorkingDirectory(targetRun.path(serverSettings.getWorkingDirectorySystemDependent()));

@@ -71,13 +71,11 @@ public final class KarmaRunProfileState implements NodeDebuggableRunProfileState
 
   public @NotNull Promise<KarmaServer> getServerOrStart() throws ExecutionException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
-    KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
-      .setNodeInterpreter(interpreter)
-      .setKarmaPackage(myKarmaPackage)
-      .setRunSettings(myRunSettings)
-      .setWithCoverage(myExecutionType == KarmaExecutionType.COVERAGE)
-      .setDebug(myExecutionType == KarmaExecutionType.DEBUG)
-      .build();
+    KarmaServerSettings serverSettings = new KarmaServerSettings(myEnvironment.getExecutor(),
+                                                                 interpreter,
+                                                                 myKarmaPackage,
+                                                                 myRunSettings,
+                                                                 myRunConfiguration);
 
     KarmaServerRegistry registry = KarmaServerRegistry.getInstance(myProject);
     KarmaServer server = registry.getServer(serverSettings);
