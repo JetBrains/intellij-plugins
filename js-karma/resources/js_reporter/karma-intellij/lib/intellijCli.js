@@ -4,7 +4,8 @@
 
 var join = require('path').join;
 
-var SERVER_PORT_KEY = 'serverPort'
+var SERVER_HOST_KEY = 'serverHost'
+  , SERVER_PORT_KEY = 'serverPort'
   , CONFIG_FILE_KEY = 'configFile'
   , DEBUG_KEY = 'debug'
   , PROTOCOL_KEY = 'protocol'
@@ -39,6 +40,10 @@ function getConfigFile() {
     throw Error("Config file isn't specified.");
   }
   return configFile;
+}
+
+function getServerHost() {
+  return options[SERVER_HOST_KEY] || '127.0.0.1';
 }
 
 function getServerPort() {
@@ -91,6 +96,7 @@ function isLastTestRunWithTestNameFilter() {
 }
 
 exports.getConfigFile = getConfigFile;
+exports.getServerHost = getServerHost;
 exports.getServerPort = getServerPort;
 exports.isDebug = isDebug;
 exports.getProtocol = getProtocol;

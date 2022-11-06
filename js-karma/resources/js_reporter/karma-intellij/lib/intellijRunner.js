@@ -32,7 +32,7 @@ function stripExitCodeInfo(buffer) {
 
 function runWithConfig(config) {
   var options = {
-    hostname: config.hostname || '127.0.0.1',
+    hostname: config.host,
     path: config.urlRoot + 'run',
     port: config.port,
     method: 'POST',
@@ -71,13 +71,13 @@ function runWithConfig(config) {
 }
 
 function runTests() {
-  var serverPort = cli.getServerPort();
   var urlRoot = cli.getUrlRoot() || '/';
   if (urlRoot.charAt(urlRoot.length - 1) !== '/') {
     urlRoot = urlRoot + '/';
   }
   var config = {
-    port: serverPort,
+    host: cli.getServerHost(),
+    port: cli.getServerPort(),
     refresh: true,
     urlRoot: urlRoot
   };
