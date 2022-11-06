@@ -22,7 +22,8 @@ public class KarmaProcessOutputManager {
 
   private static final char NEW_LINE = '\n';
   private static final String PREFIX = "##intellij-event[";
-  private static final String SUFFIX = "]\n";
+  private static final String SUFFIX_LF = "]\n";
+  private static final String SUFFIX_CRLF = "]\r\n";
 
   private final ProcessHandler myProcessHandler;
   private final Deque<Pair<String, Key>> myArchivedTexts = new ArrayDeque<>();
@@ -122,13 +123,14 @@ public class KarmaProcessOutputManager {
   }
 
   private boolean handleLineAsEvent(@NotNull String line) {
-    if (line.startsWith(PREFIX) && line.endsWith(SUFFIX)) {
+    if (line.startsWith(PREFIX) && (line.endsWith(SUFFIX_LF) || line.endsWith(SUFFIX_CRLF))) {
       int colonInd = line.indexOf(':');
       if (colonInd == -1) {
         return false;
       }
       String eventType = line.substring(PREFIX.length(), colonInd);
-      String eventBody = line.substring(colonInd + 1, line.length() - SUFFIX.length());
+      String suffix = line.endsWith(SUFFIX_LF) ? SUFFIX_LF : SUFFIX_CRLF;
+      String eventBody = line.substring(colonInd + 1, line.length() - suffix.length());
       for (StreamEventListener listener : myStdOutStreamEventListeners) {
         listener.on(eventType, eventBody);
       }

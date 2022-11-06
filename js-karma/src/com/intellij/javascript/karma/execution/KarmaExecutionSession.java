@@ -5,7 +5,9 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.*;
+import com.intellij.execution.target.ResolvedPortBinding;
 import com.intellij.execution.target.TargetedCommandLineBuilder;
+import com.intellij.execution.target.value.TargetValue;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.KarmaBundle;
@@ -17,6 +19,7 @@ import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.remote.NodeJsRemoteInterpreter;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
@@ -39,6 +42,7 @@ import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
@@ -155,7 +159,21 @@ public class KarmaExecutionSession {
     targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
     File clientAppFile = KarmaJsSourcesLocator.getInstance().getClientAppFile();
     commandLine.addParameter(targetRun.path(clientAppFile.getAbsolutePath()));
-    commandLine.addParameter("--serverPort=" + server.getServerPort());
+    if (NodeJsRemoteInterpreter.isDocker(interpreter) || NodeJsRemoteInterpreter.isDockerCompose(interpreter)) {
+      // Workaround for Docker/Docker Compose: assume remove karma server port is forwarded to IDE host with the same port.
+      // Need to run karma-runner and karma server in the same Docker container, but it's not possible now.
+      Promise<ResolvedPortBinding> resolvedPortBinding = targetRun.localPortBinding(server.getServerPort());
+      commandLine.addParameter(TargetValue.create("--serverHost=127.0.0.1", resolvedPortBinding.then((portBinding) -> {
+        return "--serverHost=" + portBinding.getTargetEndpoint().getHost();
+      })));
+      commandLine.addParameter(TargetValue.create("--serverPort=" + server.getServerPort(), resolvedPortBinding.then((portBinding) -> {
+        return "--serverPort=" + portBinding.getTargetEndpoint().getPort();
+      })));
+    }
+    else {
+      commandLine.addParameter("--serverHost=127.0.0.1");
+      commandLine.addParameter("--serverPort=" + server.getServerPort());
+    }
     KarmaConfig config = server.getKarmaConfig();
     if (config != null) {
       commandLine.addParameter("--protocol=" + config.getProtocol());
