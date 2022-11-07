@@ -48,7 +48,7 @@ JSFile:TemplateInjectionVueLib.js
                       XmlToken:XML_TAG_END('>')
                       PsiElement(VUE:INTERPOLATION_START)('{{')
                       ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-                        VueJSEmbeddedExpression
+                        VueJSEmbeddedExpressionContent
                           JSReferenceExpression
                             PsiElement(JS:IDENTIFIER)('value')
                       PsiElement(VUE:INTERPOLATION_END)('}}')
@@ -67,7 +67,7 @@ JSFile:TemplateInjectionVueLib.js
                         PsiElement(XML_ATTRIBUTE_VALUE)
                           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                           ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-                            VueJSEmbeddedExpression
+                            VueJSEmbeddedExpressionContent
                               JSExpressionStatement
                                 JSReferenceExpression
                                   PsiElement(JS:IDENTIFIER)('increment')

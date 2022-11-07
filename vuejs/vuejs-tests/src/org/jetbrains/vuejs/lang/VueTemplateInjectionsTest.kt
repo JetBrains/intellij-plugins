@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,7 +39,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
     val injectedElement = injectedLanguageManager.findInjectedElementAt(
       myFixture.file, myFixture.file.findOffsetBySignature("<caret>title + foo"))
 
-    TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpression::class.java))
+    TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpressionContent::class.java))
 
     val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()
     TestCase.assertTrue(resolved!!.text, resolved.text.contains("Check me"))

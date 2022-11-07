@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.VueBundle.message
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_ARGUMENTS_LIST
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_EXPRESSION
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_LEFT_SIDE_ARGUMENT
@@ -47,7 +47,7 @@ class VueJSParser(builder: PsiBuilder)
     extraParser.parseEmbeddedExpression(attributeInfo)
     // we need to consume rest of the tokens, even if they are not valid
     extraParser.parseRest()
-    statementMarker.done(VueJSElementTypes.EMBEDDED_EXPR_STATEMENT)
+    statementMarker.done(VueJSElementTypes.EMBEDDED_EXPR_CONTENT)
     rootMarker.done(root)
   }
 

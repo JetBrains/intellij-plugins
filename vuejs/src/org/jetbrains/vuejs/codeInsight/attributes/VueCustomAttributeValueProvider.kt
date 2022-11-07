@@ -11,7 +11,7 @@ import com.intellij.util.SmartList
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.Companion.parse
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
 class VueCustomAttributeValueProvider : HtmlAttributeValueProvider() {
 
@@ -54,7 +54,7 @@ class VueCustomAttributeValueProvider : HtmlAttributeValueProvider() {
       && info.arguments == HtmlUtil.CLASS_ATTRIBUTE_NAME
 
     private fun getClassNames(attribute: XmlAttribute?): String {
-      return getClassesFromEmbeddedContent(PsiTreeUtil.findChildOfType(attribute, VueJSEmbeddedExpression::class.java))
+      return getClassesFromEmbeddedContent(PsiTreeUtil.findChildOfType(attribute, VueJSEmbeddedExpressionContent::class.java))
     }
   }
 }

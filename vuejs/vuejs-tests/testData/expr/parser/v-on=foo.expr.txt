@@ -1,5 +1,5 @@
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSBinaryExpression
         JSReferenceExpression
@@ -21,7 +21,7 @@ JSFile:test.js.v-on:foo.expr
             PsiElement(JS:IDENTIFIER)('c')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSLiteralExpression
         PsiElement(JS:STRING_LITERAL)('"foo"')
@@ -34,7 +34,7 @@ JSFile:test.js.v-on:foo.expr
         PsiElement(JS:IDENTIFIER)('lowercase')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSBinaryExpression
         JSLiteralExpression
@@ -44,7 +44,7 @@ JSFile:test.js.v-on:foo.expr
           PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSBinaryExpression
         JSLiteralExpression
@@ -54,7 +54,7 @@ JSFile:test.js.v-on:foo.expr
           PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSBinaryExpression
         JSLiteralExpression
@@ -68,7 +68,7 @@ JSFile:test.js.v-on:foo.expr
             PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSCallExpression
         JSReferenceExpression
@@ -103,7 +103,7 @@ JSFile:test.js.v-on:foo.expr
         PsiElement(JS:IDENTIFIER)('c')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('a')
@@ -121,7 +121,7 @@ JSFile:test.js.v-on:foo.expr
         PsiElement(JS:IDENTIFIER)('c')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSAssignmentExpression
         JSDefinitionExpression
@@ -146,7 +146,7 @@ JSFile:test.js.v-on:foo.expr
           PsiElement(JS:NUMERIC_LITERAL)('4')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('12')
@@ -178,7 +178,7 @@ JSFile:test.js.v-on:foo.expr
     PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSExpressionStatement
       JSBinaryExpression
         JSReferenceExpression
@@ -206,13 +206,13 @@ JSFile:test.js.v-on:foo.expr
             PsiElement(JS:IDENTIFIER)('a')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')
@@ -221,7 +221,7 @@ JSFile:test.js.v-on:foo.expr
     PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-on:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       <empty list>
     PsiElement(JS:SHARP)('#')

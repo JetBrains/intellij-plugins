@@ -51,7 +51,7 @@ import com.intellij.webSymbols.utils.unwrapMatchedSymbols
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
@@ -358,10 +358,10 @@ fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   ?: false
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
-  return findVueJSEmbeddedExpression()?.firstChild as? T
+  return findVueJSEmbeddedExpressionContent()?.firstChild as? T
 }
 
-fun XmlAttributeValue.findVueJSEmbeddedExpression(): VueJSEmbeddedExpression? {
+fun XmlAttributeValue.findVueJSEmbeddedExpressionContent(): VueJSEmbeddedExpressionContent? {
   val root = when {
     language === VueLanguage.INSTANCE ->
       children.find { it is ASTWrapperPsiElement }
@@ -371,7 +371,7 @@ fun XmlAttributeValue.findVueJSEmbeddedExpression(): VueJSEmbeddedExpression? {
         ?.containingFile
     else -> null
   }
-  return root?.firstChild?.asSafely<VueJSEmbeddedExpression>()
+  return root?.firstChild?.asSafely<VueJSEmbeddedExpressionContent>()
 }
 
 fun getFirstInjectedFile(element: PsiElement?): PsiFile? {

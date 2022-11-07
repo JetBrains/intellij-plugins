@@ -32,8 +32,8 @@ object VueJSElementTypes {
   val SCRIPT_SETUP_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SCRIPT_SETUP_EXPRESSION", ::VueJSScriptSetupExpressionImpl)
 
-  val EMBEDDED_EXPR_STATEMENT: IElementType = VueJSElementType(
-    "VUE:EMBEDDED_EXPR_STATEMENT", ::VueJSEmbeddedExpressionImpl)
+  val EMBEDDED_EXPR_CONTENT: IElementType = VueJSElementType(
+    "VUE:EMBEDDED_EXPR_CONTENT", ::VueJSEmbeddedExpressionContentImpl)
 
 
   private open class VueJSElementType(@NonNls debugName: String, private val myClassConstructor: (VueJSElementType) -> ASTNode)

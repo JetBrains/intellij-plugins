@@ -1,12 +1,12 @@
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         VueJSSlotPropsParameter
           PsiElement(JS:IDENTIFIER)('a')
 ------
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         VueJSSlotPropsParameter
@@ -17,7 +17,7 @@ JSFile:test.js.slot-scope.expr
           PsiElement(JS:IDENTIFIER)('b')
 ------
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         JSDestructuringParameter
@@ -38,7 +38,7 @@ JSFile:test.js.slot-scope.expr
             PsiElement(JS:RBRACE)('}')
 ------
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         VueJSSlotPropsParameter
@@ -50,7 +50,7 @@ JSFile:test.js.slot-scope.expr
       PsiElement(JS:IDENTIFIER)('b')
 ------
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         JSDestructuringParameter
@@ -66,7 +66,7 @@ JSFile:test.js.slot-scope.expr
           PsiElement(JS:IDENTIFIER)('b')
 ------
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         JSDestructuringParameter
@@ -88,7 +88,7 @@ JSFile:test.js.slot-scope.expr
             PsiElement(JS:RBRACE)('}')
 ------
 JSFile:test.js.slot-scope.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSSlotPropsExpression
       JSParameterList
         PsiErrorElement:Formal parameter name expected

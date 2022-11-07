@@ -14,7 +14,7 @@ import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlText
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
 /**
  * @see JSControlFlowBuilder
@@ -24,6 +24,7 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
     private const val V_IF = "v-if"
     private const val V_ELSE_IF = "v-else-if"
     private const val V_ELSE = "v-else"
+
     // v-for is not included because Vue template has no break/continue/return/throw etc.
     private val controlFlowRelevantDirectives = setOf(V_IF, V_ELSE_IF, V_ELSE)
   }
@@ -99,7 +100,7 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
       is JSExpression -> {
         super.visitElement(element)
       }
-      is VueJSEmbeddedExpression -> {
+      is VueJSEmbeddedExpressionContent -> {
         myBuilder.startNode(element) // translates to JSExpressionStatement in pure JS CFG
         super.visitElement(element)
       }

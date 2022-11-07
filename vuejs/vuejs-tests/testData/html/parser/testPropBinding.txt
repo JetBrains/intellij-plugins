@@ -18,7 +18,7 @@ HtmlFile:test.vue
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+              VueJSEmbeddedExpressionContent
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('url')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -38,7 +38,7 @@ HtmlFile:test.vue
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+              VueJSEmbeddedExpressionContent
                 JSReferenceExpression
                   PsiElement(JS:IDENTIFIER)('url')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')

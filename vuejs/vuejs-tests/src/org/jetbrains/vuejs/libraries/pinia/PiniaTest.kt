@@ -12,7 +12,7 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class PiniaTest : BasePlatformTestCase() {
@@ -56,7 +56,7 @@ class PiniaTest : BasePlatformTestCase() {
     val element = JSTestUtils.getGotoDeclarationTarget(myFixture)
     TestCase.assertTrue(
       PsiTreeUtil
-        .findChildrenOfType(element?.containingFile, VueJSEmbeddedExpression::class.java)
+        .findChildrenOfType(element?.containingFile, VueJSEmbeddedExpressionContent::class.java)
         .mapNotNull { TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(JSResolveUtil.getElementJSType(it.firstChild)) }
         .also { TestCase.assertEquals(3, it.size) }
         .all { it.typeText == "boolean" }

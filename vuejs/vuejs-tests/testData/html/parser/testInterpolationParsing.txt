@@ -4,7 +4,7 @@ HtmlFile:test.{{.}}.#@injected@#.html
       <empty list>
     PsiElement(VUE:INTERPOLATION_START)('{{')
     ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-      VueJSEmbeddedExpression
+      VueJSEmbeddedExpressionContent
         JSReferenceExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('foo')
@@ -22,7 +22,7 @@ HtmlFile:test.{{.}}.#@injected@#.html
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-            VueJSEmbeddedExpression
+            VueJSEmbeddedExpressionContent
               JSObjectLiteralExpression
                 PsiElement(JS:LBRACE)('{')
                 PsiErrorElement:Identifier or string literal or numeric literal expected
@@ -45,7 +45,7 @@ HtmlFile:test.{{.}}.#@injected@#.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           PsiElement(VUE:INTERPOLATION_START)('{{')
           ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-            VueJSEmbeddedExpression
+            VueJSEmbeddedExpressionContent
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('bar')
           PsiElement(VUE:INTERPOLATION_END)('}}')
@@ -58,7 +58,7 @@ HtmlFile:test.{{.}}.#@injected@#.html
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           PsiElement(VUE:INTERPOLATION_START)('{{')
           ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-            VueJSEmbeddedExpression
+            VueJSEmbeddedExpressionContent
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('bar')
           PsiElement(VUE:INTERPOLATION_END)('}}')
@@ -68,7 +68,7 @@ HtmlFile:test.{{.}}.#@injected@#.html
         PsiWhiteSpace('\n  ')
       PsiElement(VUE:INTERPOLATION_START)('{{')
       ASTWrapperPsiElement(VUE_JS:INTERPOLATION_EXPR)
-        VueJSEmbeddedExpression
+        VueJSEmbeddedExpressionContent
           JSReferenceExpression
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('foo')
