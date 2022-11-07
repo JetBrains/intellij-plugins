@@ -74,7 +74,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestName(false) + ".dart");
 
     final IntentionAction quickFix = myFixture.findSingleIntention("Create file 'CreatePartFile_part.dart'");
-    assertEquals(true, quickFix.isAvailable(getProject(), getEditor(), getFile()));
+    assertTrue(quickFix.isAvailable(getProject(), getEditor(), getFile()));
 
     ApplicationManager.getApplication().runWriteAction(() -> quickFix.invoke(getProject(), getEditor(), getFile()));
 
@@ -129,7 +129,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
       \s
 
       class A{
-        List<caret> bar(int i, bool param1, String s) {}
+        List<caret> bar(int i, bool bool, String s) {}
       }
       foo() {
         List a = new A().bar(1, true, '');
@@ -159,7 +159,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
         List a = new A().bar(1, true, '');
       }
       class A{
-        List<caret> bar(int i, bool param1, String s) {}
+        List<caret> bar(int i, bool bool, String s) {}
       }""";
     doCrLfAwareTest(content, "Create method", after);
   }
