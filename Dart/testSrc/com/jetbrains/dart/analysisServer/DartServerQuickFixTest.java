@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
+import com.intellij.codeInsight.daemon.HighlightDisplayKey;
+import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspection;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -172,5 +174,15 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
                         "Change to 'ServerSockets'",
                         "Create class 'ServerSocket'",
                         "Create mixin 'ServerSocket'");
+  }
+
+  /**
+   * Checks that the Platform doesn't add useless "Inspection 'Annotator' options" quick fix.
+   */
+  public void testNoQuickFixes() {
+    myFixture.enableInspections(new DefaultHighlightVisitorBasedInspection.AnnotatorBasedInspection());
+    assertNotNull(HighlightDisplayKey.find("Annotator"));
+    myFixture.configureByText("foo.dart", "main(){ print(<caret>); }");
+    assertEmpty(myFixture.getAvailableIntentions());
   }
 }
