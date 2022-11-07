@@ -18,7 +18,7 @@ import com.intellij.util.ObjectUtils.notNull
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
-import org.jetbrains.vuejs.codeInsight.findExpressionInAttributeValue
+import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSScriptSetupExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
@@ -157,21 +157,24 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
 
     private fun addScriptSetupParams(attribute: XmlAttribute) {
-      findExpressionInAttributeValue(attribute, VueJSScriptSetupExpression::class.java)
+      attribute.valueElement
+        ?.findJSExpression<VueJSScriptSetupExpression>()
         ?.getParameterList()
         ?.parameterVariables
         ?.forEach { addElement(it) }
     }
 
     private fun addSlotProps(attribute: XmlAttribute) {
-      findExpressionInAttributeValue(attribute, VueJSSlotPropsExpression::class.java)
+      attribute.valueElement
+        ?.findJSExpression<VueJSSlotPropsExpression>()
         ?.getParameterList()
         ?.parameterVariables
         ?.forEach { addElement(it) }
     }
 
     private fun addVForVariables(attribute: XmlAttribute) {
-      findExpressionInAttributeValue(attribute, VueJSVForExpression::class.java)
+      attribute.valueElement
+        ?.findJSExpression<VueJSVForExpression>()
         ?.getVarStatement()
         ?.variables
         ?.forEach { addElement(it) }

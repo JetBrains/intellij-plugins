@@ -1,18 +1,16 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.types
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.ProcessingContext
-import com.intellij.util.asSafely
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.codeInsight.findJSExpression
 
 class VueSourceSlotBindingType private constructor(typeSource: JSTypeSource,
                                                    private val attribute: XmlAttribute,
@@ -41,10 +39,7 @@ class VueSourceSlotBindingType private constructor(typeSource: JSTypeSource,
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType =
     AstLoadingFilter.forceAllowTreeLoading<JSType, Throwable>(attribute.containingFile) {
       attribute.valueElement
-        ?.childrenOfType<ASTWrapperPsiElement>()
-        ?.firstOrNull()
-        ?.firstChild?.asSafely<VueJSEmbeddedExpression>()
-        ?.firstChild
+        ?.findJSExpression<JSExpression>()
         ?.let { JSResolveUtil.getElementJSType(it) }
       ?: JSAnyType.get(attribute, false)
     }

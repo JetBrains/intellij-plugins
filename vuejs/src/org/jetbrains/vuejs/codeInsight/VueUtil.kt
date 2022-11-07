@@ -39,6 +39,7 @@ import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.*
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
@@ -356,22 +357,21 @@ fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
     }
   ?: false
 
-fun <T : JSExpression> findExpressionInAttributeValue(attribute: XmlAttribute,
-                                                      expressionClass: Class<T>): T? {
-  val value = attribute.valueElement ?: return null
+inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
+  return findVueJSEmbeddedExpression()?.firstChild as? T
+}
 
+fun XmlAttributeValue.findVueJSEmbeddedExpression(): VueJSEmbeddedExpression? {
   val root = when {
-    attribute.language === VueLanguage.INSTANCE ->
-      value.children
-        .find { it is ASTWrapperPsiElement }
-    value.textLength >= 2 ->
-      InjectedLanguageManager.getInstance(attribute.project).findInjectedElementAt(
-        value.containingFile, value.textOffset + 1)
+    language === VueLanguage.INSTANCE ->
+      children.find { it is ASTWrapperPsiElement }
+    textLength >= 2 ->
+      InjectedLanguageManager.getInstance(project)
+        .findInjectedElementAt(containingFile, textOffset + 1)
         ?.containingFile
     else -> null
   }
-
-  return tryCast((root?.firstChild as? VueJSEmbeddedExpression)?.firstChild, expressionClass)
+  return root?.firstChild?.asSafely<VueJSEmbeddedExpression>()
 }
 
 fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
