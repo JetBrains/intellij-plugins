@@ -195,7 +195,6 @@
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
 
     <spellchecker.bundledDictionaryProvider implementation="org.jetbrains.vuejs.spellchecker.VueSpellcheckingDictionaryProvider"/>
-    <spellchecker.support language="Vue" implementationClass="org.jetbrains.vuejs.spellchecker.VueSpellcheckingStrategy"/>
 
     <liveTemplateContext contextId="Vue" implementation="org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType"/>
     <liveTemplateContext contextId="VUE_SCRIPT" baseContextId="Vue"

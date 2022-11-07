@@ -169,6 +169,11 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testSpellchecking() {
+    myFixture.enableInspections(SpellCheckingInspection())
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
   fun testTypeScriptTypesAreResolved() = doTest()
 
   fun testTypeScriptTypesAreNotResolvedIfECMA5Script() {
