@@ -3,7 +3,7 @@ package com.intellij.protobuf.ide.settings
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.startup.ProjectPostStartupActivity
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,7 +11,7 @@ import com.intellij.util.io.exists
 import com.intellij.util.io.outputStream
 import java.io.IOException
 
-internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivity.Background {
+internal class BundledProtoResourcesMigrationPostStartupActivity : ProjectPostStartupActivity {
   private val bundledProtoFiles = setOf(
     "google/protobuf/any.proto",
     "google/protobuf/api.proto",
@@ -26,7 +26,7 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
     "google/protobuf/wrappers.proto"
   )
 
-  override fun runActivity(project: Project) {
+  override suspend fun execute(project: Project) {
     val baseExtractionPath = DefaultConfigurator.getExtractedProtoPath()
     if (!bundledProtoFiles.all { baseExtractionPath.resolve(it).exists() }) {
       extractBundledProtoToTempDirectory()
