@@ -15,7 +15,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
-import org.jetbrains.vuejs.codeInsight.findExpressionInAttributeValue
+import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.stubSafeAttributes
 import org.jetbrains.vuejs.index.VueIndexData
@@ -76,7 +76,8 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
                 }
                 else if ((info as? VueDirectiveInfo)?.directiveKind == VueDirectiveKind.BIND
                          && info.arguments == SLOT_NAME_ATTRIBUTE) {
-                  findExpressionInAttributeValue(attr, JSExpression::class.java)
+                  attr.valueElement
+                    ?.findJSExpression<JSExpression>()
                     ?.let { getSlotNameRegex(it) }
                     ?.let { VueSourceRegexSlot(it, tag) }
                 }

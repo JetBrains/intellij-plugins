@@ -34,7 +34,8 @@ class VueXmlExtension : WebSymbolsXmlExtension() {
 
     return tag?.attributes?.find { attr ->
       if (attr.name == "v-bind") {
-        return@find findExpressionInAttributeValue(attr, JSExpression::class.java)
+        return@find attr.valueElement
+          ?.findJSExpression<JSExpression>()
           ?.let { JSResolveUtil.getElementJSType(it) }
           ?.asRecordType()
           ?.findPropertySignature(toAssetName) != null
