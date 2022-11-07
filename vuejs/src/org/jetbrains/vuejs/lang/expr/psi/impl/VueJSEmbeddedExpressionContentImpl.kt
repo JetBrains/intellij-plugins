@@ -13,10 +13,10 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
-class VueJSEmbeddedExpressionImpl(elementType: IElementType) : JSElementImpl(elementType),
-                                                               JSSuppressionHolder, VueJSEmbeddedExpression, HintedReferenceHost {
+class VueJSEmbeddedExpressionContentImpl(elementType: IElementType) : JSElementImpl(elementType),
+                                                                      JSSuppressionHolder, VueJSEmbeddedExpressionContent, HintedReferenceHost {
 
   override fun getLanguage(): Language {
     return VueJSLanguage.INSTANCE

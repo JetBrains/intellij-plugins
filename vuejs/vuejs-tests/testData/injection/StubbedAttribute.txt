@@ -14,7 +14,7 @@ HtmlFile:StubbedAttribute.vue
           XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{{foo.test()}}')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
           JSFile:StubbedAttribute.vue.int
-            VueJSEmbeddedExpression
+            VueJSEmbeddedExpressionContent
               JSCallExpression
                 JSReferenceExpression
                   JSReferenceExpression

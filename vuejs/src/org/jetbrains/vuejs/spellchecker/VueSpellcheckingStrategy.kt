@@ -8,14 +8,14 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.spellchecker.tokenizer.Tokenizer
 import com.intellij.spellchecker.xml.HtmlSpellcheckingStrategy
-import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
 class VueSpellcheckingStrategy : HtmlSpellcheckingStrategy() {
   override fun getTokenizer(element: PsiElement?): Tokenizer<*> {
     if (element is XmlAttributeValue) {
       val jsEmbeddedContent = PsiTreeUtil.getChildOfType(element, JSEmbeddedContent::class.java)
                               ?: PsiTreeUtil.getChildOfType(element, ASTWrapperPsiElement::class.java)
-                                ?.let { PsiTreeUtil.getChildOfType(it, VueJSEmbeddedExpression::class.java) }
+                                ?.let { PsiTreeUtil.getChildOfType(it, VueJSEmbeddedExpressionContent::class.java) }
       if (element.valueTextRange == jsEmbeddedContent?.textRange) return EMPTY_TOKENIZER
     }
     return super.getTokenizer(element)

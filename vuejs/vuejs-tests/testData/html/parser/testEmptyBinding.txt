@@ -18,7 +18,7 @@ HtmlFile:test.vue
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+              VueJSEmbeddedExpressionContent
                 <empty list>
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
@@ -37,7 +37,7 @@ HtmlFile:test.vue
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+              VueJSEmbeddedExpressionContent
                 PsiErrorElement:Expression expected
                   <empty list>
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')

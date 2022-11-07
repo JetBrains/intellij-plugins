@@ -1,5 +1,5 @@
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSLiteralExpression
@@ -9,7 +9,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:IDENTIFIER)('lowercase')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSLiteralExpression
@@ -26,7 +26,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:RPAR)(')')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSLiteralExpression
@@ -38,7 +38,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:AWAIT_KEYWORD)('await')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSLiteralExpression
@@ -50,7 +50,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:IDENTIFIER)('lowercase')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSLiteralExpression
@@ -71,7 +71,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:RPAR)(')')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         VueJSFilterExpression
@@ -106,7 +106,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:IDENTIFIER)('third')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSParenthesizedExpression
@@ -127,7 +127,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:IDENTIFIER)('foo')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         VueJSFilterExpression
@@ -191,7 +191,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:IDENTIFIER)('third')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     VueJSFilterExpression
       VueJSFilterLeftSideArgument
         JSObjectLiteralExpression
@@ -216,7 +216,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:IDENTIFIER)('boo')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSBinaryExpression
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('0')
@@ -225,7 +225,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSBinaryExpression
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('0')
@@ -234,7 +234,7 @@ JSFile:test.js.v-bind:foo.expr
         PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSBinaryExpression
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('0')
@@ -247,12 +247,12 @@ JSFile:test.js.v-bind:foo.expr
           PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       <empty list>
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('a')
     PsiErrorElement:Expected end of expression
@@ -267,7 +267,7 @@ JSFile:test.js.v-bind:foo.expr
       PsiElement(JS:IDENTIFIER)('c')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSLiteralExpression
       PsiElement(JS:NUMERIC_LITERAL)('12')
     PsiErrorElement:Statements are not allowed in Vue expressions
@@ -297,7 +297,7 @@ JSFile:test.js.v-bind:foo.expr
     PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     JSBinaryExpression
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('a')
@@ -324,19 +324,19 @@ JSFile:test.js.v-bind:foo.expr
           PsiElement(JS:IDENTIFIER)('a')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-bind:foo.expr
-  VueJSEmbeddedExpression
+  VueJSEmbeddedExpressionContent
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
     PsiErrorElement:Expression expected

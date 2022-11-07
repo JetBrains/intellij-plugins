@@ -24,7 +24,7 @@ HtmlFile:CustomDelimitersInterpolationInVue.vue
           PsiWhiteSpace('\n    ')
           JSFile:CustomDelimitersInterpolationInVue.vue.int
             PsiWhiteSpace(' ')
-            VueJSEmbeddedExpression
+            VueJSEmbeddedExpressionContent
               JSBinaryExpression
                 JSLiteralExpression
                   PsiElement(JS:NUMERIC_LITERAL)('1')

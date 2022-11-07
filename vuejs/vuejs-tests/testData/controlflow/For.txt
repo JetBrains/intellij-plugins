@@ -1,7 +1,7 @@
 0(1) element: null
 1(2) element: XmlText
 2(3) element: JSFile:For.vue.int
-3(4) element: VueJSEmbeddedExpression
+3(4) element: VueJSEmbeddedExpressionContent
 4(5) element: JSVarStatement
 5(6) element: VueJSVForVariable Write(item)
 6(7) element: JSReferenceExpression Read(union)
@@ -12,7 +12,7 @@
 11(13) element: JSBinaryExpression condition: true, reachable
 12(20) element: JSBinaryExpression condition: false, reachable
 13(14) element: HtmlTag:div IF (branch) true
-14(15) element: VueJSEmbeddedExpression
+14(15) element: VueJSEmbeddedExpressionContent
 15(16) element: JSVarStatement
 16(17) element: VueJSVForVariable Write(item)
 17(18) element: JSReferenceExpression Read(union)
@@ -24,14 +24,14 @@
 23(25) element: JSBinaryExpression condition: true, reachable
 24(32) element: JSBinaryExpression condition: false, reachable
 25(26) element: HtmlTag:div IF (branch) true
-26(27) element: VueJSEmbeddedExpression
+26(27) element: VueJSEmbeddedExpressionContent
 27(28) element: JSVarStatement
 28(29) element: VueJSVForVariable Write(item)
 29(30) element: JSReferenceExpression Read(union)
 30(31) element: XmlText
 31(39) element: JSFile:For.vue.int
 32(33) element: HtmlTag:div IF (branch) false
-33(34) element: VueJSEmbeddedExpression
+33(34) element: VueJSEmbeddedExpressionContent
 34(35) element: JSVarStatement
 35(36) element: VueJSVForVariable Write(item)
 36(37) element: JSReferenceExpression Read(union)
@@ -45,7 +45,7 @@
 44(46) element: JSCallExpression condition: true, reachable
 45(53) element: JSCallExpression condition: false, reachable
 46(47) element: HtmlTag:aside IF (branch) true
-47(48) element: VueJSEmbeddedExpression
+47(48) element: VueJSEmbeddedExpressionContent
 48(49) element: JSVarStatement
 49(50) element: VueJSVForVariable Write(item)
 50(51) element: JSReferenceExpression Read(union)

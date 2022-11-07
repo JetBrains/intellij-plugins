@@ -18,7 +18,7 @@ HtmlFile:test.vue
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+              VueJSEmbeddedExpressionContent
                 JSExpressionStatement
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('doSomething')
@@ -39,7 +39,7 @@ HtmlFile:test.vue
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
-              VueJSEmbeddedExpression
+              VueJSEmbeddedExpressionContent
                 JSExpressionStatement
                   JSReferenceExpression
                     PsiElement(JS:IDENTIFIER)('doSomething')
