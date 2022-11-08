@@ -46,7 +46,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @NotNull
   @Override
   public String getFamilyName() {
-    return getText();
+    return DartBundle.message("intention.family.name");
   }
 
   @NotNull
