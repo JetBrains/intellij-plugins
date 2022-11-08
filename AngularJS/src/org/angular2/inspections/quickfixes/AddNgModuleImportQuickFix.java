@@ -30,15 +30,11 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
   public AddNgModuleImportQuickFix(@NotNull PsiElement context,
                                    @NotNull Collection<Angular2Declaration> importableDeclarations) {
     super(context);
+    var scope = new Angular2DeclarationsScope(context);
     List<String> names = StreamEx.of(importableDeclarations)
-      .flatCollection(declaration -> {
-        if (declaration.isStandalone()) {
-          return List.of(declaration);
-        }
-        else {
-          return new Angular2DeclarationsScope(context).getPublicModulesExporting(declaration);
-        }
-      })
+      .flatCollection(declaration -> declaration.isStandalone()
+                                     ? List.of(declaration)
+                                     : scope.getPublicModulesExporting(declaration))
       .distinct()
       .map(Angular2Entity::getClassName)
       .distinct()
