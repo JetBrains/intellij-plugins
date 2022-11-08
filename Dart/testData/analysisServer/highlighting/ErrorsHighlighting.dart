@@ -13,7 +13,7 @@ main() {
 }
 
 @deprecated
-int <error descr="The body might complete normally, causing 'null' to be returned, but the return type is a potentially non-nullable type.">bar</error>(){}
+int <error descr="The body might complete normally, causing 'null' to be returned, but the return type, 'int', is a potentially non-nullable type.">bar</error>(){}
 
 // TODO highlighted by IDE engine
 class <warning descr="The declaration '_Foo' isn't referenced.">_Foo</warning> {
