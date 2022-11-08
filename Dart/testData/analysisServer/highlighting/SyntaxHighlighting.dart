@@ -51,7 +51,7 @@ class <info textAttributesKey="DART_CLASS">Foo</info> {
   <info textAttributesKey="DART_CLASS">Foo</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">from</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">redirect</info>() : this.<info textAttributesKey="DART_CONSTRUCTOR">from</info>();
-<info descr="null" textAttributesKey="DART_KEYWORD">factory</info> <error descr="The body might complete normally, causing 'null' to be returned, but the return type is a potentially non-nullable type." textAttributesKey="DART_ERROR"><info descr="null" textAttributesKey="DART_CLASS">Foo</info>.factory</error>() {}
+<info descr="null" textAttributesKey="DART_KEYWORD">factory</info> <error descr="The body might complete normally, causing 'null' to be returned, but the return type, 'Foo', is a potentially non-nullable type." textAttributesKey="DART_ERROR"><info descr="null" textAttributesKey="DART_CLASS">Foo</info>.factory</error>() {}
 }
 
 /// [<info textAttributesKey="DART_CLASS">Foo1</info>] is good []
