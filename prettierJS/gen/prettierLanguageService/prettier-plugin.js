@@ -1,4 +1,3 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -83,7 +82,7 @@ var PrettierPlugin = /** @class */ (function () {
                         return [4 /*yield*/, this.resolveConfig(prettierApi, args)];
                     case 1:
                         config = _a.sent();
-                        options = { ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins };
+                        options = { ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins, resolveConfig: true };
                         if (!prettierApi.getFileInfo) return [3 /*break*/, 3];
                         return [4 /*yield*/, prettierApi.getFileInfo(args.path, options)];
                     case 2:

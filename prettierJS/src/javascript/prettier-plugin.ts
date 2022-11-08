@@ -48,7 +48,7 @@ export class PrettierPlugin implements LanguagePlugin {
         let prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
 
         let config = await this.resolveConfig(prettierApi, args)
-        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins};
+        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins, resolveConfig: true};
 
         if (prettierApi.getFileInfo) {
             let fileInfo = await prettierApi.getFileInfo(args.path, options)
