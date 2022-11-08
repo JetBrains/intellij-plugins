@@ -299,6 +299,12 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "ClassicModule - \"./classic\"");
   }
 
+  public void testLocalLibraryWithAlias() {
+    doMultiFileTest("projects/demo/src/app/app.component.html",
+                    "Import Lib1Module"
+    );
+  }
+
   private void doMultiFileTest(@NotNull String mainFile,
                                @NotNull String intention) {
     doMultiFileTest(mainFile, intention, null);
