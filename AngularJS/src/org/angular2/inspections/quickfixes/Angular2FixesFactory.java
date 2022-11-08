@@ -4,9 +4,12 @@ package org.angular2.inspections.quickfixes;
 import com.intellij.codeInsight.hint.QuestionAction;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl;
+import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer;
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Key;
@@ -41,10 +44,7 @@ import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.angular2.web.containers.OneTimeBindingsProvider;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -66,13 +66,15 @@ public final class Angular2FixesFactory {
     }
     else if (!candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
       selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
-                                                  getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
+                                                  getCommonNameForDeclarations(
+                                                    candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
                    candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE), candidate ->
                      Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true));
     }
     else if (!candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).isEmpty()) {
       selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
-                                                  getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
+                                                  getCommonNameForDeclarations(
+                                                    candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
                    candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE), candidate ->
                      Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true));
     }
@@ -97,7 +99,8 @@ public final class Angular2FixesFactory {
   public static @NotNull MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
                                                                                                         boolean codeCompletion) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(element);
-    if (scope.getImportsOwner() == null || !scope.isInSource(scope.getImportsOwner())) {
+    Angular2ImportsOwner importsOwner = scope.getImportsOwner();
+    if (importsOwner == null || !scope.isInSource(importsOwner)) {
       return MultiMap.empty();
     }
     Ref<Predicate<Angular2Declaration>> filter = new Ref<>(declaration -> true);
@@ -195,7 +198,7 @@ public final class Angular2FixesFactory {
     }
 
     MultiMap<DeclarationProximity, Angular2Declaration> result = new MultiMap<>();
-    removeLocalLibraryElements(element, declarations)
+    removeLocalLibraryElements(importsOwner.getSourceElement(), declarations)
       .forEach(declaration -> result.putValue(scope.getDeclarationProximity(declaration), declaration));
 
     return result;
@@ -225,15 +228,39 @@ public final class Angular2FixesFactory {
 
     VirtualFile projectRoot = config.getAngularJsonFile().getParent();
     return filter(declarations, declaration -> {
-      VirtualFile file = PsiUtilCore.getVirtualFile(declaration.getSourceElement());
+      VirtualFile declarationFile = PsiUtilCore.getVirtualFile(declaration.getSourceElement());
+      VirtualFile file = declarationFile;
       while (file != null && !file.equals(projectRoot)) {
         if (localRoots.contains(file)) {
-          return false;
+          return hasNonRelativeModuleName(context, declaration.getTypeScriptClass(), declarationFile);
         }
         file = file.getParent();
       }
       return true;
     });
+  }
+
+  private static boolean hasNonRelativeModuleName(@NotNull PsiElement context,
+                                                  @Nullable PsiElement declaration,
+                                                  @NotNull VirtualFile declarationFile) {
+    if (declaration == null) return false;
+    var builder = new TypeScriptImportPathBuilder(new JSImportPathConfigurationImpl(
+      unwrapImplicitElement(context), unwrapImplicitElement(declaration), declarationFile, false, "Foo"));
+    Ref<Boolean> isAbsolute = Ref.create(false);
+    builder.processDescriptorsWithModuleName(info -> {
+      if (!Angular2EntityUtils.unquote(info.getModuleName()).startsWith(".")) {
+        isAbsolute.set(true);
+      }
+      return !isAbsolute.get();
+    });
+    return isAbsolute.get();
+  }
+
+  private static @NotNull PsiElement unwrapImplicitElement(@NotNull PsiElement element) {
+    if (element instanceof JSImplicitElement) {
+      return notNull(element.getContext(), element);
+    }
+    return element;
   }
 
   private static @NotNull Supplier<List<? extends Angular2Declaration>> createSecondaryProvider(@NotNull Angular2TemplateBindings bindings) {
