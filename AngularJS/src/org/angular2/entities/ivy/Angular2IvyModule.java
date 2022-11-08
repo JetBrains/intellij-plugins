@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
-import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType;
 import com.intellij.psi.util.CachedValueProvider.Result;
@@ -78,13 +78,22 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
     }
     Set<T> entities = new HashSet<>();
     boolean fullyResolved = true;
+    // Dependencies for the cache are calculated heuristically.
+    // As dependencies, we use source and target files, however we miss any files in between.
+    // To compensate, we depend on any changes in node_modules.
+    // This approach is correct in 95% of cases, but gives huge boost to performance.
+    Set<Object> dependencies = new HashSet<>();
+    dependencies.add(fieldDef.getContainingFile());
+    dependencies.add(NodeModulesDirectoryManager.getInstance(fieldDef.getProject()).getNodeModulesDirChangeTracker());
     for (TypeScriptTypeofType typeOfType : types) {
       String reference = typeOfType.getReferenceText();
       if (reference == null) {
         fullyResolved = false;
         continue;
       }
-      T entity = JBIterable.from(getTypeOfResultElements(typeOfType, reference))
+      var resolvedTypes = getTypeOfResultElements(typeOfType, reference);
+      resolvedTypes.forEach(type -> dependencies.add(type.getContainingFile()));
+      T entity = JBIterable.from(resolvedTypes)
         .filterMap(el -> Angular2EntitiesProvider.getEntity(el))
         .filter(symbolClazz)
         .first();
@@ -95,6 +104,6 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
         entities.add(entity);
       }
     }
-    return ResolvedEntitiesList.createResult(entities, fullyResolved, JSTypeUtils.getTypeInvalidationDependency());
+    return ResolvedEntitiesList.createResult(entities, fullyResolved, dependencies);
   }
 }
