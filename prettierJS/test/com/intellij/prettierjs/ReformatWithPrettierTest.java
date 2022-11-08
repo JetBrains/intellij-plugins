@@ -181,6 +181,10 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testResolveConfig() {
+    doReformatFile("webc");
+  }
+
   private void configureYarnPrettierPackage(VirtualFile root) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
