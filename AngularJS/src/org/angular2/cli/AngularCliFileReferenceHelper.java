@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
 import org.angular2.cli.config.AngularConfigProvider;
 import org.angular2.cli.config.AngularProject;
@@ -21,7 +22,8 @@ public class AngularCliFileReferenceHelper extends FileReferenceHelper {
 
   @Override
   public boolean isMine(@NotNull Project project, @NotNull VirtualFile file) {
-    return getPsiFileSystemItem(project, file) instanceof HtmlCompatibleFile
+    var psiFile = getPsiFileSystemItem(project, file);
+    return (psiFile instanceof HtmlCompatibleFile || psiFile instanceof StylesheetFile)
            && Angular2LangUtil.isAngular2Context(project, file)
            && AngularConfigProvider.getAngularProject(project, file) != null;
   }
