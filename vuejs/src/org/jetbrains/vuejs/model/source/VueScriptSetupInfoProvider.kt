@@ -37,7 +37,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       }
   }
 
-  class VueScriptSetupInfo(val module: JSEmbeddedContent) : VueContainerInfoProvider.VueContainerInfo {
+  class VueScriptSetupInfo(val module: JSExecutionScope) : VueContainerInfoProvider.VueContainerInfo {
 
     override val components: Map<String, VueComponent>
     override val directives: Map<String, VueDirective>
@@ -182,7 +182,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       return props
     }
 
-    private fun JSEmbeddedContent.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
+    private fun JSExecutionScope.getStubSafeDefineCalls(): Sequence<JSCallExpression> {
       (this as? JSStubElementImpl<*>)?.stub?.let { moduleStub ->
         return moduleStub.childrenStubs.asSequence().flatMap { stub ->
           when (val psi = stub.psi) {

@@ -16,9 +16,8 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.componentDecorator.findComponentDecorator
+import org.jetbrains.vuejs.model.hasSrcReference
 import org.jetbrains.vuejs.model.source.VueComponents
-import java.io.DataInput
-import java.io.DataOutput
 import java.util.*
 
 class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
@@ -30,6 +29,9 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
       file is XmlFile && findScriptTag(file, false).let { script ->
         if (script == null) {
           true
+        }
+        else if (script.hasSrcReference()) {
+          false
         }
         else {
           val module = PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
@@ -57,7 +59,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
 
   override fun getVersion(): Int = 8
 
-  override fun getInputFilter(): FileBasedIndex.InputFilter = object: DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE) {
+  override fun getInputFilter(): FileBasedIndex.InputFilter = object : DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE) {
     override fun acceptInput(file: VirtualFile): Boolean {
       return file.fileType == VueFileType.INSTANCE
     }

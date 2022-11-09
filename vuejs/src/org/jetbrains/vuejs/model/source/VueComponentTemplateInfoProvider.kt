@@ -22,10 +22,7 @@ import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.VueUrlIndex
 import org.jetbrains.vuejs.index.findTopLevelVueTag
-import org.jetbrains.vuejs.model.VueFileTemplate
-import org.jetbrains.vuejs.model.VueTagTemplate
-import org.jetbrains.vuejs.model.VueTemplate
-import org.jetbrains.vuejs.model.resolveTagSrcReference
+import org.jetbrains.vuejs.model.*
 
 class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 
@@ -142,7 +139,12 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
     }
 
     private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? =
-      resolveTagSrcReference(tag)?.let { createInfo(it) }
+      run {
+        if (tag.hasSrcReference())
+          tag.tryResolveSrcReference()
+        else tag
+      }
+        ?.let { createInfo(it) }
 
   }
 

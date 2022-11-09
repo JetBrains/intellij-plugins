@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.template
 
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -20,7 +20,7 @@ class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
     } ?: emptyList()
   }
 
-  private class VueScriptSetupScope constructor(private val module: JSEmbeddedContent) : VueTemplateScope(null) {
+  private class VueScriptSetupScope constructor(private val module: JSExecutionScope) : VueTemplateScope(null) {
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
