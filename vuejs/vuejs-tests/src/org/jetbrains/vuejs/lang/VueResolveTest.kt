@@ -2059,6 +2059,14 @@ export default class UsageComponent extends Vue {
 
     assertSameElements(mixinsViaStubs, mixinsViaPsi)
   }
+
+  fun testMixinQualifiedReference() {
+    myFixture.copyDirectoryToProject("mixinQualifiedReference", ".")
+    myFixture.configureFromTempProjectFile("Test.vue")
+    TestCase.assertEquals("clickMixin.js",
+                          myFixture.resolveReference("cl<caret>icked(").containingFile.name)
+  }
+
 }
 
 fun globalMixinText(): String {

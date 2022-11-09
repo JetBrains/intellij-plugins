@@ -21,6 +21,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
@@ -75,11 +76,13 @@ class VueComponents {
       return JSStubBasedPsiTreeUtil.resolveLocally(reference, context)
                ?.let { getVueComponentFromResolve(listOf(it)) }
                ?.let { return it }
-             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(context).resolveQualifiedName(reference))
+             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(context, true).resolveQualifiedName(reference))
     }
 
     private fun getVueComponentFromResolve(result: Collection<PsiElement>): VueEntityDescriptor? {
-      return result.firstNotNullOfOrNull(::getComponentDescriptor)
+      return result.firstNotNullOfOrNull {
+        getComponentDescriptor(it.applyIf(it is JSImplicitElement) { it.context ?: return@firstNotNullOfOrNull null })
+      }
     }
 
     fun getClassComponentDescriptor(clazz: JSClass): VueSourceEntityDescriptor =
