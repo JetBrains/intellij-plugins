@@ -288,7 +288,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   private fun completeTsLangAndAssert() {
     doTestWithCopyDirectory()
-    myFixture.type(" lang=\"\bts\"")
+    myFixture.type(" lang=\"ts\"")
     FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.file))
     UIUtil.dispatchAllInvocationEvents()
     checkAfterFile("vue")
