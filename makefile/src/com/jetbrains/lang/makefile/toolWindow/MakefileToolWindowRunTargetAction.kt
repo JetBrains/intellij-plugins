@@ -11,6 +11,7 @@ import com.intellij.psi.search.*
 import com.intellij.ui.treeStructure.*
 import com.jetbrains.lang.makefile.*
 
+@Suppress("DialogTitleCapitalization")
 class MakefileToolWindowRunTargetAction(private val tree: Tree, private val project: Project, private val runManager: RunManagerImpl)
   : AnAction(MakefileLangBundle.message("action.run.target.tool.window.text"),
              MakefileLangBundle.message("action.run.target.tool.window.description"),
@@ -22,7 +23,7 @@ class MakefileToolWindowRunTargetAction(private val tree: Tree, private val proj
       val elements = MakefileTargetIndex.get(selected.name, project, GlobalSearchScope.fileScope(selected.parent.psiFile))
       val target = elements.firstOrNull() ?: return
 
-      val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY.name, PsiLocation(target), event.dataContext)
+      val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY, PsiLocation(target), event.dataContext)
 
       val context = ConfigurationContext.getFromContext(dataContext, event.place)
 
