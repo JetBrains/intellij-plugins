@@ -291,7 +291,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
 
     private final boolean myIsElement;
 
-    MyRenameValidator(boolean isElement){
+    MyRenameValidator(boolean isElement) {
       myIsElement = isElement;
     }
 
@@ -301,11 +301,13 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
       if (myIsElement) {
         return TAG_NAME_PATTERN.matcher(newName).matches()
                ? RenameValidationResult.ok()
-               : RenameValidationResult.invalid(AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.element.name", newName));
+               : RenameValidationResult.invalid(
+                 AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.element.name", newName));
       }
       return ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()
              ? RenameValidationResult.ok()
-             : RenameValidationResult.invalid(AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.attribute.name", newName));
+             : RenameValidationResult.invalid(
+               AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.attribute.name", newName));
     }
   }
 }
