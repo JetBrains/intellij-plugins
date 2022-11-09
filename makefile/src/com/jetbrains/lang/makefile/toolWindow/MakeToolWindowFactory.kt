@@ -37,14 +37,14 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val tree = object : Tree(model), DataProvider {
         override fun getData(dataId: String): Any? {
           if (PlatformCoreDataKeys.BGT_DATA_PROVIDER.`is`(dataId)) {
-            return DataProvider { slowData(it) }
+            val selectedNodes = getSelectedNodes(MakefileTargetNode::class.java, {true})
+            return DataProvider { slowData(it, selectedNodes) }
           }
           return null
         }
 
-        private fun slowData(dataId: String): MakefileTarget? {
+        private fun slowData(dataId: String, selectedNodes: Array<MakefileTargetNode>): MakefileTarget? {
           if (PSI_ELEMENT.`is`(dataId)) {
-            val selectedNodes = getSelectedNodes(MakefileTargetNode::class.java, {true})
             if (selectedNodes.any()) {
               val selected = selectedNodes.first()
               return MakefileTargetIndex.get(selected.name, project, GlobalSearchScope.fileScope(selected.parent.psiFile)).firstOrNull()
