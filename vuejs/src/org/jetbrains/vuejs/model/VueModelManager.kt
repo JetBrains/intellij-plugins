@@ -261,12 +261,9 @@ class VueModelManager {
     private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
       val file = element.containingFile?.originalFile as? XmlFile
       if (file != null && file.fileType == VueFileType.INSTANCE) {
-        val script = findScriptTag(file, false)
-        if (script != null) {
-          findDefaultExport(
-            resolveTagSrcReference(script) as? PsiFile
-            ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
-          )
+        val scriptModule = findModule(file, false)
+        if (scriptModule != null) {
+          findDefaultExport(scriptModule)
             ?.let { getComponentDescriptor(it) }
             ?.asSafely<VueSourceEntityDescriptor>()
             ?.let { return it }

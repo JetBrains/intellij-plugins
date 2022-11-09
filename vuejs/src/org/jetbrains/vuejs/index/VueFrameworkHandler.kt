@@ -47,6 +47,8 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
+import org.jetbrains.vuejs.model.hasSrcReference
+import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
@@ -361,9 +363,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           .setUserStringWithData(
             this, VueCompositionAppIndex.JS_KEY,
             // Store reference name for resolution
-                                     callExpression.arguments
+            callExpression.arguments
               .getOrNull(if (referenceName == CREATE_APP_FUN || referenceName == MIXIN_FUN) 0 else 1)
-                                       .asSafely<JSReferenceExpression>()
+              .asSafely<JSReferenceExpression>()
               ?.takeIf { it.qualifier == null }
               ?.referenceName
           )
@@ -566,13 +568,19 @@ fun processScriptSetupTopLevelDeclarations(context: PsiElement, consumer: (JSPsi
 }
 
 @StubSafe
-fun findModule(element: PsiElement?, setup: Boolean): JSEmbeddedContent? =
+fun findModule(element: PsiElement?, setup: Boolean): JSExecutionScope? =
   element
     ?.let { InjectedLanguageManager.getInstance(element.project) }
     ?.getTopLevelFile(element)
     ?.asSafely<XmlFile>()
     ?.let { findScriptTag(it, setup) }
-    ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
+    ?.let result@{ tag ->
+      if (tag.hasSrcReference()) {
+        tag.tryResolveSrcReference().asSafely<JSFile>()
+      } else {
+        PsiTreeUtil.getStubChildOfType(tag, JSEmbeddedContent::class.java)
+      }
+    }
 
 @StubSafe
 fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =

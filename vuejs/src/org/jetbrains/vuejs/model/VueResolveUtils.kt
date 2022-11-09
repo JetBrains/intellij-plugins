@@ -1,48 +1,42 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.model
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.psi.StubSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.FakePsiElement
-import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
+import org.jetbrains.vuejs.codeInsight.stubSafeGetAttribute
+
+fun XmlTag.hasSrcReference(): Boolean =
+  !stubSafeGetAttribute(SRC_ATTRIBUTE_NAME)?.value.isNullOrBlank()
 
 @StubSafe
-fun resolveTagSrcReference(tag: XmlTag): PsiElement? {
-  val tagStub = (tag as? StubBasedPsiElementBase<*>)?.stub
-  var attrReferences: Array<PsiReference>? = null
-  if (tagStub != null) {
-    tagStub.childrenStubs
-      .asSequence()
-      .mapNotNull { (it as? XmlAttributeStub<*>)?.psi }
-      .filter { it.name == SRC_ATTRIBUTE_NAME && it.value != null }
-      .firstOrNull()
-      ?.let {
-        attrReferences = BASIC_REF_PROVIDER.getReferencesByElement(FakeAttributeValue(it, it.value!!), ProcessingContext())
+fun XmlTag.tryResolveSrcReference(): PsiElement? {
+  val attribute = stubSafeGetAttribute(SRC_ATTRIBUTE_NAME)?.takeIf { !it.value.isNullOrBlank() }
+                  ?: return null
+  val attrReferences: Array<PsiReference>? =
+    if ((attribute as? StubBasedPsiElement<*>)?.stub != null)
+      attribute.value?.let {
+        BASIC_REF_PROVIDER.getReferencesByElement(FakeAttributeValue(attribute, it), ProcessingContext())
       }
-  }
-  else {
-    tag.getAttribute(SRC_ATTRIBUTE_NAME)
-      ?.valueElement
-      ?.let { attrReferences = BASIC_REF_PROVIDER.getReferencesByElement(it, ProcessingContext()) }
-  }
-  if (attrReferences != null) {
-    return attrReferences
-      ?.asSequence()
-      ?.mapNotNull { it.resolve()?.asSafely<PsiFile>() }
-      ?.firstOrNull()
-  }
-  return tag
+    else
+      attribute.valueElement?.let {
+        BASIC_REF_PROVIDER.getReferencesByElement(it, ProcessingContext())
+      }
+  return attrReferences
+    ?.asSequence()
+    ?.mapNotNull { it.resolve()?.asSafely<PsiFile>() }
+    ?.firstOrNull()
 }
 
-private class FakeAttributeValue internal constructor(private val myParent: PsiElement, value: String) : FakePsiElement() {
+private class FakeAttributeValue constructor(private val myParent: PsiElement, value: String) : FakePsiElement() {
 
   private val myValue: String = value
 

@@ -12,7 +12,10 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.RecursionManager
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
@@ -2060,6 +2063,41 @@ export default {
 
     myFixture.checkResultByFile("${getTestName(true)}/imports.after.ts")
 
+  }
+
+  fun testExternalScriptComponentEdit() {
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+
+    myFixture.configureFromTempProjectFile("foo.vue")
+
+    myFixture.completeBasic()
+    myFixture.type("Col\n.r")
+    myFixture.completeBasic()
+    myFixture.type("\n")
+
+    WriteAction.run<Throwable> {
+      PsiDocumentManager.getInstance(project).commitAllDocuments()
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
+
+    myFixture.checkResultByFile("${getTestName(true)}/foo.after.vue")
+
+    myFixture.configureFromTempProjectFile("foo.js")
+    myFixture.checkResultByFile("${getTestName(true)}/foo.after.js")
+  }
+
+  fun testExternalScriptComponentImport() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureFromTempProjectFile("test.vue")
+
+    myFixture.type("<")
+    myFixture.completeBasic()
+    myFixture.type("fo\n :")
+    myFixture.completeBasic()
+    myFixture.type("ms\n")
+
+    myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {

@@ -37,6 +37,7 @@ import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_TOP_LEVEL_ELEMENTS
@@ -57,6 +58,10 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     if (file is JSFile) return file
     if (file !is XmlFile) return null
     val scriptTag = findScriptTag(file, true) ?: findScriptTag(file, false) ?: createScriptTag(file)
+
+    if (!scriptTag.isScriptSetupTag()) {
+      scriptTag.tryResolveSrcReference().asSafely<JSFile>()?.let { return it }
+    }
 
     scriptTag
       .children
