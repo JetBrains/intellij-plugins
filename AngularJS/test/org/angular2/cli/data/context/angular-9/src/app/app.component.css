@@ -1,0 +1,16 @@
+div {
+  background-image: url("image.png");
+}
+div {
+  background-image: url("/image.png");
+}
+div {
+  background-image: url("../assets/image.png");
+}
+div {
+  background-image: url("<error>assets</error>/<error>image.png</error>");
+}
+div {
+  /* not a correct path, but I don't want to override everything */
+  background-image: url("src/assets/image.png");
+}

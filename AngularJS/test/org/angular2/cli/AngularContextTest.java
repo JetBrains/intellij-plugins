@@ -4,6 +4,7 @@ package org.angular2.cli;
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -24,6 +25,21 @@ public class AngularContextTest extends BasePlatformTestCase {
       FileDocumentManager.getInstance().saveAllDocuments();
     });
     AngularTestUtil.moveToOffsetBySignature("<img src='<caret>'/>",myFixture);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "favicon.ico", "image.png");
+  }
+
+  public void testAngular9Css() {
+    myFixture.enableInspections(CssUnknownTargetInspection.class);
+    myFixture.copyDirectoryToProject("angular-9", ".");
+
+    myFixture.configureFromTempProjectFile("src/app/app.component.css");
+    myFixture.checkHighlighting(true, false, true);
+    WriteAction.runAndWait(() -> {
+      myFixture.getEditor().getDocument().setText("div {\nbackground-image=url('')\n}");
+      FileDocumentManager.getInstance().saveAllDocuments();
+    });
+    AngularTestUtil.moveToOffsetBySignature("url('<caret>')",myFixture);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "favicon.ico", "image.png");
   }
