@@ -6,6 +6,9 @@ import com.intellij.workspaceModel.storage.GeneratedCodeApiVersion
 import com.intellij.workspaceModel.storage.MutableEntityStorage
 import com.intellij.workspaceModel.storage.WorkspaceEntity
 import com.intellij.workspaceModel.storage.url.VirtualFileUrl
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 import org.jetbrains.deft.ObjBuilder
 import org.jetbrains.deft.Type
 
@@ -24,6 +27,9 @@ interface DenoEntity : WorkspaceEntity {
   }
 
   companion object : Type<DenoEntity, Builder>() {
+    @JvmOverloads
+    @JvmStatic
+    @JvmName("create")
     operator fun invoke(entitySource: EntitySource, init: (Builder.() -> Unit)? = null): DenoEntity {
       val builder = builder()
       builder.entitySource = entitySource
