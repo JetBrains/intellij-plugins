@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web.symbols
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.model.Symbol
 import com.intellij.model.presentation.SymbolPresentation
+import com.intellij.navigation.TargetPresentation
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
@@ -22,10 +23,10 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
   override val description: String?
     get() = item.description
 
-  override fun getSymbolPresentation(): SymbolPresentation {
-    val description = VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name)
-    return SymbolPresentation.create(icon, name, description, description)
-  }
+  override val presentation: TargetPresentation
+    get() = TargetPresentation.builder(VueBundle.message("vue.symbol.presentation", VueItemDocumentation.typeOf(item), name))
+        .icon(icon)
+        .presentation()
 
   override fun equals(other: Any?): Boolean =
     other === this ||
