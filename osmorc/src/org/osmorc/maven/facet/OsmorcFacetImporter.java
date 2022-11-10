@@ -64,9 +64,6 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
   }
 
   @Override
-  protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) { }
-
-  @Override
   protected void reimportFacet(IdeModifiableModelsProvider modelsProvider, Module module,
                                MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
                                MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
