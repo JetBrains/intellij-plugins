@@ -26,7 +26,8 @@ class DenoIndexableEntityProvider : IndexableEntityProvider.Existing<DenoEntity>
   }
 
   override fun getReplacedEntityIteratorBuilders(oldEntity: DenoEntity,
-                                                 newEntity: DenoEntity): Collection<IndexableEntityProvider.IndexableIteratorBuilder> {
+                                                 newEntity: DenoEntity,
+                                                 project: Project): Collection<IndexableEntityProvider.IndexableIteratorBuilder> {
     if (!useWorkspaceModel()) return emptyList()
     return listOf(Dependency(newEntity.denoTypes?.virtualFile, newEntity.depsFile?.virtualFile))
   }
