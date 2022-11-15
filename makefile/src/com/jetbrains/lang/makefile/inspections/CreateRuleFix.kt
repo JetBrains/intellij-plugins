@@ -1,8 +1,10 @@
-package com.jetbrains.lang.makefile
+package com.jetbrains.lang.makefile.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import com.jetbrains.lang.makefile.MakefileFile
+import com.jetbrains.lang.makefile.MakefileLangBundle
 import com.jetbrains.lang.makefile.psi.MakefileElementFactory
 
 class CreateRuleFix : LocalQuickFix {

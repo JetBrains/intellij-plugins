@@ -73,6 +73,15 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
 
     <internalFileTemplate name="Makefile" />
     <iconMapper mappingFile="MakefileIconMappings.json"/>
+
+    <localInspection language="Makefile"
+                     groupKey="makefile.inspection.group.name"
+                     shortName="MakefileUnresolvedPrerequisite"
+                     bundle="messages.MakefileLangBundle"
+                     key="make.unresolved.prerequisite.inspection.name"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     implementationClass="com.jetbrains.lang.makefile.inspections.MakefileUnresolvedPrerequisiteInspection" />
   </extensions>
 
   <extensionPoints>
