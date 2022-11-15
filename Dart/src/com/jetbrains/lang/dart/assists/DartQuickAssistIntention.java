@@ -2,7 +2,9 @@
 package com.jetbrains.lang.dart.assists;
 
 import com.intellij.CommonBundle;
+import com.intellij.codeInsight.intention.FileModifier;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
@@ -11,6 +13,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +59,11 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
     }
 
     if (sourceChange != null) {
+      if (!file.isPhysical() && !ApplicationManager.getApplication().isWriteAccessAllowed()) {
+        DartQuickFix.doInvokeForPreview(file, sourceChange);
+        return;
+      }
+
       DartAnalysisServerService.getInstance(project).fireBeforeQuickAssistIntentionInvoked(this, editor, file);
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
@@ -89,6 +97,11 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   @Override
   public boolean startInWriteAction() {
     return true;
+  }
+
+  @Override
+  public @Nullable FileModifier getFileModifierForPreview(@NotNull PsiFile target) {
+    return DartQuickFix.isPreviewAvailable(target, sourceChange) ? this : null;
   }
 
   //@formatter:off
