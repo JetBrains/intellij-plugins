@@ -75,6 +75,8 @@ const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
+const val VITE_PKG = "vite"
+
 val VUE_NOTIFICATIONS: NotificationGroup
   get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
 

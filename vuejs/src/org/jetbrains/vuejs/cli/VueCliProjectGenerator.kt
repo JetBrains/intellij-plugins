@@ -7,10 +7,12 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.javascript.CreateRunConfigurationUtil
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
@@ -21,6 +23,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.PathUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.VITE_PKG
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -150,8 +153,17 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
 
   override fun onGettingSmartAfterProjectGeneration(project: Project, baseDir: VirtualFile) {
     super.onGettingSmartAfterProjectGeneration(project, baseDir)
-    CreateRunConfigurationUtil.debugConfiguration(project, 8080)
-    CreateRunConfigurationUtil.npmConfiguration(project, "serve")
+    val isVite = PackageJsonUtil.findChildPackageJsonFile(baseDir)
+      ?.let { PackageJsonData.getOrCreate(it) }
+      ?.containsOneOfDependencyOfAnyType(VITE_PKG) == true
+
+    if (isVite) {
+      CreateRunConfigurationUtil.debugConfiguration(project, 5173)
+      CreateRunConfigurationUtil.npmConfiguration(project, "dev")
+    } else {
+      CreateRunConfigurationUtil.debugConfiguration(project, 8080)
+      CreateRunConfigurationUtil.npmConfiguration(project, "serve")
+    }
   }
 
   override fun generateInTemp(): Boolean = true
