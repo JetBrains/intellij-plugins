@@ -1,1 +1,0 @@
-a: <weak_warning descr="Unresolved prerequisite">b</weak_warning>

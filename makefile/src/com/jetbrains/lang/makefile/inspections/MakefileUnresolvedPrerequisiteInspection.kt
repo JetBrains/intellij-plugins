@@ -21,6 +21,11 @@ class MakefileUnresolvedPrerequisiteInspection : LocalInspectionTool() {
         val targetLine = prerequisite.findTargetLine() ?: return
         val targets = targetLine.targets.targetList
 
+        if (targets.any { it.isPatternTarget } && prerequisite.textContains('%')) {
+          // don't highlight such cases cause it leads to a lot of false errors
+          return
+        }
+
         if (targets.firstOrNull()?.isSpecialTarget == false && targetLine.targetPattern == null) {
           val targetReferences = prerequisite.references.any { it is MakefileTargetReference && it.multiResolve(false).isNotEmpty() }
 
