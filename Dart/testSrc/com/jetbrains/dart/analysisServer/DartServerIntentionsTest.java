@@ -87,6 +87,18 @@ public class DartServerIntentionsTest extends CodeInsightFixtureTestCase {
                         "Assign shortcut…",
                         "Adjust code style settings",
                         "Assign shortcut…"
-                        );
+    );
+  }
+
+  public void testIntentionPreview() {
+    myFixture.configureByText("foo.dart", """
+      main ( )  {
+       Foo<caret>
+         }""");
+    IntentionAction action = myFixture.findSingleIntention("Assign value to new local variable");
+    assertEquals("""
+                   main ( )  {
+                    var foo = Foo
+                      }""", myFixture.getIntentionPreviewText(action));
   }
 }

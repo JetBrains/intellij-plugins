@@ -3,7 +3,9 @@ package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.CommonBundle;
 import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.intention.FileModifier;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -12,6 +14,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,6 +27,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import org.dartlang.analysis.server.protocol.SourceChange;
+import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,6 +80,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     }
 
     if (mySourceChange != null) {
+      if (!file.isPhysical() && !ApplicationManager.getApplication().isWriteAccessAllowed()) {
+        doInvokeForPreview(file, mySourceChange);
+        return;
+      }
+
       doInvoke(project, editor, file, mySourceChange, this);
     }
   }
@@ -167,5 +176,37 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @Override
   public boolean startInWriteAction() {
     return true;
+  }
+
+  @Override
+  public @Nullable FileModifier getFileModifierForPreview(@NotNull PsiFile target) {
+    return isPreviewAvailable(target, mySourceChange) ? this : null;
+  }
+
+  public static boolean isPreviewAvailable(@NotNull PsiFile target, @Nullable SourceChange sourceChange) {
+    if (sourceChange == null) {
+      return false;
+    }
+
+    String path = FileUtil.toSystemIndependentName(sourceChange.getEdits().get(0).getFile());
+    VirtualFile vFile = target.getOriginalFile().getVirtualFile();
+    if (vFile == null || !vFile.getPath().equals(path)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static void doInvokeForPreview(@NotNull PsiFile psiFile, @NotNull SourceChange sourceChange) {
+    assert !psiFile.isPhysical() &&
+           !ApplicationManager.getApplication().isWriteAccessAllowed() &&
+           isPreviewAvailable(psiFile, sourceChange);
+
+    // #isPreviewAvailable() has checked that sourceChange.getEdits().get(0) modifies _this_ PsiFile, not some other
+    Document document = psiFile.getViewProvider().getDocument();
+    for (SourceEdit edit : sourceChange.getEdits().get(0).getEdits()) {
+      String replacement = StringUtil.convertLineSeparators(edit.getReplacement());
+      document.replaceString(edit.getOffset(), edit.getOffset() + edit.getLength(), replacement);
+    }
   }
 }
