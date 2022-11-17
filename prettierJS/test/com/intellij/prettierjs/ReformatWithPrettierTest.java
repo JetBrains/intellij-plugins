@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
+import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -140,18 +141,13 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     }
   }
 
-  public void testYarnPrettierBasicExample() {
+  public void testYarnPrettierBasicExample() throws Exception {
     doReformatFile("toReformat", "js", () -> {
       VirtualFile file = myFixture.findFileInTempDir("toReformat.js");
       VirtualFile root = file.getParent();
-      try {
-        NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
-        AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
-        configureYarnPrettierPackage(root);
-      }
-      catch (Exception e) {
-        throw new RuntimeException(e);
-      }
+      NodePackage yarnPkg = AbstractYarnPnpIntegrationTest.installYarnGlobally(getNodeJsAppRule());
+      AbstractYarnPnpIntegrationTest.configureYarnBerryAndRunYarnInstall(getProject(), yarnPkg, getNodeJsAppRule(), root);
+      configureYarnPrettierPackage(root);
     });
   }
 
@@ -205,9 +201,9 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile(fileNamePrefix, extension, null);
   }
 
-  private void doReformatFile(final String fileNamePrefix,
-                              final String extension,
-                              @Nullable Runnable configureFixture) {
+  private <T extends Throwable> void doReformatFile(final String fileNamePrefix,
+                                                    final String extension,
+                                                    @Nullable ThrowableRunnable<T> configureFixture) throws T {
     String dirName = getTestName(true);
     myFixture.copyDirectoryToProject(dirName, "");
     String extensionWithDot = StringUtil.isEmpty(extension) ? "" : "." + extension;
