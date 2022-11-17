@@ -55,7 +55,7 @@ public final class ActiveBuildConfigurationWidget {
 
     myProject.getMessageBus().connect(myProject).subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
-      public void modulesAdded(@NotNull Project project, @NotNull List<Module> modules) {
+      public void modulesAdded(@NotNull Project project, @NotNull List<? extends Module> modules) {
         showOrHideWidget(false);
       }
 

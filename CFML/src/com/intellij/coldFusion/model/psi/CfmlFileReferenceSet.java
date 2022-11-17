@@ -28,7 +28,7 @@ public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIc
     @Override
     protected void innerResolveInContext(@NotNull final String text,
                                          @NotNull final PsiFileSystemItem context,
-                                         final @NotNull Collection<ResolveResult> result,
+                                         final @NotNull Collection<? super ResolveResult> result,
                                          final boolean caseSensitive) {
 
       CfmlProjectConfiguration.State state = CfmlProjectConfiguration.getInstance(getElement().getProject()).getState();

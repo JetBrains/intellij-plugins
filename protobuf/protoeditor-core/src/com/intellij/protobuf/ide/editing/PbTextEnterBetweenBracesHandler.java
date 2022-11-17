@@ -33,12 +33,12 @@ public class PbTextEnterBetweenBracesHandler extends EnterBetweenBracesHandler {
 
   @Override
   public Result preprocessEnter(
-      @NotNull PsiFile file,
-      @NotNull Editor editor,
-      @NotNull Ref<Integer> caretOffsetRef,
-      @NotNull Ref<Integer> caretAdvance,
-      @NotNull DataContext dataContext,
-      EditorActionHandler originalHandler) {
+    @NotNull PsiFile file,
+    @NotNull Editor editor,
+    @NotNull Ref<Integer> caretOffsetRef,
+    @NotNull Ref<Integer> caretAdvance,
+    @NotNull DataContext dataContext,
+    EditorActionHandler originalHandler) {
     if (!ProtoTypedHandler.inTextFormat(file, editor)) {
       return Result.Continue;
     }

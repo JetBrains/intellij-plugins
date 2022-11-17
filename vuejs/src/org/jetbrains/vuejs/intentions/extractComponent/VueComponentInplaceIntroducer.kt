@@ -59,7 +59,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     return mutableListOf()
   }
 
-  override fun addReferenceAtCaret(refs: MutableCollection<PsiReference>?) {
+  override fun addReferenceAtCaret(refs: MutableCollection<in PsiReference>) {
   }
 
   override fun startsOnTheSameElement(handler: RefactoringActionHandler?, element: PsiElement?): Boolean {

@@ -30,7 +30,7 @@ import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
 
 public final class GaugeModuleListener implements ModuleListener {
   @Override
-  public void modulesAdded(@NotNull Project project, @NotNull List<Module> modules) {
+  public void modulesAdded(@NotNull Project project, @NotNull List<? extends Module> modules) {
     for (Module module : modules) {
       if (module.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != null) {
         continue;
