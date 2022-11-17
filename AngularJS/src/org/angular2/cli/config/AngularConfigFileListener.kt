@@ -11,7 +11,7 @@ import com.intellij.util.FileContentUtil
 import org.angular2.cli.AngularCliUtil
 
 class AngularConfigFileListener : BulkFileListener {
-  override fun after(events: MutableList<out VFileEvent>) {
+  override fun after(events: List<VFileEvent>) {
     for (event in events) {
       if (event !is VFileContentChangeEvent) continue
       val file = event.file
