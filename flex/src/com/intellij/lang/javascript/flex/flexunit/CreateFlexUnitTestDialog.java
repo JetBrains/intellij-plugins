@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.refactoring.ui.JSMemberSelectionPanel;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -134,9 +135,9 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     final Module module = ModuleUtilCore.findModuleForPsiElement(myContextClass);
     assert module != null;
 
-    myPackageCombo = JSReferenceEditor.forPackageName(StringUtil.getPackageName(myContextClass.getQualifiedName()), module.getProject(),
-                                                      null, getTestClassPackageScope(module),
-                                                      RefactoringBundle.message("choose.destination.package"));
+    myPackageCombo = ActionScriptPackageChooserDialog.createPackageReferenceEditor(StringUtil.getPackageName(myContextClass.getQualifiedName()), module.getProject(),
+                                                                                   null, getTestClassPackageScope(module),
+                                                                                   RefactoringBundle.message("choose.destination.package"));
 
     final Condition<JSClass> filter = jsClass -> {
       final JSAttributeList attributeList = jsClass.getAttributeList();

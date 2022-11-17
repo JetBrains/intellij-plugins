@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
@@ -58,8 +59,8 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
   @Override
   protected ComponentWithBrowseButton createPackageNameField() {
     String packageName = StringUtil.getPackageName(mySourceClass.getQualifiedName());
-    return JSReferenceEditor.forPackageName(packageName, myProject, DESTINATION_PACKAGE_RECENT_KEY, getScope(),
-                                            RefactoringBundle.message("choose.destination.package"));
+    return ActionScriptPackageChooserDialog.createPackageReferenceEditor(packageName, myProject, DESTINATION_PACKAGE_RECENT_KEY, getScope(),
+                                                                         RefactoringBundle.message("choose.destination.package"));
   }
 
   @Override

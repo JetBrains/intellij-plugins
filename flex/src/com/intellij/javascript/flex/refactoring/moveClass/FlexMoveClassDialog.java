@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -175,9 +176,9 @@ public class FlexMoveClassDialog extends RefactoringDialog {
       }
     }
     myTargetPackageField =
-      JSReferenceEditor.forPackageName(initialPackage, myProject, FlexMoveClassDialog.class.getName() + ".target_package",
-                                       GlobalSearchScope.projectScope(myProject),
-                                       RefactoringBundle.message("choose.destination.package"));
+      ActionScriptPackageChooserDialog.createPackageReferenceEditor(initialPackage, myProject, FlexMoveClassDialog.class.getName() + ".target_package",
+                                                                    GlobalSearchScope.projectScope(myProject),
+                                                                    RefactoringBundle.message("choose.destination.package"));
   }
 
   @Override

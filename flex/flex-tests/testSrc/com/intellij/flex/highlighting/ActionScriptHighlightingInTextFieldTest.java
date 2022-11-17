@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.refactoring.ui.JSEditorTextField;
-import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.PsiDocumentManager;
@@ -73,14 +73,14 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
   public void testPackageNameCombo() {
     configureByFiles(BASE_PATH + getTestName(false), BASE_PATH + getTestName(false) + "/foo/dummy.txt");
     PsiFile fragment =
-      JSReferenceEditor.forPackageName("foo", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
+      ActionScriptPackageChooserDialog.createPackageReferenceEditor("foo", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
     doTestForEditorTextField((JSExpressionCodeFragment)fragment);
   }
 
   public void testPackageNameCombo2() {
     configureByFiles(BASE_PATH + getTestName(false), BASE_PATH + getTestName(false) + "/foo/dummy.txt");
     PsiFile fragment =
-      JSReferenceEditor.forPackageName("<error>foo2</error>", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
+      ActionScriptPackageChooserDialog.createPackageReferenceEditor("<error>foo2</error>", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
     doTestForEditorTextField((JSExpressionCodeFragment)fragment);
   }
 }

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.lang.javascript.ui.ActionScriptPackageChooserDialog;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -95,8 +96,8 @@ public class CreateFlexSkinDialog extends DialogWrapper {
   }
 
   private void createUIComponents() {
-    myPackageCombo = JSReferenceEditor.forPackageName(myPackageNameInitial, myModule.getProject(), DESTINATION_PACKAGE_RECENT_KEY,
-                                                      getPackageScope(), RefactoringBundle.message("choose.destination.package"));
+    myPackageCombo = ActionScriptPackageChooserDialog.createPackageReferenceEditor(myPackageNameInitial, myModule.getProject(), DESTINATION_PACKAGE_RECENT_KEY,
+                                                                                   getPackageScope(), RefactoringBundle.message("choose.destination.package"));
     myHostComponentCombo = createHostComponentCombo(myHostComponentInitial, myModule);
   }
 
