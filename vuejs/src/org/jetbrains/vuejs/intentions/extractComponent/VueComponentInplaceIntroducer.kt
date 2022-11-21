@@ -28,6 +28,7 @@ import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.ui.popup.mock.MockConfirmation
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
 
@@ -35,11 +36,10 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                                     editor: Editor,
                                     private val data: VueExtractComponentDataBuilder,
                                     private val oldText: String,
-                                    private val validator: (String) -> String?,
+                                    private val validator: (@NonNls String) -> @Nls String?,
                                     private val startMarkAction: StartMarkAction) :
   InplaceRefactoring(editor, elementToRename, elementToRename.project) {
-  @Nls
-  private val commandName = VueBundle.message("vue.template.intention.extract.component")
+
   private val containingFile = myElementToRename.containingFile
   private val oldCaret = editor.caretModel.currentCaret.offset
   private var isCanceled = false
@@ -50,10 +50,8 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
 
   override fun shouldSelectAll(): Boolean = false
 
-  @Nls
-  override fun getCommandName(): String {
-    return commandName
-  }
+  override fun getCommandName(): String =
+    VueBundle.message("vue.template.intention.extract.component.command.name")
 
   override fun collectRefs(referencesSearchScope: SearchScope?): MutableCollection<PsiReference> {
     return mutableListOf()
@@ -109,7 +107,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     if (myInsertedName == null) return false
 
     val commandProcessor = CommandProcessor.getInstance()
-    val error = validator.invoke(myInsertedName)
+    val error = validator(myInsertedName)
     if (error != null) {
       if (ApplicationManager.getApplication().isUnitTestMode) {
         performCleanupInCommand()
@@ -144,7 +142,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
           hijackCommand()
           FinishMarkAction.finish(myProject, myEditor, myMarkAction)
         }
-      }, getCommandName(), getGroupId())
+      }, commandName, getGroupId())
     }
     return true
   }
@@ -181,7 +179,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
   private fun hijackCommand() {
     val commandProcessor = CommandProcessor.getInstance()
     if (commandProcessor.currentCommand != null) {
-      commandProcessor.currentCommandName = getCommandName()
+      commandProcessor.currentCommandName = commandName
       commandProcessor.currentCommandGroupId = getGroupId()
     }
   }

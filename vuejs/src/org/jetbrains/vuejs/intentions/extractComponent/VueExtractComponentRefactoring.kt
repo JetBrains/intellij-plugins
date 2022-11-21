@@ -15,6 +15,7 @@ import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -34,7 +35,7 @@ class VueExtractComponentRefactoring(private val project: Project,
 
     val data = VueExtractComponentDataBuilder(list)
 
-    val refactoringName = VueBundle.message("vue.template.intention.extract.component")
+    val refactoringName = VueBundle.message("vue.template.intention.extract.component.command.name")
     val commandProcessor = CommandProcessor.getInstance()
     commandProcessor.executeCommand(project, {
       var newlyAdded: XmlTag? = null
@@ -69,8 +70,7 @@ class VueExtractComponentRefactoring(private val project: Project,
         .toSet()
     }
 
-    @Nls
-    fun validate(text: String): String? {
+    fun validate(@NonNls text: String): @Nls String? {
       val normalized = fromAsset(text.trim())
       val fileName = toAsset(text.trim(), true) + ".vue"
       if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) ||
