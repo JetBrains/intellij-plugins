@@ -16,6 +16,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.javascript.inspections.ES6ShorthandObjectPropertyInspection
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -53,6 +54,12 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
   fun testReplaceIfElseWithElvis() {
     doIntentionTest(JSIntentionBundle.message("trivialif.replace-if-with-conditional.display-name"))
+  }
+
+  fun testExpandShorthandProperty() {
+    myFixture.enableInspections(ES6ShorthandObjectPropertyInspection())
+    doIntentionTest(JavaScriptBundle.message("js.expand.shorthand.property.quick.fix"))
+    myFixture.checkHighlighting()
   }
 
   fun testReplaceWithIndexerAccess() {
@@ -165,6 +172,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
     myFixture.checkResultByFile("${getTestName(true)}/components/Test.after.vue")
   }
+
 
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
