@@ -1,2 +1,4 @@
 !@test-event#100
 !@test-event-2#100
+!@testEvent#100
+!@testEvent2#100

@@ -1218,7 +1218,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.configureByText("foo.vue", "<template> <BAlert @<caret> </template>")
     myFixture.completeBasic()
     myFixture.assertPreferredCompletionItems(0, // first 3 items come from the BAlert component
-                                             "@dismiss-count-down", "@dismissed", "@input",
+                                             "@dismiss-count-down", "@dismissCountDown", "@dismissed", "@input",
                                              "@abort", "@auxclick", "@beforeinput", "@beforematch", "@blur", "@cancel", "@canplay",
                                              "@canplaythrough", "@change", "@click", "@close", "@contextlost", "@contextmenu",
                                              "@contextrestored", "@copy", "@cuechange", "@cut", "@dblclick")

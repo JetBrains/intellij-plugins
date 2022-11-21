@@ -2,6 +2,6 @@
 </template>
 
 <script setup>
-defineEmits(['foo', 'bar'])
+defineEmits(['foo', 'bar', 'fooBar12'])
 </script>
 

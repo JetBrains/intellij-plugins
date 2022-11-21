@@ -85,13 +85,16 @@ fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
   for (ch in name) {
     when {
       ch.isUpperCase() -> {
-        if (result.isNotEmpty()) {
+        if (result.isNotEmpty()
+            && result.last() != '-') {
           result.append('-')
         }
         result.append(StringUtil.toLowerCase(ch))
       }
       ch in '0'..'9' -> {
-        if (hyphenBeforeDigit) {
+        if (hyphenBeforeDigit
+            && result.isNotEmpty()
+            && result.last() != '-') {
           result.append('-')
         }
         result.append(ch)
