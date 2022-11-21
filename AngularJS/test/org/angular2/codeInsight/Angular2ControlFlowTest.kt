@@ -32,6 +32,7 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
     Angular2TestModule.configureLink(myFixture, Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5)
     if (!skipTSConfig) {
       myFixture.configureByFile("tsconfig.json")
+      myFixture.configureByFile("tsconfig.app.json")
     }
     myFixture.enableInspections(Angular2TemplateInspectionsProvider())
 
