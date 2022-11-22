@@ -574,7 +574,7 @@ fun findModule(element: PsiElement?, setup: Boolean): JSExecutionScope? =
     ?.getTopLevelFile(element)
     ?.asSafely<XmlFile>()
     ?.let { findScriptTag(it, setup) }
-    ?.let result@{ tag ->
+    ?.let { tag ->
       if (tag.hasSrcReference()) {
         tag.tryResolveSrcReference().asSafely<JSFile>()
       } else {
