@@ -10,12 +10,12 @@ import com.intellij.openapi.util.Key
 class Angular2TypeScriptConfigCustomizer : TypeScriptConfigCustomizer {
   companion object {
     @JvmStatic
-    fun getStrictTemplates(fullConfig: TypeScriptConfig?): Boolean {
-      return fullConfig?.getCustomOption(STRICT_TEMPLATES) ?: false
+    fun isStrictTemplates(config: TypeScriptConfig?): Boolean {
+      return config?.getCustomOption(STRICT_TEMPLATES) ?: false
     }
 
-    val STRICT_TEMPLATES = Key.create<Boolean>("angularCompilerOptions.strictTemplates")
-    val STRICT_NULL_INPUT_TYPES = Key.create<Boolean>("angularCompilerOptions.strictNullInputTypes")
+    private val STRICT_TEMPLATES = Key.create<Boolean>("angularCompilerOptions.strictTemplates")
+    private val STRICT_NULL_INPUT_TYPES = Key.create<Boolean>("angularCompilerOptions.strictNullInputTypes")
   }
 
   override fun parseJsonObject(jsonObject: JsonObject): Map<Key<*>, Any>? {
@@ -31,8 +31,8 @@ class Angular2TypeScriptConfigCustomizer : TypeScriptConfigCustomizer {
   }
 
   private fun getBooleanValue(jsonObject: JsonObject, name: String): Boolean? {
-    val compileOnSave = jsonObject.findProperty(name)
-    val compileOnSaveValue = compileOnSave?.value
-    return if (compileOnSaveValue == null) null else java.lang.Boolean.parseBoolean(compileOnSaveValue.text)
+    val jsonProperty = jsonObject.findProperty(name)
+    val jsonValue = jsonProperty?.value
+    return if (jsonValue == null) null else java.lang.Boolean.parseBoolean(jsonValue.text)
   }
 }
