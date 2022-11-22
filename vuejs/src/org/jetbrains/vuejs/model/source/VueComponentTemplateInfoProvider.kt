@@ -138,13 +138,10 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
       return result
     }
 
-    private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? =
-      run {
-        if (tag.hasSrcReference())
-          tag.tryResolveSrcReference()
-        else tag
-      }
-        ?.let { createInfo(it) }
+    private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? {
+      val element = if (tag.hasSrcReference()) tag.tryResolveSrcReference() else tag
+      return createInfo(element)
+    }
 
   }
 
