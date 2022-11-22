@@ -23,7 +23,7 @@ public class Angular2TypeGuardEvaluator extends TypeScriptTypeGuardEvaluator {
                                                @Nullable PsiElement resolvedElement) {
     TypeScriptConfig config = TypeScriptConfigUtil.getConfigForPsiFile(namedElement.getContainingFile());
 
-    if (Angular2TypeScriptConfigCustomizer.getStrictTemplates(config)) {
+    if (Angular2TypeScriptConfigCustomizer.isStrictTemplates(config)) {
       return super.getTypeFromTypeGuard(namedElement, place, type, resolvedElement);
     }
 
