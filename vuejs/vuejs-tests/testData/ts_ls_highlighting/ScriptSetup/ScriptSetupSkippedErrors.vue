@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import {expression, NamedComponent} from './helper';
+import {expression, NamedComponent} from './helper.ts';
+import {MyType} from "./Helper.vue";
+
 const x = 1, y = 10;
 const constant = "hello";
 class C {
@@ -14,6 +16,8 @@ const user = {
 };
 
 const {id, isVerified} = user;
+
+let foo: MyType
 </script>
 
 <template>
