@@ -90,21 +90,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(true, true, true);
   }
 
-  public void testBuiltInIdentifiers() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(false, true, true);
-  }
-
-  public void testSyncAsyncAwaitYield() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
-
-    // now check that reparsing because of typing inside a reparseable block doesn't loose knowledge that the method is async
-    final List<HighlightInfo> oldHighlighting = myFixture.doHighlighting();
-    myFixture.type(' ');
-    assertSameElements(myFixture.doHighlighting(), oldHighlighting);
-  }
-
   public void testColorAnnotatorIdePart() {
     // includes cases not covered by testSyncAsyncAwaitYield, testBuiltInIdentifiers and testEscapeSequences
     myFixture.configureByFile(getTestName(false) + ".dart");

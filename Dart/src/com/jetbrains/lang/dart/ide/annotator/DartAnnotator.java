@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -17,7 +16,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
-import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
@@ -43,8 +41,7 @@ public final class DartAnnotator implements Annotator {
 
   static {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);
-    // handled by DartAnnotator without server
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.BUILT_IN, DartSyntaxHighlighterColors.DART_KEYWORD);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.BUILT_IN, DartSyntaxHighlighterColors.DART_KEYWORD);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CLASS, DartSyntaxHighlighterColors.DART_CLASS);
     // handled by DartSyntaxHighlighter
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_BLOCK, DartSyntaxHighlighterColors.DART_BLOCK_COMMENT);
@@ -87,7 +84,7 @@ public final class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE);
     // handled by DartAnnotator without server
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INVALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_INVALID_STRING_ESCAPE);
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.KEYWORD, DartSyntaxHighlighterColors.DART_KEYWORD);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.KEYWORD, DartSyntaxHighlighterColors.DART_KEYWORD);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LABEL, DartSyntaxHighlighterColors.DART_LABEL);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LIBRARY_NAME, DartSyntaxHighlighterColors.DART_LIBRARY_NAME);
     // handled by DartSyntaxHighlighter
@@ -209,23 +206,6 @@ public final class DartAnnotator implements Annotator {
     if (DartTokenTypes.COLON == element.getNode().getElementType() && element.getParent() instanceof DartTernaryExpression) {
       holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.OPERATION_SIGN).create();
       return;
-    }
-
-    if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
-      if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
-        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.KEYWORD).create();
-        return;
-      }
-    }
-
-    // sync*, async* and yield*
-    if (DartTokenTypes.MUL == element.getNode().getElementType()) {
-      final ASTNode previous = element.getNode().getTreePrev();
-      if (previous != null && (previous.getElementType() == DartTokenTypes.SYNC ||
-                               previous.getElementType() == DartTokenTypes.ASYNC ||
-                               previous.getElementType() == DartTokenTypes.YIELD)) {
-        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.KEYWORD).create();
-      }
     }
 
     if (element.getNode().getElementType() == DartTokenTypes.REGULAR_STRING_PART) {
