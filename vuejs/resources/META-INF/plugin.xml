@@ -36,6 +36,7 @@
     <module name="intellij.vuejs/copyright"/>
   </content>
   <dependencies>
+    <plugin id="com.intellij.modules.xml"/>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
     <plugin id="intellij.webpack"/>
