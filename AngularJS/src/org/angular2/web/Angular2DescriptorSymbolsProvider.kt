@@ -1,10 +1,11 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web
 
+import com.intellij.util.SmartList
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
-import com.intellij.util.SmartList
 import org.angular2.entities.Angular2Directive
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_PROPERTY_BINDINGS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_BINDING_PATTERN
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_ERROR_SYMBOL
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
@@ -39,7 +40,7 @@ class Angular2DescriptorSymbolsProvider(symbol: WebSymbol) {
             directiveSymbols.add(s)
             directives.add(directive)
           }
-          else {
+          else if (s.kind != KIND_NG_PROPERTY_BINDINGS) {
             nonDirectiveSymbols.add(s)
           }
         }
