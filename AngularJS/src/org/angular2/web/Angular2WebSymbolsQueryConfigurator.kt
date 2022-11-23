@@ -55,6 +55,7 @@ class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val ELEMENT_NG_CONTENT = "ng-content"
     const val ELEMENT_NG_TEMPLATE = "ng-template"
 
+    const val KIND_NG_PROPERTY_BINDINGS = "ng-property-bindings"
     const val KIND_NG_STRUCTURAL_DIRECTIVES = "ng-structural-directives"
 
     const val KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS = "ng-one-time-bindings"
