@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.intellij.lang.javascript.highlighting.TypeScriptHighlighter.*;
 import static com.intellij.openapi.editor.XmlHighlighterColors.HTML_CODE;
 import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 import static org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.*;
 import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA;
 import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPANSION_FORM_CONTENT;
@@ -44,18 +43,18 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   }
 
   static {
-    newArrayList(INTERPOLATION_START, INTERPOLATION_END).forEach(
+    ContainerUtil.newArrayList(INTERPOLATION_START, INTERPOLATION_END).forEach(
       token -> put(token, HTML_CODE, NG_EXPRESSION, NG_INTERPOLATION_DELIMITER)
     );
 
-    newArrayList(EXPANSION_FORM_START, EXPANSION_FORM_CASE_START, EXPANSION_FORM_END, EXPANSION_FORM_CASE_END).forEach(
+    ContainerUtil.newArrayList(EXPANSION_FORM_START, EXPANSION_FORM_CASE_START, EXPANSION_FORM_END, EXPANSION_FORM_CASE_END).forEach(
       token -> put(token, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_DELIMITER)
     );
 
     put(EXPANSION_FORM_CONTENT, HTML_CODE, NG_EXPANSION_FORM);
     put(EXPANSION_FORM_COMMA, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_COMMA);
 
-    newArrayList(
+    ContainerUtil.newArrayList(
       pair(BANANA_BOX_BINDING, NG_BANANA_BINDING_ATTR_NAME),
       pair(EVENT, NG_EVENT_BINDING_ATTR_NAME),
       pair(PROPERTY_BINDING, NG_PROPERTY_BINDING_ATTR_NAME),
@@ -65,11 +64,11 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
       p -> put(p.first, HTML_CODE, XmlHighlighterColors.HTML_TAG, XmlHighlighterColors.HTML_ATTRIBUTE_NAME, p.second)
     );
 
-    newArrayList(Angular2TokenTypes.KEYWORDS.getTypes()).forEach(
+    ContainerUtil.newArrayList(Angular2TokenTypes.KEYWORDS.getTypes()).forEach(
       token -> put(token, HTML_CODE, NG_EXPRESSION, TS_KEYWORD)
     );
 
-    newArrayList(
+    ContainerUtil.newArrayList(
       pair(Angular2TokenTypes.ESCAPE_SEQUENCE, TS_VALID_STRING_ESCAPE),
       pair(Angular2TokenTypes.INVALID_ESCAPE_SEQUENCE, TS_INVALID_STRING_ESCAPE),
       pair(Angular2TokenTypes.XML_CHAR_ENTITY_REF, XmlHighlighterColors.HTML_ENTITY_REFERENCE),

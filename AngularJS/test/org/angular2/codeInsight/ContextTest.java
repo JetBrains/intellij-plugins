@@ -16,6 +16,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInsp
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.CheckDtdReferencesInspection;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -24,7 +25,6 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.BaseJSCompletionTestCase.getLocationPresentation;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -206,11 +206,11 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   public void testOverriddenMethods() {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals(newArrayList("$any#any#(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts"),
-                              "bar#string#()" ,
-                              "bar#string#(test: boolean)",
-                              "bar#string#(test: string)",
-                              "foo#string#null"),
+    assertEquals(ContainerUtil.newArrayList("$any#any#(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts"),
+                                            "bar#string#()" ,
+                                            "bar#string#(test: boolean)",
+                                            "bar#string#(test: string)",
+                                            "foo#string#null"),
                  StreamEx.of(myFixture.getLookupElements()).map(el -> {
                    LookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();

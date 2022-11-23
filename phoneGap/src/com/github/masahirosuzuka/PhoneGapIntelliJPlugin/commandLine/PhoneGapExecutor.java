@@ -1,12 +1,12 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_REMOTE_BUILD;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_REMOTE_RUN;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class PhoneGapExecutor extends CordovaBasedExecutor {
   public PhoneGapExecutor(@Nullable String path, @Nullable String version) {
@@ -33,10 +33,10 @@ public class PhoneGapExecutor extends CordovaBasedExecutor {
   }
 
   private String[] getRemoteRunCommands(@NotNull String platform, @Nullable String extraArg) {
-    return appendParsedArguments(newArrayList(myPath, "remote", "run", platform), extraArg);
+    return appendParsedArguments(ContainerUtil.newArrayList(myPath, "remote", "run", platform), extraArg);
   }
 
   private String[] getRemoteBuildCommands(@NotNull String platform, @Nullable String extraArg) {
-    return appendParsedArguments(newArrayList(myPath, "remote", "build", platform), extraArg);
+    return appendParsedArguments(ContainerUtil.newArrayList(myPath, "remote", "build", platform), extraArg);
   }
 }

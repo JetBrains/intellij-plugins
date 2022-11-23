@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.describe;
 import static com.mscharhag.oleaster.runner.StaticRunnerSupport.it;
@@ -379,40 +378,40 @@ public class Angular2ParserSpecTest {
 
         it("should parse a key without a value",
            () -> {
-             expect(keys(parseTemplateBindings("a", ""))).toEqual(newArrayList("a"));
+             expect(keys(parseTemplateBindings("a", ""))).toEqual(ContainerUtil.newArrayList("a"));
            });
 
         it("should allow string including dashes as keys", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(newArrayList("a"));
+          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a"));
 
           bindings = parseTemplateBindings("a-b", "c");
-          expect(keys(bindings)).toEqual(newArrayList("a-b"));
+          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a-b"));
         });
 
         it("should detect expressions as value", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(exprSources(bindings)).toEqual(newArrayList("b"));
+          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("b"));
 
           bindings = parseTemplateBindings("a", "1+1");
-          expect(exprSources(bindings)).toEqual(newArrayList("1+1"));
+          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("1+1"));
         });
 
         it("should detect names as value", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "let b");
-          expect(keyValues(bindings)).toEqual(newArrayList("a", "let b=$implicit"));
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList("a", "let b=$implicit"));
         });
 
         it("should allow space and colon as separators", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(newArrayList("a"));
-          expect(exprSources(bindings)).toEqual(newArrayList("b"));
+          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a"));
+          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("b"));
         });
 
         it("should allow multiple pairs", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1 b 2");
-          expect(keys(bindings)).toEqual(newArrayList("a", "aB"));
-          expect(exprSources(bindings)).toEqual(newArrayList("1", "2"));
+          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a", "aB"));
+          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("1", "2"));
         });
 
         it("should store the sources in the result", () -> {
@@ -431,37 +430,37 @@ public class Angular2ParserSpecTest {
 
         it("should support let notation", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("key", "let i");
-          expect(keyValues(bindings)).toEqual(newArrayList("key", "let i=$implicit"));
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList("key", "let i=$implicit"));
 
           bindings = parseTemplateBindings("key", "let a; let b");
-          expect(keyValues(bindings)).toEqual(newArrayList(
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
             "key",
             "let a=$implicit",
             "let b=$implicit"
           ));
 
           bindings = parseTemplateBindings("key", "let a; let b;");
-          expect(keyValues(bindings)).toEqual(newArrayList(
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
             "key",
             "let a=$implicit",
             "let b=$implicit"
           ));
 
           bindings = parseTemplateBindings("key", "let i-a = k-a");
-          expect(keyValues(bindings)).toEqual(newArrayList(
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
             "key",
             "let i-a=k-a"
           ));
 
           bindings = parseTemplateBindings("key", "let item; let i = k");
-          expect(keyValues(bindings)).toEqual(newArrayList(
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
             "key",
             "let item=$implicit",
             "let i=k"
           ));
 
           bindings = parseTemplateBindings("directive", "let item in expr; let a = b", "location");
-          expect(keyValues(bindings)).toEqual(newArrayList(
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
             "directive",
             "let item=$implicit",
             "directiveIn=expr"/* in location"*/,
@@ -471,10 +470,10 @@ public class Angular2ParserSpecTest {
 
         it("should support as notation", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("ngIf", "exp as local", "location");
-          expect(keyValues(bindings)).toEqual(newArrayList("ngIf=exp"/*  in location"*/, "let local=ngIf"));
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList("ngIf=exp"/*  in location"*/, "let local=ngIf"));
 
           bindings = parseTemplateBindings("ngFor", "let item of items as iter; index as i", "L");
-          expect(keyValues(bindings)).toEqual(newArrayList(
+          expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
             "ngFor", "let item=$implicit", "ngForOf=items"/*  in L"*/, "let iter=ngForOf", "let i=index"
           ));
         });
@@ -488,13 +487,13 @@ public class Angular2ParserSpecTest {
         describe("spans", () -> {
           it("should should support let", () -> {
             final String source = "let i";
-            expect(keySpans(source, parseTemplateBindings("key", "let i"))).toEqual(newArrayList("", "let i"));
+            expect(keySpans(source, parseTemplateBindings("key", "let i"))).toEqual(ContainerUtil.newArrayList("", "let i"));
           });
 
           it("should support multiple lets", () -> {
             final String source = "let item; let i=index; let e=even;";
             expect(keySpans(source, parseTemplateBindings("key", source)))
-              .toEqual(newArrayList("", "let item", "let i=index", "let e=even"
+              .toEqual(ContainerUtil.newArrayList("", "let item", "let i=index", "let e=even"
               ));
           });
 
@@ -502,10 +501,10 @@ public class Angular2ParserSpecTest {
             final String source = "let person of people";
             final String prefix = "ngFor";
             final Angular2TemplateBinding[] bindings = parseTemplateBindings(prefix, source);
-            expect(keyValues(bindings)).toEqual(newArrayList(
+            expect(keyValues(bindings)).toEqual(ContainerUtil.newArrayList(
               "ngFor", "let person=$implicit", "ngForOf=people"/* in null"*/
             ));
-            expect(keySpans(source, bindings)).toEqual(newArrayList("", "let person", "of people"));
+            expect(keySpans(source, bindings)).toEqual(ContainerUtil.newArrayList("", "let person", "of people"));
           });
         });
       });

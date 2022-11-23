@@ -23,7 +23,6 @@ import org.junit.runners.Parameterized;
 import java.util.Collection;
 
 import static com.intellij.model.psi.impl.TargetsKt.targetSymbols;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 @RunWith(Parameterized.class)
 public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtureTestCase {
@@ -42,7 +41,7 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
 
   @Parameterized.Parameters(name = "Component={0}, Injected={1}: {2}, {3}")
   public static Collection<Object> data() {
-    return newArrayList(
+    return ContainerUtil.newArrayList(
       new Object[]{true, false, "<my-cu<caret>st", "my-customer"},
       new Object[]{true, true, "<my-cu<caret>st", "my-customer"},
       new Object[]{true, false, "my-cu<caret>stomer-att", "my-customer-attr"},
