@@ -50,6 +50,7 @@ interface VueSlot : VueNamedSymbol {
   val pattern: String? get() = null
 }
 
+@JvmDefaultWithCompatibility
 interface VueEmitCall : VueNamedSymbol {
   val eventJSType: JSType? get() = null
 }
