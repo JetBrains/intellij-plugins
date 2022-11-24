@@ -50,7 +50,6 @@ import java.util.function.Consumer;
 import static com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
 public class Angular2CompletionContributor extends CompletionContributor {
 
@@ -58,7 +57,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_PRIVATE_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC;
   private static final JSLookupPriority NG_$ANY_PRIORITY = JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 
-  @NonNls private static final Set<String> NG_LIFECYCLE_HOOKS = newHashSet(
+  @NonNls private static final Set<String> NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
     "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
     "ngAfterContentChecked", "ngAfterViewInit", "ngAfterViewChecked");
 
