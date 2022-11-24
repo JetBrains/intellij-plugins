@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
@@ -20,6 +19,7 @@ import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
+import com.intellij.webSymbols.moveToOffsetBySignature
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -169,14 +169,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
     //do the renaming
     val action = RenameElementAction()
-    val e = TestActionEvent({ name ->
-                              when (name) {
-                                DEFAULT_NAME.name -> "newTest.vue"
-                                PSI_ELEMENT.name -> myFixture.file
-                                PROJECT.name -> myFixture.project
-                                else -> null
-                              }
-                            }, action)
+    val e = TestActionEvent.createTestEvent(action) { name ->
+      when (name) {
+        DEFAULT_NAME.name -> "newTest.vue"
+        PSI_ELEMENT.name -> myFixture.file
+        PROJECT.name -> myFixture.project
+        else -> null
+      }
+    }
     TestCase.assertTrue(ActionUtil.lastUpdateAndCheckDumb(action, e, true))
     ActionUtil.performActionDumbAwareWithCallbacks(action, e)
     TestCase.assertEquals("newTest.vue", myFixture.file.name)

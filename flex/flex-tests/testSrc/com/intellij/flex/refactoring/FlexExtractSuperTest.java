@@ -310,7 +310,8 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
 
   private void checkAction(String actionId, boolean enabled, int pos) {
     AnAction action = ActionManager.getInstance().getAction(actionId);
-    AnActionEvent e = new TestActionEvent(DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()), action);
+    AnActionEvent e = TestActionEvent.createTestEvent(
+      action, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()));
     ActionUtil.lastUpdateAndCheckDumb(action, e, false);
     assertEquals("Action " + actionId + " should be " + (enabled ? "enabled" : "disabled") + " at position " + pos, enabled,
                  e.getPresentation().isEnabled());
