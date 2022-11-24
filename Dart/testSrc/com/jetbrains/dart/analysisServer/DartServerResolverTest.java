@@ -227,8 +227,7 @@ public class DartServerResolverTest extends CodeInsightFixtureTestCase {
       "import 'package:PathPackage<caret expected='local_package/lib/localPackageLib1.dart'>/<caret expected='local_package/lib/localPackageLib1.dart'>localPackageLib1.dart<caret expected='local_package/lib/localPackageLib1.dart'>';\n" +
       "import 'package:PathPackage<caret expected='local_package/lib/src/localPackageLib2.dart'>/<caret expected='local_package/lib/src/localPackageLib2.dart'>src<caret expected='local_package/lib/src/localPackageLib2.dart'>/<caret expected='local_package/lib/src/localPackageLib2.dart'>localPackageLib2.dart<caret expected='local_package/lib/src/localPackageLib2.dart'>';\n" +
       "import 'package<caret expected='packages/SomePackage/somePack1.dart'>:SomePackage/<caret expected='packages/SomePackage/somePack1.dart'>somePack1.dart<caret expected='packages/SomePackage/somePack1.dart'>';\n" +
-      "import 'package<caret expected='packages/SomePackage/src/somePack2.dart'>:SomePackage/<caret expected='packages/SomePackage/src/somePack2.dart'>src<caret expected='packages/SomePackage/src/somePack2.dart'>/<caret expected='packages/SomePackage/src/somePack2.dart'>somePack2.dart<caret expected='packages/SomePackage/src/somePack2.dart'>';\n" +
-      ""
+      "import 'package<caret expected='packages/SomePackage/src/somePack2.dart'>:SomePackage/<caret expected='packages/SomePackage/src/somePack2.dart'>src<caret expected='packages/SomePackage/src/somePack2.dart'>/<caret expected='packages/SomePackage/src/somePack2.dart'>somePack2.dart<caret expected='packages/SomePackage/src/somePack2.dart'>';\n"
     );
     myFixture.openFileInEditor(psiFile.getVirtualFile());
 
