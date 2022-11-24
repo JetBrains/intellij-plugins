@@ -1312,9 +1312,9 @@ public final class PerforceRunner implements PerforceRunnerI {
     String sourceRevision = sourceRevPosition >= 0 ? sourcePath.substring(sourceRevPosition).trim() : null;
     int revPosition = StringUtil.indexOfAny(line, "#@", usingBasePosition, line.length());
 
+    if (revPosition < 0) return null;
     String basePath = line.substring(usingBasePosition + USING_BASE_MESSAGE.length(), revPosition).trim();
 
-    if (revPosition < 0) return null;
     final String revision = line.substring(revPosition).trim();
     try {
       final String revisionNum = existing == null ? revision : existing.getRevisionNum();

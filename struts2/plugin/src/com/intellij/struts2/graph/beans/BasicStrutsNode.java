@@ -32,7 +32,7 @@ public abstract class BasicStrutsNode<T extends DomElement> {
   private final T myIdentifyingElement;
 
   @NonNls
-  private final String myName;
+  private final @NotNull String myName;
 
   /**
    * CTOR.
@@ -67,19 +67,15 @@ public abstract class BasicStrutsNode<T extends DomElement> {
       return false;
     }
 
-    final BasicStrutsNode pagesNode = (BasicStrutsNode) o;
-
-    if (!myIdentifyingElement.equals(pagesNode.myIdentifyingElement)) {
-      return false;
-    }
-
-    return true;
+    final BasicStrutsNode<?> pagesNode = (BasicStrutsNode<?>)o;
+    return myIdentifyingElement.equals(pagesNode.myIdentifyingElement) &&
+           myName.equals(pagesNode.myName);
   }
 
   public int hashCode() {
     int result;
     result = myIdentifyingElement.hashCode();
-    result = 31 * result + (myName != null ? myName.hashCode() : 0);
+    result = 31 * result + myName.hashCode();
     return result;
   }
 

@@ -319,7 +319,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
     String[] lines = LineTokenizer.tokenize(result.getStdout(), false);
     for (String line : lines) {
       String lineConverted = FilePathsHelper.convertPath(line);
-      int pos = clientRoot == null ? -1 : lineConverted.indexOf(clientRoot);
+      int pos = lineConverted.indexOf(clientRoot);
       if (pos >= 0) {
         final File localFile = new File(line.substring(pos));
         LOG.debug("Incoming file: " + line.substring(pos));

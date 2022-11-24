@@ -109,7 +109,7 @@ public class P4MoveRenameOperation extends VcsOperation {
     final P4Connection oldConnection = PerforceConnectionManager.getInstance(project).getConnectionForFile(oldP4File);
     final P4Connection newConnection = PerforceConnectionManager.getInstance(project).getConnectionForFile(newP4File);
 
-    if (runner.getClient(newConnection) == null || oldConnection == null || newConnection == null) {
+    if (runner.getClient(newConnection) == null || oldConnection == null) {
       return;
     }
 

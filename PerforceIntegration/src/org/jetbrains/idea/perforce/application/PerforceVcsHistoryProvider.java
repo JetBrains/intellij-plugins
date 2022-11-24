@@ -148,7 +148,7 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
         if (currentRev != null && p4rev.getRevisionNumber() == currentRev.getRevisionNumber() && !p4rev.isBranched()) {
           final String curPath = currentRev.getDepotPath();
           final String revPath = p4rev.getDepotPath();
-          return curPath == null || revPath == null || curPath.equals(revPath);
+          return curPath.equals(revPath);
         }
         return false;
       }
