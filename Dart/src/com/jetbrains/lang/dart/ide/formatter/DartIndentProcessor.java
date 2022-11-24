@@ -185,7 +185,7 @@ public class DartIndentProcessor {
     if (elementType == SUPER_CALL_OR_FIELD_INITIALIZER) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == SUPER_CALL_OR_FIELD_INITIALIZER && elementType != COLON) {
+    if (parentType == SUPER_CALL_OR_FIELD_INITIALIZER) {
       return Indent.getNormalIndent();
     }
 

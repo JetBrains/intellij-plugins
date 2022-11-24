@@ -344,11 +344,9 @@ public class DartSpacingProcessor {
     //Spacing before left braces
     //
     if (BLOCKS.contains(type2)) {
-      if (elementType == IF_STATEMENT && type1 != ELSE) {
-        return setBraceSpace(mySettings.SPACE_BEFORE_IF_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
-      }
-      else if (elementType == IF_STATEMENT && type1 == ELSE) {
-        return setBraceSpace(mySettings.SPACE_BEFORE_ELSE_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+      if (elementType == IF_STATEMENT) {
+        boolean needSpace = type1 != ELSE ? mySettings.SPACE_BEFORE_IF_LBRACE : mySettings.SPACE_BEFORE_ELSE_LBRACE;
+        return setBraceSpace(needSpace, mySettings.BRACE_STYLE, child1.getTextRange());
       }
       else if (elementType == WHILE_STATEMENT || elementType == DO_WHILE_STATEMENT) {
         return setBraceSpace(mySettings.SPACE_BEFORE_WHILE_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
@@ -625,7 +623,7 @@ public class DartSpacingProcessor {
         TextRange range = myNode.getTextRange();
         return Spacing.createDependentLFSpacing(0, 0, range, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
       }
-      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA && type2 != RBRACE && type2 != RBRACKET);
+      return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA && type2 != RBRACE);
     }
 
     if (type2 == COMMA) {
