@@ -5,6 +5,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.SendFeedbackAction;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
@@ -34,6 +35,11 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
     if (project == null) return;
 
     sendFeedback(project);
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

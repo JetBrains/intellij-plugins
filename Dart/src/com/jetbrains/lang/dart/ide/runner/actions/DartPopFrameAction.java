@@ -2,10 +2,7 @@
 package com.jetbrains.lang.dart.ide.runner.actions;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.frame.XStackFrame;
@@ -29,6 +26,11 @@ public class DartPopFrameAction extends AnAction implements DumbAware {
     if (frame != null) {
       frame.dropFrame();
     }
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override

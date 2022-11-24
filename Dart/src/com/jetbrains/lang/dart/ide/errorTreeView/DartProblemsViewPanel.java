@@ -270,6 +270,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                                 DartBundle.message("group.by.severity.description"),
                                                 AllIcons.Nodes.SortBySeverity) {
       @Override
+      public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
+      }
+
+      @Override
       public boolean isSelected(@NotNull AnActionEvent e) {
         return myPresentationHelper.isGroupBySeverity();
       }
@@ -418,6 +423,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.BGT;
+    }
+
+    @Override
     public void update(@NotNull AnActionEvent e) {
       // show icon as toggled on if any filter is active
       Toggleable.setSelected(e.getPresentation(), myPresentationHelper.areFiltersApplied());
@@ -435,6 +445,11 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       super(DartBundle.messagePointer("dart.problems.view.action.name.analysis.server.settings"),
             DartBundle.messagePointer("dart.problems.view.action.description.analysis.server.settings"),
             AllIcons.General.GearPlain);
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+      return ActionUpdateThread.BGT;
     }
 
     @Override

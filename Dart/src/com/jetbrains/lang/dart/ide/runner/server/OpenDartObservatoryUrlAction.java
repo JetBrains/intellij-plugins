@@ -4,6 +4,7 @@ import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Computable;
@@ -31,6 +32,11 @@ public class OpenDartObservatoryUrlAction extends DumbAwareAction {
 
   public void setUrl(@NotNull final String url) {
     myUrl = url;
+  }
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.BGT;
   }
 
   @Override
