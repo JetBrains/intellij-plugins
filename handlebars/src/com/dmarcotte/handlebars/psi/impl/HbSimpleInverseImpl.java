@@ -46,7 +46,7 @@ public class HbSimpleInverseImpl extends HbPlainMustacheImpl implements HbSimple
    */
   private ASTNode getElseNode() {
     ASTNode[] elseChildren = getNode().getChildren(TokenSet.create(HbTokenTypes.ELSE));
-    if (elseChildren != null && elseChildren.length > 0) {
+    if (elseChildren.length > 0) {
       return elseChildren[0];
     }
     return null;
