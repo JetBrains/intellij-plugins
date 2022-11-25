@@ -589,12 +589,10 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
   public void testSelectorBasedAttributesNavigation() {
     myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json");
 
-    final List<Pair<String, String>> attrWrap = newArrayList(
-      pair("", ""),
-      pair("[", "]"),
-      pair("(", ")"),
-      pair("[(", ")]")
-    );
+    final List<Pair<String, String>> attrWrap = List.of(pair("", ""),
+                                                        pair("[", "]"),
+                                                        pair("(", ")"),
+                                                        pair("[(", ")]"));
 
     for (Map.Entry<String, String> attr : ContainerUtil.<String, String>immutableMapBuilder()
       // <simple><input><output><inout>
@@ -700,7 +698,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
     myFixture.completeBasic();
     assertEquals(sorted(myFixture.getLookupElementStrings()),
-                 newArrayList("$any", "testOne", "testTwo", "testing"));
+                 List.of("$any", "testOne", "testTwo", "testing"));
   }
 
   public void testDecoratorInGetter() {
@@ -1016,7 +1014,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
   public void testNgContentCompletion() {
     myFixture.configureByFiles("ng-content-completion.html", "package.json");
     myFixture.completeBasic();
-    assertEquals(newArrayList("select", "xml:base", "xml:lang", "xml:space"), myFixture.getLookupElementStrings());
+    assertEquals(List.of("select", "xml:base", "xml:lang", "xml:space"), myFixture.getLookupElementStrings());
   }
 
   public void testNgContentInspection() {

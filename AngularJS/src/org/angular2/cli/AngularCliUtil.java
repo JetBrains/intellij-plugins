@@ -42,8 +42,7 @@ import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 public final class AngularCliUtil {
   private static final String NOTIFICATION_GROUP_ID = "Angular CLI";
 
-  @NonNls private static final List<String> ANGULAR_JSON_NAMES = ContainerUtil.newArrayList(
-    "angular.json", ".angular-cli.json", "angular-cli.json");
+  @NonNls private static final List<String> ANGULAR_JSON_NAMES = List.of("angular.json", ".angular-cli.json", "angular-cli.json");
   @NonNls private static final String NG_CLI_DEFAULT_ADDRESS = "http://localhost:4200";
 
 

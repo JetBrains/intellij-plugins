@@ -12,6 +12,8 @@ import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.inspections.AngularUndefinedTagInspection;
 import org.angularjs.AngularTestUtil;
 
+import java.util.List;
+
 import static com.intellij.webSymbols.WebTestUtil.webSymbolAtCaret;
 import static com.intellij.webSymbols.WebTestUtil.webSymbolSourceAtCaret;
 import static org.angular2.modules.Angular2TestModule.*;
@@ -77,7 +79,7 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.copyDirectoryToProject("priority", ".");
     myFixture.configureFromTempProjectFile("template.html");
     myFixture.completeBasic();
-    assertEquals(ContainerUtil.newArrayList("comp-ivy-bar", "comp-ivy-foo", "comp-meta-bar"),
+    assertEquals(List.of("comp-ivy-bar", "comp-ivy-foo", "comp-meta-bar"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
   }
 

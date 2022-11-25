@@ -8,6 +8,8 @@ import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.ANGULAR_COMMON_4_0_0;
 import static org.angular2.modules.Angular2TestModule.configureLink;
@@ -97,13 +99,13 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
                                "angular.json", "package.json");
     AngularTestUtil.moveToOffsetBySignature("<div class=\"<caret>\">", myFixture);
     myFixture.completeBasic();
-    assertEquals(ContainerUtil.newArrayList("cli-class",
-                                            "index-html-link-class",
-                                            "inline-class",
-                                            "inline-html-class",
-                                            "internal-class",
-                                            //"index-html-inline-class", - not supported yet
-                                            "simpleNameClass"),
+    assertEquals(List.of("cli-class",
+                         "index-html-link-class",
+                         "inline-class",
+                         "inline-html-class",
+                         "internal-class",
+                         //"index-html-inline-class", - not supported yet
+                         "simpleNameClass"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
   }
 
@@ -142,13 +144,12 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "[class.");
     myFixture.type("[class.");
-    assertEquals(ContainerUtil.newArrayList(
-      "cli-class]",
-      "ext-html-class]",
-      "index-html-link-class]",
-      "inline-class]",
-      "internal-class]",
-      "simpleNameClass]"),
+    assertEquals(List.of("cli-class]",
+                         "ext-html-class]",
+                         "index-html-link-class]",
+                         "inline-class]",
+                         "internal-class]",
+                         "simpleNameClass]"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     assertEquals(AngularTestUtil.findOffsetBySignature("[class.cli-class]=\"<caret>\"", myFixture.getFile()),
@@ -166,13 +167,12 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("bind-");
     assertContainsElements(myFixture.getLookupElementStrings(), "class.");
     myFixture.type("class.");
-    assertEquals(ContainerUtil.newArrayList(
-      "cli-class",
-      "ext-html-class",
-      "index-html-link-class",
-      "inline-class",
-      "internal-class",
-      "simpleNameClass"),
+    assertEquals(List.of("cli-class",
+                         "ext-html-class",
+                         "index-html-link-class",
+                         "inline-class",
+                         "internal-class",
+                         "simpleNameClass"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     assertEquals(AngularTestUtil.findOffsetBySignature("bind-class.cli-class=\"<caret>\"", myFixture.getFile()),
@@ -199,13 +199,12 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
     myFixture.type("{");
     myFixture.completeBasic();
-    assertEquals(ContainerUtil.newArrayList(
-      "cli-class",
-      "ext-html-class",
-      "index-html-link-class",
-      "inline-class",
-      "internal-class",
-      "simpleNameClass"),
+    assertEquals(List.of("cli-class",
+                         "ext-html-class",
+                         "index-html-link-class",
+                         "inline-class",
+                         "internal-class",
+                         "simpleNameClass"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();

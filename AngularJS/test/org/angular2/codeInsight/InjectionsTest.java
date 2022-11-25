@@ -29,7 +29,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webSymbols.context.WebSymbolsContext;
 import com.intellij.webSymbols.context.WebSymbolsContextProvider;
@@ -96,10 +95,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testHost() {
     myFixture.configureByFiles("host.ts", "package.json");
-    for (Pair<String, ? extends JSLanguageDialect> signature : ContainerUtil.newArrayList(
-      Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
-      Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
-      Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+    for (Pair<String, ? extends JSLanguageDialect> signature : List.of(Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
+                                                                       Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
+                                                                       Pair.create("at<caret>tribute",
+                                                                                   JavaScriptSupportLoader.TYPESCRIPT))) {
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       if (element == null) {
@@ -111,11 +110,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testNonAngular() {
     myFixture.configureByFiles("nonAngularComponent.ts", "package.json");
-    for (Pair<String, ? extends Language> signature : ContainerUtil.newArrayList(
-      Pair.create("<foo><caret></foo>", HTMLLanguage.INSTANCE),
-      Pair.create("eve<caret>nt", JavaScriptSupportLoader.TYPESCRIPT),
-      Pair.create("bind<caret>ing", JavaScriptSupportLoader.TYPESCRIPT),
-      Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+    for (Pair<String, ? extends Language> signature : List.of(Pair.create("<foo><caret></foo>", HTMLLanguage.INSTANCE),
+                                                              Pair.create("eve<caret>nt", JavaScriptSupportLoader.TYPESCRIPT),
+                                                              Pair.create("bind<caret>ing", JavaScriptSupportLoader.TYPESCRIPT),
+                                                              Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
       if (element == null) {
@@ -153,10 +151,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testUserSpecifiedInjection() {
     myFixture.configureByFiles("userSpecifiedLang.ts", "package.json");
-    for (Pair<String, String> signature : ContainerUtil.newArrayList(
-      Pair.create("<div><caret></div>", Angular2HtmlLanguage.INSTANCE.getID()),
-      Pair.create("$text<caret>-color", "SCSS"), //fails if correct order of injectors is not ensured
-      Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
+    for (Pair<String, String> signature : List.of(Pair.create("<div><caret></div>", Angular2HtmlLanguage.INSTANCE.getID()),
+                                                  Pair.create("$text<caret>-color", "SCSS"),
+                                                  //fails if correct order of injectors is not ensured
+                                                  Pair.create("color: <caret>#00aa00", CSSLanguage.INSTANCE.getID()))) {
 
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       final PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
@@ -176,7 +174,7 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("event_private.html", "event_private.ts", "package.json");
     myFixture.completeBasic();
     assertEquals("Private members should be sorted after public ones",
-                 ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"),
+                 List.of("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"),
                  myFixture.getLookupElementStrings());
   }
 

@@ -42,67 +42,58 @@ public class Angular2HtmlLexerSpecTest {
 
       describe("line/column numbers", () -> {
         it("should work without newlines", () -> {
-          expect(tokenizeAndHumanizeLineColumn("<t>a</t>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "0:0"),
-            ContainerUtil.newArrayList(XML_NAME, "0:1"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:2"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "0:3"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "0:4"),
-            ContainerUtil.newArrayList(XML_NAME, "0:6"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:7")
-          ));
+          expect(tokenizeAndHumanizeLineColumn("<t>a</t>")).toEqual(List.of(List.of(XML_START_TAG_START, "0:0"),
+                                                                            List.of(XML_NAME, "0:1"),
+                                                                            List.of(XML_TAG_END, "0:2"),
+                                                                            List.of(XML_DATA_CHARACTERS, "0:3"),
+                                                                            List.of(XML_END_TAG_START, "0:4"),
+                                                                            List.of(XML_NAME, "0:6"),
+                                                                            List.of(XML_TAG_END, "0:7")));
         });
 
         it("should work with one newline", () -> {
-          expect(tokenizeAndHumanizeLineColumn("<t>\na</t>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "0:0"),
-            ContainerUtil.newArrayList(XML_NAME, "0:1"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:2"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "0:3"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "0:4"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "0:5"),
-            ContainerUtil.newArrayList(XML_NAME, "0:7"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:8")
-          ));
+          expect(tokenizeAndHumanizeLineColumn("<t>\na</t>")).toEqual(List.of(List.of(XML_START_TAG_START, "0:0"),
+                                                                              List.of(XML_NAME, "0:1"),
+                                                                              List.of(XML_TAG_END, "0:2"),
+                                                                              List.of(XML_REAL_WHITE_SPACE, "0:3"),
+                                                                              List.of(XML_DATA_CHARACTERS, "0:4"),
+                                                                              List.of(XML_END_TAG_START, "0:5"),
+                                                                              List.of(XML_NAME, "0:7"),
+                                                                              List.of(XML_TAG_END, "0:8")));
         });
 
         it("should work with multiple newlines", () -> {
-          expect(tokenizeAndHumanizeLineColumn("<t\n>\na</t>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "0:0"),
-            ContainerUtil.newArrayList(XML_NAME, "0:1"),
-            ContainerUtil.newArrayList(WHITE_SPACE, "0:2"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:3"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "0:4"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "0:5"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "0:6"),
-            ContainerUtil.newArrayList(XML_NAME, "0:8"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:9")
-          ));
+          expect(tokenizeAndHumanizeLineColumn("<t\n>\na</t>")).toEqual(List.of(List.of(XML_START_TAG_START, "0:0"),
+                                                                                List.of(XML_NAME, "0:1"),
+                                                                                List.of(WHITE_SPACE, "0:2"),
+                                                                                List.of(XML_TAG_END, "0:3"),
+                                                                                List.of(XML_REAL_WHITE_SPACE, "0:4"),
+                                                                                List.of(XML_DATA_CHARACTERS, "0:5"),
+                                                                                List.of(XML_END_TAG_START, "0:6"),
+                                                                                List.of(XML_NAME, "0:8"),
+                                                                                List.of(XML_TAG_END, "0:9")));
         });
 
         it("should work with CR and LF", () -> {
-          expect(tokenizeAndHumanizeLineColumn("<t\n>\r\na\r</t>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "0:0"),
-            ContainerUtil.newArrayList(XML_NAME, "0:1"),
-            ContainerUtil.newArrayList(WHITE_SPACE, "0:2"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:3"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "0:4"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "0:6"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "0:7"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "0:8"),
-            ContainerUtil.newArrayList(XML_NAME, "0:10"),
-            ContainerUtil.newArrayList(XML_TAG_END, "0:11")
-          ));
+          expect(tokenizeAndHumanizeLineColumn("<t\n>\r\na\r</t>")).toEqual(List.of(List.of(XML_START_TAG_START, "0:0"),
+                                                                                    List.of(XML_NAME, "0:1"),
+                                                                                    List.of(WHITE_SPACE, "0:2"),
+                                                                                    List.of(XML_TAG_END, "0:3"),
+                                                                                    List.of(XML_REAL_WHITE_SPACE, "0:4"),
+                                                                                    List.of(XML_DATA_CHARACTERS, "0:6"),
+                                                                                    List.of(XML_REAL_WHITE_SPACE, "0:7"),
+                                                                                    List.of(XML_END_TAG_START, "0:8"),
+                                                                                    List.of(XML_NAME, "0:10"),
+                                                                                    List.of(XML_TAG_END, "0:11")));
         });
       });
 
       describe("comments", () -> {
         it("should parse comments", () -> {
-          expect(tokenizeAndHumanizeParts("<!--t\ne\rs\r\nt-->")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_COMMENT_START, "<!--"),
-            ContainerUtil.newArrayList(XML_COMMENT_CHARACTERS, "t\ne\rs\r\nt"),
-            ContainerUtil.newArrayList(XML_COMMENT_END, "-->")
-          ));
+          expect(tokenizeAndHumanizeParts("<!--t\ne\rs\r\nt-->")).toEqual(List.of(List.of(XML_COMMENT_START, "<!--"),
+                                                                                  List.of(XML_COMMENT_CHARACTERS,
+                                                                                          "t\ne\rs\r\nt"),
+                                                                                  List.of(XML_COMMENT_END, "-->")));
         });
 
         //it("should report <!- without -", () -> {
@@ -118,37 +109,32 @@ public class Angular2HtmlLexerSpecTest {
         //});
 
         it("should accept comments finishing by too many dashes (even number)", () -> {
-          expect(tokenizeAndHumanizeSourceSpans("<!-- test ---->")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_COMMENT_START, "<!--"),
-            ContainerUtil.newArrayList(XML_COMMENT_CHARACTERS, " test --"),
-            ContainerUtil.newArrayList(XML_COMMENT_END, "-->")
-          ));
+          expect(tokenizeAndHumanizeSourceSpans("<!-- test ---->")).toEqual(List.of(List.of(XML_COMMENT_START, "<!--"),
+                                                                                    List.of(XML_COMMENT_CHARACTERS,
+                                                                                            " test --"),
+                                                                                    List.of(XML_COMMENT_END, "-->")));
         });
 
         it("should accept comments finishing by too many dashes (odd number)", () -> {
-          expect(tokenizeAndHumanizeSourceSpans("<!-- test --->")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_COMMENT_START, "<!--"),
-            ContainerUtil.newArrayList(XML_COMMENT_CHARACTERS, " test -"),
-            ContainerUtil.newArrayList(XML_COMMENT_END, "-->")
-          ));
+          expect(tokenizeAndHumanizeSourceSpans("<!-- test --->")).toEqual(List.of(List.of(XML_COMMENT_START, "<!--"),
+                                                                                   List.of(XML_COMMENT_CHARACTERS,
+                                                                                           " test -"),
+                                                                                   List.of(XML_COMMENT_END, "-->")));
         });
         it("should not parse interpolation within comment", () -> {
-          expect(tokenizeAndHumanizeParts("<!-- {{ v }} -->")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_COMMENT_START, "<!--"),
-            ContainerUtil.newArrayList(XML_COMMENT_CHARACTERS, " {{ v }} "),
-            ContainerUtil.newArrayList(XML_COMMENT_END, "-->")
-          ));
+          expect(tokenizeAndHumanizeParts("<!-- {{ v }} -->")).toEqual(List.of(List.of(XML_COMMENT_START, "<!--"),
+                                                                               List.of(XML_COMMENT_CHARACTERS,
+                                                                                       " {{ v }} "),
+                                                                               List.of(XML_COMMENT_END, "-->")));
         });
       });
 
       describe("doctype", () -> {
         it("should parse doctypes", () -> {
-          expect(tokenizeAndHumanizeParts("<!doctype html>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DOCTYPE_START, "<!doctype"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "html"),
-            ContainerUtil.newArrayList(XML_DOCTYPE_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<!doctype html>")).toEqual(List.of(List.of(XML_DOCTYPE_START, "<!doctype"),
+                                                                              List.of(WHITE_SPACE, " "),
+                                                                              List.of(XML_NAME, "html"),
+                                                                              List.of(XML_DOCTYPE_END, ">")));
         });
 
         //it("should report missing end doctype", () -> {
@@ -160,15 +146,14 @@ public class Angular2HtmlLexerSpecTest {
 
       describe("CDATA", () -> {
         it("should parse CDATA", () -> {
-          expect(tokenizeAndHumanizeParts("<![CDATA[t\ne\rs\r\nt]]>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "<![CDATA[t"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "\n"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "e"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "\r"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "s"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "\r\n"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "t]]>")
-          ));
+          expect(tokenizeAndHumanizeParts("<![CDATA[t\ne\rs\r\nt]]>")).toEqual(
+            List.of(List.of(XML_DATA_CHARACTERS, "<![CDATA[t"),
+                    List.of(XML_REAL_WHITE_SPACE, "\n"),
+                    List.of(XML_DATA_CHARACTERS, "e"),
+                    List.of(XML_REAL_WHITE_SPACE, "\r"),
+                    List.of(XML_DATA_CHARACTERS, "s"),
+                    List.of(XML_REAL_WHITE_SPACE, "\r\n"),
+                    List.of(XML_DATA_CHARACTERS, "t]]>")));
         });
 
         //it("should report <![ without CDATA[", () -> {
@@ -186,260 +171,229 @@ public class Angular2HtmlLexerSpecTest {
 
       describe("open tags", () -> {
         it("should parse open tags without prefix", () -> {
-          expect(tokenizeAndHumanizeParts("<test>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "test"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<test>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                     List.of(XML_NAME, "test"),
+                                                                     List.of(XML_TAG_END, ">")));
         });
 
         it("should parse namespace prefix", () -> {
-          expect(tokenizeAndHumanizeParts("<ns1:test>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "ns1:test"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<ns1:test>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                         List.of(XML_NAME, "ns1:test"),
+                                                                         List.of(XML_TAG_END, ">")));
         });
 
         it("should parse void tags", () -> {
-          expect(tokenizeAndHumanizeParts("<test/>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "test"),
-            ContainerUtil.newArrayList(XML_EMPTY_ELEMENT_END, "/>")
-          ));
+          expect(tokenizeAndHumanizeParts("<test/>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                      List.of(XML_NAME, "test"),
+                                                                      List.of(XML_EMPTY_ELEMENT_END, "/>")));
         });
 
         it("should allow whitespace after the tag name", () -> {
-          expect(tokenizeAndHumanizeParts("<test >")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "test"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<test >")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                      List.of(XML_NAME, "test"),
+                                                                      List.of(WHITE_SPACE, " "),
+                                                                      List.of(XML_TAG_END, ">")));
         });
       });
 
       describe("attributes", () -> {
         it("should parse attributes without prefix", () -> {
-          expect(tokenizeAndHumanizeParts("<t a>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                    List.of(XML_NAME, "t"),
+                                                                    List.of(WHITE_SPACE, " "),
+                                                                    List.of(XML_NAME, "a"),
+                                                                    List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with interpolation", () -> {
-          expect(tokenizeAndHumanizeParts("<t a=\"{{v}}\" b=\"s{{m}}e\" c=\"s{{m//c}}e\">")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, "v"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "b"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "s"),
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, "m"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "e"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "c"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "s"),
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, "m//c"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "e"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a=\"{{v}}\" b=\"s{{m}}e\" c=\"s{{m//c}}e\">")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "t"),
+                    List.of(WHITE_SPACE, " "),
+                    List.of(XML_NAME, "a"),
+                    List.of(XML_EQ, "="),
+                    List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                    List.of(INTERPOLATION_START, "{{"),
+                    List.of(INTERPOLATION_EXPR, "v"),
+                    List.of(INTERPOLATION_END, "}}"),
+                    List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                    List.of(WHITE_SPACE, " "),
+                    List.of(XML_NAME, "b"),
+                    List.of(XML_EQ, "="),
+                    List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                    List.of(XML_ATTRIBUTE_VALUE_TOKEN, "s"),
+                    List.of(INTERPOLATION_START, "{{"),
+                    List.of(INTERPOLATION_EXPR, "m"),
+                    List.of(INTERPOLATION_END, "}}"),
+                    List.of(XML_ATTRIBUTE_VALUE_TOKEN, "e"),
+                    List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                    List.of(WHITE_SPACE, " "),
+                    List.of(XML_NAME, "c"),
+                    List.of(XML_EQ, "="),
+                    List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                    List.of(XML_ATTRIBUTE_VALUE_TOKEN, "s"),
+                    List.of(INTERPOLATION_START, "{{"),
+                    List.of(INTERPOLATION_EXPR, "m//c"),
+                    List.of(INTERPOLATION_END, "}}"),
+                    List.of(XML_ATTRIBUTE_VALUE_TOKEN, "e"),
+                    List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                    List.of(XML_TAG_END, ">")));
         });
         it("should not parse interpolation within tag element", () -> {
-          expect(tokenizeAndHumanizeParts("<t {{v}}=12>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "{{v}}"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "12"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t {{v}}=12>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                           List.of(XML_NAME, "t"),
+                                                                           List.of(WHITE_SPACE, " "),
+                                                                           List.of(XML_NAME, "{{v}}"),
+                                                                           List.of(XML_EQ, "="),
+                                                                           List.of(XML_ATTRIBUTE_VALUE_TOKEN, "12"),
+                                                                           List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with prefix", () -> {
-          expect(tokenizeAndHumanizeParts("<t ns1:a>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "ns1:a"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t ns1:a>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                        List.of(XML_NAME, "t"),
+                                                                        List.of(WHITE_SPACE, " "),
+                                                                        List.of(XML_NAME, "ns1:a"),
+                                                                        List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes whose prefix is not valid", () -> {
-          expect(tokenizeAndHumanizeParts("<t (ns1:a)>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "(ns1:a)"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t (ns1:a)>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                          List.of(XML_NAME, "t"),
+                                                                          List.of(WHITE_SPACE, " "),
+                                                                          List.of(XML_NAME, "(ns1:a)"),
+                                                                          List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with single quote value", () -> {
-          expect(tokenizeAndHumanizeParts("<t a='b'>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "'"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "'"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a='b'>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                        List.of(XML_NAME, "t"),
+                                                                        List.of(WHITE_SPACE, " "),
+                                                                        List.of(XML_NAME, "a"),
+                                                                        List.of(XML_EQ, "="),
+                                                                        List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER,
+                                                                                "'"),
+                                                                        List.of(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
+                                                                        List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "'"),
+                                                                        List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with double quote value", () -> {
-          expect(tokenizeAndHumanizeParts("<t a=\"b\">")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a=\"b\">")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                          List.of(XML_NAME, "t"),
+                                                                          List.of(WHITE_SPACE, " "),
+                                                                          List.of(XML_NAME, "a"),
+                                                                          List.of(XML_EQ, "="),
+                                                                          List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER,
+                                                                                  "\""),
+                                                                          List.of(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
+                                                                          List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER,
+                                                                                  "\""),
+                                                                          List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with unquoted value", () -> {
-          expect(tokenizeAndHumanizeParts("<t a=b>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a=b>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                      List.of(XML_NAME, "t"),
+                                                                      List.of(WHITE_SPACE, " "),
+                                                                      List.of(XML_NAME, "a"),
+                                                                      List.of(XML_EQ, "="),
+                                                                      List.of(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
+                                                                      List.of(XML_TAG_END, ">")));
         });
 
         it("should allow whitespace", () -> {
-          expect(tokenizeAndHumanizeParts("<t a = b >")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a = b >")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                         List.of(XML_NAME, "t"),
+                                                                         List.of(WHITE_SPACE, " "),
+                                                                         List.of(XML_NAME, "a"),
+                                                                         List.of(WHITE_SPACE, " "),
+                                                                         List.of(XML_EQ, "="),
+                                                                         List.of(WHITE_SPACE, " "),
+                                                                         List.of(XML_ATTRIBUTE_VALUE_TOKEN, "b"),
+                                                                         List.of(WHITE_SPACE, " "),
+                                                                         List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with entities in values", () -> {
-          expect(tokenizeAndHumanizeParts("<t a=\"&#65;&#x41;\">")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&#65;"),
-            ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&#x41;"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a=\"&#65;&#x41;\">")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                                    List.of(XML_NAME, "t"),
+                                                                                    List.of(WHITE_SPACE, " "),
+                                                                                    List.of(XML_NAME, "a"),
+                                                                                    List.of(XML_EQ, "="),
+                                                                                    List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                                                                                    List.of(XML_CHAR_ENTITY_REF,
+                                                                                            "&#65;"),
+                                                                                    List.of(XML_CHAR_ENTITY_REF,
+                                                                                            "&#x41;"),
+                                                                                    List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                                                                                    List.of(XML_TAG_END, ">")));
         });
 
         it("should not decode entities without trailing \";\"", () -> {
-          expect(tokenizeAndHumanizeParts("<t a=\"&amp\" b=\"c&&d\">")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "&amp"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "b"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "c&&d"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a=\"&amp\" b=\"c&&d\">")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "t"),
+                    List.of(WHITE_SPACE, " "),
+                    List.of(XML_NAME, "a"),
+                    List.of(XML_EQ, "="),
+                    List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                    List.of(XML_ATTRIBUTE_VALUE_TOKEN, "&amp"),
+                    List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                    List.of(WHITE_SPACE, " "),
+                    List.of(XML_NAME, "b"),
+                    List.of(XML_EQ, "="),
+                    List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                    List.of(XML_ATTRIBUTE_VALUE_TOKEN, "c&&d"),
+                    List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                    List.of(XML_TAG_END, ">")));
         });
 
         it("should parse attributes with \"&\" in values", () -> {
-          expect(tokenizeAndHumanizeParts("<t a=\"b && c &\">")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "b && c &"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a=\"b && c &\">")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                                 List.of(XML_NAME, "t"),
+                                                                                 List.of(WHITE_SPACE, " "),
+                                                                                 List.of(XML_NAME, "a"),
+                                                                                 List.of(XML_EQ, "="),
+                                                                                 List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "\""),
+                                                                                 List.of(XML_ATTRIBUTE_VALUE_TOKEN,
+                                                                                         "b && c &"),
+                                                                                 List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "\""),
+                                                                                 List.of(XML_TAG_END, ">")));
         });
 
         it("should parse values with CR and LF", () -> {
-          expect(tokenizeAndHumanizeParts("<t a='t\ne\rs\r\nt'>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "t"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "a"),
-            ContainerUtil.newArrayList(XML_EQ, "="),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_START_DELIMITER, "'"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_TOKEN, "t\ne\rs\r\nt"),
-            ContainerUtil.newArrayList(XML_ATTRIBUTE_VALUE_END_DELIMITER, "'"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<t a='t\ne\rs\r\nt'>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                                   List.of(XML_NAME, "t"),
+                                                                                   List.of(WHITE_SPACE, " "),
+                                                                                   List.of(XML_NAME, "a"),
+                                                                                   List.of(XML_EQ, "="),
+                                                                                   List.of(XML_ATTRIBUTE_VALUE_START_DELIMITER, "'"),
+                                                                                   List.of(XML_ATTRIBUTE_VALUE_TOKEN,
+                                                                                           "t\ne\rs\r\nt"),
+                                                                                   List.of(XML_ATTRIBUTE_VALUE_END_DELIMITER, "'"),
+                                                                                   List.of(XML_TAG_END, ">")));
         });
       });
 
       describe("closing tags", () -> {
         it("should parse closing tags without prefix", () -> {
-          expect(tokenizeAndHumanizeParts("</test>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "test"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("</test>")).toEqual(List.of(List.of(XML_END_TAG_START, "</"),
+                                                                      List.of(XML_NAME, "test"),
+                                                                      List.of(XML_TAG_END, ">")));
         });
 
         it("should parse closing tags with prefix", () -> {
-          expect(tokenizeAndHumanizeParts("</ns1:test>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "ns1:test"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("</ns1:test>")).toEqual(List.of(List.of(XML_END_TAG_START, "</"),
+                                                                          List.of(XML_NAME, "ns1:test"),
+                                                                          List.of(XML_TAG_END, ">")));
         });
 
         it("should allow whitespace", () -> {
-          expect(tokenizeAndHumanizeParts("</test >")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "test"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("</test >")).toEqual(List.of(List.of(XML_END_TAG_START, "</"),
+                                                                       List.of(XML_NAME, "test"),
+                                                                       List.of(WHITE_SPACE, " "),
+                                                                       List.of(XML_TAG_END, ">")));
         });
 
         //it("should report missing name after </", () -> {
@@ -457,26 +411,20 @@ public class Angular2HtmlLexerSpecTest {
 
       describe("entities", () -> {
         it("should parse named entities", () -> {
-          expect(tokenizeAndHumanizeParts("a&amp;b")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "a"),
-            ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&amp;"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "b")
-          ));
+          expect(tokenizeAndHumanizeParts("a&amp;b")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "a"),
+                                                                      List.of(XML_CHAR_ENTITY_REF, "&amp;"),
+                                                                      List.of(XML_DATA_CHARACTERS, "b")));
         });
 
         it("should parse hexadecimal entities", () -> {
-          expect(tokenizeAndHumanizeParts("&#x41;&#X41;")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&#x41;"),
-            ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&#X41;")
-          ));
+          expect(tokenizeAndHumanizeParts("&#x41;&#X41;")).toEqual(List.of(List.of(XML_CHAR_ENTITY_REF, "&#x41;"),
+                                                                           List.of(XML_CHAR_ENTITY_REF, "&#X41;")));
         });
 
         it("should parse decimal entities", () -> {
-          expect(tokenizeAndHumanizeParts("&#65;")).toEqual(ContainerUtil.newArrayList(
-            new Object[]{
-              ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&#65;")
-            }
-          ));
+          expect(tokenizeAndHumanizeParts("&#65;")).toEqual(List.of(new Object[]{
+            List.of(XML_CHAR_ENTITY_REF, "&#65;")
+          }));
         });
 
         //it("should report malformed/unknown entities", () -> {
@@ -499,112 +447,89 @@ public class Angular2HtmlLexerSpecTest {
 
       describe("regular text", () -> {
         it("should parse text", () -> {
-          expect(tokenizeAndHumanizeParts("a")).toEqual(ContainerUtil.newArrayList(
-            new Object[]{
-              ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "a")
-            }
-          ));
+          expect(tokenizeAndHumanizeParts("a")).toEqual(List.of(new Object[]{
+            List.of(XML_DATA_CHARACTERS, "a")
+          }));
         });
 
         it("should parse interpolation", () -> {
-          expect(tokenizeAndHumanizeParts("{{ a }}b{{ c // comment }}")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " a "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "b"),
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " c // comment "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
-          expect(tokenizeAndHumanizeParts("{{a}}", false)).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, "a"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{ a }}b{{ c // comment }}")).toEqual(
+            List.of(List.of(INTERPOLATION_START, "{{"),
+                    List.of(INTERPOLATION_EXPR, " a "),
+                    List.of(INTERPOLATION_END, "}}"),
+                    List.of(XML_DATA_CHARACTERS, "b"),
+                    List.of(INTERPOLATION_START, "{{"),
+                    List.of(INTERPOLATION_EXPR, " c // comment "),
+                    List.of(INTERPOLATION_END, "}}")));
+          expect(tokenizeAndHumanizeParts("{{a}}", false)).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                           List.of(INTERPOLATION_EXPR, "a"),
+                                                                           List.of(INTERPOLATION_END, "}}")));
         });
         it("should parse empty interpolation", () -> {
-          expect(tokenizeAndHumanizeParts("{{}}", false)).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
-          expect(tokenizeAndHumanizeParts("{{ }}", false)).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{}}", false)).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                          List.of(INTERPOLATION_END, "}}")));
+          expect(tokenizeAndHumanizeParts("{{ }}", false)).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                           List.of(INTERPOLATION_EXPR, " "),
+                                                                           List.of(INTERPOLATION_END, "}}")));
         });
 
         it("should parse interpolation with custom markers", () -> {
-          expect(tokenizeAndHumanizeParts("{% a %}", false, pair("{%", "%}"))).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{%"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " a "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "%}")
-          ));
+          expect(tokenizeAndHumanizeParts("{% a %}", false, pair("{%", "%}"))).toEqual(
+            List.of(List.of(INTERPOLATION_START, "{%"),
+                    List.of(INTERPOLATION_EXPR, " a "),
+                    List.of(INTERPOLATION_END, "%}")));
         });
 
         it("should parse empty interpolation with custom markers", () -> {
-          expect(tokenizeAndHumanizeParts("{%%}", false, pair("{%", "%}"))).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{%"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "%}")
-          ));
-          expect(tokenizeAndHumanizeParts("{% %}", false, pair("{%", "%}"))).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{%"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "%}")
-          ));
+          expect(tokenizeAndHumanizeParts("{%%}", false, pair("{%", "%}"))).toEqual(
+            List.of(List.of(INTERPOLATION_START, "{%"),
+                    List.of(INTERPOLATION_END, "%}")));
+          expect(tokenizeAndHumanizeParts("{% %}", false, pair("{%", "%}"))).toEqual(
+            List.of(List.of(INTERPOLATION_START, "{%"),
+                    List.of(INTERPOLATION_EXPR, " "),
+                    List.of(INTERPOLATION_END, "%}")));
         });
 
         it("should parse interpolation with entities", () -> {
-          expect(tokenizeAndHumanizeParts("{{&lt;}}", false)).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, "&lt;"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
-          expect(tokenizeAndHumanizeParts("{{&xee12;}}", false)).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, "&xee12;"),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{&lt;}}", false)).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                              List.of(INTERPOLATION_EXPR, "&lt;"),
+                                                                              List.of(INTERPOLATION_END, "}}")));
+          expect(tokenizeAndHumanizeParts("{{&xee12;}}", false)).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                                 List.of(INTERPOLATION_EXPR, "&xee12;"),
+                                                                                 List.of(INTERPOLATION_END, "}}")));
         });
 
         it("should handle CR & LF", () -> {
-          expect(tokenizeAndHumanizeParts("t\ne\rs\r\nt")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "t"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "\n"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "e"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "\r"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "s"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, "\r\n"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "t")
-          ));
+          expect(tokenizeAndHumanizeParts("t\ne\rs\r\nt")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "t"),
+                                                                           List.of(XML_REAL_WHITE_SPACE, "\n"),
+                                                                           List.of(XML_DATA_CHARACTERS, "e"),
+                                                                           List.of(XML_REAL_WHITE_SPACE, "\r"),
+                                                                           List.of(XML_DATA_CHARACTERS, "s"),
+                                                                           List.of(XML_REAL_WHITE_SPACE, "\r\n"),
+                                                                           List.of(XML_DATA_CHARACTERS, "t")));
         });
 
         it("should parse entities", () -> {
-          expect(tokenizeAndHumanizeParts("a&amp;b")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "a"),
-            ContainerUtil.newArrayList(XML_CHAR_ENTITY_REF, "&amp;"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "b")
-          ));
+          expect(tokenizeAndHumanizeParts("a&amp;b")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "a"),
+                                                                      List.of(XML_CHAR_ENTITY_REF, "&amp;"),
+                                                                      List.of(XML_DATA_CHARACTERS, "b")));
         });
 
         it("should parse text starting with \"&\"", () -> {
-          expect(tokenizeAndHumanizeParts("a && b &")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "a"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "&&"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "b"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "&")
-          ));
+          expect(tokenizeAndHumanizeParts("a && b &")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "a"),
+                                                                       List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                       List.of(XML_DATA_CHARACTERS, "&&"),
+                                                                       List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                       List.of(XML_DATA_CHARACTERS, "b"),
+                                                                       List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                       List.of(XML_DATA_CHARACTERS, "&")));
         });
 
         it("should allow \"<\" in text nodes", () -> {
-          expect(tokenizeAndHumanizeParts("{{ a < b ? c : d }}")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " a < b ? c : d "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{ a < b ? c : d }}")).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                                  List.of(INTERPOLATION_EXPR,
+                                                                                          " a < b ? c : d "),
+                                                                                  List.of(INTERPOLATION_END, "}}")));
 
           //expect(tokenizeAndHumanizeSourceSpans("<p>a<b</p>")).toEqual(newArrayList(
           //  newArrayList(XML_START_TAG_START, "<"),
@@ -616,135 +541,119 @@ public class Angular2HtmlLexerSpecTest {
           //  newArrayList(XML_TAG_END, ">")
           //));
 
-          expect(tokenizeAndHumanizeParts("< a>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "<"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "a>")
-          ));
+          expect(tokenizeAndHumanizeParts("< a>")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "<"),
+                                                                   List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                   List.of(XML_DATA_CHARACTERS, "a>")));
         });
 
         it("should parse valid start tag in interpolation", () -> {
-          expect(tokenizeAndHumanizeParts("{{ a <b && c > d }}")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "{{"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "a"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "b"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "&&"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_NAME, "c"),
-            ContainerUtil.newArrayList(WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "d"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "}}")
-          ));
-          expect(tokenizeAndHumanizeParts("{{<b>}}")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "{{"),
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "b"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{ a <b && c > d }}")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "{{"),
+                                                                                  List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                                  List.of(XML_DATA_CHARACTERS, "a"),
+                                                                                  List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                                  List.of(XML_START_TAG_START, "<"),
+                                                                                  List.of(XML_NAME, "b"),
+                                                                                  List.of(WHITE_SPACE, " "),
+                                                                                  List.of(XML_NAME, "&&"),
+                                                                                  List.of(WHITE_SPACE, " "),
+                                                                                  List.of(XML_NAME, "c"),
+                                                                                  List.of(WHITE_SPACE, " "),
+                                                                                  List.of(XML_TAG_END, ">"),
+                                                                                  List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                                  List.of(XML_DATA_CHARACTERS, "d"),
+                                                                                  List.of(XML_REAL_WHITE_SPACE, " "),
+                                                                                  List.of(XML_DATA_CHARACTERS, "}}")));
+          expect(tokenizeAndHumanizeParts("{{<b>}}")).toEqual(List.of(List.of(XML_DATA_CHARACTERS, "{{"),
+                                                                      List.of(XML_START_TAG_START, "<"),
+                                                                      List.of(XML_NAME, "b"),
+                                                                      List.of(XML_TAG_END, ">"),
+                                                                      List.of(XML_DATA_CHARACTERS, "}}")));
         });
 
         it("should be able to escape {", () -> {
-          expect(tokenizeAndHumanizeParts("{{ \"{\" }}")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " \"{\" "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{ \"{\" }}")).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                          List.of(INTERPOLATION_EXPR, " \"{\" "),
+                                                                          List.of(INTERPOLATION_END, "}}")));
         });
 
         it("should be able to escape {{", () -> {
-          expect(tokenizeAndHumanizeParts("{{ \"{{\" }}")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(INTERPOLATION_START, "{{"),
-            ContainerUtil.newArrayList(INTERPOLATION_EXPR, " \"{{\" "),
-            ContainerUtil.newArrayList(INTERPOLATION_END, "}}")
-          ));
+          expect(tokenizeAndHumanizeParts("{{ \"{{\" }}")).toEqual(List.of(List.of(INTERPOLATION_START, "{{"),
+                                                                           List.of(INTERPOLATION_EXPR, " \"{{\" "),
+                                                                           List.of(INTERPOLATION_END, "}}")));
         });
 
         it("should treat expansion form as text when they are not parsed", () -> {
-          expect(tokenizeAndHumanizeParts("<span>{a, b, =4 {c}}</span>", false)).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "span"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "{a,"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "b,"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "=4"),
-            ContainerUtil.newArrayList(XML_REAL_WHITE_SPACE, " "),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "{c}}"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "span"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeParts("<span>{a, b, =4 {c}}</span>", false)).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "span"),
+                    List.of(XML_TAG_END, ">"),
+                    List.of(XML_DATA_CHARACTERS, "{a,"),
+                    List.of(XML_REAL_WHITE_SPACE, " "),
+                    List.of(XML_DATA_CHARACTERS, "b,"),
+                    List.of(XML_REAL_WHITE_SPACE, " "),
+                    List.of(XML_DATA_CHARACTERS, "=4"),
+                    List.of(XML_REAL_WHITE_SPACE, " "),
+                    List.of(XML_DATA_CHARACTERS, "{c}}"),
+                    List.of(XML_END_TAG_START, "</"),
+                    List.of(XML_NAME, "span"),
+                    List.of(XML_TAG_END, ">")));
         });
       });
 
       describe("raw text", () -> {
         it("should parse text", () -> {
-          expectReversed(tokenizeAndHumanizeParts("<script>t\ne\rs\r\nt</script>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(JS_EMBEDDED_CONTENT, "t\ne\rs\r\nt"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expectReversed(tokenizeAndHumanizeParts("<script>t\ne\rs\r\nt</script>")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">"),
+                    List.of(JS_EMBEDDED_CONTENT, "t\ne\rs\r\nt"),
+                    List.of(XML_END_TAG_START, "</"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">")));
         });
 
         it("should not detect entities", () -> {
-          expectReversed(tokenizeAndHumanizeParts("<script>&amp;</SCRIPT>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(JS_EMBEDDED_CONTENT, "&amp;"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "SCRIPT"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expectReversed(tokenizeAndHumanizeParts("<script>&amp;</SCRIPT>")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">"),
+                    List.of(JS_EMBEDDED_CONTENT, "&amp;"),
+                    List.of(XML_END_TAG_START, "</"),
+                    List.of(XML_NAME, "SCRIPT"),
+                    List.of(XML_TAG_END, ">")));
         });
 
         it("should ignore other opening tags", () -> {
-          expectReversed(tokenizeAndHumanizeParts("<script>a<div></script>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(JS_EMBEDDED_CONTENT, "a<div>"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expectReversed(tokenizeAndHumanizeParts("<script>a<div></script>")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">"),
+                    List.of(JS_EMBEDDED_CONTENT, "a<div>"),
+                    List.of(XML_END_TAG_START, "</"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">")));
         });
 
         it("should ignore other closing tags", () -> {
-          expectReversed(tokenizeAndHumanizeParts("<script>a</test></script>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(JS_EMBEDDED_CONTENT, "a</test>"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expectReversed(tokenizeAndHumanizeParts("<script>a</test></script>")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">"),
+                    List.of(JS_EMBEDDED_CONTENT, "a</test>"),
+                    List.of(XML_END_TAG_START, "</"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">")));
         });
 
         it("should store the locations", () -> {
-          expectReversed(tokenizeAndHumanizeSourceSpans("<script>a</script>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(JS_EMBEDDED_CONTENT, "a"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "script"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expectReversed(tokenizeAndHumanizeSourceSpans("<script>a</script>")).toEqual(
+            List.of(List.of(XML_START_TAG_START, "<"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">"),
+                    List.of(JS_EMBEDDED_CONTENT, "a"),
+                    List.of(XML_END_TAG_START, "</"),
+                    List.of(XML_NAME, "script"),
+                    List.of(XML_TAG_END, ">")));
         });
       });
 
@@ -814,15 +723,13 @@ public class Angular2HtmlLexerSpecTest {
 
       describe("unicode characters", () -> {
         it("should support unicode characters", () -> {
-          expect(tokenizeAndHumanizeSourceSpans("<p>İ</p>")).toEqual(ContainerUtil.newArrayList(
-            ContainerUtil.newArrayList(XML_START_TAG_START, "<"),
-            ContainerUtil.newArrayList(XML_NAME, "p"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">"),
-            ContainerUtil.newArrayList(XML_DATA_CHARACTERS, "İ"),
-            ContainerUtil.newArrayList(XML_END_TAG_START, "</"),
-            ContainerUtil.newArrayList(XML_NAME, "p"),
-            ContainerUtil.newArrayList(XML_TAG_END, ">")
-          ));
+          expect(tokenizeAndHumanizeSourceSpans("<p>İ</p>")).toEqual(List.of(List.of(XML_START_TAG_START, "<"),
+                                                                             List.of(XML_NAME, "p"),
+                                                                             List.of(XML_TAG_END, ">"),
+                                                                             List.of(XML_DATA_CHARACTERS, "İ"),
+                                                                             List.of(XML_END_TAG_START, "</"),
+                                                                             List.of(XML_NAME, "p"),
+                                                                             List.of(XML_TAG_END, ">")));
         });
       });
     });
@@ -862,7 +769,7 @@ public class Angular2HtmlLexerSpecTest {
     String input, boolean tokenizeExpansionForms,
     Pair<String, String> interpolationConfig) {
     return ContainerUtil.map(tokenizeWithoutErrors(input, tokenizeExpansionForms, interpolationConfig),
-                             token -> ContainerUtil.newArrayList(token.type, token.contents));
+                             token -> List.of(token.type, token.contents));
   }
 
   private static List<List<?>> tokenizeAndHumanizeSourceSpans(String input) {
@@ -871,7 +778,7 @@ public class Angular2HtmlLexerSpecTest {
 
   private static List<List<?>> tokenizeAndHumanizeLineColumn(String input) {
     return ContainerUtil.map(tokenizeWithoutErrors(input),
-                             token -> ContainerUtil.newArrayList(token.type, "0:" + token.start));
+                             token -> List.of(token.type, "0:" + token.start));
   }
 
   private static List<List<?>> tokenizeAndHumanizeErrors(String input) {

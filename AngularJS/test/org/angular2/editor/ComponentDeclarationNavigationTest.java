@@ -3,7 +3,6 @@ package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.codeInsight.navigation.actions.GotoTypeDeclarationAction;
-import com.intellij.webSymbols.WebSymbol;
 import com.intellij.model.psi.PsiSymbolService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -12,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webSymbols.WebSymbol;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.intellij.model.psi.impl.TargetsKt.targetSymbols;
 
@@ -41,14 +42,12 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
 
   @Parameterized.Parameters(name = "Component={0}, Injected={1}: {2}, {3}")
   public static Collection<Object> data() {
-    return ContainerUtil.newArrayList(
-      new Object[]{true, false, "<my-cu<caret>st", "my-customer"},
-      new Object[]{true, true, "<my-cu<caret>st", "my-customer"},
-      new Object[]{true, false, "my-cu<caret>stomer-att", "my-customer-attr"},
-      new Object[]{true, true, "my-cu<caret>stomer-att", "my-customer-attr"},
-      new Object[]{false, false, "foo-<caret>dir", "foo-directive"},
-      new Object[]{false, true, "foo-<caret>dir", "foo-directive"}
-    );
+    return List.of(new Object[]{true, false, "<my-cu<caret>st", "my-customer"},
+                   new Object[]{true, true, "<my-cu<caret>st", "my-customer"},
+                   new Object[]{true, false, "my-cu<caret>stomer-att", "my-customer-attr"},
+                   new Object[]{true, true, "my-cu<caret>stomer-att", "my-customer-attr"},
+                   new Object[]{false, false, "foo-<caret>dir", "foo-directive"},
+                   new Object[]{false, true, "foo-<caret>dir", "foo-directive"});
   }
 
   @Override

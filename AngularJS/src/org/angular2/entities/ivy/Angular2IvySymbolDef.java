@@ -61,7 +61,7 @@ public abstract class Angular2IvySymbolDef {
   }
 
   public static final class Module extends Entity {
-    private Module(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+    private Module(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
 
     public @NotNull List<TypeScriptTypeofType> getTypesList(@NotNull String property) {
       int index;
@@ -97,7 +97,7 @@ public abstract class Angular2IvySymbolDef {
   }
 
   public static class Directive extends Entity {
-    private Directive(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+    private Directive(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
 
     public Pointer<? extends Directive> createPointer() {
       var fieldPtr = createSmartPointer(getField());
@@ -155,7 +155,7 @@ public abstract class Angular2IvySymbolDef {
 
   public static final class Component extends Directive {
 
-    private Component(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+    private Component(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
 
     @Override
     public Pointer<Component> createPointer() {
@@ -212,7 +212,7 @@ public abstract class Angular2IvySymbolDef {
 
   public static final class Factory extends Angular2IvySymbolDef {
 
-    private Factory(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+    private Factory(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
 
     @Override
     protected @NotNull List<String> getDefTypeNames() {
@@ -279,16 +279,11 @@ public abstract class Angular2IvySymbolDef {
   @NonNls private static final String FIELD_FACTORY_DEF = "ɵfac";
 
   /* NG 9-11: *Def(WithMeta), NG 12+: *Declaration */
-  @NonNls private static final List<String> TYPE_DIRECTIVE_DEFS =
-    ContainerUtil.newArrayList("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration");
-  @NonNls private static final List<String> TYPE_MODULE_DEFS =
-    ContainerUtil.newArrayList("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration");
-  @NonNls private static final List<String> TYPE_PIPE_DEFS =
-    ContainerUtil.newArrayList("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration");
-  @NonNls private static final List<String> TYPE_COMPONENT_DEFS =
-    ContainerUtil.newArrayList("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration");
-  @NonNls private static final List<String> TYPE_FACTORY_DEFS =
-    ContainerUtil.newArrayList("ɵɵFactoryDef", "ɵɵFactoryDeclaration");
+  @NonNls private static final List<String> TYPE_DIRECTIVE_DEFS = List.of("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration");
+  @NonNls private static final List<String> TYPE_MODULE_DEFS = List.of("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration");
+  @NonNls private static final List<String> TYPE_PIPE_DEFS = List.of("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration");
+  @NonNls private static final List<String> TYPE_COMPONENT_DEFS = List.of("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration");
+  @NonNls private static final List<String> TYPE_FACTORY_DEFS = List.of("ɵɵFactoryDef", "ɵɵFactoryDeclaration");
 
   private final Object myFieldOrStub;
 
