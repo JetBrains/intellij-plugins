@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact version="2.15.0" name="error-prone">
+  <artifact version="2.16.0" name="error-prone">
     <item url="https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/2.16/error_prone_core-2.16-with-dependencies.jar"/>
     <item url="https://repo1.maven.org/maven2/com/google/code/findbugs/jFormatString/3.0.0/jFormatString-3.0.0.jar"/>
     <item url="https://repo1.maven.org/maven2/org/checkerframework/dataflow-shaded/3.24.0/dataflow-shaded-3.24.0.jar"/>
