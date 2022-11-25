@@ -1,6 +1,6 @@
 !foo#string#101
 !increment#any#101
-!state#{double: …, count: …}#101
+!state#{double: UnwrapRef<ComputedRef<unknown>>, count: UnwrapRef<number>} & SymbolExtract<{double: ComputedRef<unknown>, count: number}>#101
 !$#ComponentInternalInstance#100
 !$attrs#null#100
 !$data#null#100
