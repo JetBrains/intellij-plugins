@@ -279,8 +279,8 @@ public final class FlexUnitPrecompileTask implements CompileTask {
 
     final File tmpDir = new File(getPathToFlexUnitTempDirectory(myProject));
     boolean ok = true;
-    if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
-    if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();
+    if (tmpDir.isFile() && !FileUtil.delete(tmpDir)) ok = false;
+    if (!tmpDir.isDirectory() && !tmpDir.mkdirs()) ok = false;
     if (!ok) {
       final String message =
         UIBundle.message("create.new.folder.could.not.create.folder.error.message", FileUtil.toSystemDependentName(tmpDir.getPath()));

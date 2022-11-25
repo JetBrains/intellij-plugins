@@ -1224,7 +1224,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     String readLine(boolean nonblock) throws IOException {
-      if (lastText != null) {
+      {
         final String lastText = getNextLine(nonblock);
         if (lastText != null) return lastText;
       }

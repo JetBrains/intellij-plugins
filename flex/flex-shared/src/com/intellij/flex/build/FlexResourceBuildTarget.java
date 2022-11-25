@@ -124,9 +124,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
 
         if (bc.getCompilerOptions().getResourceFilesMode() == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns) {
           final JpsJavaCompilerConfiguration c = JpsJavaExtensionService.getInstance().getCompilerConfiguration(getModule().getProject());
-          if (c != null) {
-            out.print(", patterns: " + StringUtil.join(c.getResourcePatterns(), " "));
-          }
+          out.print(", patterns: " + StringUtil.join(c.getResourcePatterns(), " "));
         }
 
         out.println();

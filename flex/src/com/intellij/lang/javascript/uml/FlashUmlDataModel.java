@@ -870,9 +870,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   private DiagramEdge<Object> addEdgeAndRefresh(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo type) {
     FlashUmlEdge result = addEdge(from, to, type);
     final DiagramBuilder builder = getBuilder();
-    if (builder != null) {
-      builder.queryUpdate().withDataReload().withPresentationUpdate().run();
-    }
+    builder.queryUpdate().withDataReload().withPresentationUpdate().run();
     return result;
   }
 

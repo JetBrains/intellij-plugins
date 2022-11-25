@@ -46,6 +46,7 @@ import java.lang.annotation.Target;
 import java.util.*;
 
 import static com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase.JAVA_1_7;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
   static final String BASE_PATH = "/flex_completion/";
@@ -121,7 +122,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
         super.complete();
 
-        final String[] expected = entry.getValue().length() == 0 ? new String[]{} : entry.getValue().split(",");
+        final String[] expected = entry.getValue().length() == 0 ? ArrayUtil.EMPTY_STRING_ARRAY : entry.getValue().split(",");
 
         final String[] variants = new String[myFixture.getLookupElements() == null ? 0 : myFixture.getLookupElements().length];
         if (myFixture.getLookupElements() != null && myFixture.getLookupElements().length > 0) {
@@ -150,8 +151,6 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public final void testCompletionInMxml() {
     defaultTest();
-    //    doTest("_2", MXML_EXTENSION);
-    //    doTest("_3", MXML_EXTENSION);
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexSdk)
@@ -236,7 +235,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     items = doTest("_2", MXML_EXTENSION);
     assertNotNull(items);
     for (LookupElement li : items) {
-      assertTrue(!li.getLookupString().equals("arity"));
+      assertNotEquals("arity", li.getLookupString());
     }
   }
 
@@ -865,16 +864,6 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     WriteCommandAction.runWriteCommandAction(editor.getProject(), () -> editor.getDocument().replaceString(offset, offset + original.length(), replacement));
 
     PsiDocumentManager.getInstance(editor.getProject()).commitDocument(editor.getDocument());
-
-    //myFixture.getEditor().getCaretModel().moveToOffset(offset + original.length());
-    //
-    //for (int i = 0; i < original.length(); i++) {
-    //  JSBaseEditorTestCase.performTypingAction(myFixture.getEditor(), JSBaseEditorTestCase.BACKSPACE_FAKE_CHAR);
-    //}
-    //
-    //for (int i = 0; i < replacement.length(); i++) {
-    //  JSBaseEditorTestCase.performTypingAction(myFixture.getEditor(), replacement.charAt(i));
-    //}
   }
 
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
@@ -1322,10 +1311,6 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     FlexTestUtils.addFlexLibrary(false, getModule(), "playerglobal", false, getTestDataPath(), "playerglobal.swc",
                                  null, null);
     Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "playerglobal"));
-
-    //final PsiElement clazz = ActionScriptClassResolver
-      //  .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
-      //clazz.getNode(); // this is required to switch from stubs to AST for library.swf from playerglobal.swc
 
     myFixture.configureByFile(getTestName(false) + ".as");
 

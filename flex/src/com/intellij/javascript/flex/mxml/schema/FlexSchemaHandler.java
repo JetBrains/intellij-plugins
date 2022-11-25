@@ -276,7 +276,7 @@ public final class FlexSchemaHandler extends XmlSchemaProvider implements DumbAw
       }
     }
 
-    if (prefix != null && prefixPattern.matcher(prefix).matches()) {
+    if (prefixPattern.matcher(prefix).matches()) {
       return prefix;
     }
 

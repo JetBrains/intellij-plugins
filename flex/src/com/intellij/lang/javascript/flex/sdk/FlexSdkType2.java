@@ -51,10 +51,6 @@ public class FlexSdkType2 extends SdkType {
 
   @Override
   public boolean isValidSdkHome(final @NotNull String path) {
-    if (path == null) {
-      return false;
-    }
-
     final VirtualFile sdkHome = LocalFileSystem.getInstance().findFileByPath(path);
     if (sdkHome == null || !sdkHome.isDirectory()) {
       return false;
