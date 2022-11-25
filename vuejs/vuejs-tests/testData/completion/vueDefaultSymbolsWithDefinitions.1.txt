@@ -15,7 +15,7 @@
 !$off#this#100
 !$on#this#100
 !$once#this#100
-!$options#ComponentOptions<Vue>#100
+!$options#null#100
 !$parent#Vue#100
 !$props#null#100
 !$refs#null#100
