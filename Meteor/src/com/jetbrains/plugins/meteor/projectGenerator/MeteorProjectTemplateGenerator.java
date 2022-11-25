@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorProjectTemplateGenerator.MeteorProjectSettings> {
@@ -173,8 +172,7 @@ public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorPro
                                                   Ref<Boolean> noErrorOnProjectCreating)
     throws IOException, ExecutionException {
     File tempProject = createTemp();
-    List<String> params = ContainerUtil.newArrayList(settings.getCommand());
-    params.addAll(settings.params());
+    List<String> params = ContainerUtil.prepend(settings.params(), settings.getCommand());
     ProcessOutput output = ExecUtil.execAndGetOutput(new GeneralCommandLine(params).withWorkDirectory(tempProject));
     if (output.getExitCode() != 0) {
       showErrorMessage(output.getStderr());
@@ -254,13 +252,11 @@ public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorPro
     }
 
     public List<String> params() {
-      ArrayList<String> create = ContainerUtil.newArrayList("create");
       if (!MeteorProjectPeer.EMPTY_PROJECT_TYPE.equals(myType)) {
         return ContainerUtil.emptyList();
       }
-      create.add(StringUtil.isEmpty(myName) ? DEFAULT_TEMPLATE_NAME : myName);
 
-      return create;
+      return List.of("create", StringUtil.isEmpty(myName) ? DEFAULT_TEMPLATE_NAME : myName);
     }
 
     public String getGithubRepositoryBranch() {

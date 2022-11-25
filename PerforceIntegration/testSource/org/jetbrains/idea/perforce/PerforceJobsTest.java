@@ -216,8 +216,8 @@ public class PerforceJobsTest extends PerforceTestCase {
 
     verify(runP4(new String[]{"-c", "test", "job", "-i"},
                  PerforceRunner.createStringFormRepresentation(ContainerUtil.newHashMap(
-                   ContainerUtil.newArrayList(PerforceRunner.JOB),
-                   ContainerUtil.<List<String>>newArrayList(Collections.singletonList("justdoit")))).toString()));
+                   List.of(PerforceRunner.JOB),
+                   List.of(Collections.singletonList("justdoit")))).toString()));
 
     final JobsWorker worker = new JobsWorker(myProject);
 

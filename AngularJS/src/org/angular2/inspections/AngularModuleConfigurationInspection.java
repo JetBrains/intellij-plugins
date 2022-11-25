@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.Stack;
 import org.angular2.entities.*;
 import org.angular2.lang.Angular2Bundle;
@@ -113,7 +113,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
       Stack<List<Angular2Module>> dfsStack = new Stack<>();
 
       cycleTrack.push(myModule);
-      dfsStack.push(ContainerUtil.newArrayList(module));
+      dfsStack.push(new SmartList<>(module));
       while (!dfsStack.isEmpty()) {
         List<Angular2Module> curNode = dfsStack.peek();
         if (curNode.isEmpty()) {

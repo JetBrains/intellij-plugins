@@ -378,23 +378,23 @@ public class Angular2ParserSpecTest {
 
         it("should parse a key without a value",
            () -> {
-             expect(keys(parseTemplateBindings("a", ""))).toEqual(ContainerUtil.newArrayList("a"));
+             expect(keys(parseTemplateBindings("a", ""))).toEqual(List.of("a"));
            });
 
         it("should allow string including dashes as keys", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a"));
+          expect(keys(bindings)).toEqual(List.of("a"));
 
           bindings = parseTemplateBindings("a-b", "c");
-          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a-b"));
+          expect(keys(bindings)).toEqual(List.of("a-b"));
         });
 
         it("should detect expressions as value", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("b"));
+          expect(exprSources(bindings)).toEqual(List.of("b"));
 
           bindings = parseTemplateBindings("a", "1+1");
-          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("1+1"));
+          expect(exprSources(bindings)).toEqual(List.of("1+1"));
         });
 
         it("should detect names as value", () -> {
@@ -404,8 +404,8 @@ public class Angular2ParserSpecTest {
 
         it("should allow space and colon as separators", () -> {
           Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "b");
-          expect(keys(bindings)).toEqual(ContainerUtil.newArrayList("a"));
-          expect(exprSources(bindings)).toEqual(ContainerUtil.newArrayList("b"));
+          expect(keys(bindings)).toEqual(List.of("a"));
+          expect(exprSources(bindings)).toEqual(List.of("b"));
         });
 
         it("should allow multiple pairs", () -> {

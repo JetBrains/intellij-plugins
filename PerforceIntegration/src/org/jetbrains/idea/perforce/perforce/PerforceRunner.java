@@ -238,7 +238,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
   public void edit(final P4File file, final long changeListNumber, final boolean keepWorkspace) throws VcsException {
     P4Connection connection = getNotNullConnection(file);
-    editAll(ContainerUtil.newArrayList(file), changeListNumber, keepWorkspace, connection);
+    editAll(List.of(file), changeListNumber, keepWorkspace, connection);
   }
 
   public void editAll(final List<P4File> files, final long changeListNumber, final boolean keepWorkspace, @NotNull P4Connection connection) throws VcsException {
@@ -963,7 +963,7 @@ public final class PerforceRunner implements PerforceRunnerI {
                                                           final int maxCount, final boolean showIntegrated) throws VcsException {
     String interval = dateSpec(settings.getDateAfterFilter(), settings.getDateBeforeFilter(), settings.getChangeAfterFilter(),
                         settings.getChangeBeforeFilter(), settings.STRICTLY_AFTER);
-    final List<String> fileSpecs = ContainerUtil.newArrayList(rootP4File.getRecursivePath() + interval);
+    final List<String> fileSpecs = List.of(rootP4File.getRecursivePath() + interval);
     return getSubmittedChangeLists(getNotNullConnection(rootP4File), client, user, maxCount, showIntegrated, fileSpecs);
   }
 

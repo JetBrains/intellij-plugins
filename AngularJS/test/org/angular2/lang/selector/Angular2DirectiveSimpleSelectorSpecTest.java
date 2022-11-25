@@ -349,7 +349,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
 
       it("should detect class names", () -> {
         Angular2DirectiveSimpleSelector cssSelector = Angular2DirectiveSimpleSelector.parse(".someClass").get(0);
-        expect(cssSelector.classNames).toEqual(ContainerUtil.newArrayList("someclass"));
+        expect(cssSelector.classNames).toEqual(List.of("someclass"));
 
         expect(cssSelector.toString()).toEqual(".someclass");
       });
@@ -383,7 +383,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
         Angular2DirectiveSimpleSelector cssSelector = Angular2DirectiveSimpleSelector.parse("sometag[attrname=attrvalue].someclass").get(0);
         expect(cssSelector.element).toEqual("sometag");
         expect(cssSelector.attrs).toEqual(ContainerUtil.newArrayList("attrname", "attrvalue"));
-        expect(cssSelector.classNames).toEqual(ContainerUtil.newArrayList("someclass"));
+        expect(cssSelector.classNames).toEqual(List.of("someclass"));
 
         expect(cssSelector.toString()).toEqual("sometag.someclass[attrname=attrvalue]");
       });
@@ -406,7 +406,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
         Angular2DirectiveSimpleSelector notSelector = cssSelector.notSelectors.get(0);
         expect(notSelector.element).toEqual(null);
         expect(notSelector.attrs).toEqual(ContainerUtil.newArrayList("attrname", "attrvalue"));
-        expect(notSelector.classNames).toEqual(ContainerUtil.newArrayList("someclass"));
+        expect(notSelector.classNames).toEqual(List.of("someclass"));
 
         expect(cssSelector.toString()).toEqual("sometag:not(.someclass[attrname=attrvalue])");
       });
@@ -417,7 +417,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
 
         Angular2DirectiveSimpleSelector notSelector = cssSelector.notSelectors.get(0);
         expect(notSelector.attrs).toEqual(ContainerUtil.newArrayList("attrname", "attrvalue"));
-        expect(notSelector.classNames).toEqual(ContainerUtil.newArrayList("someclass"));
+        expect(notSelector.classNames).toEqual(List.of("someclass"));
 
         expect(cssSelector.toString()).toEqual("*:not(.someclass[attrname=attrvalue])");
       });
@@ -439,7 +439,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
           .parse(".someclass,[attrname=attrvalue], sometag");
         expect(cssSelectors.size()).toEqual(3);
 
-        expect(cssSelectors.get(0).classNames).toEqual(ContainerUtil.newArrayList("someclass"));
+        expect(cssSelectors.get(0).classNames).toEqual(List.of("someclass"));
         expect(cssSelectors.get(1).attrs).toEqual(ContainerUtil.newArrayList("attrname", "attrvalue"));
         expect(cssSelectors.get(2).element).toEqual("sometag");
       });
@@ -456,7 +456,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
         expect(cssSelectors.get(1).notSelectors.get(0).element).toEqual("textarea");
 
         expect(cssSelectors.get(2).element).toEqual("textbox");
-        expect(cssSelectors.get(2).notSelectors.get(0).classNames).toEqual(ContainerUtil.newArrayList("special"));
+        expect(cssSelectors.get(2).notSelectors.get(0).classNames).toEqual(List.of("special"));
       });
     });
 

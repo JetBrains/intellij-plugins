@@ -353,11 +353,11 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     }
   }
 
-  @NotNull
   @Override
-  public ArrayList<LogFileOptions> getAllLogFiles() {
+  public @NotNull ArrayList<LogFileOptions> getAllLogFiles() {
     if (!PLATFORM_IOS.equals(myPlatform) || StringUtil.isEmpty(myWorkDir)) super.getAllLogFiles();
-    return ContainerUtil.newArrayList(new LogFileOptions("console.log", getPathToLog(), true, false, true));
+    LogFileOptions options = new LogFileOptions("console.log", getPathToLog(), true, false, true);
+    return new ArrayList<>(List.of(options));
   }
 
   private String getPathToLog() {

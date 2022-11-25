@@ -52,7 +52,7 @@ import java.util.Set;
 @State(name = "Osmorc", storages = @Storage(value = "osmorc.xml", roamingType = RoamingType.DISABLED))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> myInstances = new ArrayList<>();
-  private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
+  private List<LibraryBundlificationRule> myRules = List.of(new LibraryBundlificationRule());
 
   public static ApplicationSettings getInstance() {
     return ApplicationManager.getApplication().getService(ApplicationSettings.class);
@@ -87,7 +87,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
   public void setLibraryBundlificationRules(List<LibraryBundlificationRule> rules) {
     myRules = rules;
     if (myRules == null || myRules.isEmpty()) {
-      myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
+      myRules = List.of(new LibraryBundlificationRule());
     }
   }
 
