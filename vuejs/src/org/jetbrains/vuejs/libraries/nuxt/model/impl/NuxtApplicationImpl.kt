@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
 import com.intellij.ide.util.PropertiesComponent
@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.AlarmFactory
+import com.intellij.util.Alarm
 import com.intellij.util.asSafely
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
@@ -133,7 +133,7 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     PropertiesComponent.getInstance(project).setValue(NUXT_TYPES_NOTIFICATION_SHOWN, true)
     notification.notify(project)
 
-    AlarmFactory.getInstance().create().addRequest(
+    Alarm().addRequest(
       Runnable { notification.hideBalloon() },
       TimeUnit.SECONDS.toMillis(30)
     )
