@@ -3,6 +3,7 @@ package jetbrains.plugins.yeoman.projectGenerator.ui.list;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.progress.ProgressManager;
@@ -55,6 +56,11 @@ public class YeomanAvailableGeneratorsMain extends YeomanGeneratorsMain {
         myBusy = true;
 
         downloadAndShowGeneratorList();
+      }
+
+      @Override
+      public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
       }
 
       @Override
