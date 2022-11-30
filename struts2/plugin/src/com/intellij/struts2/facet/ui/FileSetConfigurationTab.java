@@ -31,6 +31,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -359,7 +360,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       mySet = fileSet;
 
       final PresentationData presentationData = getPresentation();
-      final String name = mySet.getName();
+      final String name = mySet.getName(); //NON-NLS
 
       if (fileSet.getFiles().isEmpty()) {
         presentationData.addText(name, getErrorAttributes());
@@ -400,7 +401,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     ConfigFileNode(final VirtualFilePointer name, final SimpleNode parent) {
       super(parent);
       myFilePointer = name;
-      setUniformIcon(StrutsIcons.STRUTS_CONFIG_FILE);
+      getTemplatePresentation().setIcon(StrutsIcons.STRUTS_CONFIG_FILE);
     }
 
     @Override
@@ -409,22 +410,23 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     }
 
     @Override
-    protected void doUpdate() {
+    protected void doUpdate(@NotNull PresentationData presentation) {
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
-        renderFile(file, getPlainAttributes(), null);
+        renderFile(presentation, file, getPlainAttributes(), null);
       }
       else {
-        renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.file.not.found"));
+        renderFile(presentation, null, getErrorAttributes(), StrutsBundle.message("facet.fileset.file.not.found"));
       }
     }
 
-    private void renderFile(final VirtualFile file,
+    private void renderFile(@NotNull PresentationData presentation,
+                            final VirtualFile file,
                             final SimpleTextAttributes textAttributes,
-                            @Nullable final String toolTip) {
-      final PresentationData presentation = getPresentation();
+                            @NlsContexts.Tooltip @Nullable final String toolTip) {
       presentation.setTooltip(toolTip);
-      presentation.addText(myFilePointer.getFileName(), textAttributes);
+      presentation.clearText();
+      presentation.addText(myFilePointer.getFileName(), textAttributes); //NON-NLS
 
       if (file != null) {
         presentation.setLocationString(file.getPath());
