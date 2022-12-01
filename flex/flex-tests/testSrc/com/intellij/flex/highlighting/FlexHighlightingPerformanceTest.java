@@ -32,9 +32,10 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
     return "as";
   }
 
+  private static final boolean doProfiling = false;
+  
   @FlexTestOptions(FlexTestOption.WithFlexFacet)
   public void testPerformance() {
-    final boolean doProfiling = false;
     if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
     try {
       PlatformTestUtil.startPerformanceTest("Mxml highlighting", 27_000,
