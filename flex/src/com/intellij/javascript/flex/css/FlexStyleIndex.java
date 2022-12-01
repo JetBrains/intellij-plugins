@@ -196,12 +196,10 @@ public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<Fl
           if (propertyName != null) {
             if (classQName != null) {
               FlexStyleIndexInfo info = FlexStyleIndexInfo.create(classQName, propertyName, jsAttribute, inClass);
-              if (info != null) {
-                addElement(map, propertyName, info);
-                String classicPropertyName = FlexCssUtil.toClassicForm(propertyName);
-                if (!propertyName.equals(classicPropertyName)) {
-                  addElement(map, classicPropertyName, info);
-                }
+              addElement(map, propertyName, info);
+              String classicPropertyName = FlexCssUtil.toClassicForm(propertyName);
+              if (!propertyName.equals(classicPropertyName)) {
+                addElement(map, classicPropertyName, info);
               }
             }
           }
