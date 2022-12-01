@@ -36,9 +36,6 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
-    if (state == null) {
-      return;
-    }
     state.migrateIfNeeded();
   }
 

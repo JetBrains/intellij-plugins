@@ -77,11 +77,7 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
 
   @Nullable
   private CfmlComponent getComponentDefinition() {
-    CfmlFile containingFile = getContainingFile();
-    if (containingFile != null) {
-      return containingFile.getComponentDefinition();
-    }
-    return null;
+    return getContainingFile().getComponentDefinition();
   }
 
   @Override
