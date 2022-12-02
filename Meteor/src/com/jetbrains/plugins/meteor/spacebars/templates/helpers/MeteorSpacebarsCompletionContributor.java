@@ -88,7 +88,7 @@ public class MeteorSpacebarsCompletionContributor extends CompletionContributor 
                                                                  GlobalSearchScope.allScope(project),
                                                                  JSElement.class);
 
-          if (elements != null && !elements.isEmpty()) {
+          if (!elements.isEmpty()) {
             result.addAllElements(getLookupElements(elements, namespace));
           }
         }
@@ -105,7 +105,7 @@ public class MeteorSpacebarsCompletionContributor extends CompletionContributor 
                                                                          GlobalSearchScope.allScope(project),
                                                                          JSElement.class);
 
-          if (elementsTemplate != null && !elementsTemplate.isEmpty()) {
+          if (!elementsTemplate.isEmpty()) {
             result.addAllElements(getLookupElements(elementsTemplate, namespace));
           }
         }
