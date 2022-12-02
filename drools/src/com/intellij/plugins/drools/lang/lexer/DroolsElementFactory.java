@@ -26,7 +26,7 @@ public final class DroolsElementFactory {
         elementType = new DroolsElementType("EQ");
       }
       else {
-        elementType = new DroolsElementType("true".equals(name) || "false".equals(name)? StringUtil.toUpperCase(name) : name);
+        elementType = new DroolsElementType(name);
       }
 
       ourCompositeMap.put(name, elementType);

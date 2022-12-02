@@ -20,6 +20,7 @@ import com.intellij.psi.infos.CandidateInfo;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.IconManager;
+import com.intellij.ui.PlatformIcons;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
@@ -70,10 +71,7 @@ public abstract class DroolsReferenceImpl extends DroolsPsiCompositeElementImpl 
     }
     else if (resolve instanceof PsiMethod) {
       if (PropertyUtilBase.isSimplePropertyGetter((PsiMethod)resolve)) {
-        final String getterName = PropertyUtilBase.suggestGetterName(newElementName, null);
-        if (getterName != null) {
-          newName = getterName;
-        }
+        newName = PropertyUtilBase.suggestGetterName(newElementName, null);
       }
     }
     final DroolsIdentifier identifier = DroolsElementsFactory.createDroolsIdentifier(newName, getProject());
@@ -85,8 +83,8 @@ public abstract class DroolsReferenceImpl extends DroolsPsiCompositeElementImpl 
 
   @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-    if (element instanceof PsiClass) {
-      return handleElementRename(((PsiClass)element).getName());
+    if (element instanceof PsiClass psiClass) {
+      return handleElementRename(psiClass.getName());
     }
     return element;
   }
@@ -116,8 +114,7 @@ public abstract class DroolsReferenceImpl extends DroolsPsiCompositeElementImpl 
         if (psiElement instanceof PsiPackage) {
           return !StringUtil.isEmptyOrSpaces(((PsiPackage)psiElement).getName());
         }
-        if (psiElement instanceof PsiMethod) {
-          final PsiMethod psiMethod = (PsiMethod)psiElement;
+        if (psiElement instanceof final PsiMethod psiMethod) {
           if (psiMethod.isConstructor()) return false;
           final PsiClass containingClass = psiMethod.getContainingClass();
           if (containingClass != null && CommonClassNames.JAVA_LANG_OBJECT.equals(containingClass.getQualifiedName())) return false;
@@ -146,17 +143,15 @@ public abstract class DroolsReferenceImpl extends DroolsPsiCompositeElementImpl 
     }
 
     return ContainerUtil.map2Array(processor.getResults(), Object.class, psiElement -> {
-      if (psiElement instanceof PsiVariable) {
-        final PsiVariable variable = (PsiVariable)psiElement;
+      if (psiElement instanceof final PsiVariable variable) {
         return LookupElementBuilder.create(variable.getName()).withIcon(
-            IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Variable))
+            IconManager.getInstance().getPlatformIcon(PlatformIcons.Variable))
           .withTypeText(variable.getType().getCanonicalText());
       }
-      else if (psiElement instanceof PsiMethod) {
-        final PsiMethod psiMethod = (PsiMethod)psiElement;
+      else if (psiElement instanceof final PsiMethod psiMethod) {
         final PsiType type = psiMethod.getReturnType();
         return LookupElementBuilder.create(psiMethod.getName()).withIcon(
-            IconManager.getInstance().getPlatformIcon(com.intellij.ui.PlatformIcons.Method))
+            IconManager.getInstance().getPlatformIcon(PlatformIcons.Method))
           .withTypeText(type == null ? "" : type.getCanonicalText()).withInsertHandler(
             ParenthesesInsertHandler.WITH_PARAMETERS);
       }
