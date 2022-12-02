@@ -1,0 +1,2 @@
+FooClass
+set foo

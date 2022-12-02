@@ -40,6 +40,8 @@
     <typedHandler implementation="com.jetbrains.lang.dart.ide.editor.DartTypeHandler" id="Dart"/>
     <quoteHandler fileType="Dart" className="com.jetbrains.lang.dart.ide.editor.DartQuoteHandler"/>
 
+    <breadcrumbsInfoProvider implementation="com.jetbrains.lang.dart.ide.breadcrumbs.DartBreadcrumbsInfoProvider"/>
+
     <lang.commenter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartCommenter"/>
     <lang.parserDefinition language="Dart" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
 

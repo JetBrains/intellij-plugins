@@ -1,0 +1,1 @@
+final f<caret>oo = "value";

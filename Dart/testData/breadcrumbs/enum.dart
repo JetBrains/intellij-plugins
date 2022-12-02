@@ -1,0 +1,3 @@
+enum FooEnum {
+  E<caret>
+}
