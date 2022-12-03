@@ -14,6 +14,9 @@ import com.intellij.workspaceModel.storage.impl.UsedClassesCollector
 import com.intellij.workspaceModel.storage.impl.WorkspaceEntityBase
 import com.intellij.workspaceModel.storage.impl.WorkspaceEntityData
 import com.intellij.workspaceModel.storage.url.VirtualFileUrl
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
 import org.jetbrains.deft.ObjBuilder
 import org.jetbrains.deft.Type
 
@@ -88,8 +91,7 @@ open class DenoEntityImpl(val dataSource: DenoEntityData) : DenoEntity, Workspac
       if (this.entitySource != dataSource.entitySource) this.entitySource = dataSource.entitySource
       if (this.depsFile != dataSource?.depsFile) this.depsFile = dataSource.depsFile
       if (this.denoTypes != dataSource?.denoTypes) this.denoTypes = dataSource.denoTypes
-      if (parents != null) {
-      }
+      updateChildToParentReferences(parents)
     }
 
 
