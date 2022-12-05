@@ -12,5 +12,8 @@
     <orderEntry type="module" module-name="intellij.clion" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="module" module-name="intellij.platform.ssh.ui" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.cidr.util" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
   </component>
 </module>
