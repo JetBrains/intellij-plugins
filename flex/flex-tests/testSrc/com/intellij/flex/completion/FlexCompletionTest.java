@@ -49,6 +49,7 @@ import static com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTes
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
+  public static final boolean PROFILING = false;
   static final String BASE_PATH = "/flex_completion/";
 
   @NonNls private static final String MXML_EXTENSION = "mxml";
@@ -1314,15 +1315,14 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
     myFixture.configureByFile(getTestName(false) + ".as");
 
-    final boolean doProfiling = false;
-    if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
+    if (PROFILING) YourKitProfilerHandler.startCPUProfiling();
     try {
       PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete())
         .setup(() -> getPsiManager().dropPsiCaches())
         .assertTiming();
     }
     finally {
-      if (doProfiling) YourKitProfilerHandler.captureCPUSnapshot();
+      if (PROFILING) YourKitProfilerHandler.captureCPUSnapshot();
     }
   }
 
