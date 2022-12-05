@@ -177,7 +177,7 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   private void checkTestSourceRoots(final String... sourceRootUrls) {
-    final Collection<String> roots = ContainerUtil.set(ModuleRootManager.getInstance(myModule).getSourceRootUrls(true));
+    final Collection<String> roots = ContainerUtil.newHashSet(ModuleRootManager.getInstance(myModule).getSourceRootUrls(true));
     roots.removeAll(Arrays.asList(ModuleRootManager.getInstance(myModule).getSourceRootUrls(false)));
     assertSameElements(roots, Arrays.asList(sourceRootUrls));
   }

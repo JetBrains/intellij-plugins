@@ -620,7 +620,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
       additionalTarget = object.getParent();
     }
 
-    Set<PsiReference> uniquesSet = ContainerUtil.set(references);
+    Set<PsiReference> uniquesSet = ContainerUtil.newHashSet(references);
     if (additionalTarget != null) {
       uniquesSet.addAll(ReferencesSearch.search(additionalTarget, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll());
     }

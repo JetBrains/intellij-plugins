@@ -72,7 +72,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
   }
 
   static void assertContains(LookupElement[] items, boolean contains, String... expected) {
-    Collection<String> c = ContainerUtil.set(expected);
+    Collection<String> c = ContainerUtil.newHashSet(expected);
     for (LookupElement item : items) {
       final String s = item.getLookupString();
       final boolean removed = c.remove(s);
