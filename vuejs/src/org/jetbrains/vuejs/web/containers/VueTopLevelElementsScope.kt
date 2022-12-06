@@ -8,6 +8,7 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.query.WebSymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.utils.nameSegments
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
 object VueTopLevelElementsScope : WebSymbolsScope {
