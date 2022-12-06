@@ -10,7 +10,9 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
+import com.intellij.webSymbols.CompositeWebSymbol
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.utils.nameSegments
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.web.Angular2PsiSourcedSymbol
@@ -63,7 +65,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
     }
   }
 
-  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiSourcedSymbol {
+  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiSourcedSymbol, CompositeWebSymbol {
 
     override val source: PsiElement
       get() = attribute
@@ -73,7 +75,7 @@ class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
     override val nameSegments: List<WebSymbolNameSegment> by lazy(LazyThreadSafetyMode.NONE) {
       (attribute.descriptor as? WebSymbolAttributeDescriptor)?.symbol?.nameSegments
-      ?: super.nameSegments
+      ?: listOf(WebSymbolNameSegment(this))
     }
 
     override val priority: WebSymbol.Priority
