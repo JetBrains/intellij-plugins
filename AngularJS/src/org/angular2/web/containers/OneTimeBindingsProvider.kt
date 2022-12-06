@@ -42,7 +42,7 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
         .runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name),
                            scope = scope.toList())
         .filter { it.attributeValue?.required == false }
-        .mapSmartSet { it.matchedName }
+        .mapSmartSet { it.name }
 
       params.queryExecutor
         .runNameMatchQuery(
@@ -50,7 +50,7 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
           scope = scope.toList())
         .asSequence()
         .filter { isOneTimeBindingProperty(it) }
-        .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.matchedName)) }
+        .map { Angular2OneTimeBinding(it, !attributeSelectors.contains(it.name)) }
         .toList()
     }
     else emptyList()

@@ -73,7 +73,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
   private class I18nTagExtension(private val lang: String) : WebSymbol {
 
-    override val matchedName: String
+    override val name: String
       get() = "i18n"
 
     override val origin: WebSymbolOrigin =

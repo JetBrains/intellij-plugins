@@ -8,11 +8,6 @@ import com.intellij.webSymbols.WebSymbolOrigin
 
 interface Angular2Symbol : WebSymbol {
 
-  override val matchedName: String
-    get() = name
-
-  override val name: String
-
   val project: Project
 
   override val origin: WebSymbolOrigin

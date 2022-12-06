@@ -23,9 +23,6 @@ abstract class Angular2SymbolDelegate<T : Angular2Symbol>(delegate: T) : WebSymb
   override val origin: WebSymbolOrigin
     get() = delegate.origin
 
-  override val matchedName: String
-    get() = name
-
   override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
     super<WebSymbolDelegate>.getNavigationTargets(project)
 

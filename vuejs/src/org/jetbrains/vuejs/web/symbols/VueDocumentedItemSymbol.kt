@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.web.symbols
 
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.model.Symbol
-import com.intellij.model.presentation.SymbolPresentation
 import com.intellij.navigation.TargetPresentation
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.VueBundle
@@ -12,7 +11,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import java.util.*
 
 abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
-  override val matchedName: String, protected val item: T) : VueWebSymbolBase(), PsiSourcedWebSymbol {
+  override val name: String, protected val item: T) : VueWebSymbolBase(), PsiSourcedWebSymbol {
 
   override val source: PsiElement?
     get() = item.source
@@ -32,15 +31,15 @@ abstract class VueDocumentedItemSymbol<T : VueDocumentedItem>(
     other === this ||
     (other is VueDocumentedItemSymbol<*>
      && other.javaClass == this.javaClass
-     && matchedName == other.matchedName
+     && name == other.name
      && item == other.item)
 
-  override fun hashCode(): Int = Objects.hash(matchedName, item)
+  override fun hashCode(): Int = Objects.hash(name, item)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean =
     if (symbol is VueDocumentedItemSymbol<*>)
       symbol === this || (symbol.javaClass == this.javaClass
-                          && symbol.matchedName == matchedName)
+                          && symbol.name == name)
     //&& VueDelegatedContainer.unwrap(item) == VueDelegatedContainer.unwrap(symbol.item))
     else
       super.isEquivalentTo(symbol)
