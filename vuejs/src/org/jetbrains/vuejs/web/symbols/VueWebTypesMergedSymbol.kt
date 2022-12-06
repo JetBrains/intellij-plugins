@@ -23,7 +23,7 @@ import javax.swing.Icon
 class VueWebTypesMergedSymbol(override val name: String,
                               sourceSymbol: PsiSourcedWebSymbol,
                               val webTypesSymbols: Collection<WebSymbol>)
-  : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol) {
+  : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol), CompositeWebSymbol {
 
   private val symbols: List<WebSymbol> = sequenceOf(sourceSymbol)
     .plus(webTypesSymbols).toList()
