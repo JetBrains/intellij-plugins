@@ -50,6 +50,9 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
             override val kind: SymbolKind
               get() = WebSymbol.KIND_HTML_ATTRIBUTES
 
+            override val name: String
+              get() = "Fake symbol"
+
             override fun createPointer(): Pointer<out WebSymbol> =
               Pointer.hardPointer(this)
           }

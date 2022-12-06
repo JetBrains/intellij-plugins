@@ -12,7 +12,7 @@ import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
 class VueAnySymbol(override val origin: WebSymbolOrigin,
                    override val namespace: SymbolNamespace,
                    override val kind: SymbolKind,
-                   override val matchedName: String) : WebSymbol {
+                   override val name: String) : WebSymbol {
 
   override val pattern: WebSymbolsPattern
     get() = WebSymbolsPatternFactory.createRegExMatch(".*", false)

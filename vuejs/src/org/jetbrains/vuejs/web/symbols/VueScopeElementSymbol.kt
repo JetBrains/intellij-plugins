@@ -16,8 +16,8 @@ import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.VueScopeElement
 import org.jetbrains.vuejs.web.VueFramework
 
-abstract class VueScopeElementSymbol<T : VueDocumentedItem>(matchedName: String, item: T) :
-  VueDocumentedItemSymbol<T>(matchedName, item), SearchTarget {
+abstract class VueScopeElementSymbol<T : VueDocumentedItem>(name: String, item: T) :
+  VueDocumentedItemSymbol<T>(name, item), SearchTarget {
 
   abstract override fun createPointer(): Pointer<out VueScopeElementSymbol<T>>
 

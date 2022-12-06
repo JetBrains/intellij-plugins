@@ -48,6 +48,9 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
       get() =
         WebSymbol.KIND_HTML_ATTRIBUTES
 
+    override val name: String
+      get() = "Attribute with interpolations"
+
     override fun createPointer(): Pointer<out WebSymbol> =
       Pointer.hardPointer(this)
 

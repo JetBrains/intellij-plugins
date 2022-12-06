@@ -62,7 +62,7 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       }
       else {
         val byName = if (name == null)
-          matches.groupBy { it.matchedName }
+          matches.groupBy { it.name }
         else
           mapOf(Pair(name, matches))
 

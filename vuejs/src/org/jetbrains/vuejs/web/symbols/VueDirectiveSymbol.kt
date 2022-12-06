@@ -11,14 +11,11 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-class VueDirectiveSymbol(matchedName: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
-  VueScopeElementSymbol<VueDirective>(fromAsset(matchedName), directive) {
+class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
+  VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
 
   override val kind: SymbolKind
     get() = VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVES
-
-  override val name: String
-    get() = matchedName
 
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
@@ -36,10 +33,10 @@ class VueDirectiveSymbol(matchedName: String, directive: VueDirective, private v
 
   override fun createPointer(): Pointer<VueDirectiveSymbol> {
     val component = item.createPointer()
-    val matchedName = this.matchedName
+    val name = this.name
     val vueProximity = this.vueProximity
     return Pointer {
-      component.dereference()?.let { VueDirectiveSymbol(matchedName, it, vueProximity) }
+      component.dereference()?.let { VueDirectiveSymbol(name, it, vueProximity) }
     }
   }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
 import javax.swing.Icon
 
-class VueWebTypesMergedSymbol(override val matchedName: String,
+class VueWebTypesMergedSymbol(override val name: String,
                               sourceSymbol: PsiSourcedWebSymbol,
                               val webTypesSymbols: Collection<WebSymbol>)
   : PsiSourcedWebSymbolDelegate<PsiSourcedWebSymbol>(sourceSymbol) {
@@ -33,9 +33,6 @@ class VueWebTypesMergedSymbol(override val matchedName: String,
       ?.name
       ?.takeIf { toAsset(it) != toAsset(name) }
 
-  override val name: String
-    get() = matchedName
-
   override val origin: WebSymbolOrigin
     get() = symbols.getOrNull(1)?.origin ?: super.origin
 
@@ -44,7 +41,7 @@ class VueWebTypesMergedSymbol(override val matchedName: String,
 
   override val nameSegments: List<WebSymbolNameSegment>
     get() = listOf(WebSymbolNameSegment(
-      0, matchedName.length, symbols
+      0, name.length, symbols
     ))
 
   override val description: String?
@@ -132,7 +129,7 @@ class VueWebTypesMergedSymbol(override val matchedName: String,
           }
         }
         if (psiSourcedWebSymbol != null) {
-          containers.add(VueWebTypesMergedSymbol(psiSourcedWebSymbol.matchedName, psiSourcedWebSymbol, webSymbols))
+          containers.add(VueWebTypesMergedSymbol(psiSourcedWebSymbol.name, psiSourcedWebSymbol, webSymbols))
         }
         else {
           containers.addAll(webSymbols)
@@ -162,14 +159,14 @@ class VueWebTypesMergedSymbol(override val matchedName: String,
             else symbols.add(it)
           }
           psiSourcedWebSymbol?.let {
-            items[0].withSymbol(VueWebTypesMergedSymbol(it.matchedName, it, symbols))
+            items[0].withSymbol(VueWebTypesMergedSymbol(it.name, it, symbols))
           } ?: items[0]
         }
       }
 
   override fun createPointer(): Pointer<out WebSymbol> {
     val pointers = symbols.map { it.createPointer() }
-    val matchedName = matchedName
+    val matchedName = name
     return Pointer {
       val symbols = pointers.map { it.dereference() ?: return@Pointer null }
       VueWebTypesMergedSymbol(matchedName,
