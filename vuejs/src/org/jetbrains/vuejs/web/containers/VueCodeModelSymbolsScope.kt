@@ -179,11 +179,11 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
     if (toMerge.isNotEmpty()) {
       if (source is ES6ExportDefaultAssignment || source is HtmlFileImpl) {
         // Merge with the source component - we need to merge both ways
-        val names = toMerge.asSequence().map { it.matchedName }.plus(this.matchedName).toSet()
+        val names = toMerge.asSequence().map { it.name }.plus(this.name).toSet()
         return names.map { VueWebTypesMergedSymbol(it, this, toMerge) }
       }
       else {
-        return listOf(VueWebTypesMergedSymbol(this.matchedName, this, toMerge))
+        return listOf(VueWebTypesMergedSymbol(this.name, this, toMerge))
       }
     }
     return listOf(this)

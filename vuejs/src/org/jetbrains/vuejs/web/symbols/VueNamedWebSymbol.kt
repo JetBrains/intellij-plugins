@@ -11,9 +11,6 @@ abstract class VueNamedWebSymbol<T : VueNamedSymbol>(item: T,
                                                      override val origin: WebSymbolOrigin)
   : VueDocumentedItemSymbol<T>(item.name, item) {
 
-  override val name: String
-    get() = item.name
-
   abstract override fun createPointer(): Pointer<out VueNamedWebSymbol<T>>
 
   abstract class NamedSymbolPointer<T : VueNamedSymbol, S : VueNamedWebSymbol<T>>(wrapper: S) : Pointer<S> {

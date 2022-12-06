@@ -19,8 +19,8 @@ import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-class VueComponentSymbol(matchedName: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
-  VueScopeElementSymbol<VueComponent>(matchedName, component) {
+class VueComponentSymbol(name: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
+  VueScopeElementSymbol<VueComponent>(name, component) {
 
   private val isCompositionComponent: Boolean = VueCompositionApp.isCompositionAppComponent(component)
 
@@ -29,9 +29,6 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
 
   override val kind: SymbolKind
     get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS
-
-  override val name: String
-    get() = matchedName
 
   // The source field is used for refactoring purposes by Web Symbols framework
   override val source: PsiElement?
@@ -104,10 +101,10 @@ class VueComponentSymbol(matchedName: String, component: VueComponent, private v
 
   override fun createPointer(): Pointer<VueComponentSymbol> {
     val component = item.createPointer()
-    val matchedName = this.matchedName
+    val name = this.name
     val vueProximity = this.vueProximity
     return Pointer {
-      component.dereference()?.let { VueComponentSymbol(matchedName, it, vueProximity) }
+      component.dereference()?.let { VueComponentSymbol(name, it, vueProximity) }
     }
   }
 

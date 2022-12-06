@@ -12,6 +12,8 @@ import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 class VueModelSymbol(override val origin: WebSymbolOrigin,
                      private val vueModel: VueModelDirectiveProperties) : WebSymbol {
 
+  override val name: String
+    get() = "Vue Model"
   override val namespace: SymbolNamespace get() = WebSymbol.NAMESPACE_HTML
   override val kind: SymbolKind get() = VueWebSymbolsQueryConfigurator.KIND_VUE_MODEL
 
