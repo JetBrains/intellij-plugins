@@ -5,13 +5,13 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.changes.*;
+import com.intellij.openapi.vcs.changes.ui.BooleanCommitOption;
 import com.intellij.openapi.vcs.checkin.BeforeCheckinDialogHandler;
 import com.intellij.openapi.vcs.checkin.CheckinHandler;
 import com.intellij.openapi.vcs.checkin.VcsCheckinHandlerFactory;
 import com.intellij.openapi.vcs.ui.RefreshableOnComponent;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.actions.RevertAllUnchangedFilesAction;
 import org.jetbrains.idea.perforce.actions.ShelfUtils;
@@ -28,16 +28,19 @@ public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
   @NotNull
   @Override
   protected CheckinHandler createVcsHandler(@NotNull CheckinProjectPanel panel, @NotNull CommitContext commitContext) {
+    final Project project = panel.getProject();
     return new CheckinHandler() {
       @Override
-      @Nullable
       public RefreshableOnComponent getBeforeCheckinConfigurationPanel() {
-        return new PerforceCheckinOptionsPanel(panel.getProject());
+        return new BooleanCommitOption(project,
+                                       PerforceBundle.message("message.revert.unchanged.files"),
+                                       false,
+                                       () -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN,
+                                       value -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN = value);
       }
 
       @Override
       public ReturnResult beforeCheckin() {
-        final Project project = panel.getProject();
         if (PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN) {
           RevertAllUnchangedFilesAction.revertUnchanged(project, panel.getVirtualFiles(), panel, null);
         }
