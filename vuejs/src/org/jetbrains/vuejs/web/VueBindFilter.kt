@@ -12,7 +12,7 @@ class VueBindFilter : WebSymbolsFilter {
                                      queryExecutor: WebSymbolsQueryExecutor,
                                      scope: List<WebSymbolsScope>,
                                      properties: Map<String, Any>): List<WebSymbolCodeCompletionItem> {
-    val props = queryExecutor.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
+    val props = queryExecutor.runNameMatchQuery(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS, "",
                                                 scope = scope).mapTo(HashSet()) { it.name }
     return codeCompletions.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }
@@ -21,7 +21,7 @@ class VueBindFilter : WebSymbolsFilter {
                                  queryExecutor: WebSymbolsQueryExecutor,
                                  scope: List<WebSymbolsScope>,
                                  properties: Map<String, Any>): List<WebSymbol> {
-    val props = queryExecutor.runNameMatchQuery(listOf(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
+    val props = queryExecutor.runNameMatchQuery(WebSymbol.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS, "",
                                                 scope = scope).mapTo(HashSet()) { it.name }
     return matches.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }

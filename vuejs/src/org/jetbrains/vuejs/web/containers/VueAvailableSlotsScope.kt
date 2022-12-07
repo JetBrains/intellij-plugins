@@ -23,7 +23,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
 
   override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
@@ -34,7 +34,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
       getAvailableSlots(tag, name, true)
     else emptyList()
 
-  override fun getCodeCompletions(namespace: SymbolNamespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,

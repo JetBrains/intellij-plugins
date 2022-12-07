@@ -51,7 +51,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
 
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
-    override fun getSymbols(namespace: SymbolNamespace?,
+    override fun getSymbols(namespace: SymbolNamespace,
                             kind: SymbolKind,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,

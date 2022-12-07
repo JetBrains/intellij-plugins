@@ -28,7 +28,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
 
   override fun getModificationCount(): Long = 0
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,

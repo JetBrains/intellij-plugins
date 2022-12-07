@@ -20,7 +20,7 @@ class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueP
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,

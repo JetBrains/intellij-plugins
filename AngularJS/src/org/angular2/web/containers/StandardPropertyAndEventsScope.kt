@@ -33,7 +33,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
   override fun getModificationCount(): Long = templateFile.project.psiModificationCount
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,

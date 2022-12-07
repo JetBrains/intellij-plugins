@@ -921,6 +921,7 @@
               "items": [
                 {
                   "path": "/html/attributes",
+                  "includeVirtual": false,
                   "filter": "match-with-target-list",
                   "target-list": "/js/events",
                   "prefix": "update:"
