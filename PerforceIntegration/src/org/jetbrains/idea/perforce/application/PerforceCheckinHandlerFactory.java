@@ -32,11 +32,10 @@ public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
     return new CheckinHandler() {
       @Override
       public RefreshableOnComponent getBeforeCheckinConfigurationPanel() {
-        return new BooleanCommitOption(project,
-                                       PerforceBundle.message("message.revert.unchanged.files"),
-                                       false,
-                                       () -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN,
-                                       value -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN = value);
+        return BooleanCommitOption.create(project, this, false,
+                                          PerforceBundle.message("message.revert.unchanged.files"),
+                                          () -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN,
+                                          value -> PerforceSettings.getSettings(project).REVERT_UNCHANGED_FILES_CHECKIN = value);
       }
 
       @Override
