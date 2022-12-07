@@ -51,7 +51,7 @@ fun getSlotTypeFromContext(context: PsiElement): JSType? =
     ?.asCompleteType()
 
 private fun WebSymbolElementDescriptor.getSlots(name: String?): List<WebSymbol> =
-  runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name))
+  runNameMatchQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name ?:"")
 
 private fun WebSymbolElementDescriptor.getSlotsCompletions(name: String?, position: Int): List<WebSymbolCodeCompletionItem> =
-  runCodeCompletionQuery(listOfNotNull(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name), position)
+  runCodeCompletionQuery(WebSymbol.NAMESPACE_HTML, WebSymbol.KIND_HTML_SLOTS, name ?: "", position)

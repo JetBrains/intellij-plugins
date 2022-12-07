@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Symbol
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
@@ -17,7 +18,7 @@ import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
 
 fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
-  runNameMatchQuery(listOf(KIND_VUE_MODEL)).firstOrNull()
+  runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_MODEL, "").firstOrNull()
     ?.let {
       VueModelDirectiveProperties(prop = it.properties[PROP_VUE_MODEL_PROP] as? String,
                                   event = it.properties[PROP_VUE_MODEL_EVENT] as? String)

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NonNls
 
 class I18NAttributesScope(private val tag: XmlTag) : WebSymbolsScope {
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,

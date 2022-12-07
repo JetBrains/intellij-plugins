@@ -52,7 +52,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     get() = mapOf(Pair(VueWebSymbolsQueryConfigurator.PROP_VUE_PROXIMITY, vueProximity), Pair(
       VueWebSymbolsQueryConfigurator.PROP_VUE_COMPOSITION_COMPONENT, isCompositionComponent))
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: String,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,

@@ -23,7 +23,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
 
   override fun getModificationCount(): Long = 0
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
@@ -82,10 +82,10 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
                            scopeStack: Stack<WebSymbolsScope>,
                            queryExecutor: WebSymbolsQueryExecutor): List<WebSymbol> =
       queryExecutor.runNameMatchQuery(
-        listOf(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name),
+        WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES, name,
         scope = scopeStack) +
       queryExecutor.runNameMatchQuery(
-        listOf(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS, name),
+        WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS, name,
         scope = scopeStack)
 
   }
