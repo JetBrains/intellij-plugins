@@ -50,7 +50,7 @@ class VueAttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String> {
           val symbol = descriptor?.symbol
           if (symbol != null
               && WebSymbolsQueryExecutorFactory.create(attr)
-                .runNameMatchQuery(listOf(NAMESPACE_HTML, KIND_VUE_DIRECTIVE_ARGUMENT), scope = listOf(symbol))
+                .runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_DIRECTIVE_ARGUMENT, "", scope = listOf(symbol))
                 .count { !it.hideFromCompletion } == 0
           ) {
             names.add(ATTR_DIRECTIVE_PREFIX + info.name)

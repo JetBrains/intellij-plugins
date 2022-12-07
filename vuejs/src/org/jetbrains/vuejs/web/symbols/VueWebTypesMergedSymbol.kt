@@ -89,8 +89,8 @@ class VueWebTypesMergedSymbol(override val name: String,
       .distinctBy { it.key }
       .associateBy({ it.key }, { it.value })
 
-  override val queryScope: Sequence<WebSymbolsScope>
-    get() = sequenceOf(this)
+  override val queryScope: List<WebSymbolsScope>
+    get() = listOf(this)
 
   override val documentation: WebSymbolDocumentation
     get() = WebSymbolDocumentation.create(this).let { doc ->
@@ -102,7 +102,7 @@ class VueWebTypesMergedSymbol(override val name: String,
   override fun getDocumentationTarget(): DocumentationTarget =
     VueMergedSymbolDocumentationTarget(this, originalName ?: name)
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
@@ -138,7 +138,7 @@ class VueWebTypesMergedSymbol(override val name: String,
       }
     ?: emptyList()
 
-  override fun getCodeCompletions(namespace: SymbolNamespace?,
+  override fun getCodeCompletions(namespace: SymbolNamespace,
                                   kind: SymbolKind,
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,

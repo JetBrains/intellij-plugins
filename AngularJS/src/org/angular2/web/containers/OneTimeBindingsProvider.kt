@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsProvider : WebSymbolsScope {
 
-  override fun getSymbols(namespace: SymbolNamespace?,
+  override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
@@ -39,14 +39,14 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
         && params.queryExecutor.allowResolve) {
       // Avoid any conflicts with attribute selectors over the attribute value
       val attributeSelectors = params.queryExecutor
-        .runNameMatchQuery(listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name),
+        .runNameMatchQuery(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS, name ?: "",
                            scope = scope.toList())
         .filter { it.attributeValue?.required == false }
         .mapSmartSet { it.name }
 
       params.queryExecutor
         .runNameMatchQuery(
-          listOfNotNull(WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name),
+          WebSymbol.NAMESPACE_JS, KIND_NG_DIRECTIVE_INPUTS, name ?: "",
           scope = scope.toList())
         .asSequence()
         .filter { isOneTimeBindingProperty(it) }
