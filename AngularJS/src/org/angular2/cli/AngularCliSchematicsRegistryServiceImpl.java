@@ -153,10 +153,9 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
 
   private static @NotNull List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
     JsonObject contents = (JsonObject)new JsonParser().parse(content);
-    return Collections.unmodifiableList(
-      ContainerUtil.map(
-        contents.get(NG_ADD_SCHEMATIC).getAsJsonObject().entrySet(),
-        e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
+    return ContainerUtil.map(
+      contents.get(NG_ADD_SCHEMATIC).getAsJsonObject().entrySet(),
+      e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()));
   }
 
   private static @Nullable File getSchematicsCollection(@NotNull File packageJson) throws IOException {
