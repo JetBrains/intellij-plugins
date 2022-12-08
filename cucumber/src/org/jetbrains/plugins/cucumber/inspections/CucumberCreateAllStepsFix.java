@@ -1,5 +1,8 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -61,5 +64,10 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
   @Override
   protected boolean shouldRunTemplateOnStepDefinition() {
     return false;
+  }
+
+  @Override
+  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+    return IntentionPreviewInfo.EMPTY;
   }
 }
