@@ -135,8 +135,9 @@ public final class DartResolveUtil {
   public static String getLibraryName(@NotNull final PsiFile psiFile) {
     if (psiFile instanceof DartFile) {
       final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(psiFile, DartLibraryStatement.class);
-      if (libraryStatement != null) {
-        return libraryStatement.getLibraryNameElement().getName();
+      DartLibraryNameElement nameElement = libraryStatement != null ? libraryStatement.getLibraryNameElement() : null;
+      if (nameElement != null) {
+        return nameElement.getName();
       }
 
       final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class);

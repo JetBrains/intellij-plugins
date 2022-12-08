@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartLibraryStatement extends DartPsiCompositeElement {
 
-  @NotNull
+  @Nullable
   DartLibraryNameElement getLibraryNameElement();
 
   @NotNull

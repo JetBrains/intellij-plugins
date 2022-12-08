@@ -28,9 +28,9 @@ public class DartLibraryStatementImpl extends DartPsiCompositeElementImpl implem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartLibraryNameElement getLibraryNameElement() {
-    return findNotNullChildByClass(DartLibraryNameElement.class);
+    return findChildByClass(DartLibraryNameElement.class);
   }
 
   @Override
