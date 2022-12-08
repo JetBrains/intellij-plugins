@@ -9,7 +9,7 @@ import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.patterns.ComplexPatternOptions
 import com.intellij.webSymbols.patterns.WebSymbolsPattern
 import com.intellij.webSymbols.patterns.WebSymbolsPatternFactory
-import com.intellij.webSymbols.patterns.WebSymbolsPatternItemsProvider
+import com.intellij.webSymbols.patterns.WebSymbolsPatternSymbolsResolver
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutor
 import com.intellij.webSymbols.utils.match
@@ -58,13 +58,13 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
       ComplexPatternOptions(
         null, false, true,
         WebSymbol.Priority.HIGHEST, null, false, false,
-        PropertiesProvider),
+        PropertiesResolver),
       false,
-      WebSymbolsPatternFactory.createItemReferencePlaceholder(null))
+      WebSymbolsPatternFactory.createSymbolReferencePlaceholder(null))
 
   }
 
-  private object PropertiesProvider : WebSymbolsPatternItemsProvider {
+  private object PropertiesResolver : WebSymbolsPatternSymbolsResolver {
     override fun getSymbolKinds(context: WebSymbol?): Set<WebSymbolQualifiedKind> = setOf(
       WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, WebSymbol.KIND_JS_PROPERTIES),
       WebSymbolQualifiedKind(WebSymbol.NAMESPACE_JS, Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS)
