@@ -98,8 +98,13 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
       super.doHighlightingWithInvokeFixAndCheckResult(fixName, ext, *files)
     }
   }
+
   override fun testPrivateBrandCheck_js() {
     // skip
     // See https://youtrack.jetbrains.com/issue/WEB-57683/
+  }
+
+  override fun testAddExcessMembersToOtherFile() {
+    // inapplicable
   }
 }
