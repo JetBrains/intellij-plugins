@@ -454,7 +454,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     }
 
     @Override
-    protected boolean parseDialectSpecificMemberExpressionPart(Ref<PsiBuilder.Marker> markerRef) {
+    protected boolean parseDialectSpecificMemberExpressionPart(Ref<PsiBuilder.Marker> markerRef, boolean isInExtendsOrImplementsList) {
       if (builder.getTokenType() == EXCL) {
         builder.advanceLexer();
         PsiBuilder.Marker marker = markerRef.get();
