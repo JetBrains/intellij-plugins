@@ -4009,7 +4009,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'library' libraryNameElement ';'
+  // metadata* 'library' libraryNameElement? ';'
   public static boolean libraryStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryStatement")) return false;
     if (!nextTokenIs(b, "<library statement>", AT, LIBRARY)) return false;
@@ -4017,7 +4017,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, LIBRARY_STATEMENT, "<library statement>");
     r = libraryStatement_0(b, l + 1);
     r = r && consumeToken(b, LIBRARY);
-    r = r && libraryNameElement(b, l + 1);
+    r = r && libraryStatement_2(b, l + 1);
     p = r; // pin = 3
     r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
@@ -4032,6 +4032,13 @@ public class DartParser implements PsiParser, LightPsiParser {
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "libraryStatement_0", c)) break;
     }
+    return true;
+  }
+
+  // libraryNameElement?
+  private static boolean libraryStatement_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryStatement_2")) return false;
+    libraryNameElement(b, l + 1);
     return true;
   }
 
