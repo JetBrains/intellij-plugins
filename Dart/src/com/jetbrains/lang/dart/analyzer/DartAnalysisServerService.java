@@ -138,7 +138,7 @@ public final class DartAnalysisServerService implements Disposable {
   @Nullable private String mySdkHome;
 
   private final DartServerRootsHandler myRootsHandler;
-  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new HashMap<>();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = Collections.synchronizedMap(new HashMap<>());
   private final List<String> myVisibleFiles = new ArrayList<>();
   private final Set<Document> myChangedDocuments = new HashSet<>();
   private final Alarm myUpdateFilesAlarm;
@@ -916,7 +916,10 @@ public final class DartAnalysisServerService implements Disposable {
     myUpdateFilesAlarm.cancelAllRequests();
 
     final Map<String, Object> filesToUpdate = new HashMap<>();
+    final Set<String> filesToRemoveContentOverlay;
+
     ApplicationManager.getApplication().assertReadAccessAllowed();
+
     synchronized (myLock) {
       final Set<String> oldTrackedFiles = new HashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
@@ -942,29 +945,35 @@ public final class DartAnalysisServerService implements Disposable {
       }
 
       // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() anymore
-      for (String oldPath : oldTrackedFiles) {
-        final Long removed = myFilePathWithOverlaidContentToTimestamp.remove(oldPath);
-        LOG.assertTrue(removed != null, oldPath);
-        filesToUpdate.put(FileUtil.toSystemDependentName(oldPath), new RemoveContentOverlay());
+      filesToRemoveContentOverlay = Collections.unmodifiableSet(oldTrackedFiles);
+      for (String oldPath : filesToRemoveContentOverlay) {
+        if (myFilePathWithOverlaidContentToTimestamp.get(oldPath) != null) {
+          filesToUpdate.put(FileUtil.toSystemDependentName(oldPath), new RemoveContentOverlay());
+        }
       }
 
       if (LOG.isDebugEnabled()) {
         final Set<String> overlaid = new HashSet<>(filesToUpdate.keySet());
-        for (String removeOverlaid : oldTrackedFiles) {
+        for (String removeOverlaid : filesToRemoveContentOverlay) {
           overlaid.remove(FileUtil.toSystemDependentName(removeOverlaid));
         }
         if (!overlaid.isEmpty()) {
           LOG.debug("Sending overlaid content: " + StringUtil.join(overlaid, ",\n"));
         }
 
-        if (!oldTrackedFiles.isEmpty()) {
-          LOG.debug("Removing overlaid content: " + StringUtil.join(oldTrackedFiles, ",\n"));
+        if (!filesToRemoveContentOverlay.isEmpty()) {
+          LOG.debug("Removing overlaid content: " + StringUtil.join(filesToRemoveContentOverlay, ",\n"));
         }
       }
     }
 
     if (!filesToUpdate.isEmpty()) {
-      server.analysis_updateContent(filesToUpdate, myServerData::onFilesContentUpdated);
+      server.analysis_updateContent(filesToUpdate, () -> {
+        synchronized (myFilePathWithOverlaidContentToTimestamp) {
+          filesToRemoveContentOverlay.forEach(myFilePathWithOverlaidContentToTimestamp::remove);
+        }
+        myServerData.onFilesContentUpdated();
+      });
     }
   }
 
