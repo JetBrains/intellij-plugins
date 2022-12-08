@@ -237,6 +237,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 //<YYINITIAL, LONG_TEMPLATE_ENTRY> ">="               { return GT_EQ;    } breaks mixin app parsing
 //<YYINITIAL, LONG_TEMPLATE_ENTRY> ">>"               { return GT_GT;    } breaks generics parsing
 //<YYINITIAL, LONG_TEMPLATE_ENTRY> ">>="              { return GT_GT_EQ; } breaks mixin app parsing
+//<YYINITIAL, LONG_TEMPLATE_ENTRY> ">>>="             { return GT_GT_GT_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "<"                { return LT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "<="               { return LT_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "<<"               { return LT_LT; }
