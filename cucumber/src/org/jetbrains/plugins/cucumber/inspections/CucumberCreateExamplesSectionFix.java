@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.editor.Document;
@@ -85,5 +86,10 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     PsiDocumentManager.getInstance(project).commitDocument(document);
 
     editor.getCaretModel().moveToOffset(firstCellOffset);
+  }
+
+  @Override
+  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+    return IntentionPreviewInfo.EMPTY;
   }
 }
