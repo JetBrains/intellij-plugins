@@ -12,6 +12,8 @@ class Object {
     a >= 1;
     a >>= 1;
     a >> 1;
+    a >>>= 1;
+    a >>> 1;
     bar().baz();
     return 42;
   }
