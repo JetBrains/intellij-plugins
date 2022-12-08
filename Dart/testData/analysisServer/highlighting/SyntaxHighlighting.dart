@@ -113,5 +113,5 @@
   };
 }
 
-<info textAttributesKey="DART_KEYWORD">typedef</info> <info textAttributesKey="DART_CLASS">int</info> <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">Compare</info>(<info textAttributesKey="DART_CLASS">bool</info> x());
+<info textAttributesKey="DART_KEYWORD">typedef</info> <info textAttributesKey="DART_CLASS">int</info> <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">Compare</info>(<info textAttributesKey="DART_CLASS">bool</info> <info textAttributesKey="DART_PARAMETER_DECLARATION">x</info>());
 <info textAttributesKey="DART_KEYWORD">void</info> <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">f</info>(<info textAttributesKey="DART_KEYWORD">void</info> <info textAttributesKey="DART_KEYWORD">Function</info>() <info textAttributesKey="DART_PARAMETER_DECLARATION">a</info>, <info textAttributesKey="DART_CLASS">Function</info> <info textAttributesKey="DART_PARAMETER_DECLARATION">b</info>) {}
