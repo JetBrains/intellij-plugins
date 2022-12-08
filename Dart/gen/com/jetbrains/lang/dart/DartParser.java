@@ -478,7 +478,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
+  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | <<gtGtGtEq>> | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
   public static boolean assignmentOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignmentOperator")) return false;
     boolean r;
@@ -492,6 +492,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, MINUS_EQ);
     if (!r) r = consumeToken(b, LT_LT_EQ);
     if (!r) r = gtGtEq(b, l + 1);
+    if (!r) r = gtGtGtEq(b, l + 1);
     if (!r) r = consumeToken(b, AND_EQ);
     if (!r) r = consumeToken(b, AND_AND_EQ);
     if (!r) r = consumeToken(b, XOR_EQ);
@@ -1639,7 +1640,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '?..' | '...' | '...?' | '/' |
-  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | <<gtGtGt>> | <<gtGtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
@@ -1660,7 +1661,7 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '?..' | '...' | '...?' | '/' |
-  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> | <<gtGtGt>> | <<gtGtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
@@ -1715,6 +1716,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = gtGt(b, l + 1);
     if (!r) r = gtEq(b, l + 1);
     if (!r) r = gtGtEq(b, l + 1);
+    if (!r) r = gtGtGt(b, l + 1);
+    if (!r) r = gtGtGtEq(b, l + 1);
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, LBRACKET);
     if (!r) r = consumeToken(b, RBRACKET);

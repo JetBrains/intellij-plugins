@@ -213,6 +213,28 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return true;
   }
 
+  public static boolean gtGtGtEq(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, EQ)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_GT_GT_EQ);
+    return true;
+  }
+
   public static boolean failIfItLooksLikeConstantObjectExpression(PsiBuilder builder_, int level_) {
     // need to fail varAccessDeclaration parsing if this looks like constant object expression (it will be parsed later by DartNewExpression)
     final IElementType type = builder_.getTokenType();

@@ -305,6 +305,24 @@ Dart File
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('1')
                 PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(>>>=)('>>>=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
+                SHIFT_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('a')
+                  SHIFT_OPERATOR
+                    PsiElement(>>>)('>>>')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('1')
+                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     CALL_EXPRESSION
