@@ -1,3 +1,6 @@
+@Foo(bar)
+library;
+
 class NumberSyntax {
   f() {
     1; 12; 123;

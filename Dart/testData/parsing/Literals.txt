@@ -1,4 +1,19 @@
 Dart File
+  LIBRARY_STATEMENT
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('Foo')
+      ARGUMENTS
+        PsiElement(()('(')
+        ARGUMENT_LIST
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('bar')
+        PsiElement())(')')
+    PsiElement(library)('library')
+    PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')
     COMPONENT_NAME

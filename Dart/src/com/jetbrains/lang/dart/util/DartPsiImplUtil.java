@@ -134,8 +134,9 @@ public final class DartPsiImplUtil {
     final DartLibraryStatement libraryStatement = targetPsiFile == null
                                                   ? null
                                                   : PsiTreeUtil.getChildOfType(targetPsiFile, DartLibraryStatement.class);
-    if (libraryStatement != null) {
-      return libraryStatement.getLibraryNameElement().getName();
+    DartLibraryNameElement nameElement = libraryStatement != null ? libraryStatement.getLibraryNameElement() : null;
+    if (nameElement != null) {
+      return nameElement.getName();
     }
 
     return PathUtil.getFileName(uri);

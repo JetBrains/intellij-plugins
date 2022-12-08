@@ -40,8 +40,9 @@ public final class DartIndexUtil {
     DartFileIndexData result = new DartFileIndexData();
 
     final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(psiFile, DartLibraryStatement.class);
-    if (libraryStatement != null) {
-      result.setLibraryName(libraryStatement.getLibraryNameElement().getName());
+    DartLibraryNameElement nameElement = libraryStatement != null ? libraryStatement.getLibraryNameElement() : null;
+    if (nameElement != null) {
+      result.setLibraryName(nameElement.getName());
     }
 
     result.setIsPart(PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class) != null);
