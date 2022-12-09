@@ -50,11 +50,6 @@ public class DroolsFilesSearcher extends QueryExecutorBase<PsiReference, Referen
         parameters.getOptimizer().searchWord(name, parameters.getEffectiveSearchScope(), UsageSearchContext.ANY, false, search);
       }
     }
-    else if (search instanceof DroolsBeanPropertyLightVariable) {
-      final BeanProperty beanProperty = ((DroolsBeanPropertyLightVariable)search).getBeanProperty();
-
-      searchBeanPropertyElement(parameters, (BeanPropertyElement)beanProperty.getPsiElement());
-    }
     else if (search instanceof BeanPropertyElement) {
       searchBeanPropertyElement(parameters, (BeanPropertyElement)search);
     }
