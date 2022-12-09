@@ -44,7 +44,9 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
     // do not look inside archives here - it may be too expensive, fail later if not a suitable archive
     return file.isDirectory()
            ? FlashBuilderProjectFinder.isFlashBuilderProject(file.findChild(FlashBuilderImporter.DOT_PROJECT))
-           : FlashBuilderProjectFinder.isFlashBuilderProject(file) || FlashBuilderProjectFinder.hasArchiveExtension(file.getPath());
+           : FlashBuilderProjectFinder.isFlashBuilderProject(file) ||
+             file.getName().endsWith(FlashBuilderImporter.DOT_FXP) ||
+             file.getName().endsWith(FlashBuilderImporter.DOT_FXPL);
   }
 
   @Override
