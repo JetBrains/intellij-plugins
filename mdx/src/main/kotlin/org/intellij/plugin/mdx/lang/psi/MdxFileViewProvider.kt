@@ -49,7 +49,7 @@ class MdxFileViewProvider(manager: PsiManager, virtualFile: VirtualFile, eventSy
       if (psi != null && DialectDetector.isJSX(psi)) {
         val element = findElementAt(offset)
         if (element == null) {
-          return element
+          return null
         }
         if (isXmlElement(element)) {
           return element
