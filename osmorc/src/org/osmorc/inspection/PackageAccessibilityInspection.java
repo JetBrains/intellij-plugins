@@ -26,6 +26,7 @@ package org.osmorc.inspection;
 
 import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
 import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.options.OptPane;
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
@@ -52,6 +53,7 @@ import javax.swing.*;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
+import static com.intellij.codeInspection.options.OptPane.*;
 import static org.osmorc.i18n.OsmorcBundle.message;
 
 /**
@@ -64,8 +66,9 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
   public boolean checkTests = false;
 
   @Override
-  public JComponent createOptionsPanel() {
-    return new SingleCheckboxOptionsPanel(message("PackageAccessibilityInspection.ui.check.tests"), this, "checkTests");
+  public @NotNull OptPane getOptionsPane() {
+    return pane(
+      checkbox("checkTests", message("PackageAccessibilityInspection.ui.check.tests")));
   }
 
   @Override

@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.inspection;
 
+import com.intellij.codeInspection.options.OptPane;
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,6 +48,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Set;
 
+import static com.intellij.codeInspection.options.OptPane.*;
+
 /**
  * Default DOM-Model inspection for struts.xml files.
  *
@@ -63,11 +66,10 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     super(StrutsRoot.class);
   }
 
-  @Nullable
   @Override
-  public JComponent createOptionsPanel() {
-    return new SingleCheckboxOptionsPanel(
-      StrutsBundle.message("inspections.struts2.model.do.not.check.extendable.class"), this, "ignoreExtendableClass");
+  public @NotNull OptPane getOptionsPane() {
+    return pane(
+      checkbox("ignoreExtendableClass", StrutsBundle.message("inspections.struts2.model.do.not.check.extendable.class")));
   }
 
   /**
