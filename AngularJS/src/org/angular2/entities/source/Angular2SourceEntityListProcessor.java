@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.source;
 
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias;
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifierAlias;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType;
@@ -126,8 +126,8 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       }
 
       @Override
-      public void visitES6ImportSpecifierAlias(ES6ImportSpecifierAlias specifierAlias) {
-        addIfNotNull(result, specifierAlias.findAliasedElement());
+      public void visitES6ImportExportSpecifierAlias(ES6ImportExportSpecifierAlias alias) {
+        addIfNotNull(result, alias.findAliasedElement());
       }
 
       @Override

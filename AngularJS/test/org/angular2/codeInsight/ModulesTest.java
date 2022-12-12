@@ -210,6 +210,14 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                      NGXS_STORE_3_6_2_MIXED);
   }
 
+  public void testModuleReexport() {
+    doResolutionTest("module-reexport",
+                     "app.module.ts",
+                     "export class App<caret>Module {",
+                     "check.txt",
+                     ANGULAR_CORE_9_1_1_MIXED);
+  }
+
   private void doResolutionTest(@NotNull String directory,
                                 @NotNull String moduleFile,
                                 @NotNull String signature,
