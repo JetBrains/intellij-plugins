@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.clion.embedded" />
+    <orderEntry type="module" module-name="intellij.clion.embedded.plugin" />
     <orderEntry type="module" module-name="intellij.clion" />
     <orderEntry type="module" module-name="intellij.cidr.debugger" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
