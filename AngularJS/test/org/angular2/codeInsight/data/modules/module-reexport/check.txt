@@ -1,0 +1,25 @@
+AppModule: Angular2SourceModule
+  imports:
+    CustomModule: Angular2SourceModule
+      imports:
+      declarations:
+        ButtonComponent: Angular2SourceComponent
+      exports:
+        ButtonComponent: Angular2SourceComponent
+      all-exported-declarations:
+        ButtonComponent: Angular2SourceComponent
+      scope:
+        ButtonComponent: Angular2SourceComponent
+      scope fully resolved: false
+      exports fully resolved: true
+      declarations fully resolved: true
+  declarations:
+    AppComponent: Angular2SourceComponent
+  exports:
+  all-exported-declarations:
+  scope:
+    AppComponent: Angular2SourceComponent
+    ButtonComponent: Angular2SourceComponent
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true
