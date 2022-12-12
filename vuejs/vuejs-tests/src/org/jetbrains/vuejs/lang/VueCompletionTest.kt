@@ -2100,6 +2100,10 @@ export default {
     myFixture.checkResultByFile("${getTestName(true)}/test.after.vue")
   }
 
+  fun testVueTscComponent() {
+    doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, filter = { it.startsWith("!") })
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
