@@ -26,7 +26,8 @@ import org.jetbrains.vuejs.model.source.VueEntityDescriptor
 
 object VueTypedEntitiesProvider {
 
-  private val defineComponentRegex = Regex("import\\s*\\(\\s*['\"]vue['\"]\\s*\\)\\s*\\.\\s*DefineComponent")
+  private val vueComponentTypenameRegex = Regex(
+    "(import\\s*\\(\\s*['\"]vue['\"]\\s*\\)\\s*\\.\\s*)?(DefineComponent|ComponentOptionsBase|ComponentOptionsMixin|ComponentCustomProps)")
 
   fun isComponentDefinition(definition: JSQualifiedNamedElement): Boolean {
     if (definition.name == null || definition is JSField) return false
@@ -38,7 +39,7 @@ object VueTypedEntitiesProvider {
         val typeStub = (typeElement as? StubBasedPsiElement<*>)?.stub
 
         fun checkTypeName(typeName: String?) =
-          typeName != null && (typeName == "DefineComponent" || typeName.matches(defineComponentRegex))
+          typeName != null && typeName.matches(vueComponentTypenameRegex)
 
         if (typeStub != null) {
           fun visit(stub: Stub) {
