@@ -250,7 +250,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
     settings.getLanguageIndentOptions(CSSLanguage.INSTANCE).INDENT_SIZE = 3
     settings.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
-    settings.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE = 5
+    //settings.getLanguageIndentOptions(JavaScriptSupportLoader.TYPESCRIPT).INDENT_SIZE = 5 // impossible to have TS and JS in single file
     settings.getLanguageIndentOptions(SCSSLanguage.INSTANCE).INDENT_SIZE = 6
     settings.getLanguageIndentOptions(JadeLanguage.INSTANCE).INDENT_SIZE = 7
     doTestFromAbsolutePaths(Paths.get(testDataPath, basePath, "indentation.vue").toFile().toString(),

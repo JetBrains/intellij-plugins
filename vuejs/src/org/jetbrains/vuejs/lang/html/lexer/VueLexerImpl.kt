@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType.*
+import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
@@ -16,6 +17,9 @@ class VueLexerImpl(override val languageLevel: JSLanguageLevel,
                    override val project: Project?,
                    override val interpolationConfig: Pair<String, String>?)
   : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
+
+  override val langMode: LangMode = LangMode.PENDING
+  override var lexedLangMode: LangMode = LangMode.PENDING
 
   override fun isHtmlTagState(state: Int): Boolean {
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME

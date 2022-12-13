@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
@@ -321,6 +322,14 @@ Vue.options.delimiters = ['<%', '%>']
     myFixture.configureByFile(getTestName(false) + ".vue")
     myFixture.type(':')
     myFixture.type('"')
+    checkParseTree()
+  }
+
+  fun testTypingLangAttr() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    toParseTreeText(myFixture.file) // expands lazy tokens deeply
+    myFixture.type("\b\bts") // js -> ts
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
     checkParseTree()
   }
 

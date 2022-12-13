@@ -26,17 +26,17 @@ HtmlFile:MultipleInterpolationsWithNewLinesInVue.vue
         PsiWhiteSpace('\n')
         XmlToken:XML_DATA_CHARACTERS('another}}{{two}}')
         JSFile:MultipleInterpolationsWithNewLinesInVue.vue.int
-          VueJSEmbeddedExpressionContent
+          VueJSEmbeddedExpressionContent(VueJS)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('interpolation')
           PsiWhiteSpace('\n\n')
         JSFile:MultipleInterpolationsWithNewLinesInVue.vue.int
           PsiWhiteSpace('\n')
-          VueJSEmbeddedExpressionContent
+          VueJSEmbeddedExpressionContent(VueJS)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('another')
         JSFile:MultipleInterpolationsWithNewLinesInVue.vue.int
-          VueJSEmbeddedExpressionContent
+          VueJSEmbeddedExpressionContent(VueJS)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('two')
       XmlToken:XML_END_TAG_START('</')

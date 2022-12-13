@@ -29,6 +29,7 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.parser.VueExprParsing
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -46,7 +47,7 @@ class VueInjector : MultiHostInjector {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
-      VueJSLanguage.INSTANCE.displayName,
+      VueJSLanguage.INSTANCE.id, // might be slightly wrong for VueTSLanguage, but so far nothing was found
       { element ->
         (VueModelManager.findEnclosingContainer(element) as? VueSourceContainer)
           ?.delimiters
@@ -106,11 +107,11 @@ class VueInjector : MultiHostInjector {
         if (embedded != null) {
           val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
           if (literal != null && literal.isValidHost) {
-            injectInElement(literal, registrar, parent.name)
+            injectExpressionIn(literal, registrar, parent.name)
           }
         }
         else {
-          injectInElement(context, registrar, parent.name)
+          injectExpressionIn(context, registrar, parent.name)
         }
       }
       return
@@ -118,7 +119,8 @@ class VueInjector : MultiHostInjector {
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
       val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
-      injectInXmlTextByDelimiters(registrar, context, VueJSLanguage.INSTANCE,
+      val exprLanguage = VueScriptLangs.getLatestKnownLang(context).exprLang
+      injectInXmlTextByDelimiters(registrar, context, exprLanguage,
                                   braces.getFirst(), braces.getSecond(),
                                   VueExprParsing.INTERPOLATION)
     }
@@ -155,11 +157,11 @@ class VueInjector : MultiHostInjector {
              ?.let { isComponentDecorator(it) } == true
   }
 
-  private fun injectInElement(host: PsiLanguageInjectionHost,
-                              registrar: MultiHostRegistrar,
-                              attributeName: String) {
-    registrar.startInjecting(VueJSLanguage.INSTANCE, "${attributeName.replace('.', ' ')}.${VueExprParsing.EXPRESSION}")
-      .addPlace(null, null, host, ElementManipulators.getValueTextRange(host))
+  private fun injectExpressionIn(context: PsiLanguageInjectionHost, registrar: MultiHostRegistrar, attributeName: String) {
+    val exprLanguage = VueScriptLangs.getLatestKnownLang(context).exprLang
+    val extension = "${attributeName.replace('.', ' ')}.${VueExprParsing.EXPRESSION}"
+    registrar.startInjecting(exprLanguage, extension)
+      .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
       .doneInjecting()
   }
 

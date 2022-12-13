@@ -37,6 +37,7 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
+import com.intellij.psi.tree.CustomLanguageASTComparator
 import com.intellij.util.ObjectUtils
 import org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider
 import org.intellij.plugins.postcss.PostCssLanguage
@@ -45,6 +46,7 @@ import org.intellij.plugins.postcss.parser.PostCssParserDefinition
 import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport
+import org.jetbrains.vuejs.lang.html.parser.VueASTComparator
 import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
@@ -58,6 +60,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
   override fun setUp() {
     super.setUp()
+    addExplicitExtension(CustomLanguageASTComparator.EXTENSION_POINT_NAME, VueLanguage.INSTANCE, VueASTComparator())
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
                        listOf(CssEmbeddedTokenTypesProvider(), PostCssEmbeddedTokenTypesProvider()))
@@ -121,6 +124,18 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/html/parser"
 
+  fun testScriptNoLang() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script>
+      class X {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
   fun testScriptJs() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
@@ -142,6 +157,61 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <template>
         <div v-if="class {}"></div>
       </template>
+    """)
+  }
+
+  fun testScriptTypo() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="tss">
+      class X {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testScriptsWithMixedLanguages() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="ts">
+      export class X {}
+      </script>
+      <script setup>
+      class XS {}
+      </script>
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+    """)
+  }
+
+  fun testVueInnerScriptTagTS() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <script lang="ts"></script>
+      <template>
+        <script type="text/x-template" id="foo">
+          <div v-if="class {}"></div>
+        </script>
+      </template>
+    """)
+  }
+
+  fun testScriptStrangeLang1() {
+    doTestVue("""
+      <script lang="html">
+        <div v-if="true"></div>
+      </script>
+    """)
+  }
+
+  fun testScriptStrangeLang2() {
+    doTestVue("""
+      <script lang="template">
+        <div v-if="true"></div>
+      </script>
     """)
   }
 
@@ -212,6 +282,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <template>
         <a v-bind:href="url"></a>
         <a :href="url"></a>
+        <a :href=url></a>
         <a href="https://foo.bar"></a>
       </template>
     """)
@@ -292,6 +363,40 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <template><div lang="ts"><span></span></div></template>
       <template lang="html"><div lang="ts"><span></span></div></template>
     """.trimIndent())
+  }
+
+  fun testLangReparse() {
+    val baseText = """
+      <script lang="js">
+      export class X1 {}
+      </script>
+
+      <script setup>
+      class X2 {}
+      </script>
+      
+      <template>
+        <div v-text="class {}"></div>
+      </template>
+    """.trimIndent()
+    val changedText = baseText.replace("js", "ts")
+
+    val file = createFile("test.vue", baseText)
+    val fileAfter = createFile("test.vue", changedText)
+
+    val psiToStringDefault = DebugUtil.psiToString(fileAfter, true, false)
+    DebugUtil.performPsiModification<RuntimeException>("ensureCorrectReparse") {
+      val fileText = file.text
+      val diffLog = BlockSupportImpl().reparseRange(
+        file,
+        file.node,
+        TextRange.allOf(fileText),
+        fileAfter.text,
+        EmptyProgressIndicator(),
+        fileText)
+      diffLog.performActualPsiChange(file)
+    }
+    assertEquals(psiToStringDefault, DebugUtil.psiToString(file, true, false))
   }
 
   private class MockJSRootConfiguration constructor(project: Project) : JSRootConfigurationBase(project) {

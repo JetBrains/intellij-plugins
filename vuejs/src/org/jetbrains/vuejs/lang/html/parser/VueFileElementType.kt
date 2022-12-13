@@ -4,16 +4,25 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.PsiBuilderFactory
+import com.intellij.lexer.Lexer
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.psi.PsiFile
+import com.intellij.psi.StubBuilder
 import com.intellij.psi.impl.source.tree.SharedImplUtil
-import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.psi.stubs.DefaultStubBuilder
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.psi.xml.HtmlFileElementType
+import org.jetbrains.vuejs.lang.LangMode
+import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 
-class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("vue", VueLanguage.INSTANCE) {
+class VueFileElementType : IStubFileElementType<VueFileStub>("vue", VueLanguage.INSTANCE) {
   companion object {
     @JvmStatic
     val INSTANCE: VueFileElementType = VueFileElementType()
@@ -36,19 +45,46 @@ class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("vue"
     return HtmlFileElementType.getHtmlStubVersion() + VueStubElementTypes.VERSION + VueJSStubElementTypes.STUB_VERSION
   }
 
+  override fun getExternalId(): String {
+    return "$language:$this"
+  }
+
+  override fun getBuilder(): StubBuilder? {
+    return object : DefaultStubBuilder() {
+      override fun createStubForFile(file: PsiFile): StubElement<*> {
+        return if (file is VueFile) VueFileStub(file) else super.createStubForFile(file)
+      }
+    }
+  }
+
+  override fun serialize(stub: VueFileStub, dataStream: StubOutputStream) {
+    dataStream.writeName(stub.langMode.canonicalAttrValue)
+  }
+
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): VueFileStub {
+    return VueFileStub(LangMode.fromAttrValue(dataStream.readNameString()!!))
+  }
+
   override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {
     val delimiters = readDelimiters(SharedImplUtil.getContainingFile(chameleon).name)
     val languageForParser = getLanguageForParser(psi)
     // TODO support for custom delimiters - port to Angular and merge
-    if (delimiters != null
-        && languageForParser === VueLanguage.INSTANCE) {
+    if (languageForParser === VueLanguage.INSTANCE) {
       val project = psi.project
       val lexer = VueParserDefinition.createLexer(project, delimiters)
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
+      lexer as VueLexer
+      if (lexer.lexedLangMode == LangMode.PENDING) {
+        lexer.lexedLangMode = LangMode.NO_TS
+      }
+      builder.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueParsing
+      psi.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueElementTypes
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)
       val node = parser.parse(this, builder)
+
       return node.firstChildNode
     }
+
     return super.doParseContents(chameleon, psi)
   }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.lang.html.psi.impl.VueRefAttributeStubImpl;
 
 public interface VueStubElementTypes {
 
-  int VERSION = 8;
+  int VERSION = 9;
 
   VueStubBasedTagElementType STUBBED_TAG = new VueStubBasedTagElementType("STUBBED_TAG");
 

@@ -12,14 +12,13 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 
 class VueJSEmbeddedExpressionContentImpl(elementType: IElementType) : JSElementImpl(elementType),
                                                                       JSSuppressionHolder, VueJSEmbeddedExpressionContent, HintedReferenceHost {
 
   override fun getLanguage(): Language {
-    return VueJSLanguage.INSTANCE
+    return elementType.language
   }
 
   override fun accept(visitor: PsiElementVisitor) {
@@ -47,4 +46,8 @@ class VueJSEmbeddedExpressionContentImpl(elementType: IElementType) : JSElementI
   override fun getReferences(hints: PsiReferenceService.Hints): Array<PsiReference> = PsiReference.EMPTY_ARRAY
 
   override fun shouldAskParentForReferences(hints: PsiReferenceService.Hints): Boolean = false
+
+  override fun toString(): String {
+    return super.toString() + "(${language.id})"
+  }
 }

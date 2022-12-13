@@ -10,6 +10,9 @@ import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
+import org.jetbrains.vuejs.lang.LangMode
+import org.jetbrains.vuejs.lang.VueScriptLangs
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
@@ -17,6 +20,7 @@ import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
+  private val langMode: LangMode get() = builder.getUserData(VueScriptLangs.LANG_MODE)!!
 
   override fun isSingleTag(tagName: String, originalTagName: String): Boolean {
     // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
@@ -45,6 +49,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       val interpolation = mark()
       advance()
       if (token() is VueJSEmbeddedExprTokenType) {
+        maybeRemapCurrentToken(token())
         advance()
       }
       if (token() === INTERPOLATION_END) {
@@ -56,6 +61,12 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       }
     }
     return result
+  }
+
+  override fun maybeRemapCurrentToken(tokenType: IElementType) {
+    if (tokenType is VueJSEmbeddedExprTokenType) {
+      builder.remapCurrentToken(tokenType.copyWithLanguage(langMode))
+    }
   }
 
   override fun parseCustomTopLevelContent(error: PsiBuilder.Marker?): PsiBuilder.Marker? {

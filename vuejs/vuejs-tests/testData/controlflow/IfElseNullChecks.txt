@@ -1,0 +1,32 @@
+0(1) element: null
+1(2) element: VueJSEmbeddedExpressionContent(VueTS)
+2(3) element: JSReferenceExpression Read(acceptNumber)
+3(4) element: JSReferenceExpression Read(union)
+4(5) element: JSCallExpression
+5(6) element: XmlText
+6(7) element: JSFile:IfElseNullChecks.vue.int
+7(8) element: HtmlTag:div
+8(9,10) element: JSReferenceExpression Read(union)
+9(11) element: JSBinaryExpression condition: true, reachable
+10(18) element: JSBinaryExpression condition: false, reachable
+11(12) element: HtmlTag:div IF (branch) true
+12(13) element: VueJSEmbeddedExpressionContent(VueTS)
+13(14) element: JSReferenceExpression Read(acceptNumber)
+14(15) element: JSReferenceExpression Read(union)
+15(16) element: JSCallExpression
+16(17) element: XmlText
+17(25) element: JSFile:IfElseNullChecks.vue.int
+18(19) element: HtmlTag:div IF (branch) false
+19(20) element: VueJSEmbeddedExpressionContent(VueTS)
+20(21) element: JSReferenceExpression Read(acceptNumber)
+21(22) element: JSReferenceExpression Read(union)
+22(23) element: JSCallExpression
+23(24) element: XmlText
+24(25) element: JSFile:IfElseNullChecks.vue.int
+25(26) element: VueJSEmbeddedExpressionContent(VueTS)
+26(27) element: JSReferenceExpression Read(acceptNumber)
+27(28) element: JSReferenceExpression Read(union)
+28(29) element: JSCallExpression
+29(30) element: XmlText
+30(31) element: JSFile:IfElseNullChecks.vue.int
+31() element: null

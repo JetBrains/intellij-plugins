@@ -24,7 +24,7 @@ createImageBitmap#Promise<ImageBitmap>
 crossOriginIsolated#boolean
 devicePixelRatio#number
 dispatchEvent#boolean
-escape#null
+escape#string
 eval#any
 external#External
 frameElement#Element
@@ -104,7 +104,6 @@ onwebkitanimationend#(this:Window, ev: Event) => any
 onwebkitanimationiteration#(this:Window, ev: Event) => any
 onwebkitanimationstart#(this:Window, ev: Event) => any
 onwebkittransitionend#(this:Window, ev: Event) => any
-openDatabase#Database
 orientation#number
 pageXOffset#number
 pageYOffset#number
@@ -124,7 +123,12 @@ setInterval#number
 status#string
 statusbar#BarProp
 toolbar#BarProp
-unescape#null
+unescape#string
 visualViewport#VisualViewport
-webkitCancelAnimationFrame#any
-webkitRequestAnimationFrame#any
+apply#any
+compileStreaming#Promise<Module>
+escape#string
+has#boolean
+instantiate#Promise<Instance>
+instantiateStreaming#Promise<WebAssemblyInstantiatedSource>
+validate#boolean

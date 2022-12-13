@@ -79,7 +79,7 @@ HtmlFile:CustomDelimitersOldDoNotWorkInHtml.html
             PsiWhiteSpace('\n    ')
             JSFile:CustomDelimitersOldDoNotWorkInHtml.html.int
               PsiWhiteSpace(' ')
-              VueJSEmbeddedExpressionContent
+              VueJSEmbeddedExpressionContent(VueJS)
                 JSBinaryExpression
                   JSLiteralExpression
                     PsiElement(JS:NUMERIC_LITERAL)('1')

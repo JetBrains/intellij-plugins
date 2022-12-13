@@ -3,10 +3,15 @@ package org.jetbrains.vuejs.lang.html.lexer
 
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.openapi.project.Project
+import org.jetbrains.vuejs.lang.LangMode
 
 interface VueLexer {
 
   val languageLevel: JSLanguageLevel
+
+  val langMode: LangMode
+
+  var lexedLangMode: LangMode
 
   val project: Project?
 

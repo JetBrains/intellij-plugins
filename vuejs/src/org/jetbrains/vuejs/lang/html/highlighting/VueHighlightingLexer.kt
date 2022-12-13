@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE
+import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl.VueMergingLexer.Companion.getBaseLexerState
@@ -19,10 +20,13 @@ import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl.VueMergingLexer.Companio
 import org.jetbrains.vuejs.lang.html.lexer._VueLexer
 
 class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
+                           override val langMode: LangMode,
                            override val project: Project?,
                            override val interpolationConfig: Pair<String, String>?)
   : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null), VueLexer {
+
+  override var lexedLangMode: LangMode = LangMode.PENDING
 
   override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider): Boolean {
     return provider !is HtmlScriptStyleEmbeddedContentProvider

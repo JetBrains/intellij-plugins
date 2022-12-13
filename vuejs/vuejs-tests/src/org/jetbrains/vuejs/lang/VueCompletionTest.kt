@@ -1128,25 +1128,16 @@ export default class ComponentInsertion extends Vue {
 <script lang="ts">
     import { Component, Prop, Vue } from 'vue-property-decorator';
 
-    function getArr() : Promise<Array<string>> {
-        return new Promise<Array<string>>(resolve => {
-            return resolve(['1','2','3','4']);
-        })
-    }
-
     @Component
     export default class HelloWorld extends Vue {
         @Prop() private msg!: string;
         goodTypes: Array<string> = [];
-        async created (){
-            this.goodTypes = await getArr()
-        }
     }
 </script>
 """)
     myFixture.completeBasic()
 
-    checkJSStringCompletion(myFixture.lookupElements!!, true)
+    checkJSStringCompletion(myFixture.lookupElements!!, false)
   }
 
   fun testTypescriptVForCompletionWebTypes() {

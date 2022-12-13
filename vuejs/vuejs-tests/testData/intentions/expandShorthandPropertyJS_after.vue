@@ -1,6 +1,8 @@
+<script lang="js"></script>
+
 <template>
   <v-data-table>
-    <template #item.name="{ i<caret>tem }">
+    <template #item.name="{ item : item }">
       {{ item.name }}
     </template>
   </v-data-table>

@@ -27,16 +27,6 @@ export default Vue.extend({
  foo: {}
 });
 </script>
-<script lang="ts">
-import Vue from 'vue';
-
-export default Vue.extend({
- name: 'app', components: {
-  HelloWorld
- },
- foo: {}
-});
-</script>
 
 <style>
 #app {

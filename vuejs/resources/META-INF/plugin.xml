@@ -65,6 +65,7 @@
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueParserDefinition"/>
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition"/>
     <lang.parserDefinition language="VueTS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueTSParserDefinition"/>
+    <tree.CustomLanguageASTComparator language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueASTComparator"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <typedHandler implementation="org.jetbrains.vuejs.editor.VueJSBracesInterpolationTypedHandler"/>

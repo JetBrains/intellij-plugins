@@ -12,7 +12,6 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
-import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 
@@ -34,11 +33,11 @@ class VueParserDefinition : HTMLParserDefinition() {
   }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {
-    return HtmlFileImpl(viewProvider, VueFileElementType.INSTANCE)
+    return VueFile(viewProvider)
   }
 
   override fun createElement(node: ASTNode?): PsiElement {
-    if (node?.elementType === VueElementTypes.VUE_EMBEDDED_CONTENT) {
+    if (node?.elementType is VueElementTypes.EmbeddedVueContentElementType) {
       return HtmlEmbeddedContentImpl(node)
     }
     return super.createElement(node)

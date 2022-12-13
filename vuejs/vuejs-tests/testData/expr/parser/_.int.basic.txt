@@ -1,10 +1,10 @@
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSLiteralExpression
       PsiElement(JS:NUMERIC_LITERAL)('12')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSBinaryExpression
       JSBinaryExpression
         JSReferenceExpression
@@ -21,7 +21,7 @@ JSFile:test.js._.int
         PsiElement(JS:IDENTIFIER)('c')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSBinaryExpression
       JSLiteralExpression
         PsiElement(JS:TRUE_KEYWORD)('true')
@@ -32,11 +32,11 @@ JSFile:test.js._.int
         PsiElement(JS:IDENTIFIER)('b')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     <empty list>
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSBinaryExpression
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('b')
@@ -47,7 +47,7 @@ JSFile:test.js._.int
         PsiElement(JS:TRUE_KEYWORD)('true')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSBinaryExpression
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
@@ -67,7 +67,7 @@ JSFile:test.js._.int
         PsiElement(JS:NUMERIC_LITERAL)('2')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSCommaExpression
       JSCommaExpression
         JSLiteralExpression
@@ -82,7 +82,7 @@ JSFile:test.js._.int
         PsiElement(JS:NUMERIC_LITERAL)('15')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('a')
     PsiErrorElement:Statements are not allowed in Vue expressions
@@ -97,7 +97,7 @@ JSFile:test.js._.int
       PsiElement(JS:IDENTIFIER)('c')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSObjectLiteralExpression
       PsiElement(JS:LBRACE)('{')
       JSProperty
@@ -133,7 +133,7 @@ JSFile:test.js._.int
       PsiElement(JS:IDENTIFIER)('foo')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('a')
     PsiErrorElement:Expected end of expression
@@ -153,19 +153,19 @@ JSFile:test.js._.int
       PsiElement(JS:IDENTIFIER)('d')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js._.int
-  VueJSEmbeddedExpressionContent
+  VueJSEmbeddedExpressionContent(VueJS)
     PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
     PsiErrorElement:Expression expected

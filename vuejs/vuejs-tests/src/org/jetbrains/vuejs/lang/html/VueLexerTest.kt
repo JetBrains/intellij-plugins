@@ -51,8 +51,34 @@ open class VueLexerTest : LexerTestCase() {
     |</div>
   """)
 
+  fun testScriptLangTemplate() {
+    doTest("""
+      |<script lang="template">
+      |  <div v-if="true"></div>
+      |</script>
+    """, true)
+  }
+
+  fun testScriptLangEmpty() {
+    doTest("""
+      |<script lang=''><</script>
+    """, true)
+  }
+
+  fun testScriptLangBoolean() {
+    doTest("""
+      |<script lang><</script>
+    """, true)
+  }
+
+  fun testScriptLangMissing() {
+    doTest("""
+      |<script><</script>
+    """, true)
+  }
+
   fun testScriptTS() = doTest("""
-    |<script lang="typescript">
+    |<script lang="ts">
     |(() => {})();
     |</script>
   """)
