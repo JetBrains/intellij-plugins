@@ -8,26 +8,17 @@ import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.types.guard.markAsCfgAwareInjectedFile
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lexer.Lexer
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.FileViewProvider
-import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.IFileElementType
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 
 class VueJSParserDefinition : JavascriptParserDefinition() {
   companion object {
     private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
-    private val LOG = Logger.getInstance(VueJSParserDefinition::class.java)
-
-    const val EXPRESSION: String = "expr"
-    const val INTERPOLATION: String = "int"
 
     fun createLexer(project: Project?): Lexer {
       val configured = JSRootConfiguration.getInstance(project).languageLevel.dialect.optionHolder
@@ -37,35 +28,8 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun createParser(project: Project?): PsiParser {
-    return PsiParser { root, builder ->
-      val containingFile = builder.getUserData(FileContextUtil.CONTAINING_FILE_KEY)
-      if (containingFile != null) {
-        when (FileUtilRt.getExtension(containingFile.name)) {
-          EXPRESSION -> {
-            val info = containingFile.name
-              .let {
-                val lastDot = it.lastIndexOf('.')
-                val preLastDot = it.lastIndexOf('.', lastDot - 1)
-                if (preLastDot >= 0)
-                  it.substring(preLastDot + 1, lastDot)
-                    .replace(' ', '.')
-                else
-                  ""
-              }
-              .let {
-                VueAttributeNameParser.parse(it)
-              }
-            VueJSParser.parseEmbeddedExpression(builder, root, info)
-          }
-          "js" -> //special case for creation of AST from text
-            VueJSParser.parseJS(builder, root)
-          else -> VueJSParser.parseInterpolation(builder, root)
-        }
-      }
-      else {
-        LOG.error("No containing file while parsing Vue expression.")
-      }
-      return@PsiParser builder.treeBuilt
+    return object : VueExprParsing.PsiParserAdapter() {
+      override fun createExprParser(builder: PsiBuilder) = VueJSParser(builder)
     }
   }
 
@@ -83,9 +47,7 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
 
   override fun createFile(viewProvider: FileViewProvider): JSFile {
     val file = super.createFile(viewProvider)
-    if (file.name.endsWith(INTERPOLATION)) {
-      file.markAsCfgAwareInjectedFile()
-    }
+    VueExprParsing.postProcessFile(file)
     return file
   }
 }

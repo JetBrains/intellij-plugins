@@ -32,7 +32,7 @@ class VueJSEmbeddedExprTokenType private constructor(debugName: String,
   }
 
   override fun parse(builder: PsiBuilder) {
-    VueJSParser.parseEmbeddedExpression(builder, this, attributeInfo)
+    VueJSParser(builder).parseEmbeddedExpression(this, attributeInfo)
   }
 
   override fun hashCode(): Int {

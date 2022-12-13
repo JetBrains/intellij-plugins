@@ -19,29 +19,15 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_REFERENCE_E
 
 class VueJSParser(builder: PsiBuilder)
   : ES6Parser<VueJSParser.VueJSExpressionParser, ES6StatementParser<*>, ES6FunctionParser<*>,
-  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
-
-  companion object {
-    fun parseEmbeddedExpression(builder: PsiBuilder, root: IElementType, attributeInfo: VueAttributeInfo?) {
-      VueJSParser(builder).parseEmbeddedExpression(root, attributeInfo)
-    }
-
-    fun parseInterpolation(builder: PsiBuilder, root: IElementType) {
-      parseEmbeddedExpression(builder, root, null)
-    }
-
-    fun parseJS(builder: PsiBuilder, root: IElementType) {
-      VueJSParser(builder).parseJS(root)
-    }
-  }
+  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder), VueExprParsing.VueExprParser {
 
   init {
     myExpressionParser = VueJSExpressionParser(this)
   }
 
-  protected val extraParser = VueJSExtraParser(this, ::parseFilterOptional)
+  private val extraParser = VueJSExtraParser(this, ::parseFilterOptional)
 
-  fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
+  override fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
     extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSElementTypes.EMBEDDED_EXPR_CONTENT)
   }
 

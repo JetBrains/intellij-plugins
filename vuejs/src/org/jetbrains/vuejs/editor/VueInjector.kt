@@ -30,7 +30,7 @@ import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
+import org.jetbrains.vuejs.lang.expr.parser.VueExprParsing
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
@@ -120,7 +120,7 @@ class VueInjector : MultiHostInjector {
       val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
       injectInXmlTextByDelimiters(registrar, context, VueJSLanguage.INSTANCE,
                                   braces.getFirst(), braces.getSecond(),
-                                  VueJSParserDefinition.INTERPOLATION)
+                                  VueExprParsing.INTERPOLATION)
     }
     else if (context is JSLiteralExpressionImpl
              && context.isQuotedLiteral
@@ -158,7 +158,7 @@ class VueInjector : MultiHostInjector {
   private fun injectInElement(host: PsiLanguageInjectionHost,
                               registrar: MultiHostRegistrar,
                               attributeName: String) {
-    registrar.startInjecting(VueJSLanguage.INSTANCE, "${attributeName.replace('.', ' ')}.${VueJSParserDefinition.EXPRESSION}")
+    registrar.startInjecting(VueJSLanguage.INSTANCE, "${attributeName.replace('.', ' ')}.${VueExprParsing.EXPRESSION}")
       .addPlace(null, null, host, ElementManipulators.getValueTextRange(host))
       .doneInjecting()
   }
