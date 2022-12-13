@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInspection.SuppressQuickFix;
+import com.intellij.codeInspection.options.OptPane;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
@@ -11,7 +12,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -34,8 +34,8 @@ public final class TsLintInspection extends JSLinterInspection {
   }
 
   @Override
-  public JComponent createOptionsPanel() {
-    return createOptionPanelForConfigFileOption("useSeverityFromConfigFile");
+  public @NotNull OptPane getOptionsPane() {
+    return getOptionsPaneForConfigFileOption("useSeverityFromConfigFile");
   }
 
   @Override
