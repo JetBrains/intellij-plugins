@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 /**
  * Does not work inside text interpolations, because they are injected PSI.
  */
-class VueJSInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
+class VueInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
 
   override fun getShowNameForAllArgsOption(): Option {
     return NAMES_FOR_ALL_ARGS

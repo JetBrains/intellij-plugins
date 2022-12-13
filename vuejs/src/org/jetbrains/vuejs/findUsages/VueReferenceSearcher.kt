@@ -35,7 +35,7 @@ import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.VueComponents
 import java.util.*
 
-class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
+class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
 
   override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
     val element = queryParameters.elementToSearch

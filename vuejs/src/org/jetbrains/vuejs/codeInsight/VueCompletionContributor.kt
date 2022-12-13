@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeValueCompletionProvider
 import org.jetbrains.vuejs.codeInsight.attributes.VueRefValueCompletionProvider
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 
 class VueCompletionContributor : CompletionContributor() {
   init {
@@ -24,9 +24,9 @@ class VueCompletionContributor : CompletionContributor() {
            VueAttributeValueCompletionProvider())
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
            VueRefValueCompletionProvider())
-    extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
+    extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
            VueJSCompletionProvider())
-    extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
+    extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
            CssInBindingExpressionCompletionProvider())
     extend(CompletionType.BASIC,
            psiElement(JSTokenTypes.IDENTIFIER)
@@ -42,6 +42,14 @@ class VueCompletionContributor : CompletionContributor() {
     return object : PatternCondition<T>("language(" + language.id + ")") {
       override fun accepts(t: T, context: ProcessingContext): Boolean {
         return language.`is`(PsiUtilCore.findLanguageFromElement(t))
+      }
+    }
+  }
+
+  private fun <T : PsiElement> exprLanguage(): PatternCondition<T> {
+    return object : PatternCondition<T>("exprlanguage") {
+      override fun accepts(t: T, context: ProcessingContext): Boolean {
+        return VueExprMetaLanguage.matches(PsiUtilCore.findLanguageFromElement(t))
       }
     }
   }

@@ -18,7 +18,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
@@ -119,7 +119,7 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
   }
 
   private fun useTypeScriptKeyofType(collectionType: JSType): Boolean {
-    return (collectionType.isTypeScript || collectionType.sourceElement?.language == VueJSLanguage.INSTANCE)
+    return (collectionType.isTypeScript || VueExprMetaLanguage.matches(collectionType.sourceElement?.language)) // hmm
            && collectionType is JSRecordType
   }
 }

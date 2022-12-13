@@ -17,7 +17,7 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
@@ -37,7 +37,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
       val language = DialectDetector.languageOfElement(element)
       if ((VueFileType.INSTANCE == element.containingFile?.fileType
            && isInsideScript(element)
-           && VueJSLanguage.INSTANCE != language
+           && !VueExprMetaLanguage.matches(language)
            && (VueFrameworkHandler.hasComponentIndicatorProperties(element) || element.context is ES6ExportDefaultAssignment))
           || (element.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(element)
               && isVueContext(element))) {

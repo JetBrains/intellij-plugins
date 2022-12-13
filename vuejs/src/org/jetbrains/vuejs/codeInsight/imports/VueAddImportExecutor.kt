@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
 import org.jetbrains.vuejs.model.source.METHODS_PROP
 
-class VueJSAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
+class VueAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
 
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
     if (place !is JSReferenceExpression) return null

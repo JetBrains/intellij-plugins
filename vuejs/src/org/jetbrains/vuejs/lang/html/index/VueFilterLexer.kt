@@ -21,6 +21,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import kotlin.experimental.or
 
@@ -94,6 +95,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
       HTMLLanguage.INSTANCE,
       VueLanguage.INSTANCE,
       VueJSLanguage.INSTANCE,
+      VueTSLanguage.INSTANCE,
       Language.ANY
     )
 

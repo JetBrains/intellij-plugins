@@ -28,8 +28,8 @@ import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
-class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
-                                       ignorePerformanceLimits: Boolean) :
+class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl,
+                                         ignorePerformanceLimits: Boolean) :
   TypeScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits) {
 
   companion object {

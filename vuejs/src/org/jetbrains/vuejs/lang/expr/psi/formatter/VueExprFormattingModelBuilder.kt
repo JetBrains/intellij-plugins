@@ -15,7 +15,7 @@ import com.intellij.webcore.formatter.SpacingStrategy
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
-class VueJSFormattingModelBuilder : JavascriptFormattingModelBuilder() {
+class VueExprFormattingModelBuilder : JavascriptFormattingModelBuilder() {
   override fun createModel(formattingContext: FormattingContext): FormattingModel {
     val element = formattingContext.psiElement
     val settings = formattingContext.codeStyleSettings
@@ -31,7 +31,7 @@ class VueJSFormattingModelBuilder : JavascriptFormattingModelBuilder() {
                                              alignment, Indent.getNormalIndent(), null, null)
       // Wrap with a composite block to add indentation
       rootBlock = CompositeJSBlock(listOf(rootBlock), SpacingStrategy { _, _ -> null }, null,
-                                   JSFileElementType.getByLanguage(VueJSLanguage.INSTANCE), jsBlockContext)
+                                   JSFileElementType.getByLanguage(dialect), jsBlockContext)
     }
     else {
       rootBlock = jsBlockContext.createBlock(element.node, null, alignment, null, null, null)
