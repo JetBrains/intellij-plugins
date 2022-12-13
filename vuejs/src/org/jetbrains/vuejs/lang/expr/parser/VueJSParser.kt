@@ -42,13 +42,7 @@ class VueJSParser(builder: PsiBuilder)
   protected val extraParser = VueJSExtraParser(this, ::parseFilterOptional)
 
   fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
-    val rootMarker = builder.mark()
-    val statementMarker = builder.mark()
-    extraParser.parseEmbeddedExpression(attributeInfo)
-    // we need to consume rest of the tokens, even if they are not valid
-    extraParser.parseRest()
-    statementMarker.done(VueJSElementTypes.EMBEDDED_EXPR_CONTENT)
-    rootMarker.done(root)
+    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSElementTypes.EMBEDDED_EXPR_CONTENT)
   }
 
   private fun parseFilterOptional() = expressionParser.parseFilterOptional()

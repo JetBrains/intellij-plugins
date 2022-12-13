@@ -16,7 +16,17 @@ class VueJSExtraParser(parser: ES6Parser<*, *, *, *>,
                        private val parseFilterOptional: () -> Boolean) : JavaScriptParserBase<ES6Parser<*, *, *, *>>(parser) {
   private val statementParser get() = myJavaScriptParser.statementParser
 
-  fun parseEmbeddedExpression(attributeInfo: VueAttributeNameParser.VueAttributeInfo?) {
+  fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeNameParser.VueAttributeInfo?, expressionContent: IElementType) {
+    val rootMarker = builder.mark()
+    val statementMarker = builder.mark()
+    parseEmbeddedExpressionInner(attributeInfo)
+    // we need to consume the rest of the tokens, even if they are not valid
+    parseRest()
+    statementMarker.done(expressionContent)
+    rootMarker.done(root)
+  }
+
+  private fun parseEmbeddedExpressionInner(attributeInfo: VueAttributeNameParser.VueAttributeInfo?) {
     when (attributeInfo?.kind) {
       VueAttributeNameParser.VueAttributeKind.DIRECTIVE -> {
         when ((attributeInfo as VueAttributeNameParser.VueDirectiveInfo).directiveKind) {
@@ -136,7 +146,7 @@ class VueJSExtraParser(parser: ES6Parser<*, *, *, *>,
     parametersList.precede().done(exprType)
   }
 
-  internal fun parseRest(initialReported: Boolean = false) {
+  private fun parseRest(initialReported: Boolean = false) {
     var reported = initialReported
     while (!builder.eof()) {
       if (builder.tokenType === JSTokenTypes.SEMICOLON) {
