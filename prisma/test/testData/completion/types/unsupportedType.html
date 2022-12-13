@@ -1,0 +1,4 @@
+<div class='definition'><pre><span style="">Unsupported(name:&#32;String)</span></pre></div>
+<div class='content'><p>An arbitrary database column type, for which Prisma has no syntax. Fields of type <code>Unsupported</code> work with Prisma Migrate and introspection, but are not exposed in Prisma Client.</p></div>
+<table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td valign='top'><code>name</code><td style="padding-left: 15px" valign="top"/><p>Name of the column type as expected by the underlying database, e.g. Unsupported(&quot;GEOGRAPHY(POINT,4326)&quot;). This string is not validated by Prisma Migrate and will be used by Prisma Migrate to generate the DDL statements to evolve the database schema. Prisma Introspect will overwrite this when re-introspecting if the type does not match.</p></td>
+</table>

@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Model
+/// Documentation
+model User {
+  id          Int                @id @default(autoincrement())
+  email       String             @unique
+  firstName   String?
+  lastName    String?
+  social      Json?
+  isAdmin     Boolean            @default(false)
+  // Relation fields
+  courses     CourseEnrollment[]
+  testResults TestResult[]       @relation(name: "results")
+  testsGraded TestResult[]       @relation(name: "graded")
+  tokens      Token[]
+  feedback    CourseFeedback[]
+}
+
+model Token {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  type       TokenType
+  emailToken String?   @unique // Only used for short lived email tokens
+  valid      Boolean   @default(true)
+  expiration DateTime
+  // Relation fields
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int
+}
+
+model Course {
+  id            Int                         @id @default(autoincrement())
+  name          String                      @db.VarChar(255)
+  courseDetails String?
+  // Relation fields
+  members       CourseEnrollment[]
+  tests         Test[]
+  feedback      CourseFeedback[]
+  unsupported   Unsupported("MyCustomType")
+
+  @@fulltext([name, courseDetails])
+}
+
+model CourseFeedback {
+  id        Int    @id @default(autoincrement())
+  feedback  String @db.Text
+  studentId Int
+  courseId  Int
+  student   User   @relation(fields: [studentId], references: [id])
+  course    Course @relation(fields: [courseId], references: [id])
+}
+
+model CourseEnrollment {
+  createdAt DateTime @default(now())
+  role      UserRole
+  // Relation Fields
+  userId    Int
+  courseId  Int
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
+  @@index([userId, role])
+}
+
+model Test {
+  id          Int          @id @default(autoincrement())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  date        DateTime
+  // Relation Fields
+  courseId    Int
+  course      Course       @relation(fields: [courseId], references: [id])
+  testResults TestResult[]
+}
+
+model TestResult {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  result    Int // Percentage precise to one decimal point represented as `result * 10^-1`
+  // Relation Fields
+  studentId Int
+  student   User     @relation(name: "results", fields: [studentId], references: [id])
+  graderId  Int
+  gradedBy  User     @relation(name: "graded", fields: [graderId], references: [id])
+  testId    Int
+  test      Test     @relation(fields: [testId], references: [id])
+
+  @@index([result, createdAt(sort: Desc)])
+}
+
+enum UserRole {
+  STUDENT
+  TEACHER
+}
+
+enum TokenType {
+  EMAIL // used as a short lived token sent to the user's email
+  API
+}
+
+type CUID = String @id @default(cuid())
+
+model TypeWithReserved {
+  generator  String @id
+  datasource String
+  model      String
+  type       String
+  enum       String
+}

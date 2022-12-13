@@ -1,0 +1,7 @@
+model User {
+  parent User
+}
+model Account {
+  user       U<caret>ser
+  oldAccount User
+}
