@@ -1,0 +1,9 @@
+model Post {
+  id   Int  @default(autoincrement())
+  lang Lang @default(E<caret>N)
+}
+
+enum Lang {
+  EN
+  FR
+}

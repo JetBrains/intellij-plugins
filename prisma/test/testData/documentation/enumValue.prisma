@@ -1,0 +1,8 @@
+enum L<caret>ang {
+  EN
+  /// Skip
+
+  /// Enum
+  /// Doc
+  F<caret>R /// Skip
+}

@@ -1,0 +1,22 @@
+/// Skip
+
+/// Model
+/// Doc
+model Use<caret>r {
+  id          Int                @id @default(autoincrement())
+  email       String             @unique
+  firstName   String?
+  lastName    String?
+  social      Json?
+  isAdmin     Boolean            @default(false)
+  // Relation fields
+  courses     CourseEnrollment[]
+  testResults TestResult[]       @relation(name: "results")
+  testsGraded TestResult[]       @relation(name: "graded")
+  tokens      Token[]
+  feedback    CourseFeedback[]
+  unsup       Unsupported("123")
+
+  @@index([result, createdAt(sort: Desc)])
+  @@ignore
+}

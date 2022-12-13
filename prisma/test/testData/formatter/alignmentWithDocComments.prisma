@@ -1,0 +1,17 @@
+/// Model
+/// Comment
+/// Multiline
+model User {
+  id                     Int     @id
+  email                  String  @unique
+  firstName              String? /// trailing doc comment 1
+  lastName               String? /// trailing doc comment 2
+  /// social field doc comment
+  social                 Json?
+  isAdmin                Boolean @default(false)
+  /// Courses
+  /// Field
+
+  /// Documentation
+  courses            CourseEnrollmentVeryLongType[]    /// comment
+}

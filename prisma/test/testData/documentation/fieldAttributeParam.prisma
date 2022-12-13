@@ -1,0 +1,3 @@
+model M {
+  id Int @relation(fi<caret>elds: [])
+}

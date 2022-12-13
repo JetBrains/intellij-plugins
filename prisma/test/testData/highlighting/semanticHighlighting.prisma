@@ -1,0 +1,129 @@
+generator <info descr="PRISMA_TYPE_NAME">client</info> {
+    <info descr="PRISMA_FIELD_NAME">provider</info> = "prisma-client-js"
+}
+
+datasource <info descr="PRISMA_TYPE_NAME">db</info> {
+    <info descr="PRISMA_FIELD_NAME">provider</info> = "postgresql"
+    <info descr="PRISMA_FIELD_NAME">url</info>      = <info descr="PRISMA_FUNCTION">env</info>("DATABASE_URL")
+}
+
+/// Model
+/// Documentation
+model <info descr="PRISMA_TYPE_NAME">User</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>          <info descr="PRISMA_TYPE_REFERENCE">Int</info>                <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">autoincrement</info>())
+    <info descr="PRISMA_FIELD_NAME">email</info>       <info descr="PRISMA_TYPE_REFERENCE">String</info>             <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">unique</info>
+    <info descr="PRISMA_FIELD_NAME">firstName</info>   <info descr="PRISMA_TYPE_REFERENCE">String</info>?
+    <info descr="PRISMA_FIELD_NAME">lastName</info>    <info descr="PRISMA_TYPE_REFERENCE">String</info>?
+    <info descr="PRISMA_FIELD_NAME">social</info>      <info descr="PRISMA_TYPE_REFERENCE">Json</info>?
+    <info descr="PRISMA_FIELD_NAME">isAdmin</info>     <info descr="PRISMA_TYPE_REFERENCE">Boolean</info>            <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FIELD_REFERENCE">false</info>)
+    // Relation fields
+    <info descr="PRISMA_FIELD_NAME">courses</info>     <info descr="PRISMA_TYPE_REFERENCE">CourseEnrollment</info>[]
+    <info descr="PRISMA_FIELD_NAME">testResults</info> <info descr="PRISMA_TYPE_REFERENCE">TestResult</info>[]       <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">name</info>: "results")
+    <info descr="PRISMA_FIELD_NAME">testsGraded</info> <info descr="PRISMA_TYPE_REFERENCE">TestResult</info>[]       <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">name</info>: "graded")
+    <info descr="PRISMA_FIELD_NAME">tokens</info>      <info descr="PRISMA_TYPE_REFERENCE">Token</info>[]
+    <info descr="PRISMA_FIELD_NAME">feedback</info>    <info descr="PRISMA_TYPE_REFERENCE">CourseFeedback</info>[]
+    <info descr="PRISMA_FIELD_NAME">unsup</info>       Unsupported("123")
+}
+
+model <info descr="PRISMA_TYPE_NAME">Token</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>         <info descr="PRISMA_TYPE_REFERENCE">Int</info>       <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">autoincrement</info>())
+    <info descr="PRISMA_FIELD_NAME">createdAt</info>  <info descr="PRISMA_TYPE_REFERENCE">DateTime</info>  <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">now</info>())
+    <info descr="PRISMA_FIELD_NAME">updatedAt</info>  <info descr="PRISMA_TYPE_REFERENCE">DateTime</info>  <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">updatedAt</info>
+    <info descr="PRISMA_FIELD_NAME">type</info>       <info descr="PRISMA_TYPE_REFERENCE">TokenType</info>
+    <info descr="PRISMA_FIELD_NAME">emailToken</info> <info descr="PRISMA_TYPE_REFERENCE">String</info>?   <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">unique</info> // Only used for short lived email tokens
+    <info descr="PRISMA_FIELD_NAME">valid</info>      <info descr="PRISMA_TYPE_REFERENCE">Boolean</info>   <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FIELD_REFERENCE">true</info>)
+    <info descr="PRISMA_FIELD_NAME">expiration</info> <info descr="PRISMA_TYPE_REFERENCE">DateTime</info>
+    // Relation fields
+    <info descr="PRISMA_FIELD_NAME">user</info>       <info descr="PRISMA_TYPE_REFERENCE">User</info>      <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">userId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+    <info descr="PRISMA_FIELD_NAME">userId</info>     <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+}
+
+model <info descr="PRISMA_TYPE_NAME">Course</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>            <info descr="PRISMA_TYPE_REFERENCE">Int</info>                <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">autoincrement</info>())
+    <info descr="PRISMA_FIELD_NAME">name</info>          <info descr="PRISMA_TYPE_REFERENCE">String</info>             <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">db</info>.<info descr="PRISMA_ATTRIBUTE">VarChar</info>(255)
+    <info descr="PRISMA_FIELD_NAME">courseDetails</info> <info descr="PRISMA_TYPE_REFERENCE">String</info>?
+    // Relation fields
+    <info descr="PRISMA_FIELD_NAME">members</info>       <info descr="PRISMA_TYPE_REFERENCE">CourseEnrollment</info>[]
+    <info descr="PRISMA_FIELD_NAME">tests</info>         <info descr="PRISMA_TYPE_REFERENCE">Test</info>[]
+    <info descr="PRISMA_FIELD_NAME">feedback</info>      <info descr="PRISMA_TYPE_REFERENCE">CourseFeedback</info>[]
+
+    <info descr="PRISMA_ATTRIBUTE">@@</info><info descr="PRISMA_ATTRIBUTE">fulltext</info>([<info descr="PRISMA_FIELD_REFERENCE">name</info>, <info descr="PRISMA_FIELD_REFERENCE">courseDetails</info>])
+}
+
+model <info descr="PRISMA_TYPE_NAME">CourseFeedback</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>        <info descr="PRISMA_TYPE_REFERENCE">Int</info>    <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">autoincrement</info>())
+    <info descr="PRISMA_FIELD_NAME">feedback</info>  <info descr="PRISMA_TYPE_REFERENCE">String</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">db</info>.<info descr="PRISMA_ATTRIBUTE">Text</info>
+    <info descr="PRISMA_FIELD_NAME">studentId</info> <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">courseId</info>  <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">student</info>   <info descr="PRISMA_TYPE_REFERENCE">User</info>   <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">studentId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+    <info descr="PRISMA_FIELD_NAME">course</info>    <info descr="PRISMA_TYPE_REFERENCE">Course</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">courseId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+}
+
+model <info descr="PRISMA_TYPE_NAME">CourseEnrollment</info> {
+    <info descr="PRISMA_FIELD_NAME">createdAt</info> <info descr="PRISMA_TYPE_REFERENCE">DateTime</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">now</info>())
+    <info descr="PRISMA_FIELD_NAME">role</info>      <info descr="PRISMA_TYPE_REFERENCE">UserRole</info>
+    // Relation Fields
+    <info descr="PRISMA_FIELD_NAME">userId</info>    <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">courseId</info>  <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">user</info>      <info descr="PRISMA_TYPE_REFERENCE">User</info>     <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">userId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+    <info descr="PRISMA_FIELD_NAME">course</info>    <info descr="PRISMA_TYPE_REFERENCE">Course</info>   <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">courseId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+
+    <info descr="PRISMA_ATTRIBUTE">@@</info><info descr="PRISMA_ATTRIBUTE">id</info>([<info descr="PRISMA_FIELD_REFERENCE">userId</info>, <info descr="PRISMA_FIELD_REFERENCE">courseId</info>])
+    <info descr="PRISMA_ATTRIBUTE">@@</info><info descr="PRISMA_ATTRIBUTE">index</info>([<info descr="PRISMA_FIELD_REFERENCE">userId</info>, <info descr="PRISMA_FIELD_REFERENCE">role</info>])
+}
+
+model <info descr="PRISMA_TYPE_NAME">Test</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>          <info descr="PRISMA_TYPE_REFERENCE">Int</info>          <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">autoincrement</info>())
+    <info descr="PRISMA_FIELD_NAME">updatedAt</info>   <info descr="PRISMA_TYPE_REFERENCE">DateTime</info>     <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">updatedAt</info>
+    <info descr="PRISMA_FIELD_NAME">name</info>        <info descr="PRISMA_TYPE_REFERENCE">String</info>
+    <info descr="PRISMA_FIELD_NAME">date</info>        <info descr="PRISMA_TYPE_REFERENCE">DateTime</info>
+    // Relation Fields
+    <info descr="PRISMA_FIELD_NAME">courseId</info>    <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">course</info>      <info descr="PRISMA_TYPE_REFERENCE">Course</info>       <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">courseId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+    <info descr="PRISMA_FIELD_NAME">testResults</info> <info descr="PRISMA_TYPE_REFERENCE">TestResult</info>[]
+}
+
+model <info descr="PRISMA_TYPE_NAME">TestResult</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>        <info descr="PRISMA_TYPE_REFERENCE">Int</info>      <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">autoincrement</info>())
+    <info descr="PRISMA_FIELD_NAME">createdAt</info> <info descr="PRISMA_TYPE_REFERENCE">DateTime</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">now</info>())
+    <info descr="PRISMA_FIELD_NAME">result</info>    <info descr="PRISMA_TYPE_REFERENCE">Int</info> // Percentage precise to one decimal point represented as `result * 10^-1`
+    // Relation Fields
+    <info descr="PRISMA_FIELD_NAME">studentId</info> <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">student</info>   <info descr="PRISMA_TYPE_REFERENCE">User</info>     <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">name</info>: "results", <info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">studentId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+    <info descr="PRISMA_FIELD_NAME">graderId</info>  <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">gradedBy</info>  <info descr="PRISMA_TYPE_REFERENCE">User</info>     <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">name</info>: "graded", <info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">graderId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+    <info descr="PRISMA_FIELD_NAME">testId</info>    <info descr="PRISMA_TYPE_REFERENCE">Int</info>
+    <info descr="PRISMA_FIELD_NAME">test</info>      <info descr="PRISMA_TYPE_REFERENCE">Test</info>     <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">relation</info>(<info descr="PRISMA_PARAMETER">fields</info>: [<info descr="PRISMA_FIELD_REFERENCE">testId</info>], <info descr="PRISMA_PARAMETER">references</info>: [<info descr="PRISMA_FIELD_REFERENCE">id</info>])
+
+    <info descr="PRISMA_ATTRIBUTE">@@</info><info descr="PRISMA_ATTRIBUTE">index</info>([<info descr="PRISMA_FIELD_REFERENCE">result</info>, <info descr="PRISMA_FIELD_REFERENCE">createdAt</info>(<info descr="PRISMA_PARAMETER">sort</info>: <info descr="PRISMA_FIELD_REFERENCE">Desc</info>)])
+}
+
+type <info descr="PRISMA_TYPE_NAME">TypeDefinition</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info>  <info descr="PRISMA_TYPE_REFERENCE">String</info>
+}
+
+enum <info descr="PRISMA_TYPE_NAME">UserRole</info> {
+    <info descr="PRISMA_FIELD_NAME">STUDENT</info>
+    <info descr="PRISMA_FIELD_NAME">TEACHER</info>
+}
+
+enum <info descr="PRISMA_TYPE_NAME">TokenType</info> {
+    <info descr="PRISMA_FIELD_NAME">EMAIL</info> // used as a short lived token sent to the user's email
+    <info descr="PRISMA_FIELD_NAME">API</info>
+}
+
+type <info descr="PRISMA_TYPE_NAME">CUID</info> = <info descr="PRISMA_TYPE_REFERENCE">String</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">default</info>(<info descr="PRISMA_FUNCTION">cuid</info>())
+
+model <info descr="PRISMA_TYPE_NAME">TypeWithReserved</info> {
+    <info descr="PRISMA_FIELD_NAME">generator</info>  <info descr="PRISMA_TYPE_REFERENCE">String</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info>
+    <info descr="PRISMA_FIELD_NAME">datasource</info> <info descr="PRISMA_TYPE_REFERENCE">String</info>
+    <info descr="PRISMA_FIELD_NAME">model</info>      <info descr="PRISMA_TYPE_REFERENCE">String</info>
+    <info descr="PRISMA_FIELD_NAME">type</info>       <info descr="PRISMA_TYPE_REFERENCE">String</info>
+    <info descr="PRISMA_FIELD_NAME">enum</info>       <info descr="PRISMA_TYPE_REFERENCE">String</info>
+}
+
+model <info descr="PRISMA_TYPE_NAME">Post</info> {
+    <info descr="PRISMA_FIELD_NAME">id</info> <info descr="PRISMA_TYPE_REFERENCE">Int</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">id</info> <info descr="PRISMA_ATTRIBUTE">@</info><info descr="PRISMA_ATTRIBUTE">db</info>.<info descr="PRISMA_ATTRIBUTE">SmallInt</info>
+
+    <info descr="PRISMA_ATTRIBUTE">@@</info><info descr="PRISMA_ATTRIBUTE">index</info>([<info descr="PRISMA_FIELD_REFERENCE">id</info>(<info descr="PRISMA_PARAMETER">ops</info>: <info descr="PRISMA_FIELD_REFERENCE">Int2MinMaxMultiOps</info>)], <info descr="PRISMA_PARAMETER">type</info>: <info descr="PRISMA_FIELD_REFERENCE">Brin</info>)
+}

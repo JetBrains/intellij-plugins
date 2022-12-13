@@ -1,0 +1,4 @@
+model User {
+  id  Int @id @db.Object.Some.Field
+  ref Int @relation(fields: [some.type.field])
+}

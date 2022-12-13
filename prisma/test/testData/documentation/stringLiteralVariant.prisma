@@ -1,0 +1,3 @@
+generator client {
+  binaryTargets = ["<caret>debian-openssl-1.1.x"]
+}

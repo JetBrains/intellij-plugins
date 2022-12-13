@@ -1,0 +1,100 @@
+<idea-plugin>
+    <id>org.intellij.prisma</id>
+    <name>Prisma</name>
+    <vendor>JetBrains</vendor>
+    <resource-bundle>messages.PrismaBundle</resource-bundle>
+    <description><![CDATA[
+    Support for <a href="https://www.prisma.io">Prisma</a> ORM.
+
+    <h3>Features</h3>
+
+    <ul>
+      <li>Prisma Schema Language grammar support</li>
+      <li>Semantic syntax highlighting</li>
+      <li>Code completion</li>
+      <li>Documentation</li>
+      <li>Line commenter</li>
+      <li>Reader mode for comments with Markdown support</li>
+      <li>Braces and quotes automatic insertion</li>
+      <li>Rename refactoring</li>
+      <li>Structure view</li>
+      <li>Folding</li>
+      <li>LSP support</li>
+      <li>Improved completion and resolve for generated Prisma client</li>
+    </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.ultimate</depends>
+    <depends>JavaScript</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Language -->
+        <fileType name="Prisma"
+                  language="Prisma"
+                  implementationClass="org.intellij.prisma.lang.PrismaFileType"
+                  extensions="prisma"
+                  fieldName="INSTANCE"/>
+        <lang.parserDefinition language="Prisma"
+                               implementationClass="org.intellij.prisma.lang.parser.PrismaParserDefinition"/>
+
+        <!-- Syntax Highlighting -->
+        <lang.syntaxHighlighter language="Prisma"
+                                implementationClass="org.intellij.prisma.ide.highlighting.PrismaSyntaxHighlighter"/>
+        <colorSettingsPage implementation="org.intellij.prisma.ide.highlighting.PrismaColorSettingsPage"/>
+        <annotator language="Prisma"
+                   implementationClass="org.intellij.prisma.ide.highlighting.PrismaHighlightingAnnotator"/>
+
+        <!-- Editor -->
+        <lang.commenter language="Prisma"
+                        implementationClass="org.intellij.prisma.ide.editor.PrismaCommenter"/>
+        <lang.braceMatcher language="Prisma"
+                           implementationClass="org.intellij.prisma.ide.editor.PrismaBraceMatcher"/>
+        <lang.quoteHandler language="Prisma"
+                           implementationClass="org.intellij.prisma.ide.editor.PrismaQuoteHandler"/>
+        <typedHandler implementation="org.intellij.prisma.ide.editor.PrismaTypedHandler"
+                      order="first, before completionAutoPopup"/>
+
+        <!-- Handlers -->
+        <enterBetweenBracesDelegate language="Prisma"
+                                    implementationClass="com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesAndBracketsDelegate"/>
+
+        <!-- Code Style -->
+        <langCodeStyleSettingsProvider
+                implementation="org.intellij.prisma.ide.formatter.settings.PrismaLanguageCodeStyleSettingsProvider"/>
+
+        <!-- Formatter -->
+        <lang.formatter language="Prisma"
+                        implementationClass="org.intellij.prisma.ide.formatter.PrismaFormattingModelBuilder"/>
+        <postFormatProcessor
+                implementation="org.intellij.prisma.ide.formatter.PrismaTrailingSpacesFormatProcessor"/>
+
+        <!-- Documentation -->
+        <lang.documentationProvider language="Prisma"
+                                    implementationClass="org.intellij.prisma.ide.documentation.PrismaDocumentationProvider"/>
+
+        <!-- Completion -->
+        <completion.contributor language="Prisma"
+                                implementationClass="org.intellij.prisma.ide.completion.PrismaCompletionContributor"/>
+        <lookup.charFilter implementation="org.intellij.prisma.ide.completion.PrismaCharFilter"/>
+
+        <!-- Indexing -->
+        <additionalLibraryRootsProvider
+                implementation="org.intellij.prisma.ide.indexing.PrismaAdditionalLibraryRootsProvider"/>
+
+        <!-- Refactoring -->
+        <lang.refactoringSupport language="Prisma"
+                                 implementationClass="org.intellij.prisma.ide.refactoring.PrismaRefactoringSupport"/>
+
+        <!-- Structure view -->
+        <lang.psiStructureViewFactory language="Prisma"
+                                      implementationClass="org.intellij.prisma.ide.structureview.PrismaStructureViewFactory"/>
+
+        <!-- Folding -->
+        <lang.foldingBuilder language="Prisma"
+                             implementationClass="org.intellij.prisma.ide.folding.PrismaFoldingBuilder"/>
+
+        <!-- LSP -->
+        <lsp.serverSupportProvider language="Prisma"
+                                   implementationClass="org.intellij.prisma.ide.lsp.PrismaLspServerSupportProvider"/>
+    </extensions>
+</idea-plugin>

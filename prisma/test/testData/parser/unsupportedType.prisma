@@ -1,0 +1,17 @@
+model User {
+  unsup       Unsupported("")
+
+  @@index([result, createdAt(sort: Desc)])
+  @@ignore
+}
+
+model M {
+  id Unsupported("asd") @id
+  sdd Int
+}
+
+model M1 {
+  id Unsupported // invalid
+  sdd Int
+  sd Unsupported("dfg")
+}

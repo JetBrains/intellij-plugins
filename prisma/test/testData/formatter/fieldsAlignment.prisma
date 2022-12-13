@@ -1,0 +1,27 @@
+model User {
+  id Int @id
+  id  Int   // comment
+  courses CourseEnrollmentLongType @id // comment
+  // comment
+  oneMoreLongField CourseEnrollmentLongType @id // comment
+  // comment
+  // comment
+  // comment
+  oneEvenLongerMoreLongField CourseEnrollmentLongType @id // comment
+
+  name String @ignore
+}
+
+type UserType {
+  id Int @id
+  id  Int   // comment
+  courses CourseEnrollmentLongType @id // comment
+  // comment
+  oneMoreLongField CourseEnrollmentLongType @id // comment
+  // comment
+  // comment
+  // comment
+  oneEvenLongerMoreLongField CourseEnrollmentLongType @id // comment
+
+  name String @ignore
+}
