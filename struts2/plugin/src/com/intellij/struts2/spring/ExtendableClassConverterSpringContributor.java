@@ -62,17 +62,9 @@ final class ExtendableClassConverterSpringContributor
    */
   @Override
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
-    final Module module = convertContext.getModule();
-    if (module == null) {
-      return false;
-    }
+    if (!SpringCommonUtils.isSpringConfigured(convertContext.getModule())) return false;
 
-    if (!SpringCommonUtils.hasSpringFacet(module)) {
-      return false;
-    }
-
-    return DomJavaUtil.findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
-                                 convertContext.getInvocationElement()) != null;
+    return DomJavaUtil.findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS, convertContext.getInvocationElement()) != null;
   }
 
   @Override
