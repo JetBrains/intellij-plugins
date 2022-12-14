@@ -168,4 +168,8 @@ public class DartParsingTest extends ParsingTestCase {
   public void testUnifiedCollections() {
     doTest();
   }
+
+  public void testRecords() {
+    doTest();
+  }
 }
