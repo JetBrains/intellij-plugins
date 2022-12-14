@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartLiteralExpression extends DartExpression, DartReference {
+public interface DartRecord extends DartPsiCompositeElement {
 
-  @Nullable
-  DartRecord getRecord();
+  @NotNull
+  List<DartRecordField> getRecordFieldList();
 
 }
