@@ -604,8 +604,8 @@ left isExpression ::= 'is' '!'? type
 left asExpression ::= 'as' type
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-private primary ::=  literalExpression |
-                     functionExpression |
+private primary ::=  functionExpression |
+                     literalExpression |
                      newExpression | // constant object expression is also parsed as newExpression
                      refOrThisOrSuperOrParenExpression |
                      throwExpression
@@ -654,8 +654,12 @@ private newExpressionWithKeyword ::= ('new' | 'const') type ('.' (referenceExpre
 throwExpression ::= 'throw' expression
 
 // todo get rid of all Wrappers and WITHOUT_CASCADE user data, implement expression parsing according to the spec and Grammar-Kit docs
-literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
+literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression |
+                      <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>> | record
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+
+record ::= 'const'? '(' !(expression ')') recordField ( ',' recordField )* ','? ')'
+recordField ::= (<<nonStrictID>> ':' )? expression
 
 symbolLiteralExpression ::= '#' ('void' | userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
 

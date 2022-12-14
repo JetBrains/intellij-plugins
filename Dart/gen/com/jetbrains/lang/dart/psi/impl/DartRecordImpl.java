@@ -11,15 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartLiteralExpressionImpl extends DartClassReferenceImpl implements DartLiteralExpression {
+public class DartRecordImpl extends DartPsiCompositeElementImpl implements DartRecord {
 
-  public DartLiteralExpressionImpl(ASTNode node) {
+  public DartRecordImpl(@NotNull ASTNode node) {
     super(node);
   }
 
-  @Override
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitLiteralExpression(this);
+    visitor.visitRecord(this);
   }
 
   @Override
@@ -29,9 +28,9 @@ public class DartLiteralExpressionImpl extends DartClassReferenceImpl implements
   }
 
   @Override
-  @Nullable
-  public DartRecord getRecord() {
-    return findChildByClass(DartRecord.class);
+  @NotNull
+  public List<DartRecordField> getRecordFieldList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartRecordField.class);
   }
 
 }
