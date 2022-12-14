@@ -105,6 +105,8 @@ public interface DartTokenTypes {
   IElementType PART_STATEMENT = new DartElementType("PART_STATEMENT");
   IElementType PREFIX_EXPRESSION = new DartElementType("PREFIX_EXPRESSION");
   IElementType PREFIX_OPERATOR = new DartElementType("PREFIX_OPERATOR");
+  IElementType RECORD = new DartElementType("RECORD");
+  IElementType RECORD_FIELD = new DartElementType("RECORD_FIELD");
   IElementType REDIRECTION = new DartElementType("REDIRECTION");
   IElementType REFERENCE_EXPRESSION = new DartElementType("REFERENCE_EXPRESSION");
   IElementType RELATIONAL_OPERATOR = new DartElementType("RELATIONAL_OPERATOR");
@@ -579,6 +581,12 @@ public interface DartTokenTypes {
       }
       else if (type == PREFIX_OPERATOR) {
         return new DartPrefixOperatorImpl(node);
+      }
+      else if (type == RECORD) {
+        return new DartRecordImpl(node);
+      }
+      else if (type == RECORD_FIELD) {
+        return new DartRecordFieldImpl(node);
       }
       else if (type == REDIRECTION) {
         return new DartRedirectionImpl(node);
