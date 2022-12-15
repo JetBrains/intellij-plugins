@@ -63,6 +63,8 @@
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueParserDefinition"/>
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition"/>
+    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
+    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <typedHandler implementation="org.jetbrains.vuejs.editor.VueJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
     <annotator language="VueJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
@@ -84,8 +86,6 @@
 
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before web-symbols-react"/>
     <xml.xmlSuppressionProvider implementation="org.jetbrains.vuejs.inspections.VueXmlSuppressionProvider" order="first"/>
-    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
-    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <notificationGroup displayType="BALLOON" id="Vue" isLogByDefault="true"
                        bundle="messages.VueBundle" key="vue.documentation.vue"/>
 
@@ -349,6 +349,7 @@
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <dialectSpecificHandlersFactory language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <handlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSHandlersFactory"/>
+    <analysisHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueJSAnalysisHandlersFactory"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFrameworkSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
@@ -357,7 +358,6 @@
                               implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexFrameworkSpecificHandler"/>
-    <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.inspections.VueAnalysisHandlersFactory" language="VueJS"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
     <importModulePathStrategy implementation="org.jetbrains.vuejs.lang.VueImportModulePathStrategy"/>
     <!--suppress PluginXmlValidity -->

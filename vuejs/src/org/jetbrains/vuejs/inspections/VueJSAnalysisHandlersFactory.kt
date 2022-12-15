@@ -14,7 +14,7 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
-class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
+class VueJSAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
 
   override fun getFunctionSignatureChecker(holder: ProblemsHolder): JSFunctionSignatureChecker {
     val typeChecker = getTypeChecker(holder)
