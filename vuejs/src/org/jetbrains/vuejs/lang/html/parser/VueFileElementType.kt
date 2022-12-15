@@ -43,8 +43,8 @@ class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>("vue"
     if (delimiters != null
         && languageForParser === VueLanguage.INSTANCE) {
       val project = psi.project
-      val builder = PsiBuilderFactory.getInstance().createBuilder(
-        project, chameleon, VueParserDefinition.createLexer(project, delimiters), languageForParser, chameleon.chars)
+      val lexer = VueParserDefinition.createLexer(project, delimiters)
+      val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)
       val node = parser.parse(this, builder)
       return node.firstChildNode

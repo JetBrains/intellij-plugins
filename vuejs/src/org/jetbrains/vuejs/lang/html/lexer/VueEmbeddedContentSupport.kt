@@ -7,6 +7,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lexer.BaseHtmlLexer
+import com.intellij.lexer.HtmlRawTextLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
@@ -29,11 +30,16 @@ class VueEmbeddedContentSupport : HtmlEmbeddedContentSupport {
   override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is VueLexer
 
   override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> =
-    listOf(VueAttributeEmbeddedContentProvider(lexer), VueTagEmbeddedContentProvider(lexer),
-           HtmlTokenEmbeddedContentProvider(
-             lexer, INTERPOLATION_EXPR,
-             { VueJSSyntaxHighlighter().highlightingLexer },
-             { VueJSEmbeddedExprTokenType.createInterpolationExpression((lexer as VueLexer).project) }))
+    listOf(
+      VueAttributeEmbeddedContentProvider(lexer),
+      VueTagEmbeddedContentProvider(lexer),
+      HtmlTokenEmbeddedContentProvider(
+        lexer,
+        INTERPOLATION_EXPR,
+        { VueJSSyntaxHighlighter().highlightingLexer },
+        { VueJSEmbeddedExprTokenType.createInterpolationExpression((lexer as VueLexer).project) }
+      )
+    )
 }
 
 class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeEmbeddedContentProvider(lexer) {
@@ -45,19 +51,14 @@ class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeE
     super.handleToken(tokenType, range)
     when (tokenType) {
       XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER -> injectEmpty = true
-      XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER -> {
-      }
+      XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER -> Unit
       else -> injectEmpty = false
     }
   }
 
-  override fun isInterestedInTag(tagName: CharSequence): Boolean {
-    return true
-  }
+  override fun isInterestedInTag(tagName: CharSequence): Boolean = true
 
-  override fun isInterestedInAttribute(attributeName: CharSequence): Boolean {
-    return true
-  }
+  override fun isInterestedInAttribute(attributeName: CharSequence): Boolean = true
 
   override fun isStartOfEmbedment(tokenType: IElementType): Boolean =
     super.isStartOfEmbedment(tokenType)
@@ -87,8 +88,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
   private val project get() = (lexer as VueLexer).project
   private val interpolationConfig get() = (lexer as VueLexer).interpolationConfig
 
-  private val interestingTags: List<String> = listOf(HtmlUtil.TEMPLATE_TAG_NAME, HtmlUtil.SCRIPT_TAG_NAME,
-                                                     HtmlUtil.STYLE_TAG_NAME)
+  private val interestingTags: List<String> = listOf(HtmlUtil.TEMPLATE_TAG_NAME, HtmlUtil.SCRIPT_TAG_NAME, HtmlUtil.STYLE_TAG_NAME)
 
   override fun isInterestedInTag(tagName: CharSequence): Boolean =
     interestingTags.any { namesEqual(tagName, it) }
@@ -114,6 +114,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
       if (lang == null || lang.equals("html", ignoreCase = true)) return null
     }
     val provider = scriptContentProvider(lang)
+
     return when (val elementType = provider?.getElementType()) {
       HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
