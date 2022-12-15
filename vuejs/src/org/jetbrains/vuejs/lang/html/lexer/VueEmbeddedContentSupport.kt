@@ -6,8 +6,8 @@ import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyle
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.BaseHtmlLexer
-import com.intellij.lexer.HtmlRawTextLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
@@ -113,9 +113,9 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     if (namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME)) {
       if (lang == null || lang.equals("html", ignoreCase = true)) return null
     }
-    val provider = scriptContentProvider(lang)
+    val embedmentInfo = findEmbedmentInfo(lang)
 
-    return when (val elementType = provider?.getElementType()) {
+    return when (val elementType = embedmentInfo?.getElementType()) {
       HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
         override fun createHighlightingLexer(): Lexer =
@@ -124,14 +124,23 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
       null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       else -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType? = JSElementTypes.toModuleContentType(elementType)
-        override fun createHighlightingLexer(): Lexer? = provider.createHighlightingLexer()
+        override fun createHighlightingLexer(): Lexer? = embedmentInfo.createHighlightingLexer()
       }
     }
   }
 
-  private fun scriptContentProvider(language: String?): HtmlEmbedmentInfo? =
-    if (language != null)
-      Language.findInstancesByMimeType(language)
+  private fun findEmbedmentInfo(language: String?): HtmlEmbedmentInfo? = when (language) {
+    null -> {
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(languageLevel.dialect)
+    }
+    "js" -> { // fast path + special case for VueParserTest
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
+    }
+    "ts" -> { // fast path + special case for VueParserTest
+      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.TYPESCRIPT)
+    }
+    else -> {
+      val languageSequence = Language.findInstancesByMimeType(language)
         .asSequence()
         .plus(Language.findInstancesByMimeType("text/$language"))
         .plus(
@@ -140,10 +149,14 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
             .filter { languageMatches(language, it) }
         )
         .plus(if (StringUtil.containsIgnoreCase(language, "template")) listOf(HTMLLanguage.INSTANCE) else emptyList())
-        .map { HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(it) }
-        .firstOrNull { it != null }
-    else
-      HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(languageLevel.dialect)
+
+      languageSequence.map {
+        HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(it)
+      }.firstOrNull {
+        it != null
+      }
+    }
+  }
 
   private fun languageMatches(scriptType: String, language: Language): Boolean =
     scriptType.equals(language.id, ignoreCase = true)
