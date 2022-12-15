@@ -49,8 +49,8 @@ class JestLesson
           WriteAction.run<Throwable> {
             fileEditorManager.createSplitter(SwingConstants.VERTICAL, window)
             val newWindow = fileEditorManager.getNextWindow(window)
-            fileEditorManager.openFileWithProviders(file.parent.findChild("sum.js")!!, false, newWindow)
-            newWindow.closeFile(file)
+            fileEditorManager.openFile(file = file.parent.findChild("sum.js")!!, window = newWindow)
+            newWindow?.closeFile(file)
             fileEditorManager.currentWindow = window
           }
         }
