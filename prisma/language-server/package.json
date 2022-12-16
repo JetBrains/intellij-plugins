@@ -4,8 +4,8 @@
     "bundle": "cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "dependencies": {
-    "@prisma/language-server": "^4.7.1",
-    "@prisma/prisma-fmt-wasm": "^4.8.0-11.e88b5dd70fddc391f9344ee8056dfd92f0f6fdef"
+    "@prisma/language-server": "4.6.1",
+    "@prisma/prisma-fmt-wasm": "4.6.1-4.694eea289a8462c80264df36757e4fdc129b1b32"
   },
   "devDependencies": {
     "webpack": "^5.74.0",
