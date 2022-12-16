@@ -52,7 +52,7 @@ public class AngularInvalidSelectorInspection extends LocalInspectionTool {
       return new JSElementVisitor() {
 
         @Override
-        public void visitES6Decorator(ES6Decorator decorator) {
+        public void visitES6Decorator(@NotNull ES6Decorator decorator) {
           if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC)) {
             JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
             if (initializer == null) {

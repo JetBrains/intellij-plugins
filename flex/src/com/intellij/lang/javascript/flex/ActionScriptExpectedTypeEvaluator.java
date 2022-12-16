@@ -116,7 +116,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   }
 
   @Override
-  public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+  public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
     if (myParent.getParent() instanceof JSNewExpression) {
       JSType type = getQualifiedExpressionType((JSExpression)myParent.getParent());
       if (type instanceof JSGenericTypeImpl) {

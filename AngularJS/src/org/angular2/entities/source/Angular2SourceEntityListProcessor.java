@@ -51,7 +51,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
   private final boolean myAcceptNgModuleWithProviders;
   private final JSElementVisitor myResultsVisitor = new JSElementVisitor() {
     @Override
-    public void visitJSClass(JSClass aClass) {
+    public void visitJSClass(@NotNull JSClass aClass) {
       T entity = getAcceptableEntity(aClass);
       if (entity != null) {
         processAcceptableEntity(entity);
@@ -62,22 +62,22 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     }
 
     @Override
-    public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+    public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
       //it's ok, if array does not have any children
     }
 
     @Override
-    public void visitJSFunctionDeclaration(JSFunction node) {
+    public void visitJSFunctionDeclaration(@NotNull JSFunction node) {
       resolveFunctionReturnType(node);
     }
 
     @Override
-    public void visitJSFunctionExpression(JSFunctionExpression node) {
+    public void visitJSFunctionExpression(@NotNull JSFunctionExpression node) {
       resolveFunctionReturnType(node);
     }
 
     @Override
-    public void visitJSElement(JSElement node) {
+    public void visitJSElement(@NotNull JSElement node) {
       processAnyElement(node);
     }
   };
@@ -96,12 +96,12 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
   private JSElementVisitor createResolveVisitor(SmartList<PsiElement> result) {
     return new JSElementVisitor() {
       @Override
-      public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+      public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
         result.addAll(asList(node.getExpressions()));
       }
 
       @Override
-      public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
+      public void visitJSObjectLiteralExpression(@NotNull JSObjectLiteralExpression node) {
         if (myAcceptNgModuleWithProviders) {
           AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
             addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP), JSProperty::getValue)));
@@ -109,35 +109,35 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       }
 
       @Override
-      public void visitJSReferenceExpression(JSReferenceExpression node) {
+      public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
         addIfNotNull(result, node.resolve());
       }
 
       @Override
-      public void visitJSVariable(JSVariable node) {
+      public void visitJSVariable(@NotNull JSVariable node) {
         AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
           addIfNotNull(result, node.getInitializer()));
       }
 
       @Override
-      public void visitJSProperty(JSProperty node) {
+      public void visitJSProperty(@NotNull JSProperty node) {
         AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
           addIfNotNull(result, node.getValue()));
       }
 
       @Override
-      public void visitES6ImportExportSpecifierAlias(ES6ImportExportSpecifierAlias alias) {
+      public void visitES6ImportExportSpecifierAlias(@NotNull ES6ImportExportSpecifierAlias alias) {
         addIfNotNull(result, alias.findAliasedElement());
       }
 
       @Override
-      public void visitJSSpreadExpression(JSSpreadExpression spreadExpression) {
+      public void visitJSSpreadExpression(@NotNull JSSpreadExpression spreadExpression) {
         AstLoadingFilter.forceAllowTreeLoading(spreadExpression.getContainingFile(), () ->
           addIfNotNull(result, spreadExpression.getExpression()));
       }
 
       @Override
-      public void visitJSConditionalExpression(JSConditionalExpression node) {
+      public void visitJSConditionalExpression(@NotNull JSConditionalExpression node) {
         AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () -> {
           addIfNotNull(result, node.getThenBranch());
           addIfNotNull(result, node.getElseBranch());
@@ -145,17 +145,17 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       }
 
       @Override
-      public void visitJSCallExpression(JSCallExpression node) {
+      public void visitJSCallExpression(@NotNull JSCallExpression node) {
         addIfNotNull(result, node.getStubSafeMethodExpression());
       }
 
       @Override
-      public void visitJSFunctionDeclaration(JSFunction node) {
+      public void visitJSFunctionDeclaration(@NotNull JSFunction node) {
         collectFunctionReturningArrayItems(node);
       }
 
       @Override
-      public void visitJSFunctionExpression(JSFunctionExpression node) {
+      public void visitJSFunctionExpression(@NotNull JSFunctionExpression node) {
         collectFunctionReturningArrayItems(node);
       }
 
@@ -166,12 +166,12 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
           AstLoadingFilter.forceAllowTreeLoading(function.getContainingFile(), () ->
             function.acceptChildren(new JSElementVisitor() {
               @Override
-              public void visitJSReturnStatement(JSReturnStatement node) {
+              public void visitJSReturnStatement(@NotNull JSReturnStatement node) {
                 addIfNotNull(result, node.getExpression());
               }
 
               @Override
-              public void visitJSStatement(JSStatement node) {
+              public void visitJSStatement(@NotNull JSStatement node) {
                 node.acceptChildren(this);
               }
             })

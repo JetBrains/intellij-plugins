@@ -49,7 +49,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
         || Angular2Language.INSTANCE.is(fileLang)) {
       return new Angular2ElementVisitor() {
         @Override
-        public void visitJSReferenceExpression(JSReferenceExpression node) {
+        public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
           if (node.getQualifier() == null
               || node.getQualifier() instanceof JSThisExpression) {
             PsiElement resolved = node.resolve();
@@ -71,7 +71,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
              && Angular2LangUtil.isAngular2Context(holder.getFile())) {
       return new JSElementVisitor() {
         @Override
-        public void visitTypeScriptClass(TypeScriptClass typeScriptClass) {
+        public void visitTypeScriptClass(@NotNull TypeScriptClass typeScriptClass) {
           Angular2Component component = Angular2EntitiesProvider.getComponent(typeScriptClass);
           PsiFile template;
           if (component == null || (template = component.getTemplateFile()) == null) return;

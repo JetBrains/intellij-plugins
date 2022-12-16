@@ -17,7 +17,7 @@ public class KarmaConfigFileInspection extends JSInspection {
   protected PsiElementVisitor createVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new JSElementVisitor() {
       @Override
-      public void visitJSLiteralExpression(final JSLiteralExpression node) {
+      public void visitJSLiteralExpression(final @NotNull JSLiteralExpression node) {
         if (!node.isQuotedLiteral()) return;
         for (PsiReference ref : node.getReferences()) {
           if (ref instanceof KarmaConfigFileReference) {

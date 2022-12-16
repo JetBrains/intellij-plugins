@@ -21,7 +21,7 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
   public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
       @Override
-      public void visitES6Decorator(ES6Decorator decorator) {
+      public void visitES6Decorator(@NotNull ES6Decorator decorator) {
         if (isAngularEntityDecorator(decorator, MODULE_DEC, COMPONENT_DEC)) {
           ValidationResults<ProblemType> results = new ValidationResults<>();
           new EntryComponentsValidator().validate(decorator, results);

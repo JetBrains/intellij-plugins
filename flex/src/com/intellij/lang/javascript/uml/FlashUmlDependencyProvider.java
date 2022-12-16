@@ -50,7 +50,7 @@ public class FlashUmlDependencyProvider {
       boolean myInParameter;
 
       @Override
-      public void visitJSReferenceExpression(final JSReferenceExpression node) {
+      public void visitJSReferenceExpression(final @NotNull JSReferenceExpression node) {
         if (PsiTreeUtil.getParentOfType(node, JSImportStatement.class) != null) {
           return;
         }
@@ -109,7 +109,7 @@ public class FlashUmlDependencyProvider {
       }
 
       @Override
-      public void visitJSVariable(final JSVariable node) {
+      public void visitJSVariable(final @NotNull JSVariable node) {
         if (node instanceof JSParameter) {
           myInParameter = true;
         }
@@ -128,7 +128,7 @@ public class FlashUmlDependencyProvider {
       }
 
       @Override
-      public void visitJSNewExpression(final JSNewExpression node) {
+      public void visitJSNewExpression(final @NotNull JSNewExpression node) {
         myNewExpression = node;
         try {
           super.visitJSNewExpression(node);

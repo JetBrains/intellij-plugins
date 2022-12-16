@@ -6,6 +6,7 @@ import com.intellij.lang.actionscript.highlighting.ECMAL4Highlighter;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptGotoStatementImpl;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSStatementWithLabelReference;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionScriptKeywordHighlighterVisitor extends JSKeywordHighlighterVisitor {
   public ActionScriptKeywordHighlighterVisitor(HighlightInfoHolder holder) {
@@ -13,7 +14,7 @@ public class ActionScriptKeywordHighlighterVisitor extends JSKeywordHighlighterV
   }
 
   @Override
-  public void visitJSStatementWithLabelReference(JSStatementWithLabelReference element) {
+  public void visitJSStatementWithLabelReference(@NotNull JSStatementWithLabelReference element) {
     if (element instanceof ActionScriptGotoStatementImpl) {
       highlightChildKeywordOfType(element, JSTokenTypes.GOTO_KEYWORD);
     }

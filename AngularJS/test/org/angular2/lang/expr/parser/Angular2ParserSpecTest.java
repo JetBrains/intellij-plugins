@@ -731,12 +731,12 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSExpressionStatement(JSExpressionStatement node) {
+    public void visitJSExpressionStatement(@NotNull JSExpressionStatement node) {
       printElement(node.getExpression());
     }
 
     @Override
-    public void visitJSReferenceExpression(JSReferenceExpression node) {
+    public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
       JSExpression qualifier = node.getQualifier();
       if (qualifier != null) {
         printElement(qualifier);
@@ -808,7 +808,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSIndexedPropertyAccessExpression(JSIndexedPropertyAccessExpression node) {
+    public void visitJSIndexedPropertyAccessExpression(@NotNull JSIndexedPropertyAccessExpression node) {
       JSExpression qualifier = node.getQualifier();
       qualifier.accept(this);
       if (node.isElvis()) {
@@ -821,14 +821,14 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSParenthesizedExpression(JSParenthesizedExpression node) {
+    public void visitJSParenthesizedExpression(@NotNull JSParenthesizedExpression node) {
       result.append("(");
       printElement(node.getInnerExpression());
       result.append(")");
     }
 
     @Override
-    public void visitJSBinaryExpression(JSBinaryExpression node) {
+    public void visitJSBinaryExpression(@NotNull JSBinaryExpression node) {
       printElement(node.getLOperand());
       result.append(" ");
       printOperator(node.getOperationSign());
@@ -837,19 +837,19 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSPrefixExpression(JSPrefixExpression node) {
+    public void visitJSPrefixExpression(@NotNull JSPrefixExpression node) {
       printOperator(node.getOperationSign());
       printElement(node.getExpression());
     }
 
     @Override
-    public void visitJSPostfixExpression(JSPostfixExpression node) {
+    public void visitJSPostfixExpression(@NotNull JSPostfixExpression node) {
       printElement(node.getExpression());
       printOperator(node.getOperationSign());
     }
 
     @Override
-    public void visitJSLiteralExpression(JSLiteralExpression node) {
+    public void visitJSLiteralExpression(@NotNull JSLiteralExpression node) {
       if (node.isStringLiteral()) {
         result.append("\"")
           .append(node.getStringValue())
@@ -861,7 +861,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+    public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
       result.append("[");
       boolean first = true;
       for (JSExpression expr : node.getExpressions()) {
@@ -877,7 +877,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
+    public void visitJSObjectLiteralExpression(@NotNull JSObjectLiteralExpression node) {
       result.append("{");
       boolean first = true;
       for (JSProperty property : node.getProperties()) {
@@ -895,7 +895,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSCallExpression(JSCallExpression node) {
+    public void visitJSCallExpression(@NotNull JSCallExpression node) {
       printElement(node.getMethodExpression());
       result.append("(");
       boolean first = true;
@@ -912,7 +912,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSConditionalExpression(JSConditionalExpression node) {
+    public void visitJSConditionalExpression(@NotNull JSConditionalExpression node) {
       printElement(node.getCondition());
       result.append(" ? ");
       printElement(node.getThenBranch());
@@ -921,24 +921,24 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitJSAssignmentExpression(JSAssignmentExpression node) {
+    public void visitJSAssignmentExpression(@NotNull JSAssignmentExpression node) {
       printElement(node.getLOperand());
       result.append(" = ");
       printElement(node.getROperand());
     }
 
     @Override
-    public void visitJSDefinitionExpression(JSDefinitionExpression node) {
+    public void visitJSDefinitionExpression(@NotNull JSDefinitionExpression node) {
       printElement(node.getExpression());
     }
 
     @Override
-    public void visitJSThisExpression(JSThisExpression node) {
+    public void visitJSThisExpression(@NotNull JSThisExpression node) {
       result.append("this");
     }
 
     @Override
-    public void visitJSEmptyStatement(JSEmptyStatement node) {
+    public void visitJSEmptyStatement(@NotNull JSEmptyStatement node) {
     }
 
     @Override

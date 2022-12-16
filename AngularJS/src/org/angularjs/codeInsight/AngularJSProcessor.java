@@ -328,13 +328,13 @@ public final class AngularJSProcessor {
     protected void accept(PsiElement element) {
       element.accept(new AngularJSRecursiveVisitor() {
         @Override
-        public void visitJSDefinitionExpression(JSDefinitionExpression node) {
+        public void visitJSDefinitionExpression(@NotNull JSDefinitionExpression node) {
           myResult.add(node);
           super.visitJSDefinitionExpression(node);
         }
 
         @Override
-        public void visitJSVariable(JSVariable node) {
+        public void visitJSVariable(@NotNull JSVariable node) {
           myResult.add(node);
           super.visitJSVariable(node);
         }

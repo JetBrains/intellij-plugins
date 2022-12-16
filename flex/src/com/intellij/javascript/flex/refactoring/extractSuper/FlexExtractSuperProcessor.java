@@ -318,7 +318,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
     scope.accept(new JSRecursiveElementVisitor() {
       @Override
-      public void visitJSReferenceExpression(JSReferenceExpression node) {
+      public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
         if (util.getSubjectClass(node).isEquivalentTo(node.resolve())) {
           if (util.canTurnReferenceToSuper(node, variablesResults) ^ myMode == JSExtractSuperMode.RenameImplementation) {
             result.add(new UsageInfo((PsiElement)node));

@@ -560,7 +560,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (function != null) {
       function.accept(new JSRecursiveWalkingElementVisitor() {
         @Override
-        public void visitJSProperty(JSProperty node) {
+        public void visitJSProperty(@NotNull JSProperty node) {
           final String name = node.getName();
           final JSExpression value = node.getValue();
           if (RESTRICT_PROP.equals(name)) {

@@ -542,14 +542,14 @@ class FlexValue extends XValue {
         final Ref<JSVariable> varRef = new Ref<>();
         jsFunction.accept(new JSElementVisitor() {
           @Override
-          public void visitJSElement(final JSElement node) {
+          public void visitJSElement(final @NotNull JSElement node) {
             if (varRef.isNull()) {
               node.acceptChildren(this);
             }
           }
 
           @Override
-          public void visitJSVariable(final JSVariable node) {
+          public void visitJSVariable(final @NotNull JSVariable node) {
             if (myName.equals(node.getName())) {
               varRef.set(node);
             }

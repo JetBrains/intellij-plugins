@@ -47,18 +47,18 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
   protected JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {
       @Override
-      public void visitJSClass(JSClass aClass) {
+      public void visitJSClass(@NotNull JSClass aClass) {
         process(aClass, holder);
       }
 
       @Override
-      public void visitJSLocalVariable(JSLocalVariable var) {}
+      public void visitJSLocalVariable(@NotNull JSLocalVariable var) {}
 
-      @Override public void visitJSVariable(final JSVariable node) {
+      @Override public void visitJSVariable(final @NotNull JSVariable node) {
         process(node, holder);
       }
 
-      @Override public void visitJSFunctionDeclaration(final JSFunction node) {
+      @Override public void visitJSFunctionDeclaration(final @NotNull JSFunction node) {
         process(node, holder);
       }
     };

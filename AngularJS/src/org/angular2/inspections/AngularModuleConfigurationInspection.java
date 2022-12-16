@@ -40,7 +40,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
   public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
       @Override
-      public void visitES6Decorator(ES6Decorator decorator) {
+      public void visitES6Decorator(@NotNull ES6Decorator decorator) {
         getValidationResults(decorator).registerProblems(myProblemType, holder);
       }
     };

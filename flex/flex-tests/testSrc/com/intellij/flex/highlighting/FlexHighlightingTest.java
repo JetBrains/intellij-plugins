@@ -771,7 +771,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     myFile.acceptChildren(new JSRecursiveElementVisitor() {
       @Override
-      public void visitJSReferenceExpression(JSReferenceExpression node) {
+      public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
         super.visitJSReferenceExpression(node);
         final PsiElement resolve = node.resolve();
 
