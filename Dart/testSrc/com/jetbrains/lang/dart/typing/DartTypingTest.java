@@ -611,12 +611,12 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   public void testEnterAfterEQ() {
     doTypingTest('\n',
                  """
-                   ms(toto)
+                   ms(toto) {
                      bool x =<caret> toto;
                      return;
                    }""",
                  """
-                   ms(toto)
+                   ms(toto) {
                      bool x =
                          <caret>toto;
                      return;

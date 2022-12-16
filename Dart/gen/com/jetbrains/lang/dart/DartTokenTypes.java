@@ -107,6 +107,10 @@ public interface DartTokenTypes {
   IElementType PREFIX_OPERATOR = new DartElementType("PREFIX_OPERATOR");
   IElementType RECORD = new DartElementType("RECORD");
   IElementType RECORD_FIELD = new DartElementType("RECORD_FIELD");
+  IElementType RECORD_TYPE = new DartElementType("RECORD_TYPE");
+  IElementType RECORD_TYPE_FIELD = new DartElementType("RECORD_TYPE_FIELD");
+  IElementType RECORD_TYPE_NAMED_FIELD = new DartElementType("RECORD_TYPE_NAMED_FIELD");
+  IElementType RECORD_TYPE_NAMED_FIELDS = new DartElementType("RECORD_TYPE_NAMED_FIELDS");
   IElementType REDIRECTION = new DartElementType("REDIRECTION");
   IElementType REFERENCE_EXPRESSION = new DartElementType("REFERENCE_EXPRESSION");
   IElementType RELATIONAL_OPERATOR = new DartElementType("RELATIONAL_OPERATOR");
@@ -587,6 +591,18 @@ public interface DartTokenTypes {
       }
       else if (type == RECORD_FIELD) {
         return new DartRecordFieldImpl(node);
+      }
+      else if (type == RECORD_TYPE) {
+        return new DartRecordTypeImpl(node);
+      }
+      else if (type == RECORD_TYPE_FIELD) {
+        return new DartRecordTypeFieldImpl(node);
+      }
+      else if (type == RECORD_TYPE_NAMED_FIELD) {
+        return new DartRecordTypeNamedFieldImpl(node);
+      }
+      else if (type == RECORD_TYPE_NAMED_FIELDS) {
+        return new DartRecordTypeNamedFieldsImpl(node);
       }
       else if (type == REDIRECTION) {
         return new DartRedirectionImpl(node);
