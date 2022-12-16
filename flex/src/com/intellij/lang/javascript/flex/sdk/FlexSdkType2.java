@@ -116,7 +116,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   @Override
-  public String getVersionString(final String sdkHome) {
+  public String getVersionString(final @NotNull String sdkHome) {
     final VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(sdkHome);
     final String flexVersion = FlexSdkUtils.doReadFlexSdkVersion(sdkRoot);
     if (flexVersion != null) return flexVersion;
