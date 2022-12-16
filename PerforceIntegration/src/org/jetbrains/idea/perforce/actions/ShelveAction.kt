@@ -35,17 +35,7 @@ class ShelveAction : AbstractCommitChangesAction() {
   }
 
   override fun getExecutor(project: Project): CommitExecutor {
-    return object : CommitExecutor {
-      override fun getActionText(): String = PerforceBundle.message("shelve")
-
-      override fun createCommitSession(commitContext: CommitContext): CommitSession {
-        return object : CommitSession {
-          override fun execute(changes: Collection<Change>, commitMessage: String?) {
-            shelveChanges(project, commitMessage, changes)
-          }
-        }
-      }
-    }
+    return P4ShelveCommitExecutor(project)
   }
 
   companion object {
@@ -118,6 +108,20 @@ class ShelveAction : AbstractCommitChangesAction() {
       catch (e: VcsException) {
         return false
       }
+    }
+  }
+
+  private class P4ShelveCommitExecutor(private val project: Project) : CommitExecutor {
+    override fun getActionText(): String = PerforceBundle.message("shelve")
+
+    override fun createCommitSession(commitContext: CommitContext): CommitSession {
+      return P4ShelveCommitSession(project)
+    }
+  }
+
+  private class P4ShelveCommitSession(private val project: Project) : CommitSession {
+    override fun execute(changes: Collection<Change>, commitMessage: String?) {
+      shelveChanges(project, commitMessage, changes)
     }
   }
 }
