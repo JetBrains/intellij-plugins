@@ -9,7 +9,7 @@ import {EventEmitter} from "events";
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 `],
-    template: `<div #myDiv (click)="oCBu<caret>" [todo]="a"></div>`,
+    template: `<div #myDiv (click)="oComplButto<caret>" [todo]="a"></div>`,
     templateUrl: 'playground.html',
     styleUrls: ['playground.css'
 

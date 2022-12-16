@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
+import static org.angularjs.AngularTestUtil.renderLookupItems;
+
 public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -38,12 +40,14 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByText("test.html", "{{ <caret> }}");
     assertSize(1, Angular2ComponentLocator.findComponentClasses(myFixture.getFile()));
     myFixture.completeBasic();
-    assertOrderedEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), "$any", "fooField1", "fooField2");
+    assertOrderedEquals(ContainerUtil.sorted(renderLookupItems(myFixture,false, false, true)),
+                        "$any", "fooField1", "fooField2");
 
     Disposer.dispose(disposable);
     assertSize(0, Angular2ComponentLocator.findComponentClasses(myFixture.getFile()));
     myFixture.completeBasic();
-    assertOrderedEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), "$any");
+    assertOrderedEquals(ContainerUtil.sorted(renderLookupItems(myFixture,false, false, true)),
+                        "$any");
   }
 
   public void testSelectModuleForDeclarationsScope() {

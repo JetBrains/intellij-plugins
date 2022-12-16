@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor
 import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.JSControlFlowScope
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.*
@@ -63,5 +65,11 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
 
   override fun getTypeHelper(): JSTypeHelper {
     return TypeScriptTypeHelper.getInstance()
+  }
+
+  override fun getExportScope(element: PsiElement): JSElement? {
+    return Angular2ComponentLocator.findComponentClass(element)
+             ?.containingFile as? JSFile
+           ?: super.getExportScope(element)
   }
 }

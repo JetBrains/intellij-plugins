@@ -43,7 +43,7 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals(StreamEx.of(
       "!$any#any#4", "!height#number#101", "!item#null#101", "!items#null#101"
                  ).sorted().toList(),
-                 sorted(renderLookupItems(myFixture, true, true)));
+                 sorted(renderLookupItems(myFixture, true, true, true)));
   }
 
   public void testExpressionsCompletion2() {
@@ -56,7 +56,7 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
       "!foo#string#101", "!width#number#101", "constructor#Function#98", "hasOwnProperty#boolean#98", "isPrototypeOf#boolean#98",
       "propertyIsEnumerable#boolean#98", "toLocaleString#string#98", "toString#string#98", "valueOf#Object#98"
                  ).sorted().toList(),
-                 sorted(renderLookupItems(myFixture, true, true)));
+                 sorted(renderLookupItems(myFixture, true, true, false)));
   }
 
 }

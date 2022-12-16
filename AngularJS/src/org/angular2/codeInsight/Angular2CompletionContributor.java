@@ -2,12 +2,11 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.completion.JSLookupElementInsertHandler;
-import com.intellij.lang.javascript.completion.JSLookupPriority;
-import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
+import com.intellij.lang.javascript.completion.*;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser.FunctionTypeWithKind;
 import com.intellij.lang.javascript.ecmascript6.types.OverloadStrictness;
@@ -15,9 +14,11 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
+import com.intellij.lang.javascript.psi.resolve.CompletionResultSink;
 import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
@@ -32,8 +33,10 @@ import com.intellij.util.containers.ContainerUtil;
 import icons.AngularJSIcons;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
+import org.angular2.codeInsight.imports.Angular2GlobalImportCandidate;
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider;
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2Bundle;
@@ -47,6 +50,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRIORITY;
+import static com.intellij.lang.javascript.completion.JSLookupPriority.*;
 import static com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -55,11 +60,15 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
   private static final JSLookupPriority NG_PRIVATE_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC;
-  private static final JSLookupPriority NG_$ANY_PRIORITY = JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
+  private static final JSLookupPriority NG_$ANY_PRIORITY = TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 
   @NonNls private static final Set<String> NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
     "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
     "ngAfterContentChecked", "ngAfterViewInit", "ngAfterViewChecked");
+
+  @NonNls private static final Set<String> SUPPORTED_KEYWORDS = ContainerUtil.newHashSet(
+    "var", "let", "as", "null", "undefined", "true", "false", "if", "else", "this"
+  );
 
   public Angular2CompletionContributor() {
 
@@ -149,6 +158,10 @@ public class Angular2CompletionContributor extends CompletionContributor {
                && (((JSReferenceExpressionImpl)ref).getQualifier() == null
                    || ((JSReferenceExpressionImpl)ref).getQualifier() instanceof JSThisExpression)) {
         final Set<String> contributedElements = new HashSet<>();
+        final Set<String> localNames = new HashSet<>();
+        final JSReferenceExpressionImpl place = (JSReferenceExpressionImpl)ref;
+
+        // Angular template scope
         Angular2TemplateScopesResolver.resolve(parameters.getPosition(), resolveResult -> {
           final JSPsiElementBase element = ObjectUtils.tryCast(resolveResult.getElement(), JSPsiElementBase.class);
           if (element == null) {
@@ -157,13 +170,72 @@ public class Angular2CompletionContributor extends CompletionContributor {
           final String name = element.getName();
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
               && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null).getTailAndType())) {
-            result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
-              element, name, calcPriority(element)
+            localNames.add(name);
+            result.consume(JSCompletionUtil.withJSLookupPriority(
+              JSLookupUtilImpl.createLookupElement(element, name, place.getQualifier() == null)
+                .withInsertHandler(new JSLookupElementInsertHandler(false, null)),
+              calcPriority(element)
             ));
           }
           return true;
         });
-        result.stopHere();
+
+        if (place.getQualifier() != null) {
+          result.stopHere();
+          return;
+        }
+
+        // Declarations local to the component class
+        var componentClass = Angular2ComponentLocator.findComponentClass(place);
+        var componentContext = doIfNotNull(componentClass, PsiElement::getContext);
+        if (componentContext != null) {
+          var sink = new CompletionResultSink(place, result.getPrefixMatcher(), localNames, false, false);
+          JSStubBasedPsiTreeUtil.processDeclarationsInScope(
+            componentContext, (element, state) -> {
+              if (element != componentClass) {
+                return sink.addResult(element, state, null);
+              }
+              else {
+                return true;
+              }
+            }, true);
+          sink.getResultsAsObjects().forEach(lookupElement -> {
+            localNames.add(lookupElement.getLookupString());
+            result.addElement(
+              JSCompletionUtil.withJSLookupPriority(wrapWithImportInsertHandler(lookupElement, place), RELEVANT_NO_SMARTNESS_PRIORITY));
+          });
+        }
+
+        // Exports, global symbols and keywords, plus any smart code completions
+        result.runRemainingContributors(parameters, completionResult -> {
+          var lookupElement = completionResult.getLookupElement();
+          var name = lookupElement.getLookupString();
+          if (localNames.contains(name)) {
+            return;
+          }
+          if (lookupElement instanceof PrioritizedLookupElement<?>
+              && lookupElement.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR) instanceof JSCompletionContributor) {
+            int priority = (int)((PrioritizedLookupElement<?>)lookupElement).getPriority();
+            // Filter out unsupported keywords
+            if (priority == NON_CONTEXT_KEYWORDS_PRIORITY.getPriorityValue()
+                || priority == KEYWORDS_PRIORITY.getPriorityValue()) {
+              if (!SUPPORTED_KEYWORDS.contains(name)) {
+                return;
+              }
+            }
+            else if (priority == TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES.getPriorityValue()) {
+              // Wrap global symbols with insert handler
+              lookupElement = wrapWithImportInsertHandler(lookupElement, place);
+            }
+            else if (priority != 0) {
+              // If we don't know what it is, we better ignore it
+              return;
+            }
+          }
+          result.withRelevanceSorter(completionResult.getSorter())
+            .withPrefixMatcher(completionResult.getPrefixMatcher())
+            .addElement(lookupElement);
+        });
       }
     }
 
@@ -218,6 +290,21 @@ public class Angular2CompletionContributor extends CompletionContributor {
       return Angular2DecoratorUtil.isPrivateMember(element)
              ? NG_PRIVATE_VARIABLE_PRIORITY
              : NG_VARIABLE_PRIORITY;
+    }
+
+    private static LookupElement wrapWithImportInsertHandler(@NotNull LookupElement lookupElement, @NotNull PsiElement place) {
+      if (lookupElement instanceof PrioritizedLookupElement) {
+        lookupElement = ((PrioritizedLookupElement<?>)lookupElement).getDelegate();
+      }
+      else {
+        return lookupElement;
+      }
+      if (lookupElement instanceof LookupElementBuilder) {
+        lookupElement = ((LookupElementBuilder)lookupElement).withInsertHandler(JSImportCompletionUtil.createInsertHandler(
+          new Angular2GlobalImportCandidate(lookupElement.getLookupString(), place)
+        ));
+      }
+      return JSCompletionUtil.withJSLookupPriority(lookupElement, IMPORT_PRIORITY);
     }
   }
 }

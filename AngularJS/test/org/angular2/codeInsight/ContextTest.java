@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
@@ -15,9 +14,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInsp
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.xml.util.CheckDtdReferencesInspection;
-import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angularjs.AngularTestUtil;
@@ -26,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.intellij.lang.javascript.BaseJSCompletionTestCase.getLocationPresentation;
+import static com.intellij.util.containers.ContainerUtil.sorted;
+import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -192,7 +191,7 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
       myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
       myFixture.configureByFiles("createFieldWithExplicitPublic.html", "createFieldWithExplicitPublic.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention(JavaScriptBundle.message("javascript.create.field.intention.name", "unresolved")));
-      myFixture.checkResultByFile("createFieldWithExplicitPublic.ts", "createFieldWithExplicitPublic.fixed.ts", true);  
+      myFixture.checkResultByFile("createFieldWithExplicitPublic.ts", "createFieldWithExplicitPublic.fixed.ts", true);
     });
   }
 
@@ -207,15 +206,12 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   public void testOverriddenMethods() {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals(List.of("$any#any#(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts"),
-                         "bar#string#()",
-                         "bar#string#(test: boolean)",
-                         "bar#string#(test: string)",
-                         "foo#string#null"),
-                 StreamEx.of(myFixture.getLookupElements()).map(el -> {
-                   LookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
-                   return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
-                 }).sorted().toList());
+    assertEquals(List.of("$any%(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts") + "#any",
+                         "bar%()#string",
+                         "bar%(test: boolean)#string",
+                         "bar%(test: string)#string",
+                         "foo%null#string"),
+                 sorted(renderLookupItems(myFixture, false, true, true, true)));
   }
 
   public void testNonNullAssertionResolutionTypeScript() {

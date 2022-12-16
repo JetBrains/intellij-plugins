@@ -50,6 +50,7 @@ import static com.intellij.webSymbols.context.WebSymbolsContext.KIND_FRAMEWORK;
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
+import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -174,8 +175,8 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("event_private.html", "event_private.ts", "package.json");
     myFixture.completeBasic();
     assertEquals("Private members should be sorted after public ones",
-                 List.of("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"),
-                 myFixture.getLookupElementStrings());
+                 List.of("_callApi", "callSecuredApi", "callZ", "callA", "callAnonymousApi"),
+                 renderLookupItems(myFixture, false, false, true));
   }
 
   public void testResolutionWithDifferentTemplateName() {

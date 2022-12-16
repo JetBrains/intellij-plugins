@@ -697,8 +697,8 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
   public void testNoLifecycleHooksInCodeCompletion() {
     myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals(sorted(myFixture.getLookupElementStrings()),
-                 List.of("$any", "testOne", "testTwo", "testing"));
+    assertEquals(List.of("$any", "testOne", "testTwo", "testing"),
+                 sorted(renderLookupItems(myFixture, false, false, true)));
   }
 
   public void testDecoratorInGetter() {

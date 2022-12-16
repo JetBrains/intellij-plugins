@@ -18,7 +18,7 @@ public class Angular2Language extends JSLanguageDialect implements DependentLang
     super("Angular2", new DialectOptionHolder("ANGULAR2", true) {
       @Override
       protected @NotNull Set<@NotNull JSLanguageFeature> defineFeatures() {
-        return Collections.emptySet();
+        return Collections.singleton(JSLanguageFeature.IMPORT_DECLARATIONS);
       }
     });
   }

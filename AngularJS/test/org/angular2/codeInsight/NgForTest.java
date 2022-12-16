@@ -2,16 +2,17 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
+
+import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class NgForTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -57,8 +58,8 @@ public class NgForTest extends Angular2CodeInsightFixtureTestCase {
     Angular2TestModule.configure(myFixture, false, null, Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5);
     myFixture.checkHighlighting();
     myFixture.type('.');
-    LookupElement[] elements = myFixture.complete(CompletionType.BASIC);
-    BaseJSCompletionTestCase.assertStartsWith(elements, 2, "key", "value");
-    assertEquals("string", BaseJSCompletionTestCase.typeText(elements[0]));
+    myFixture.complete(CompletionType.BASIC);
+    assertOrderedEquals(ContainerUtil.getFirstItems(renderLookupItems(myFixture, false, true, true), 2),
+                        "key#string", "value#null");
   }
 }
