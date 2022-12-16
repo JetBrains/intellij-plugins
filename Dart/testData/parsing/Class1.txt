@@ -1868,22 +1868,15 @@ Dart File
         ID
           PsiElement(on)('on')
       PsiElement(;)(';')
-  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
-    RETURN_TYPE
-      TYPE
-        SIMPLE_TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(extension)('extension')
-    COMPONENT_NAME
-      ID
-        PsiElement(on)('on')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      PsiElement())(')')
-    FUNCTION_BODY
-      LAZY_PARSEABLE_BLOCK
-        PsiElement({)('{')
-        STATEMENTS
-          <empty list>
-        PsiElement(})('}')
+  EXTENSION_DECLARATION
+    PsiElement(extension)('extension')
+    PsiElement(on)('on')
+    TYPE
+      RECORD_TYPE
+        PsiElement(()('(')
+        PsiElement())(')')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        <empty list>
+      PsiElement(})('}')

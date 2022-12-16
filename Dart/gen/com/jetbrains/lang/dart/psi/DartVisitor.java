@@ -424,6 +424,22 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitRecordType(@NotNull DartRecordType o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitRecordTypeField(@NotNull DartRecordTypeField o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitRecordTypeNamedField(@NotNull DartRecordTypeNamedField o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitRecordTypeNamedFields(@NotNull DartRecordTypeNamedFields o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitRedirection(@NotNull DartRedirection o) {
     visitPsiCompositeElement(o);
   }

@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface DartType extends DartPsiCompositeElement {
 
   @Nullable
+  DartRecordType getRecordType();
+
+  @Nullable
   DartSimpleType getSimpleType();
 
   @Nullable
