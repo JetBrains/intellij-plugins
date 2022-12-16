@@ -27,7 +27,6 @@ import com.intellij.ide.util.frameworkSupport.FrameworkSupportProviderBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.jam.model.util.JamCommonUtil;
-import com.intellij.javaee.framework.JavaeeProjectCategory;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.javaee.web.model.xml.Filter;
 import com.intellij.javaee.web.model.xml.FilterMapping;
@@ -152,6 +151,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
             // create filter & mapping in web.xml (if present)
             WriteCommandAction.writeCommandAction(modifiableRootModel.getProject()).run(() -> {
               final WebFacet webFacet = strutsFacet.getWebFacet();
+              if (null == webFacet) return;
 
               final ConfigFile configFile = webFacet.getWebXmlDescriptor();
               if (configFile == null) return;

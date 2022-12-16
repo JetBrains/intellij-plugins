@@ -46,7 +46,9 @@ public class StrutsFacetLibrariesValidatorDescription extends FacetLibrariesVali
     super.onLibraryAdded(facet, library);
     final StrutsFacet strutsFacet = (StrutsFacet) facet;
     final WebFacet webFacet = strutsFacet.getWebFacet();
-    JavaeeArtifactUtil.getInstance().addLibraryToAllArtifactsContainingFacet(library, webFacet);
+    if (null != webFacet) {
+      JavaeeArtifactUtil.getInstance().addLibraryToAllArtifactsContainingFacet(library, webFacet);
+    }
   }
 
 }

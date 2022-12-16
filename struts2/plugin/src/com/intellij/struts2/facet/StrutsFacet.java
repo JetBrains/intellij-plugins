@@ -73,9 +73,9 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
    *
    * @return WebFacet.
    */
-  @NotNull
+  @Nullable
   public WebFacet getWebFacet() {
-    return (WebFacet) getUnderlyingFacet();
+    return FacetManager.getInstance(getModule()).getFacetByType(WebFacet.ID);
   }
 
 }

@@ -108,7 +108,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
 
     final WebFacet webFacet = FacetUtil.addFacet(module, WebFacetType.getInstance());
     if (addStrutsFacet) {
-      FacetManager.getInstance(module).addFacet(StrutsFacetType.getInstance(), "struts2", webFacet);
+      FacetManager.getInstance(module).addFacet(StrutsFacetType.getInstance(), "struts2", null);
     }
 
     if (addWebFacet) {
