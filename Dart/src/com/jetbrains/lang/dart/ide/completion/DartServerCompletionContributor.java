@@ -61,7 +61,6 @@ public final class DartServerCompletionContributor extends CompletionContributor
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
               psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
-              psiElement().inFile(psiFile().withName(".analysis_options")),
               psiElement().inFile(psiFile().withName("analysis_options.yaml")),
               psiElement().inFile(psiFile().withName("pubspec.yaml")),
               psiElement().inFile(psiFile().withName("fix_data.yaml"))
