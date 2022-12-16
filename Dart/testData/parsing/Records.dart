@@ -78,3 +78,10 @@ void f((int, String) a) {}
 (int, String)? f() => throw 0;
 (int, String) f() => throw 0;
 final x = <(int, String)>[];
+
+@metadata(a, b) function() {} // metadata with args
+@metadata Type function() {}
+@metadata (a, b) function() {} // record
+@metadata/**/(a, b) function() {} // record
+@metadata () function() => ""; // record
+@metadata() function() => ""; // args

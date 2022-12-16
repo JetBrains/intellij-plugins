@@ -5,6 +5,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderUtil;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
@@ -36,6 +37,13 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     final boolean result = DartParser.parenthesizedExpression(builder_, level_);
     builder_.putUserData(WITHOUT_CASCADE, cascadeData);
     return result;
+  }
+
+  public static boolean noSpace(PsiBuilder builder_, int level_) {
+    IElementType type = builder_.rawLookup(-1);
+    return type != TokenType.WHITE_SPACE &&
+           !DartTokenTypesSets.COMMENTS.contains(type) &&
+           !DartTokenTypesSets.DOC_COMMENT_CONTENTS.contains(type);
   }
 
   public static boolean argumentsWrapper(PsiBuilder builder_, int level_) {

@@ -4233,7 +4233,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '@' simpleQualifiedReferenceExpression typeArguments? <<argumentsWrapper>>?
+  // '@' simpleQualifiedReferenceExpression typeArguments? (<<noSpace>> <<argumentsWrapper>>)?
   public static boolean metadata(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metadata")) return false;
     if (!nextTokenIs(b, AT)) return false;
@@ -4254,11 +4254,22 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // <<argumentsWrapper>>?
+  // (<<noSpace>> <<argumentsWrapper>>)?
   private static boolean metadata_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metadata_3")) return false;
-    argumentsWrapper(b, l + 1);
+    metadata_3_0(b, l + 1);
     return true;
+  }
+
+  // <<noSpace>> <<argumentsWrapper>>
+  private static boolean metadata_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "metadata_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = noSpace(b, l + 1);
+    r = r && argumentsWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -6998,9 +7009,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(<<nonStrictID>> | 
-  //                               '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' | 
-  //                               'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 
+  // !(<<nonStrictID>> |
+  //                               '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' |
+  //                               'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
   //                               'void')
   static boolean top_level_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover")) return false;
@@ -7011,9 +7022,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // <<nonStrictID>> | 
-  //                               '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' | 
-  //                               'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 
+  // <<nonStrictID>> |
+  //                               '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' |
+  //                               'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
   //                               'void'
   private static boolean top_level_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover_0")) return false;
