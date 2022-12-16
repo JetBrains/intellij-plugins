@@ -567,11 +567,11 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testEnterAfterEQ() {
     doTypingTest('\n',
-                 "ms(toto)\n" +
+                 "ms(toto) {\n" +
                  "  bool x =<caret> toto;\n" +
                  "  return;\n" +
                  "}",
-                 "ms(toto)\n" +
+                 "ms(toto) {\n" +
                  "  bool x =\n" +
                  "      <caret>toto;\n" +
                  "  return;\n" +

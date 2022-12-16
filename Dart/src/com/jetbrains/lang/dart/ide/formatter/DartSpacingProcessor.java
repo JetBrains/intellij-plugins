@@ -574,6 +574,7 @@ public class DartSpacingProcessor {
     }
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
     if ((isBraces &&
+         elementType != RECORD_TYPE_NAMED_FIELDS &&
          elementType != OPTIONAL_FORMAL_PARAMETERS &&
          elementType != OPTIONAL_PARAMETER_TYPES &&
          elementType != SET_OR_MAP_LITERAL_EXPRESSION) ||
