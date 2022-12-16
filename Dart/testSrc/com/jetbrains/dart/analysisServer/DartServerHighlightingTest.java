@@ -342,13 +342,11 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  public void _testAnalysisOptionsFile() {
-    // do not use configureByText(), because that method creates file with different name (___.analysis_options)
-    final PsiFile file = myFixture.addFileToProject(".analysis_options",
-                                                    "analyzer:\n" +
-                                                    "  errors:\n" +
-                                                    "    <warning>invalid-option</warning>: <warning>invalid-value</warning>");
-    myFixture.openFileInEditor(file.getVirtualFile());
+  public void testAnalysisOptionsFile() {
+    myFixture.configureByText("analysis_options.yaml",
+      "analyzer:\n" +
+      "  errors:\n" +
+      "    <warning>invalid-option</warning>: <warning>invalid-value</warning>");
     myFixture.checkHighlighting();
   }
 

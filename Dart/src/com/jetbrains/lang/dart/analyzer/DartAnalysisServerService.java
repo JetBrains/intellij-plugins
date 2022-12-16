@@ -892,7 +892,6 @@ public final class DartAnalysisServerService implements Disposable {
     return fileName.endsWith(".dart") ||
            fileName.endsWith(".htm") ||
            fileName.endsWith(".html") ||
-           fileName.equals(".analysis_options") ||
            fileName.equals("analysis_options.yaml") ||
            fileName.equals("pubspec.yaml") ||
            fileName.equals("fix_data.yaml") ||
