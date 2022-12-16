@@ -145,6 +145,24 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """)
   }
 
+  fun testVue2FilterJs() {
+    doTestVue("""
+      <script lang="js"></script>
+      <template>
+        <div v-bind:title="1 | fooFilter"></div>
+      </template>
+    """)
+  }
+
+  fun testVue2FilterTs() {
+    doTestVue("""
+      <script lang="ts"></script>
+      <template>
+        <div v-bind:title="1 | fooFilter"></div>
+      </template>
+    """)
+  }
+
   fun testVueInnerScriptTag() {
     doTestVue("""
       <template>
