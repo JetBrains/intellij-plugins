@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>org.intellij.prisma</id>
-    <name>Prisma</name>
+    <name>Prisma ORM</name>
     <vendor>JetBrains</vendor>
     <resource-bundle>messages.PrismaBundle</resource-bundle>
     <description><![CDATA[
