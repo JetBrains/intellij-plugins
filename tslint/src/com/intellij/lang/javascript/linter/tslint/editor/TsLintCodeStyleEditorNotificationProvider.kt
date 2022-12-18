@@ -12,15 +12,15 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
+import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotifications
+import java.util.function.Function
+import javax.swing.JComponent
 
-private val KEY = Key.create<EditorNotificationPanel>("TsLint.Import.Code.Style.Notification")
-
-class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
+class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : EditorNotificationProvider {
 
   private val NOTIFICATION_DISMISSED_PROPERTY = "tslint.code.style.apply.dismiss"
 
@@ -34,9 +34,11 @@ class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : 
     EditorNotifications.getInstance(project).updateAllNotifications()
   }
 
-  override fun getKey() = KEY
+  override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?> {
+    return Function { createNotificationPanel(file, it, project) }
+  }
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
+  private fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
     if (fileEditor !is TextEditor || fileEditor.editor !is EditorEx) return null
     if (isNotificationDismissed(file)) return null
 

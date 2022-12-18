@@ -9,45 +9,42 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
 import com.jetbrains.plugins.meteor.MeteorBundle;
 import com.jetbrains.plugins.meteor.MeteorFacade;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.util.function.Function;
+
 /**
  * If file type for '*.html' isn't HTML we cannot consider the file as Spacebars
  * but some users changed association for '*.html' to Handlebars (there was no other way before).
  * So let's offer user to change association on correct (HTML)
  */
-public final class MeteorHtmlFileTypeEditNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
-  private static final Key<EditorNotificationPanel> KEY = Key.create("MeteorHandlebarsEditorNotificationsProvider");
-
+public final class MeteorHtmlFileTypeEditNotificationProvider implements EditorNotificationProvider {
   private static final String METEOR_CHANGE_ASSOCIATION_DISMISSED = "js.meteor.notification.html.filetype.dismissed";
   private static final String HTML = "html";
 
-  @NotNull
   @Override
-  public Key<EditorNotificationPanel> getKey() {
-    return KEY;
-  }
-
-  @Nullable
-  @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor, @NotNull Project project) {
-    if (MeteorFacade.getInstance().isMeteorProject(project)) {
-      FileType html = FileTypeManager.getInstance().getFileTypeByExtension("html");
-      if (html != HtmlFileType.INSTANCE) {
-        if (!PropertiesComponent.getInstance(project).getBoolean(METEOR_CHANGE_ASSOCIATION_DISMISSED)) {
-          return new IncorrectHtmlAssociationPanel(project);
+  public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
+                                                                                                                 @NotNull VirtualFile file) {
+    return fileEditor -> {
+      if (MeteorFacade.getInstance().isMeteorProject(project)) {
+        FileType html = FileTypeManager.getInstance().getFileTypeByExtension("html");
+        if (html != HtmlFileType.INSTANCE) {
+          if (!PropertiesComponent.getInstance(project).getBoolean(METEOR_CHANGE_ASSOCIATION_DISMISSED)) {
+            return new IncorrectHtmlAssociationPanel(project);
+          }
         }
       }
-    }
 
-    return null;
+      return null;
+    };
   }
 
   private static final class IncorrectHtmlAssociationPanel extends EditorNotificationPanel {

@@ -21,34 +21,32 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.EditorNotifications;
-import com.intellij.util.containers.WeakList;
 import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.actions.InsertSchemaDirectiveAction;
 import com.intellij.protobuf.ide.settings.PbTextLanguageSettings;
 import com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable;
 import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.protobuf.lang.resolve.directive.SchemaDirective;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotificationProvider;
+import com.intellij.ui.EditorNotifications;
+import com.intellij.util.containers.WeakList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import javax.swing.event.HyperlinkListener;
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * Provides an editor notification (a bar at the top of the editor) when a text format file is
  * opened without an associated root message. The notification provides some remediation actions.
  */
-public class MissingSchemaNotificationProvider
-    extends EditorNotifications.Provider<EditorNotificationPanel> {
-
-  private static final Key<EditorNotificationPanel> KEY =
-      Key.create("prototext.missing.schema.notification");
+public class MissingSchemaNotificationProvider implements EditorNotificationProvider {
   private final Collection<VirtualFile> ignoredFiles = new WeakList<>();
 
   /**
@@ -68,16 +66,16 @@ public class MissingSchemaNotificationProvider
     EditorNotifications.getInstance(file.getProject()).updateNotifications(virtualFile);
   }
 
-  @NotNull
   @Override
-  public Key<EditorNotificationPanel> getKey() {
-    return KEY;
+  public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
+                                                                                                                 @NotNull VirtualFile file) {
+    return fileEditor -> createNotificationPanel(file, fileEditor, project);
   }
 
   @Nullable
-  @Override
-  public EditorNotificationPanel createNotificationPanel(
-      @NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile,
+                                                         @NotNull FileEditor fileEditor,
+                                                         @NotNull Project project) {
     if (ignoredFiles.contains(virtualFile)) {
       return null;
     }
