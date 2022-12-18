@@ -66,10 +66,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     super(onTheFly);
   }
 
-  @NotNull
   @Override
-  protected JSLinterConfigurable<TsLintState> createSettingsConfigurable(@NotNull Project project) {
-    return new TsLintConfigurable(project, true);
+  protected @NotNull String getSettingsConfigurableID() {
+    return TsLintConfigurable.SETTINGS_JAVA_SCRIPT_LINTERS_TSLINT;
   }
 
   @Override
