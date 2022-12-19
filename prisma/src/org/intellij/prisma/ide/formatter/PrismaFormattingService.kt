@@ -12,7 +12,6 @@ import com.intellij.formatting.service.AsyncFormattingRequest
 import com.intellij.formatting.service.CoreFormattingService
 import com.intellij.formatting.service.FormattingService
 import com.intellij.javascript.nodejs.execution.NodeTargetRun
-import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
@@ -24,6 +23,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
+import com.intellij.util.ThreeState
 import com.intellij.util.io.URLUtil
 import com.intellij.util.text.CharArrayUtil
 import org.intellij.prisma.PrismaBundle
@@ -78,7 +78,7 @@ class PrismaFormattingService : AsyncDocumentFormattingService() {
       return null
     }
 
-    val nodeTargetRun = NodeTargetRun(interpreter, context.project, null, NodeTargetRunOptions.of(false))
+    val nodeTargetRun = NodeTargetRun(interpreter, context.project, null, NodeTargetRun.createOptions(ThreeState.NO, listOf()))
     nodeTargetRun.commandLineBuilder.apply {
       charset = StandardCharsets.UTF_8
       setWorkingDirectory(nodeTargetRun.path(formatter.parent))
