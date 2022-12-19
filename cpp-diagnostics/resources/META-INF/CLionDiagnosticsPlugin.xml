@@ -1,6 +1,4 @@
 <idea-plugin>
-  <depends>com.intellij.modules.clion</depends>
-
   <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
