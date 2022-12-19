@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>{{ stories }}</p>
-    <p>{{ <weak_warning descr="Unresolved variable or type fooBar">fooBar</weak_warning> }}</p>
+    <p>{{ <error descr="Unresolved variable or type fooBar">fooBar</error> }}</p>
     <div @input="getFoo()" />
   </div>
 </template>

@@ -26,5 +26,5 @@ var bar = 123;
   <MyComponent2/>
   {{ bar }}
   {{ foo }}
-  {{ <weak_warning descr="Unresolved variable or type foobar">foobar</weak_warning> }}
+  {{ <error descr="Unresolved variable or type foobar">foobar</error> }}
 </template>

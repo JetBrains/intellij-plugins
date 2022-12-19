@@ -12,8 +12,8 @@ const items: Union[] = [
 <template>
   <div v-for="(item, i) in items" :key="i">
     <div v-if="item.type === 'Named'">Name: {{ item.name }}</div> <!-- ok -->
-    <div v-if="item.type === 'Named'">Age: {{ item.<weak_warning descr="Unresolved variable age">age</weak_warning> }}</div> <!-- expect error -->
-    <div v-if="item.type === 'Aged'">Name: {{ item.<weak_warning descr="Unresolved variable name">name</weak_warning> }}</div> <!-- expect error -->
+    <div v-if="item.type === 'Named'">Age: {{ item.<error descr="Unresolved variable age">age</error> }}</div> <!-- expect error -->
+    <div v-if="item.type === 'Aged'">Name: {{ item.<error descr="Unresolved variable name">name</error> }}</div> <!-- expect error -->
     <div v-if="item.type === 'Aged'">Age: {{ item.age }}</div> <!-- ok -->
   </div>
 </template>

@@ -2,7 +2,7 @@
   <span :class="{'add-me-if-true': foo, 'add-if-bar': bar}">
     Foo
   </span>
-  <FooBar :foo="12" :bar="<weak_warning descr="Type number is not assignable to type boolean | undefined  Type number is not assignable to type boolean">12</weak_warning>">
+  <FooBar :foo="12" :bar="<error descr="Type number is not assignable to type boolean | undefined  Type number is not assignable to type boolean">12</error>">
 
   </FooBar>
   <<warning descr="Element FooBar doesn't have required attribute foo">FooBar</warning>>

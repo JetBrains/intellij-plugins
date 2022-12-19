@@ -1,7 +1,7 @@
 <template>
-    <div @click="foo = <weak_warning descr="Assigned expression type 12 is not assignable to type string">annualReportPeriodId</weak_warning>">
-        {{ <weak_warning descr="Unresolved variable or type abc">abc</weak_warning> }}
-        {{ <weak_warning descr="Method expression is not of Function type">annualReportPeriodId</weak_warning>() }}
+    <div @click="foo = <error descr="Assigned expression type 12 is not assignable to type string">annualReportPeriodId</error>">
+        {{ <error descr="Unresolved variable or type abc">abc</error> }}
+        {{ <error descr="Method expression is not of Function type">annualReportPeriodId</error>() }}
     </div>
 </template>
 <script lang="ts">

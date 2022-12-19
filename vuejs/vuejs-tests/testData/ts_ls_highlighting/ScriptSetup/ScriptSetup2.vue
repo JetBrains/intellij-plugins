@@ -28,5 +28,5 @@ const <error>await</error> = "expect error";
   <MyComponent2/>
   {{ bar }}
   {{ foo }}
-  {{ <weak_warning descr="Unresolved variable or type undeclared">undeclared</weak_warning> }}
+  {{ <error descr="Unresolved variable or type undeclared">undeclared</error> }}
 </template>

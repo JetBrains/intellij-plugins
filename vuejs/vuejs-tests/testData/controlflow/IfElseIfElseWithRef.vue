@@ -12,17 +12,17 @@ let union = ref(createUnion());
   <section>
     <div v-if="typeof union === `number`">
       <span v-text="union.toFixed()"></span>
-      <span v-text="union.<weak_warning descr="Unresolved function or method toUpperCase()">toUpperCase</weak_warning>()"></span>
-      <span v-text="union.<weak_warning descr="Unresolved function or method join()">join</weak_warning>(`, `)"></span>
+      <span v-text="union.<error descr="Unresolved function or method toUpperCase()">toUpperCase</error>()"></span>
+      <span v-text="union.<error descr="Unresolved function or method join()">join</error>(`, `)"></span>
     </div>
     <div v-else-if="typeof union === `string`">
-      <span v-text="union.<weak_warning descr="Unresolved function or method toFixed()">toFixed</weak_warning>()"></span>
+      <span v-text="union.<error descr="Unresolved function or method toFixed()">toFixed</error>()"></span>
       <span v-text="union.toUpperCase()"></span>
-      <span v-text="union.<weak_warning descr="Unresolved function or method join()">join</weak_warning>(`, `)"></span>
+      <span v-text="union.<error descr="Unresolved function or method join()">join</error>(`, `)"></span>
     </div>
     <div v-else>
-      <span v-text="union.<weak_warning descr="Unresolved function or method toFixed()">toFixed</weak_warning>()"></span>
-      <span v-text="union.<weak_warning descr="Unresolved function or method toUpperCase()">toUpperCase</weak_warning>()"></span>
+      <span v-text="union.<error descr="Unresolved function or method toFixed()">toFixed</error>()"></span>
+      <span v-text="union.<error descr="Unresolved function or method toUpperCase()">toUpperCase</error>()"></span>
       <span v-text="union.join(`, `)"></span>
     </div>
   </section>

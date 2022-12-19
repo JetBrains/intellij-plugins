@@ -16,6 +16,6 @@ export default {
 </script>
 
 <template>
-  <TestComponent :book="<weak_warning descr="Type {year: number, title: string} is not assignable to type Book">{title: 'WebStorm', year: 2022}</weak_warning>" />
+  <TestComponent :book="<error descr="Type {year: 2022, title: \"WebStorm\"} is not assignable to type Book">{title: 'WebStorm', year: 2022}</error>" />
   <TestComponent :book="{title: 'WebStorm', year: 2022, author: 'JB'}" />
 </template>

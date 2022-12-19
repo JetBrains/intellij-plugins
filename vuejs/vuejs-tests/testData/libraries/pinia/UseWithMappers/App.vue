@@ -3,17 +3,17 @@
     {{this.cartStore}}
     {{this.foo(12)}}
     {{this.formattedCart}}
-    {{this.formattedCart[0].<weak_warning descr="Unresolved variable cst">cst</weak_warning>}}
-    {{this.<weak_warning descr="Unresolved variable total">total</weak_warning>}}
+    {{this.formattedCart[0].<error descr="Unresolved variable cst">cst</error>}}
+    {{this.<error descr="Unresolved variable total">total</error>}}
     {{this.cartStore.formattedCart}}
-    {{this.cartStore.<weak_warning descr="Unresolved variable formattedGart">formattedGart</weak_warning>}}
+    {{this.cartStore.<error descr="Unresolved variable formattedGart">formattedGart</error>}}
     {{cartStore}}
     {{foo(12)}}
     {{formattedCart}}
-    {{formattedCart[0].<weak_warning descr="Unresolved variable cst">cst</weak_warning>}}
-    {{<weak_warning descr="Unresolved variable or type total">total</weak_warning>}}
+    {{formattedCart[0].<error descr="Unresolved variable cst">cst</error>}}
+    {{<error descr="Unresolved variable or type total">total</error>}}
     {{cartStore.formattedCart}}
-    {{cartStore.<weak_warning descr="Unresolved variable formattedGart">formattedGart</weak_warning>}}
+    {{cartStore.<error descr="Unresolved variable formattedGart">formattedGart</error>}}
   </div>
 </template>
 

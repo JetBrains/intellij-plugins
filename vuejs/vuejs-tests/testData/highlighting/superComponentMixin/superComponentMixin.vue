@@ -1,7 +1,7 @@
 <template>
   <div>
     File size {{ fileSize | formatDigitsAfterDecimal(1) }} GB <br/>
-    File size {{ fileSize | <weak_warning descr="Unresolved filter formatDigitAfterDecimal">formatDigitAfterDecimal</weak_warning>(1) }} GB
+    File size {{ fileSize | <error descr="Unresolved filter formatDigitAfterDecimal">formatDigitAfterDecimal</error>(1) }} GB
   </div>
 
 </template>

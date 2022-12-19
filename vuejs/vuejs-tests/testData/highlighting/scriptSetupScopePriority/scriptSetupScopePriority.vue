@@ -9,5 +9,5 @@ const props = defineProps({
 </script>
 <template>
   {{item.name}}
-  {{item.<weak_warning descr="Unresolved variable value">value</weak_warning>}}
+  {{item.<error descr="Unresolved variable value">value</error>}}
 </template>
