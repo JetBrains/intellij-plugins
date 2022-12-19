@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.run;
 
 import com.intellij.execution.TestStateStorage;
+import com.intellij.execution.lineMarker.ExecutorAction;
 import com.intellij.execution.lineMarker.RunLineMarkerContributor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -44,6 +45,6 @@ public class CucumberRunLineMarkerContributor extends RunLineMarkerContributor {
   }
 
   private static @NotNull Info getInfo(@Nullable TestStateStorage.Record state) {
-    return RunLineMarkerContributor.withExecutorActions(getTestStateIcon(state, true));
+    return new Info(getTestStateIcon(state, true), ExecutorAction.getActions(0), RUN_TEST_TOOLTIP_PROVIDER);
   }
 }
