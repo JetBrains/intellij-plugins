@@ -1,1 +1,0 @@
-import "@prisma/language-server/dist/src/bin";

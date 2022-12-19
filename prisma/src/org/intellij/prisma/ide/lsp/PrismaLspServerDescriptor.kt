@@ -11,18 +11,19 @@ import com.intellij.lsp.LspServerDescriptorBase
 import com.intellij.lsp.SocketModeDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.intellij.prisma.PrismaBundle
 import java.io.File
 
 class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptorBase(project, root) {
   override fun createStdioServerStartingCommandLine(): GeneralCommandLine {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
     if (interpreter !is NodeJsLocalInterpreter && interpreter !is WslNodeInterpreter) {
-      throw ExecutionException("Local or WSL Node.js interpreter not configured.")
+      throw ExecutionException(PrismaBundle.message("prisma.interpreter.not.configured"))
     }
 
     val lsp = JSLanguageServiceUtil.getPluginDirectory(javaClass, "language-server/prisma-language-server.js")
     if (lsp == null || !lsp.exists()) {
-      throw ExecutionException("Prisma language server is not found.")
+      throw ExecutionException(PrismaBundle.message("prisma.language.server.not.found"))
     }
 
     return GeneralCommandLine().apply {

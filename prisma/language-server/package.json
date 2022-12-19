@@ -1,7 +1,7 @@
 {
   "name": "prisma-language-server",
   "scripts": {
-    "bundle": "cross-env NODE_ENV=production webpack --config webpack.config.js"
+    "prisma:lsp": "cross-env NODE_ENV=production webpack --config webpack.config.js"
   },
   "dependencies": {
     "@prisma/language-server": "4.6.1",
