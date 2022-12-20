@@ -2,12 +2,12 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.validation.fixes.FixAndIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -69,25 +69,30 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
     return Collections.emptyList();
   }
 
-  private static final class AddLeadingSlashFix extends FixAndIntentionAction {
+  private static final class AddLeadingSlashFix extends LocalQuickFixAndIntentionActionOnPsiElement {
     private AddLeadingSlashFix(final JSAttributeNameValuePair element) {
-      registerElementRefForFix(element, null);
+      super(element);
     }
 
     @Override
     @NotNull
-    public String getName() {
+    public String getText() {
       return "Add leading slash";
     }
 
     @Override
-    public boolean startInWriteAction() {
-      return true;
+    public @NotNull String getFamilyName() {
+      return getText();
     }
 
+
     @Override
-    protected void applyFix(final Project project, final PsiElement psiElement, @NotNull final PsiFile file, @Nullable final Editor editor) {
-      final ASTNode oldValueNode = ((JSAttributeNameValuePair)psiElement).getValueNode();
+    public void invoke(@NotNull Project project,
+                       @NotNull PsiFile file,
+                       @Nullable Editor editor,
+                       @NotNull PsiElement startElement,
+                       @NotNull PsiElement endElement) {
+      final ASTNode oldValueNode = ((JSAttributeNameValuePair)startElement).getValueNode();
       final String oldText = oldValueNode.getText();
       char quoteChar = oldText.length() > 0 ? oldText.charAt(0) : '"';
       if (quoteChar != '\'' && quoteChar != '"') {
@@ -96,7 +101,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
 
       final String newText = quoteChar + "/" + StringUtil.stripQuotesAroundValue(oldText) + quoteChar;
       final ASTNode newNode = JSChangeUtil.createExpressionFromText(project, newText);
-      psiElement.getNode().replaceChild(oldValueNode, newNode.getFirstChildNode());
+      startElement.getNode().replaceChild(oldValueNode, newNode.getFirstChildNode());
     }
   }
 }
