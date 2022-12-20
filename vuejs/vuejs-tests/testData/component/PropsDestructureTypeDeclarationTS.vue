@@ -21,7 +21,6 @@ aliased;
 <template>
   <<warning descr="Element PropsDestructureTypeDeclarationTS doesn't have required attribute prop1">PropsDestructureTypeDeclarationTS</warning> />
   <PropsDestructureTypeDeclarationTS :prop1="1" />
-  <!-- todo below, :prop1="undefined" should be an error in strictNullChecks=true -->
   <PropsDestructureTypeDeclarationTS :prop1="undefined" :prop2="undefined" :prop3="undefined" :prop4="undefined" />
   <PropsDestructureTypeDeclarationTS :prop1="1" :prop2="1" :prop3="1" :prop4="1" />
   <PropsDestructureTypeDeclarationTS :prop1="prop1" :prop2="prop2" :prop3="prop3" :prop4="prop4" />

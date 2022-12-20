@@ -74,15 +74,18 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testDefinePropsTypeDeclarationTypeAliasTS() = doTest(true)
 
-  fun testWithDefaultsTypeDeclarationTS() = doTest(true)
+  fun testWithDefaultsTypeDeclarationTS() = doSingleStrictnessTest(false)
+  fun testWithDefaultsTypeDeclarationTSNullChecks() = doSingleStrictnessTest(true)
 
-  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doTest(true)
+  fun testWithDefaultsTypeDeclarationWithAssignmentTS() = doSingleStrictnessTest(false)
+  fun testWithDefaultsTypeDeclarationWithAssignmentTSNullChecks() = doSingleStrictnessTest(true)
 
   fun testWithDefaultsTypeDeclarationPartialTS() = doTest()
 
   fun testWithDefaultsTypeDeclarationLocalReferencesTS() = doTest(true)
 
-  fun testPropsDestructureTypeDeclarationTS() = doTest(true)
+  fun testPropsDestructureTypeDeclarationTS() = doSingleStrictnessTest(false)
+  fun testPropsDestructureTypeDeclarationTSNullChecks() = doSingleStrictnessTest(true)
 
   fun testPropsDestructureRuntimeDeclarationJS() = doTest()
 
@@ -115,10 +118,23 @@ class VueComponentTest : BasePlatformTestCase() {
     file = doTestInner(file, strictNullChecksDiffer)
   }
 
+  private fun doSingleStrictnessTest(strictNullChecks: Boolean, addNodeModules: List<VueTestModule> = listOf(VueTestModule.VUE_3_2_2)) {
+    val file = configureTestProject(addNodeModules) as PsiFileImpl
+
+    if (strictNullChecks) {
+      TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    }
+    else {
+      TypeScriptTestUtil.forceDefaultTsConfig(project, testRootDisposable)
+    }
+
+    doTestInner(file, false)
+  }
+
   /**
    * Checks highlighting, then checks the AST-based component model, then compares it with the Stub-based component model.
    */
-  private fun doTestInner(_file: PsiFileImpl, strictNullChecks: Boolean): PsiFileImpl {
+  private fun doTestInner(_file: PsiFileImpl, appendSuffixToExpected: Boolean): PsiFileImpl {
     var file = _file
 
     file.node // ensure that the AST is loaded
@@ -127,7 +143,7 @@ class VueComponentTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
 
     val newModel = buildComponentModel(file)
-    val expectedFile = "${getTestName(false)}.${if (strictNullChecks) "strictNullChecks." else ""}expected.txt"
+    val expectedFile = "${getTestName(false)}.${if (appendSuffixToExpected) "strictNullChecks." else ""}expected.txt"
     myFixture.checkTextByFile(newModel, expectedFile)
 
     assertNull(file.stub)

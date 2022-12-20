@@ -1,7 +1,7 @@
 {
  class: "VueSourceComponent",
  components: {
-  WithDefaultsTypeDeclarationWithAssignmentTS: <recursive value of class VueSourceComponent>,
+  PropsDestructureTypeDeclarationTSNullChecks: <recursive value of class VueSourceComponent>,
  },
  props: [
   {
