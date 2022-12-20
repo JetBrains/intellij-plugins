@@ -86,6 +86,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
   protected Runnable myAfterCommitRunnable = null;
 
+  private boolean myCheckPreview;
+
+  @Override
+  protected boolean checkPreview() {
+    return myCheckPreview;
+  }
+
   @Override
   protected String getBasePath() {
     return BASE_PATH.substring(0, BASE_PATH.length() - 1);
@@ -151,14 +158,17 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCreateParameter() throws Exception {
+    myCheckPreview = true;
     doSimpleHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter_2() throws Exception {
+    myCheckPreview = true;
     doSimpleHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter_3() throws Exception {
+    myCheckPreview = true;
     doSimpleHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
