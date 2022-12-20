@@ -1,63 +1,118 @@
 package org.intellij.prisma
 
-import com.intellij.psi.formatter.FormatterTestCase
+import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Document
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.util.IncorrectOperationException
+import org.intellij.prisma.ide.formatter.PrismaFormattingService
 
-class PrismaFormatterTest : FormatterTestCase() {
-  override fun getBasePath(): String = "/formatter"
-
-  override fun getTestDataPath(): String = getPrismaTestDataPath()
-
-  override fun getFileExtension(): String = "prisma"
+class PrismaFormatterTest : JSTempDirWithNodeInterpreterTest() {
+  override fun getBasePath(): String = "${getPrismaRelativeTestDataPath()}/formatter"
 
   fun testIndents() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testLineSpacing() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testTrailingNewLine() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testEmptyFile() {
-    doTest()
+    doInternalFormatterTest()
+  }
+
+  fun testEmptyFilePrismaFmt() {
+    doPrismaFmtFormatterTest()
   }
 
   fun testModelSpacing() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testEnumSpacing() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testTypeSpacing() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testGeneratorSpacing() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testDatasourceSpacing() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testKeyValueAlignment() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testFieldsAlignment() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testTypeAliasAlignment() {
-    doTest()
+    doFormatterTest()
   }
 
   fun testAlignmentWithDocComments() {
-    doTest()
+    doFormatterTest()
+  }
+
+  fun testEnumAlignment() {
+    doFormatterTest()
+  }
+
+  fun testSchema() {
+    doPrismaFmtFormatterTest()
+  }
+
+  private fun doInternalFormatterTest() {
+    doFormatterTest(true, false)
+  }
+
+  private fun doPrismaFmtFormatterTest() {
+    doFormatterTest(false, true)
+  }
+
+  private fun doFormatterTest(internal: Boolean = true, prismaFmt: Boolean = true) {
+    val testName = getTestName(true)
+    myFixture.configureByFile("$testName.prisma")
+
+    val psiFile = myFixture.file
+    val document = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
+
+    if (internal) {
+      format(psiFile, document, false)
+      myFixture.checkResultByFile("${testName}_after.prisma")
+    }
+
+    if (prismaFmt) {
+      format(psiFile, document, true)
+      myFixture.checkResultByFile("${testName}_after.prisma")
+    }
+  }
+
+  private fun format(psiFile: PsiFile, document: Document, usePrismaFmt: Boolean) {
+    WriteCommandAction.runWriteCommandAction(project) {
+      try {
+        PrismaFormattingService.USE_PRISMA_FMT.set(psiFile, usePrismaFmt)
+        CodeStyleManager.getInstance(project)
+          .reformatText(psiFile, psiFile.textRange.startOffset, psiFile.textRange.endOffset)
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+      }
+      catch (e: IncorrectOperationException) {
+        fail()
+      }
+    }
   }
 }

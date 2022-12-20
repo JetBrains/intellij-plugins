@@ -9,6 +9,7 @@ import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.containers.addIfNotNull
 import com.intellij.util.text.CharArrayUtil
+import org.intellij.prisma.lang.psi.PrismaElementTypes.ENUM_VALUE_DECLARATION
 import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_DECLARATION
 import org.intellij.prisma.lang.psi.PrismaFile
 import org.intellij.prisma.lang.psi.skipWhitespacesBackwardWithoutNewLines
@@ -54,7 +55,8 @@ class PrismaTrailingSpacesFormatProcessor : PostFormatProcessor {
     val whiteSpaces = SyntaxTraverser.psiTraverser(file).onRange(rangeToReformat).filter(PsiWhiteSpace::class.java)
     for (ws in whiteSpaces) {
       val prev = ws.skipWhitespacesBackwardWithoutNewLines()
-      if (prev?.elementType == FIELD_DECLARATION) {
+      val elementType = prev?.elementType
+      if (elementType == FIELD_DECLARATION || elementType == ENUM_VALUE_DECLARATION) {
         val newLineIdx = ws.text.indexOf('\n')
         // We remove trailing spaces added because of the alignment by a field attribute.
         // Comments are also aligned by a field attribute, but they shouldn't, so

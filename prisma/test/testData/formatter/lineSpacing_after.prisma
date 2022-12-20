@@ -63,8 +63,6 @@ enum UserRole {
   TEACHER
 }
 
-type CUID = String @id @default(cuid())
-
 model Empty {
 }
 

@@ -112,8 +112,6 @@ enum UserRole {
 
 
 
-type CUID = String @id @default(cuid())
-
 
 
 model Empty {

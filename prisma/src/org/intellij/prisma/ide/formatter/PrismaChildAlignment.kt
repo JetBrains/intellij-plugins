@@ -1,14 +1,13 @@
 package org.intellij.prisma.ide.formatter
 
 import com.intellij.formatting.Alignment
-import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.endOffset
 import org.intellij.prisma.lang.psi.PRISMA_TYPES
-import org.intellij.prisma.lang.psi.PrismaElementTypes.EQ
-import org.intellij.prisma.lang.psi.PrismaElementTypes.FIELD_ATTRIBUTE
+import org.intellij.prisma.lang.psi.PrismaElementTypes.*
+import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
 import org.intellij.prisma.lang.psi.PrismaFieldAttribute
 import org.intellij.prisma.lang.psi.PrismaFieldType
 
@@ -26,7 +25,8 @@ class PrismaChildAlignment(
       FIELD_ATTRIBUTE -> {
         // align only by the first attribute in the list
         val prev = PsiTreeUtil.skipWhitespacesBackward(element)
-        return if (prev is PrismaFieldType) {
+        return if (prev is PrismaFieldType ||
+                   prev.elementType == IDENTIFIER && prev?.parent is PrismaEnumValueDeclaration) {
           attributeAlignment
         }
         else {
@@ -38,9 +38,14 @@ class PrismaChildAlignment(
     }
   }
 
-  fun createAlignmentAnchor(node: ASTNode): PrismaAnchorBlock? {
-    if (node.elementType in PRISMA_TYPES && attributeAlignment != null) {
-      val element = node.psi
+  fun createAlignmentAnchor(element: PsiElement): PrismaAnchorBlock? {
+    if (attributeAlignment == null) {
+      return null
+    }
+
+    val elementType = element.elementType
+    if (elementType in PRISMA_TYPES ||
+        elementType == IDENTIFIER && element.parent is PrismaEnumValueDeclaration) {
       val next = PsiTreeUtil.skipWhitespacesForward(element)
       if (next !is PrismaFieldAttribute) {
         return PrismaAnchorBlock(element.endOffset, attributeAlignment)

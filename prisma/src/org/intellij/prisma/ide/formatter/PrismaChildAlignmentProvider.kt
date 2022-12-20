@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.intellij.prisma.lang.psi.PrismaBlock
+import org.intellij.prisma.lang.psi.PrismaEnumValueDeclaration
 import org.intellij.prisma.lang.psi.PrismaFieldDeclaration
 import org.intellij.prisma.lang.psi.PrismaKeyValue
 
@@ -21,35 +22,42 @@ class PrismaChildAlignmentProvider(private val map: Map<PsiElement, PrismaChildA
         return EMPTY
       }
 
-      val buildContext = PrismaChildAlignmentBuilder()
+      val builder = PrismaChildAlignmentBuilder()
       var prev: PsiElement? = null
 
       for (child in element.children) {
         if (shouldStartNewGroup(prev, child)) {
-          buildContext.finishGroup()
+          builder.finishGroup()
         }
 
         when (child) {
           is PrismaFieldDeclaration -> {
-            buildContext.addToGroup(child)
-            buildContext.alignByType()
+            builder.addToGroup(child)
+            builder.alignByType()
             if (child.fieldAttributeList.isNotEmpty()) {
-              buildContext.alignByAttribute()
+              builder.alignByAttribute()
+            }
+          }
+
+          is PrismaEnumValueDeclaration -> {
+            builder.addToGroup(child)
+            if (child.fieldAttributeList.isNotEmpty()) {
+              builder.alignByAttribute()
             }
           }
 
           is PrismaKeyValue -> {
-            buildContext.addToGroup(child)
-            buildContext.alignByKeyValue()
+            builder.addToGroup(child)
+            builder.alignByKeyValue()
           }
 
-          else -> buildContext.finishGroup()
+          else -> builder.finishGroup()
         }
 
         prev = child
       }
 
-      return buildContext.build()
+      return builder.build()
     }
 
     private fun shouldStartNewGroup(prev: PsiElement?, next: PsiElement): Boolean {
