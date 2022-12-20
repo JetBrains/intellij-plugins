@@ -5,15 +5,15 @@ import com.intellij.lang.html.HTMLLanguage
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions
-import com.intellij.psi.codeStyle.FileIndentOptionsProvider
+import com.intellij.psi.codeStyle.PsiBasedFileIndentOptionsProvider
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueFileIndentOptionsProvider : FileIndentOptionsProvider() {
+class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
 
-  override fun getIndentOptions(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
+  override fun getIndentOptionsByPsiFile(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
     if (file.language is VueLanguage) {
       val fileType = file.originalFile.virtualFile?.fileType
       if (fileType === null || fileType === VueFileType.INSTANCE) {
