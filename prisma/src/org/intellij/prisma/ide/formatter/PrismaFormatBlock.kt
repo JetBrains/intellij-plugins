@@ -42,7 +42,7 @@ class PrismaFormatBlock(
     val newAlignment: Alignment? = newChildAlignment?.getAlignmentForElement(childElement)
 
     blocks.add(PrismaFormatBlock(child, null, newAlignment, context, newChildAlignment))
-    blocks.addIfNotNull(newChildAlignment?.createAlignmentAnchor(child))
+    blocks.addIfNotNull(newChildAlignment?.createAlignmentAnchor(childElement))
   }
 
   override fun getChildIndent(): Indent? = indentProcessor.getChildIndent(node)
