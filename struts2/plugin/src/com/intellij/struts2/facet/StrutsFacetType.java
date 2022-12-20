@@ -34,7 +34,7 @@ import javax.swing.*;
  */
 public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfiguration> {
   StrutsFacetType() {
-    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "Struts 2", null);
+    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "Struts 2");
   }
 
   public static FacetType<StrutsFacet, StrutsFacetConfiguration> getInstance() {
