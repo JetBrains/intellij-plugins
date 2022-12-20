@@ -39,7 +39,7 @@ public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFacto
 
   @NotNull
   @Override
-  public JSFunctionSignatureChecker getFunctionSignatureChecker(@NotNull ProblemsHolder holder) {
-    return new ActionScriptFunctionSignatureChecker(getTypeChecker(holder));
+  public JSFunctionSignatureChecker getFunctionSignatureChecker(@NotNull ProblemsHolder holder, @NotNull JSTypeChecker typeChecker) {
+    return new ActionScriptFunctionSignatureChecker(typeChecker);
   }
 }

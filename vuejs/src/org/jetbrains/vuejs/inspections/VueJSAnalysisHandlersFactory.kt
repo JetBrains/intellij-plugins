@@ -16,8 +16,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
 class VueJSAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
 
-  override fun getFunctionSignatureChecker(holder: ProblemsHolder): JSFunctionSignatureChecker {
-    val typeChecker = getTypeChecker(holder)
+  override fun getFunctionSignatureChecker(holder: ProblemsHolder, typeChecker: JSTypeChecker): JSFunctionSignatureChecker {
     return object : JavaScriptFunctionSignatureChecker(typeChecker) {
 
       override fun checkParameterLength(node: JSCallExpression,
