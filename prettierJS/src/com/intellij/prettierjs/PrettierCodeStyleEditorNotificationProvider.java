@@ -50,9 +50,13 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
+    if (JSProjectUtil.isInLibrary(file, project)) {
+      return null;
+    }
+
     return fileEditor -> {
       if (!(fileEditor instanceof TextEditor)) return null;
-      if (!file.isWritable() || JSProjectUtil.isInLibrary(file, project) || JSLibraryUtil.isProbableLibraryFile(file)) {
+      if (!file.isWritable() || JSLibraryUtil.isProbableLibraryFile(file)) {
         return null;
       }
       if (isNotificationDismissed(file)) {
