@@ -1,6 +1,7 @@
 package org.intellij.prisma.ide.schema.definitions
 
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
+import com.intellij.patterns.PlatformPatterns.psiElement
 import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaDeclaration
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
@@ -13,6 +14,9 @@ import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 import org.intellij.prisma.lang.PrismaConstants.Types
+import org.intellij.prisma.lang.psi.PrismaEnumDeclaration
+import org.intellij.prisma.lang.psi.PrismaModelDeclaration
+import org.intellij.prisma.lang.psi.PrismaModelTypeDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.types.PrismaBooleanType
 import java.util.*
@@ -23,6 +27,8 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       label = BlockAttributes.MAP
       insertHandler = PrismaInsertHandler.PARENS_QUOTED_ARGUMENT
       documentation = "Maps a model name from the Prisma schema to a different table name."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(
+        psiElement().andOr(psiElement(PrismaModelDeclaration::class.java), psiElement(PrismaEnumDeclaration::class.java)))
 
       param {
         label = ParameterNames.NAME
@@ -36,6 +42,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       label = BlockAttributes.ID
       insertHandler = PrismaInsertHandler.PARENS_LIST_ARGUMENT
       documentation = "Defines a multi-field ID on the model."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.FIELDS
@@ -64,6 +71,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       label = BlockAttributes.UNIQUE
       insertHandler = PrismaInsertHandler.PARENS_LIST_ARGUMENT
       documentation = "Defines a compound unique constraint for the specified fields."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.FIELDS
@@ -92,6 +100,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       label = BlockAttributes.INDEX
       insertHandler = PrismaInsertHandler.PARENS_LIST_ARGUMENT
       documentation = "Defines an index on the model."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.FIELDS
@@ -132,6 +141,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       insertHandler = PrismaInsertHandler.PARENS_LIST_ARGUMENT
       documentation = "Defines a full-text index on the model."
       datasources = EnumSet.of(PrismaDatasourceType.MYSQL, PrismaDatasourceType.MONGODB)
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.FIELDS
@@ -151,6 +161,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       label = BlockAttributes.IGNORE
       documentation =
         "A model with an `@@ignore` attribute can be kept in sync with the database schema using Prisma Migrate and Introspection, but won't be exposed in Prisma Client."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
     }
   }
 
@@ -158,6 +169,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
     element {
       label = FieldAttributes.ID
       documentation = "Defines a single-field ID on the model."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.MAP
@@ -173,6 +185,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
     element {
       label = FieldAttributes.UNIQUE
       documentation = "Defines a unique constraint for this field."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.MAP
@@ -201,6 +214,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       label = FieldAttributes.DEFAULT
       insertHandler = ParenthesesInsertHandler.WITH_PARAMETERS
       documentation = "Defines a default value for this field. `@default` takes an expression as an argument."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelTypeDeclaration::class.java))
 
       param {
         label = ParameterNames.EXPRESSION
@@ -225,6 +239,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
       insertHandler = ParenthesesInsertHandler.WITH_PARAMETERS
       documentation =
         "Defines a connection between two models. [Learn more](https://pris.ly/d/relation-attribute)."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
 
       param {
         label = ParameterNames.NAME
@@ -275,12 +290,14 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
     element {
       label = FieldAttributes.UPDATED_AT
       documentation = "Automatically stores the time when a record was last updated."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
     }
 
     element {
       label = FieldAttributes.IGNORE
       documentation =
         "A field with an `@ignore` attribute can be kept in sync with the database schema using Prisma Migrate and Introspection, but won't be exposed in Prisma Client."
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
     }
 
     element {
@@ -289,6 +306,7 @@ val PRISMA_SCHEMA_ATTRIBUTES = schema {
         "Defines a native database type that should be used for this field. See https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#native-types-mapping."
       insertHandler = PrismaInsertHandler.QUALIFIED_NAME
       datasources = PrismaDatasourceType.except(PrismaDatasourceType.SQLITE)
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelDeclaration::class.java))
     }
   }
 }

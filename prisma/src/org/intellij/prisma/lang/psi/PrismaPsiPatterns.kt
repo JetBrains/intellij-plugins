@@ -11,6 +11,7 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.prevLeaf
 import com.intellij.util.ProcessingContext
+import org.intellij.prisma.ide.completion.PRISMA_ENTITY_DECLARATION
 import org.intellij.prisma.lang.types.PrismaType
 import org.intellij.prisma.lang.types.name
 
@@ -53,26 +54,36 @@ object PrismaPsiPatterns {
       element.identifier.textMatches(name)
     }
   }
+
+  fun insideEntityDeclaration(declarationPattern: PsiElementPattern.Capture<out PsiElement>): PsiElementPattern.Capture<out PsiElement> {
+    return psiElement().with("insideEntityDeclaration") { element, context ->
+      val declaration =
+        context?.get(PRISMA_ENTITY_DECLARATION)
+        ?: element.parentOfType()
+        ?: return@with false
+      declarationPattern.accepts(declaration, context)
+    }
+  }
 }
 
 fun <T : PsiElement, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.afterNewLine(): Self =
-  with("afterNewLine") { element ->
+  with("afterNewLine") { element, context ->
     val prev = element.skipWhitespacesBackwardWithoutNewLines() ?: return@with true
-    PrismaPsiPatterns.newLine.accepts(prev)
+    PrismaPsiPatterns.newLine.accepts(prev, context)
   }
 
 fun <T : PsiElement, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.afterLeafNewLine(): Self =
-  with("afterLeafNewLine") { element ->
+  with("afterLeafNewLine") { element, context ->
     val prev = element.prevLeaf() ?: return@with true
-    PrismaPsiPatterns.newLine.accepts(prev)
+    PrismaPsiPatterns.newLine.accepts(prev, context)
   }
 
 fun <T : PsiElement, Self : ObjectPattern<T, Self>, P : PsiElement> ObjectPattern<T, Self>.afterSiblingNewLinesAware(
   pattern: PsiElementPattern.Capture<P>
 ): Self =
-  with("afterSiblingWithoutNewLines") { element ->
+  with("afterSiblingWithoutNewLines") { element, context ->
     val prev = element.skipWhitespacesBackwardWithoutNewLines() ?: return@with true
-    pattern.accepts(prev)
+    pattern.accepts(prev, context)
   }
 
 fun <T : Any, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.with(name: String, cond: (T) -> Boolean): Self =

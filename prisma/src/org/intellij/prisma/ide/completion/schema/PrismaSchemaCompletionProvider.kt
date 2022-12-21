@@ -19,6 +19,8 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
     context: ProcessingContext,
     result: CompletionResultSet
   ) {
+    populateProcessingContext(parameters, context)
+
     collectSchemaElements(parameters, context).forEach { schemaElement ->
       createLookupElement(schemaElement, parameters, context).let { builder ->
         result.addElement(builder)
@@ -37,6 +39,7 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
       .getElementsByKind(kind)
       .asSequence()
       .filter { it.isAvailableForDatasource(datasourceType) }
+      .filter { it.isAcceptedByPattern(parameters.originalPosition ?: parameters.position, context) }
       .toList()
   }
 

@@ -60,6 +60,7 @@
   extends('UnsupportedOptionalListType|ListType|OptionalType|LegacyRequiredType|LegacyListType|SingleType')=FieldType
 
   implements('FieldDeclaration')='org.intellij.prisma.lang.psi.PrismaTypeOwner'
+  implements('FieldDeclaration|EnumValueDeclaration')='org.intellij.prisma.lang.psi.PrismaFieldAttributeOwner'
 }
 
 Schema ::= Declaration*

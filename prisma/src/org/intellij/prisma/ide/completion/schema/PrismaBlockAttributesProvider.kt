@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
-import org.intellij.prisma.ide.completion.collectExistingAttributeNamesForDeclaration
+import org.intellij.prisma.ide.completion.collectExistingAttributeNames
 import org.intellij.prisma.ide.schema.PrismaSchemaElement
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
@@ -21,15 +21,21 @@ object PrismaBlockAttributesProvider : PrismaSchemaCompletionProvider() {
 
   override val pattern: ElementPattern<out PsiElement> =
     psiElement().andOr(
-      psiElement().withParent(psiElement(PrismaFieldDeclaration::class.java)),
+      psiElement().withParent(
+        psiElement().andOr(
+          psiElement(PrismaFieldDeclaration::class.java),
+          psiElement(PrismaEnumValueDeclaration::class.java),
+        )
+      ),
       psiElement().withSuperParent(
-        2, psiElement().andOr(
-        psiElement(PrismaFieldAttribute::class.java),
-        psiElement(PrismaBlockAttribute::class.java),
-      )
+        2,
+        psiElement().andOr(
+          psiElement(PrismaFieldAttribute::class.java),
+          psiElement(PrismaBlockAttribute::class.java),
+        )
       )
     )
-      .inside(psiElement(PrismaModelDeclaration::class.java))
+      .inside(psiElement().andOr(psiElement(PrismaModelDeclaration::class.java), psiElement(PrismaEnumDeclaration::class.java)))
       .afterLeafSkipping(psiElement().withElementType(TokenSet.create(AT, ATAT)), PrismaPsiPatterns.newLine)
 
   override fun collectSchemaElements(
@@ -37,10 +43,8 @@ object PrismaBlockAttributesProvider : PrismaSchemaCompletionProvider() {
     context: ProcessingContext
   ): Collection<PrismaSchemaElement> {
     val declaration = parameters.originalPosition?.parentOfType<PrismaDeclaration>() ?: return emptyList()
-
     val excluded = mutableSetOf<String>()
-
-    val existingAttributes = collectExistingAttributeNamesForDeclaration(declaration)
+    val existingAttributes = collectExistingAttributeNames(declaration)
     excluded.addAll(existingAttributes) // skip already used block attributes
 
     if (FieldAttributes.ID in existingAttributes) {
