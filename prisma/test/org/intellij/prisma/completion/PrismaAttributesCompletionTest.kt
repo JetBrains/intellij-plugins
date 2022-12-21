@@ -10,20 +10,20 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributes() {
     val lookupElements = completeSelected(
       """
-            datasource db {
-              provider = "mysql"
-            }
-            model M {
-              <caret>
-            }
-        """.trimIndent(), """
-            datasource db {
-              provider = "mysql"
-            }
-            model M {
-              @@id([<caret>])
-            }
-        """.trimIndent(),
+          datasource db {
+            provider = "mysql"
+          }
+          model M {
+            <caret>
+          }
+      """.trimIndent(), """
+          datasource db {
+            provider = "mysql"
+          }
+          model M {
+            @@id([<caret>])
+          }
+      """.trimIndent(),
       "@@id"
     )
     assertSameElements(lookupElements.strings, BlockAttributes.ALL)
@@ -33,14 +33,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesPrefixAt() {
     val lookupElements = completeSelected(
       """
-            model M {
-              @<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              @@map("<caret>")
-            }
-        """.trimIndent(),
+          model M {
+            @<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            @@map("<caret>")
+          }
+      """.trimIndent(),
       "@@map"
     )
     assertSameElements(lookupElements.strings, BlockAttributes.ALL)
@@ -49,18 +49,18 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesPrefixAtAfterField() {
     val lookupElements = completeSelected(
       """
-            model M {
-              id String
-              
-              @<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              id String
-              
-              @@index([<caret>])
-            }
-        """.trimIndent(),
+          model M {
+            id String
+            
+            @<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            id String
+            
+            @@index([<caret>])
+          }
+      """.trimIndent(),
       "@@index"
     )
     assertSameElements(lookupElements.strings, BlockAttributes.ALL)
@@ -69,14 +69,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesPrefixAtAt() {
     val lookupElements = completeSelected(
       """
-            model M {
-              @@<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              @@unique([<caret>])
-            }
-        """.trimIndent(),
+          model M {
+            @@<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            @@unique([<caret>])
+          }
+      """.trimIndent(),
       "@@unique"
     )
     assertSameElements(lookupElements.strings, BlockAttributes.ALL)
@@ -85,18 +85,18 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesPrefixAtAtAfterField() {
     val lookupElements = completeSelected(
       """
-            model M {
-              id String
-              
-              @@<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              id String
-              
-              @@unique([<caret>])
-            }
-        """.trimIndent(),
+          model M {
+            id String
+            
+            @@<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            id String
+            
+            @@unique([<caret>])
+          }
+      """.trimIndent(),
       "@@unique"
     )
     assertSameElements(lookupElements.strings, BlockAttributes.ALL)
@@ -105,61 +105,61 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesPrefixName() {
     completeBasic(
       """
-            model M {
-              @@ign<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              @@ignore<caret>
-            }
-        """.trimIndent()
+          model M {
+            @@ign<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            @@ignore<caret>
+          }
+      """.trimIndent()
     )
   }
 
   fun testBlockAttributesFulltext() {
     completeBasic(
       """
-            datasource db {
-              provider = "mysql"
-            }
-            
-            model M {
-              @@full<caret>
-            }
-        """.trimIndent(), """
-            datasource db {
-              provider = "mysql"
-            }
-            
-            model M {
-              @@fulltext([<caret>])
-            }
-        """.trimIndent()
+          datasource db {
+            provider = "mysql"
+          }
+          
+          model M {
+            @@full<caret>
+          }
+      """.trimIndent(), """
+          datasource db {
+            provider = "mysql"
+          }
+          
+          model M {
+            @@fulltext([<caret>])
+          }
+      """.trimIndent()
     )
   }
 
   fun testBlockAttributesNoFulltext() {
     val lookupElements = getLookupElements(
       """
-            datasource db {
-              provider = "postgresql"
-            }
-            
-            model M {
-              @@<caret>
-            }
-        """.trimIndent()
+          datasource db {
+            provider = "postgresql"
+          }
+          
+          model M {
+            @@<caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, BlockAttributes.FULLTEXT)
   }
 
-  fun testNoBlockAttributesInType() {
+  fun testNoBlockAttributesInCompositeType() {
     val lookupElements = getLookupElements(
       """
-            type M {
-              <caret>
-            }
-        """.trimIndent()
+          type M {
+            <caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, BlockAttributes.ALL)
   }
@@ -167,10 +167,10 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testNoBlockAttributesForField() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              id String <caret>
-            }
-        """.trimIndent()
+          model M {
+            id String <caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, BlockAttributes.ALL)
   }
@@ -178,12 +178,12 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesNoIdIfHasIdFieldAttribute() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              id Int @id
-              
-              <caret>
-            }
-        """.trimIndent()
+          model M {
+            id Int @id
+            
+            <caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, BlockAttributes.ID)
   }
@@ -191,14 +191,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testBlockAttributesNoDuplicates() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              id Int
-              
-              @@map("foo")
-              @@unique([id])
-              <caret>
-            }
-        """.trimIndent()
+          model M {
+            id Int
+            
+            @@map("foo")
+            @@unique([id])
+            <caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, BlockAttributes.MAP, BlockAttributes.UNIQUE)
   }
@@ -206,29 +206,74 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testNoBlockAttributesForFieldAfterAt() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              id String @<caret>
-            }
-        """.trimIndent()
+          model M {
+            id String @<caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, BlockAttributes.ALL)
+  }
+
+  fun testBlockAttributesEnum() {
+    val lookupElements = getLookupElements(
+      """
+          enum Role {
+            ADMIN
+            USER
+            GUEST
+            
+            @<caret>
+          }
+      """.trimIndent()
+    )
+    assertSameElements(lookupElements.strings, BlockAttributes.MAP)
+  }
+
+  fun testBlockAttributesEnumWithoutAt() {
+    val lookupElements = getLookupElements(
+      """
+          enum Role {
+            ADMIN
+            USER
+            GUEST
+            
+            <caret>
+          }
+      """.trimIndent()
+    )
+    assertSameElements(lookupElements.strings, BlockAttributes.MAP)
+  }
+
+  fun testBlockAttributesEnumAtAt() {
+    val lookupElements = getLookupElements(
+      """
+          enum Role {
+            ADMIN
+            USER
+            GUEST
+            
+            @@<caret>
+          }
+      """.trimIndent()
+    )
+    assertSameElements(lookupElements.strings, BlockAttributes.MAP)
   }
 
   fun testFieldAttributes() {
     val lookupElements = completeSelected(
       """
-            model User {
-            }
-            model M {
-              user User <caret>
-            }
-        """.trimIndent(), """
-            model User {
-            }
-            model M {
-              user User @relation(<caret>)
-            }
-        """.trimIndent(),
+          model User {
+          }
+          model M {
+            user User <caret>
+          }
+      """.trimIndent(), """
+          model User {
+          }
+          model M {
+            user User @relation(<caret>)
+          }
+      """.trimIndent(),
       FieldAttributes.RELATION
     )
     assertSameElements(
@@ -242,14 +287,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeAfterAt() {
     completeSelected(
       """
-            model M {
-              id Int @<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              id Int @id<caret>
-            }
-        """.trimIndent(),
+          model M {
+            id Int @<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            id Int @id<caret>
+          }
+      """.trimIndent(),
       FieldAttributes.ID
     )
   }
@@ -257,16 +302,16 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeWithBeforeNextField() {
     completeSelected(
       """
-            model M {
-              id Int @<caret>
-              date DateTime
-            }
-        """.trimIndent(), """
-            model M {
-              id Int @ignore<caret>
-              date DateTime
-            }
-        """.trimIndent(),
+          model M {
+            id Int @<caret>
+            date DateTime
+          }
+      """.trimIndent(), """
+          model M {
+            id Int @ignore<caret>
+            date DateTime
+          }
+      """.trimIndent(),
       FieldAttributes.IGNORE
     )
   }
@@ -274,14 +319,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeExistingAttribute() {
     completeSelected(
       """
-            model M {
-              id Int @un<caret>
-            }
-        """.trimIndent(), """
-            model M {
-              id Int @unique<caret>
-            }
-        """.trimIndent(),
+          model M {
+            id Int @un<caret>
+          }
+      """.trimIndent(), """
+          model M {
+            id Int @unique<caret>
+          }
+      """.trimIndent(),
       FieldAttributes.UNIQUE
     )
   }
@@ -289,14 +334,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeAfterAnother() {
     val lookupElements = completeSelected(
       """
-            model M {
-              user User @unique <caret>
-            }
-        """.trimIndent(), """
-            model M {
-              user User @unique @map("<caret>")
-            }
-        """.trimIndent(),
+          model M {
+            user User @unique <caret>
+          }
+      """.trimIndent(), """
+          model M {
+            user User @unique @map("<caret>")
+          }
+      """.trimIndent(),
       FieldAttributes.MAP
     )
     assertSameElements(
@@ -309,14 +354,14 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeBeforeAnother() {
     val lookupElements = completeSelected(
       """
-            model M {
-              user User <caret> @map("")
-            }
-        """.trimIndent(), """
-            model M {
-              user User @unique @map("")
-            }
-        """.trimIndent(),
+          model M {
+            user User <caret> @map("")
+          }
+      """.trimIndent(), """
+          model M {
+            user User @unique @map("")
+          }
+      """.trimIndent(),
       FieldAttributes.UNIQUE
     )
     assertSameElements(
@@ -328,11 +373,11 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeForCompositeTypeField() {
     val lookupElements = getLookupElements(
       """
-            type T {}
-            model M {
-              type T <caret>
-            }
-        """.trimIndent()
+          type T {}
+          model M {
+            type T <caret>
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, FieldAttributes.DEFAULT, FieldAttributes.RELATION)
     assertSameElements(
@@ -344,11 +389,11 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeIdAllowedForEnum() {
     val lookupElements = getLookupElements(
       """
-            enum Lang {}
-            model M {
-              lang Lang <caret>
-            }
-        """.trimIndent()
+          enum Lang {}
+          model M {
+            lang Lang <caret>
+          }
+      """.trimIndent()
     )
     assertContainsElements(lookupElements.strings, FieldAttributes.ID)
   }
@@ -356,10 +401,10 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeIdAllowedForInt() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              i Int <caret>
-            }
-        """.trimIndent()
+          model M {
+            i Int <caret>
+          }
+      """.trimIndent()
     )
     assertContainsElements(lookupElements.strings, FieldAttributes.ID)
   }
@@ -367,10 +412,10 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeIdAllowedForString() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              s String <caret>
-            }
-        """.trimIndent()
+          model M {
+            s String <caret>
+          }
+      """.trimIndent()
     )
     assertContainsElements(lookupElements.strings, FieldAttributes.ID)
   }
@@ -378,13 +423,13 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeNoIdForCompositeTypes() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              m1 M1 <caret>
-            }
-            model M1 {
-                id Int @id
-            }
-        """.trimIndent()
+          model M {
+            m1 M1 <caret>
+          }
+          model M1 {
+              id Int @id
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, FieldAttributes.ID)
   }
@@ -392,10 +437,10 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeUpdatedAtForDateTime() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              updated DateTime <caret>
-            }
-        """.trimIndent()
+          model M {
+            updated DateTime <caret>
+          }
+      """.trimIndent()
     )
     assertContainsElements(lookupElements.strings, FieldAttributes.UPDATED_AT)
   }
@@ -403,12 +448,12 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeNoIdIfBlockAttributeExists() {
     val lookupElements = getLookupElements(
       """
-            model M {
-              id Int <caret>
-              
-              @@id([id])
-            }
-        """.trimIndent()
+          model M {
+            id Int <caret>
+            
+            @@id([id])
+          }
+      """.trimIndent()
     )
     assertDoesntContain(lookupElements.strings, FieldAttributes.ID)
   }
@@ -416,20 +461,20 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeDb() {
     completeSelected(
       """
-            datasource db {
-              provider = "postgresql"
-            }
-            model M {
-              id Int <caret>
-            }
-        """.trimIndent(), """
-            datasource db {
-              provider = "postgresql"
-            }
-            model M {
-              id Int @db.<caret>
-            }
-        """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+          }
+          model M {
+            id Int <caret>
+          }
+      """.trimIndent(), """
+          datasource db {
+            provider = "postgresql"
+          }
+          model M {
+            id Int @db.<caret>
+          }
+      """.trimIndent(),
       FieldAttributes.DB
     )
   }
@@ -437,20 +482,20 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeNativeTypes() {
     val lookupElements = completeSelected(
       """
-            datasource db {
-              provider = "postgresql"
-            }
-            model M {
-              id String @db.<caret>
-            }
-        """.trimIndent(), """
-            datasource db {
-              provider = "postgresql"
-            }
-            model M {
-              id String @db.Uuid<caret>
-            }
-        """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+          }
+          model M {
+            id String @db.<caret>
+          }
+      """.trimIndent(), """
+          datasource db {
+            provider = "postgresql"
+          }
+          model M {
+            id String @db.Uuid<caret>
+          }
+      """.trimIndent(),
       PrismaNativeType.PostgreSQL.UUID_TYPE_NAME
     )
 
@@ -471,21 +516,60 @@ class PrismaAttributesCompletionTest : PrismaCompletionTestBase() {
   fun testFieldAttributeNativeTypesWithArgs() {
     completeSelected(
       """
-            datasource db {
-              provider = "postgresql"
-            }
-            model M {
-              id String @db.<caret>
-            }
-        """.trimIndent(), """
-            datasource db {
-              provider = "postgresql"
-            }
-            model M {
-              id String @db.VarChar(<caret>)
-            }
-        """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+          }
+          model M {
+            id String @db.<caret>
+          }
+      """.trimIndent(), """
+          datasource db {
+            provider = "postgresql"
+          }
+          model M {
+            id String @db.VarChar(<caret>)
+          }
+      """.trimIndent(),
       PrismaNativeType.PostgreSQL.VARCHAR_TYPE_NAME
     )
+  }
+
+  fun testFieldAttributesEnum() {
+    val lookupElements = getLookupElements(
+      """
+          enum Role {
+            ADMIN @map("admin")
+            USER @map("user")
+            GUEST @<caret>
+          }
+      """.trimIndent()
+    )
+    assertSameElements(lookupElements.strings, FieldAttributes.MAP)
+  }
+
+  fun testFieldAttributesEnumWithoutAt() {
+    val lookupElements = getLookupElements(
+      """
+          enum Role {
+            ADMIN @map("admin")
+            USER @map("user")
+            GUEST <caret>
+          }
+      """.trimIndent()
+    )
+    assertSameElements(lookupElements.strings, FieldAttributes.MAP)
+  }
+
+  fun testFieldAttributesCompositeType() {
+    val lookupElements = getLookupElements(
+      """
+          type Comp {
+            id Int @<caret>
+            name String
+            location String
+          }
+      """.trimIndent()
+    )
+    assertSameElements(lookupElements.strings, FieldAttributes.DEFAULT, FieldAttributes.MAP)
   }
 }

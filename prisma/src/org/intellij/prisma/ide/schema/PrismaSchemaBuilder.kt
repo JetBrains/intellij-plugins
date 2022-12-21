@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.ElementPattern
 import com.intellij.psi.PsiElement
+import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
 
 class PrismaSchema(private val elements: Map<PrismaSchemaKind, PrismaSchemaElementGroup>) {
@@ -105,8 +106,8 @@ sealed class PrismaSchemaElement(
            datasources.contains(usedDatasource)
   }
 
-  fun isAcceptedByPattern(element: PsiElement?): Boolean {
-    return pattern?.accepts(element) ?: true
+  fun isAcceptedByPattern(element: PsiElement?, processingContext: ProcessingContext?): Boolean {
+    return pattern?.accepts(element, processingContext ?: ProcessingContext()) ?: true
   }
 }
 

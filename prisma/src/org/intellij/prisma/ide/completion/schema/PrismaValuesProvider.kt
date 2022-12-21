@@ -63,7 +63,8 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
       .asSequence()
       .filter { it.label !in usedValues }
       .filterNot { isInString && it is PrismaSchemaDeclaration }
-      .filter { it.isAvailableForDatasource(datasourceType) && it.isAcceptedByPattern(parameters.position) }
+      .filter { it.isAvailableForDatasource(datasourceType) }
+      .filter { it.isAcceptedByPattern(parameters.originalPosition ?: parameters.position, context) }
       .map {
         val label = computeLabel(it, parameters)
         createLookupElement(label, it, PrismaSchemaFakeElement.createForCompletion(parameters, it))

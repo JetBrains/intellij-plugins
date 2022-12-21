@@ -38,6 +38,7 @@ public class PrismaVisitor extends PsiElementVisitor {
 
   public void visitEnumValueDeclaration(@NotNull PrismaEnumValueDeclaration o) {
     visitMemberDeclaration(o);
+    // visitFieldAttributeOwner(o);
   }
 
   public void visitExpression(@NotNull PrismaExpression o) {
@@ -51,6 +52,7 @@ public class PrismaVisitor extends PsiElementVisitor {
   public void visitFieldDeclaration(@NotNull PrismaFieldDeclaration o) {
     visitMemberDeclaration(o);
     // visitTypeOwner(o);
+    // visitFieldAttributeOwner(o);
   }
 
   public void visitFieldDeclarationBlock(@NotNull PrismaFieldDeclarationBlock o) {
