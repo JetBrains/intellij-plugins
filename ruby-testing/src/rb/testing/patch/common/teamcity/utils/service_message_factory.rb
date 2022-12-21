@@ -230,12 +230,13 @@ module Rake
 
       private
       def self.format_stacktrace_if_needed message, stacktrace
+        stacktrace = stacktrace.join "\n" if stacktrace.kind_of?(Array)
         if Rake::TeamCity.is_in_buildserver_mode()
           # At current moment TC doesn't extract message from corresponding attribute.
           # see [TW-6270] http://jetbrains.net/tracker/workspace?currentIssueId=TW-6270
-          "#{message}\n\nStack trace:\n#{stacktrace}"
+          message + "\n\nStack trace:\n" + stacktrace
         else
-          "#{stacktrace}"
+          stacktrace
         end
       end
 
