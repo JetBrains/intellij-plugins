@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_COMPONENTS
 
@@ -72,7 +73,7 @@ class VueExtractComponentRefactoring(private val project: Project,
 
     fun validate(@NonNls text: String): @Nls String? {
       val normalized = fromAsset(text.trim())
-      val fileName = toAsset(text.trim(), true) + ".vue"
+      val fileName = toAsset(text.trim(), true) + VUE_FILE_EXTENSION
       if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) ||
           normalized.contains(' ') || forbidden.contains(normalized)) {
         return VueBundle.message("vue.template.intention.extract.component.error.component.name", normalized)

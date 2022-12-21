@@ -31,6 +31,7 @@ import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
@@ -137,7 +138,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName)
     val folder: PsiDirectory = containingFile.parent ?: return null
-    val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName, true) + ".vue")
+    val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName, true) + VUE_FILE_EXTENSION)
     VfsUtil.saveText(virtualFile, newText)
     return virtualFile
   }

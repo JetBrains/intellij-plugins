@@ -24,6 +24,7 @@ import com.intellij.webSymbols.context.WebSymbolsContext
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
+const val VUE_FILE_EXTENSION = ".vue"
 const val VUE_MODULE: String = "vue"
 const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
@@ -31,6 +32,8 @@ const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
 const val SHARDS_VUE_MODULE: String = "shards-vue"
 const val VUE_CLASS_COMPONENT_MODULE: String = "vue-class-component"
 const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
+
+val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
 
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"

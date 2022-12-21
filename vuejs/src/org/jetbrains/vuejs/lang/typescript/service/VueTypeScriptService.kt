@@ -25,6 +25,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
@@ -138,7 +139,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
     val arguments = ConfigureRequestArguments()
     val fileExtensionInfo = FileExtensionInfo()
-    fileExtensionInfo.extension = ".vue"
+    fileExtensionInfo.extension = VUE_FILE_EXTENSION
 
     //see ts.getSupportedExtensions
     //x.scriptKind === ScriptKind.Deferred(7) || needJsExtensions && isJSLike(x.scriptKind) ? x.extension : undefined

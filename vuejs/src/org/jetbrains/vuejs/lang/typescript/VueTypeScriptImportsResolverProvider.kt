@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.lang.typescript
 
 import com.intellij.lang.javascript.DialectDetector
-import com.intellij.lang.typescript.modules.TypeScriptNodeSearchProcessor
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportResolveContext
@@ -12,11 +11,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.index.VUE_DEFAULT_EXTENSIONS_WITH_DOT
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
-
-const val vueExtension = ".vue"
-val defaultExtensionsWithDot = arrayOf(vueExtension)
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun isImplicitTypeScriptFile(project: Project, file: VirtualFile): Boolean {
@@ -28,7 +26,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
            findModule(psiFile, false)?.let { DialectDetector.isTypeScript(it) } == true
   }
 
-  override fun getExtensions(): Array<String> = defaultExtensionsWithDot
+  override fun getExtensions(): Array<String> = VUE_DEFAULT_EXTENSIONS_WITH_DOT
 
   override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver {
     return VueFileImportsResolver(project, config.resolveContext, config.configFile)

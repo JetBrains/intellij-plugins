@@ -8,13 +8,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Processor
+import org.jetbrains.vuejs.index.VUE_DEFAULT_EXTENSIONS_WITH_DOT
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueFileImportsResolver(project: Project,
                              resolveContext: TypeScriptImportResolveContext,
                              private val contextFile: VirtualFile) :
-  TypeScriptFileImportsResolverImpl(project, resolveContext, defaultExtensionsWithDot, listOf(VueFileType.INSTANCE)) {
+  TypeScriptFileImportsResolverImpl(project, resolveContext, VUE_DEFAULT_EXTENSIONS_WITH_DOT, listOf(VueFileType.INSTANCE)) {
 
   override fun processAllFilesInScope(includeScope: GlobalSearchScope, processor: Processor<in VirtualFile>) {
     if (includeScope == GlobalSearchScope.EMPTY_SCOPE) return
