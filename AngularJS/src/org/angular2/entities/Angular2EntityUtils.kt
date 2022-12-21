@@ -1,306 +1,289 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
-import one.util.streamex.StreamEx;
-import org.angular2.entities.ivy.Angular2IvyEntity;
-import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
-import org.angular2.entities.source.Angular2SourceEntity;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
+import com.intellij.openapi.util.text.StringUtil
+import org.angular2.entities.ivy.Angular2IvyEntity
+import org.angular2.entities.metadata.psi.Angular2MetadataEntity
+import org.angular2.entities.source.Angular2SourceEntity
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
+import org.jetbrains.annotations.NonNls
+import java.util.function.Consumer
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
+object Angular2EntityUtils {
 
-import static com.intellij.openapi.util.Pair.pair;
+  @NonNls
+  const val ELEMENT_REF = "ElementRef"
 
-public final class Angular2EntityUtils {
+  @NonNls
+  const val TEMPLATE_REF = "TemplateRef"
 
-  @NonNls public static final String ELEMENT_REF = "ElementRef";
-  @NonNls public static final String TEMPLATE_REF = "TemplateRef";
-  @NonNls public static final String VIEW_CONTAINER_REF = "ViewContainerRef";
+  @NonNls
+  const val VIEW_CONTAINER_REF = "ViewContainerRef"
 
-  private static final String INDEX_ELEMENT_NAME_PREFIX = ">";
-  private static final String INDEX_ANY_ELEMENT_NAME = "E";
-  private static final String INDEX_ATTRIBUTE_NAME_PREFIX = "=";
+  private const val INDEX_ELEMENT_NAME_PREFIX = ">"
+  const val anyElementDirectiveIndexName = "E"
+  private const val INDEX_ATTRIBUTE_NAME_PREFIX = "="
 
-  public static @NotNull Collection<? extends TypeScriptFunction> getPipeTransformMethods(@NotNull TypeScriptClass cls) {
+  @JvmStatic
+  fun getPipeTransformMethods(cls: TypeScriptClass): Collection<TypeScriptFunction> {
     //noinspection RedundantCast,unchecked
-    return (Collection<? extends TypeScriptFunction>)(Collection)TypeScriptTypeParser
-      .buildTypeFromClass(cls, false)
-      .getProperties()
-      .stream()
-      .filter(prop -> Angular2EntitiesProvider.TRANSFORM_METHOD.equals(prop.getMemberName())
-                      && prop.getMemberSource()
-                        .getSingleElement() instanceof TypeScriptFunction)
-      .findFirst()
-      .map(sig -> ContainerUtil.filter(sig.getMemberSource()
-                                         .getAllSourceElements(), fun -> fun instanceof TypeScriptFunction &&
-                                                                         !(fun instanceof TypeScriptFunctionSignature)))
-      .map(Collections::unmodifiableCollection)
-      .orElseGet(Collections::emptyList);
+    return TypeScriptTypeParser
+             .buildTypeFromClass(cls, false)
+             .properties
+             .asSequence()
+             .filter { prop ->
+               Angular2EntitiesProvider.TRANSFORM_METHOD == prop.memberName &&
+               prop.memberSource.singleElement is TypeScriptFunction
+             }
+             .firstOrNull()
+             ?.memberSource
+             ?.allSourceElements
+             ?.filterIsInstance<TypeScriptFunction>()
+             ?.filter { it !is TypeScriptFunctionSignature }
+           ?: emptyList()
   }
 
-  public static @NotNull Pair<String, String> parsePropertyMapping(@NotNull String property) {
-    int ind = property.indexOf(':');
-    if (ind > 0) {
-      return pair(property.substring(0, ind).trim(), property.substring(ind + 1).trim());
+  @JvmStatic
+  fun parsePropertyMapping(property: String): Pair<String, String> {
+    val ind = property.indexOf(':')
+    return if (ind > 0) {
+      Pair(property.substring(0, ind).trim { it <= ' ' }, property.substring(ind + 1).trim { it <= ' ' })
     }
-    return pair(property.trim(), property.trim());
+    else Pair(property.trim { it <= ' ' }, property.trim { it <= ' ' })
   }
 
-  public static @NotNull String getElementDirectiveIndexName(@NotNull String elementName) {
-    return INDEX_ELEMENT_NAME_PREFIX + elementName;
+  @JvmStatic
+  fun getElementDirectiveIndexName(elementName: String): String {
+    return INDEX_ELEMENT_NAME_PREFIX + elementName
   }
 
-  public static @NotNull String getAnyElementDirectiveIndexName() {
-    return INDEX_ANY_ELEMENT_NAME;
+  @JvmStatic
+  fun isElementDirectiveIndexName(elementName: String): Boolean {
+    return elementName.startsWith(INDEX_ELEMENT_NAME_PREFIX)
   }
 
-  public static boolean isElementDirectiveIndexName(@NotNull String elementName) {
-    return elementName.startsWith(INDEX_ELEMENT_NAME_PREFIX);
+  @JvmStatic
+  fun getElementName(elementDirectiveIndexName: String): String {
+    require(isElementDirectiveIndexName(elementDirectiveIndexName))
+    return elementDirectiveIndexName.substring(1)
   }
 
-  public static @NotNull String getElementName(@NotNull String elementDirectiveIndexName) {
-    if (!isElementDirectiveIndexName(elementDirectiveIndexName)) {
-      throw new IllegalArgumentException();
-    }
-    return elementDirectiveIndexName.substring(1);
+  @JvmStatic
+  fun getAttributeDirectiveIndexName(attributeName: String): String {
+    return INDEX_ATTRIBUTE_NAME_PREFIX + attributeName
   }
 
-  public static @NotNull String getAttributeDirectiveIndexName(@NotNull String attributeName) {
-    return INDEX_ATTRIBUTE_NAME_PREFIX + attributeName;
+  @JvmStatic
+  fun isAttributeDirectiveIndexName(attributeName: String): Boolean {
+    return attributeName.startsWith(INDEX_ATTRIBUTE_NAME_PREFIX)
   }
 
-  public static boolean isAttributeDirectiveIndexName(@NotNull String attributeName) {
-    return attributeName.startsWith(INDEX_ATTRIBUTE_NAME_PREFIX);
+  @JvmStatic
+  fun getAttributeName(attributeIndexName: String): String {
+    require(isAttributeDirectiveIndexName(attributeIndexName))
+    return attributeIndexName.substring(1)
   }
 
-  public static @NotNull String getAttributeName(@NotNull String attributeIndexName) {
-    if (!isAttributeDirectiveIndexName(attributeIndexName)) {
-      throw new IllegalArgumentException();
-    }
-    return attributeIndexName.substring(1);
+  @JvmStatic
+  fun <T : Angular2Module> defaultChooseModule(modules: Collection<T>): T? {
+    return modules.minByOrNull { it.getName() }
   }
 
-  public static <T extends Angular2Module> @Nullable T defaultChooseModule(@NotNull Stream<T> modulesStream) {
-    return modulesStream.min(Comparator.comparing(Angular2Module::getName)).orElse(null);
-  }
-
-  public static @NotNull Set<String> getDirectiveIndexNames(@NotNull String selector) {
-    List<Angular2DirectiveSimpleSelector> selectors;
+  @JvmStatic
+  fun getDirectiveIndexNames(selector: String): Set<String> {
+    val selectors: List<Angular2DirectiveSimpleSelector>
     try {
-      selectors = Angular2DirectiveSimpleSelector.parse(selector);
+      selectors = Angular2DirectiveSimpleSelector.parse(selector)
     }
-    catch (ParseException e) {
-      return Collections.emptySet();
+    catch (e: ParseException) {
+      return emptySet()
     }
-    Set<String> result = new HashSet<>();
-    Consumer<Angular2DirectiveSimpleSelector> indexSelector = sel -> {
-      String elementName = sel.getElementName();
-      if (StringUtil.isEmpty(elementName) || "*".equals(elementName)) {
-        result.add(INDEX_ELEMENT_NAME_PREFIX);
+
+    val result = HashSet<String>()
+    val indexSelector = { sel: Angular2DirectiveSimpleSelector ->
+      val elementName = sel.elementName
+      if (StringUtil.isEmpty(elementName) || "*" == elementName) {
+        result.add(INDEX_ELEMENT_NAME_PREFIX)
       }
       else {
-        result.add(INDEX_ELEMENT_NAME_PREFIX + elementName);
-        result.add(INDEX_ANY_ELEMENT_NAME);
+        result.add(INDEX_ELEMENT_NAME_PREFIX + elementName!!)
+        result.add(anyElementDirectiveIndexName)
       }
-      for (String attrName : sel.getAttrNames()) {
-        result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attrName);
+      for (attrName in sel.attrNames) {
+        result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attrName)
       }
-    };
-    for (Angular2DirectiveSimpleSelector sel : selectors) {
-      indexSelector.accept(sel);
-      sel.getNotSelectors().forEach(indexSelector);
     }
-    return result;
+    for (sel in selectors) {
+      indexSelector(sel)
+      sel.notSelectors.forEach(indexSelector)
+    }
+    return result
   }
 
-  public static String toString(Angular2Element element) {
-    String sourceKind;
-    if (element instanceof Angular2SourceEntity) {
-      sourceKind = "source";
+  @JvmStatic
+  fun toString(element: Angular2Element): String {
+    val sourceKind: String
+    when (element) {
+      is Angular2SourceEntity -> sourceKind = "source"
+      is Angular2MetadataEntity<*> -> sourceKind = "metadata"
+      is Angular2IvyEntity<*> -> sourceKind = "ivy"
+      else -> sourceKind = "unknown"
     }
-    else if (element instanceof Angular2MetadataEntity) {
-      sourceKind = "metadata";
-    }
-    else if (element instanceof Angular2IvyEntity) {
-      sourceKind = "ivy";
-    }
-    else {
-      sourceKind = "unknown";
-    }
-    if (element instanceof Angular2Directive) {
-      StringBuilder result = new StringBuilder();
-      Angular2Directive directive = (Angular2Directive)element;
-      result.append(directive.getName())
+    if (element is Angular2Directive) {
+      val result = StringBuilder()
+      result.append(element.getName())
         .append(" <")
         .append(sourceKind)
-        .append(' ');
-      if (directive.isComponent()) {
-        result.append("component");
+        .append(' ')
+      if (element.isComponent) {
+        result.append("component")
       }
       else {
-        Angular2DirectiveKind kind = directive.getDirectiveKind();
-        if (kind.isStructural()) {
-          if (kind.isRegular()) {
-            result.append("directive/");
+        val kind = element.directiveKind
+        if (kind.isStructural) {
+          if (kind.isRegular) {
+            result.append("directive/")
           }
-          result.append("template");
+          result.append("template")
         }
         else {
-          result.append("directive");
+          result.append("directive")
         }
       }
       result.append(">")
         .append(": selector=")
-        .append(directive.getSelector().getText());
-      if (directive instanceof Angular2Component
-          && !((Angular2Component)directive).getNgContentSelectors().isEmpty()) {
-        result.append("; ngContentSelectors=");
-        result.append(((Angular2Component)directive).getNgContentSelectors());
+        .append(element.selector.text)
+      if (element is Angular2Component && !element.ngContentSelectors.isEmpty()) {
+        result.append("; ngContentSelectors=")
+        result.append(element.ngContentSelectors)
       }
-      if (!directive.getExportAsList().isEmpty()) {
+      if (!element.exportAsList.isEmpty()) {
         result.append("; exportAs=")
-          .append(StringUtil.join(directive.getExportAsList(), ","));
+          .append(StringUtil.join(element.exportAsList, ","))
       }
       result.append("; inputs=")
-        .append(directive.getInputs().toString())
+        .append(element.inputs.toString())
         .append("; outputs=")
-        .append(directive.getOutputs().toString())
+        .append(element.outputs.toString())
         .append("; inOuts=")
-        .append(directive.getInOuts().toString());
+        .append(element.inOuts.toString())
 
-      if (!directive.getAttributes().isEmpty()) {
+      if (!element.attributes.isEmpty()) {
         result.append("; attributes=")
-          .append(directive.getAttributes());
+          .append(element.attributes)
       }
 
-      return result.toString();
+      return result.toString()
     }
-    else if (element instanceof Angular2Pipe) {
-      return ((Angular2Pipe)element).getName() + " <" + sourceKind + " pipe>";
-    }
-    else if (element instanceof Angular2DirectiveProperty) {
-      return ((Angular2DirectiveProperty)element).getName();
-    }
-    else if (element instanceof Angular2DirectiveAttribute) {
-      return ((Angular2DirectiveAttribute)element).getName();
-    }
-    else if (element instanceof Angular2Module) {
-      Angular2Module module = (Angular2Module)element;
-      return module.getName() +
-             " <" +
-             sourceKind +
-             " module>: imports=[" +
-             StreamEx.of(module.getImports()).map(Angular2Entity::getName).sorted().joining(", ") +
-             "]; declarations=[" +
-             StreamEx.of(module.getDeclarations()).map(Angular2Entity::getName).sorted().joining(", ") +
-             "]; exports=[" +
-             StreamEx.of(module.getExports()).map(Angular2Entity::getName).sorted().joining(", ") +
-             "]; scopeFullyResolved=" +
-             module.isScopeFullyResolved() +
-             "; exportsFullyResolved=" +
-             module.areExportsFullyResolved();
-    }
-    else {
-      return element.getClass().getName() + "@" + Integer.toHexString(element.hashCode());
+    else return when (element) {
+      is Angular2Pipe -> element.getName() + " <" + sourceKind + " pipe>"
+      is Angular2DirectiveProperty -> element.name
+      is Angular2DirectiveAttribute -> element.name
+      is Angular2Module -> element.getName() +
+                           " <" + sourceKind + " module>: " +
+                           "imports=[" + element.imports.render() + "]; " +
+                           "declarations=[" + element.declarations.render() + "]; " +
+                           "exports=[" + element.exports.render() + "]; " +
+                           "scopeFullyResolved=" + element.isScopeFullyResolved + "; " +
+                           "exportsFullyResolved=" + element.areExportsFullyResolved()
+      else -> element.javaClass.name + "@" + Integer.toHexString(element.hashCode())
     }
   }
 
-  public static <T extends Angular2Entity> String renderEntityList(Collection<T> entities) {
-    StringBuilder result = new StringBuilder();
-    int i = -1;
-    for (Angular2Entity entity : entities) {
+  @JvmStatic
+  fun <T : Angular2Entity> renderEntityList(entities: Collection<T>): String {
+    val result = StringBuilder()
+    var i = -1
+    for (entity in entities) {
       if (++i > 0) {
-        if (i == entities.size() - 1) {
-          result.append(' ');
-          result.append(Angular2Bundle.message("angular.description.and-separator"));
-          result.append(' ');
+        if (i == entities.size - 1) {
+          result.append(' ')
+          result.append(Angular2Bundle.message("angular.description.and-separator"))
+          result.append(' ')
         }
         else {
-          result.append(", ");
+          result.append(", ")
         }
       }
-      result.append(getEntityClassName(entity));
-      if (entity instanceof Angular2Pipe) {
-        result.append(" (");
-        result.append(entity.getName());
-        result.append(")");
+      result.append(getEntityClassName(entity))
+      if (entity is Angular2Pipe) {
+        result.append(" (")
+        result.append(entity.getName())
+        result.append(")")
       }
-      else if (entity instanceof Angular2Directive) {
-        result.append(" (");
-        result.append(((Angular2Directive)entity).getSelector().getText());
-        result.append(')');
+      else if (entity is Angular2Directive) {
+        result.append(" (")
+        result.append((entity as Angular2Directive).selector.text)
+        result.append(')')
       }
     }
-    return result.toString();
+    return result.toString()
   }
 
-
-  public static String getEntityClassName(@NotNull Angular2Entity entity) {
-    if (entity instanceof Angular2Pipe) {
-      return ObjectUtils.notNull(ObjectUtils.doIfNotNull(entity.getTypeScriptClass(), TypeScriptClass::getName),
-                                 Angular2Bundle.message("angular.description.unknown-class"));
+  @JvmStatic
+  fun getEntityClassName(entity: Angular2Entity): String {
+    return if (entity is Angular2Pipe) {
+      entity.typeScriptClass?.name ?: Angular2Bundle.message("angular.description.unknown-class")
     }
-    return entity.getName();
+    else entity.getName()
   }
 
-  public static String getEntityClassName(@NotNull ES6Decorator decorator) {
-    Angular2Entity entity = Angular2EntitiesProvider.getEntity(decorator);
-    if (entity == null) {
-      return Angular2Bundle.message("angular.description.unknown-class");
-    }
-    return getEntityClassName(entity);
+  @JvmStatic
+  fun getEntityClassName(decorator: ES6Decorator): String {
+    val entity = Angular2EntitiesProvider.getEntity(decorator) ?: return Angular2Bundle.message("angular.description.unknown-class")
+    return getEntityClassName(entity)
   }
 
-  public static boolean isImportableEntity(@NotNull Angular2Entity entity) {
-    return entity instanceof Angular2Module || (entity instanceof Angular2Declaration && ((Angular2Declaration)entity).isStandalone());
+  @JvmStatic
+  fun isImportableEntity(entity: Angular2Entity): Boolean {
+    return entity is Angular2Module || entity is Angular2Declaration && entity.isStandalone
   }
 
-  public static @NotNull String unquote(@NotNull String s) {
-    return s.length() > 1 && ("'\"`".indexOf(s.charAt(0)) >= 0) && s.charAt(0) == s.charAt(s.length() - 1) ?
-           s.substring(1, s.length() - 1) : s;
+  @JvmStatic
+  fun unquote(s: String): String {
+    return if (s.length > 1 && "'\"`".indexOf(s[0]) >= 0 && s[0] == s[s.length - 1])
+      s.substring(1, s.length - 1)
+    else
+      s
   }
 
   /**
-   * Calls {@code moduleConsumer} for each NgModule, ignoring Components, Directives & Pipes.
+   * Calls `moduleConsumer` for each NgModule, ignoring Components, Directives & Pipes.
    *
-   * @see #forEachEntity
+   * @see .forEachEntity
    */
-  public static void forEachModule(@NotNull Iterable<@Nullable Angular2Entity> entities,
-                                   @NotNull Consumer<@NotNull Angular2Module> moduleConsumer) {
-    forEachEntity(entities, moduleConsumer, null);
+  @JvmStatic
+  fun forEachModule(entities: Iterable<Angular2Entity>,
+                    moduleConsumer: Consumer<Angular2Module>) {
+    forEachEntity(entities, moduleConsumer, null)
   }
 
   /**
-   * Calls {@code moduleConsumer} for each NgModule, or {@code declarationConsumer} for each Component, Directive, or Pipe.
+   * Calls `moduleConsumer` for each NgModule, or `declarationConsumer` for each Component, Directive, or Pipe.
    *
-   * @see #forEachModule
+   * @see .forEachModule
    */
-  public static void forEachEntity(@NotNull Iterable<@Nullable Angular2Entity> entities,
-                                   @NotNull Consumer<@NotNull Angular2Module> moduleConsumer,
-                                   @Nullable Consumer<@NotNull Angular2Declaration> declarationConsumer) {
-    entities.forEach(entity -> {
-      if (entity instanceof Angular2Module) {
-        moduleConsumer.accept((Angular2Module)entity);
+  @JvmStatic
+  fun forEachEntity(entities: Iterable<Angular2Entity>,
+                    moduleConsumer: Consumer<Angular2Module>,
+                    declarationConsumer: Consumer<Angular2Declaration>?) {
+    entities.forEach { entity ->
+      if (entity is Angular2Module) {
+        moduleConsumer.accept(entity)
       }
-      else if (entity instanceof Angular2Declaration && declarationConsumer != null) {
-        declarationConsumer.accept((Angular2Declaration)entity);
+      else if (entity is Angular2Declaration && declarationConsumer != null) {
+        declarationConsumer.accept(entity)
       }
-    });
+    }
   }
+
+  private fun Collection<Angular2Entity>.render(): String =
+    this.asSequence().map { it.getName() }.sorted().joinToString(", ")
 }

@@ -10,7 +10,7 @@ import com.intellij.webSymbols.WebSymbolsScopeWithCache
 import org.angular2.Angular2Framework
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag
+import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2Symbol

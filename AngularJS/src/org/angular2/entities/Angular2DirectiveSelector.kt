@@ -1,29 +1,26 @@
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 
-import java.util.List;
+interface Angular2DirectiveSelector {
 
-public interface Angular2DirectiveSelector {
+  val text: String
 
-  @NotNull String getText();
+  val simpleSelectors: List<Angular2DirectiveSimpleSelector>
 
-  @NotNull List<@NotNull Angular2DirectiveSimpleSelector> getSimpleSelectors();
+  val simpleSelectorsWithPsi: List<SimpleSelectorWithPsi>
 
-  @NotNull List<@NotNull  SimpleSelectorWithPsi> getSimpleSelectorsWithPsi();
-
-  @NotNull Angular2DirectiveSelectorSymbol getSymbolForElement(@NotNull String elementName);
+  fun getSymbolForElement(elementName: String): Angular2DirectiveSelectorSymbol
 
   interface SimpleSelectorWithPsi {
 
-    @Nullable Angular2DirectiveSelectorSymbol getElement();
+    val element: Angular2DirectiveSelectorSymbol?
 
-    @NotNull List<@NotNull Angular2DirectiveSelectorSymbol> getAttributes();
+    val attributes: List<Angular2DirectiveSelectorSymbol>
 
-    @NotNull List<@NotNull SimpleSelectorWithPsi> getNotSelectors();
+    val notSelectors: List<SimpleSelectorWithPsi>
 
-    @Nullable Angular2DirectiveSelectorSymbol getElementAt(int offset);
+    fun getElementAt(offset: Int): Angular2DirectiveSelectorSymbol?
   }
 }

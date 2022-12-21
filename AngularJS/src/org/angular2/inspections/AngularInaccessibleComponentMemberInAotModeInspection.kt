@@ -1,141 +1,117 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections;
+package org.angular2.inspections
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.LocalInspectionToolSession;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.Language;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.presentable.JSFormatUtil;
-import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
-import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.AstLoadingFilter;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
-import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.expr.psi.Angular2ElementVisitor;
-import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.presentable.JSFormatUtil
+import com.intellij.lang.javascript.presentable.JSNamedElementPresenter
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
+import com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier
+import com.intellij.openapi.util.text.StringUtil.capitalize
+import com.intellij.psi.*
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.AstLoadingFilter
+import com.intellij.util.asSafely
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.psi.Angular2ElementVisitor
+import org.angular2.lang.html.Angular2HtmlLanguage
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
+class AngularInaccessibleComponentMemberInAotModeInspection : LocalInspectionTool() {
 
-import static com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier;
-import static com.intellij.openapi.util.text.StringUtil.capitalize;
-import static com.intellij.util.ObjectUtils.notNull;
+  override fun buildVisitor(holder: ProblemsHolder,
+                            isOnTheFly: Boolean,
+                            session: LocalInspectionToolSession): PsiElementVisitor {
+    val fileLang = holder.file.language
+    if (fileLang.isKindOf(Angular2HtmlLanguage.INSTANCE) || Angular2Language.INSTANCE.`is`(fileLang)) {
+      return object : Angular2ElementVisitor() {
+        override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+          if (node.qualifier == null || node.qualifier is JSThisExpression) {
+            val resolved = node.resolve()
+            val clazz = PsiTreeUtil.getContextOfType(resolved, TypeScriptClass::class.java)
+            if (clazz != null && resolved is JSElement && accept(resolved)) {
 
-public class AngularInaccessibleComponentMemberInAotModeInspection extends LocalInspectionTool {
-
-  @Override
-  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
-                                                 boolean isOnTheFly,
-                                                 @NotNull LocalInspectionToolSession session) {
-    Language fileLang = holder.getFile().getLanguage();
-    if (fileLang.isKindOf(Angular2HtmlLanguage.INSTANCE)
-        || Angular2Language.INSTANCE.is(fileLang)) {
-      return new Angular2ElementVisitor() {
-        @Override
-        public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
-          if (node.getQualifier() == null
-              || node.getQualifier() instanceof JSThisExpression) {
-            PsiElement resolved = node.resolve();
-            TypeScriptClass clazz = PsiTreeUtil.getContextOfType(resolved, TypeScriptClass.class);
-            if (clazz != null && resolved instanceof JSElement && accept(resolved)) {
-              //noinspection HardCodedStringLiteral
               holder.registerProblem(
-                notNull(node.getReferenceNameElement(), node),
+                node.referenceNameElement ?: node,
                 capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.template-symbol",
-                                                  getAccessModifier((JSElement)resolved), getKind(resolved), getName(resolved))),
+                                                  getAccessModifier(resolved), getKind(resolved), getName(resolved))),
 
-                new AngularMakePublicQuickFix());
+                AngularMakePublicQuickFix())
             }
-          }
-        }
-      };
-    }
-    else if (DialectDetector.isTypeScript(holder.getFile())
-             && Angular2LangUtil.isAngular2Context(holder.getFile())) {
-      return new JSElementVisitor() {
-        @Override
-        public void visitTypeScriptClass(@NotNull TypeScriptClass typeScriptClass) {
-          Angular2Component component = Angular2EntitiesProvider.getComponent(typeScriptClass);
-          PsiFile template;
-          if (component == null || (template = component.getTemplateFile()) == null) return;
-          Set<JSElement> candidates = new HashSet<>();
-          for (JSElement member : typeScriptClass.getMembers()) {
-            if (accept(member)) {
-              candidates.add(member);
-            }
-          }
-          retainReferenced(template, candidates);
-          for (JSElement member : candidates) {
-            //noinspection HardCodedStringLiteral
-            holder.registerProblem(
-              notNull(member instanceof PsiNameIdentifierOwner
-                      ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
-                      : null, member),
-              capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.member",
-                                                getAccessModifier(member), getKind(member), getName(member))),
-              new AngularMakePublicQuickFix());
-          }
-        }
-      };
-    }
-    return PsiElementVisitor.EMPTY_VISITOR;
-  }
-
-  public static boolean accept(@Nullable PsiElement member) {
-    if (member instanceof JSAttributeListOwner
-        && !(member instanceof JSFunction && ((JSFunction)member).isConstructor())) {
-      JSAttributeList attributes = ((JSAttributeListOwner)member).getAttributeList();
-      if (attributes == null) return false;
-      JSAttributeList.AccessType accessType = attributes.getAccessType();
-      return !attributes.hasModifier(JSAttributeList.ModifierType.STATIC) &&
-             accessType == JSAttributeList.AccessType.PRIVATE;
-    }
-    return false;
-  }
-
-  private static String getKind(@NotNull PsiElement member) {
-    return new JSNamedElementPresenter(member).describeElementKind();
-  }
-
-  private static @NotNull String getAccessModifier(@NotNull JSElement member) {
-    return Optional.ofNullable(getPresentableAccessModifier(member))
-      .map(JSVisibilityUtil.PresentableAccessModifier::getText)
-      .orElse("");
-  }
-
-  private static @NotNull String getName(@NotNull PsiElement member) {
-    return notNull(member instanceof PsiNamedElement ? ((PsiNamedElement)member).getName() : null,
-                   JSFormatUtil.getAnonymousElementPresentation());
-  }
-
-  private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<? extends PsiElement> candidates) {
-    LocalSearchScope fileScope = new LocalSearchScope(template);
-    Iterator<? extends PsiElement> iterator = candidates.iterator();
-    AstLoadingFilter.forceAllowTreeLoading(
-      template, () -> {
-        while (iterator.hasNext()) {
-          if (ReferencesSearch.search(iterator.next(), fileScope, true).findFirst() == null) {
-            iterator.remove();
           }
         }
       }
-    );
+    }
+    else if (DialectDetector.isTypeScript(holder.file) && Angular2LangUtil.isAngular2Context(holder.file)) {
+      return object : JSElementVisitor() {
+        override fun visitTypeScriptClass(typeScriptClass: TypeScriptClass) {
+          val component = Angular2EntitiesProvider.getComponent(typeScriptClass)
+          val template = component?.templateFile ?: return
+          val candidates = HashSet<JSElement>()
+          for (member in typeScriptClass.members) {
+            if (accept(member)) {
+              candidates.add(member)
+            }
+          }
+          retainReferenced(template, candidates)
+          for (member in candidates) {
+            holder.registerProblem(
+              member.asSafely<PsiNameIdentifierOwner>()?.nameIdentifier ?: member,
+              capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.member",
+                                                getAccessModifier(member), getKind(member), getName(member))),
+              AngularMakePublicQuickFix())
+          }
+        }
+      }
+    }
+    return PsiElementVisitor.EMPTY_VISITOR
+  }
+
+  companion object {
+
+    fun accept(member: PsiElement?): Boolean {
+      if (member is JSAttributeListOwner && !(member is JSFunction && member.isConstructor)) {
+        val attributes = member.attributeList ?: return false
+        val accessType = attributes.accessType
+        return !attributes.hasModifier(JSAttributeList.ModifierType.STATIC)
+               && accessType == JSAttributeList.AccessType.PRIVATE
+      }
+      return false
+    }
+
+    private fun getKind(member: PsiElement): String {
+      return JSNamedElementPresenter(member).describeElementKind()
+    }
+
+    private fun getAccessModifier(member: JSElement): String {
+      return getPresentableAccessModifier(member)?.text ?: ""
+    }
+
+    private fun getName(member: PsiElement): String {
+      return member.asSafely<PsiNamedElement>()?.name
+             ?: JSFormatUtil.getAnonymousElementPresentation()
+    }
+
+    private fun retainReferenced(template: PsiFile, candidates: MutableSet<out PsiElement>) {
+      val fileScope = LocalSearchScope(template)
+      val iterator = candidates.iterator()
+      AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(template) {
+        while (iterator.hasNext()) {
+          if (ReferencesSearch.search(iterator.next(), fileScope, true).findFirst() == null) {
+            iterator.remove()
+          }
+        }
+      }
+    }
   }
 }

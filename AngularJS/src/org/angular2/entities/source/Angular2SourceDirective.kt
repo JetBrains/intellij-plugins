@@ -1,315 +1,284 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.source;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.source
 
-import com.intellij.lang.javascript.JSStubElementTypes;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
-import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
-import com.intellij.lang.javascript.psi.stubs.ES6DecoratorStub;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
-import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
-import one.util.streamex.StreamEx;
-import org.angular2.Angular2DecoratorUtil;
-import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
-import org.angular2.entities.*;
-import org.angular2.entities.ivy.Angular2IvyEntity;
-import org.angular2.entities.metadata.Angular2MetadataUtil;
-import org.angular2.index.Angular2IndexingHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
+import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
+import com.intellij.lang.javascript.psi.util.JSClassUtils
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.util.AstLoadingFilter
+import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
+import org.angular2.entities.*
+import org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback
+import org.angular2.entities.Angular2EntityUtils.ELEMENT_REF
+import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
+import org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF
+import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
+import org.angular2.entities.metadata.Angular2MetadataUtil
+import org.angular2.index.Angular2IndexingHandler
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSImplicitElement)
+  : Angular2SourceDeclaration(decorator, implicitElement), Angular2Directive {
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
-import static org.angular2.entities.Angular2EntityUtils.*;
-import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS;
-
-public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
-
-  public Angular2SourceDirective(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
-    super(decorator, implicitElement);
-  }
-
-  @Override
-  public @NotNull Pointer<? extends Angular2Directive> createPointer() {
-    return createPointer(Angular2SourceDirective::new);
-  }
-
-  @Override
-  public @NotNull Angular2DirectiveSelector getSelector() {
-    return getCachedValue(() -> {
-      JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
-      String value = null;
+  override val selector: Angular2DirectiveSelector
+    get() = getCachedValue {
+      val property = Angular2DecoratorUtil.getProperty(decorator, Angular2DecoratorUtil.SELECTOR_PROP)
+      var value: String? = null
       if (property != null) {
-        JSLiteralExpression initializer;
-        JSPropertyStub stub = ((JSPropertyImpl)property).getStub();
+        val initializer: JSLiteralExpression?
+        val stub = (property as JSPropertyImpl).stub
         if (stub != null) {
-          initializer = StreamEx.of(stub.getChildrenStubs())
-            .map(StubElement::getPsi)
-            .select(JSLiteralExpression.class)
-            .findFirst()
-            .orElse(null);
-          value = initializer == null ? null : doIfNotNull(initializer.getSignificantValue(), Angular2EntityUtils::unquote);
+          initializer = stub.childrenStubs.firstNotNullOfOrNull { it.psi as? JSLiteralExpression }
+          value = initializer?.significantValue?.let { Angular2EntityUtils.unquote(it) }
         }
         else {
-          initializer = ObjectUtils.tryCast(property.getValue(), JSLiteralExpression.class);
-          value = initializer == null ? null : initializer.getStringValue();
+          initializer = property.value as? JSLiteralExpression
+          value = initializer?.stringValue
         }
-        if (value != null) {
-          return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
-            initializer, StringUtil.unquoteString(value), 1), property);
+        if (value != null && initializer != null) {
+          return@getCachedValue Result.create(
+            Angular2DirectiveSelectorImpl(initializer, StringUtil.unquoteString(value), 1),
+            property)
         }
-        value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
-                                                       () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
+        value = AstLoadingFilter.forceAllowTreeLoading<String, RuntimeException>(property.containingFile) {
+          Angular2DecoratorUtil.getExpressionStringValue(property.value)
+        }
       }
-      return CachedValueProvider.Result.create(
-        new Angular2DirectiveSelectorImpl(getDecorator(), value, null), getDecorator());
-    });
-  }
+      Result.create(Angular2DirectiveSelectorImpl(decorator, value, null), decorator)
+    }
 
-  @Override
-  public @NotNull Angular2DirectiveKind getDirectiveKind() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      getDirectiveKindNoCache(myClass), getClassModificationDependencies()));
-  }
+  override val directiveKind: Angular2DirectiveKind
+    get() = getCachedValue {
+      Result.create(
+        getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
+    }
 
-  @Override
-  public @NotNull List<String> getExportAsList() {
-    return getCachedValue(() -> {
-      String exportAsString = Angular2DecoratorUtil.getPropertyStringValue(getDecorator(), Angular2DecoratorUtil.EXPORT_AS_PROP);
-      return CachedValueProvider.Result.create(exportAsString == null
-                                               ? Collections.emptyList()
-                                               : StringUtil.split(exportAsString, ","),
-                                               getDecorator());
-    });
-  }
+  override val exportAsList: List<String>
+    get() = getCachedValue {
+      val exportAsString = Angular2DecoratorUtil.getPropertyStringValue(decorator, Angular2DecoratorUtil.EXPORT_AS_PROP)
+      Result.create(if (exportAsString == null) emptyList() else StringUtil.split(exportAsString, ","), decorator)
+    }
 
-  @Override
-  public @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes() {
-    return getCachedValue(
-      () -> Result.create(getAttributeParameters(),
-                          getClassModificationDependencies())
-    );
-  }
+  override val attributes: Collection<Angular2DirectiveAttribute>
+    get() = getCachedValue {
+      Result.create(attributeParameters, classModificationDependencies)
+    }
 
-  @Override
-  public @NotNull Angular2DirectiveProperties getBindings() {
-    return getCachedValue(
-      () -> CachedValueProvider.Result.create(getPropertiesNoCache(),
-                                              getClassModificationDependencies())
-    );
-  }
+  override val bindings: Angular2DirectiveProperties
+    get() = getCachedValue {
+      Result.create(propertiesNoCache, classModificationDependencies)
+    }
 
-  private @NotNull Angular2DirectiveProperties getPropertiesNoCache() {
-    Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
-    Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
+  private val propertiesNoCache: Angular2DirectiveProperties
+    get() {
+      val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+      val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
 
-    Map<String, String> inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP);
-    Map<String, String> outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP);
+      val inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP)
+      val outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP)
 
-    TypeScriptClass clazz = getTypeScriptClass();
+      val clazz = typeScriptClass
 
-    TypeScriptTypeParser
-      .buildTypeFromClass(clazz, false)
-      .getProperties()
-      .forEach(prop -> {
-        for (JSAttributeListOwner el : getPropertySources(prop.getMemberSource().getSingleElement())) {
-          processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, KIND_NG_DIRECTIVE_INPUTS, inputs);
-          processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, KIND_NG_DIRECTIVE_OUTPUTS, outputs);
-        }
-      });
-
-    inputMap.values().forEach(
-      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS)));
-    outputMap.values().forEach(
-      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)));
-
-    Ref<Angular2DirectiveProperties> inheritedProperties = new Ref<>();
-    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
-      if (aClass instanceof TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass((TypeScriptClass)aClass)) {
-        Angular2DirectiveProperties props = withJsonMetadataFallback(aClass, cls -> {
-          Angular2IvyEntity<?> ivyEntity = getIvyEntity(aClass, true);
-          if (ivyEntity instanceof Angular2Directive) {
-            return ((Angular2Directive)ivyEntity).getBindings();
+      TypeScriptTypeParser
+        .buildTypeFromClass(clazz, false)
+        .properties
+        .forEach { prop ->
+          for (el in getPropertySources(prop.memberSource.singleElement)) {
+            processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, KIND_NG_DIRECTIVE_INPUTS, inputs)
+            processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
           }
-          return null;
-        }, Angular2MetadataUtil::getMetadataClassDirectiveProperties);
-        if (props != null) {
-          inheritedProperties.set(props);
-          return false;
+        }
+
+      inputMap.values.forEach { input ->
+        inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS)
+      }
+      outputMap.values.forEach { output ->
+        outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)
+      }
+
+      val inheritedProperties = Ref<Angular2DirectiveProperties>()
+      JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
+        if (aClass is TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass(aClass)) {
+          val props = withJsonMetadataFallback(
+            aClass,
+            { getIvyEntity(it, true).asSafely<Angular2Directive>()?.bindings },
+            { Angular2MetadataUtil.getMetadataClassDirectiveProperties(it) }
+          )
+          if (props != null) {
+            inheritedProperties.set(props)
+            return@processClassesInHierarchy false
+          }
+        }
+        true
+      }
+
+      if (!inheritedProperties.isNull) {
+        inheritedProperties.get().inputs.forEach { prop ->
+          inputs.putIfAbsent(prop.name, prop)
+        }
+        inheritedProperties.get().outputs.forEach { prop ->
+          outputs.putIfAbsent(prop.name, prop)
         }
       }
-      return true;
-    });
-
-    if (!inheritedProperties.isNull()) {
-      inheritedProperties.get().getInputs().forEach(prop -> inputs.putIfAbsent(prop.getName(), prop));
-      inheritedProperties.get().getOutputs().forEach(prop -> outputs.putIfAbsent(prop.getName(), prop));
+      return Angular2DirectiveProperties(inputs.values, outputs.values)
     }
-    return new Angular2DirectiveProperties(inputs.values(), outputs.values());
+
+  private val attributeParameters: Collection<Angular2DirectiveAttribute>
+    get() {
+      val constructors = typeScriptClass.constructors
+      return if (constructors.size == 1)
+        processCtorParameters(constructors[0])
+      else
+        constructors.firstOrNull { it.isOverloadImplementation }
+          ?.let { processCtorParameters(it) }
+        ?: emptyList()
+    }
+
+  override fun createPointer(): Pointer<out Angular2Directive> {
+    return createPointer { decorator, implicitElement ->
+      Angular2SourceDirective(decorator, implicitElement)
+    }
   }
 
-  private @NotNull Map<String, String> readPropertyMappings(String source) {
-    JSProperty prop = Angular2DecoratorUtil.getProperty(getDecorator(), source);
-    if (prop == null) {
-      return Collections.emptyMap();
-    }
-    JSPropertyStub stub = ((JSPropertyImpl)prop).getStub();
-    Stream<String> stream;
+  private fun readPropertyMappings(source: String): MutableMap<String, String> {
+    val prop = Angular2DecoratorUtil.getProperty(decorator, source)
+               ?: return LinkedHashMap()
+    val stub = (prop as JSPropertyImpl).stub
+    val seq: Sequence<String>
     if (stub != null) {
-      stream = StreamEx.of(stub.getChildrenStubs())
-        .map(StubElement::getPsi)
-        .select(JSLiteralExpression.class)
-        .map(JSLiteralExpression::getSignificantValue)
-        .nonNull()
-        .map(Angular2EntityUtils::unquote);
-    }
-    else if (prop.getValue() instanceof JSArrayLiteralExpression) {
-      stream = ((JSArrayLiteralExpression)prop.getValue())
-        .getExpressionStream()
-        .filter(expression -> expression instanceof JSLiteralExpression && ((JSLiteralExpression)expression).isQuotedLiteral())
-        .map(expression -> ((JSLiteralExpression)expression).getStringValue())
-        .filter(Objects::nonNull);
+      seq = stub.childrenStubs.asSequence().mapNotNull {
+        it.psi.asSafely<JSLiteralExpression>()?.significantValue?.let { str -> Angular2EntityUtils.unquote(str) }
+      }
     }
     else {
-      return Collections.emptyMap();
+      seq = prop.value
+              .asSafely<JSArrayLiteralExpression>()
+              ?.expressions
+              ?.asSequence()
+              ?.mapNotNull { expr ->
+                expr.asSafely<JSLiteralExpression>()?.takeIf { it.isQuotedLiteral }?.stringValue
+              }
+            ?: emptySequence()
     }
-    return stream
-      .map(Angular2EntityUtils::parsePropertyMapping)
-      .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
+    return seq
+      .map { property -> Angular2EntityUtils.parsePropertyMapping(property) }
+      .toMap(LinkedHashMap())
   }
 
-  static List<JSAttributeListOwner> getPropertySources(PsiElement property) {
-    if (property instanceof TypeScriptFunction) {
-      TypeScriptFunction fun = (TypeScriptFunction)property;
-      if (!fun.isSetProperty() && !fun.isGetProperty()) {
-        return Collections.singletonList(fun);
+  companion object {
+
+    @JvmStatic
+    internal fun getPropertySources(property: PsiElement?): List<JSAttributeListOwner> {
+      if (property is TypeScriptFunction) {
+        val `fun` = property as TypeScriptFunction?
+        if (!`fun`!!.isSetProperty && !`fun`.isGetProperty) {
+          return listOf<JSAttributeListOwner>(`fun`)
+        }
+        val result = ArrayList<JSAttributeListOwner>()
+        result.add(`fun`)
+        Angular2ReferenceExpressionResolver.findPropertyAccessor(`fun`, `fun`.isGetProperty) { result.add(it) }
+        return result
       }
-      List<JSAttributeListOwner> result = new ArrayList<>();
-      result.add(fun);
-      Angular2ReferenceExpressionResolver.findPropertyAccessor(fun, fun.isGetProperty(), result::add);
-      return result;
+      else if (property is JSAttributeListOwner) {
+        return listOf(property)
+      }
+      return emptyList()
     }
-    else if (property instanceof JSAttributeListOwner) {
-      return Collections.singletonList((JSAttributeListOwner)property);
-    }
-    return Collections.emptyList();
-  }
 
-  private static void processProperty(@NotNull TypeScriptClass sourceClass,
-                                      @NotNull JSRecordType.PropertySignature property,
-                                      @NotNull JSAttributeListOwner field,
-                                      @NotNull Map<String, String> mappings,
-                                      @NotNull String decorator,
-                                      @NotNull String kind,
-                                      @NotNull Map<String, Angular2DirectiveProperty> result) {
-    String bindingName = mappings.remove(property.getMemberName());
-    if (bindingName == null && field.getAttributeList() != null) {
-      bindingName = Arrays.stream(field.getAttributeList().getDecorators())
-        .filter(d -> decorator.equals(d.getDecoratorName()))
-        .findFirst()
-        .map(d -> StringUtil.notNullize(getStringParamValue(d), property.getMemberName()))
-        .orElse(null);
-    }
-    if (bindingName != null) {
-      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(sourceClass, property, kind, bindingName));
-    }
-  }
-
-  private @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
-    final TypeScriptFunction[] constructors = myClass.getConstructors();
-    return constructors.length == 1
-           ? processCtorParameters(constructors[0])
-           : Arrays.stream(constructors)
-             .filter(TypeScriptFunction::isOverloadImplementation)
-             .findFirst()
-             .map(Angular2SourceDirective::processCtorParameters)
-             .orElse(Collections.emptyList());
-  }
-
-  private static @NotNull Collection<? extends Angular2DirectiveAttribute> processCtorParameters(final @NotNull JSFunction ctor) {
-    return StreamEx.of(ctor.getParameterVariables())
-      .mapToEntry(JSParameter::getAttributeList)
-      .nonNullValues()
-      .flatMapValues(a -> Arrays.stream(a.getDecorators()))
-      .filterValues(d -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(d.getDecoratorName()))
-      .mapValues(Angular2SourceDirective::getStringParamValue)
-      .filterValues(v -> v != null && !v.trim().isEmpty())
-      .distinctValues()
-      .mapToValue(Angular2SourceDirectiveAttribute::new)
-      .values()
-      .toList();
-  }
-
-  private static @Nullable String getStringParamValue(@Nullable ES6Decorator decorator) {
-    if (decorator == null || !Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
-      return null;
-    }
-    ES6DecoratorStub stub = decorator.getStub();
-    if (stub != null) {
-      return StreamEx.of(stub.getChildrenStubs())
-        .filter(s -> s.getStubType() == JSStubElementTypes.CALL_EXPRESSION)
-        .map(StubElement::getPsi)
-        .select(JSCallExpression.class)
-        .map(JSStubBasedPsiTreeUtil::findRequireCallArgument)
-        .nonNull()
-        .map(JSLiteralExpression::getSignificantValue)
-        .nonNull()
-        .map(Angular2EntityUtils::unquote)
-        .findFirst()
-        .orElse(null);
-    }
-    JSCallExpression expression = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);
-    if (expression != null) {
-      JSExpression[] args = expression.getArguments();
-      if (args.length == 1 && args[0] instanceof JSLiteralExpression && ((JSLiteralExpression)args[0]).isQuotedLiteral()) {
-        return ((JSLiteralExpression)args[0]).getStringValue();
+    private fun processProperty(sourceClass: TypeScriptClass,
+                                property: JSRecordType.PropertySignature,
+                                field: JSAttributeListOwner,
+                                mappings: MutableMap<String, String>,
+                                decorator: String,
+                                kind: String,
+                                result: MutableMap<String, Angular2DirectiveProperty>) {
+      val bindingName: String? =
+        mappings.remove(property.memberName)
+        ?: field.attributeList
+          ?.decorators
+          ?.firstOrNull { it.decoratorName == decorator }
+          ?.let { d -> StringUtil.notNullize(getStringParamValue(d), property.memberName) }
+      if (bindingName != null) {
+        result.putIfAbsent(bindingName, Angular2SourceDirectiveProperty(sourceClass, property, kind, bindingName))
       }
     }
-    return null;
-  }
 
-  public static @NotNull Angular2DirectiveKind getDirectiveKindNoCache(@NotNull TypeScriptClass clazz) {
-    Ref<Angular2DirectiveKind> result = new Ref<>(null);
-    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
-      if (aClass instanceof TypeScriptClass) {
-        List<String> types = StreamEx.of(((TypeScriptClass)aClass).getConstructors())
-          .map(JSFunction::getParameterList)
-          .nonNull()
-          .flatArray(JSParameterList::getParameters)
-          .map(JSParameterListElement::getJSType)
-          .nonNull()
-          .map(type -> type.getTypeText())
-          .toList();
-        result.set(Angular2DirectiveKind.get(
-          ContainerUtil.exists(types, t -> t.contains(ELEMENT_REF)),
-          ContainerUtil.exists(types, t -> t.contains(TEMPLATE_REF)),
-          ContainerUtil.exists(types, t -> t.contains(VIEW_CONTAINER_REF))
-        ));
+    private fun processCtorParameters(ctor: JSFunction): Collection<Angular2DirectiveAttribute> {
+      return ctor.parameterVariables
+        .flatMap { param ->
+          param.attributeList
+            ?.decorators
+            ?.asSequence()
+            ?.filter { Angular2DecoratorUtil.ATTRIBUTE_DEC == it.decoratorName }
+            ?.mapNotNull { getStringParamValue(it)?.takeIf { value -> !value.isBlank() } }
+            ?.map { Angular2SourceDirectiveAttribute(param, it) }
+          ?: emptySequence()
+        }
+        .distinctBy { it.name }
+    }
+
+    private fun getStringParamValue(decorator: ES6Decorator?): String? {
+      if (decorator == null || !Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
+        return null
       }
-      return result.isNull();
-    });
-    return result.isNull() ? Angular2DirectiveKind.REGULAR : result.get();
+      val stub = decorator.stub
+      if (stub != null) {
+        return stub.childrenStubs.firstNotNullOfOrNull { callExpr ->
+          callExpr
+            .takeIf { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
+            ?.psi
+            ?.asSafely<JSCallExpression>()
+            ?.let { JSStubBasedPsiTreeUtil.findRequireCallArgument(it) }
+            ?.significantValue
+            ?.let { Angular2EntityUtils.unquote(it) }
+        }
+      }
+      val expression = decorator.expression as? JSCallExpression
+      if (expression != null) {
+        val args = expression.arguments
+        if (args.size == 1 && args[0] is JSLiteralExpression && (args[0] as JSLiteralExpression).isQuotedLiteral) {
+          return (args[0] as JSLiteralExpression).stringValue
+        }
+      }
+      return null
+    }
+
+    @JvmStatic
+    fun getDirectiveKindNoCache(clazz: TypeScriptClass): Angular2DirectiveKind {
+      val result = Ref<Angular2DirectiveKind>(null)
+      JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
+        if (aClass is TypeScriptClass) {
+          val types = aClass.constructors
+            .mapNotNull { it.parameterList }
+            .flatMap { it.parameters.toList() }
+            .mapNotNull { it.jsType }
+            .map { type -> type.typeText }
+            .toList()
+          result.set(Angular2DirectiveKind.get(
+            types.any { t -> t.contains(ELEMENT_REF) },
+            types.any { t -> t.contains(TEMPLATE_REF) },
+            types.any { t ->
+              t.contains(VIEW_CONTAINER_REF)
+            }))
+        }
+        result.isNull
+      }
+      return if (result.isNull) Angular2DirectiveKind.REGULAR else result.get()
+    }
   }
 }

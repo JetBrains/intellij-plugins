@@ -1,158 +1,142 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.psi
 
-import com.intellij.lang.javascript.psi.JSRecordType;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
-import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Stack;
-import org.angular2.codeInsight.Angular2LibrariesHacks;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperties;
-import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
-import org.angular2.entities.metadata.stubs.Angular2MetadataReferenceStub;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
+import com.intellij.lang.javascript.psi.util.JSClassUtils
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.Pair.pair
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.Stack
+import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
+import org.angular2.codeInsight.Angular2LibrariesHacks
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveProperties
+import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase
+import org.angular2.lang.Angular2Bundle
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>>(element: Stub)
+  : Angular2MetadataElement<Stub>(element) {
 
-import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.notNull;
-import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
-import static org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS;
+  val typeScriptClass: TypeScriptClass?
+    get() = classAndDependencies.first
 
-public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBase<?>> extends Angular2MetadataElement<Stub> {
-  public Angular2MetadataClassBase(@NotNull Stub element) {
-    super(element);
-  }
-
-  public @Nullable TypeScriptClass getTypeScriptClass() {
-    return getClassAndDependencies().first;
-  }
-
-  @Override
-  public @NotNull String getName() {
-    return getCachedClassBasedValue(cls -> cls != null
-                                           ? cls.getName()
-                                           : StringUtil.notNullize(getStub().getMemberName(),
-                                                                   Angular2Bundle.message("angular.description.unnamed")));
-  }
-
-  public Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase<?>> getExtendedClass() {
-    Angular2MetadataReferenceStub refStub = getStub().getExtendsReference();
-    if (refStub != null) {
-      //noinspection unchecked
-      return ObjectUtils.tryCast(refStub.getPsi().resolve(), Angular2MetadataClassBase.class);
+  val extendedClass: Angular2MetadataClassBase<out Angular2MetadataClassStubBase<*>>?
+    get() {
+      val refStub = stub.extendsReference
+      return refStub?.psi?.resolve() as? Angular2MetadataClassBase<*>
     }
-    return null;
-  }
 
-  public @NotNull PsiElement getSourceElement() {
-    return notNull(getTypeScriptClass(), this);
-  }
+  val sourceElement: PsiElement
+    get() = typeScriptClass ?: this
 
-  public @NotNull Angular2DirectiveProperties getBindings() {
-    return CachedValuesManager.getCachedValue(this, this::getPropertiesNoCache);
-  }
+  val bindings: Angular2DirectiveProperties
+    get() = CachedValuesManager.getCachedValue(this, CachedValueProvider { propertiesNoCache })
 
-  protected Pair<TypeScriptClass, Collection<Object>> getClassAndDependencies() {
-    return CachedValuesManager.getCachedValue(this, () -> {
-      ProgressManager.checkCanceled();
-      String className = getStub().getClassName();
-      Angular2MetadataNodeModule nodeModule = getNodeModule();
-      Pair<PsiFile, TypeScriptClass> fileAndClass = className != null && nodeModule != null
-                                                    ? nodeModule.locateFileAndMember(className, TypeScriptClass.class)
-                                                    : Pair.create(null, null);
-      Collection<Object> dependencies = new HashSet<>();
-      dependencies.add(getContainingFile());
+  protected val classAndDependencies: Pair<TypeScriptClass?, Collection<Any>>
+    get() = CachedValuesManager.getCachedValue(this) {
+      ProgressManager.checkCanceled()
+      val className = stub.className
+      val nodeModule = nodeModule
+      val fileAndClass = if (className != null && nodeModule != null)
+        nodeModule.locateFileAndMember(className, TypeScriptClass::class.java)
+      else
+        Pair.create<PsiFile?, TypeScriptClass?>(null, null)
+      val dependencies = HashSet<Any>()
+      dependencies.add(containingFile)
       if (fileAndClass.second != null) {
-        JSClassUtils.processClassesInHierarchy(fileAndClass.second, true, (aClass, typeSubstitutor, fromImplements) -> {
-          dependencies.add(aClass.getContainingFile());
-          return true;
-        });
+        JSClassUtils.processClassesInHierarchy(fileAndClass.second, true) { aClass, _, _ ->
+          dependencies.add(aClass.containingFile)
+          true
+        }
       }
       else if (fileAndClass.first != null) {
-        dependencies.add(fileAndClass.first);
+        dependencies.add(fileAndClass.first)
       }
-      return Result.create(Pair.create(fileAndClass.second, dependencies), dependencies);
-    });
-  }
+      Result.create(Pair.create(fileAndClass.second, dependencies), dependencies)
+    }
 
-  protected <T> T getCachedClassBasedValue(Function<? super TypeScriptClass, ? extends T> provider) {
+  private val propertiesNoCache: Result<Angular2DirectiveProperties>
+    get() {
+      val mappings = allMappings
+      val inputs = collectProperties(mappings.value.first, KIND_NG_DIRECTIVE_INPUTS)
+      val outputs = collectProperties(mappings.value.second, KIND_NG_DIRECTIVE_OUTPUTS)
+      return Result.create(Angular2DirectiveProperties(inputs, outputs),
+                           *mappings.dependencyItems)
+    }
+
+  private val allMappings: Result<Pair<Map<String, String>, Map<String, String>>>
+    get() {
+      val inputs = HashMap<String, String>()
+      val outputs = HashMap<String, String>()
+      val classes = Stack<Angular2MetadataClassBase<out Angular2MetadataClassStubBase<*>>>()
+      var current: Angular2MetadataClassBase<out Angular2MetadataClassStubBase<*>>? = this
+      while (current != null) {
+        classes.push(current)
+        current = current.extendedClass
+      }
+      if (this is Angular2Directive) {
+        Angular2LibrariesHacks.hackIonicComponentOutputs(this, outputs)
+      }
+      while (!classes.isEmpty()) {
+        current = classes.pop()
+        inputs.putAll(current!!.stub.inputMappings)
+        outputs.putAll(current.stub.outputMappings)
+      }
+      val cacheDependencies = HashSet<Any>()
+
+      fun collectAdditionalMappings(map: MutableMap<String, String>, prop: String) {
+        val mappings = resolveMappings(prop)
+        map.putAll(mappings.value)
+        cacheDependencies.addAll(mappings.dependencyItems)
+      }
+      collectAdditionalMappings(inputs, INPUTS_PROP)
+      collectAdditionalMappings(outputs, OUTPUTS_PROP)
+      return Result.create(pair(inputs, outputs), cacheDependencies)
+    }
+
+  override fun getName(): String =
+    getCachedClassBasedValue { cls ->
+      cls?.name ?: stub.memberName ?: Angular2Bundle.message("angular.description.unnamed")
+    }
+
+  protected fun <T> getCachedClassBasedValue(provider: (TypeScriptClass?) -> T): T {
     return CachedValuesManager.getCachedValue(
       this,
-      CachedValuesManager.getManager(getProject()).getKeyForClass(provider.getClass()),
-      () -> {
-        Pair<TypeScriptClass, Collection<Object>> dependencies = getClassAndDependencies();
-        return Result.create(provider.apply(dependencies.first), dependencies.second);
-      });
-  }
-
-  private Result<Angular2DirectiveProperties> getPropertiesNoCache() {
-    Result<Pair<Map<String, String>, Map<String, String>>> mappings = getAllMappings();
-    List<Angular2DirectiveProperty> inputs = collectProperties(mappings.getValue().first, KIND_NG_DIRECTIVE_INPUTS);
-    List<Angular2DirectiveProperty> outputs = collectProperties(mappings.getValue().second, KIND_NG_DIRECTIVE_OUTPUTS);
-    return Result.create(new Angular2DirectiveProperties(inputs, outputs),
-                         mappings.getDependencyItems());
-  }
-
-  protected JSRecordType.PropertySignature getPropertySignature(String fieldName) {
-    return doIfNotNull(getTypeScriptClass(), cls -> TypeScriptTypeParser.buildTypeFromClass(cls, false)
-      .findPropertySignature(fieldName));
-  }
-
-  private Result<Pair<Map<String, String>, Map<String, String>>> getAllMappings() {
-    Map<String, String> inputs = new HashMap<>();
-    Map<String, String> outputs = new HashMap<>();
-    Stack<Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase<?>>> classes = new Stack<>();
-    Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase<?>> current = this;
-    while (current != null) {
-      classes.push(current);
-      current = current.getExtendedClass();
+      CachedValuesManager.getManager(project).getKeyForClass(provider.javaClass)
+    ) {
+      val dependencies = classAndDependencies
+      Result.create(provider(dependencies.first), dependencies.second)
     }
-    if (this instanceof Angular2Directive) {
-      Angular2LibrariesHacks.hackIonicComponentOutputs((Angular2Directive)this, outputs);
-    }
-    while (!classes.isEmpty()) {
-      current = classes.pop();
-      inputs.putAll(current.getStub().getInputMappings());
-      outputs.putAll(current.getStub().getOutputMappings());
-    }
-    Set<Object> cacheDependencies = new HashSet<>();
-    BiConsumer<Map<String, String>, String> collectAdditionalMappings = (map, prop) -> {
-      Result<Map<String, String>> mappings = resolveMappings(prop);
-      map.putAll(mappings.getValue());
-      ContainerUtil.addAll(cacheDependencies, mappings.getDependencyItems());
-    };
-    collectAdditionalMappings.accept(inputs, INPUTS_PROP);
-    collectAdditionalMappings.accept(outputs, OUTPUTS_PROP);
-    return Result.create(pair(inputs, outputs), cacheDependencies);
   }
 
-  private List<Angular2DirectiveProperty> collectProperties(@NotNull Map<String, String> mappings, @NotNull String kind) {
-    List<Angular2DirectiveProperty> result = new ArrayList<>();
-    mappings.forEach((String fieldName, String bindingName) -> result.add(new Angular2MetadataDirectiveProperty(
-      this, fieldName, bindingName, kind)));
-    return result;
+  fun getPropertySignature(fieldName: String): JSRecordType.PropertySignature? {
+    return typeScriptClass?.let { cls ->
+      TypeScriptTypeParser.buildTypeFromClass(cls, false)
+        .findPropertySignature(fieldName)
+    }
   }
 
-  protected @NotNull Result<Map<String, String>> resolveMappings(@NotNull String prop) {
-    return Result.create(Collections.emptyMap(), this);
+  private fun collectProperties(mappings: Map<String, String>, kind: String): List<Angular2DirectiveProperty> {
+    val result = ArrayList<Angular2DirectiveProperty>()
+    mappings.forEach { (fieldName: String, bindingName: String) ->
+      result.add(Angular2MetadataDirectiveProperty(
+        this, fieldName, bindingName, kind))
+    }
+    return result
+  }
+
+  protected open fun resolveMappings(prop: String): Result<Map<String, String>> {
+    return Result.create(emptyMap(), this)
   }
 }

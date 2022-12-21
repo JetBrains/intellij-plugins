@@ -1,259 +1,219 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.source;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.source
 
-import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.FakePsiElement;
-import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.SmartList;
-import one.util.streamex.StreamEx;
-import org.angular2.Angular2InjectionUtils;
-import org.angular2.entities.*;
-import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
-import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
-import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.FakePsiElement
+import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.util.AstLoadingFilter
+import com.intellij.util.SmartList
+import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil.STYLES_PROP
+import org.angular2.Angular2DecoratorUtil.STYLE_URLS_PROP
+import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
+import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
+import org.angular2.Angular2DecoratorUtil.getProperty
+import org.angular2.Angular2InjectionUtils
+import org.angular2.entities.*
+import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
+import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR
+import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)
+  : Angular2SourceDirective(decorator, implicitElement), Angular2Component {
 
-import static com.intellij.psi.util.CachedValueProvider.Result.create;
-import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
+  private var myModuleResolver: Angular2ModuleResolver<ES6Decorator>? = null
 
-public class Angular2SourceComponent extends Angular2SourceDirective implements Angular2Component {
+  override val imports: Set<Angular2Entity>
+    get() {
+      if (!isStandalone) return emptySet()
 
-  private Angular2ModuleResolver<ES6Decorator> myModuleResolver = null;
-
-  public Angular2SourceComponent(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
-    super(decorator, implicitElement);
-  }
-
-  @Override
-  public @NotNull Pointer<? extends Angular2Component> createPointer() {
-    return createPointer(Angular2SourceComponent::new);
-  }
-
-  @Override
-  public @NotNull Set<Angular2Entity> getImports() {
-    if (!isStandalone()) return Set.of();
-
-    if (myModuleResolver == null) {
-      myModuleResolver = new Angular2ModuleResolver<>(this::getDecorator, Angular2SourceModule::collectSymbols);
+      if (myModuleResolver == null) {
+        myModuleResolver = Angular2ModuleResolver({ decorator }, Angular2SourceModule.symbolCollector)
+      }
+      return myModuleResolver!!.imports
     }
-    return myModuleResolver.getImports();
-  }
 
-  @Override
-  public @Nullable PsiFile getTemplateFile() {
-    return getCachedValue(() -> create(
-      findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
-  }
+  override val templateFile: PsiFile?
+    get() = getCachedValue {
+      create(
+        findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+    }
 
-  @Override
-  public @NotNull List<PsiFile> getCssFiles() {
-    return getCachedValue(() -> create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
-  }
+  override val cssFiles: List<PsiFile>
+    get() = getCachedValue { create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator) }
 
-  @Override
-  public @NotNull List<Angular2DirectiveSelector> getNgContentSelectors() {
-    return getCachedValue(() -> {
-      PsiFile template = getTemplateFile();
-      if (template instanceof PsiFileImpl) {
-        List<Angular2DirectiveSelector> result = new SmartList<>();
-        StubElement<?> root = ((PsiFileImpl)template).getGreenStub();
+  override val ngContentSelectors: List<Angular2DirectiveSelector>
+    get() = getCachedValue {
+      val template = templateFile
+      if (template is PsiFileImpl) {
+        val result = SmartList<Angular2DirectiveSelector>()
+        val root = template.greenStub
         if (root != null) {
-          for (StubElement el : root.getChildrenStubs()) {
-            if (el.getStubType() == NG_CONTENT_SELECTOR) {
-              result.add(((Angular2HtmlNgContentSelector)el.getPsi()).getSelector());
+          for (el in root.childrenStubs) {
+            if (el.stubType === NG_CONTENT_SELECTOR) {
+              result.add((el.psi as Angular2HtmlNgContentSelector).selector)
             }
           }
         }
         else {
-          template.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
-            @Override
-            public void visitNgContentSelector(Angular2HtmlNgContentSelector ngContentSelector) {
-              result.add(ngContentSelector.getSelector());
+          template.accept(object : Angular2HtmlRecursiveElementWalkingVisitor() {
+            override fun visitNgContentSelector(ngContentSelector: Angular2HtmlNgContentSelector) {
+              result.add(ngContentSelector.selector)
             }
-          });
+          })
         }
-        return create(result, template, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator());
+        return@getCachedValue create<List<Angular2DirectiveSelector>>(result, template, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+                                                                      decorator)
       }
-      return create(Collections.emptyList(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator());
-    });
+      create(emptyList(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+    }
+
+  override val directiveKind: Angular2DirectiveKind
+    get() = Angular2DirectiveKind.REGULAR
+
+  override fun createPointer(): Pointer<out Angular2Component> {
+    return createPointer { decorator, implicitElement ->
+      Angular2SourceComponent(decorator, implicitElement)
+    }
   }
 
-  @Override
-  public @NotNull Angular2DirectiveKind getDirectiveKind() {
-    return Angular2DirectiveKind.REGULAR;
+  private fun getDecoratorProperty(name: String): JSProperty? {
+    return getProperty(decorator, name)
   }
 
-  private @Nullable JSProperty getDecoratorProperty(@NotNull String name) {
-    return getProperty(getDecorator(), name);
+  private fun findAngularComponentTemplate(): PsiFile? {
+    val file = getReferencedFile(getDecoratorProperty(TEMPLATE_URL_PROP), true)
+    return file ?: getReferencedFile(getDecoratorProperty(TEMPLATE_PROP), false)
   }
 
-  private @Nullable PsiFile findAngularComponentTemplate() {
-    PsiFile file = getReferencedFile(getDecoratorProperty(TEMPLATE_URL_PROP), true);
-    return file != null ? file
-                        : getReferencedFile(getDecoratorProperty(TEMPLATE_PROP), false);
-  }
-
-  private @NotNull List<PsiFile> findCssFiles() {
+  private fun findCssFiles(): List<PsiFile> {
     return findCssFiles(getDecoratorProperty(STYLE_URLS_PROP), true)
-      .append(findCssFiles(getDecoratorProperty(STYLES_PROP), false))
-      .toList();
+      .plus(findCssFiles(getDecoratorProperty(STYLES_PROP), false))
+      .toList()
   }
 
-  private static @NotNull StreamEx<PsiFile> findCssFiles(@Nullable JSProperty property, boolean directRefs) {
+  private fun findCssFiles(property: JSProperty?, directRefs: Boolean): Sequence<PsiFile> {
     if (property == null) {
-      return StreamEx.empty();
+      return emptySequence()
     }
     // TODO need stubbed references
     if (directRefs) { // styles property can contain references to CSS files imported through import statements
-      JSPropertyStub stub = ((JSPropertyImpl)property).getStub();
+      val stub = (property as JSPropertyImpl).stub
       if (stub != null) {
-        return StreamEx.of(stub.getChildrenStubs())
-          .map(StubElement::getPsi)
-          .select(JSExpression.class)
-          .map(expr -> getReferencedFileFromStub(expr, directRefs))
-          .nonNull();
+        return stub.childrenStubs
+          .asSequence()
+          .map { it.psi }
+          .filterIsInstance<JSExpression>()
+          .mapNotNull { getReferencedFileFromStub(it, directRefs) }
       }
     }
-    return AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(), () ->
-      StreamEx.ofNullable(property.getValue())
-        .select(JSArrayLiteralExpression.class)
-        .flatArray(JSArrayLiteralExpression::getExpressions)
-        .map(expr -> getReferencedFileFromPsi(expr, directRefs)))
-      .nonNull();
+    return AstLoadingFilter.forceAllowTreeLoading<Sequence<PsiFile>, RuntimeException>(property.containingFile) {
+      property.value
+        .asSafely<JSArrayLiteralExpression>()
+        ?.expressions
+        ?.asSequence()
+        ?.mapNotNull { getReferencedFileFromPsi(it, directRefs) }
+      ?: emptySequence()
+    }
   }
 
   @StubSafe
-  private static PsiFile getReferencedFile(@Nullable JSProperty property, boolean directRefs) {
+  private fun getReferencedFile(property: JSProperty?, directRefs: Boolean): PsiFile? {
     if (property == null) {
-      return null;
+      return null
     }
     // TODO need stubbed references
     if (directRefs) { // template property can contain references to HTML files imported through import statements
-      JSPropertyStub stub = ((JSPropertyImpl)property).getStub();
+      val stub = (property as JSPropertyImpl).stub
       if (stub != null) {
-        return getReferencedFileFromStub(StreamEx.of(stub.getChildrenStubs())
-                                           .map(StubElement::getPsi)
-                                           .select(JSExpression.class)
-                                           .findFirst()
-                                           .orElse(null),
-                                         directRefs);
+        return getReferencedFileFromStub(stub.childrenStubs.firstNotNullOfOrNull { it.psi as? JSExpression }, directRefs)
       }
     }
-    return AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
-                                                  () -> getReferencedFileFromPsi(property.getValue(), directRefs));
+    return AstLoadingFilter.forceAllowTreeLoading<PsiFile, RuntimeException>(property.containingFile) {
+      getReferencedFileFromPsi(property.value, directRefs)
+    }
   }
 
   @StubSafe
-  private static @Nullable PsiFile getReferencedFileFromStub(@Nullable JSExpression stubbedExpression, boolean directRefs) {
-    if (!directRefs
-        && stubbedExpression instanceof JSCallExpression
-        && ((JSCallExpression)stubbedExpression).isRequireCall()) {
-      stubbedExpression = JSStubBasedPsiTreeUtil.findRequireCallArgument((JSCallExpression)stubbedExpression);
+  private fun getReferencedFileFromStub(stubbedExpression: JSExpression?, directRefs: Boolean): PsiFile? {
+    val literal = if (!directRefs && stubbedExpression is JSCallExpression && stubbedExpression.isRequireCall) {
+      JSStubBasedPsiTreeUtil.findRequireCallArgument((stubbedExpression as JSCallExpression?)!!)
     }
+                  else {
+      stubbedExpression
+    } as? JSLiteralExpression ?: return null
 
-    String url = null;
-    if (stubbedExpression instanceof JSLiteralExpression) {
-      url = ((JSLiteralExpression)stubbedExpression).getSignificantValue();
+    val url = literal.significantValue ?: return null
+    val fakeUrlElement = FakeStringLiteral(literal, url)
+    for (ref in AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet(fakeUrlElement).allReferences) {
+      ref.resolve()
+        .asSafely<PsiFile>()
+        ?.let { return it }
     }
-
-    if (url != null) {
-      PsiElement fakeUrlElement = new FakeStringLiteral(stubbedExpression, url);
-      for (FileReference ref : new AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet(fakeUrlElement).getAllReferences()) {
-        PsiElement el = ref.resolve();
-        if (el instanceof PsiFile) {
-          return (PsiFile)el;
-        }
-      }
-    }
-    return null;
+    return null
   }
 
   @StubUnsafe
-  private static PsiFile getReferencedFileFromPsi(@Nullable JSExpression expression, boolean directRefs) {
-    if (expression != null) {
-      PsiFile file;
-      if (!directRefs && (file = Angular2InjectionUtils.getFirstInjectedFile(expression)) != null) {
-        return file;
+  private fun getReferencedFileFromPsi(expression: JSExpression?, directRefs: Boolean): PsiFile? {
+    expression ?: return null
+    if (!directRefs) {
+      Angular2InjectionUtils.getFirstInjectedFile(expression)
+        ?.let { return it }
+    }
+    val expressionToCheck: JSExpression
+    val actualDirectRefs: Boolean
+    if (expression is JSCallExpression) {
+      val args = expression.arguments
+      if (args.size == 1) {
+        expressionToCheck = args[0]
+        actualDirectRefs = true
       }
-      if (expression instanceof JSCallExpression) {
-        JSExpression[] args = ((JSCallExpression)expression).getArguments();
-        if (args.length == 1) {
-          expression = args[0];
-          directRefs = true;
-        }
-        else {
-          return null;
+      else {
+        return null
+      }
+    }
+    else {
+      expressionToCheck = expression
+      actualDirectRefs = directRefs
+    }
+    for (ref in expressionToCheck.references) {
+      val el = ref.resolve()
+      if (actualDirectRefs) {
+        if (el is PsiFile) {
+          return el
         }
       }
-      for (PsiReference ref : expression.getReferences()) {
-        PsiElement el = ref.resolve();
-        if (directRefs) {
-          if (el instanceof PsiFile) {
-            return (PsiFile)el;
-          }
-        }
-        else if (el instanceof ES6ImportedBinding) {
-          for (PsiElement importedElement : ((ES6ImportedBinding)el).findReferencedElements()) {
-            if (importedElement instanceof PsiFile) {
-              return (PsiFile)importedElement;
-            }
+      else if (el is ES6ImportedBinding) {
+        for (importedElement in el.findReferencedElements()) {
+          if (importedElement is PsiFile) {
+            return importedElement
           }
         }
       }
     }
-    return null;
+    return null
   }
 
-  private static class FakeStringLiteral extends FakePsiElement {
+  private class FakeStringLiteral(private val myParent: PsiElement, value: String) : FakePsiElement() {
+    private val myValue: String = StringUtil.unquoteString(value)
+    override fun getParent(): PsiElement = myParent
+    override fun getText(): String = myValue
+    override fun getTextLength(): Int = myValue.length
 
-    private final PsiElement myParent;
-    private final String myValue;
-
-    FakeStringLiteral(@NotNull PsiElement parent, @NotNull String value) {
-      super();
-      myParent = parent;
-      myValue = StringUtil.unquoteString(value);
-    }
-
-    @Override
-    public PsiElement getParent() {
-      return myParent;
-    }
-
-    @Override
-    public @Nullable String getText() {
-      return myValue;
-    }
-
-    @Override
-    public int getTextLength() {
-      return myValue.length();
-    }
-
-    @Override
-    public int getStartOffsetInParent() {
-      throw new IllegalStateException();
+    override fun getStartOffsetInParent(): Int {
+      throw IllegalStateException()
     }
   }
 }

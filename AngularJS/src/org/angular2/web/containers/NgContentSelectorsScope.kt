@@ -32,7 +32,7 @@ class NgContentSelectorsScope(tag: XmlTag)
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
     val tag = dataHolder
     val tagName = tag.name
-    Angular2CodeInsightUtils.getAvailableNgContentSelectorsStream(tag, Angular2DeclarationsScope(tag))
+    Angular2CodeInsightUtils.getAvailableNgContentSelectorsSequence(tag, Angular2DeclarationsScope(tag))
       .forEach { selector ->
         val elementSelector = selector.element
         elementSelector?.let(consumer)

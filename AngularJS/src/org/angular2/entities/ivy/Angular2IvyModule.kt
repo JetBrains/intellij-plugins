@@ -1,109 +1,90 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.ivy;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.ivy
 
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeofType;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.util.containers.JBIterable;
-import org.angular2.entities.*;
-import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements
+import com.intellij.psi.util.CachedValueProvider.Result
+import org.angular2.entities.*
+import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
+  : Angular2IvyEntity<Angular2IvySymbolDef.Module>(entityDef), Angular2Module {
 
-import static com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements;
-import static com.intellij.util.ObjectUtils.tryCast;
+  private val myModuleResolver = Angular2ModuleResolver({ field }, symbolCollector)
 
-public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Module> implements Angular2Module {
+  override val declarations: Set<Angular2Declaration>
+    get() = myModuleResolver.declarations
 
-  private final Angular2ModuleResolver<TypeScriptField> myModuleResolver = new Angular2ModuleResolver<>(
-    () -> getField(), Angular2IvyModule::collectSymbols);
+  override val imports: Set<Angular2Entity>
+    get() = myModuleResolver.imports
 
+  override val exports: Set<Angular2Entity>
+    get() = myModuleResolver.exports
 
-  public Angular2IvyModule(@NotNull Angular2IvySymbolDef.Module entityDef) {
-    super(entityDef);
+  override val allExportedDeclarations: Set<Angular2Declaration>
+    get() = myModuleResolver.allExportedDeclarations
+
+  override val isScopeFullyResolved: Boolean
+    get() = myModuleResolver.isScopeFullyResolved
+
+  override val isPublic: Boolean
+    get() = !getName().startsWith("ɵ")
+
+  override fun areExportsFullyResolved(): Boolean {
+    return myModuleResolver.areExportsFullyResolved()
   }
 
-  @Override
-  public @NotNull Set<Angular2Declaration> getDeclarations() {
-    return myModuleResolver.getDeclarations();
+  override fun areDeclarationsFullyResolved(): Boolean {
+    return myModuleResolver.areDeclarationsFullyResolved()
   }
 
-  @Override
-  public @NotNull Set<Angular2Entity> getImports() {
-    return myModuleResolver.getImports();
-  }
+  companion object {
 
-  @Override
-  public @NotNull Set<Angular2Entity> getExports() {
-    return myModuleResolver.getExports();
-  }
-
-  @Override
-  public @NotNull Set<Angular2Declaration> getAllExportedDeclarations() {
-    return myModuleResolver.getAllExportedDeclarations();
-  }
-
-  @Override
-  public boolean isScopeFullyResolved() {
-    return myModuleResolver.isScopeFullyResolved();
-  }
-
-  @Override
-  public boolean isPublic() {
-    return !getName().startsWith("ɵ");
-  }
-
-  @Override
-  public boolean areExportsFullyResolved() {
-    return myModuleResolver.areExportsFullyResolved();
-  }
-
-  @Override
-  public boolean areDeclarationsFullyResolved() {
-    return myModuleResolver.areDeclarationsFullyResolved();
-  }
-
-  private static @NotNull <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull TypeScriptField fieldDef,
-                                                                                                    @NotNull String propertyName,
-                                                                                                    @NotNull Class<T> symbolClazz) {
-    Angular2IvySymbolDef.Module moduleDef = tryCast(Angular2IvySymbolDef.get(fieldDef, false), Angular2IvySymbolDef.Module.class);
-    List<TypeScriptTypeofType> types = moduleDef == null ? Collections.emptyList() : moduleDef.getTypesList(propertyName);
-    if (types.isEmpty()) {
-      return ResolvedEntitiesList.createResult(Collections.emptySet(), true, fieldDef);
+    private val symbolCollector = object : Angular2ModuleResolver.SymbolCollector<TypeScriptField> {
+      override fun <U : Angular2Entity> collect(source: TypeScriptField,
+                                                propertyName: String,
+                                                symbolClazz: Class<U>): Result<ResolvedEntitiesList<U>> =
+        collectSymbols(source, propertyName, symbolClazz)
     }
-    Set<T> entities = new HashSet<>();
-    boolean fullyResolved = true;
-    // Dependencies for the cache are calculated heuristically.
-    // As dependencies, we use source and target files, however we miss any files in between.
-    // To compensate, we depend on any changes in node_modules.
-    // This approach is correct in 95% of cases, but gives huge boost to performance.
-    Set<Object> dependencies = new HashSet<>();
-    dependencies.add(fieldDef.getContainingFile());
-    dependencies.add(NodeModulesDirectoryManager.getInstance(fieldDef.getProject()).getNodeModulesDirChangeTracker());
-    for (TypeScriptTypeofType typeOfType : types) {
-      String reference = typeOfType.getReferenceText();
-      if (reference == null) {
-        fullyResolved = false;
-        continue;
+
+    private fun <T : Angular2Entity> collectSymbols(fieldDef: TypeScriptField,
+                                                    propertyName: String,
+                                                    symbolClazz: Class<T>): Result<ResolvedEntitiesList<T>> {
+      val moduleDef = Angular2IvySymbolDef.get(fieldDef, false) as? Angular2IvySymbolDef.Module
+      val types = moduleDef?.getTypesList(propertyName) ?: emptyList()
+      if (types.isEmpty()) {
+        return ResolvedEntitiesList.createResult(emptySet(), true, fieldDef)
       }
-      var resolvedTypes = getTypeOfResultElements(typeOfType, reference);
-      resolvedTypes.forEach(type -> dependencies.add(type.getContainingFile()));
-      T entity = JBIterable.from(resolvedTypes)
-        .filterMap(el -> Angular2EntitiesProvider.getEntity(el))
-        .filter(symbolClazz)
-        .first();
-      if (entity == null) {
-        fullyResolved = false;
+      val entities = HashSet<T>()
+      var fullyResolved = true
+      // Dependencies for the cache are calculated heuristically.
+      // As dependencies, we use source and target files, however we miss any files in between.
+      // To compensate, we depend on any changes in node_modules.
+      // This approach is correct in 95% of cases, but gives huge boost to performance.
+      val dependencies = HashSet<Any>()
+      dependencies.add(fieldDef.containingFile)
+      dependencies.add(NodeModulesDirectoryManager.getInstance(fieldDef.project).nodeModulesDirChangeTracker)
+      for (typeOfType in types) {
+        val reference = typeOfType.referenceText
+        if (reference == null) {
+          fullyResolved = false
+          continue
+        }
+        val resolvedTypes = getTypeOfResultElements(typeOfType, reference)
+        resolvedTypes.forEach { type -> dependencies.add(type.containingFile) }
+        val entity = resolvedTypes
+          .map { el -> Angular2EntitiesProvider.getEntity(el) }
+          .filterIsInstance(symbolClazz)
+          .firstOrNull()
+        if (entity == null) {
+          fullyResolved = false
+        }
+        else {
+          entities.add(entity)
+        }
       }
-      else {
-        entities.add(entity);
-      }
+      return ResolvedEntitiesList.createResult(entities, fullyResolved, dependencies)
     }
-    return ResolvedEntitiesList.createResult(entities, fullyResolved, dependencies);
   }
 }

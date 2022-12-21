@@ -1,90 +1,78 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.editor;
+package org.angular2.editor
 
-import com.intellij.codeInsight.hints.InlayInfo;
-import com.intellij.codeInsight.hints.Option;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSCallLikeExpression;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.html.HtmlTag;
-import com.intellij.psi.impl.source.html.HtmlDocumentImpl;
-import com.intellij.psi.impl.source.html.HtmlFileImpl;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.expr.psi.Angular2Interpolation;
-import org.angular2.lang.expr.psi.Angular2PipeExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.hints.InlayInfo
+import com.intellij.codeInsight.hints.Option
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSCallLikeExpression
+import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.PsiElement
+import com.intellij.psi.html.HtmlTag
+import com.intellij.psi.impl.source.html.HtmlDocumentImpl
+import com.intellij.psi.impl.source.html.HtmlFileImpl
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.psi.Angular2Interpolation
+import org.angular2.lang.expr.psi.Angular2PipeExpression
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+class Angular2InlayParameterHintsProvider : TypeScriptInlayParameterHintsProvider() {
 
-public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParameterHintsProvider {
-  public static final Option NAMES_FOR_ALL_ARGS = new Option(
-    "angular.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false);
-  public static final Option NAMES_FOR_PIPES = new Option(
-    "angular.show.names.for.pipes", Angular2Bundle.messagePointer("angular.inlay.params.option.pipe.arguments"), true);
-
-  @Override
-  protected Option getShowNameForAllArgsOption() {
-    return NAMES_FOR_ALL_ARGS;
+  override fun getShowNameForAllArgsOption(): Option {
+    return NAMES_FOR_ALL_ARGS
   }
 
-  @Override
-  public @NotNull List<Option> getSupportedOptions() {
-    return Arrays.asList(getShowNameForAllArgsOption(), NAMES_FOR_PIPES);
+  override fun getSupportedOptions(): List<Option> {
+    return listOf(showNameForAllArgsOption, NAMES_FOR_PIPES)
   }
 
-  @Override
-  protected boolean isSuitableCallExpression(@Nullable JSCallLikeExpression expression) {
-    if (!super.isSuitableCallExpression(expression)) return false;
-    if (!NAMES_FOR_PIPES.get() && expression instanceof Angular2PipeExpression) return false;
-    return true;
+  override fun isSuitableCallExpression(expression: JSCallLikeExpression?): Boolean {
+    if (!super.isSuitableCallExpression(expression)) return false
+    return NAMES_FOR_PIPES.get() || expression !is Angular2PipeExpression
   }
 
-  @Override
-  protected boolean skipIndex(int i, JSCallLikeExpression expression) {
-    if (expression instanceof Angular2PipeExpression && i == 0) return true;
-    return super.skipIndex(i, expression);
+  override fun skipIndex(i: Int, expression: JSCallLikeExpression): Boolean {
+    return (expression is Angular2PipeExpression && i == 0) || super.skipIndex(i, expression)
   }
 
-  @Override
-  public @NotNull List<InlayInfo> getParameterHints(@NotNull PsiElement element) {
-    if (element instanceof JSCallExpression && isAllArgsSettingsPreview((JSCallExpression)element)) {
-      return getAllArgsSettingsPreviewInfo((JSCallExpression)element);
+  override fun getParameterHints(element: PsiElement): List<InlayInfo> {
+    return if (element is JSCallExpression && isAllArgsSettingsPreview(element)) {
+      getAllArgsSettingsPreviewInfo(element)
     }
-    return super.getParameterHints(element);
+    else super.getParameterHints(element)
   }
 
-  private static boolean isAllArgsSettingsPreview(JSCallExpression element) {
-    // fast path for normal case
-    PsiElement parent = element.getParent();
-    if (!(parent instanceof Angular2Interpolation)) return false;
-    parent = parent.getParent();
-    if (!(parent instanceof ASTWrapperPsiElement)) return false;
-    parent = parent.getParent();
-    if (!(parent instanceof HtmlTag)) return false;
-    parent = parent.getParent();
-    if (!(parent instanceof HtmlTag)) return false;
-    parent = parent.getParent();
-    if (!(parent instanceof HtmlDocumentImpl)) return false;
-    parent = parent.getParent();
-    if (!(parent instanceof HtmlFileImpl)) return false;
-    return "dummy".equals(((HtmlFileImpl)parent).getName()) && element.getText().equals("foo(phone, 22)");
-  }
+  companion object {
+    val NAMES_FOR_ALL_ARGS = Option(
+      "angular.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
+    val NAMES_FOR_PIPES = Option(
+      "angular.show.names.for.pipes", Angular2Bundle.messagePointer("angular.inlay.params.option.pipe.arguments"), true)
 
-  private static @NotNull List<InlayInfo> getAllArgsSettingsPreviewInfo(@NotNull JSCallExpression callExpression) {
-    JSExpression[] arguments = callExpression.getArguments();
-    if (arguments.length != 2) {
-      Logger.getInstance(Angular2InlayParameterHintsProvider.class).error("Unexpected call expression");
-      return Collections.emptyList();
+    private fun isAllArgsSettingsPreview(element: JSCallExpression): Boolean {
+      // fast path for normal case
+      var parent = element.parent
+      if (parent !is Angular2Interpolation) return false
+      parent = parent.getParent()
+      if (parent !is ASTWrapperPsiElement) return false
+      parent = parent.getParent()
+      if (parent !is HtmlTag) return false
+      parent = parent.getParent()
+      if (parent !is HtmlTag) return false
+      parent = parent.getParent()
+      if (parent !is HtmlDocumentImpl) return false
+      parent = parent.getParent()
+      return if (parent !is HtmlFileImpl) false else "dummy" == parent.name && element.text == "foo(phone, 22)"
     }
-    return Arrays.asList(new InlayInfo("a", arguments[0].getTextOffset()),
-                         new InlayInfo("b", arguments[1].getTextOffset()));
+
+    private fun getAllArgsSettingsPreviewInfo(callExpression: JSCallExpression): List<InlayInfo> {
+      val arguments = callExpression.arguments
+      if (arguments.size != 2) {
+        Logger.getInstance(Angular2InlayParameterHintsProvider::class.java).error("Unexpected call expression")
+        return emptyList()
+      }
+      return listOf(InlayInfo("a", arguments[0].textOffset),
+                    InlayInfo("b", arguments[1].textOffset))
+    }
   }
 }

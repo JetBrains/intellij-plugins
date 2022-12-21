@@ -1,67 +1,53 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.expr.psi.impl;
+package org.angular2.lang.expr.psi.impl
 
-import com.intellij.lang.Language;
-import com.intellij.lang.javascript.psi.JSElementVisitor;
-import com.intellij.lang.javascript.psi.JSSuppressionHolder;
-import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
-import com.intellij.lang.javascript.psi.impl.JSElementImpl;
-import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl;
-import com.intellij.psi.HintedReferenceHost;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceService;
-import com.intellij.psi.tree.IElementType;
-import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.Language
+import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.JSSuppressionHolder
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
+import com.intellij.lang.javascript.psi.impl.JSElementImpl
+import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
+import com.intellij.psi.HintedReferenceHost
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceService
+import com.intellij.psi.tree.IElementType
+import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 
-public class Angular2EmbeddedExpressionImpl extends JSElementImpl
-  implements JSSuppressionHolder, Angular2EmbeddedExpression, HintedReferenceHost {
-
-  public Angular2EmbeddedExpressionImpl(IElementType elementType) {
-    super(elementType);
+open class Angular2EmbeddedExpressionImpl(elementType: IElementType?)
+  : JSElementImpl(elementType), JSSuppressionHolder, Angular2EmbeddedExpression, HintedReferenceHost {
+  override fun getLanguage(): Language {
+    return Angular2Language.INSTANCE
   }
 
-  @Override
-  public @NotNull Language getLanguage() {
-    return Angular2Language.INSTANCE;
-  }
-
-  @Override
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof JSElementVisitor) {
-      ((JSElementVisitor)visitor).visitJSEmbeddedContent(this);
+  override fun accept(visitor: PsiElementVisitor) {
+    if (visitor is JSElementVisitor) {
+      visitor.visitJSEmbeddedContent(this)
     }
     else {
-      super.accept(visitor);
+      super.accept(visitor)
     }
   }
 
-  @Override
-  public void subtreeChanged() {
-    super.subtreeChanged();
-    JSControlFlowService.getService(getProject()).resetControlFlow(this);
+  override fun subtreeChanged() {
+    super.subtreeChanged()
+    JSControlFlowService.getService(project).resetControlFlow(this)
   }
 
-  @Override
-  public boolean allowTopLevelThis() {
-    return true;
+  override fun allowTopLevelThis(): Boolean {
+    return true
   }
 
-  @Override
-  public @Nullable Character getQuoteChar() {
-    return JSEmbeddedContentImpl.getQuoteChar(this);
+  override fun getQuoteChar(): Char? {
+    return JSEmbeddedContentImpl.getQuoteChar(this)
   }
 
-  @Override
-  public PsiReference @NotNull [] getReferences(@NotNull PsiReferenceService.Hints hints) {
-    return PsiReference.EMPTY_ARRAY;
+  override fun getReferences(hints: PsiReferenceService.Hints): Array<PsiReference> {
+    return PsiReference.EMPTY_ARRAY
   }
 
-  @Override
-  public boolean shouldAskParentForReferences(@NotNull PsiReferenceService.Hints hints) {
-    return false;
+  override fun shouldAskParentForReferences(hints: PsiReferenceService.Hints): Boolean {
+    return false
   }
 }

@@ -1,211 +1,180 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight;
+package org.angular2.codeInsight
 
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
-import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.modules.NodeModuleUtil;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSRecordType;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.model.Pointer;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.containers.JBIterable;
-import org.angular2.entities.*;
-import org.angular2.entities.ivy.Angular2IvyDirective;
-import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
-import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty;
-import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
-import org.angular2.lang.Angular2LangUtil;
-import org.angular2.web.Angular2Symbol;
-import org.angular2.web.Angular2SymbolDelegate;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-
-import static com.intellij.psi.util.CachedValueProvider.Result.create;
-import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.modules.NodeModuleUtil
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.model.Pointer
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValuesManager.getCachedValue
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol
+import org.angular2.entities.Angular2Directive
+import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.ivy.Angular2IvyDirective
+import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
+import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
+import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2SymbolDelegate
+import org.jetbrains.annotations.NonNls
+import java.util.*
 
 /**
  * This class is intended to be a single point of origin for any hack to support a badly written library.
  */
-public final class Angular2LibrariesHacks {
+object Angular2LibrariesHacks {
 
-  @NonNls private static final String IONIC_ANGULAR_PACKAGE = "@ionic/angular";
-  @NonNls private static final String NG_MODEL_CHANGE = "ngModelChange";
-  @NonNls private static final String NG_FOR_OF = "ngForOf";
-  @NonNls private static final String NG_ITERABLE = "NgIterable";
-  @NonNls private static final String QUERY_LIST = "QueryList";
+  @NonNls
+  private const val IONIC_ANGULAR_PACKAGE = "@ionic/angular"
+
+  @NonNls
+  private const val NG_MODEL_CHANGE = "ngModelChange"
+
+  @NonNls
+  private const val NG_FOR_OF = "ngForOf"
+
+  @NonNls
+  private const val NG_ITERABLE = "NgIterable"
+
+  @NonNls
+  private const val QUERY_LIST = "QueryList"
 
   /**
    * Hack for WEB-37879
    */
-  public static @Nullable JSType hackNgModelChangeType(@Nullable JSType type, @NotNull String propertyName) {
+  @JvmStatic
+  fun hackNgModelChangeType(type: JSType?, propertyName: String): JSType? {
     // Workaround issue with ngModelChange field.
     // The workaround won't execute once Angular source is corrected.
-    if (propertyName.equals(NG_MODEL_CHANGE)
-        && type instanceof JSRecordType
-        && !((JSRecordType)type).hasProperties()) {
-      return JSAnyType.get(type.getSource());
+    return if (propertyName == NG_MODEL_CHANGE && type is JSRecordType && !type.hasProperties()) {
+      JSAnyType.get(type.source)
     }
-    return type;
+    else type
   }
 
   /**
    * Hack for WEB-37838
    */
-  public static void hackIonicComponentOutputs(@NotNull Angular2Directive directive, @NotNull Map<String, String> outputs) {
+  @JvmStatic
+  fun hackIonicComponentOutputs(directive: Angular2Directive, outputs: MutableMap<String, String>) {
     if (!isIonicDirective(directive)) {
-      return;
+      return
     }
-    TypeScriptClass cls = directive.getTypeScriptClass();
-    if (cls == null) {
-      return;
-    }
+    val cls = directive.typeScriptClass ?: return
     // We can guess outputs by looking for fields with EventEmitter type
-    cls.getJSType().asRecordType().getProperties().forEach(prop -> {
+    cls.jsType.asRecordType().properties.forEach { prop ->
       try {
-        JSType type;
-        if (prop instanceof TypeScriptField
-            && (type = prop.getJSType()) != null
-            && type.getTypeText().startsWith(Angular2LangUtil.EVENT_EMITTER)) {
-          outputs.put(prop.getMemberName(), prop.getMemberName());
+        val type = prop.asSafely<TypeScriptField>()?.jsType
+        if (type != null && type.typeText.startsWith(Angular2LangUtil.EVENT_EMITTER)) {
+          outputs[prop.memberName] = prop.memberName
         }
       }
-      catch (IllegalArgumentException ex) {
+      catch (ex: IllegalArgumentException) {
         //getTypeText may throw IllegalArgumentException - ignore it
       }
-    });
+    }
   }
 
   /**
    * Hack for WEB-39722
    */
-  public static @NotNull List<? extends Angular2Symbol> hackIonicComponentAttributeNames(@NotNull Angular2Directive directive) {
-    if (!isIonicDirective(directive)) {
-      return Collections.emptyList();
-    }
+  @JvmStatic
+  fun hackIonicComponentAttributeNames(directive: Angular2Directive): List<Angular2Symbol> {
+    return if (!isIonicDirective(directive))
+      emptyList()
+    else directive.inputs.map { input -> IonicComponentAttribute(input) }
     // Add kebab case version of attribute - Ionic takes these directly from element bypassing Angular
-    return JBIterable.from(directive.getInputs())
-      .map(input -> new IonicComponentAttribute(input))
-      .toList();
   }
 
-  private static boolean isIonicDirective(Angular2Directive directive) {
-    if (directive instanceof Angular2IvyDirective) {
-      return directive.getName().startsWith("Ion") //NON-NLS
-             && Optional.ofNullable(directive.getTypeScriptClass())
-               .map(PsiUtilCore::getVirtualFile)
-               .map(vf -> PackageJsonUtil.findUpPackageJson(vf))
-               .map(NodeModuleUtil::inferNodeModulePackageName)
-               .map(name -> name.equals(IONIC_ANGULAR_PACKAGE))
-               .orElse(false);
+  private fun isIonicDirective(directive: Angular2Directive): Boolean {
+    val containingNodePackage = if (directive is Angular2IvyDirective && directive.getName().startsWith("Ion")) {
+      directive.typeScriptClass
+        .let { PsiUtilCore.getVirtualFile(it) }
+        ?.let { vf -> PackageJsonUtil.findUpPackageJson(vf) }
+        ?.let { NodeModuleUtil.inferNodeModulePackageName(it) }
     }
-    return Optional.ofNullable(tryCast(directive, Angular2MetadataDirectiveBase.class))
-      .map(Angular2MetadataDirectiveBase::getNodeModule)
-      .map(Angular2MetadataNodeModule::getName)
-      .map(name -> IONIC_ANGULAR_PACKAGE.equals(name))
-      .orElse(Boolean.FALSE);
+    else
+      (directive as? Angular2MetadataDirectiveBase<*>)
+        ?.nodeModule
+        ?.name
+    return containingNodePackage == IONIC_ANGULAR_PACKAGE
   }
 
   /**
    * Hack for WEB-38825. Make ngForOf accept QueryList in addition to NgIterable
    */
-  public static @Nullable JSType hackQueryListTypeInNgForOf(@Nullable JSType type,
-                                                            @NotNull Angular2MetadataDirectiveProperty property) {
-    TypeScriptClass clazz;
-    JSType queryListType;
-    if (type instanceof JSGenericTypeImpl
-        && property.getName().equals(NG_FOR_OF)
-        && (clazz = PsiTreeUtil.getContextOfType(property.getSourceElement(), TypeScriptClass.class)) != null
-        && type.getTypeText().contains(NG_ITERABLE)
-        && (queryListType = getQueryListType(clazz)) != null) {
-      return JSCompositeTypeFactory.createUnionType(type.getSource(), type,
-                                                    new JSGenericTypeImpl(type.getSource(), queryListType,
-                                                                          ((JSGenericTypeImpl)type).getArguments()));
+  @JvmStatic
+  fun hackQueryListTypeInNgForOf(type: JSType?,
+                                 property: Angular2MetadataDirectiveProperty): JSType? {
+    if (type is JSGenericTypeImpl && property.name == NG_FOR_OF) {
+      val clazz: TypeScriptClass = PsiTreeUtil.getContextOfType(property.sourceElement, TypeScriptClass::class.java)
+                                   ?: return type
+      if (!type.typeText.contains(NG_ITERABLE))
+        return type
+      val queryListType: JSType = getQueryListType(clazz)
+                                  ?: return type
+      return JSCompositeTypeFactory.createUnionType(type.source, type, JSGenericTypeImpl(type.source, queryListType, type.arguments))
     }
-    return type;
+    return type
   }
 
-  private static @Nullable JSType getQueryListType(@NotNull PsiElement scope) {
-    return doIfNotNull(getCachedValue(scope, () -> {
-      for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
-        if (!(module instanceof JSElement)) continue;
-        TypeScriptClass queryListClass = tryCast(
-          JSResolveResult.resolve(
-            ES6PsiUtil.resolveSymbolInModule(QUERY_LIST, scope, (JSElement)module)),
-          TypeScriptClass.class);
-        if (queryListClass != null
-            && queryListClass.getTypeParameters().length == 1) {
-          return create(queryListClass, queryListClass, scope);
+  private fun getQueryListType(scope: PsiElement): JSType? {
+    return getCachedValue(scope) {
+      for (module in JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
+        if (module !is JSElement) continue
+        val queryListClass = JSResolveResult.resolve(ES6PsiUtil.resolveSymbolInModule(QUERY_LIST, scope, module)) as? TypeScriptClass
+        if (queryListClass != null && queryListClass.typeParameters.size == 1) {
+          return@getCachedValue create<TypeScriptClass>(queryListClass, queryListClass, scope)
         }
       }
-      return create(null, PsiModificationTracker.MODIFICATION_COUNT);
-    }), clazz -> clazz.getJSType());
+      create(null, PsiModificationTracker.MODIFICATION_COUNT)
+    }?.jsType
   }
 
-  private static class IonicComponentAttribute extends Angular2SymbolDelegate<Angular2DirectiveProperty> {
+  private class IonicComponentAttribute(input: Angular2DirectiveProperty)
+    : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
-    private final String name;
+    override val name: String = input.name.replace("([A-Z])".toRegex(), "-$1").lowercase(Locale.ENGLISH)
 
-    private IonicComponentAttribute(@NotNull Angular2DirectiveProperty input) {
-      super(input);
-      name = input.getName().replaceAll("([A-Z])", "-$1").toLowerCase(Locale.ENGLISH);
+    override val namespace: String
+      get() = WebSymbol.NAMESPACE_HTML
+
+    override val kind: String
+      get() = WebSymbol.KIND_HTML_ATTRIBUTES
+
+    override fun createPointer(): Pointer<IonicComponentAttribute> {
+      val input = this.delegate.createPointer()
+      return Pointer {
+        val newInput = input.dereference()
+        if (newInput != null) IonicComponentAttribute(newInput) else null
+      }
     }
 
-    @NotNull
-    @Override
-    public String getNamespace() {
-      return NAMESPACE_HTML;
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other == null || javaClass != other.javaClass) return false
+      val attr = other as IonicComponentAttribute?
+      return delegate == attr!!.delegate
     }
 
-    @NotNull
-    @Override
-    public String getKind() {
-      return KIND_HTML_ATTRIBUTES;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-      return name;
-    }
-
-    @NotNull
-    @Override
-    public Pointer<IonicComponentAttribute> createPointer() {
-      var input = this.getDelegate().createPointer();
-      return () -> {
-        var newInput = input.dereference();
-        return newInput != null ? new IonicComponentAttribute(newInput) : null;
-      };
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      IonicComponentAttribute attr = (IonicComponentAttribute)o;
-      return getDelegate().equals(attr.getDelegate());
-    }
-
-    @Override
-    public int hashCode() {
-      return getDelegate().hashCode();
+    override fun hashCode(): Int {
+      return delegate.hashCode()
     }
   }
 

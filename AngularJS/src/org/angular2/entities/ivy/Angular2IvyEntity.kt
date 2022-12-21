@@ -1,51 +1,34 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.ivy;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.ivy
 
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.angular2.entities.source.Angular2SourceEntityBase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.angular2.entities.source.Angular2SourceEntityBase
+import java.util.*
 
-import java.util.Objects;
+abstract class Angular2IvyEntity<T : Angular2IvySymbolDef.Entity> protected constructor(protected val myEntityDef: T)
+  : Angular2SourceEntityBase(PsiTreeUtil.getContextOfType(myEntityDef.field, TypeScriptClass::class.java)!!) {
 
-public abstract class Angular2IvyEntity<T extends Angular2IvySymbolDef.Entity> extends Angular2SourceEntityBase {
+  protected val field: TypeScriptField
+    get() = myEntityDef.field
 
-  protected final T myEntityDef;
+  override val decorator: ES6Decorator?
+    get() = null
 
-  protected Angular2IvyEntity(@NotNull T entityDef) {
-    super(Objects.requireNonNull(PsiTreeUtil.getContextOfType(entityDef.getField(), TypeScriptClass.class)));
-    myEntityDef = entityDef;
+  override val sourceElement: PsiElement
+    get() = this.field
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val entity = other as Angular2IvyEntity<*>?
+    return field == entity!!.field && typeScriptClass == entity.typeScriptClass
   }
 
-  protected TypeScriptField getField() {
-    return myEntityDef.getField();
-  }
-
-  @Override
-  public @Nullable ES6Decorator getDecorator() {
-    return null;
-  }
-
-  @Override
-  public @NotNull PsiElement getSourceElement() {
-    return getField();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2IvyEntity<?> entity = (Angular2IvyEntity<?>)o;
-    return getField().equals(entity.getField()) &&
-           myClass.equals(entity.myClass);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getField(), myClass);
+  override fun hashCode(): Int {
+    return Objects.hash(field, typeScriptClass)
   }
 }

@@ -1,347 +1,339 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections.quickfixes;
+package org.angular2.inspections.quickfixes
 
-import com.intellij.codeInsight.hint.QuestionAction;
-import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl;
-import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Consumer;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.MultiMap;
-import one.util.streamex.StreamEx;
-import org.angular2.cli.config.AngularConfig;
-import org.angular2.cli.config.AngularConfigProvider;
-import org.angular2.cli.config.AngularProject;
-import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
-import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.entities.*;
-import org.angular2.inspections.actions.Angular2ActionFactory;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
-import org.angular2.lang.expr.psi.Angular2TemplateBinding;
-import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
-import org.angular2.lang.html.parser.Angular2AttributeType;
-import org.angular2.lang.html.psi.Angular2HtmlEvent;
-import org.angular2.lang.html.psi.PropertyBindingType;
-import org.angular2.web.containers.OneTimeBindingsProvider;
-import org.jetbrains.annotations.*;
+import com.intellij.codeInsight.hint.QuestionAction
+import com.intellij.codeInsight.navigation.NavigationUtil
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl
+import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtilCore
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.SmartList
+import com.intellij.util.asSafely
+import com.intellij.util.containers.ContainerUtil.emptyList
+import com.intellij.util.containers.ContainerUtil.map2SetNotNull
+import com.intellij.util.containers.MultiMap
+import org.angular2.cli.config.AngularConfigProvider
+import org.angular2.cli.config.AngularProject
+import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.entities.*
+import org.angular2.inspections.actions.Angular2ActionFactory
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression
+import org.angular2.lang.expr.psi.Angular2TemplateBinding
+import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.lang.html.psi.Angular2HtmlEvent
+import org.angular2.lang.html.psi.PropertyBindingType
+import org.angular2.web.containers.OneTimeBindingsProvider
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.TestOnly
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import static com.intellij.util.ObjectUtils.*;
-import static com.intellij.util.containers.ContainerUtil.*;
-
-public final class Angular2FixesFactory {
+object Angular2FixesFactory {
 
   @TestOnly
-  @NonNls public static final Key<String> DECLARATION_TO_CHOOSE = Key.create("declaration.to.choose");
+  @NonNls
+  @JvmField
+  val DECLARATION_TO_CHOOSE = Key.create<String>("declaration.to.choose")
 
-  public static void ensureDeclarationResolvedAfterCodeCompletion(@NotNull PsiElement element, @NotNull Editor editor) {
-    MultiMap<DeclarationProximity, Angular2Declaration> candidates = getCandidatesForResolution(element, true);
+  @JvmStatic
+  fun ensureDeclarationResolvedAfterCodeCompletion(element: PsiElement, editor: Editor) {
+    val candidates = getCandidatesForResolution(element, true)
     if (!candidates.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
-      Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute();
+      Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute()
     }
     else if (!candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
-      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
-                                                  getCommonNameForDeclarations(
-                                                    candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
-                   candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE), candidate ->
-                     Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true));
+      selectAndRun(editor,
+                   Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
+                                          getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
+                   candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE)) { candidate ->
+        Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true)
+      }
     }
     else if (!candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE).isEmpty()) {
-      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
-                                                  getCommonNameForDeclarations(
-                                                    candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
-                   candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE), candidate ->
-                     Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true));
+      selectAndRun(editor,
+                   Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
+                                          getCommonNameForDeclarations(candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE))),
+                   candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)) { candidate ->
+        Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true)
+      }
     }
   }
 
-  public static void addUnresolvedDeclarationFixes(@NotNull PsiElement element, @NotNull List<LocalQuickFix> fixes) {
-    MultiMap<DeclarationProximity, Angular2Declaration> candidates = getCandidatesForResolution(element, false);
+  @JvmStatic
+  fun addUnresolvedDeclarationFixes(element: PsiElement, fixes: MutableList<LocalQuickFix>) {
+    val candidates = getCandidatesForResolution(element, false)
     if (candidates.containsKey(DeclarationProximity.IN_SCOPE)) {
-      return;
+      return
     }
     if (!candidates.get(DeclarationProximity.IMPORTABLE).isEmpty()) {
-      fixes.add(new AddNgModuleImportQuickFix(element, candidates.get(DeclarationProximity.IMPORTABLE)));
+      fixes.add(AddNgModuleImportQuickFix(element, candidates.get(DeclarationProximity.IMPORTABLE)))
     }
-    for (Angular2Declaration declaration : candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE)) {
-      AddNgModuleDeclarationQuickFix.add(element, declaration, fixes);
+    for (declaration in candidates.get(DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE)) {
+      AddNgModuleDeclarationQuickFix.add(element, declaration, fixes)
     }
-    for (Angular2Declaration declaration : candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)) {
-      ExportNgModuleDeclarationQuickFix.add(element, declaration, fixes);
+    for (declaration in candidates.get(DeclarationProximity.NOT_EXPORTED_BY_MODULE)) {
+      ExportNgModuleDeclarationQuickFix.add(element, declaration, fixes)
     }
   }
 
-  public static @NotNull MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
-                                                                                                        boolean codeCompletion) {
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(element);
-    Angular2ImportsOwner importsOwner = scope.getImportsOwner();
+  @JvmStatic
+  fun getCandidatesForResolution(element: PsiElement,
+                                 codeCompletion: Boolean): MultiMap<DeclarationProximity, Angular2Declaration> {
+    val scope = Angular2DeclarationsScope(element)
+    val importsOwner = scope.importsOwner
     if (importsOwner == null || !scope.isInSource(importsOwner)) {
-      return MultiMap.empty();
+      return MultiMap.empty()
     }
-    Ref<Predicate<Angular2Declaration>> filter = new Ref<>(declaration -> true);
-    final Supplier<List<? extends Angular2Declaration>> provider;
-    final Supplier<List<? extends Angular2Declaration>> secondaryProvider;
-    if (element instanceof XmlAttribute) {
-      Angular2AttributeDescriptor attributeDescriptor = tryCast(((XmlAttribute)element).getDescriptor(),
-                                                                Angular2AttributeDescriptor.class);
-      if (attributeDescriptor == null) {
-        return MultiMap.empty();
-      }
-      AttributeInfo info = attributeDescriptor.getInfo();
-      provider = new Angular2ApplicableDirectivesProvider(((XmlAttribute)element).getParent())::getMatched;
-      secondaryProvider = info.type == Angular2AttributeType.REFERENCE ? null : attributeDescriptor::getSourceDirectives;
+    val filter: (Angular2Declaration) -> Boolean
+    val provider: () -> List<Angular2Declaration>
+    val secondaryProvider: (() -> List<Angular2Declaration>)?
+    when (element) {
+      is XmlAttribute -> {
+        val attributeDescriptor = element.descriptor as? Angular2AttributeDescriptor
+                                  ?: return MultiMap.empty()
+        val info = attributeDescriptor.info
+        provider = { Angular2ApplicableDirectivesProvider(element.parent).matched }
+        secondaryProvider = if (info.type == Angular2AttributeType.REFERENCE)
+          null
+        else
+          ({ attributeDescriptor.sourceDirectives })
 
-      switch (info.type) {
-        case PROPERTY_BINDING:
-          if (((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType != PropertyBindingType.PROPERTY) {
-            return MultiMap.empty();
+        when (info.type) {
+          Angular2AttributeType.PROPERTY_BINDING -> {
+            if ((info as Angular2AttributeNameParser.PropertyBindingInfo).bindingType != PropertyBindingType.PROPERTY) {
+              return MultiMap.empty()
+            }
+            filter = { declaration ->
+              declaration is Angular2Directive && declaration.inputs.any { input -> info.name == input.name }
+            }
           }
-          filter.set(declaration -> declaration instanceof Angular2Directive
-                                    && exists(((Angular2Directive)declaration).getInputs(),
-                                              input -> info.name.equals(input.getName())));
-          break;
-        case EVENT:
-          if (((Angular2AttributeNameParser.EventInfo)info).eventType != Angular2HtmlEvent.EventType.REGULAR) {
-            return MultiMap.empty();
+          Angular2AttributeType.EVENT -> {
+            if ((info as Angular2AttributeNameParser.EventInfo).eventType != Angular2HtmlEvent.EventType.REGULAR) {
+              return MultiMap.empty()
+            }
+            filter = { declaration ->
+              declaration is Angular2Directive && declaration.outputs.any { output -> info.name == output.name }
+            }
           }
-          filter.set(declaration -> declaration instanceof Angular2Directive
-                                    && exists(((Angular2Directive)declaration).getOutputs(),
-                                              output -> info.name.equals(output.getName())));
-        case BANANA_BOX_BINDING:
-          filter.set(declaration -> declaration instanceof Angular2Directive
-                                    && exists(((Angular2Directive)declaration).getInOuts(),
-                                              inout -> info.name.equals(inout.getName())));
-          break;
-        case REGULAR:
-          filter.set(declaration -> declaration instanceof Angular2Directive
-                                    && (exists(((Angular2Directive)declaration).getInputs(),
-                                               input -> info.name.equals(input.getName())
-                                                        && OneTimeBindingsProvider.isOneTimeBindingProperty(input))
-                                        || exists(((Angular2Directive)declaration).getSelector().getSimpleSelectors(),
-                                                  selector -> exists(selector.getAttrNames(), info.name::equals))));
-          break;
-        case REFERENCE:
-          String exportName = ((XmlAttribute)element).getValue();
-          if (exportName == null || exportName.isEmpty()) {
-            return MultiMap.empty();
+          Angular2AttributeType.BANANA_BOX_BINDING -> {
+            filter = { declaration ->
+              declaration is Angular2Directive && declaration.inOuts.any { inout -> info.name == inout.name }
+            }
           }
-          filter.set(declaration -> declaration instanceof Angular2Directive
-                                    && ((Angular2Directive)declaration).getExportAsList().contains(exportName));
-          break;
-        default:
-          return MultiMap.empty();
+          Angular2AttributeType.REGULAR -> {
+            filter = { declaration ->
+              declaration is Angular2Directive
+              && (declaration.inputs.any { input -> info.name == input.name && OneTimeBindingsProvider.isOneTimeBindingProperty(input) }
+                  || declaration.selector.simpleSelectors.any { selector -> selector.attrNames.any { info.name == it } })
+            }
+          }
+          Angular2AttributeType.REFERENCE -> {
+            val exportName = element.value
+            if (exportName.isNullOrEmpty()) {
+              return MultiMap.empty()
+            }
+            filter = { declaration -> declaration is Angular2Directive && declaration.exportAsList.contains(exportName) }
+          }
+          else -> return MultiMap.empty()
+        }
+      }
+      is XmlTag -> {
+        provider = { Angular2ApplicableDirectivesProvider(element, true).matched }
+        secondaryProvider = null
+        filter = { _: Angular2Declaration -> true }
+      }
+      is Angular2TemplateBinding -> {
+        provider = { Angular2ApplicableDirectivesProvider(element.getParent() as Angular2TemplateBindings).matched }
+        secondaryProvider = createSecondaryProvider(element.getParent() as Angular2TemplateBindings)
+        if (element.keyIsVar()) {
+          return MultiMap.empty()
+        }
+        val key = element.key
+        filter = { declaration ->
+          declaration is Angular2Directive && declaration.inputs.any { input -> key == input.name }
+        }
+      }
+      is Angular2TemplateBindings -> {
+        provider = { Angular2ApplicableDirectivesProvider(element).matched }
+        secondaryProvider = createSecondaryProvider(element)
+        filter = { _: Angular2Declaration -> true }
+      }
+      is Angular2PipeReferenceExpression -> {
+        val referencedName = element.referenceName
+        if (referencedName.isNullOrEmpty()) {
+          return MultiMap.empty()
+        }
+        provider = { Angular2EntitiesProvider.findPipes(element.getProject(), referencedName) }
+        secondaryProvider = null
+        filter = { _: Angular2Declaration -> true }
+      }
+      else -> {
+        throw IllegalArgumentException(element.javaClass.name)
       }
     }
-    else if (element instanceof XmlTag) {
-      provider = new Angular2ApplicableDirectivesProvider((XmlTag)element, true)::getMatched;
-      secondaryProvider = null;
-    }
-    else if (element instanceof Angular2TemplateBinding) {
-      provider = new Angular2ApplicableDirectivesProvider((Angular2TemplateBindings)element.getParent())::getMatched;
-      secondaryProvider = createSecondaryProvider((Angular2TemplateBindings)element.getParent());
-      if (((Angular2TemplateBinding)element).keyIsVar()) {
-        return MultiMap.empty();
+    val declarations = SmartList<Angular2Declaration>()
+    val declarationProcessor = { p: () -> List<Angular2Declaration> ->
+      for (it in p()) {
+        if (filter(it)) {
+          declarations.add(it)
+        }
       }
-      String key = ((Angular2TemplateBinding)element).getKey();
-      filter.set(declaration -> declaration instanceof Angular2Directive
-                                && exists(((Angular2Directive)declaration).getInputs(),
-                                          input -> key.equals(input.getName())));
     }
-    else if (element instanceof Angular2TemplateBindings) {
-      provider = new Angular2ApplicableDirectivesProvider((Angular2TemplateBindings)element)::getMatched;
-      secondaryProvider = createSecondaryProvider((Angular2TemplateBindings)element);
-    }
-    else if (element instanceof Angular2PipeReferenceExpression) {
-      String referencedName = ((Angular2PipeReferenceExpression)element).getReferenceName();
-      if (referencedName == null || referencedName.isEmpty()) {
-        return MultiMap.empty();
-      }
-      provider = () -> Angular2EntitiesProvider.findPipes(element.getProject(), referencedName);
-      secondaryProvider = null;
-    }
-    else {
-      throw new IllegalArgumentException(element.getClass().getName());
-    }
-    List<Angular2Declaration> declarations = new SmartList<>();
-    Consumer<Supplier<List<? extends Angular2Declaration>>> declarationProcessor = p -> StreamEx.of(p.get())
-      .filter(filter.get())
-      .forEach(declaration -> declarations.add(declaration));
 
-    declarationProcessor.consume(provider);
+    declarationProcessor(provider)
     if (declarations.isEmpty() && codeCompletion && secondaryProvider != null) {
-      declarationProcessor.consume(secondaryProvider);
+      declarationProcessor(secondaryProvider)
     }
 
-    MultiMap<DeclarationProximity, Angular2Declaration> result = new MultiMap<>();
-    removeLocalLibraryElements(importsOwner.getSourceElement(), declarations)
-      .forEach(declaration -> result.putValue(scope.getDeclarationProximity(declaration), declaration));
+    val result = MultiMap<DeclarationProximity, Angular2Declaration>()
+    removeLocalLibraryElements(importsOwner.sourceElement, declarations)
+      .forEach { declaration -> result.putValue(scope.getDeclarationProximity(declaration), declaration) }
 
-    return result;
+    return result
   }
 
-  private static Collection<Angular2Declaration> removeLocalLibraryElements(@NotNull PsiElement context,
-                                                                            @NotNull List<Angular2Declaration> declarations) {
-    VirtualFile contextFile = context.getContainingFile().getOriginalFile().getVirtualFile();
-    AngularConfig config = AngularConfigProvider.getAngularConfig(context.getProject(), contextFile);
-    if (config == null) {
-      return declarations;
-    }
-    AngularProject contextProject = config.getProject(contextFile);
-    if (contextProject == null) {
-      return declarations;
-    }
-    Set<VirtualFile> localRoots = map2SetNotNull(config.getProjects(), project -> {
-      if (project.getType() == AngularProject.AngularProjectType.LIBRARY
-          && !project.equals(contextProject)) {
-        return project.getSourceDir();
+  private fun removeLocalLibraryElements(context: PsiElement,
+                                         declarations: List<Angular2Declaration>): Collection<Angular2Declaration> {
+    val contextFile = context.containingFile.originalFile.virtualFile
+    val config = AngularConfigProvider.getAngularConfig(context.project, contextFile) ?: return declarations
+    val contextProject = config.getProject(contextFile) ?: return declarations
+    val localRoots = map2SetNotNull(config.projects) { project ->
+      if (project.type === AngularProject.AngularProjectType.LIBRARY && project != contextProject) {
+        return@map2SetNotNull project.sourceDir
       }
-      return null;
-    });
+      null
+    }
 
     // TODO do not provide proposals from dist dir for local lib context - requires parsing ng-package.json
     // localRoots.add(contextProject.getOutputDirectory())
 
-    VirtualFile projectRoot = config.getAngularJsonFile().getParent();
-    return filter(declarations, declaration -> {
-      VirtualFile declarationFile = PsiUtilCore.getVirtualFile(declaration.getSourceElement());
-      VirtualFile file = declarationFile;
-      while (file != null && !file.equals(projectRoot)) {
+    val projectRoot = config.angularJsonFile.parent
+    return declarations.filter { declaration ->
+      val declarationFile = PsiUtilCore.getVirtualFile(declaration.sourceElement)
+      var file = declarationFile
+      while (file != null && file != projectRoot) {
         if (localRoots.contains(file)) {
-          return hasNonRelativeModuleName(context, declaration.getTypeScriptClass(), declarationFile);
+          return@filter hasNonRelativeModuleName(context, declaration.typeScriptClass, declarationFile!!)
         }
-        file = file.getParent();
+        file = file.parent
       }
-      return true;
-    });
+      true
+    }
   }
 
-  private static boolean hasNonRelativeModuleName(@NotNull PsiElement context,
-                                                  @Nullable PsiElement declaration,
-                                                  @NotNull VirtualFile declarationFile) {
-    if (declaration == null) return false;
-    var builder = new TypeScriptImportPathBuilder(new JSImportPathConfigurationImpl(
-      unwrapImplicitElement(context), unwrapImplicitElement(declaration), declarationFile, false, "Foo"));
-    Ref<Boolean> isAbsolute = Ref.create(false);
-    builder.processDescriptorsWithModuleName(info -> {
-      if (!Angular2EntityUtils.unquote(info.getModuleName()).startsWith(".")) {
-        isAbsolute.set(true);
+  private fun hasNonRelativeModuleName(context: PsiElement,
+                                       declaration: PsiElement?,
+                                       declarationFile: VirtualFile): Boolean {
+    if (declaration == null) return false
+    val builder = TypeScriptImportPathBuilder(JSImportPathConfigurationImpl(
+      unwrapImplicitElement(context), unwrapImplicitElement(declaration), declarationFile, false, "Foo"))
+    val isAbsolute = Ref.create(false)
+    builder.processDescriptorsWithModuleName { info ->
+      if (!Angular2EntityUtils.unquote(info.moduleName).startsWith(".")) {
+        isAbsolute.set(true)
       }
-      return !isAbsolute.get();
-    });
-    return isAbsolute.get();
-  }
-
-  private static @NotNull PsiElement unwrapImplicitElement(@NotNull PsiElement element) {
-    if (element instanceof JSImplicitElement) {
-      return notNull(element.getContext(), element);
+      !isAbsolute.get()
     }
-    return element;
+    return isAbsolute.get()
   }
 
-  private static @NotNull Supplier<List<? extends Angular2Declaration>> createSecondaryProvider(@NotNull Angular2TemplateBindings bindings) {
-    return () -> Optional.of(notNull(InjectedLanguageManager.getInstance(bindings.getProject()).getInjectionHost(bindings), bindings))
-      .map(element -> PsiTreeUtil.getParentOfType(element, XmlAttribute.class))
-      .map(XmlAttribute::getDescriptor)
-      .map(d -> tryCast(d, Angular2AttributeDescriptor.class))
-      .map(Angular2AttributeDescriptor::getSourceDirectives)
-      .orElse(Collections.emptyList());
+  private fun unwrapImplicitElement(element: PsiElement): PsiElement {
+    return (element as? JSImplicitElement)?.context ?: element
   }
 
-  private static String getCommonNameForDeclarations(@NotNull Collection<Angular2Declaration> declarations) {
-    if (getFirstItem(declarations) instanceof Angular2Pipe) {
-      return Angular2Bundle.message("angular.entity.pipe");
+  private fun createSecondaryProvider(bindings: Angular2TemplateBindings): () -> List<Angular2Declaration> {
+    return {
+      (InjectedLanguageManager.getInstance(bindings.project).getInjectionHost(bindings) ?: bindings)
+        .let { element -> PsiTreeUtil.getParentOfType(element, XmlAttribute::class.java) }
+        ?.descriptor
+        ?.asSafely<Angular2AttributeDescriptor>()
+        ?.sourceDirectives
+      ?: emptyList<Angular2Directive>()
     }
-    boolean hasDirective = false;
-    boolean hasComponent = false;
-    for (Angular2Declaration declaration : declarations) {
-      if (declaration instanceof Angular2Component) {
-        hasComponent = true;
+  }
+
+  private fun getCommonNameForDeclarations(declarations: Collection<Angular2Declaration>): String {
+    if (declarations.firstOrNull() is Angular2Pipe) {
+      return Angular2Bundle.message("angular.entity.pipe")
+    }
+    var hasDirective = false
+    var hasComponent = false
+    for (declaration in declarations) {
+      if (declaration is Angular2Component) {
+        hasComponent = true
       }
       else {
-        hasDirective = true;
+        hasDirective = true
       }
     }
-    return hasComponent == hasDirective ? Angular2Bundle.message("angular.entity.component.or.directive")
-                                        : hasComponent ? Angular2Bundle.message("angular.entity.component")
-                                                       : Angular2Bundle.message("angular.entity.directive");
+    return if (hasComponent == hasDirective)
+      Angular2Bundle.message("angular.entity.component.or.directive")
+    else if (hasComponent)
+      Angular2Bundle.message("angular.entity.component")
+    else
+      Angular2Bundle.message("angular.entity.directive")
   }
 
-  private static void selectAndRun(@NotNull Editor editor,
-                                   @NotNull @Nls String title,
-                                   @NotNull Collection<Angular2Declaration> declarations,
-                                   @NotNull Function<Angular2Declaration, QuestionAction> actionFactory) {
+  private fun selectAndRun(editor: Editor,
+                           @Nls title: String,
+                           declarations: Collection<Angular2Declaration>,
+                           actionFactory: (Angular2Declaration) -> QuestionAction?) {
     if (declarations.isEmpty()) {
-      return;
+      return
     }
 
-    if (declarations.size() == 1) {
-      doIfNotNull(actionFactory.apply(getFirstItem(declarations)), QuestionAction::execute);
-      return;
+    if (declarations.size == 1) {
+      actionFactory(declarations.first())?.execute()
+      return
     }
 
-    ApplicationManager.getApplication().assertIsDispatchThread();
-    Map<JSElement, Angular2Declaration> elementMap = StreamEx.of(declarations)
-      .mapToEntry(Angular2Declaration::getTypeScriptClass, Function.identity())
-      .selectKeys(JSElement.class)
-      .toMap();
+    ApplicationManager.getApplication().assertIsDispatchThread()
+    val elementMap = declarations
+      .mapNotNull { it.typeScriptClass?.let { cls -> Pair(cls, it) } }
+      .toMap()
 
-    PsiElementProcessor<JSElement> processor = new PsiElementProcessor<>() {
-      @Override
-      public boolean execute(final @NotNull JSElement element) {
-        Optional.ofNullable(elementMap.get(element))
-          .map(actionFactory)
-          .ifPresent(QuestionAction::execute);
-        return false;
-      }
-    };
+    val processor = PsiElementProcessor<JSElement> { element ->
+      elementMap[element]?.let(actionFactory)?.execute()
+      false
+    }
 
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      //noinspection TestOnlyProblems
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      @Suppress("TestOnlyProblems")
       processor.execute(
-        Optional.ofNullable(editor.getUserData(DECLARATION_TO_CHOOSE))
-          .map(name -> find(declarations, declaration -> declaration.getName().equals(name)))
-          .map(Angular2Entity::getTypeScriptClass)
-          .orElseThrow(
-            () -> new AssertionError("Declaration name must be specified in test mode. Available names: " +
-                                     StreamEx.of(declarations)
-                                       .filter(decl -> decl.getTypeScriptClass() != null)
-                                       .map(Angular2Declaration::getName)
-                                       .joining(",")
-            ))
-      );
-      return;
+        editor.getUserData(DECLARATION_TO_CHOOSE)
+          ?.let { name -> declarations.find { declaration -> declaration.getName() == name } }
+          ?.typeScriptClass
+        ?: throw AssertionError(
+          "Declaration name must be specified in test mode. Available names: " +
+          declarations.filter { it.typeScriptClass != null }.joinToString { it.getName() }
+        )
+      )
+      return
     }
-    if (editor.isDisposed()) return;
+    if (editor.isDisposed) return
 
-    NavigationUtil.getPsiElementPopup(elementMap.keySet().toArray(JSElement.EMPTY_ARRAY),
-                                      new ES6QualifiedNamedElementRenderer<>(),
-                                      title,
-                                      processor)
-      .showInBestPositionFor(editor);
+    NavigationUtil.getPsiElementPopup(elementMap.keys.toTypedArray<JSElement>(),
+                                      ES6QualifiedNamedElementRenderer(),
+                                      title, processor)
+      .showInBestPositionFor(editor)
   }
 }

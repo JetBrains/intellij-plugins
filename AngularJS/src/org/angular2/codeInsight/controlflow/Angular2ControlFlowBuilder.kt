@@ -16,7 +16,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag
+import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings

@@ -1,313 +1,220 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angular2.entities;
+package org.angular2.entities
 
-import com.intellij.find.usages.api.SearchTarget;
-import com.intellij.find.usages.api.UsageHandler;
-import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator;
-import com.intellij.lang.documentation.DocumentationTarget;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.model.Pointer;
-import com.intellij.navigation.NavigationRequest;
-import com.intellij.navigation.NavigationTarget;
-import com.intellij.navigation.TargetPresentation;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.rename.api.RenameTarget;
-import com.intellij.refactoring.rename.api.RenameValidationResult;
-import com.intellij.refactoring.rename.api.RenameValidator;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.webSymbols.WebSymbol;
-import com.intellij.webSymbols.WebSymbolOrigin;
-import com.intellij.xml.XmlElementDescriptor;
-import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
-import org.angular2.web.Angular2Symbol;
-import org.angular2.web.Angular2SymbolOrigin;
-import org.angularjs.AngularJSBundle;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.find.usages.api.SearchTarget
+import com.intellij.find.usages.api.UsageHandler
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
+import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator.Companion.getHtmlNSDescriptor
+import com.intellij.lang.documentation.DocumentationTarget
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.model.Pointer
+import com.intellij.navigation.NavigationItem
+import com.intellij.navigation.NavigationRequest
+import com.intellij.navigation.NavigationTarget
+import com.intellij.navigation.TargetPresentation
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.rename.api.RenameTarget
+import com.intellij.refactoring.rename.api.RenameValidationResult
+import com.intellij.refactoring.rename.api.RenameValidator
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolOrigin
+import com.intellij.webSymbols.utils.createPsiRangeNavigationItem
+import com.intellij.xml.XmlElementDescriptor
+import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
+import org.angular2.entities.impl.TypeScriptElementDocumentationTarget
+import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2SymbolOrigin
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
+import org.angularjs.AngularJSBundle
+import java.util.*
+import java.util.regex.Pattern
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
+class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSelectorImpl,
+                                      val textRangeInSource: TextRange,
+                                      override val name: @NlsSafe String,
+                                      private val myElementSelector: String?,
+                                      val isElementSelector: Boolean) : Angular2Symbol, SearchTarget, RenameTarget {
 
-import static com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator.getHtmlNSDescriptor;
-import static com.intellij.webSymbols.utils.WebSymbolUtils.createPsiRangeNavigationItem;
-import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;
+  override val priority: WebSymbol.Priority
+    get() = WebSymbol.Priority.LOWEST
 
-public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTarget, RenameTarget {
+  override val psiContext: PsiElement
+    get() = myParent.psiParent
 
-  private static final Pattern TAG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*");
-  private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\\p{Space}\"'>/=\\p{Cntrl}]+");
+  val source: PsiElement
+    get() = myParent.psiParent
 
-  private final Angular2DirectiveSelectorImpl myParent;
-  private final TextRange myRange;
-  private final String myName;
-  private final String myElementSelector;
-  private final boolean myIsElement;
+  override val project: Project
+    get() = source.project
 
-  public Angular2DirectiveSelectorSymbol(@NotNull Angular2DirectiveSelectorImpl parent,
-                                         @NotNull TextRange range,
-                                         @NotNull String name,
-                                         @Nullable String elementSelector,
-                                         boolean isElement) {
-    myParent = parent;
-    myRange = range;
-    myName = name;
-    myElementSelector = elementSelector;
-    myIsElement = isElement;
-  }
+  override val namespace: String
+    get() = WebSymbol.NAMESPACE_JS
 
-  @Override
-  public @NotNull String getName() {
-    return myName;
-  }
+  override val kind: String
+    get() = if (isElementSelector) KIND_NG_DIRECTIVE_ELEMENT_SELECTORS else KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 
-  @Nullable
-  @Override
-  public Priority getPriority() {
-    return Priority.LOWEST;
-  }
+  override val origin: WebSymbolOrigin
+    get() = Angular2SymbolOrigin(this)
 
-  @NotNull
-  @Override
-  public TargetPresentation presentation() {
-    return getPresentation();
-  }
+  val isDeclaration: Boolean
+    get() = referencedSymbols.all { it is Angular2Symbol }
 
-  @NotNull
-  @Override
-  public DocumentationTarget getDocumentationTarget() {
-    var clazz = PsiTreeUtil.getContextOfType(getSource(), TypeScriptClass.class);
-    if (clazz == null) {
-      return Angular2Symbol.super.getDocumentationTarget();
-    }
-    return new TypeScriptElementDocumentationTarget(getName(), clazz);
-  }
-
-  @Nullable
-  @Override
-  public PsiElement getPsiContext() {
-    return myParent.getPsiParent();
-  }
-
-  public @NotNull PsiElement getSource() {
-    return myParent.getPsiParent();
-  }
-
-  @Override
-  public @NotNull Project getProject() {
-    return getSource().getProject();
-  }
-
-  @NotNull
-  @Override
-  public String getNamespace() {
-    return NAMESPACE_JS;
-  }
-
-  @NotNull
-  @Override
-  public String getKind() {
-    return myIsElement ? KIND_NG_DIRECTIVE_ELEMENT_SELECTORS : KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
-  }
-
-  @NotNull
-  @Override
-  public Pointer<Angular2DirectiveSelectorSymbol> createPointer() {
-    var parent = myParent.createPointer();
-    var range = myRange;
-    var name = myName;
-    var elementName = myElementSelector;
-    var isElement = myIsElement;
-    return () -> {
-      var newParent = parent.dereference();
-      return newParent != null ? new Angular2DirectiveSelectorSymbol(newParent, range, name, elementName, isElement) : null;
-    };
-  }
-
-  @NotNull
-  @Override
-  public WebSymbolOrigin getOrigin() {
-    return new Angular2SymbolOrigin(this);
-  }
-
-  public boolean isDeclaration() {
-    return ContainerUtil.and(getReferencedSymbols(), symbol -> symbol instanceof Angular2Symbol);
-  }
-
-  public List<WebSymbol> getReferencedSymbols() {
-    var psiElement = getSource();
-    var nsDescriptor = getHtmlNSDescriptor(psiElement.getProject());
-    if (nsDescriptor != null) {
-      if (isElementSelector()) {
-        var elementDescriptor = nsDescriptor.getElementDescriptorByName(getName());
-        if (elementDescriptor != null) {
-          return Collections.singletonList(
-            new WebSymbolsHtmlQueryConfigurator.HtmlElementDescriptorBasedSymbol(elementDescriptor, null));
+  val referencedSymbols: List<WebSymbol>
+    get() {
+      val psiElement = source
+      val nsDescriptor = getHtmlNSDescriptor(psiElement.project)
+      if (nsDescriptor != null) {
+        if (isElementSelector) {
+          val elementDescriptor = nsDescriptor.getElementDescriptorByName(name)
+          if (elementDescriptor != null) {
+            return listOf<WebSymbol>(WebSymbolsHtmlQueryConfigurator.HtmlElementDescriptorBasedSymbol(elementDescriptor, null))
+          }
         }
-      }
-      else {
-        XmlElementDescriptor elementDescriptor = null;
-        String tagName = myElementSelector;
-        if (myElementSelector != null) {
-          elementDescriptor = nsDescriptor.getElementDescriptorByName(myElementSelector);
-        }
-        if (elementDescriptor == null) {
-          elementDescriptor = nsDescriptor.getElementDescriptorByName("div");
-          tagName = "div";
-        }
-        if (elementDescriptor != null) {
-          var attributeDescriptor = elementDescriptor.getAttributeDescriptor(getName(), null);
-          if (attributeDescriptor != null) {
-            return Collections.singletonList(
-              new WebSymbolsHtmlQueryConfigurator.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName));
+        else {
+          var elementDescriptor: XmlElementDescriptor? = null
+          var tagName = myElementSelector
+          if (myElementSelector != null) {
+            elementDescriptor = nsDescriptor.getElementDescriptorByName(myElementSelector)
+          }
+          if (elementDescriptor == null) {
+            elementDescriptor = nsDescriptor.getElementDescriptorByName("div")
+            tagName = "div"
+          }
+          if (elementDescriptor != null) {
+            val attributeDescriptor = elementDescriptor.getAttributeDescriptor(name, null)
+            if (attributeDescriptor != null) {
+              return listOf<WebSymbol>(WebSymbolsHtmlQueryConfigurator.HtmlAttributeDescriptorBasedSymbol(attributeDescriptor, tagName!!))
+            }
           }
         }
       }
-    }
-    return Collections.singletonList(this);
-  }
-
-  public int getTextOffset() {
-    return myParent.getPsiParent().getTextOffset() + myRange.getStartOffset();
-  }
-
-  public @NotNull TextRange getTextRangeInSource() {
-    return myRange;
-  }
-
-  public boolean isElementSelector() {
-    return myIsElement;
-  }
-
-  public boolean isAttributeSelector() {
-    return !myIsElement;
-  }
-
-  @Override
-  public String toString() {
-    return (myIsElement ? "ElementDirectiveSelector" : "AttributeDirectiveSelector") + "<" + myName + ">";
-  }
-
-  @Override
-  public @NotNull Collection<NavigationTarget> getNavigationTargets(@NotNull Project project) {
-    return Collections.singletonList(new DirectiveSelectorSymbolNavigationTarget(this));
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2DirectiveSelectorSymbol symbol = (Angular2DirectiveSelectorSymbol)o;
-    return myIsElement == symbol.myIsElement &&
-           myParent.equals(symbol.myParent) &&
-           myRange.equals(symbol.myRange) &&
-           myName.equals(symbol.myName) &&
-           Objects.equals(myElementSelector, symbol.myElementSelector);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(myParent, myRange, myName, myElementSelector, myIsElement);
-  }
-
-  @Override
-  public @NotNull TargetPresentation getPresentation() {
-    PsiElement parent = myParent.getPsiParent();
-    TypeScriptClass clazz = getClassForDecoratorElement(parent);
-    return TargetPresentation.builder(getName())
-      .icon(getIcon())
-      .locationText(parent.getContainingFile().getName())
-      .containerText(clazz != null ? clazz.getName() : null)
-      .presentation();
-  }
-
-  @NotNull
-  @Override
-  public UsageHandler getUsageHandler() {
-    return UsageHandler.createEmptyUsageHandler(getName());
-  }
-
-  @NotNull
-  @Override
-  public String getTargetName() {
-    return getName();
-  }
-
-  @Nullable
-  @Override
-  public SearchScope getMaximalSearchScope() {
-    return SearchTarget.super.getMaximalSearchScope();
-  }
-
-  @NotNull
-  @Override
-  public RenameValidator validator() {
-    return new MyRenameValidator(myIsElement);
-  }
-
-  private static class DirectiveSelectorSymbolNavigationTarget implements NavigationTarget {
-
-    private final Angular2DirectiveSelectorSymbol mySymbol;
-
-    private DirectiveSelectorSymbolNavigationTarget(Angular2DirectiveSelectorSymbol symbol) {
-      mySymbol = symbol;
+      return listOf<WebSymbol>(this)
     }
 
-    @Override
-    public final @NotNull Pointer<? extends NavigationTarget> createPointer() {
+  val textOffset: Int
+    get() = myParent.psiParent.textOffset + textRangeInSource.startOffset
+
+  val isAttributeSelector: Boolean
+    get() = !isElementSelector
+
+  override val presentation: TargetPresentation
+    get() {
+      val parent = myParent.psiParent
+      val clazz = getClassForDecoratorElement(parent)
+      return TargetPresentation.builder(name)
+        .icon(icon)
+        .locationText(parent.containingFile.name)
+        .containerText(clazz?.name)
+        .presentation()
+    }
+
+  override val usageHandler: UsageHandler
+    get() = UsageHandler.createEmptyUsageHandler(name)
+
+  override val targetName: String
+    get() = name
+
+  override val maximalSearchScope: SearchScope?
+    get() = super<SearchTarget>.maximalSearchScope
+
+  override fun presentation(): TargetPresentation {
+    return presentation
+  }
+
+  override fun getDocumentationTarget(): DocumentationTarget {
+    val clazz = PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java)
+                ?: return super.getDocumentationTarget()
+    return TypeScriptElementDocumentationTarget(name, clazz)
+  }
+
+  override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {
+    val parent = myParent.createPointer()
+    val range = textRangeInSource
+    val name = this.name
+    val elementName = myElementSelector
+    val isElement = isElementSelector
+    return Pointer {
+      val newParent = parent.dereference()
+      if (newParent != null) Angular2DirectiveSelectorSymbol(newParent, range, name, elementName, isElement) else null
+    }
+  }
+
+  override fun toString(): String {
+    return (if (isElementSelector) "ElementDirectiveSelector" else "AttributeDirectiveSelector") + "<" + name + ">"
+  }
+
+  override fun getNavigationTargets(project: Project): Collection<DirectiveSelectorSymbolNavigationTarget> {
+    return listOf(DirectiveSelectorSymbolNavigationTarget(this))
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val symbol = other as Angular2DirectiveSelectorSymbol?
+    return isElementSelector == symbol!!.isElementSelector &&
+           myParent == symbol.myParent &&
+           textRangeInSource == symbol.textRangeInSource &&
+           name == symbol.name &&
+           myElementSelector == symbol.myElementSelector
+  }
+
+  override fun hashCode(): Int {
+    return Objects.hash(myParent, textRangeInSource, name, myElementSelector, isElementSelector)
+  }
+
+  override fun validator(): RenameValidator {
+    return MyRenameValidator(isElementSelector)
+  }
+
+  class DirectiveSelectorSymbolNavigationTarget(private val mySymbol: Angular2DirectiveSelectorSymbol) : NavigationTarget {
+
+    override fun createPointer(): Pointer<out NavigationTarget> {
       return Pointer.delegatingPointer(
         mySymbol.createPointer(),
-        DirectiveSelectorSymbolNavigationTarget.class,
-        DirectiveSelectorSymbolNavigationTarget::new
-      );
+        DirectiveSelectorSymbolNavigationTarget::class.java
+      ) { DirectiveSelectorSymbolNavigationTarget(it) }
     }
 
-    @Override
-    public @NotNull Navigatable getNavigatable() {
-      return createPsiRangeNavigationItem(this, mySymbol.getSource(), mySymbol.myRange.getStartOffset());
+    override fun presentation(): TargetPresentation {
+      return mySymbol.presentation
     }
 
-    @Override
-    public @NotNull TargetPresentation presentation() {
-      return mySymbol.getPresentation();
+    fun getNavigationItem(): NavigationItem? {
+      return createPsiRangeNavigationItem(mySymbol.source, mySymbol.textRangeInSource.startOffset) as? NavigationItem
     }
 
-    @Override
-    public @Nullable NavigationRequest navigationRequest() {
-      return getNavigatable().navigationRequest();
+    override fun navigationRequest(): NavigationRequest? {
+      return getNavigationItem()?.navigationRequest()
     }
   }
 
-  private static class MyRenameValidator implements RenameValidator {
+  private class MyRenameValidator(private val myIsElement: Boolean) : RenameValidator {
 
-    private final boolean myIsElement;
-
-    MyRenameValidator(boolean isElement) {
-      myIsElement = isElement;
-    }
-
-    @NotNull
-    @Override
-    public RenameValidationResult validate(@NotNull String newName) {
+    override fun validate(newName: String): RenameValidationResult {
       if (myIsElement) {
-        return TAG_NAME_PATTERN.matcher(newName).matches()
-               ? RenameValidationResult.ok()
-               : RenameValidationResult.invalid(
-                 AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.element.name", newName));
+        return if (TAG_NAME_PATTERN.matcher(newName).matches())
+          RenameValidationResult.ok()
+        else
+          RenameValidationResult.invalid(
+            AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.element.name", newName))
       }
-      return ATTRIBUTE_NAME_PATTERN.matcher(newName).matches()
-             ? RenameValidationResult.ok()
-             : RenameValidationResult.invalid(
-               AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.attribute.name", newName));
+      return if (ATTRIBUTE_NAME_PATTERN.matcher(newName).matches())
+        RenameValidationResult.ok()
+      else
+        RenameValidationResult.invalid(
+          AngularJSBundle.message("angularjs.refactoring.selector.invalid.html.attribute.name", newName))
     }
+  }
+
+  companion object {
+
+    private val TAG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*")
+    private val ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\\s\"'>/=\\p{Cntrl}]+")
   }
 }

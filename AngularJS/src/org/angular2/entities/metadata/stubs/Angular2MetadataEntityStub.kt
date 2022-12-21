@@ -1,44 +1,46 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
-import org.angular2.lang.metadata.psi.MetadataElementType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonObject
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import org.angular2.lang.metadata.psi.MetadataElementType
+import org.jetbrains.annotations.NonNls
+import java.io.IOException
 
-import java.io.IOException;
+open class Angular2MetadataEntityStub<Psi : PsiElement> : Angular2MetadataClassStubBase<Psi> {
 
-public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity<?>> extends Angular2MetadataClassStubBase<Psi> {
-  @NonNls protected static final String NAME = "name";
-  @NonNls private static final String DECORATOR_FIELD_PREFIX = "___dec.";
-
-  public Angular2MetadataEntityStub(@Nullable String memberName,
-                                    @Nullable StubElement parent,
-                                    @NotNull JsonObject source,
-                                    @NotNull MetadataElementType elementType) {
-    super(memberName, parent, source, elementType);
+  constructor(memberName: String?,
+              parent: StubElement<*>?,
+              source: JsonObject,
+              elementType: MetadataElementType<*>) : super(memberName, parent, source, elementType) {
   }
 
-  public Angular2MetadataEntityStub(@NotNull StubInputStream stream,
-                                    @Nullable StubElement parent, @NotNull MetadataElementType elementType) throws IOException {
-    super(stream, parent, elementType);
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream,
+              parent: StubElement<*>?, elementType: MetadataElementType<*>) : super(stream, parent, elementType) {
   }
 
-  protected void stubDecoratorFields(@NotNull JsonObject initializer, String @NotNull ... fields) {
-    for (String name : fields) {
-      JsonProperty property = initializer.findProperty(name);
+  protected fun stubDecoratorFields(initializer: JsonObject, vararg fields: String) {
+    for (name in fields) {
+      val property = initializer.findProperty(name)
       if (property != null) {
-        createMember(DECORATOR_FIELD_PREFIX + name, property.getValue());
+        createMember(DECORATOR_FIELD_PREFIX + name, property.value)
       }
     }
   }
 
-  public StubElement getDecoratorFieldValueStub(@NotNull String name) {
-    return findMember(DECORATOR_FIELD_PREFIX + name);
+  fun getDecoratorFieldValueStub(name: String): StubElement<*>? {
+    return findMember(DECORATOR_FIELD_PREFIX + name)
+  }
+
+  companion object {
+    @JvmStatic
+    @NonNls
+    protected val NAME = "name"
+
+    @NonNls
+    private val DECORATOR_FIELD_PREFIX = "___dec."
   }
 }

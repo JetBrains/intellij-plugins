@@ -11,7 +11,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.utils.psiModificationCount
 import org.angular2.Angular2Framework
-import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag
+import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2DirectiveSelectorSymbol

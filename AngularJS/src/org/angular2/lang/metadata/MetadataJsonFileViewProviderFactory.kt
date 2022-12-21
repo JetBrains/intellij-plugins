@@ -1,40 +1,36 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import org.angular2.lang.metadata.psi.MetadataFileImpl;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.Language
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
+import org.angular2.lang.metadata.psi.MetadataFileImpl
 
-public class MetadataJsonFileViewProviderFactory implements FileViewProviderFactory {
+class MetadataJsonFileViewProviderFactory : FileViewProviderFactory {
 
-  @Override
-  public @NotNull FileViewProvider createFileViewProvider(@NotNull VirtualFile file,
-                                                          Language language,
-                                                          @NotNull PsiManager manager,
-                                                          boolean eventSystemEnabled) {
-    return new MetadataFileViewProvider(manager, file, eventSystemEnabled);
+  override fun createFileViewProvider(file: VirtualFile,
+                                      language: Language?,
+                                      manager: PsiManager,
+                                      eventSystemEnabled: Boolean): FileViewProvider {
+    return MetadataFileViewProvider(manager, file, eventSystemEnabled)
   }
 
-  public static final class MetadataFileViewProvider extends SingleRootFileViewProvider {
-    private MetadataFileViewProvider(@NotNull PsiManager manager,
-                                     @NotNull VirtualFile file,
-                                     boolean eventSystemEnabled) {
-      super(manager, file, eventSystemEnabled, MetadataJsonLanguage.INSTANCE);
-      assert file.getFileType() instanceof MetadataJsonFileType;
+  class MetadataFileViewProvider internal constructor(manager: PsiManager,
+                                                      file: VirtualFile,
+                                                      eventSystemEnabled: Boolean)
+    : SingleRootFileViewProvider(manager, file, eventSystemEnabled, MetadataJsonLanguage.INSTANCE) {
+    init {
+      assert(file.fileType is MetadataJsonFileType)
     }
 
-    @Override
-    protected PsiFile createFile(@NotNull Project project, @NotNull VirtualFile file, @NotNull FileType fileType) {
-      return new MetadataFileImpl(this, (MetadataJsonFileType)fileType);
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile {
+      return MetadataFileImpl(this, fileType as MetadataJsonFileType)
     }
 
-    @Override
-    public @NotNull SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
-      return new MetadataFileViewProvider(getManager(), copy, false);
+    override fun createCopy(copy: VirtualFile): SingleRootFileViewProvider {
+      return MetadataFileViewProvider(manager, copy, false)
     }
   }
 }

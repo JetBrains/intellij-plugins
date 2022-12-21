@@ -55,7 +55,7 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
     Disposer.register(myFixture.getTestRootDisposable(), disposable);
     Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
       @Override
-      public @NotNull Angular2Module selectModuleForDeclarationsScope(@NotNull Collection<@NotNull Angular2Module> modules,
+      public @NotNull Angular2Module selectModuleForDeclarationsScope(@NotNull Collection<? extends @NotNull Angular2Module> modules,
                                                                       @NotNull Angular2Component component,
                                                                       @NotNull PsiFile context) {
         return ContainerUtil.find(modules, module -> module.getName().equals("FooModule"));
@@ -83,7 +83,7 @@ public class FrameworkHandlerTest extends Angular2CodeInsightFixtureTestCase {
   public void testSuppressModuleInspectionErrors() {
     Angular2FrameworkHandler.EP_NAME.getPoint().registerExtension(new Angular2FrameworkHandler() {
       @Override
-      public boolean suppressModuleInspectionErrors(@NotNull Collection<@NotNull Angular2Module> modules,
+      public boolean suppressModuleInspectionErrors(@NotNull Collection<? extends @NotNull Angular2Module> modules,
                                                     @NotNull Angular2Declaration declaration) {
         return "FooComponent".equals(declaration.getName());
       }

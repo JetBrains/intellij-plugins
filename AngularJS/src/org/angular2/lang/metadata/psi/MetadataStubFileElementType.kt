@@ -1,26 +1,19 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata.psi
 
-import com.intellij.lang.Language;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.tree.IStubFileElementType;
-import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.Language
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.tree.IStubFileElementType
+import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
 
-public class MetadataStubFileElementType extends IStubFileElementType<MetadataFileStubImpl> {
+open class MetadataStubFileElementType(language: Language) : IStubFileElementType<MetadataFileStubImpl>(language) {
 
-  public MetadataStubFileElementType(Language language) {
-    super(language);
+  override fun getExternalId(): String {
+    return language.toString() + ":" + toString()
   }
 
-  @Override
-  public @NotNull String getExternalId() {
-    return getLanguage() + ":" + toString();
-  }
-
-  @Override
-  public @NotNull MetadataFileStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) {
-    return new MetadataFileStubImpl(null, this);
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): MetadataFileStubImpl {
+    return MetadataFileStubImpl(null, this)
   }
 }

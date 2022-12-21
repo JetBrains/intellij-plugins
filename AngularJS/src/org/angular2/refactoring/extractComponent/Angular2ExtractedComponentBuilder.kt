@@ -15,7 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlTag
-import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider.`$EVENT`
+import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider.Companion.`$EVENT`
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX

@@ -1,42 +1,37 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.model.Pointer;
-import org.angular2.web.Angular2Symbol;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.model.Pointer
+import org.angular2.web.Angular2Symbol
 
-import java.util.Collection;
-import java.util.List;
+interface Angular2Directive : Angular2Declaration {
 
-public interface Angular2Directive extends Angular2Declaration {
+  val selector: Angular2DirectiveSelector
 
-  Angular2Directive[] EMPTY_ARRAY = new Angular2Directive[0];
+  val exportAsList: List<String>
 
-  @NotNull Pointer<? extends Angular2Directive> createPointer();
+  val inputs: Collection<Angular2DirectiveProperty>
+    get() = bindings.inputs
 
-  @NotNull Angular2DirectiveSelector getSelector();
+  val outputs: Collection<Angular2DirectiveProperty>
+    get() = bindings.outputs
 
-  @NotNull List<String> getExportAsList();
+  val inOuts: List<Angular2Symbol>
+    get() = bindings.inOuts
 
-  default @NotNull Collection<? extends Angular2DirectiveProperty> getInputs() {
-    return getBindings().getInputs();
-  }
+  val bindings: Angular2DirectiveProperties
 
-  default @NotNull Collection<? extends Angular2DirectiveProperty> getOutputs() {
-    return getBindings().getOutputs();
-  }
+  val attributes: Collection<Angular2DirectiveAttribute>
 
-  default List<? extends Angular2Symbol> getInOuts() {
-    return getBindings().getInOuts();
-  }
+  val directiveKind: Angular2DirectiveKind
 
-  @NotNull Angular2DirectiveProperties getBindings();
+  val isComponent: Boolean
+    get() = false
 
-  @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes();
+  fun createPointer(): Pointer<out Angular2Directive>
 
-  @NotNull Angular2DirectiveKind getDirectiveKind();
+  companion object {
 
-  default boolean isComponent() {
-    return false;
+    val EMPTY_ARRAY = arrayOfNulls<Angular2Directive>(0)
   }
 }

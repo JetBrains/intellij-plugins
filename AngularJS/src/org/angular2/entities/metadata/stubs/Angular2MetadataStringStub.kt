@@ -1,44 +1,37 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonValue
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.StringRef
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataString
+import java.io.IOException
 
-import java.io.IOException;
-import java.util.Objects;
+class Angular2MetadataStringStub : Angular2MetadataElementStub<Angular2MetadataString> {
 
-public class Angular2MetadataStringStub extends Angular2MetadataElementStub<Angular2MetadataString> {
+  private val myValue: StringRef
 
+  val value: String
+    get() = myValue.string
 
-  private final @NotNull StringRef myValue;
-
-  public Angular2MetadataStringStub(@Nullable String memberName,
-                                    @NotNull JsonValue source,
-                                    @Nullable StubElement parent) {
-    super(memberName, parent, Angular2MetadataElementTypes.STRING);
-    myValue = StringRef.fromString(((JsonStringLiteral)source).getValue());
+  constructor(memberName: String?, source: JsonValue, parent: StubElement<*>?)
+    : super(memberName, parent, Angular2MetadataElementTypes.STRING) {
+    myValue = StringRef.fromString((source as JsonStringLiteral).value)
   }
 
-  public Angular2MetadataStringStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
-    super(stream, parent, Angular2MetadataElementTypes.STRING);
-    myValue = Objects.requireNonNull(stream.readName());
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parent: StubElement<*>?)
+    : super(stream, parent, Angular2MetadataElementTypes.STRING) {
+    myValue = stream.readName()!!
   }
 
-  @Override
-  public void serialize(@NotNull StubOutputStream stream) throws IOException {
-    super.serialize(stream);
-    writeString(myValue, stream);
-  }
-
-  public @NotNull String getValue() {
-    return myValue.getString();
+  @Throws(IOException::class)
+  override fun serialize(stream: StubOutputStream) {
+    super.serialize(stream)
+    writeString(myValue, stream)
   }
 }

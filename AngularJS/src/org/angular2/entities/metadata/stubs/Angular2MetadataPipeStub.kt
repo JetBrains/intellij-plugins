@@ -1,70 +1,63 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
-import org.angular2.index.Angular2MetadataPipeIndex;
-import org.angular2.lang.metadata.MetadataUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonObject
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.StringRef
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataPipe
+import org.angular2.index.Angular2MetadataPipeIndex
+import org.angular2.lang.metadata.MetadataUtils
+import java.io.IOException
 
-import java.io.IOException;
+class Angular2MetadataPipeStub : Angular2MetadataEntityStub<Angular2MetadataPipe> {
 
-public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular2MetadataPipe> {
+  private val myPipeName: StringRef?
 
-  public static @Nullable Angular2MetadataPipeStub createPipeStub(@Nullable String memberName,
-                                                                  @Nullable StubElement parent,
-                                                                  @NotNull JsonObject classSource,
-                                                                  @NotNull JsonObject decoratorSource) {
-    JsonObject decoratorArg = getDecoratorInitializer(decoratorSource, JsonObject.class);
-    if (decoratorArg != null) {
-      String pipeName = MetadataUtils.readStringPropertyValue(decoratorArg.findProperty(NAME));
-      if (pipeName != null) {
-        return new Angular2MetadataPipeStub(memberName, parent, classSource, pipeName);
-      }
+  val pipeName: String
+    get() = StringRef.toString(myPipeName)
+
+  private constructor(memberName: String?,
+                      parent: StubElement<*>?,
+                      classSource: JsonObject,
+                      pipeName: String) : super(memberName, parent, classSource, Angular2MetadataElementTypes.PIPE) {
+    myPipeName = StringRef.fromString(pipeName)
+  }
+
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parent: StubElement<*>?) : super(stream, parent, Angular2MetadataElementTypes.PIPE) {
+    myPipeName = stream.readName()
+  }
+
+  @Throws(IOException::class)
+  override fun serialize(stream: StubOutputStream) {
+    super.serialize(stream)
+    writeString(myPipeName, stream)
+  }
+
+  override fun index(sink: IndexSink) {
+    super.index(sink)
+    sink.occurrence(Angular2MetadataPipeIndex.KEY, pipeName)
+  }
+
+  override val loadInOuts: Boolean
+    get() {
+      return false
     }
-    return null;
-  }
 
-  private final StringRef myPipeName;
+  companion object {
 
-  private Angular2MetadataPipeStub(@Nullable String memberName,
-                                   @Nullable StubElement parent,
-                                   @NotNull JsonObject classSource,
-                                   @NotNull String pipeName) {
-    super(memberName, parent, classSource, Angular2MetadataElementTypes.PIPE);
-    myPipeName = StringRef.fromString(pipeName);
-  }
-
-  public Angular2MetadataPipeStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
-    super(stream, parent, Angular2MetadataElementTypes.PIPE);
-    myPipeName = stream.readName();
-  }
-
-  public @NotNull String getPipeName() {
-    return StringRef.toString(myPipeName);
-  }
-
-  @Override
-  public void serialize(@NotNull StubOutputStream stream) throws IOException {
-    super.serialize(stream);
-    writeString(myPipeName, stream);
-  }
-
-  @Override
-  public void index(@NotNull IndexSink sink) {
-    super.index(sink);
-    sink.occurrence(Angular2MetadataPipeIndex.KEY, getPipeName());
-  }
-
-  @Override
-  protected boolean loadInOuts() {
-    return false;
+    fun createPipeStub(memberName: String?,
+                       parent: StubElement<*>?,
+                       classSource: JsonObject,
+                       decoratorSource: JsonObject): Angular2MetadataPipeStub? {
+      return getDecoratorInitializer<JsonObject>(decoratorSource)
+        ?.findProperty(NAME)
+        ?.let { MetadataUtils.readStringPropertyValue(it) }
+        ?.let { pipeName -> Angular2MetadataPipeStub(memberName, parent, classSource, pipeName) }
+    }
   }
 }

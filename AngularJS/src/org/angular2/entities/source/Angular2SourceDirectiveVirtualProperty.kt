@@ -1,86 +1,49 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.source;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.source
 
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.model.Pointer;
-import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.Angular2EntityUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.model.Pointer
+import com.intellij.refactoring.suggested.createSmartPointer
+import org.angular2.entities.Angular2DirectiveProperty
+import org.angular2.entities.Angular2EntityUtils
+import java.util.*
 
-import java.util.Objects;
+class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClass,
+                                             override val name: String,
+                                             override val kind: String) : Angular2DirectiveProperty {
 
-import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
+  override val rawJsType: JSType?
+    get() = null
 
-public class Angular2SourceDirectiveVirtualProperty implements Angular2DirectiveProperty {
+  override val virtual: Boolean
+    get() = true
 
-  private final TypeScriptClass myOwner;
-  private final String myName;
-  private final String myKind;
+  override val sourceElement: JSElement
+    get() = myOwner
 
-  public Angular2SourceDirectiveVirtualProperty(@NotNull TypeScriptClass owner,
-                                                @NotNull String bindingName,
-                                                @NotNull String kind) {
-    myOwner = owner;
-    myName = bindingName;
-    myKind = kind;
+  override fun toString(): String {
+    return Angular2EntityUtils.toString(this)
   }
 
-  @NotNull
-  @Override
-  public String getKind() {
-    return myKind;
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val property = other as Angular2SourceDirectiveVirtualProperty?
+    return myOwner == property!!.myOwner && name == property.name && kind == property.kind
   }
 
-  @Override
-  public @NotNull String getName() {
-    return myName;
+  override fun hashCode(): Int {
+    return Objects.hash(myOwner, name, kind)
   }
 
-  @Override
-  public @Nullable JSType getRawJsType() {
-    return null;
-  }
-
-  @Override
-  public boolean isVirtual() {
-    return true;
-  }
-
-  @Override
-  public @NotNull JSElement getSourceElement() {
-    return myOwner;
-  }
-
-  @Override
-  public String toString() {
-    return Angular2EntityUtils.toString(this);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2SourceDirectiveVirtualProperty property = (Angular2SourceDirectiveVirtualProperty)o;
-    return myOwner.equals(property.myOwner) && myName.equals(property.myName) && myKind.equals(property.myKind);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(myOwner, myName, myKind);
-  }
-
-  @NotNull
-  @Override
-  public Pointer<Angular2SourceDirectiveVirtualProperty> createPointer() {
-    var name = myName;
-    var kind = myKind;
-    var owner = createSmartPointer(myOwner);
-    return () -> {
-      var newOwner = owner.getElement();
-      return newOwner != null ? new Angular2SourceDirectiveVirtualProperty(newOwner, name, kind) : null;
-    };
+  override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {
+    val name = this.name
+    val kind = this.kind
+    val owner = myOwner.createSmartPointer()
+    return Pointer {
+      owner.element?.let { Angular2SourceDirectiveVirtualProperty(it, name, kind) }
+    }
   }
 }

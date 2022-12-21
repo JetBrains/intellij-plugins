@@ -1,25 +1,23 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonArray;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonArray
+import com.intellij.json.psi.JsonValue
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataArray
 
-import java.io.IOException;
+import java.io.IOException
 
-public class Angular2MetadataArrayStub extends Angular2MetadataElementStub<Angular2MetadataArray> {
+class Angular2MetadataArrayStub : Angular2MetadataElementStub<Angular2MetadataArray> {
 
-  public Angular2MetadataArrayStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
-    super(stream, parent, Angular2MetadataElementTypes.ARRAY);
-  }
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parent: StubElement<*>?)
+    : super(stream, parent, Angular2MetadataElementTypes.ARRAY)
 
-  public Angular2MetadataArrayStub(@Nullable String memberName, @NotNull JsonValue source, @Nullable StubElement parent) {
-    super(memberName, parent, Angular2MetadataElementTypes.ARRAY);
-    ((JsonArray)source).getValueList().forEach(v -> createMember(null, v));
+  constructor(memberName: String?, source: JsonValue, parent: StubElement<*>?)
+    : super(memberName, parent, Angular2MetadataElementTypes.ARRAY) {
+    (source as JsonArray).valueList.forEach { v -> createMember(null, v) }
   }
 }

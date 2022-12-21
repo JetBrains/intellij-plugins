@@ -1,17 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.index;
+package org.angular2.index
 
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.psi.stubs.StubIndexKey;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.psi.stubs.StubIndexKey
 
-public class Angular2IvyDirectiveIndex extends Angular2IndexBase<TypeScriptClass> {
+class Angular2IvyDirectiveIndex : Angular2IndexBase<TypeScriptClass>() {
 
-  public static final StubIndexKey<String, TypeScriptClass> KEY =
-    StubIndexKey.createIndexKey("angular2.ivy.directive.index");
+  override fun getKey(): StubIndexKey<String, TypeScriptClass> = KEY
 
-  @Override
-  public @NotNull StubIndexKey<String, TypeScriptClass> getKey() {
-    return KEY;
+  companion object {
+    val KEY = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.directive.index")
   }
 }

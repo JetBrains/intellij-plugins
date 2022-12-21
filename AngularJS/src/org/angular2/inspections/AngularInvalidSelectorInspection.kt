@@ -1,85 +1,78 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections;
+package org.angular2.inspections
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.html.HtmlCompatibleFile;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.psi.JSElementVisitor;
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.XmlElementVisitor;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.html.HtmlCompatibleFile
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.xml.XmlAttribute
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.SELECTOR_PROP
+import org.angular2.Angular2DecoratorUtil.getExpressionStringValue
+import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
+import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ATTR_SELECT
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_CONTENT
 
-import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ATTR_SELECT;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_CONTENT;
+class AngularInvalidSelectorInspection : LocalInspectionTool() {
 
-public class AngularInvalidSelectorInspection extends LocalInspectionTool {
-
-  @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    if (holder.getFile() instanceof HtmlCompatibleFile) {
-      return new XmlElementVisitor() {
-        @Override
-        public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
-          XmlAttributeValue value;
-          if (attribute.getName().equals(ATTR_SELECT)
-              && attribute.getParent().getName().equals(ELEMENT_NG_CONTENT)
-              && (value = attribute.getValueElement()) != null) {
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+    if (holder.file is HtmlCompatibleFile) {
+      return object : XmlElementVisitor() {
+        override fun visitXmlAttribute(attribute: XmlAttribute) {
+          if (attribute.name == ATTR_SELECT
+              && attribute.parent.name == ELEMENT_NG_CONTENT) {
+            val value = attribute.valueElement ?: return
             try {
-              Angular2DirectiveSimpleSelector.parse(value.getValue());
+              Angular2DirectiveSimpleSelector.parse(value.value)
             }
-            catch (Angular2DirectiveSimpleSelector.ParseException e) {
+            catch (e: Angular2DirectiveSimpleSelector.ParseException) {
               holder.registerProblem(value,
-                                     e.getErrorRange().shiftRight(value.getText().indexOf(value.getValue())),
-                                     e.getMessage());
+                                     e.errorRange.shiftRight(value.text.indexOf(value.value)),
+                                     e.message!!)
             }
           }
         }
-      };
+      }
     }
-    else if (DialectDetector.isTypeScript(holder.getFile())
-             && Angular2LangUtil.isAngular2Context(holder.getFile())) {
-      return new JSElementVisitor() {
+    else if (DialectDetector.isTypeScript(holder.file) && Angular2LangUtil.isAngular2Context(holder.file)) {
+      return object : JSElementVisitor() {
 
-        @Override
-        public void visitES6Decorator(@NotNull ES6Decorator decorator) {
+        override fun visitES6Decorator(decorator: ES6Decorator) {
           if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC)) {
-            JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
-            if (initializer == null) {
-              return;
-            }
-            JSProperty selector = initializer.findProperty(SELECTOR_PROP);
-            String text;
+            val initializer = getObjectLiteralInitializer(decorator) ?: return
+            val selector = initializer.findProperty(SELECTOR_PROP)
             if (selector == null) {
-              if (DIRECTIVE_DEC.equals(decorator.getDecoratorName())) {
+              if (DIRECTIVE_DEC == decorator.decoratorName) {
                 holder.registerProblem(initializer,
                                        Angular2Bundle.message("angular.inspection.invalid-directive-selector.message.missing"),
-                                       new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
+                                       AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false))
               }
             }
-            else if ((text = getExpressionStringValue(selector.getValue())) != null) {
+            else {
+              val text = getExpressionStringValue(selector.value) ?: return
               try {
-                Angular2DirectiveSimpleSelector.parse(text);
+                Angular2DirectiveSimpleSelector.parse(text)
               }
-              catch (Angular2DirectiveSimpleSelector.ParseException e) {
-                holder.registerProblem(selector.getValue(),
-                                       e.getErrorRange().shiftRight(1), e.getMessage());
+              catch (e: Angular2DirectiveSimpleSelector.ParseException) {
+                holder.registerProblem(selector.value!!,
+                                       e.errorRange.shiftRight(1),
+                                       e.message!!)
               }
             }
           }
         }
-      };
+      }
     }
-    return PsiElementVisitor.EMPTY_VISITOR;
+    return PsiElementVisitor.EMPTY_VISITOR
   }
 }

@@ -52,11 +52,11 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   }
 
   override fun getReadWriteAccessDetector(): JSDialectSpecificReadWriteAccessDetector {
-    return Angular2ReadWriteAccessDetector.INSTANCE
+    return Angular2ReadWriteAccessDetector
   }
 
   override fun getTypeGuardEvaluator(): JSTypeGuardEvaluator {
-    return Angular2TypeGuardEvaluator.INSTANCE
+    return Angular2TypeGuardEvaluator
   }
 
   override fun createTypeGuard(element: PsiElement): TypeScriptTypeGuard {

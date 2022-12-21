@@ -1,143 +1,117 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections.actions;
+package org.angular2.inspections.actions
 
-import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
-import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
-import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
-import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.MultiMap;
-import one.util.streamex.IntStreamEx;
-import one.util.streamex.StreamEx;
-import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
-import org.angular2.entities.metadata.psi.Angular2MetadataModule;
-import org.angular2.inspections.quickfixes.Angular2FixesFactory;
-import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
+import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate
+import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.NlsContexts
+import com.intellij.psi.PsiElement
+import com.intellij.util.containers.MultiMap
+import one.util.streamex.IntStreamEx
+import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
+import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.metadata.psi.Angular2MetadataModule
+import org.angular2.inspections.quickfixes.Angular2FixesFactory
+import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil
+import org.angular2.lang.Angular2Bundle
 
-import java.util.*;
+class NgModuleImportAction internal constructor(editor: Editor?,
+                                                element: PsiElement,
+                                                @NlsContexts.Command actionName: String,
+                                                codeCompletion: Boolean) //NON-NLS
+  : Angular2NgModuleSelectAction(editor, element, "NgModule", actionName, codeCompletion) {
 
-import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
-
-public class NgModuleImportAction extends Angular2NgModuleSelectAction {
-
-  NgModuleImportAction(@Nullable Editor editor,
-                       @NotNull PsiElement element,
-                       @NotNull @NlsContexts.Command String actionName,
-                       boolean codeCompletion) {
-    super(editor, element, "NgModule", actionName, codeCompletion); //NON-NLS
+  override fun getModuleSelectionPopupTitle(): String {
+    return Angular2Bundle.message("angular.quickfix.ngmodule.import.select.module")
   }
 
-  @Override
-  protected String getModuleSelectionPopupTitle() {
-    return Angular2Bundle.message("angular.quickfix.ngmodule.import.select.module");
-  }
+  override fun getRawCandidates(): List<JSImportCandidate> {
+    val distanceCalculator = DistanceCalculator()
+    val scope = Angular2DeclarationsScope(context)
 
-  @Override
-  public @NotNull List<? extends JSImportCandidate> getRawCandidates() {
-    DistanceCalculator distanceCalculator = new DistanceCalculator();
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(getContext());
-
-    var candidates = Angular2FixesFactory.getCandidatesForResolution(getContext(), myCodeCompletion);
+    val candidates = Angular2FixesFactory.getCandidatesForResolution(context, myCodeCompletion)
     if (!candidates.get(Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE).isEmpty()) {
-      return Collections.emptyList();
+      return emptyList()
     }
 
-    Collection<Angular2Declaration> importableDeclarations = candidates.get(Angular2DeclarationsScope.DeclarationProximity.IMPORTABLE);
-
-    MultiMap<Angular2Module, Integer> moduleToDeclarationDistances = new MultiMap<>();
-    StreamEx.of(importableDeclarations)
-      .flatMap(declaration -> {
-        if (declaration.isStandalone()) {
-          return StreamEx.of();
-        }
-        else {
-          return StreamEx.of(scope.getPublicModulesExporting(declaration))
-            .distinct()
-            .map(module -> pair(module, distanceCalculator.get(module, declaration)));
-        }
-      })
-      .forEach(pair -> moduleToDeclarationDistances.putValue(pair.first, pair.second));
-
-    Map<Angular2Entity, Double> averageDistances = new HashMap<>();
-    for (var entry : moduleToDeclarationDistances.entrySet()) {
-      averageDistances.put(entry.getKey(), IntStreamEx.of(entry.getValue()).average().orElse(0));
+    val moduleToDeclarationDistances = MultiMap<Angular2Module, Int>()
+    val importableDeclarations = candidates.get(Angular2DeclarationsScope.DeclarationProximity.IMPORTABLE)
+    importableDeclarations.forEach { declaration ->
+      if (!declaration.isStandalone)
+        scope.getPublicModulesExporting(declaration)
+          .distinct()
+          .forEach { module ->
+            moduleToDeclarationDistances.putValue(module, distanceCalculator.get(module, declaration))
+          }
+    }
+    val averageDistances = HashMap<Angular2Entity, Double>()
+    for ((key, value) in moduleToDeclarationDistances.entrySet()) {
+      averageDistances[key] = IntStreamEx.of(value).average().orElse(0.0)
     }
 
-    for (var declaration : importableDeclarations) {
-      if (declaration.isStandalone()) {
-        averageDistances.put(declaration, 0.0);
+    for (declaration in importableDeclarations) {
+      if (declaration.isStandalone) {
+        averageDistances[declaration] = 0.0
       }
     }
 
-    return StreamEx.of(averageDistances.keySet())
-      .sorted(Comparator.comparingDouble(averageDistances::get))
-      .map(Angular2Entity::getTypeScriptClass)
-      .select(JSElement.class)
-      .map(element -> {
-        String name = detectName(element);
-        if (name == null) return null;
-        return new ES6ImportCandidate(name, element, getContext());
-      })
-      .nonNull()
-      .toList();
+    return averageDistances.keys
+      .asSequence()
+      .sortedBy { averageDistances[it] }
+      .mapNotNull {
+        val cls = it.typeScriptClass ?: return@mapNotNull null
+        val name = detectName(cls) ?: return@mapNotNull null
+        ES6ImportCandidate(name, cls, context)
+      }
+      .toList()
   }
 
-  private static String detectName(PsiElement element) {
-    if (element == null) return null;
-    var entityToImport = Angular2EntitiesProvider.getEntity(element);
+  private fun detectName(element: PsiElement?): String? {
+    if (element == null) return null
+    val entityToImport = Angular2EntitiesProvider.getEntity(element) ?: return null
 
-    if (entityToImport == null) return null;
-    if (entityToImport instanceof Angular2MetadataModule) { // metadata does not support standalone declarations
-      return ObjectUtils.notNull(((Angular2MetadataModule)entityToImport).getStub().getMemberName(),
-                                 entityToImport.getName());
+    return if (entityToImport is Angular2MetadataModule) { // metadata does not support standalone declarations
+      entityToImport.stub.memberName ?: entityToImport.name
     }
-    return entityToImport.getClassName();
+    else entityToImport.className
   }
 
-  @Override
-  protected void runAction(@Nullable Editor editor,
-                           @NotNull JSImportCandidateWithExecutor candidate,
-                           @NotNull PsiElement place) {
-    PsiElement element = candidate.getElement();
-    if (element == null) return;
-    var scope = new Angular2DeclarationsScope(getContext());
-    var importsOwner = scope.getImportsOwner();
+  override fun runAction(editor: Editor?,
+                         candidate: JSImportCandidateWithExecutor,
+                         place: PsiElement) {
+    val element = candidate.element ?: return
+    val scope = Angular2DeclarationsScope(context)
+    val importsOwner = scope.importsOwner
     if (importsOwner == null || !scope.isInSource(importsOwner)) {
-      return;
+      return
     }
-    var destinationModuleClass = importsOwner.getTypeScriptClass();
+    val destinationModuleClass = importsOwner.typeScriptClass
 
-    if (destinationModuleClass == null || importsOwner.getDecorator() == null) {
-      return;
+    if (destinationModuleClass == null || importsOwner.decorator == null) {
+      return
     }
 
-    String name = candidate.getName();
-    WriteAction.run(() -> {
-      ES6ImportPsiUtil.insertJSImport(destinationModuleClass, name, element, editor);
-      Angular2FixesPsiUtil.insertEntityDecoratorMember(importsOwner, IMPORTS_PROP, name);
+    val name = candidate.name
+    WriteAction.run<RuntimeException> {
+      ES6ImportPsiUtil.insertJSImport(destinationModuleClass, name, element, editor)
+      Angular2FixesPsiUtil.insertEntityDecoratorMember(importsOwner, IMPORTS_PROP, name)
       // TODO support NgModuleWithProviders static methods
-    });
+    }
   }
 
-  private static class DistanceCalculator {
+  private class DistanceCalculator {
 
-    int get(Angular2Module module, Angular2Declaration declaration) {
+    fun get(module: Angular2Module, declaration: Angular2Declaration): Int {
       // For now very simple condition, if that's not enough we can
       // improve algorithm by providing proper distance calculations.
-      return module.getExports().contains(declaration) ? 0 : 1;
+      return if (module.exports.contains(declaration)) 0 else 1
     }
   }
 }

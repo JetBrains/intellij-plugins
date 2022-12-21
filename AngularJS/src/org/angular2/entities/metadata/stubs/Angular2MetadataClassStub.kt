@@ -1,24 +1,23 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonValue
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataClass
 
-import java.io.IOException;
+import java.io.IOException
 
-public class Angular2MetadataClassStub extends Angular2MetadataClassStubBase<Angular2MetadataClass> {
+class Angular2MetadataClassStub : Angular2MetadataClassStubBase<Angular2MetadataClass> {
 
-  public Angular2MetadataClassStub(@Nullable String memberName, @NotNull JsonValue source, @Nullable StubElement parent) {
-    super(memberName, parent, (JsonObject)source, Angular2MetadataElementTypes.CLASS);
+  constructor(memberName: String?, source: JsonValue, parent: StubElement<*>?)
+    : super(memberName, parent, source as JsonObject, Angular2MetadataElementTypes.CLASS) {
   }
 
-  public Angular2MetadataClassStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
-    super(stream, parent, Angular2MetadataElementTypes.CLASS);
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parent: StubElement<*>?)
+    : super(stream, parent, Angular2MetadataElementTypes.CLASS) {
   }
 }

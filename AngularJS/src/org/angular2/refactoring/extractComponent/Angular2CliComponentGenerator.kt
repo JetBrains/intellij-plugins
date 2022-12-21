@@ -93,7 +93,7 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     return { executeGenerateCommands(cliDir, commands) }
   }
 
-  private fun executeGenerateCommands(cliDir: VirtualFile, commands: MutableList<GenerateCommand>): List<String> {
+  private fun executeGenerateCommands(cliDir: VirtualFile, commands: List<GenerateCommand>): List<String> {
     val affectedPaths = mutableListOf<String>()
 
     val psiManager = PsiManager.getInstance(project)

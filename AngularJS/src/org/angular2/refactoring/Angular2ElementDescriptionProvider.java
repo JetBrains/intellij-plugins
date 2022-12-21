@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
-import org.angular2.entities.Angular2DirectiveSelectorSymbol;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
@@ -34,11 +33,6 @@ public class Angular2ElementDescriptionProvider implements ElementDescriptionPro
   }
 
   private static @DetailedDescription String getTypeDescription(@NotNull PsiElement element) {
-    if (element instanceof Angular2DirectiveSelectorSymbol) {
-      return ((Angular2DirectiveSelectorSymbol)element).isElementSelector()
-             ? Angular2Bundle.message("angular.description.element-selector")
-             : Angular2Bundle.message("angular.description.attribute-selector");
-    }
     if (element instanceof JSImplicitElement
         && Angular2IndexingHandler.isPipe((JSImplicitElement)element)) {
       return Angular2Bundle.message("angular.description.pipe");

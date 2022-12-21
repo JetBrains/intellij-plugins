@@ -1,17 +1,14 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.index;
+package org.angular2.index
 
-import com.intellij.psi.stubs.StubIndexKey;
-import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.stubs.StubIndexKey
+import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
 
-public class Angular2MetadataDirectiveIndex extends Angular2IndexBase<Angular2MetadataDirectiveBase> {
+class Angular2MetadataDirectiveIndex : Angular2IndexBase<Angular2MetadataDirectiveBase<*>>() {
 
-  public static final StubIndexKey<String, Angular2MetadataDirectiveBase> KEY =
-    StubIndexKey.createIndexKey("angular2.metadata.directive.index");
+  override fun getKey(): StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = KEY
 
-  @Override
-  public @NotNull StubIndexKey<String, Angular2MetadataDirectiveBase> getKey() {
-    return KEY;
+  companion object {
+    val KEY: StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = StubIndexKey.createIndexKey("angular2.metadata.directive.index")
   }
 }

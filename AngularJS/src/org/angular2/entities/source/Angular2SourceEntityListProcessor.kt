@@ -1,348 +1,300 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.source;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.source
 
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifierAlias;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType;
-import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFunctionCachingVisitor;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSFunctionBaseImpl;
-import com.intellij.lang.javascript.psi.impl.JSFunctionCachedDataBuilder;
-import com.intellij.lang.javascript.psi.impl.JSFunctionNodesVisitor;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
-import org.angular2.entities.metadata.Angular2MetadataUtil;
-import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
-import org.angular2.entities.metadata.psi.Angular2MetadataModule;
-import org.angular2.entities.metadata.psi.Angular2MetadataObject;
-import org.angular2.entities.metadata.psi.Angular2MetadataReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportSpecifierAlias
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
+import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFunctionCachingVisitor
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.impl.JSFunctionBaseImpl
+import com.intellij.lang.javascript.psi.impl.JSFunctionCachedDataBuilder
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.AstLoadingFilter
+import com.intellij.util.ObjectUtils.tryCast
+import com.intellij.util.SmartList
+import com.intellij.util.asSafely
+import com.intellij.util.containers.ContainerUtil.addIfNotNull
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2ModuleResolver.Companion.MODULE_WITH_PROVIDERS_CLASS
+import org.angular2.entities.Angular2ModuleResolver.Companion.NG_MODULE_PROP
+import org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity
+import org.angular2.entities.metadata.Angular2MetadataUtil
+import org.angular2.entities.metadata.psi.Angular2MetadataFunction
+import org.angular2.entities.metadata.psi.Angular2MetadataModule
+import org.angular2.entities.metadata.psi.Angular2MetadataObject
+import org.angular2.entities.metadata.psi.Angular2MetadataReference
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+abstract class Angular2SourceEntityListProcessor<T : Angular2Entity>(private val myAcceptableEntityClass: Class<T>) {
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
-import static java.util.Arrays.asList;
-import static org.angular2.entities.Angular2ModuleResolver.MODULE_WITH_PROVIDERS_CLASS;
-import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
-import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
+  private val myAcceptNgModuleWithProviders: Boolean = myAcceptableEntityClass.isAssignableFrom(Angular2Module::class.java)
 
-public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity> {
-
-  private final Class<T> myAcceptableEntityClass;
-  private final boolean myAcceptNgModuleWithProviders;
-  private final JSElementVisitor myResultsVisitor = new JSElementVisitor() {
-    @Override
-    public void visitJSClass(@NotNull JSClass aClass) {
-      T entity = getAcceptableEntity(aClass);
+  protected //it's ok, if array does not have any children
+  val resultsVisitor: JSElementVisitor = object : JSElementVisitor() {
+    override fun visitJSClass(aClass: JSClass) {
+      val entity = getAcceptableEntity(aClass)
       if (entity != null) {
-        processAcceptableEntity(entity);
+        processAcceptableEntity(entity)
       }
       else {
-        processNonAcceptableEntityClass(aClass);
+        processNonAcceptableEntityClass(aClass)
       }
     }
 
-    @Override
-    public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
-      //it's ok, if array does not have any children
+    override fun visitJSArrayLiteralExpression(node: JSArrayLiteralExpression) {}
+
+    override fun visitJSFunctionDeclaration(node: JSFunction) {
+      resolveFunctionReturnType(node)
     }
 
-    @Override
-    public void visitJSFunctionDeclaration(@NotNull JSFunction node) {
-      resolveFunctionReturnType(node);
+    override fun visitJSFunctionExpression(node: JSFunctionExpression) {
+      resolveFunctionReturnType(node)
     }
 
-    @Override
-    public void visitJSFunctionExpression(@NotNull JSFunctionExpression node) {
-      resolveFunctionReturnType(node);
+    override fun visitJSElement(node: JSElement) {
+      processAnyElement(node)
     }
-
-    @Override
-    public void visitJSElement(@NotNull JSElement node) {
-      processAnyElement(node);
-    }
-  };
-
-  public Angular2SourceEntityListProcessor(@NotNull Class<T> acceptableEntityClass) {
-    myAcceptableEntityClass = acceptableEntityClass;
-    myAcceptNgModuleWithProviders = myAcceptableEntityClass.isAssignableFrom(Angular2Module.class);
   }
 
-  protected final List<PsiElement> resolve(PsiElement t) {
-    SmartList<PsiElement> result = new SmartList<>();
-    t.accept(createResolveVisitor(result));
-    return result;
+  protected fun resolve(t: PsiElement): List<PsiElement> {
+    val result = SmartList<PsiElement>()
+    t.accept(createResolveVisitor(result))
+    return result
   }
 
-  private JSElementVisitor createResolveVisitor(SmartList<PsiElement> result) {
-    return new JSElementVisitor() {
-      @Override
-      public void visitJSArrayLiteralExpression(@NotNull JSArrayLiteralExpression node) {
-        result.addAll(asList(node.getExpressions()));
+  private fun createResolveVisitor(result: SmartList<PsiElement>): JSElementVisitor {
+    return object : JSElementVisitor() {
+      override fun visitJSArrayLiteralExpression(node: JSArrayLiteralExpression) {
+        result.addAll(listOf(*node.expressions))
       }
 
-      @Override
-      public void visitJSObjectLiteralExpression(@NotNull JSObjectLiteralExpression node) {
+      override fun visitJSObjectLiteralExpression(node: JSObjectLiteralExpression) {
         if (myAcceptNgModuleWithProviders) {
-          AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
-            addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP), JSProperty::getValue)));
+          AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) {
+            addIfNotNull(result, node.findProperty(NG_MODULE_PROP)?.value)
+          }
         }
       }
 
-      @Override
-      public void visitJSReferenceExpression(@NotNull JSReferenceExpression node) {
-        addIfNotNull(result, node.resolve());
+      override fun visitJSReferenceExpression(node: JSReferenceExpression) {
+        addIfNotNull(result, node.resolve())
       }
 
-      @Override
-      public void visitJSVariable(@NotNull JSVariable node) {
-        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
-          addIfNotNull(result, node.getInitializer()));
+      override fun visitJSVariable(node: JSVariable) {
+        AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) { addIfNotNull(result, node.initializer) }
       }
 
-      @Override
-      public void visitJSProperty(@NotNull JSProperty node) {
-        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
-          addIfNotNull(result, node.getValue()));
+      override fun visitJSProperty(node: JSProperty) {
+        AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) { addIfNotNull(result, node.value) }
       }
 
-      @Override
-      public void visitES6ImportExportSpecifierAlias(@NotNull ES6ImportExportSpecifierAlias alias) {
-        addIfNotNull(result, alias.findAliasedElement());
+      override fun visitES6ImportExportSpecifierAlias(alias: ES6ImportExportSpecifierAlias) {
+        addIfNotNull(result, alias.findAliasedElement())
       }
 
-      @Override
-      public void visitJSSpreadExpression(@NotNull JSSpreadExpression spreadExpression) {
-        AstLoadingFilter.forceAllowTreeLoading(spreadExpression.getContainingFile(), () ->
-          addIfNotNull(result, spreadExpression.getExpression()));
+      override fun visitJSSpreadExpression(spreadExpression: JSSpreadExpression) {
+        AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(spreadExpression.containingFile) {
+          addIfNotNull(result, spreadExpression.expression)
+        }
       }
 
-      @Override
-      public void visitJSConditionalExpression(@NotNull JSConditionalExpression node) {
-        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () -> {
-          addIfNotNull(result, node.getThenBranch());
-          addIfNotNull(result, node.getElseBranch());
-        });
+      override fun visitJSConditionalExpression(node: JSConditionalExpression) {
+        AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(node.containingFile) {
+          addIfNotNull(result, node.thenBranch)
+          addIfNotNull(result, node.elseBranch)
+        }
       }
 
-      @Override
-      public void visitJSCallExpression(@NotNull JSCallExpression node) {
-        addIfNotNull(result, node.getStubSafeMethodExpression());
+      override fun visitJSCallExpression(node: JSCallExpression) {
+        addIfNotNull(result, node.stubSafeMethodExpression)
       }
 
-      @Override
-      public void visitJSFunctionDeclaration(@NotNull JSFunction node) {
-        collectFunctionReturningArrayItems(node);
+      override fun visitJSFunctionDeclaration(node: JSFunction) {
+        collectFunctionReturningArrayItems(node)
       }
 
-      @Override
-      public void visitJSFunctionExpression(@NotNull JSFunctionExpression node) {
-        collectFunctionReturningArrayItems(node);
+      override fun visitJSFunctionExpression(node: JSFunctionExpression) {
+        collectFunctionReturningArrayItems(node)
       }
 
-      private void collectFunctionReturningArrayItems(@NotNull JSFunction function) {
-        JSType type = function.getReturnType();
+      private fun collectFunctionReturningArrayItems(function: JSFunction) {
+        val type = function.returnType
         if (JSTypeUtils.isArrayLikeType(type)) {
           // None of the required information is stubbed here
-          AstLoadingFilter.forceAllowTreeLoading(function.getContainingFile(), () ->
-            function.acceptChildren(new JSElementVisitor() {
-              @Override
-              public void visitJSReturnStatement(@NotNull JSReturnStatement node) {
-                addIfNotNull(result, node.getExpression());
+          AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(function.containingFile
+          ) {
+            function.acceptChildren(object : JSElementVisitor() {
+              override fun visitJSReturnStatement(node: JSReturnStatement) {
+                addIfNotNull(result, node.expression)
               }
 
-              @Override
-              public void visitJSStatement(@NotNull JSStatement node) {
-                node.acceptChildren(this);
+              override fun visitJSStatement(node: JSStatement) {
+                node.acceptChildren(this)
               }
             })
-          );
+          }
         }
       }
-    };
-  }
-
-  protected final JSElementVisitor getResultsVisitor() {
-    return myResultsVisitor;
+    }
   }
 
   /**
-   * @see #getAcceptableEntity
+   * @see .getAcceptableEntity
    */
-  protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
+  protected open fun processNonAcceptableEntityClass(aClass: JSClass) {
 
   }
 
   /**
-   * @see #getAcceptableEntity
+   * @see .getAcceptableEntity
    */
-  protected void processAcceptableEntity(@NotNull T entity) {
+  protected open fun processAcceptableEntity(entity: T) {
 
   }
 
-  protected void processAnyType() {
+  protected open fun processAnyType() {
 
   }
 
-  protected void processAnyElement(JSElement node) {
+  protected open fun processAnyElement(node: JSElement) {
 
   }
 
   /**
-   * Implementations can store the {@code element} and pass it later to {@link CachedValueProvider.Result#create(Object, Collection)}
+   * Implementations can store the `element` and pass it later to [CachedValueProvider.Result.create]
    */
-  protected void processCacheDependency(PsiElement element) {
+  protected open fun processCacheDependency(element: PsiElement) {
 
   }
 
-  private T getAcceptableEntity(@Nullable JSClass aClass) {
-    return tryCast(Angular2EntitiesProvider.getEntity(aClass), myAcceptableEntityClass);
+  private fun getAcceptableEntity(aClass: JSClass): T? {
+    return tryCast(Angular2EntitiesProvider.getEntity(aClass), myAcceptableEntityClass)
   }
 
-  private void resolveFunctionReturnType(@NotNull JSFunction function) {
-    Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
-    boolean lookingForModule = myAcceptNgModuleWithProviders;
-    JSClass resolvedClazz = null;
-    JSType type = function.getReturnType();
+  private fun resolveFunctionReturnType(function: JSFunction) {
+    val visitedTypes = HashSet<JSResolvedTypeId>()
+    var lookingForModule = myAcceptNgModuleWithProviders
+    var resolvedClazz: JSClass? = null
+    var type = function.returnType
     while (type != null
-           && !(type instanceof JSAnyType)
-           && visitedTypes.add(type.getResolvedTypeId())) {
-      NotNullLazyValue<JSRecordType> recordType = NotNullLazyValue.createValue(type::asRecordType);
-      JSRecordType.PropertySignature ngModuleSignature;
-      if (type.getSourceElement() != null) {
-        processCacheDependency(type.getSourceElement());
-      }
+           && type !is JSAnyType
+           && visitedTypes.add(type.resolvedTypeId)) {
+      val recordType = NotNullLazyValue.createValue<JSRecordType> { type!!.asRecordType() }
+      type.sourceElement
+        ?.let { processCacheDependency(it) }
       if (lookingForModule) { // see https://angular.io/guide/migration-module-with-providers
         // Ivy syntax
-        if (type instanceof JSGenericTypeImpl
-            && ((JSGenericTypeImpl)type).getType() instanceof JSTypeImpl
-            && MODULE_WITH_PROVIDERS_CLASS.equals(((JSGenericTypeImpl)type).getType().getTypeText())) {
-          JSType argument = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
-          if (argument != null && !(argument instanceof JSAnyType)) {
-            type = argument;
-            lookingForModule = false;
-            continue;
+        if (type is JSGenericTypeImpl
+            && type.type is JSTypeImpl
+            && MODULE_WITH_PROVIDERS_CLASS == type.type.typeText) {
+          val argument = type.arguments.firstOrNull()
+          if (argument != null && argument !is JSAnyType) {
+            type = argument
+            lookingForModule = false
+            continue
           }
         }
         // pre-Ivy syntax
-        if ((ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
-          type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
-          lookingForModule = false;
-          continue;
+        val ngModuleSignature = recordType.value.findPropertySignature(NG_MODULE_PROP)
+        if (ngModuleSignature != null) {
+          type = evaluateModuleWithProvidersType(ngModuleSignature, type.source)
+          lookingForModule = false
+          continue
         }
       }
-      PsiElement sourceElement = type.getSourceElement();
-      if (sourceElement instanceof TypeScriptSingleType) {
-        JSReferenceExpression expression = AstLoadingFilter.forceAllowTreeLoading(
-          sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
+      val sourceElement = type.sourceElement
+      if (sourceElement is TypeScriptSingleType) {
+        val expression = AstLoadingFilter.forceAllowTreeLoading<JSReferenceExpression, RuntimeException>(sourceElement.containingFile) {
+          sourceElement.referenceExpression
+        }
         if (expression != null) {
-          resolvedClazz = tryCast(expression.resolve(), JSClass.class);
-          T entity = getAcceptableEntity(resolvedClazz);
-          if (entity != null) {
-            processCacheDependency(resolvedClazz);
-            processAcceptableEntity(entity);
-            return;
+          resolvedClazz = expression.resolve() as? JSClass
+          val entity = resolvedClazz?.let { getAcceptableEntity(it) }
+          if (entity != null && resolvedClazz != null) {
+            processCacheDependency(resolvedClazz)
+            processAcceptableEntity(entity)
+            return
           }
         }
       }
-      else if (sourceElement instanceof TypeScriptClass) {
-        resolvedClazz = (JSClass)sourceElement;
-        T entity = getAcceptableEntity(resolvedClazz);
+      else if (sourceElement is TypeScriptClass) {
+        resolvedClazz = sourceElement
+        val entity = getAcceptableEntity(resolvedClazz)
         if (entity != null) {
-          processCacheDependency(resolvedClazz);
-          processAcceptableEntity(entity);
-          return;
+          processCacheDependency(resolvedClazz)
+          processAcceptableEntity(entity)
+          return
         }
       }
-      JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getValue().getCallSignatures(),
-                                                                  JSRecordType.CallSignature::hasNew);
-      type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
+      type = recordType.value.callSignatures.find { it.hasNew() }?.returnType
     }
     // Fallback to search in metadata
     if (myAcceptNgModuleWithProviders) {
-      Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
-      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
+      val metadataFunction = Angular2MetadataUtil.findMetadataFunction(function)
+      val metadataModule = metadataFunction?.let { resolveFunctionValue(it) }
       if (metadataModule != null) {
-        processCacheDependency(metadataFunction);
-        processCacheDependency(metadataModule);
+        processCacheDependency(metadataFunction)
+        processCacheDependency(metadataModule)
         // Make sure we translate to Ivy module if available
-        TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
+        val tsClass = metadataModule.typeScriptClass
         if (tsClass != null) {
-          Angular2Module ivyModule = tryCast(getIvyEntity(tsClass), Angular2Module.class);
+          val ivyModule = getIvyEntity(tsClass) as? Angular2Module
           if (ivyModule != null) {
-            processCacheDependency(tsClass);
-            //noinspection unchecked
-            processAcceptableEntity((T)ivyModule);
-            return;
+            processCacheDependency(tsClass)
+            @Suppress("UNCHECKED_CAST")
+            processAcceptableEntity(ivyModule as T)
+            return
           }
         }
-        //noinspection unchecked
-        processAcceptableEntity((T)metadataModule);
-        return;
+
+        @Suppress("UNCHECKED_CAST")
+        processAcceptableEntity(metadataModule as T)
+        return
       }
     }
-    if (resolvedClazz != null && !(type instanceof JSAnyType)) {
-      processNonAcceptableEntityClass(resolvedClazz);
+    if (resolvedClazz != null && type !is JSAnyType) {
+      processNonAcceptableEntityClass(resolvedClazz)
     }
     else {
-      processAnyType();
+      processAnyType()
     }
   }
 
-  private static JSType evaluateModuleWithProvidersType(JSRecordType.PropertySignature ngModuleSignature, JSTypeSource functionTypeSource) {
-    JSType result = ngModuleSignature.getJSType();
-    List<JSType> args;
-    JSFunctionBaseImpl<?> function;
+  private fun evaluateModuleWithProvidersType(ngModuleSignature: JSRecordType.PropertySignature,
+                                              functionTypeSource: JSTypeSource): JSType? {
+    val result = ngModuleSignature.jsType
+    if (result !is JSGenericTypeImpl) return result
 
-    if (result instanceof JSGenericTypeImpl
-        && (args = ((JSGenericTypeImpl)result).getArguments()).size() == 1
-        && args.get(0) instanceof JSAnyType
-        && functionTypeSource.getSourceElement() != null
-        && (function = tryCast(functionTypeSource.getSourceElement().getContext(), JSFunctionBaseImpl.class)) != null) {
+    val args: List<JSType> = result.arguments
+    if (args.size != 1 || args[0] !is JSAnyType)
+      return result
+    val function: JSFunctionBaseImpl<*> = functionTypeSource.sourceElement?.context as? JSFunctionBaseImpl<*>
+                                          ?: return result
 
-      JSType evaluatedReturnType = CachedValuesManager.getCachedValue(function, () -> {
-        final JSFunctionCachedDataBuilder cachedData = new JSFunctionCachedDataBuilder();
-        final List<JSFunction> nestedFuns = new SmartList<>();
-        final JSFunctionNodesVisitor cachedDataEvaluator =
-          new TypeScriptFunctionCachingVisitor(function,
-                                               cachedData, nestedFuns);
-        AstLoadingFilter.forceAllowTreeLoading(
-          function.getContainingFile(),
-          () -> cachedDataEvaluator.visitElement(function.getNode()));
-        return CachedValueProvider.Result.create(cachedDataEvaluator.getReturnTypeFromEvaluated(), function);
-      });
-
-      ngModuleSignature = doIfNotNull(evaluatedReturnType,
-                                      t -> t.asRecordType().findPropertySignature(NG_MODULE_PROP));
-      result = doIfNotNull(ngModuleSignature, JSRecordType.PropertySignature::getJSType);
+    val evaluatedReturnType = CachedValuesManager.getCachedValue(function) {
+      val cachedData = JSFunctionCachedDataBuilder()
+      val nestedFuns = SmartList<JSFunction>()
+      val cachedDataEvaluator = TypeScriptFunctionCachingVisitor(function, cachedData, nestedFuns)
+      AstLoadingFilter.forceAllowTreeLoading<RuntimeException>(function.containingFile) {
+        cachedDataEvaluator.visitElement(function.node)
+      }
+      CachedValueProvider.Result.create(cachedDataEvaluator.returnTypeFromEvaluated, function)
     }
-    return result;
+    return evaluatedReturnType?.asRecordType()?.findPropertySignature(NG_MODULE_PROP)?.jsType
   }
 
-  private static @Nullable Angular2MetadataModule resolveFunctionValue(@Nullable Angular2MetadataFunction function) {
-    return Optional.ofNullable(function)
-      .map(f -> tryCast(f.getValue(), Angular2MetadataObject.class))
-      .map(value -> tryCast(value.findMember(NG_MODULE_PROP), Angular2MetadataReference.class))
-      .map(reference -> tryCast(reference.resolve(), Angular2MetadataModule.class))
-      .orElse(null);
+  private fun resolveFunctionValue(function: Angular2MetadataFunction): Angular2MetadataModule? {
+    return function.value?.asSafely<Angular2MetadataObject>()
+      ?.findMember(NG_MODULE_PROP)?.asSafely<Angular2MetadataReference>()
+      ?.resolve() as? Angular2MetadataModule
   }
 }

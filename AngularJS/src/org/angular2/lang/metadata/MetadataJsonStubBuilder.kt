@@ -1,45 +1,40 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata
 
-import com.intellij.json.JsonLanguage;
-import com.intellij.json.psi.impl.JsonFileImpl;
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.stubs.BinaryFileStubBuilder;
-import com.intellij.psi.stubs.Stub;
-import com.intellij.util.indexing.FileContent;
-import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.JsonLanguage
+import com.intellij.json.psi.impl.JsonFileImpl
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.stubs.BinaryFileStubBuilder
+import com.intellij.psi.stubs.Stub
+import com.intellij.util.indexing.FileContent
+import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
 
-public class MetadataJsonStubBuilder implements BinaryFileStubBuilder {
+class MetadataJsonStubBuilder : BinaryFileStubBuilder {
 
-  @Override
-  public boolean acceptsFile(@NotNull VirtualFile file) {
-    return file.getFileType() instanceof MetadataJsonFileType;
+  override fun acceptsFile(file: VirtualFile): Boolean {
+    return file.fileType is MetadataJsonFileType
   }
 
-  @Override
-  public @Nullable Stub buildStubTree(@NotNull FileContent fileContent) {
-    MetadataJsonFileType fileType = (MetadataJsonFileType)fileContent.getFileType();
+  override fun buildStubTree(fileContent: FileContent): Stub {
+    val fileType = fileContent.fileType as MetadataJsonFileType
 
-    CharSequence text = LoadTextUtil.getTextByBinaryPresentation(
-      fileContent.getContent(), fileContent.getFile());
+    val text = LoadTextUtil.getTextByBinaryPresentation(
+      fileContent.content, fileContent.file)
 
-    JsonFileImpl jsonFile = (JsonFileImpl)PsiFileFactory
-      .getInstance(fileContent.getProject())
-      .createFileFromText(JsonLanguage.INSTANCE, text);
+    val jsonFile = PsiFileFactory
+      .getInstance(fileContent.project)
+      .createFileFromText(JsonLanguage.INSTANCE, text) as JsonFileImpl
 
-    MetadataFileStubImpl result = new MetadataFileStubImpl(null, fileType.getFileElementType());
-    if (jsonFile.getTopLevelValue() != null) {
-      fileType.createRootStub(result, jsonFile.getTopLevelValue());
+    val result = MetadataFileStubImpl(null, fileType.fileElementType)
+    jsonFile.topLevelValue?.let {
+      fileType.createRootStub(result, it)
     }
-    return result;
+    return result
   }
 
-  @Override
-  public int getStubVersion() {
-    return 22;
+  override fun getStubVersion(): Int {
+    return 22
   }
 }

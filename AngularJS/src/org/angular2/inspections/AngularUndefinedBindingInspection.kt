@@ -1,160 +1,139 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections;
+package org.angular2.inspections
 
-import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
-import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
-import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.inspections.quickfixes.Angular2FixesFactory;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.expr.psi.Angular2TemplateBinding;
-import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
-import org.angular2.lang.html.psi.PropertyBindingType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.PropertyKey;
+import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.util.SmartList
+import com.intellij.util.containers.MultiMap
+import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
+import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE
+import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.entities.Angular2Directive
+import org.angular2.inspections.quickfixes.Angular2FixesFactory
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2Bundle.BUNDLE
+import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
+import org.angular2.lang.html.parser.Angular2AttributeType.*
+import org.angular2.lang.html.psi.PropertyBindingType
+import org.jetbrains.annotations.PropertyKey
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+class AngularUndefinedBindingInspection : AngularHtmlLikeTemplateLocalInspectionTool() {
 
-import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
-import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
-import static org.angular2.lang.Angular2Bundle.BUNDLE;
-import static org.angular2.lang.html.parser.Angular2AttributeType.*;
-
-public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
-
-  @Override
-  protected void visitAngularAttribute(@NotNull ProblemsHolder holder,
-                                       @NotNull XmlAttribute attribute,
-                                       @NotNull Angular2AttributeDescriptor descriptor) {
-    AttributeInfo info = descriptor.getInfo();
-    boolean templateTag = isTemplateTag(attribute.getParent());
+  override fun visitAngularAttribute(holder: ProblemsHolder,
+                                     attribute: XmlAttribute,
+                                     descriptor: Angular2AttributeDescriptor) {
+    val info = descriptor.info
+    val templateTag = isTemplateTag(attribute.parent)
     if (info.type == TEMPLATE_BINDINGS) {
       if (templateTag) {
-        return;
+        return
       }
-      visitTemplateBindings(holder, attribute, Angular2TemplateBindings.get(attribute));
-      return;
+      visitTemplateBindings(holder, attribute, Angular2TemplateBindings.get(attribute))
+      return
     }
-    else if (info.type == REFERENCE || info.type == LET || info.type == I18N
-             || (info.type == PROPERTY_BINDING && ((PropertyBindingInfo)info).bindingType != PropertyBindingType.PROPERTY)) {
-      return;
+    else if (info.type == REFERENCE || info.type == LET || info.type == I18N || info.type == PROPERTY_BINDING && (info as PropertyBindingInfo).bindingType != PropertyBindingType.PROPERTY) {
+      return
     }
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
-    DeclarationProximity proximity;
-    if (descriptor.hasErrorSymbols()) {
-      proximity = NOT_REACHABLE;
+    val scope = Angular2DeclarationsScope(attribute)
+    val proximity: DeclarationProximity
+    if (descriptor.hasErrorSymbols) {
+      proximity = NOT_REACHABLE
     }
-    else if (descriptor.hasNonDirectiveSymbols()) {
+    else if (descriptor.hasNonDirectiveSymbols) {
       if (templateTag) {
-        proximity = NOT_REACHABLE;
+        proximity = NOT_REACHABLE
       }
       else {
-        return;
+        return
       }
     }
     else {
-      Set<Angular2Directive> matchedDirectives = new HashSet<>(new Angular2ApplicableDirectivesProvider(
-        attribute.getParent()).getMatched());
-      proximity = scope.getDeclarationsProximity(ContainerUtil.findAll(descriptor.getSourceDirectives(), matchedDirectives::contains));
+      val matchedDirectives = HashSet(Angular2ApplicableDirectivesProvider(
+        attribute.parent).matched)
+      proximity = scope.getDeclarationsProximity(
+        descriptor.sourceDirectives.filter { matchedDirectives.contains(it) })
     }
     if (proximity == IN_SCOPE) {
-      return;
+      return
     }
-    List<LocalQuickFix> quickFixes = new SmartList<>();
+    val quickFixes = SmartList<LocalQuickFix>()
     if (proximity != NOT_REACHABLE) {
-      Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes);
+      Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes)
     }
-    quickFixes.add(new RemoveAttributeIntentionFix(attribute.getName()));
-    ProblemHighlightType severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope);
-    @PropertyKey(resourceBundle = BUNDLE) final String messageKey;
-    switch (info.type) {
-      case EVENT -> {
-        if (templateTag) {
-          messageKey = "angular.inspection.undefined-binding.message.embedded.event-not-emitted";
+    quickFixes.add(RemoveAttributeIntentionFix(attribute.name))
+    var severity = Angular2InspectionUtils.getBaseProblemHighlightType(scope)
+    @PropertyKey(resourceBundle = BUNDLE) val messageKey: String =
+      when (info.type) {
+        EVENT -> {
+          if (templateTag)
+            "angular.inspection.undefined-binding.message.embedded.event-not-emitted"
+          else
+            "angular.inspection.undefined-binding.message.event-not-emitted"
         }
-        else {
-          messageKey = "angular.inspection.undefined-binding.message.event-not-emitted";
+        PROPERTY_BINDING -> {
+          if (templateTag)
+            "angular.inspection.undefined-binding.message.embedded.property-not-provided"
+          else
+            "angular.inspection.undefined-binding.message.property-not-provided"
         }
+        BANANA_BOX_BINDING ->
+          "angular.inspection.undefined-binding.message.banana-box-binding-not-provided"
+        REGULAR -> {
+          severity = ProblemHighlightType.WARNING
+          if (proximity === NOT_REACHABLE)
+            "angular.inspection.undefined-binding.message.unknown-attribute"
+          else
+            "angular.inspection.undefined-binding.message.attribute-directive-out-of-scope"
+        }
+        else -> return
       }
-      case PROPERTY_BINDING -> {
-        if (templateTag) {
-          messageKey = "angular.inspection.undefined-binding.message.embedded.property-not-provided";
-        }
-        else {
-          messageKey = "angular.inspection.undefined-binding.message.property-not-provided";
-        }
-      }
-      case BANANA_BOX_BINDING -> messageKey = "angular.inspection.undefined-binding.message.banana-box-binding-not-provided";
-      case REGULAR -> {
-        if (proximity == NOT_REACHABLE) {
-          messageKey = "angular.inspection.undefined-binding.message.unknown-attribute";
-        }
-        else {
-          messageKey = "angular.inspection.undefined-binding.message.attribute-directive-out-of-scope";
-        }
-        severity = ProblemHighlightType.WARNING;
-      }
-      default -> {
-        return;
-      }
-    }
     // TODO register error on the symbols themselves
-    holder.registerProblem(attribute.getNameElement(),
-                           Angular2Bundle.message(messageKey, info.name, attribute.getParent().getName()),
+    holder.registerProblem(attribute.nameElement,
+                           Angular2Bundle.message(messageKey, info.name, attribute.parent.name),
                            severity,
-                           quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
+                           *quickFixes.toTypedArray<LocalQuickFix>())
   }
 
-  private static void visitTemplateBindings(@NotNull ProblemsHolder holder,
-                                            @NotNull XmlAttribute attribute,
-                                            @NotNull Angular2TemplateBindings bindings) {
-    List<Angular2Directive> matched = new Angular2ApplicableDirectivesProvider(bindings).getMatched();
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
-    DeclarationProximity proximity = scope.getDeclarationsProximity(matched);
+  private fun visitTemplateBindings(holder: ProblemsHolder,
+                                    attribute: XmlAttribute,
+                                    bindings: Angular2TemplateBindings) {
+    val matched = Angular2ApplicableDirectivesProvider(bindings).matched
+    val scope = Angular2DeclarationsScope(attribute)
+    var proximity = scope.getDeclarationsProximity(matched)
     if (proximity != IN_SCOPE) {
-      List<LocalQuickFix> fixes = new SmartList<>();
-      Angular2FixesFactory.addUnresolvedDeclarationFixes(bindings, fixes);
-      holder.registerProblem(attribute.getNameElement(),
+      val fixes = SmartList<LocalQuickFix>()
+      Angular2FixesFactory.addUnresolvedDeclarationFixes(bindings, fixes)
+      holder.registerProblem(attribute.nameElement,
                              Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.no-directive-matched",
-                                                    bindings.getTemplateName()),
+                                                    bindings.templateName),
                              ProblemHighlightType.WEAK_WARNING,
-                             fixes.toArray(LocalQuickFix.EMPTY_ARRAY));
-      return;
+                             *fixes.toTypedArray<LocalQuickFix>())
+      return
     }
 
-    MultiMap<String, Angular2Directive> input2DirectiveMap = new MultiMap<>();
-    matched.forEach(
-      dir -> dir.getInputs().forEach(
-        input -> input2DirectiveMap.putValue(input.getName(), dir)));
+    val input2DirectiveMap = MultiMap<String, Angular2Directive>()
+    matched.forEach { dir -> dir.inputs.forEach { input -> input2DirectiveMap.putValue(input.name, dir) } }
 
-    for (Angular2TemplateBinding binding : bindings.getBindings()) {
-      if (!binding.keyIsVar() && binding.getExpression() != null) {
-        proximity = scope.getDeclarationsProximity(input2DirectiveMap.get(binding.getKey()));
+    for (binding in bindings.bindings) {
+      if (!binding.keyIsVar() && binding.expression != null) {
+        proximity = scope.getDeclarationsProximity(input2DirectiveMap.get(binding.key))
         if (proximity != IN_SCOPE) {
-          PsiElement element = ObjectUtils.notNull(binding.getKeyElement(), attribute.getNameElement());
-          List<LocalQuickFix> fixes = new SmartList<>();
-          Angular2FixesFactory.addUnresolvedDeclarationFixes(binding, fixes);
+          val element = binding.keyElement ?: attribute.nameElement
+          val fixes = SmartList<LocalQuickFix>()
+          Angular2FixesFactory.addUnresolvedDeclarationFixes(binding, fixes)
           holder.registerProblem(element,
                                  Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.property-not-provided",
-                                                        binding.getKey()),
+                                                        binding.key),
                                  Angular2InspectionUtils.getBaseProblemHighlightType(scope),
-                                 fixes.toArray(LocalQuickFix.EMPTY_ARRAY));
+                                 *fixes.toTypedArray<LocalQuickFix>())
         }
       }
     }

@@ -1,322 +1,325 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.cli;
+package org.angular2.cli
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
-import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
-import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
-import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.*;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.util.concurrency.AppExecutorUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.HttpRequests;
-import com.intellij.util.io.RequestBuilder;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.google.gson.stream.JsonReader
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
+import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion
+import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.*
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.util.concurrency.AppExecutorUtil
+import com.intellij.util.io.HttpRequests
+import org.jetbrains.annotations.NonNls
+import java.io.*
+import java.nio.charset.StandardCharsets
+import java.nio.file.Paths
+import java.util.*
+import java.util.concurrent.*
+import java.util.function.Supplier
+import kotlin.Pair
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.*;
-import java.util.function.Supplier;
+class AngularCliSchematicsRegistryServiceImpl : AngularCliSchematicsRegistryService() {
 
-public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematicsRegistryService {
+  private val myNgAddPackages = CachedValue { fetchPackagesSupportingNgAdd() }
+  private val myLocalNgAddPackages = ConcurrentHashMap<String, Pair<Boolean, Long>>()
+  private val myNgAddSupportedCache = ConcurrentHashMap<String, CachedValue<Boolean>>()
 
-  @NonNls private static final String USER_AGENT = "JetBrains IDE";
-  @NonNls private static final String NG_PACKAGES_URL =
-    "https://raw.githubusercontent.com/JetBrains/intellij-plugins/master/AngularJS/resources/org/angularjs/cli/ng-packages.json";
-
-  @NonNls private static final Logger LOG = Logger.getInstance(AngularCliSchematicsRegistryServiceImpl.class);
-  private static final int CACHE_EXPIRY = 25 * 60 * 1000; //25 mins
-  @NonNls private static final ExecutorService ourExecutorService =
-    AppExecutorUtil.createBoundedApplicationPoolExecutor("Angular CLI Schematics Registry Pool", 5);
-  @NonNls private static final Key<CachedSchematics> SCHEMATICS_PUBLIC =
-    new Key<>("angular.cli.schematics.public");
-  @NonNls private static final Key<CachedSchematics> SCHEMATICS_ALL =
-    new Key<>("angular.cli.schematics.all");
-  private static final SimpleModificationTracker SCHEMATICS_CACHE_TRACKER = new SimpleModificationTracker();
-  @NonNls private static final String NG_PACKAGES_JSON_PATH = "../../angularjs/cli/ng-packages.json";
-  @NonNls private static final String SCHEMATICS_PROP = "schematics";
-  @NonNls private static final String NG_ADD_SCHEMATIC = "ng-add";
-
-  private final CachedValue<List<NodePackageBasicInfo>> myNgAddPackages = new CachedValue<>(
-    AngularCliSchematicsRegistryServiceImpl::fetchPackagesSupportingNgAdd);
-  private final Map<String, Pair<Boolean, Long>> myLocalNgAddPackages = new ConcurrentHashMap<>();
-  private final Map<String, CachedValue<Boolean>> myNgAddSupportedCache = new ConcurrentHashMap<>();
-
-
-  @Override
-  public @NotNull List<NodePackageBasicInfo> getPackagesSupportingNgAdd(long timeout) {
-    return ContainerUtil.notNullize(myNgAddPackages.getValue(timeout));
+  override fun getPackagesSupportingNgAdd(timeout: Long): List<NodePackageBasicInfo> {
+    return myNgAddPackages.getValue(timeout) ?: emptyList()
   }
 
-  @Override
-  public boolean supportsNgAdd(@NotNull String packageName, long timeout) {
-    return getPackagesSupportingNgAdd(timeout).stream().anyMatch(pkg -> packageName.equals(pkg.getName()));
+  override fun supportsNgAdd(packageName: String, timeout: Long): Boolean {
+    return getPackagesSupportingNgAdd(timeout).any { pkg -> packageName == pkg.name }
   }
 
-  @Override
-  public boolean supportsNgAdd(@NotNull String packageName,
-                               @NotNull String versionOrRange,
-                               long timeout) {
+  override fun supportsNgAdd(packageName: String,
+                             versionOrRange: String,
+                             timeout: Long): Boolean {
     return supportsNgAdd(packageName, timeout)
-           && Boolean.TRUE.equals(myNgAddSupportedCache.computeIfAbsent(
-      getKey(packageName, versionOrRange),
-      k -> new CachedValue<>(() -> checkForNgAddSupport(packageName, versionOrRange))).getValue(timeout));
+           && myNgAddSupportedCache
+             .computeIfAbsent(getKey(packageName, versionOrRange)) { _ ->
+               CachedValue { checkForNgAddSupport(packageName, versionOrRange) }
+             }.getValue(timeout) == true
   }
 
-  @Override
-  public boolean supportsNgAdd(@NotNull InstalledPackageVersion version) {
+  override fun supportsNgAdd(version: InstalledPackageVersion): Boolean {
     try {
-      if (version.getPackageJson() != null) {
-        return myLocalNgAddPackages.compute(version.getPackageJson().getPath(), (key, curValue) -> {
-          if (curValue != null && version.getPackageJson().getModificationStamp() == curValue.getSecond()) {
-            return curValue;
+      val packageJson = version.packageJson
+      if (packageJson != null) {
+        return myLocalNgAddPackages.compute(packageJson.path) { _, curValue ->
+          if (curValue != null && packageJson.modificationStamp == curValue.second) {
+            return@compute curValue
           }
           try {
-            File schematicsCollection = getSchematicsCollection(new File(version.getPackageJson().getPath()));
-            return Pair
-              .create(schematicsCollection != null && hasNgAddSchematic(schematicsCollection),
-                      version.getPackageJson().getModificationStamp());
+            val schematicsCollection = getSchematicsCollection(File(packageJson.path))
+            return@compute Pair(schematicsCollection != null && hasNgAddSchematic(schematicsCollection), packageJson.modificationStamp)
           }
-          catch (IOException e) {
-            return Pair.create(false, version.getPackageJson().getModificationStamp());
+          catch (e: IOException) {
+            return@compute Pair(false, packageJson.modificationStamp)
           }
-        }).getFirst();
+        }!!.first
       }
     }
-    catch (Exception e) {
-      LOG.info("Failed to retrieve schematics info for " + version.getPackageDir().getName(), e);
+    catch (e: Exception) {
+      LOG.info("Failed to retrieve schematics info for " + version.packageDir.name, e)
     }
-    return false;
+
+    return false
   }
 
-  @Override
-  public @NotNull List<Schematic> getSchematics(@NotNull Project project,
-                                                @NotNull VirtualFile cliFolder,
-                                                boolean includeHidden,
-                                                boolean logErrors) {
-    return Optional.ofNullable(AngularCliUtil.findCliJson(cliFolder))
-      .map(angularJson -> ReadAction.compute(() -> PsiManager.getInstance(project).findFile(angularJson)))
-      .map(angularJson -> getCachedSchematics(angularJson, includeHidden ? SCHEMATICS_ALL : SCHEMATICS_PUBLIC).getUpToDateOrCompute(
-        () -> CachedValueProvider.Result.create(
-          SchematicsLoaderKt.doLoad(angularJson.getProject(),
-                                    angularJson.getVirtualFile().getParent(), includeHidden, logErrors),
-          NodeModulesDirectoryManager.getInstance(angularJson.getProject()).getNodeModulesDirChangeTracker(),
-          SCHEMATICS_CACHE_TRACKER,
-          angularJson)))
-      .orElseGet(Collections::emptyList);
-  }
-
-  @Override
-  public void clearProjectSchematicsCache() {
-    SCHEMATICS_CACHE_TRACKER.incModificationCount();
-  }
-
-  private static @NotNull List<NodePackageBasicInfo> fetchPackagesSupportingNgAdd() {
-    try {
-      RequestBuilder builder = HttpRequests.request(NG_PACKAGES_URL);
-      builder.userAgent(USER_AGENT);
-      builder.gzip(true);
-      return readNgAddPackages(builder.readString(null));
-    }
-    catch (IOException e) {
-      LOG.info("Failed to load current list of ng-add compatible packages.", e);
-      try (InputStream is = AngularCliSchematicsRegistryServiceImpl.class.getResourceAsStream(NG_PACKAGES_JSON_PATH)) {
-        return readNgAddPackages(FileUtil.loadTextAndClose(new InputStreamReader(is, StandardCharsets.UTF_8)));
-      }
-      catch (Exception e1) {
-        LOG.error("Failed to load list of ng-add compatible packages from static file.", e1);
-      }
-    }
-    return Collections.emptyList();
-  }
-
-  private static @NotNull List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
-    JsonObject contents = (JsonObject)new JsonParser().parse(content);
-    return ContainerUtil.map(
-      contents.get(NG_ADD_SCHEMATIC).getAsJsonObject().entrySet(),
-      e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()));
-  }
-
-  private static @Nullable File getSchematicsCollection(@NotNull File packageJson) throws IOException {
-    try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(packageJson),
-                                                                  StandardCharsets.UTF_8))) {
-      reader.beginObject();
-      while (reader.hasNext()) {
-        String key = reader.nextName();
-        if (key.equals(SCHEMATICS_PROP)) {
-          String path = reader.nextString();
-          return Paths.get(packageJson.getParent(), path).normalize().toAbsolutePath().toFile();
-        }
-        else {
-          reader.skipValue();
+  override fun getSchematics(project: Project,
+                             cliFolder: VirtualFile,
+                             includeHidden: Boolean,
+                             logErrors: Boolean): List<Schematic> =
+    AngularCliUtil.findCliJson(cliFolder)
+      ?.let { angularJson ->
+        ReadAction.compute<PsiFile, RuntimeException> {
+          PsiManager.getInstance(project).findFile(angularJson)
         }
       }
-      return null;
-    }
-  }
-
-  private static boolean hasNgAddSchematic(@NotNull File schematicsCollection) throws IOException {
-    try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(schematicsCollection),
-                                                                  StandardCharsets.UTF_8))) {
-      return hasNgAddSchematic(reader);
-    }
-  }
-
-  public static boolean hasNgAddSchematic(@NotNull JsonReader reader) throws IOException {
-    reader.setLenient(true);
-    reader.beginObject();
-    while (reader.hasNext()) {
-      String key = reader.nextName();
-      if (SCHEMATICS_PROP.equals(key)) {
-        reader.beginObject();
-        while (reader.hasNext()) {
-          String schematicName = reader.nextName();
-          if (schematicName.equals(NG_ADD_SCHEMATIC)) {
-            return true;
-          }
-          reader.skipValue();
+      ?.let { angularJson ->
+        getCachedSchematics(angularJson, if (includeHidden) SCHEMATICS_ALL else SCHEMATICS_PUBLIC).getUpToDateOrCompute {
+          CachedValueProvider.Result.create(
+            doLoad(angularJson.project,
+                   angularJson.virtualFile.parent, includeHidden, logErrors),
+            NodeModulesDirectoryManager.getInstance(angularJson.project).nodeModulesDirChangeTracker,
+            SCHEMATICS_CACHE_TRACKER,
+            angularJson)
         }
-        reader.endObject();
       }
-      else {
-        reader.skipValue();
-      }
-    }
-    reader.endObject();
-    return false;
+    ?: emptyList()
+
+  override fun clearProjectSchematicsCache() {
+    SCHEMATICS_CACHE_TRACKER.incModificationCount()
   }
 
-  private static boolean checkForNgAddSupport(@NotNull String packageName, @NotNull String versionOrRange) {
-    try {
-      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      JsonObject pkgJson = NpmRegistryService.getInstance().fetchPackageJson(packageName, versionOrRange, indicator);
-      return pkgJson != null && pkgJson.get(SCHEMATICS_PROP) != null;
-    }
-    catch (Exception e) {
-      LOG.info(e);
-    }
-    return false;
-  }
+  private class CachedSchematics {
+    private var mySchematics: List<Schematic>? = null
+    private var myTrackers: List<Pair<Any, Long>>? = null
 
-  private static String getKey(@NotNull String packageName,
-                               @NotNull String version) {
-    return packageName + "@" + version;
-  }
-
-  private static @NotNull CachedSchematics getCachedSchematics(@NotNull UserDataHolder dataHolder, @NotNull Key<CachedSchematics> key) {
-    CachedSchematics result = dataHolder.getUserData(key);
-    if (result != null) {
-      return result;
-    }
-
-    if (dataHolder instanceof UserDataHolderEx) {
-      return ((UserDataHolderEx)dataHolder).putUserDataIfAbsent(key, new CachedSchematics());
-    }
-    result = new CachedSchematics();
-    dataHolder.putUserData(key, result);
-    return result;
-  }
-
-  private static class CachedSchematics {
-    private List<Schematic> mySchematics;
-    private List<Pair<Object, Long>> myTrackers;
-
-    public synchronized List<Schematic> getUpToDateOrCompute(Supplier<CachedValueProvider.Result<List<Schematic>>> provider) {
+    @Synchronized
+    fun getUpToDateOrCompute(provider: Supplier<CachedValueProvider.Result<List<Schematic>>>): List<Schematic>? {
       if (mySchematics != null
-          && myTrackers != null
-          && ContainerUtil.all(myTrackers, pair -> pair.second >= 0 && getTimestamp(pair.first) == pair.second)) {
-        return mySchematics;
+          && myTrackers?.all { pair -> pair.second >= 0 && getTimestamp(pair.first) == pair.second } == true) {
+        return mySchematics
       }
-      CachedValueProvider.Result<List<Schematic>> schematics = provider.get();
-      mySchematics = Collections.unmodifiableList(schematics.getValue());
-      myTrackers = ContainerUtil.map(schematics.getDependencyItems(), obj -> Pair.pair(obj, getTimestamp(obj)));
-      return mySchematics;
+      val schematics = provider.get()
+      mySchematics = Collections.unmodifiableList(schematics.value)
+      myTrackers = schematics.dependencyItems.map { obj -> Pair(obj, getTimestamp(obj)) }
+      return mySchematics
     }
 
-    private static long getTimestamp(Object dependency) {
-      if (dependency instanceof ModificationTracker) {
-        return ((ModificationTracker)dependency).getModificationCount();
+    private fun getTimestamp(dependency: Any): Long {
+      if (dependency is ModificationTracker) {
+        return dependency.modificationCount
       }
-      if (dependency instanceof PsiElement) {
-        PsiElement element = (PsiElement)dependency;
-        if (!element.isValid()) return -1;
-        PsiFile containingFile = element.getContainingFile();
-        if (containingFile != null) {
-          return containingFile.getVirtualFile().getModificationStamp();
-        }
-        return -1;
+      if (dependency is PsiElement) {
+        if (!dependency.isValid) return -1
+        val containingFile = dependency.containingFile
+        return containingFile?.virtualFile?.modificationStamp ?: -1
       }
-      throw new UnsupportedOperationException(dependency.getClass().toString());
+      throw UnsupportedOperationException(dependency.javaClass.toString())
     }
   }
 
-  private static class CachedValue<T> {
+  private class CachedValue<T>(private val myValueSupplier: Callable<out T>) {
 
-    private long myUpdateTime;
-    private Future<? extends T> myCacheComputation;
-    private T myCachedValue;
-    private final Callable<? extends T> myValueSupplier;
+    private var myUpdateTime: Long = 0
+    private var myCacheComputation: Future<out T>? = null
+    private var myCachedValue: T? = null
 
-    CachedValue(Callable<? extends T> valueSupplier) {
-      this.myValueSupplier = valueSupplier;
-    }
+    private val isCacheExpired: Boolean
+      @Synchronized get() = myUpdateTime + CACHE_EXPIRY <= System.currentTimeMillis()
 
-    protected synchronized boolean isCacheExpired() {
-      return myUpdateTime + CACHE_EXPIRY <= System.currentTimeMillis();
-    }
-
-    @SuppressWarnings("SynchronizeOnThis")
-    public @Nullable T getValue(long timeout) {
-      Future<? extends T> cacheComputation;
-      synchronized (this) {
-        if (myCachedValue != null && !isCacheExpired()) {
-          return myCachedValue;
+    fun getValue(timeout: Long): T? {
+      val cacheComputation: Future<out T>
+      synchronized(this) {
+        if (myCachedValue != null && !isCacheExpired) {
+          return myCachedValue
         }
         if (myCacheComputation == null) {
-          myCachedValue = null;
-          myCacheComputation = ourExecutorService.submit(myValueSupplier);
+          myCachedValue = null
+          myCacheComputation = ourExecutorService.submit(myValueSupplier)
         }
-        cacheComputation = myCacheComputation;
+        cacheComputation = myCacheComputation!!
       }
-      T result = JSLanguageServiceUtil.awaitFuture(cacheComputation, timeout, 10,
-                                                   null, false, null);
-      synchronized (this) {
-        if (myCacheComputation != null && myCacheComputation.isDone()) {
+      var result: T? = JSLanguageServiceUtil.awaitFuture(cacheComputation, timeout, 10, null, false, null)
+      synchronized(this) {
+        if (myCacheComputation != null && myCacheComputation!!.isDone) {
           try {
-            result = myCachedValue = myCacheComputation.get();
+            myCachedValue = myCacheComputation!!.get()
+            result = myCachedValue
           }
-          catch (InterruptedException | CancellationException ex) {
-            //ignore
+          catch (_: InterruptedException) {
           }
-          catch (ExecutionException e) {
-            LOG.error(e);
+          catch (_: CancellationException) {
           }
-          myCacheComputation = null;
-          myUpdateTime = System.currentTimeMillis();
+          catch (e: ExecutionException) {
+            LOG.error(e)
+          }
+
+          myCacheComputation = null
+          myUpdateTime = System.currentTimeMillis()
         }
       }
-      return result;
+      return result
+    }
+  }
+
+  companion object {
+
+    @NonNls
+    private val USER_AGENT = "JetBrains IDE"
+
+    @NonNls
+    private val NG_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/intellij-plugins/master/AngularJS/resources/org/angularjs/cli/ng-packages.json"
+
+    @NonNls
+    private val LOG = Logger.getInstance(AngularCliSchematicsRegistryServiceImpl::class.java)
+    private const val CACHE_EXPIRY = 25 * 60 * 1000 //25 mins
+
+    @NonNls
+    private val ourExecutorService = AppExecutorUtil.createBoundedApplicationPoolExecutor("Angular CLI Schematics Registry Pool", 5)
+
+    @NonNls
+    private val SCHEMATICS_PUBLIC = Key<CachedSchematics>("angular.cli.schematics.public")
+
+    @NonNls
+    private val SCHEMATICS_ALL = Key<CachedSchematics>("angular.cli.schematics.all")
+    private val SCHEMATICS_CACHE_TRACKER = SimpleModificationTracker()
+
+    @NonNls
+    private val NG_PACKAGES_JSON_PATH = "../../angularjs/cli/ng-packages.json"
+
+    @NonNls
+    private val SCHEMATICS_PROP = "schematics"
+
+    @NonNls
+    private val NG_ADD_SCHEMATIC = "ng-add"
+
+    private fun fetchPackagesSupportingNgAdd(): List<NodePackageBasicInfo> {
+      try {
+        val builder = HttpRequests.request(NG_PACKAGES_URL)
+        builder.userAgent(USER_AGENT)
+        builder.gzip(true)
+        return readNgAddPackages(builder.readString(null))
+      }
+      catch (e: IOException) {
+        LOG.info("Failed to load current list of ng-add compatible packages.", e)
+        try {
+          AngularCliSchematicsRegistryServiceImpl::class.java.getResourceAsStream(NG_PACKAGES_JSON_PATH)!!.use { `is` ->
+            return readNgAddPackages(FileUtil.loadTextAndClose(InputStreamReader(`is`, StandardCharsets.UTF_8)))
+          }
+        }
+        catch (e1: Exception) {
+          LOG.error("Failed to load list of ng-add compatible packages from static file.", e1)
+        }
+
+      }
+
+      return emptyList()
+    }
+
+    private fun readNgAddPackages(content: String): List<NodePackageBasicInfo> {
+      val contents = JsonParser.parseString(content) as JsonObject
+      return contents.get(NG_ADD_SCHEMATIC).asJsonObject
+        .entrySet().map { e -> NodePackageBasicInfo(e.key, e.value.asString) }
+    }
+
+    @Throws(IOException::class)
+    private fun getSchematicsCollection(packageJson: File): File? {
+      JsonReader(InputStreamReader(FileInputStream(packageJson), StandardCharsets.UTF_8))
+        .use { reader ->
+          reader.beginObject()
+          while (reader.hasNext()) {
+            val key = reader.nextName()
+            if (key == SCHEMATICS_PROP) {
+              val path = reader.nextString()
+              return Paths.get(packageJson.parent, path).normalize().toAbsolutePath().toFile()
+            }
+            else {
+              reader.skipValue()
+            }
+          }
+          return null
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun hasNgAddSchematic(schematicsCollection: File): Boolean {
+      JsonReader(InputStreamReader(FileInputStream(schematicsCollection), StandardCharsets.UTF_8))
+        .use { reader -> return hasNgAddSchematic(reader) }
+    }
+
+    @Throws(IOException::class)
+    @JvmStatic
+    fun hasNgAddSchematic(reader: JsonReader): Boolean {
+      reader.isLenient = true
+      reader.beginObject()
+      while (reader.hasNext()) {
+        val key = reader.nextName()
+        if (SCHEMATICS_PROP == key) {
+          reader.beginObject()
+          while (reader.hasNext()) {
+            val schematicName = reader.nextName()
+            if (schematicName == NG_ADD_SCHEMATIC) {
+              return true
+            }
+            reader.skipValue()
+          }
+          reader.endObject()
+        }
+        else {
+          reader.skipValue()
+        }
+      }
+      reader.endObject()
+      return false
+    }
+
+    private fun checkForNgAddSupport(packageName: String, versionOrRange: String): Boolean {
+      try {
+        val indicator = ProgressManager.getInstance().progressIndicator
+        val pkgJson = NpmRegistryService.getInstance().fetchPackageJson(packageName, versionOrRange, indicator)
+        return pkgJson?.get(SCHEMATICS_PROP) != null
+      }
+      catch (e: Exception) {
+        LOG.info(e)
+      }
+
+      return false
+    }
+
+    private fun getKey(packageName: String,
+                       version: String): String {
+      return "$packageName@$version"
+    }
+
+    private fun getCachedSchematics(dataHolder: UserDataHolder, key: Key<CachedSchematics>): CachedSchematics {
+      var result = dataHolder.getUserData(key)
+      if (result != null) {
+        return result
+      }
+
+      if (dataHolder is UserDataHolderEx) {
+        return dataHolder.putUserDataIfAbsent(key, CachedSchematics())
+      }
+      result = CachedSchematics()
+      dataHolder.putUserData(key, result)
+      return result
     }
   }
 }

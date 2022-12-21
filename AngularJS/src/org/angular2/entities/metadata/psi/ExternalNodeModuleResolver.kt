@@ -1,171 +1,147 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.psi
 
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
-import one.util.streamex.StreamEx;
-import org.angular2.index.Angular2MetadataNodeModuleIndex;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.MultiMap
+import org.angular2.entities.metadata.Angular2MetadataFileType.Companion.METADATA_SUFFIX
+import org.angular2.index.Angular2MetadataNodeModuleIndex
+import org.jetbrains.annotations.NonNls
 
-import java.util.*;
-import java.util.function.Function;
+class ExternalNodeModuleResolver(private val mySource: Angular2MetadataElement<*>,
+                                 private val myModuleName: String,
+                                 private val myMemberName: String?) {
 
-import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX;
-
-public class ExternalNodeModuleResolver {
-  @NonNls private static final Logger LOG = Logger.getInstance(ExternalNodeModuleResolver.class);
-
-  private static final Set<String> ourReportedErrors = new HashSet<>();
-  private static final String NODE_MODULES_SEGMENT = "/" + NODE_MODULES + "/";
-
-  private final Angular2MetadataElement mySource;
-  private final String myModuleName;
-  private final String myMemberName;
-
-  public ExternalNodeModuleResolver(@NotNull Angular2MetadataElement source,
-                                    @NotNull String moduleName,
-                                    @Nullable String memberName) {
-    mySource = source;
-    myMemberName = memberName;
-    myModuleName = moduleName;
-  }
-
-  public Angular2MetadataElement resolve() {
-    Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor =
-      myMemberName == null ? nodeModule -> nodeModule
-                           : nodeModule -> tryCast(nodeModule.findMember(myMemberName), Angular2MetadataElement.class);
+  fun resolve(): Angular2MetadataElement<*>? {
+    val memberExtractor: (Angular2MetadataNodeModule) -> Angular2MetadataElement<*>? =
+      if (myMemberName == null)
+        { nodeModule -> nodeModule }
+      else
+        { nodeModule -> nodeModule.findMember(myMemberName) as? Angular2MetadataElement<*> }
     if (myModuleName.startsWith("./") || myModuleName.startsWith("../")) {
-      Angular2MetadataNodeModule module = doIfNotNull(mySource.loadRelativeFile(myModuleName, METADATA_SUFFIX),
-                                                      file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
-      return module != null ? memberExtractor.apply(module) : null;
+      val module = mySource.loadRelativeFile(myModuleName, METADATA_SUFFIX)?.let { file ->
+        PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule::class.java)
+      }
+      return if (module != null) memberExtractor(module) else null
     }
-    Angular2MetadataElement result = resolveFromFileSystem(memberExtractor);
-    return result != null ? result : resolveFromIndex(memberExtractor);
+    val result = resolveFromFileSystem(memberExtractor)
+    return result ?: resolveFromIndex(memberExtractor)
   }
 
-  private @Nullable Angular2MetadataElement resolveFromFileSystem(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
-    return doIfNotNull(NodeModuleSearchUtil.findAncestorNodeModulesDir(mySource.getContainingFile().getVirtualFile()), dir -> {
-      Angular2MetadataNodeModule module = doIfNotNull(mySource.loadRelativeFile(dir, myModuleName, METADATA_SUFFIX),
-                                                      file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
-      return module != null ? memberExtractor.apply(module) : null;
-    });
+  private fun resolveFromFileSystem(memberExtractor: (Angular2MetadataNodeModule) -> Angular2MetadataElement<*>?): Angular2MetadataElement<*>? {
+    return NodeModuleSearchUtil.findAncestorNodeModulesDir(mySource.containingFile.virtualFile)?.let { dir ->
+      val module = mySource.loadRelativeFile(dir, myModuleName, METADATA_SUFFIX)
+        ?.let { file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule::class.java) }
+      if (module != null) memberExtractor(module) else null
+    }
   }
 
-  private @Nullable Angular2MetadataElement resolveFromIndex(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
-    MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates = MultiMap.createSet();
+  private fun resolveFromIndex(memberExtractor: (Angular2MetadataNodeModule) -> Angular2MetadataElement<*>?): Angular2MetadataElement<*>? {
+    val candidates = MultiMap.createSet<Angular2MetadataElement<*>, Angular2MetadataNodeModule>()
     StubIndex.getInstance().processElements(
-      Angular2MetadataNodeModuleIndex.KEY, myModuleName, mySource.getProject(),
-      GlobalSearchScope.allScope(mySource.getProject()), Angular2MetadataNodeModule.class,
-      nodeModule -> {
-        if (nodeModule.isValid()) {
-          doIfNotNull(memberExtractor.apply(nodeModule),
-                      element -> {
-                        candidates.putValue(element, nodeModule);
-                        return null;
-                      });
-        }
-        return true;
-      });
-    if (candidates.size() > 1) {
-      retainReachableNodeModulesFolders(candidates);
+      Angular2MetadataNodeModuleIndex.KEY, myModuleName, mySource.project,
+      GlobalSearchScope.allScope(mySource.project), Angular2MetadataNodeModule::class.java
+    ) { nodeModule ->
+      if (nodeModule.isValid) {
+        memberExtractor(nodeModule)?.let { candidates.putValue(it, nodeModule) }
+      }
+      true
     }
     if (candidates.size() > 1) {
-      retainPackageTypingRoots(candidates);
+      retainReachableNodeModulesFolders(candidates)
     }
     if (candidates.size() > 1) {
-      //noinspection OptionalGetWithoutIsPresent
-      return StreamEx.of(candidates.keySet())
-        // in case of multiple candidates, ensure deterministic outcome by using file path with lowest lexical order
-        .min(Comparator.comparing(candidate -> candidate.getContainingFile().getVirtualFile().getPath()))
-        .get();
+      retainPackageTypingRoots(candidates)
     }
-    return ContainerUtil.getFirstItem(candidates.keySet());
+    return if (candidates.size() > 1) {
+      // in case of multiple candidates, ensure deterministic outcome by using file path with lowest lexical order
+      candidates.keySet().minBy { it.containingFile.virtualFile.path }
+    }
+    else candidates.keySet().firstOrNull()
   }
 
-  private void retainReachableNodeModulesFolders(@NotNull MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates) {
-    String path = getNodeModulesPath(mySource);
-    if (path == null) {
-      return;
-    }
-    Set<Angular2MetadataNodeModule> sameFolder = new HashSet<>();
-    Set<Angular2MetadataNodeModule> parentFolder = new HashSet<>();
-    candidates.values().forEach(nodeModule -> {
-      String path1 = getNodeModulesPath(nodeModule);
+  private fun retainReachableNodeModulesFolders(candidates: MultiMap<Angular2MetadataElement<*>, Angular2MetadataNodeModule>) {
+    val path = getNodeModulesPath(mySource) ?: return
+    val sameFolder = HashSet<Angular2MetadataNodeModule>()
+    val parentFolder = HashSet<Angular2MetadataNodeModule>()
+    candidates.values().forEach { nodeModule ->
+      val path1 = getNodeModulesPath(nodeModule)
       if (path1 != null) {
-        if (path.equals(path1)) {
-          sameFolder.add(nodeModule);
+        if (path == path1) {
+          sameFolder.add(nodeModule)
         }
         else if (path.startsWith(path1)) {
-          parentFolder.add(nodeModule);
+          parentFolder.add(nodeModule)
         }
       }
-    });
+    }
     if (!sameFolder.isEmpty()) {
-      retain(candidates, sameFolder);
+      retain(candidates, sameFolder)
     }
     else if (!parentFolder.isEmpty()) {
-      retain(candidates, parentFolder);
+      retain(candidates, parentFolder)
     }
   }
 
-  private static void retainPackageTypingRoots(@NotNull MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates) {
-    Set<Angular2MetadataNodeModule> packageTypingsRoots = new HashSet<>();
-    candidates.values().forEach(nodeModule -> {
-      if (nodeModule.isPackageTypingsRoot()) {
-        packageTypingsRoots.add(nodeModule);
-      }
-    });
-    if (!packageTypingsRoots.isEmpty()) {
-      retain(candidates, packageTypingsRoots);
-    }
-  }
+  companion object {
+    @NonNls
+    private val LOG = Logger.getInstance(ExternalNodeModuleResolver::class.java)
 
-  private static void retain(@NotNull MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates,
-                             @NotNull Set<Angular2MetadataNodeModule> nodeModules) {
-    Iterator<Map.Entry<Angular2MetadataElement, Collection<Angular2MetadataNodeModule>>> iterator = candidates.entrySet().iterator();
-    while (iterator.hasNext()) {
-      Map.Entry<Angular2MetadataElement, Collection<Angular2MetadataNodeModule>> entry = iterator.next();
-      Iterator<Angular2MetadataNodeModule> listIterator = entry.getValue().iterator();
-      while (listIterator.hasNext()) {
-        if (!nodeModules.contains(listIterator.next())) {
-          listIterator.remove();
+    private val ourReportedErrors = HashSet<String>()
+    private val NODE_MODULES_SEGMENT = "/$NODE_MODULES/"
+
+    private fun retainPackageTypingRoots(candidates: MultiMap<Angular2MetadataElement<*>, Angular2MetadataNodeModule>) {
+      val packageTypingsRoots = HashSet<Angular2MetadataNodeModule>()
+      candidates.values().forEach { nodeModule ->
+        if (nodeModule.isPackageTypingsRoot) {
+          packageTypingsRoots.add(nodeModule)
         }
       }
-      if (entry.getValue().isEmpty()) {
-        iterator.remove();
+      if (!packageTypingsRoots.isEmpty()) {
+        retain(candidates, packageTypingsRoots)
       }
     }
-  }
 
-  private static @Nullable String getNodeModulesPath(@NotNull Angular2MetadataElement element) {
-    return stripNodeModulesPath(doIfNotNull(element.getContainingFile().getOriginalFile().getVirtualFile(), VirtualFile::getPath));
-  }
-
-  private static @Nullable String stripNodeModulesPath(@Nullable String path) {
-    int index = path != null ? path.lastIndexOf(NODE_MODULES_SEGMENT) : -1;
-    return index >= 0 ? path.substring(0, index + 1) : null;
-  }
-
-  private static String renderFileName(@NotNull Angular2MetadataElement element) {
-    String name = element.getContainingFile().getVirtualFile().getPath();
-    int index = name.lastIndexOf(NODE_MODULES_SEGMENT);
-    if (index > 1) {
-      index = name.lastIndexOf("/", index - 1);
-      if (index > 0) {
-        return name.substring(index);
+    private fun retain(candidates: MultiMap<Angular2MetadataElement<*>, Angular2MetadataNodeModule>,
+                       nodeModules: Set<Angular2MetadataNodeModule>) {
+      val iterator = candidates.entrySet().iterator()
+      while (iterator.hasNext()) {
+        val (_, value) = iterator.next()
+        val listIterator = value.iterator()
+        while (listIterator.hasNext()) {
+          if (!nodeModules.contains(listIterator.next())) {
+            listIterator.remove()
+          }
+        }
+        if (value.isEmpty()) {
+          iterator.remove()
+        }
       }
     }
-    return name;
+
+    private fun getNodeModulesPath(element: Angular2MetadataElement<*>): String? {
+      return stripNodeModulesPath(element.containingFile.originalFile.virtualFile?.path)
+    }
+
+    private fun stripNodeModulesPath(path: String?): String? {
+      val index = path?.lastIndexOf(NODE_MODULES_SEGMENT) ?: -1
+      return if (index >= 0) path!!.substring(0, index + 1) else null
+    }
+
+    private fun renderFileName(element: Angular2MetadataElement<*>): String {
+      val name = element.containingFile.virtualFile.path
+      var index = name.lastIndexOf(NODE_MODULES_SEGMENT)
+      if (index > 1) {
+        index = name.lastIndexOf("/", index - 1)
+        if (index > 0) {
+          return name.substring(index)
+        }
+      }
+      return name
+    }
   }
 }

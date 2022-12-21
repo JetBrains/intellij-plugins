@@ -1,118 +1,102 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata.psi
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
-import com.intellij.psi.impl.PsiFileEx;
-import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.file.PsiBinaryFileImpl;
-import com.intellij.psi.impl.source.PsiFileWithStubSupport;
-import com.intellij.psi.impl.source.StubbedSpine;
-import com.intellij.psi.stubs.PsiFileStubImpl;
-import com.intellij.psi.stubs.StubTree;
-import com.intellij.psi.stubs.StubTreeLoader;
-import com.intellij.reference.SoftReference;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.metadata.MetadataJsonFileType;
-import org.angular2.lang.metadata.MetadataJsonLanguage;
-import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiInvalidElementAccessException
+import com.intellij.psi.impl.PsiFileEx
+import com.intellij.psi.impl.PsiManagerImpl
+import com.intellij.psi.impl.file.PsiBinaryFileImpl
+import com.intellij.psi.impl.source.PsiFileWithStubSupport
+import com.intellij.psi.impl.source.StubbedSpine
+import com.intellij.psi.stubs.PsiFileStubImpl
+import com.intellij.psi.stubs.StubTree
+import com.intellij.psi.stubs.StubTreeLoader
+import com.intellij.reference.SoftReference
+import org.angular2.lang.metadata.MetadataJsonFileType
+import org.angular2.lang.metadata.MetadataJsonLanguage
+import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
+import org.jetbrains.annotations.NonNls
 
-public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithStubSupport, PsiFileEx {
+class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileType: MetadataJsonFileType) : PsiBinaryFileImpl(
+  fileViewProvider.manager as PsiManagerImpl, fileViewProvider), PsiFileWithStubSupport, PsiFileEx {
 
-  @NonNls private static final Logger LOG = Logger.getInstance(MetadataFileImpl.class);
+  @Volatile
+  private var myStub: SoftReference<StubTree>? = null
+  private val myStubLock = Any()
 
-  private volatile SoftReference<StubTree> myStub;
-  private final Object myStubLock = new Object();
-
-  private final MetadataJsonFileType myFileType;
-
-  public MetadataFileImpl(FileViewProvider fileViewProvider, MetadataJsonFileType fileType) {
-    super((PsiManagerImpl)fileViewProvider.getManager(), fileViewProvider);
-    myFileType = fileType;
+  override fun getContainingFile(): PsiFile {
+    if (!isValid) throw PsiInvalidElementAccessException(this)
+    return this
   }
 
-  @Override
-  public PsiFile getContainingFile() {
-    if (!isValid()) throw new PsiInvalidElementAccessException(this);
-    return this;
+  override fun getLanguage(): Language {
+    return MetadataJsonLanguage.INSTANCE
   }
 
-  @Override
-  public @NotNull Language getLanguage() {
-    return MetadataJsonLanguage.INSTANCE;
+  override fun getChildren(): Array<PsiElement> {
+    val root = stubTree.root as MetadataFileStubImpl
+    return root.childrenStubs.map { it.psi }.toTypedArray<PsiElement>()
   }
 
-  @Override
-  public PsiElement @NotNull [] getChildren() {
-    MetadataFileStubImpl root = (MetadataFileStubImpl)getStubTree().getRoot();
-    return ContainerUtil.map2Array(root.getChildrenStubs(), PsiElement.class, s -> s.getPsi());
-  }
+  override fun getStubTree(): StubTree {
+    ApplicationManager.getApplication().assertReadAccessAllowed()
 
-  @Override
-  public @NotNull StubTree getStubTree() {
-    ApplicationManager.getApplication().assertReadAccessAllowed();
-
-    StubTree stubTree = SoftReference.dereference(myStub);
-    if (stubTree != null) return stubTree;
+    SoftReference.dereference(myStub)?.let { return it }
 
     // build newStub out of lock to avoid deadlock
-    StubTree newStubTree = (StubTree)StubTreeLoader.getInstance().readOrBuild(getProject(), getVirtualFile(), this);
+    var newStubTree = StubTreeLoader.getInstance().readOrBuild(project, virtualFile, this) as StubTree?
     if (newStubTree == null) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("No stub for class file in index: " + getVirtualFile().getPresentableUrl());
+      if (LOG.isDebugEnabled) {
+        LOG.debug("No stub for class file in index: " + virtualFile.presentableUrl)
       }
-      newStubTree = new StubTree(new MetadataFileStubImpl(this, myFileType.getFileElementType()));
+      newStubTree = StubTree(MetadataFileStubImpl(this, myFileType.fileElementType))
     }
 
-    synchronized (myStubLock) {
-      stubTree = SoftReference.dereference(myStub);
-      if (stubTree != null) return stubTree;
+    synchronized(myStubLock) {
+      SoftReference.dereference(myStub)?.let { return it }
 
-      stubTree = newStubTree;
+      val fileStub = newStubTree.root as PsiFileStubImpl<PsiFile>
+      fileStub.setPsi(this)
 
-      @SuppressWarnings("unchecked") PsiFileStubImpl<PsiFile> fileStub = (PsiFileStubImpl)stubTree.getRoot();
-      fileStub.setPsi(this);
-
-      myStub = new SoftReference<>(stubTree);
+      myStub = SoftReference(newStubTree)
+      return newStubTree
     }
-
-    return stubTree;
   }
 
-  @Override
-  public @NotNull StubbedSpine getStubbedSpine() {
-    return getStubTree().getSpine();
+  override fun getStubbedSpine(): StubbedSpine {
+    return stubTree.spine
   }
 
-  @Override
-  public boolean isContentsLoaded() {
-    return myStub != null;
+  override fun isContentsLoaded(): Boolean {
+    return myStub != null
   }
 
-  @Override
-  public void onContentReload() {
-    ApplicationManager.getApplication().assertWriteAccessAllowed();
+  override fun onContentReload() {
+    ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-    synchronized (myStubLock) {
-      StubTree stubTree = SoftReference.dereference(myStub);
-      myStub = null;
+    synchronized(myStubLock) {
+      val stubTree = SoftReference.dereference(myStub)
+      myStub = null
       if (stubTree != null) {
-        //noinspection HardCodedStringLiteral
-        ((PsiFileStubImpl<?>)stubTree.getRoot()).clearPsi("metadata onContentReload");
+
+        (stubTree.root as PsiFileStubImpl<*>).clearPsi("metadata onContentReload")
       }
     }
   }
 
-  @Override
   @NonNls
-  public String toString() {
-    return "MetadataFile:" + getName();
+  override fun toString(): String {
+    return "MetadataFile:$name"
+  }
+
+  companion object {
+
+    @NonNls
+    private val LOG = Logger.getInstance(MetadataFileImpl::class.java)
   }
 }

@@ -1,111 +1,103 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.StylesheetFile;
-import com.intellij.psi.impl.source.resolve.FileContextUtil;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import one.util.streamex.StreamEx;
-import org.angular2.index.Angular2IndexingHandler;
-import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.css.StylesheetFile
+import com.intellij.psi.impl.source.resolve.FileContextUtil
+import com.intellij.util.SmartList
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.findDecorator
+import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
+import org.angular2.index.Angular2IndexingHandler
+import org.angular2.index.Angular2IndexingHandler.Companion.resolveComponentsFromIndex
+import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.html.Angular2HtmlLanguage
+import java.util.Collections.emptyList
+import java.util.function.BiPredicate
 
-import java.util.List;
-import java.util.function.BiPredicate;
+object Angular2ComponentLocator {
 
-import static java.util.Collections.emptyList;
-import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.index.Angular2IndexingHandler.resolveComponentsFromIndex;
-
-public final class Angular2ComponentLocator {
-
-  public static @Nullable TypeScriptClass findComponentClass(@NotNull PsiElement templateContext) {
-    return ContainerUtil.getFirstItem(findComponentClasses(templateContext));
+  @JvmStatic
+  fun findComponentClass(templateContext: PsiElement): TypeScriptClass? {
+    return findComponentClasses(templateContext).firstOrNull()
   }
 
-  public static @NotNull List<@NotNull TypeScriptClass> findComponentClasses(@NotNull PsiElement templateContext) {
-    final PsiFile file = templateContext.getContainingFile();
-    if (file == null
-        || !(file.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
-             || file.getLanguage().is(Angular2Language.INSTANCE)
-             || isStylesheet(file))) {
-      return emptyList();
+  @JvmStatic
+  fun findComponentClasses(templateContext: PsiElement): List<TypeScriptClass> {
+    val file = templateContext.containingFile
+    if (file == null || !(file.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
+                          || file.language.`is`(Angular2Language.INSTANCE)
+                          || isStylesheet(file))) {
+      return emptyList()
     }
-    PsiFile hostFile = getHostFile(templateContext);
-    if (hostFile == null) {
-      return emptyList();
-    }
-    if (!file.getOriginalFile().equals(hostFile) && DialectDetector.isTypeScript(hostFile)) {
+    val hostFile = getHostFile(templateContext) ?: return emptyList()
+    if (file.originalFile != hostFile && DialectDetector.isTypeScript(hostFile)) {
       // inline content
-      return ContainerUtil.packNullables(getClassForDecoratorElement(
-        InjectedLanguageManager.getInstance(templateContext.getProject()).getInjectionHost(file.getOriginalFile())));
+      return listOfNotNull(getClassForDecoratorElement(
+        InjectedLanguageManager.getInstance(templateContext.project).getInjectionHost(file.originalFile))
+      )
     }
     // external content
-    List<TypeScriptClass> result = new SmartList<>(
-      StreamEx.of(Angular2FrameworkHandler.EP_NAME.getExtensionList())
-        .toFlatList(h -> h.findAdditionalComponentClasses(hostFile)));
+    val result = SmartList(Angular2FrameworkHandler.EP_NAME.extensionList.flatMap { h -> h.findAdditionalComponentClasses(hostFile) })
     if (result.isEmpty() || isStylesheet(file)) {
-      result.addAll(resolveComponentsFromSimilarFile(hostFile));
+      result.addAll(resolveComponentsFromSimilarFile(hostFile))
     }
     if (result.isEmpty() || isStylesheet(file)) {
-      result.addAll(resolveComponentsFromIndex(hostFile, dec -> hasFileReference(dec, hostFile)));
+      result.addAll(resolveComponentsFromIndex(hostFile) { dec -> hasFileReference(dec, hostFile) })
     }
-    return result;
+    return result
   }
 
-  public static @NotNull List<@NotNull TypeScriptClass> findComponentClassesInFile(
-    @NotNull PsiFile file, @Nullable BiPredicate<TypeScriptClass, ES6Decorator> filter) {
-    return StreamEx.of(JSStubBasedPsiTreeUtil.findDescendants(file, Angular2IndexingHandler.TS_CLASS_TOKENS))
-      .select(TypeScriptClass.class)
-      .filter(cls -> {
-        ES6Decorator dec = findDecorator(cls, COMPONENT_DEC);
-        return dec != null && (filter == null || filter.test(cls, dec));
-      })
-      .toList();
+  // External usages
+  @Suppress("unused")
+  @JvmStatic
+  fun findComponentClassesInFile(file: PsiFile, filter: BiPredicate<TypeScriptClass, ES6Decorator>?): List<TypeScriptClass> {
+    return JSStubBasedPsiTreeUtil.findDescendants<PsiElement>(file, Angular2IndexingHandler.TS_CLASS_TOKENS)
+      .filterIsInstance<TypeScriptClass>()
+      .filter {
+        val dec = findDecorator(it, COMPONENT_DEC)
+        dec != null && (filter == null || filter.test(it, dec))
+      }
   }
 
-  private static @NotNull List<TypeScriptClass> resolveComponentsFromSimilarFile(@NotNull PsiFile file) {
-    final String name = file.getViewProvider().getVirtualFile().getNameWithoutExtension();
-    final PsiDirectory dir = file.getParent();
-    if (dir == null) return emptyList();
-    for (String ext : TypeScriptUtil.TYPESCRIPT_EXTENSIONS_WITHOUT_DECLARATIONS) {
-      final PsiFile directiveFile = dir.findFile(name + ext);
+  private fun resolveComponentsFromSimilarFile(file: PsiFile): List<TypeScriptClass> {
+    val name = file.viewProvider.virtualFile.nameWithoutExtension
+    val dir = file.parent ?: return emptyList()
+    for (ext in TypeScriptUtil.TYPESCRIPT_EXTENSIONS_WITHOUT_DECLARATIONS) {
+      val directiveFile = dir.findFile(name + ext)
 
       if (directiveFile != null) {
-        return findComponentClassesInFile(directiveFile, (cls, dec) -> hasFileReference(dec, file));
+        return findComponentClassesInFile(directiveFile) { _, dec -> hasFileReference(dec, file) }
       }
     }
-    
-    return emptyList();
+
+    return emptyList()
   }
 
-  private static boolean hasFileReference(@Nullable ES6Decorator componentDecorator, @NotNull PsiFile file) {
-    Angular2Component component = Angular2EntitiesProvider.getComponent(componentDecorator);
-    if (component != null) {
-      return isStylesheet(file) ? component.getCssFiles().contains(file) : file.equals(component.getTemplateFile());
+  private fun hasFileReference(componentDecorator: ES6Decorator?, file: PsiFile): Boolean {
+    val component = Angular2EntitiesProvider.getComponent(componentDecorator)
+    return if (component != null) {
+      if (isStylesheet(file)) component.cssFiles.contains(file) else file == component.templateFile
     }
-    return false;
+    else false
   }
 
-  public static boolean isStylesheet(@NotNull PsiFile file) {
-    return file instanceof StylesheetFile;
+  @JvmStatic
+  fun isStylesheet(file: PsiFile): Boolean {
+    return file is StylesheetFile
   }
 
-  private static @Nullable PsiFile getHostFile(@NotNull PsiElement context) {
-    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
-    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
-    return hostFile != null ? hostFile.getOriginalFile() : null;
+  private fun getHostFile(context: PsiElement): PsiFile? {
+    val original = CompletionUtil.getOriginalOrSelf(context)
+    val hostFile = FileContextUtil.getContextFile(if (original !== context) original else context.containingFile.originalFile)
+    return hostFile?.originalFile
   }
 }

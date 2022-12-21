@@ -1,55 +1,39 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.model.Pointer;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.model.Pointer
+import com.intellij.psi.PsiFile
+import org.angular2.entities.Angular2EntityUtils.forEachEntity
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
 
-import static org.angular2.entities.Angular2EntityUtils.forEachEntity;
+  val templateFile: PsiFile?
 
-public interface Angular2Component extends Angular2Directive, Angular2ImportsOwner {
+  val cssFiles: List<PsiFile>
 
-  @Override
-  @NotNull Pointer<? extends Angular2Component> createPointer();
+  val ngContentSelectors: List<Angular2DirectiveSelector>
 
-  @Nullable
-  PsiFile getTemplateFile();
+  override val isComponent: Boolean
+    get() = true
 
-  @NotNull
-  List<PsiFile> getCssFiles();
-
-  @NotNull
-  List<Angular2DirectiveSelector> getNgContentSelectors();
-
-  @Override
-  default boolean isComponent() {
-    return true;
-  }
-
-  @Override
-  @NotNull
-  default Set<Angular2Entity> getImports() {
-    return Set.of();
-  }
+  override val imports: Set<Angular2Entity>
+    get() = emptySet()
 
   /**
-   * @see Angular2Module#getDeclarationsInScope()
+   * @see Angular2Module.declarationsInScope
    */
-  default @NotNull Set<Angular2Declaration> getDeclarationsInScope() {
-    Set<Angular2Declaration> result = new HashSet<>();
-    result.add(this); // for self-reference
-    forEachEntity(
-      getImports(),
-      module -> result.addAll(module.getAllExportedDeclarations()),
-      declaration -> {
-        if (declaration.isStandalone()) result.add(declaration);
-      }
-    );
-    return result;
-  }
+  // for self-reference
+  val declarationsInScope: Set<Angular2Declaration>
+    get() {
+      val result = HashSet<Angular2Declaration>()
+      result.add(this)
+      forEachEntity(
+        imports,
+        { module -> result.addAll(module.allExportedDeclarations) },
+        { declaration -> if (declaration.isStandalone) result.add(declaration) }
+      )
+      return result
+    }
+
+  override fun createPointer(): Pointer<out Angular2Component>
 }

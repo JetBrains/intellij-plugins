@@ -1,197 +1,184 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.editor;
+package org.angular2.editor
 
-import com.intellij.lang.Language;
-import com.intellij.lang.css.CSSLanguage;
-import com.intellij.lang.injection.MultiHostInjector;
-import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lang.javascript.JSInjectionBracesUtil;
-import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil;
-import com.intellij.lang.javascript.injections.JSInjectionUtil;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlText;
-import com.intellij.util.NullableFunction;
-import org.angular2.cli.config.AngularConfig;
-import org.angular2.cli.config.AngularConfigProvider;
-import org.angular2.cli.config.AngularProject;
-import org.angular2.lang.Angular2LangUtil;
-import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.Language
+import com.intellij.lang.css.CSSLanguage
+import com.intellij.lang.injection.MultiHostInjector
+import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.lang.javascript.JSInjectionBracesUtil
+import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil
+import com.intellij.lang.javascript.injections.JSInjectionUtil
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlText
+import com.intellij.util.NullableFunction
+import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.VIEW_DEC
+import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.cli.config.AngularConfigProvider
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.ACTION
+import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.BINDING
+import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.INTERPOLATION
+import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.SIMPLE_BINDING
+import org.angular2.lang.expr.parser.Angular2PsiParser.Companion.TEMPLATE_BINDINGS
+import org.angular2.lang.html.Angular2HtmlLanguage
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
-
-public class Angular2Injector implements MultiHostInjector {
-  static final class Holder {
-    static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
-      .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
-                         (project, key) -> /* no support for custom delimiters*/ null);
+class Angular2Injector : MultiHostInjector {
+  internal object Holder {
+    val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil
+      .delimitersFactory(Angular2HtmlLanguage.INSTANCE.displayName) { _, _ -> null }/* no support for custom delimiters*/
   }
 
-  @Override
-  public @NotNull List<Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(JSLiteralExpression.class, XmlText.class);
+  override fun elementsToInjectIn(): List<Class<out PsiElement>> {
+    return listOf(JSLiteralExpression::class.java, XmlText::class.java)
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
-  @Override
-  public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    final PsiElement parent = context.getParent();
+  override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
+    val parent = context.parent
     if (parent == null
-        || parent.getLanguage().is(Angular2Language.INSTANCE)
-        || parent.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
+        || parent.language.`is`(Angular2Language.INSTANCE)
+        || parent.language.isKindOf(Angular2HtmlLanguage.INSTANCE)
         || !Angular2LangUtil.isAngular2Context(context)) {
-      return;
+      return
     }
 
-    if (context instanceof XmlText) {
-      injectInterpolations(registrar, context);
-      return;
+    if (context is XmlText) {
+      injectInterpolations(registrar, context)
+      return
     }
 
-    if (!(context instanceof JSLiteralExpression && ((JSLiteralExpression)context).isQuotedLiteral())) {
-      return;
+    if (!(context is JSLiteralExpression && context.isQuotedLiteral)) {
+      return
     }
-
-    JSLiteralExpression literalExpression = (JSLiteralExpression)context;
 
     if (isPropertyWithName(parent, "template")) {
-      injectIntoDecoratorExpr(registrar, literalExpression, parent, Angular2HtmlLanguage.INSTANCE, null);
-      return;
+      injectIntoDecoratorExpr(registrar, context, parent, Angular2HtmlLanguage.INSTANCE, null)
+      return
     }
 
-    PsiElement grandParent = parent.getParent();
-    if (parent instanceof JSArrayLiteralExpression && isPropertyWithName(grandParent, "styles")) {
-      injectIntoDecoratorExpr(registrar, literalExpression, grandParent, getCssDialect(literalExpression), null);
-      return;
+    val grandParent = parent.parent
+    if (parent is JSArrayLiteralExpression && isPropertyWithName(grandParent, "styles")) {
+      injectIntoDecoratorExpr(registrar, context, grandParent, getCssDialect(context), null)
+      return
     }
 
-    if (injectIntoEmbeddedLiteral(registrar, literalExpression, parent)) {
-      return;
+    if (injectIntoEmbeddedLiteral(registrar, context, parent)) {
+      return
     }
 
-    if (parent instanceof JSProperty && parent.getParent() instanceof JSObjectLiteralExpression) {
-      final String name = ((JSProperty)parent).getName();
-      final String fileExtension;
-      if (name != null && (fileExtension = getExpressionFileExtension(literalExpression.getTextLength(), name, true)) != null) {
-        PsiElement ancestor = parent.getParent().getParent();
-        if (isPropertyWithName(ancestor, "host")) {
-          injectIntoDecoratorExpr(registrar, literalExpression, ancestor, Angular2Language.INSTANCE, fileExtension);
-        }
+    if (parent is JSProperty && parent.parent is JSObjectLiteralExpression) {
+      val name = parent.name
+                 ?: return
+      val fileExtension = getExpressionFileExtension(context.textLength, name, true)
+                          ?: return
+      val ancestor = parent.parent.parent
+      if (isPropertyWithName(ancestor, "host")) {
+        injectIntoDecoratorExpr(registrar, context, ancestor, Angular2Language.INSTANCE, fileExtension)
       }
     }
   }
 
-  @NotNull
-  private static Language getCssDialect(@NotNull JSLiteralExpression literalExpression) {
-    PsiFile file = literalExpression.getContainingFile().getOriginalFile();
+  private fun getCssDialect(literalExpression: JSLiteralExpression): Language {
+    val file = literalExpression.containingFile.originalFile
 
-    return CachedValuesManager.getCachedValue(file, () -> {
-      AngularConfig angularConfig = AngularConfigProvider.getAngularConfig(file.getProject(), file.getVirtualFile());
+    return CachedValuesManager.getCachedValue(file) {
+      val angularConfig = AngularConfigProvider.getAngularConfig(file.project, file.virtualFile)
 
       if (angularConfig == null) {
-        return CachedValueProvider.Result.create(CSSLanguage.INSTANCE, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
+        return@getCachedValue create<Language>(CSSLanguage.INSTANCE, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
 
-      Language cssDialect = CSSLanguage.INSTANCE;
-      AngularProject angularProject = angularConfig.getProject(file.getVirtualFile());
+      var cssDialect: Language = CSSLanguage.INSTANCE
+      val angularProject = angularConfig.getProject(file.virtualFile)
       if (angularProject != null) {
-        Language projectCssDialect = angularProject.getInlineStyleLanguage();
+        val projectCssDialect = angularProject.inlineStyleLanguage
         if (projectCssDialect != null) {
-          cssDialect = projectCssDialect;
+          cssDialect = projectCssDialect
         }
       }
-      return CachedValueProvider.Result.create(cssDialect, angularConfig.getAngularJsonFile(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
-    });
-  }
-  private static boolean injectIntoEmbeddedLiteral(@NotNull MultiHostRegistrar registrar,
-                                                   @NotNull JSLiteralExpression context,
-                                                   @NotNull PsiElement parent) {
-    if (parent instanceof JSEmbeddedContent) {
-      final XmlAttribute attribute = PsiTreeUtil.getParentOfType(parent, XmlAttribute.class);
-      final String expressionType;
-      if (attribute != null) {
-        if ((expressionType = getExpressionFileExtension(context.getTextLength(), attribute.getName(), false)) != null) {
-          inject(registrar, context, Angular2Language.INSTANCE, expressionType);
-        }
-        else {
-          injectInterpolations(registrar, context);
-        }
-        return true;
-      }
+      create(cssDialect, angularConfig.angularJsonFile, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }
-    return false;
   }
 
-  private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    final Pair<String, String> braces = Holder.BRACES_FACTORY.fun(context);
-    if (braces == null) return;
+  private fun injectIntoEmbeddedLiteral(registrar: MultiHostRegistrar,
+                                        context: JSLiteralExpression,
+                                        parent: PsiElement): Boolean {
+    val attribute = parent.asSafely<JSEmbeddedContent>()
+                      ?.let { PsiTreeUtil.getParentOfType(it, XmlAttribute::class.java) }
+                    ?: return false
+    val expressionType: String? = getExpressionFileExtension(context.textLength, attribute.name, false)
+    if (expressionType != null) {
+      inject(registrar, context, Angular2Language.INSTANCE, expressionType)
+    }
+    else {
+      injectInterpolations(registrar, context)
+    }
+    return true
+  }
+
+  private fun injectInterpolations(registrar: MultiHostRegistrar, context: PsiElement) {
+    val braces = Holder.BRACES_FACTORY.`fun`(context) ?: return
     JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language.INSTANCE,
-                                                      braces.first, braces.second, INTERPOLATION);
+                                                      braces.first, braces.second, INTERPOLATION)
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
-  private static @Nullable String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
+  private fun getExpressionFileExtension(valueLength: Int, attributeName: String, hostBinding: Boolean): String? {
     if (valueLength == 0) {
-      return null;
+      return null
     }
-    if (!hostBinding) {
-      attributeName = Angular2AttributeNameParser.normalizeAttributeName(attributeName);
+    val normalized = if (!hostBinding)
+      Angular2AttributeNameParser.normalizeAttributeName(attributeName)
+    else attributeName
+    return when {
+      normalized.startsWith("(") && normalized.endsWith(")") || !hostBinding && normalized.startsWith("on-") -> {
+        ACTION
+      }
+      normalized.startsWith("[") && normalized.endsWith("]") -> {
+        if (hostBinding) SIMPLE_BINDING else BINDING
+      }
+      !hostBinding && (normalized.startsWith("bind-") || normalized.startsWith("bindon-")) -> {
+        BINDING
+      }
+      !hostBinding && normalized.startsWith("*") -> {
+        normalized.substring(1) + "." + TEMPLATE_BINDINGS
+      }
+      else -> null
     }
-    if ((attributeName.startsWith("(") && attributeName.endsWith(")"))
-        || (!hostBinding && attributeName.startsWith("on-"))) {
-      return ACTION;
-    }
-    if ((attributeName.startsWith("[") && attributeName.endsWith("]"))) {
-      return hostBinding ? SIMPLE_BINDING : BINDING;
-    }
-    if (!hostBinding
-        && (attributeName.startsWith("bind-") || attributeName.startsWith("bindon-"))) {
-      return BINDING;
-    }
-    if (!hostBinding && attributeName.startsWith("*")) {
-      return attributeName.substring(1) + "." + TEMPLATE_BINDINGS;
-    }
-    return null;
   }
 
-  private static void injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
-                                              @NotNull JSLiteralExpression context,
-                                              @NotNull PsiElement ancestor,
-                                              @NotNull Language language,
-                                              @Nullable String fileExtension) {
-    final ES6Decorator decorator = PsiTreeUtil.getContextOfType(ancestor, ES6Decorator.class);
+  private fun injectIntoDecoratorExpr(registrar: MultiHostRegistrar,
+                                      context: JSLiteralExpression,
+                                      ancestor: PsiElement,
+                                      language: Language,
+                                      fileExtension: String?) {
+    val decorator = PsiTreeUtil.getContextOfType(ancestor, ES6Decorator::class.java)
     if (decorator != null) {
       if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC)) {
-        inject(registrar, context, language, fileExtension);
-        JSFormattableInjectionUtil.setReformattableInjection(context, language);
+        inject(registrar, context, language, fileExtension)
+        JSFormattableInjectionUtil.setReformattableInjection(context, language)
       }
     }
   }
 
 
-  private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull JSLiteralExpression context, @NotNull Language language,
-                             @Nullable String extension) {
-    JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null);
+  private fun inject(registrar: MultiHostRegistrar, context: JSLiteralExpression, language: Language,
+                     extension: String?) {
+    JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null)
   }
 
-  private static boolean isPropertyWithName(PsiElement element, String requiredName) {
-    return element instanceof JSProperty && Objects.equals(((JSProperty)element).getName(), requiredName);
+  private fun isPropertyWithName(element: PsiElement, requiredName: String): Boolean {
+    return element is JSProperty && element.name == requiredName
   }
 }

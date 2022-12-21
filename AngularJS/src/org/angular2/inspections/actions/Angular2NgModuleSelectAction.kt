@@ -1,59 +1,40 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections.actions;
+package org.angular2.inspections.actions
 
-import com.intellij.lang.javascript.modules.imports.JSImportAction;
-import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
-import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.modules.imports.ES6ImportExecutorFactory.FACTORY
+import com.intellij.lang.javascript.modules.imports.JSImportAction
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate
+import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.NlsContexts
+import com.intellij.psi.PsiElement
 
-import java.util.List;
+open class Angular2NgModuleSelectAction(editor: Editor?,
+                                        context: PsiElement,
+                                        name: String,
+                                        private val myActionName: @NlsContexts.Command String,
+                                        protected val myCodeCompletion: Boolean) : JSImportAction(editor, context, name) {
 
-import static com.intellij.lang.javascript.modules.imports.ES6ImportExecutorFactory.FACTORY;
-
-public class Angular2NgModuleSelectAction extends JSImportAction {
-
-  private final @NotNull @NlsContexts.Command String myActionName;
-  protected final boolean myCodeCompletion;
-
-  public Angular2NgModuleSelectAction(@Nullable Editor editor,
-                                      @NotNull PsiElement context,
-                                      @NotNull String name,
-                                      @NotNull @NlsContexts.Command String actionName,
-                                      boolean codeCompletion) {
-    super(editor, context, name);
-    myActionName = actionName;
-    myCodeCompletion = codeCompletion;
+  override fun filterAndSort(candidates: List<JSImportCandidate>,
+                             place: PsiElement): List<JSImportCandidateWithExecutor> {
+    return filter(candidates).map { JSImportCandidateWithExecutor(it, FACTORY.createExecutor(place)) }
   }
 
-  @Override
-  protected @NotNull List<JSImportCandidateWithExecutor> filterAndSort(@NotNull List<? extends JSImportCandidate> candidates,
-                                                                       @NotNull PsiElement place) {
-    return ContainerUtil.map(filter(candidates), el -> new JSImportCandidateWithExecutor(el, FACTORY.createExecutor(place)));
+  override fun getName(): String {
+    return myActionName
   }
 
-  @Override
-  public @NotNull String getName() {
-    return myActionName;
+  override fun getDebugNameForElement(element: JSImportCandidateWithExecutor): String {
+    val psiElement = element.element
+    if (psiElement !is JSElement) return super.getDebugNameForElement(element)
+    val candidate = element.candidate
+    val text = candidate.containerText
+
+    return psiElement.name + " - " + text
   }
 
-  @Override
-  protected @NotNull String getDebugNameForElement(@NotNull JSImportCandidateWithExecutor element) {
-    PsiElement psiElement = element.getElement();
-    if (!(psiElement instanceof JSElement)) return super.getDebugNameForElement(element);
-    JSImportCandidate candidate = element.getCandidate();
-    String text = candidate.getContainerText();
-
-    return ((JSElement)psiElement).getName() + " - " + text;
-  }
-
-  @Override
-  protected boolean shouldShowPopup(@NotNull List<JSImportCandidateWithExecutor> candidates) {
-    return myCodeCompletion || super.shouldShowPopup(candidates);
+  override fun shouldShowPopup(candidates: List<JSImportCandidateWithExecutor>): Boolean {
+    return myCodeCompletion || super.shouldShowPopup(candidates)
   }
 }

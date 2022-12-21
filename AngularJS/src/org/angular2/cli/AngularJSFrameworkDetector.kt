@@ -1,146 +1,117 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.cli;
+package org.angular2.cli
 
-import com.intellij.framework.FrameworkType;
-import com.intellij.framework.detection.DetectedFrameworkDescription;
-import com.intellij.framework.detection.FileContentPattern;
-import com.intellij.framework.detection.FrameworkDetectionContext;
-import com.intellij.framework.detection.FrameworkDetector;
-import com.intellij.ide.projectView.actions.MarkRootActionBase;
-import com.intellij.json.JsonFileType;
-import com.intellij.lang.javascript.library.JSLibraryUtil;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.StandardPatterns;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileContent;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import com.intellij.framework.FrameworkType
+import com.intellij.framework.detection.DetectedFrameworkDescription
+import com.intellij.framework.detection.FileContentPattern
+import com.intellij.framework.detection.FrameworkDetectionContext
+import com.intellij.framework.detection.FrameworkDetector
+import com.intellij.ide.projectView.actions.MarkRootActionBase
+import com.intellij.json.JsonFileType
+import com.intellij.lang.javascript.library.JSLibraryUtil
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModifiableModelsProvider
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ui.configuration.ModulesProvider
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.patterns.ElementPattern
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.StandardPatterns
+import com.intellij.util.ProcessingContext
+import com.intellij.util.indexing.FileContent
+import org.angular2.lang.Angular2Bundle
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSFrameworkDetector extends FrameworkDetector {
-  protected AngularJSFrameworkDetector() {
-    super(AngularJSFramework.ID);
+class AngularJSFrameworkDetector : FrameworkDetector(AngularJSFramework.ID) {
+
+  override fun getFileType(): FileType {
+    return JsonFileType.INSTANCE
   }
 
-  @Override
-  public @NotNull FileType getFileType() {
-    return JsonFileType.INSTANCE;
-  }
-
-  @Override
-  public @NotNull ElementPattern<FileContent> createSuitableFilePattern() {
+  override fun createSuitableFilePattern(): ElementPattern<FileContent> {
     return FileContentPattern.fileContent().withName(
-      StandardPatterns.string().with(new PatternCondition<>("cli-json-name") {
-        @Override
-        public boolean accepts(@NotNull String s, ProcessingContext context) {
-          return AngularCliUtil.isAngularJsonFile(s);
+      StandardPatterns.string().with(object : PatternCondition<String>("cli-json-name") {
+        override fun accepts(s: String, context: ProcessingContext): Boolean {
+          return AngularCliUtil.isAngularJsonFile(s)
         }
       })
-    ).with(new PatternCondition<>("notLibrary") {
-      @Override
-      public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
-        return !JSLibraryUtil.isProbableLibraryFile(content.getFile());
+    ).with(object : PatternCondition<FileContent>("notLibrary") {
+      override fun accepts(content: FileContent, context: ProcessingContext): Boolean {
+        return !JSLibraryUtil.isProbableLibraryFile(content.file)
       }
-    });
+    })
   }
 
-  @Override
-  public List<? extends DetectedFrameworkDescription> detect(@NotNull Collection<? extends VirtualFile> newFiles,
-                                                             @NotNull FrameworkDetectionContext context) {
-    if (newFiles.size() > 0 && !isConfigured(newFiles, context.getProject())) {
-      return Collections.singletonList(new AngularCLIFrameworkDescription(newFiles));
+  override fun detect(newFiles: Collection<VirtualFile>,
+                      context: FrameworkDetectionContext): List<DetectedFrameworkDescription> {
+    return if (newFiles.isNotEmpty() && !isConfigured(newFiles, context.project)) {
+      listOf(AngularCLIFrameworkDescription(newFiles))
     }
-    return Collections.emptyList();
+    else emptyList()
   }
 
-  private static boolean isConfigured(Collection<? extends VirtualFile> files, Project project) {
-    if (project == null) return false;
+  private fun isConfigured(files: Collection<VirtualFile>, project: Project?): Boolean {
+    if (project == null) return false
 
-    for (VirtualFile file : files) {
-      Module module = ModuleUtilCore.findModuleForFile(file, project);
+    for (file in files) {
+      val module = ModuleUtilCore.findModuleForFile(file, project)
       if (module != null) {
-        for (String root : ModuleRootManager.getInstance(module).getExcludeRootUrls()) {
-          //noinspection HardCodedStringLiteral
-          if (root.equals(file.getParent().getUrl() + "/tmp")) {
-            return true;
+        for (root in ModuleRootManager.getInstance(module).excludeRootUrls) {
+
+          if (root == file.parent.url + "/tmp") {
+            return true
           }
         }
       }
     }
-    return false;
+    return false
   }
 
-  @Override
-  public @NotNull FrameworkType getFrameworkType() {
-    return AngularJSFramework.INSTANCE;
+  override fun getFrameworkType(): FrameworkType {
+    return AngularJSFramework.INSTANCE
   }
 
-  private class AngularCLIFrameworkDescription extends DetectedFrameworkDescription {
-    private final Collection<? extends VirtualFile> myNewFiles;
+  private inner class AngularCLIFrameworkDescription constructor(private val myNewFiles: Collection<VirtualFile>) : DetectedFrameworkDescription() {
 
-    AngularCLIFrameworkDescription(Collection<? extends VirtualFile> newFiles) {
-      myNewFiles = newFiles;
+    override fun getRelatedFiles(): Collection<VirtualFile> {
+      return myNewFiles
     }
 
-    @Override
-    public @NotNull Collection<? extends VirtualFile> getRelatedFiles() {
-      return myNewFiles;
+    override fun getSetupText(): String {
+      return Angular2Bundle.message("angular.description.angular-cli")
     }
 
-    @Override
-    public @NotNull String getSetupText() {
-      return Angular2Bundle.message("angular.description.angular-cli");
+    override fun getDetector(): FrameworkDetector {
+      return this@AngularJSFrameworkDetector
     }
 
-    @Override
-    public @NotNull FrameworkDetector getDetector() {
-      return AngularJSFrameworkDetector.this;
-    }
-
-    @Override
-    public void setupFramework(@NotNull ModifiableModelsProvider modifiableModelsProvider, @NotNull ModulesProvider modulesProvider) {
-      for (Module module : modulesProvider.getModules()) {
-        ModifiableRootModel model = modifiableModelsProvider.getModuleModifiableModel(module);
-        VirtualFile item = ContainerUtil.getFirstItem(myNewFiles);
-        ContentEntry entry = item != null ? MarkRootActionBase.findContentEntry(model, item) : null;
+    override fun setupFramework(modifiableModelsProvider: ModifiableModelsProvider, modulesProvider: ModulesProvider) {
+      for (module in modulesProvider.modules) {
+        val model = modifiableModelsProvider.getModuleModifiableModel(module)
+        val item = myNewFiles.firstOrNull()
+        val entry = if (item != null) MarkRootActionBase.findContentEntry(model, item) else null
         if (entry == null) {
-          modifiableModelsProvider.disposeModuleModifiableModel(model);
-          continue;
+          modifiableModelsProvider.disposeModuleModifiableModel(model)
+          continue
         }
-        AngularJSProjectConfigurator.excludeDefault(item.getParent(), entry);
-        modifiableModelsProvider.commitModuleModifiableModel(model);
-        for (VirtualFile vf : myNewFiles) {
-          AngularCliUtil.createRunConfigurations(module.getProject(), vf.getParent());
+        AngularJSProjectConfigurator.excludeDefault(item!!.parent, entry)
+        modifiableModelsProvider.commitModuleModifiableModel(model)
+        for (vf in myNewFiles) {
+          AngularCliUtil.createRunConfigurations(module.project, vf.parent)
         }
       }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      return obj instanceof AngularCLIFrameworkDescription && myNewFiles.equals(((AngularCLIFrameworkDescription)obj).myNewFiles);
+    override fun equals(other: Any?): Boolean {
+      return other is AngularCLIFrameworkDescription && myNewFiles == other.myNewFiles
     }
 
-    @Override
-    public int hashCode() {
-      return myNewFiles.hashCode();
+    override fun hashCode(): Int {
+      return myNewFiles.hashCode()
     }
   }
 }

@@ -1,50 +1,32 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.expr.psi.impl;
+package org.angular2.lang.expr.psi.impl
 
-import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.impl.JSElementImpl;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtil;
-import org.angular2.lang.expr.parser.Angular2ElementTypes;
-import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.impl.JSElementImpl
+import com.intellij.psi.tree.IElementType
+import com.intellij.util.ArrayUtil
+import org.angular2.lang.expr.parser.Angular2ElementTypes
+import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
+class Angular2PipeLeftSideArgumentImpl(elementType: IElementType?) : JSElementImpl(elementType), Angular2PipeLeftSideArgument {
+  val pipeLeftSideExpression: JSExpression?
+    get() = findChildByType(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS)
+      ?.getPsi(JSExpression::class.java)
 
-public class Angular2PipeLeftSideArgumentImpl extends JSElementImpl implements Angular2PipeLeftSideArgument {
-
-  public Angular2PipeLeftSideArgumentImpl(IElementType elementType) {
-    super(elementType);
+  override fun getArguments(): Array<JSExpression> {
+    val leftExpr = pipeLeftSideExpression ?: return JSExpression.EMPTY_ARRAY
+    val mainArgsList = pipeRightSideExpressions
+    return if (mainArgsList == null) arrayOf(leftExpr) else ArrayUtil.prepend(leftExpr, mainArgsList)
   }
 
-  @Nullable
-  JSExpression getPipeLeftSideExpression() {
-    return doIfNotNull(findChildByType(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS),
-                       node -> node.getPsi(JSExpression.class));
-  }
+  private val pipeRightSideExpressions: Array<JSExpression>?
+    get() = (parent as Angular2PipeExpressionImpl)
+      .findChildByType(Angular2ElementTypes.PIPE_ARGUMENTS_LIST)
+      ?.getPsi(Angular2PipeArgumentsListImpl::class.java)
+      ?.pipeRightSideExpressions
 
-  @Override
-  public JSExpression @NotNull [] getArguments() {
-    JSExpression leftExpr = getPipeLeftSideExpression();
-    if (leftExpr == null) {
-      return JSExpression.EMPTY_ARRAY;
-    }
-    JSExpression[] mainArgsList = getPipeRightSideExpressions();
-    return mainArgsList == null ? new JSExpression[]{leftExpr}
-                                : ArrayUtil.prepend(leftExpr, mainArgsList);
-  }
-
-  private JSExpression @Nullable [] getPipeRightSideExpressions() {
-    return doIfNotNull(((Angular2PipeExpressionImpl)getParent())
-                         .findChildByType(Angular2ElementTypes.PIPE_ARGUMENTS_LIST),
-                       node -> doIfNotNull(node.getPsi(Angular2PipeArgumentsListImpl.class),
-                                           Angular2PipeArgumentsListImpl::getPipeRightSideExpressions));
-  }
-
-  @Override
-  public boolean hasSpreadElement() {
-    return false;
+  override fun hasSpreadElement(): Boolean {
+    return false
   }
 }

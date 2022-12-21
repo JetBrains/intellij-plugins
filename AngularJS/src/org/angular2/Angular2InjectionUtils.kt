@@ -1,70 +1,63 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2;
+package org.angular2
 
-import com.intellij.injected.editor.EditorWindow;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.injected.editor.EditorWindow
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.project.DumbService
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression
 
-import java.util.List;
+object Angular2InjectionUtils {
 
-public final class Angular2InjectionUtils {
-
-  public static PsiFile getFirstInjectedFile(@Nullable PsiElement element) {
+  @JvmStatic
+  fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
     if (element != null) {
-      List<Pair<PsiElement, TextRange>> injections =
-        InjectedLanguageManager.getInstance(element.getProject()).getInjectedPsiFiles(element);
+      val injections = InjectedLanguageManager.getInstance(element.project).getInjectedPsiFiles(element)
       if (injections != null) {
-        for (Pair<PsiElement, TextRange> injection : injections) {
-          if (injection.getFirst() instanceof PsiFile) {
-            return (PsiFile)injection.getFirst();
+        for (injection in injections) {
+          if (injection.getFirst() is PsiFile) {
+            return injection.getFirst() as PsiFile
           }
         }
       }
     }
-    return null;
+    return null
   }
 
-  public static @Nullable PsiElement getElementAtCaretFromContext(@NotNull DataContext context) {
-    Editor editor = context.getData(CommonDataKeys.EDITOR);
-    PsiFile file = context.getData(CommonDataKeys.PSI_FILE);
-    Project project = context.getData(CommonDataKeys.PROJECT);
+  @JvmStatic
+  fun getElementAtCaretFromContext(context: DataContext): PsiElement? {
+    val editor = context.getData(CommonDataKeys.EDITOR)
+    val file = context.getData(CommonDataKeys.PSI_FILE)
+    val project = context.getData(CommonDataKeys.PROJECT)
     if (editor == null || project == null
         || file == null || DumbService.isDumb(project)) {
-      return null;
+      return null
     }
-    int caretOffset = editor.getCaretModel().getOffset();
-    if (!(editor instanceof EditorWindow)) {
-      PsiElement injected = InjectedLanguageManager.getInstance(project)
-        .findInjectedElementAt(file, caretOffset);
-      if (injected != null && injected.isValid()) {
-        return injected;
+    val caretOffset = editor.caretModel.offset
+    if (editor !is EditorWindow) {
+      val injected = InjectedLanguageManager.getInstance(project)
+        .findInjectedElementAt(file, caretOffset)
+      if (injected != null && injected.isValid) {
+        return injected
       }
     }
-    return file.findElementAt(caretOffset);
+    return file.findElementAt(caretOffset)
   }
 
-  public static @Nullable <T extends Angular2EmbeddedExpression> T findInjectedAngularExpression(@NotNull XmlAttribute attribute,
-                                                                                                 @NotNull Class<T> expressionClass) {
-    XmlAttributeValue value = attribute.getValueElement();
-    if (value != null && value.getTextLength() >= 2) {
-      PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(
-        value.getContainingFile(), value.getTextOffset() + 1);
-      return PsiTreeUtil.getParentOfType(injection, expressionClass);
+  @JvmStatic
+  fun <T : Angular2EmbeddedExpression> findInjectedAngularExpression(attribute: XmlAttribute,
+                                                                     expressionClass: Class<T>): T? {
+    val value = attribute.valueElement
+    if (value != null && value.textLength >= 2) {
+      val injection = InjectedLanguageManager.getInstance(attribute.project).findInjectedElementAt(
+        value.containingFile, value.textOffset + 1)
+      return PsiTreeUtil.getParentOfType(injection, expressionClass)
     }
-    return null;
+    return null
   }
 }

@@ -1,197 +1,193 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.cli;
+package org.angular2.cli
 
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.javascript.JSRunConfigurationBuilder;
-import com.intellij.javascript.nodejs.CompletionModuleInfo;
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.NodePackageVersion;
-import com.intellij.javascript.nodejs.NodePackageVersionUtil;
-import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction;
-import com.intellij.lang.javascript.JSStringUtil;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroupManager;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.text.SemVer;
-import one.util.streamex.StreamEx;
-import org.angular2.cli.config.AngularConfig;
-import org.angular2.cli.config.AngularConfigProvider;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.RunManager
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.javascript.JSRunConfigurationBuilder
+import com.intellij.javascript.nodejs.CompletionModuleInfo
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.javascript.nodejs.NodePackageVersionUtil
+import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction
+import com.intellij.lang.javascript.JSStringUtil
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.text.SemVer
+import org.angular2.cli.config.AngularConfig
+import org.angular2.cli.config.AngularConfigProvider
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+object AngularCliUtil {
+  private const val NOTIFICATION_GROUP_ID = "Angular CLI"
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
+  @NonNls
+  private val ANGULAR_JSON_NAMES = listOf("angular.json", ".angular-cli.json", "angular-cli.json")
 
-public final class AngularCliUtil {
-  private static final String NOTIFICATION_GROUP_ID = "Angular CLI";
+  @NonNls
+  private val NG_CLI_DEFAULT_ADDRESS = "http://localhost:4200"
 
-  @NonNls private static final List<String> ANGULAR_JSON_NAMES = List.of("angular.json", ".angular-cli.json", "angular-cli.json");
-  @NonNls private static final String NG_CLI_DEFAULT_ADDRESS = "http://localhost:4200";
-
-
-  public static @Nullable VirtualFile findCliJson(@Nullable VirtualFile dir) {
-    if (dir == null || !dir.isValid()) return null;
-    for (String name : ANGULAR_JSON_NAMES) {
-      VirtualFile cliJson = dir.findChild(name);
+  @JvmStatic
+  fun findCliJson(dir: VirtualFile?): VirtualFile? {
+    if (dir == null || !dir.isValid) return null
+    for (name in ANGULAR_JSON_NAMES) {
+      val cliJson = dir.findChild(name)
       if (cliJson != null) {
-        return cliJson;
+        return cliJson
       }
     }
-    return null;
+    return null
   }
 
   /**
    * Locates folder in which angular.json from which user would run Angular CLI
    */
-  public static @Nullable VirtualFile findAngularCliFolder(@NotNull Project project, @Nullable VirtualFile file) {
-    VirtualFile current = file;
+  @JvmStatic
+  fun findAngularCliFolder(project: Project, file: VirtualFile?): VirtualFile? {
+    var current = file
     while (current != null) {
-      if (current.isDirectory() && findCliJson(current) != null) return current;
-      current = current.getParent();
+      if (current.isDirectory && findCliJson(current) != null) return current
+      current = current.parent
     }
-    if (findCliJson(project.getBaseDir()) != null) {
-      return project.getBaseDir();
+    @Suppress("DEPRECATION")
+    return if (findCliJson(project.baseDir) != null) {
+      project.baseDir
     }
-    return null;
+    else null
   }
 
-  public static boolean hasAngularCLIPackageInstalled(@NotNull Project project, @NotNull VirtualFile cli) {
-    return findAngularCliModuleInfo(cli) != null;
+  @JvmStatic
+  fun hasAngularCLIPackageInstalled(cli: VirtualFile): Boolean {
+    return findAngularCliModuleInfo(cli) != null
   }
 
-  public static @Nullable SemVer getAngularCliPackageVersion(@NotNull VirtualFile cli) {
-    CompletionModuleInfo moduleInfo = findAngularCliModuleInfo(cli);
-    if (moduleInfo == null) return null;
+  @JvmStatic
+  fun getAngularCliPackageVersion(cli: VirtualFile): SemVer? {
+    val moduleInfo = findAngularCliModuleInfo(cli) ?: return null
 
-    NodePackageVersion nodePackageVersion = NodePackageVersionUtil.getPackageVersion(moduleInfo.getVirtualFile().getPath());
-    return nodePackageVersion != null ? nodePackageVersion.getSemVer() : null;
+    val nodePackageVersion = NodePackageVersionUtil.getPackageVersion(moduleInfo.virtualFile!!.path)
+    return nodePackageVersion?.semVer
   }
 
 
-  private static @Nullable CompletionModuleInfo findAngularCliModuleInfo(@NotNull VirtualFile cli) {
-    List<CompletionModuleInfo> modules = new ArrayList<>();
-    NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
-    CompletionModuleInfo moduleInfo = ContainerUtil.getFirstItem(modules);
-    return moduleInfo != null && moduleInfo.getVirtualFile() != null ? moduleInfo : null;
+  private fun findAngularCliModuleInfo(cli: VirtualFile): CompletionModuleInfo? {
+    val modules = ArrayList<CompletionModuleInfo>()
+    NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
+    val moduleInfo = modules.firstOrNull()
+    return if (moduleInfo != null && moduleInfo.virtualFile != null) moduleInfo else null
   }
 
-  public static boolean isAngularJsonFile(@NotNull String fileName) {
-    return ANGULAR_JSON_NAMES.contains(fileName);
+  @JvmStatic
+  fun isAngularJsonFile(fileName: String): Boolean {
+    return ANGULAR_JSON_NAMES.contains(fileName)
   }
 
-  public static void notifyAngularCliNotInstalled(@NotNull Project project, @NotNull VirtualFile cliFolder, @NotNull @Nls String message) {
-    VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder);
-    Notification notification = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID)
-      .createNotification(message, Angular2Bundle.message("angular.notify.cli.required-package-not-installed"), NotificationType.WARNING);
+  @JvmStatic
+  fun notifyAngularCliNotInstalled(project: Project, cliFolder: VirtualFile, @Nls message: String) {
+    val packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder)
+    val notification = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID)
+      .createNotification(message, Angular2Bundle.message("angular.notify.cli.required-package-not-installed"), NotificationType.WARNING)
     if (packageJson != null) {
-      notification.addAction(new PackageJsonGetDependenciesAction(project, packageJson, notification));
+      notification.addAction(PackageJsonGetDependenciesAction(project, packageJson, notification))
     }
-    notification.notify(project);
+    notification.notify(project)
   }
 
-  public static void createRunConfigurations(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    ApplicationManager.getApplication().executeOnPooledThread(
-      () -> DumbService.getInstance(project).runReadActionInSmartMode(() -> {
-        if (project.isDisposed()) {
-          return;
+  @JvmStatic
+  fun createRunConfigurations(project: Project, baseDir: VirtualFile) {
+    ApplicationManager.getApplication().executeOnPooledThread {
+      DumbService.getInstance(project).runReadActionInSmartMode {
+        if (project.isDisposed) {
+          return@runReadActionInSmartMode
         }
 
-        String packageJsonPath = getPackageJson(baseDir);
-        AngularConfig config;
-        if (packageJsonPath == null
-            || (config = AngularConfigProvider.getAngularConfig(project, baseDir)) == null) {
-          return;
-        }
+        val packageJsonPath = getPackageJson(baseDir)
+                              ?: return@runReadActionInSmartMode
+        val config: AngularConfig = AngularConfigProvider.getAngularConfig(project, baseDir)
+                                    ?: return@runReadActionInSmartMode
 
-        createKarmaConfigurations(project, config);
-        createProtractorConfigurations(project, config);
+        createKarmaConfigurations(project, config)
+        createProtractorConfigurations(project, config)
 
-        String nameSuffix = ModuleManager.getInstance(project).getModules().length > 1
-                            ? " (" + baseDir.getName() + ")" : "";
+        val nameSuffix = if (ModuleManager.getInstance(project).modules.size > 1)
+          " (" + baseDir.name + ")"
+        else
+          ""
 
-        createJSDebugConfiguration(project, "Angular Application" + nameSuffix, NG_CLI_DEFAULT_ADDRESS);
-        RunManager.getInstance(project).setSelectedConfiguration(
-          createNpmConfiguration(project, packageJsonPath, "Angular CLI Server" + nameSuffix, "start"));
-      }));
-  }
-
-  private static @Nullable String getPackageJson(@NotNull VirtualFile baseDir) {
-    VirtualFile pkg = PackageJsonUtil.findChildPackageJsonFile(baseDir);
-    if (pkg != null) {
-      return pkg.getPath();
+        createJSDebugConfiguration(project, "Angular Application$nameSuffix", NG_CLI_DEFAULT_ADDRESS)
+        RunManager.getInstance(project).selectedConfiguration = createNpmConfiguration(
+          project, packageJsonPath, "Angular CLI Server$nameSuffix", "start")
+      }
     }
-    return null;
   }
 
-  private static void createJSDebugConfiguration(@NotNull Project project, @NotNull @NonNls String label, @NotNull String url) {
-    createIfNoSimilar("jsdebug", project, label, null, null, Map.of("uri", url));
+  private fun getPackageJson(baseDir: VirtualFile): String? {
+    val pkg = PackageJsonUtil.findChildPackageJsonFile(baseDir)
+    return pkg?.path
   }
 
-  private static @Nullable RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
-                                                                                 @NotNull String packageJsonPath,
-                                                                                 @NotNull @NonNls String label,
-                                                                                 @NotNull String scriptName) {
+  private fun createJSDebugConfiguration(project: Project, @NonNls label: String, url: String) {
+    createIfNoSimilar("jsdebug", project, label, null, null, mapOf("uri" to url))
+  }
+
+  private fun createNpmConfiguration(project: Project,
+                                     packageJsonPath: String,
+                                     @NonNls label: String,
+                                     scriptName: String): RunnerAndConfigurationSettings? {
     return createIfNoSimilar("npm", project, label, null, packageJsonPath,
-                             Map.of("run-script", scriptName));
+                             mapOf("run-script" to scriptName))
   }
 
-  private static void createKarmaConfigurations(@NotNull Project project,
-                                                @NotNull AngularConfig config) {
-    StreamEx.of(config.getProjects())
-      .filter(ngProject -> ngProject.getKarmaConfigFile() != null
-                           && ngProject.getRootDir() != null)
-      .forEach(ngProject -> createIfNoSimilar("karma", project, "Tests (" + ngProject.getName() + ")",
-                                              ngProject.getRootDir(), ngProject.getKarmaConfigFile().getPath(),
-                                              Collections.emptyMap())
-      );
+  private fun createKarmaConfigurations(project: Project,
+                                        config: AngularConfig) {
+    config.projects.forEach { ngProject ->
+      val karmaFile = ngProject.karmaConfigFile
+      val rootDir = ngProject.rootDir
+      if (karmaFile != null && rootDir != null)
+        createIfNoSimilar("karma", project, "Tests (" + ngProject.name + ")",
+                          rootDir, karmaFile.path,
+                          emptyMap())
+    }
   }
 
-  private static void createProtractorConfigurations(@NotNull Project project,
-                                                     @NotNull AngularConfig config) {
-    StreamEx.of(config.getProjects())
-      .filter(ngProject -> ngProject.getProtractorConfigFile() != null
-                           && ngProject.getRootDir() != null)
-      .forEach(ngProject -> createIfNoSimilar("protractor", project, "E2E Tests (" + ngProject.getName() + ")",
-                                              ngProject.getRootDir(), ngProject.getProtractorConfigFile().getPath(),
-                                              Collections.emptyMap()));
+  private fun createProtractorConfigurations(project: Project,
+                                             config: AngularConfig) {
+    config.projects.forEach { ngProject ->
+      val protractorConfigFile = ngProject.protractorConfigFile
+      val rootDir = ngProject.rootDir
+      if (protractorConfigFile != null && rootDir != null)
+        createIfNoSimilar("protractor", project, "E2E Tests (" + ngProject.name + ")",
+                          rootDir, protractorConfigFile.path,
+                          emptyMap())
+    }
   }
 
-  private static @Nullable RunnerAndConfigurationSettings createIfNoSimilar(@NotNull @NonNls String rcType,
-                                                                            @NotNull Project project,
-                                                                            @NonNls @NotNull String label,
-                                                                            VirtualFile baseDir,
-                                                                            String configPath,
-                                                                            @NotNull Map<String, Object> options) {
-    return doIfNotNull(
-      JSRunConfigurationBuilder.getForName(rcType, project),
-      builder -> ObjectUtils.notNull(
-        builder.findSimilarRunConfiguration(baseDir, configPath, options),
-        () -> builder.createRunConfiguration(label, baseDir, configPath, options))
-    );
+  private fun createIfNoSimilar(@NonNls rcType: String,
+                                project: Project,
+                                @NonNls label: String,
+                                baseDir: VirtualFile?,
+                                configPath: String?,
+                                options: Map<String, Any>): RunnerAndConfigurationSettings? {
+    return JSRunConfigurationBuilder.getForName(rcType, project)?.let { builder ->
+      builder.findSimilarRunConfiguration(baseDir, configPath, options)
+      ?: builder.createRunConfiguration(label, baseDir, configPath, options)
+    }
   }
 
-  public static @NotNull String getCliParamText(@NotNull String name, @NotNull SemVer cliVersion) {
-    boolean toKebabCase = cliVersion.isGreaterOrEqualThan(12, 0, 0);
-    String paramText = toKebabCase
-                       ? JSStringUtil.toKebabCase(name, true, true, false)
-                       : name;
-    return "--" + paramText;
+  @JvmStatic
+  fun getCliParamText(name: String, cliVersion: SemVer): String {
+    val toKebabCase = cliVersion.isGreaterOrEqualThan(12, 0, 0)
+    val paramText = if (toKebabCase)
+      JSStringUtil.toKebabCase(name, true, true, false)
+    else
+      name
+    return "--$paramText"
   }
 }

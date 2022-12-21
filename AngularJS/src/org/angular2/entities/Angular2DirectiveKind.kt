@@ -1,38 +1,32 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public enum Angular2DirectiveKind {
+enum class Angular2DirectiveKind {
   REGULAR,
   STRUCTURAL,
   BOTH;
 
-  public boolean isStructural() {
-    return this == STRUCTURAL || this == BOTH;
-  }
+  val isStructural: Boolean
+    get() = this == STRUCTURAL || this == BOTH
 
-  public boolean isRegular() {
-    return this == REGULAR || this == BOTH;
-  }
+  val isRegular: Boolean
+    get() = this == REGULAR || this == BOTH
 
-  public static @NotNull Angular2DirectiveKind get(boolean isRegular, boolean isStructural) {
-    if (isRegular && isStructural) {
-      return BOTH;
-    }
-    else if (isStructural) {
-      return STRUCTURAL;
-    }
-    else {
-      return REGULAR;
-    }
-  }
+  companion object {
 
-  public static @Nullable Angular2DirectiveKind get(boolean hasElementRef, boolean hasTemplateRef, boolean hasViewContainerRef) {
-    return hasElementRef || hasTemplateRef || hasViewContainerRef
-           ? get(hasElementRef || (hasViewContainerRef && !hasTemplateRef),
-                 hasTemplateRef || hasViewContainerRef)
-           : null;
+    fun get(isRegular: Boolean, isStructural: Boolean): Angular2DirectiveKind =
+      when {
+        isRegular && isStructural -> BOTH
+        isStructural -> STRUCTURAL
+        else -> REGULAR
+      }
+
+    fun get(hasElementRef: Boolean, hasTemplateRef: Boolean, hasViewContainerRef: Boolean): Angular2DirectiveKind? {
+      return if (hasElementRef || hasTemplateRef || hasViewContainerRef)
+        get(hasElementRef || hasViewContainerRef && !hasTemplateRef,
+            hasTemplateRef || hasViewContainerRef)
+      else
+        null
+    }
   }
 }

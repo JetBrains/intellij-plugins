@@ -1,73 +1,79 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonArray;
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
-import one.util.streamex.StreamEx;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
-import org.angular2.index.Angular2MetadataNodeModuleIndex;
-import org.angular2.lang.metadata.MetadataUtils;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonArray
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonValue
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.StringRef
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule
+import org.angular2.index.Angular2MetadataNodeModuleIndex
+import org.angular2.lang.metadata.MetadataUtils
+import org.jetbrains.annotations.NonNls
 
-import java.io.IOException;
+import java.io.IOException
+import java.util.function.Consumer
 
-public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<Angular2MetadataNodeModule> {
+class Angular2MetadataNodeModuleStub : Angular2MetadataElementStub<Angular2MetadataNodeModule> {
 
-  @NonNls private static final String IMPORT_AS = "importAs";
-  @NonNls private static final String EXPORTS = "exports";
-  private static final String METADATA = "metadata";
+  private val myImportAs: StringRef?
 
-  private final @Nullable StringRef myImportAs;
+  val importAs: String?
+    get() = StringRef.toString(myImportAs)
 
-  public Angular2MetadataNodeModuleStub(@NotNull StubInputStream stream, @Nullable StubElement parentStub) throws IOException {
-    super(stream, parentStub, Angular2MetadataElementTypes.NODE_MODULE);
-    myImportAs = stream.readName();
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parentStub: StubElement<*>?)
+    : super(stream, parentStub, Angular2MetadataElementTypes.NODE_MODULE) {
+    myImportAs = stream.readName()
   }
 
-  public Angular2MetadataNodeModuleStub(@Nullable StubElement parentStub, @Nullable JsonValue fileRoot) {
-    super((String)null, parentStub, Angular2MetadataElementTypes.NODE_MODULE);
-    if (fileRoot instanceof JsonArray) {
-      fileRoot = ((JsonArray)fileRoot).getValueList().get(0);
-    }
-    if (fileRoot instanceof JsonObject) {
-      JsonObject fileRootObject = (JsonObject)fileRoot;
-      myImportAs = StringRef.fromString(MetadataUtils.readStringPropertyValue(fileRootObject.findProperty(IMPORT_AS)));
-      StreamEx.ofNullable(MetadataUtils.getPropertyValue(fileRootObject.findProperty(EXPORTS), JsonArray.class))
-        .flatCollection(JsonArray::getValueList)
-        .select(JsonObject.class)
-        .forEach(object -> new Angular2MetadataModuleExportStub(this, object));
-      MetadataUtils.streamObjectProperty(fileRootObject.findProperty(METADATA))
-        .forEach(this::loadMemberProperty);
+  constructor(parentStub: StubElement<*>?, fileRoot: JsonValue?)
+    : super(null as String?, parentStub, Angular2MetadataElementTypes.NODE_MODULE) {
+    val fileRootObj = if (fileRoot is JsonArray)
+      fileRoot.valueList[0]
+    else
+      fileRoot
+    if (fileRootObj is JsonObject) {
+      myImportAs = StringRef.fromString(MetadataUtils.readStringPropertyValue(fileRootObj.findProperty(IMPORT_AS)))
+      MetadataUtils.getPropertyValue<JsonArray>(fileRootObj.findProperty(EXPORTS))
+        ?.valueList
+        ?.forEach {
+          if (it is JsonObject) {
+            Angular2MetadataModuleExportStub(this, it)
+          }
+        }
+      MetadataUtils.listObjectProperties(fileRootObj.findProperty(METADATA))
+        .forEach(Consumer { this.loadMemberProperty(it) })
     }
     else {
-      myImportAs = null;
+      myImportAs = null
     }
   }
 
-  @Override
-  public void index(@NotNull IndexSink sink) {
-    super.index(sink);
-    if (getImportAs() != null) {
-      sink.occurrence(Angular2MetadataNodeModuleIndex.KEY, getImportAs());
+  override fun index(sink: IndexSink) {
+    super.index(sink)
+    if (importAs != null) {
+      sink.occurrence(Angular2MetadataNodeModuleIndex.KEY, importAs!!)
     }
   }
 
-  @Override
-  public void serialize(@NotNull StubOutputStream stream) throws IOException {
-    super.serialize(stream);
-    writeString(myImportAs, stream);
+  @Throws(IOException::class)
+  override fun serialize(stream: StubOutputStream) {
+    super.serialize(stream)
+    writeString(myImportAs, stream)
   }
 
-  public @Nullable String getImportAs() {
-    return StringRef.toString(myImportAs);
+  companion object {
+
+    @NonNls
+    private const val IMPORT_AS = "importAs"
+
+    @NonNls
+    private const val EXPORTS = "exports"
+    private const val METADATA = "metadata"
   }
 }

@@ -1,23 +1,16 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.psi
 
-import org.angular2.entities.metadata.stubs.Angular2MetadataStringStub;
-import org.jetbrains.annotations.NotNull;
+import org.angular2.entities.metadata.stubs.Angular2MetadataStringStub
 
-public class Angular2MetadataString extends Angular2MetadataElement<Angular2MetadataStringStub> {
+class Angular2MetadataString(element: Angular2MetadataStringStub) : Angular2MetadataElement<Angular2MetadataStringStub>(element) {
 
-  public Angular2MetadataString(@NotNull Angular2MetadataStringStub element) {
-    super(element);
-  }
+  val value: String
+    get() = stub.value
 
-  public @NotNull String getValue() {
-    return getStub().getValue();
-  }
-
-  @Override
-  public String toString() {
-    String memberName = getStub().getMemberName();
-    return (memberName == null ? "" : memberName + ": ")
-           + getValue() + " <metadata string>";
+  override fun toString(): String {
+    val memberName = stub.memberName
+    return ((if (memberName == null) "" else "$memberName: ")
+            + value + " <metadata string>")
   }
 }

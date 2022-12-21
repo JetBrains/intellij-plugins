@@ -1,172 +1,125 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.cli.actions;
+package org.angular2.cli.actions
 
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.lookup.CharFilter;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.filters.Filter;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.icons.AllIcons;
-import com.intellij.javascript.nodejs.CompletionModuleInfo;
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
-import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
-import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
-import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.IconButton;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.*;
-import com.intellij.ui.components.JBList;
-import com.intellij.ui.scale.JBUIScale;
-import com.intellij.ui.speedSearch.ListWithFilter;
-import com.intellij.util.gist.GistManager;
-import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
-import org.angular2.cli.AngularCliFilter;
-import org.angular2.cli.AngularCliProjectGenerator;
-import org.angular2.cli.AngularCliSchematicsRegistryService;
-import org.angular2.cli.AngularCliUtil;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.lookup.CharFilter
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.filters.Filter
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.icons.AllIcons
+import com.intellij.javascript.nodejs.CompletionModuleInfo
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
+import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder
+import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
+import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.popup.IconButton
+import com.intellij.openapi.ui.popup.JBPopup
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.*
+import com.intellij.ui.components.JBList
+import com.intellij.ui.scale.JBUIScale
+import com.intellij.ui.speedSearch.ListWithFilter
+import com.intellij.util.gist.GistManager
+import com.intellij.util.ui.EmptyIcon
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
+import org.angular2.cli.AngularCliFilter
+import org.angular2.cli.AngularCliProjectGenerator
+import org.angular2.cli.AngularCliSchematicsRegistryService
+import org.angular2.cli.AngularCliUtil
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
+import org.jetbrains.annotations.NonNls
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
+import java.io.IOException
+import javax.swing.Action
+import javax.swing.JComponent
+import javax.swing.JList
+import javax.swing.JPanel
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.List;
-import java.util.*;
-import java.util.function.Consumer;
+class AngularCliAddDependencyAction : DumbAwareAction() {
 
-import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
-
-public class AngularCliAddDependencyAction extends DumbAwareAction {
-
-  private static final NodePackageBasicInfo OTHER =
-    new NodePackageBasicInfo(Angular2Bundle.message("angular.action.ng-add.install-other"), null);
-  @NonNls private static final Logger LOG = Logger.getInstance(AngularCliAddDependencyAction.class);
-  private static final long TIMEOUT = 2000;
-  @NonNls private static final String LATEST = "latest";
-
-  public static void runAndShowConsoleLater(@NotNull Project project, @NotNull VirtualFile cli, @NotNull String packageName,
-                                            @Nullable String packageVersion, boolean proposeLatestVersionIfNeeded) {
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      if (project.isDisposed()) {
-        return;
-      }
-      Ref<String> version = new Ref<>(StringUtil.defaultIfEmpty(packageVersion, LATEST));
-      boolean proposeLatestVersion = proposeLatestVersionIfNeeded &&
-                                     !AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, version.get(), TIMEOUT);
-      ApplicationManager.getApplication().invokeLater(
-        () -> {
-          if (proposeLatestVersion) {
-            //noinspection DialogTitleCapitalization
-            switch (Messages.showDialog(
-              project,
-              Angular2Bundle.message("angular.action.ng-add.not-supported-specified-try-latest"),
-              Angular2Bundle.message("angular.action.ng-add.title"),
-              new String[]{
-                Angular2Bundle.message("angular.action.ng-add.install-latest"),
-                Angular2Bundle.message("angular.action.ng-add.install-current"),
-                Messages.getCancelButton()
-              }, 0, Messages.getQuestionIcon())) {
-              case 0 -> version.set(LATEST);
-              case 1 -> version.set(packageVersion);
-              default -> {
-                return;
-              }
-            }
-          }
-          runAndShowConsole(project, cli, packageName + "@" + version.get(), !proposeLatestVersion);
-        }, project.getDisposed());
-    });
-  }
-
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    final Project project = e.getProject();
-    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project
+    val file = e.getData(CommonDataKeys.VIRTUAL_FILE)
     if (project == null || file == null) {
-      return;
+      return
     }
-    final VirtualFile cli = AngularCliUtil.findAngularCliFolder(project, file);
-    final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cli);
+    val cli = AngularCliUtil.findAngularCliFolder(project, file)
+    val packageJson = PackageJsonUtil.findChildPackageJsonFile(cli)
     if (cli == null || packageJson == null) {
-      return;
+      return
     }
-    if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
+    if (!AngularCliUtil.hasAngularCLIPackageInstalled(cli)) {
       AngularCliUtil.notifyAngularCliNotInstalled(
-        project, cli, Angular2Bundle.message("angular.action.ng-add.cant-add-new-dependency"));
-      return;
+        project, cli, Angular2Bundle.message("angular.action.ng-add.cant-add-new-dependency"))
+      return
     }
 
-    Set<String> existingPackages = PackageJsonData.getOrCreate(packageJson).getAllDependencies();
+    val existingPackages = PackageJsonData.getOrCreate(packageJson).allDependencies
 
-    SortedListModel<NodePackageBasicInfo> model = new SortedListModel<>(
-      Comparator.comparing((NodePackageBasicInfo p) -> p == OTHER ? 1 : 0)
-        .thenComparing(NodePackageBasicInfo::getName)
-    );
-    JBList<NodePackageBasicInfo> list = new JBList<>(model);
-    list.setCellRenderer(new ColoredListCellRenderer<>() {
-      @Override
-      protected void customizeCellRenderer(@NotNull JList<? extends NodePackageBasicInfo> list,
-                                           NodePackageBasicInfo value,
-                                           int index,
-                                           boolean selected,
-                                           boolean hasFocus) {
+    val model = SortedListModel(
+      Comparator.comparing { p: NodePackageBasicInfo -> if (p === OTHER) 1 else 0 }
+        .thenComparing<String> { it.name }
+    )
+    val list = JBList(model)
+    list.setCellRenderer(object : ColoredListCellRenderer<NodePackageBasicInfo>() {
+      override fun customizeCellRenderer(list: JList<out NodePackageBasicInfo>,
+                                         value: NodePackageBasicInfo,
+                                         index: Int,
+                                         selected: Boolean,
+                                         hasFocus: Boolean) {
         if (!selected && index % 2 == 0) {
-          setBackground(UIUtil.getDecoratedRowColor());
+          background = UIUtil.getDecoratedRowColor()
         }
-        setIcon(JBUIScale.scaleIcon(EmptyIcon.create(5)));
-        append(value.getName(), value != OTHER ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.LINK_ATTRIBUTES, true);
-        if (value.getDescription() != null) {
-          append(" - " + value.getDescription(), SimpleTextAttributes.GRAY_ATTRIBUTES, false);
+        setIcon(JBUIScale.scaleIcon(EmptyIcon.create(5)))
+        append(value.name, if (value !== OTHER) SimpleTextAttributes.REGULAR_ATTRIBUTES else SimpleTextAttributes.LINK_ATTRIBUTES, true)
+        if (value.description != null) {
+          append(" - " + value.description!!, SimpleTextAttributes.GRAY_ATTRIBUTES, false)
         }
       }
-    });
+    })
 
-    JScrollPane scroll = ScrollPaneFactory.createScrollPane(list);
-    scroll.setBorder(JBUI.Borders.empty());
-    JComponent pane = ListWithFilter.wrap(list, scroll, NodePackageBasicInfo::getName);
+    val scroll = ScrollPaneFactory.createScrollPane(list)
+    scroll.border = JBUI.Borders.empty()
+    val pane = ListWithFilter.wrap(list, scroll) { it.name }
 
-    ComponentPopupBuilder builder = JBPopupFactory
+    @Suppress("DialogTitleCapitalization")
+    val builder = JBPopupFactory
       .getInstance()
       .createComponentPopupBuilder(pane, list)
       .setMayBeParent(true)
       .setRequestFocus(true)
       .setFocusable(true)
-      .setFocusOwners(new Component[]{list})
+      .setFocusOwners(arrayOf<Component>(list))
       .setLocateWithinScreenBounds(true)
       .setCancelOnOtherWindowOpen(true)
       .setMovable(true)
@@ -175,252 +128,267 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       .setTitle(Angular2Bundle.message("angular.action.ng-add.title"))
       .setCancelOnClickOutside(true)
       .setDimensionServiceKey(project, "org.angular.cli.generate", true)
-      .setMinSize(new Dimension(JBUIScale.scale(350), JBUIScale.scale(300)))
-      .setCancelButton(new IconButton(Angular2Bundle.message("angular.action.ng-add.button-close"),
-                                      AllIcons.Actions.Close, AllIcons.Actions.CloseHovered));
+      .setMinSize(Dimension(JBUIScale.scale(350), JBUIScale.scale(300)))
+      .setCancelButton(IconButton(Angular2Bundle.message("angular.action.ng-add.button-close"),
+                                  AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
 
-    JBPopup popup = builder.createPopup();
+    val popup = builder.createPopup()
 
-    Consumer<NodePackageBasicInfo> action = pkgInfo -> {
-      popup.closeOk(null);
+    val action = { pkgInfo: NodePackageBasicInfo ->
+      popup.closeOk(null)
       if (pkgInfo == OTHER) {
-        chooseCustomPackageAndInstall(project, cli, existingPackages);
+        chooseCustomPackageAndInstall(project, cli, existingPackages)
       }
       else {
-        runAndShowConsole(project, cli, pkgInfo.getName(), false);
+        runAndShowConsole(project, cli, pkgInfo.name, false)
       }
-    };
-    list.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (list.getSelectedValue() == null) return;
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          e.consume();
-          action.accept(list.getSelectedValue());
+    }
+    list.addKeyListener(object : KeyAdapter() {
+      override fun keyPressed(e: KeyEvent) {
+        if (list.selectedValue == null) return
+        if (e.keyCode == KeyEvent.VK_ENTER) {
+          e.consume()
+          action(list.selectedValue)
         }
       }
-    });
-    new DoubleClickListener() {
-      @Override
-      public boolean onDoubleClick(@NotNull MouseEvent event) {
-        if (list.getSelectedValue() == null) return true;
-        action.accept(list.getSelectedValue());
-        return true;
+    })
+    object : DoubleClickListener() {
+      public override fun onDoubleClick(event: MouseEvent): Boolean {
+        if (list.selectedValue == null) return true
+        action(list.selectedValue)
+        return true
       }
-    }.installOn(list);
-    popup.showCenteredInCurrentWindow(project);
-    updateListAsync(list, model, popup, existingPackages);
+    }.installOn(list)
+    popup.showCenteredInCurrentWindow(project)
+    updateListAsync(list, model, popup, existingPackages)
   }
 
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    final Project project = e.getProject();
-    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    e.getPresentation().setEnabledAndVisible(project != null
-                                             && file != null
-                                             && AngularCliUtil.findAngularCliFolder(project, file) != null);
+  override fun update(e: AnActionEvent) {
+    val project = e.project
+    val file = e.getData(CommonDataKeys.VIRTUAL_FILE)
+    e.presentation.isEnabledAndVisible = (project != null
+                                          && file != null
+                                          && AngularCliUtil.findAngularCliFolder(project, file) != null)
   }
 
-  @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.BGT;
+  override fun getActionUpdateThread(): ActionUpdateThread {
+    return ActionUpdateThread.BGT
   }
 
-  private static void runAndShowConsole(@NotNull Project project, @NotNull VirtualFile cli,
-                                        @NotNull String packageSpec, boolean proposeLatestVersionIfNeeded) {
-    if (project.isDisposed()) {
-      return;
+  private class SelectCustomPackageDialog(private val myProject: Project,
+                                          private val myExistingPackages: Set<String>) : DialogWrapper(myProject) {
+    private var myTextEditor: EditorTextField? = null
+
+    val `package`: String
+      get() = myTextEditor!!.text
+
+    init {
+      @Suppress("DialogTitleCapitalization")
+      title = Angular2Bundle.message("angular.action.ng-add.title")
+      init()
+      okAction.putValue(Action.NAME, Angular2Bundle.message("angular.action.ng-add.button-install"))
     }
-    NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreter();
-    if (interpreter == null) {
-      return;
+
+    override fun getPreferredFocusedComponent(): JComponent? {
+      return myTextEditor
     }
-    try {
-      List<CompletionModuleInfo> modules = new ArrayList<>();
-      NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
-      if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
-        throw new ExecutionException(Angular2Bundle.message("angular.action.ng-add.pacakge-not-installed"));
-      }
-      CompletionModuleInfo module = modules.get(0);
-      ProcessHandler handler = NpmPackageProjectGenerator.generate(
-        interpreter, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
-        pkg -> Objects.requireNonNull(pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)).getAbsolutePath(),
-        cli, VfsUtilCore.virtualToIoFile(cli),
-        project, () -> GistManager.getInstance().invalidateData(),
-        Angular2Bundle.message("angular.action.ng-add.installing-for", packageSpec, cli.getName()),
-        new Filter[]{new AngularCliFilter(project, cli.getPath())},
-        "add", packageSpec);
-      if (proposeLatestVersionIfNeeded) {
-        handler.addProcessListener(new ProcessAdapter() {
-          @Override
-          public void processTerminated(@NotNull ProcessEvent event) {
-            if (event.getExitCode() != 0) {
-              installLatestIfFeasible(project, cli, packageSpec);
-            }
-          }
-        });
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to execute `ng add`: " + e.getMessage(), e);
+
+    override fun createCenterPanel(): JComponent {
+      val panel = JPanel(BorderLayout(0, 4))
+      myTextEditor = TextFieldWithAutoCompletion(
+        myProject, NodePackagesCompletionProvider(myExistingPackages), false, null)
+      myTextEditor!!.setPreferredWidth(250)
+      panel.add(LabeledComponent.create(myTextEditor!!, Angular2Bundle.message("angular.action.ng-add.package-name"), BorderLayout.NORTH))
+      return panel
     }
   }
 
-  private static void installLatestIfFeasible(@NotNull Project project, @NotNull VirtualFile cli,
-                                              @NotNull String packageSpec) {
-    if (project.isDisposed()) {
-      return;
-    }
-    VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cli);
-    if (packageJson == null) {
-      return;
-    }
-    NodeInstalledPackageFinder finder = new NodeInstalledPackageFinder(project, packageJson);
-    int index = packageSpec.lastIndexOf('@');
-    String packageName = index <= 0 ? packageSpec : packageSpec.substring(0, index);
-    InstalledPackageVersion pkg = finder.findInstalledPackage(packageName);
-    if (pkg == null) {
-      return;
-    }
-    if (!AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkg)) {
-      ApplicationManager.getApplication().invokeLater(
-        () -> {
-          //noinspection DialogTitleCapitalization
-          if (Messages.OK == Messages.showDialog(
-            project,
-            Angular2Bundle.message("angular.action.ng-add.not-supported-installed-try-latest"),
-            Angular2Bundle.message("angular.action.ng-add.title"),
-            new String[]{Angular2Bundle.message("angular.action.ng-add.install-latest"), Messages.getCancelButton()},
-            0, Messages.getQuestionIcon())) {
+  private class NodePackagesCompletionProvider(private val myExistingPackages: Set<String>) : TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo>(
+    emptyList()) {
 
-            runAndShowConsole(project, cli, packageName + "@" + LATEST, false);
-          }
-        }, project.getDisposed()
-      );
-    }
-  }
-
-  private static void chooseCustomPackageAndInstall(@NotNull Project project,
-                                                    @NotNull VirtualFile cli,
-                                                    @NotNull Set<String> existingPackages) {
-    SelectCustomPackageDialog dialog = new SelectCustomPackageDialog(project, existingPackages);
-    if (dialog.showAndGet()) {
-      runAndShowConsole(project, cli, dialog.getPackage(), false);
-    }
-  }
-
-  private static void updateListAsync(JBList<NodePackageBasicInfo> list,
-                                      SortedListModel<NodePackageBasicInfo> model,
-                                      JBPopup popup, Set<String> existingPackages) {
-    list.setPaintBusy(true);
-    model.clear();
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      if (popup.isDisposed()) {
-        return;
-      }
-      Collection<NodePackageBasicInfo> packages = AngularCliSchematicsRegistryService
-        .getInstance()
-        .getPackagesSupportingNgAdd(20000);
-      ApplicationManager.getApplication().invokeLater(() -> {
-        packages.forEach(pkg -> {
-          if (!existingPackages.contains(pkg.getName())) {
-            model.add(pkg);
-          }
-        });
-        model.add(OTHER);
-        list.setPaintBusy(false);
-      }, o -> popup.isDisposed());
-    });
-  }
-
-  private static class SelectCustomPackageDialog extends DialogWrapper {
-
-    private final Set<String> myExistingPackages;
-    private final Project myProject;
-    private EditorTextField myTextEditor;
-
-    SelectCustomPackageDialog(@NotNull Project project, @NotNull Set<String> existingPackages) {
-      super(project);
-      myProject = project;
-      myExistingPackages = existingPackages;
-      //noinspection DialogTitleCapitalization
-      setTitle(Angular2Bundle.message("angular.action.ng-add.title"));
-      init();
-      getOKAction().putValue(Action.NAME, Angular2Bundle.message("angular.action.ng-add.button-install"));
+    override fun getLookupString(item: NodePackageBasicInfo): String {
+      return item.name
     }
 
-    @Override
-    public @Nullable JComponent getPreferredFocusedComponent() {
-      return myTextEditor;
+    override fun acceptChar(c: Char): CharFilter.Result? {
+      return if (c == '@' || c == '/') CharFilter.Result.ADD_TO_PREFIX else null
     }
 
-    @Override
-    protected @Nullable JComponent createCenterPanel() {
-      JPanel panel = new JPanel(new BorderLayout(0, 4));
-      myTextEditor = new TextFieldWithAutoCompletion<>(
-        myProject, new NodePackagesCompletionProvider(myExistingPackages), false, null);
-      myTextEditor.setPreferredWidth(250);
-      panel.add(LabeledComponent.create(myTextEditor, Angular2Bundle.message("angular.action.ng-add.package-name"), BorderLayout.NORTH));
-      return panel;
+    override fun applyPrefixMatcher(result: CompletionResultSet, prefix: String): CompletionResultSet {
+      val res = super.applyPrefixMatcher(result, prefix)
+      res.restartCompletionOnAnyPrefixChange()
+      return res
     }
 
-    public String getPackage() {
-      return myTextEditor.getText();
-    }
-  }
-
-  private static class NodePackagesCompletionProvider extends TextFieldWithAutoCompletionListProvider<NodePackageBasicInfo> {
-
-    private final Set<String> myExistingPackages;
-
-    protected NodePackagesCompletionProvider(@NotNull Set<String> existingPackages) {
-      super(Collections.emptyList());
-      myExistingPackages = existingPackages;
-    }
-
-    @Override
-    protected @NotNull String getLookupString(@NotNull NodePackageBasicInfo item) {
-      return item.getName();
-    }
-
-    @Override
-    public @Nullable CharFilter.Result acceptChar(char c) {
-      return c == '@' || c == '/' ? CharFilter.Result.ADD_TO_PREFIX : null;
-    }
-
-    @Override
-    public @NotNull CompletionResultSet applyPrefixMatcher(@NotNull CompletionResultSet result, @NotNull String prefix) {
-      CompletionResultSet res = super.applyPrefixMatcher(result, prefix);
-      res.restartCompletionOnAnyPrefixChange();
-      return res;
-    }
-
-    @Override
-    public @NotNull Collection<NodePackageBasicInfo> getItems(String prefix, boolean cached, CompletionParameters parameters) {
+    override fun getItems(prefix: String, cached: Boolean, parameters: CompletionParameters): Collection<NodePackageBasicInfo> {
       if (cached) {
-        return Collections.emptyList();
+        return emptyList()
       }
-      List<NodePackageBasicInfo> result = new ArrayList<>();
+      val result = ArrayList<NodePackageBasicInfo>()
       try {
         NpmRegistryService.getInstance().findPackages(
-          ProgressManager.getInstance().getProgressIndicator(),
-          NpmRegistryService.namePrefixSearch(prefix), 20, pkg -> true,
-          pkg -> {
-            if (!myExistingPackages.contains(pkg.getName())) {
-              result.add(pkg);
+          ProgressManager.getInstance().progressIndicator,
+          NpmRegistryService.namePrefixSearch(prefix), 20, { true },
+          { pkg ->
+            if (!myExistingPackages.contains(pkg.name)) {
+              result.add(pkg)
             }
-          });
+          })
       }
-      catch (IOException e) {
-        LOG.info(e);
+      catch (e: IOException) {
+        LOG.info(e)
       }
-      return result;
+
+      return result
     }
 
-    @Override
-    public @NotNull LookupElementBuilder createLookupBuilder(@NotNull NodePackageBasicInfo item) {
+    override fun createLookupBuilder(item: NodePackageBasicInfo): LookupElementBuilder {
       return super.createLookupBuilder(item)
-        .withTailText(item.getDescription() != null ? "  " + item.getDescription() : null, true);
+        .withTailText(if (item.description != null) "  " + item.description!! else null, true)
+    }
+  }
+
+  companion object {
+
+    private val OTHER = NodePackageBasicInfo(Angular2Bundle.message("angular.action.ng-add.install-other"), null)
+
+    @NonNls
+    private val LOG = Logger.getInstance(AngularCliAddDependencyAction::class.java)
+    private const val TIMEOUT: Long = 2000
+
+    @NonNls
+    private val LATEST = "latest"
+
+    @JvmStatic
+    fun runAndShowConsoleLater(project: Project, cli: VirtualFile, packageName: String,
+                               packageVersion: String?, proposeLatestVersionIfNeeded: Boolean) {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        if (project.isDisposed) {
+          return@executeOnPooledThread
+        }
+        val version = Ref(StringUtil.defaultIfEmpty(packageVersion, LATEST))
+        val proposeLatestVersion = proposeLatestVersionIfNeeded && !AngularCliSchematicsRegistryService.instance.supportsNgAdd(packageName,
+                                                                                                                               version.get(),
+                                                                                                                               TIMEOUT)
+        ApplicationManager.getApplication().invokeLater(
+          {
+            if (proposeLatestVersion) {
+              @Suppress("DialogTitleCapitalization")
+              when (Messages.showDialog(
+                project,
+                Angular2Bundle.message("angular.action.ng-add.not-supported-specified-try-latest"),
+                Angular2Bundle.message("angular.action.ng-add.title"),
+                arrayOf(Angular2Bundle.message("angular.action.ng-add.install-latest"),
+                        Angular2Bundle.message("angular.action.ng-add.install-current"), Messages.getCancelButton()), 0,
+                Messages.getQuestionIcon())) {
+                0 -> version.set(LATEST)
+                1 -> version.set(packageVersion)
+                else -> return@invokeLater
+              }
+            }
+            runAndShowConsole(project, cli, packageName + "@" + version.get(), !proposeLatestVersion)
+          }, project.disposed)
+      }
+    }
+
+    private fun runAndShowConsole(project: Project, cli: VirtualFile,
+                                  packageSpec: String, proposeLatestVersionIfNeeded: Boolean) {
+      if (project.isDisposed) {
+        return
+      }
+      val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return
+      try {
+        val modules = ArrayList<CompletionModuleInfo>()
+        NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
+        if (modules.isEmpty() || modules[0].virtualFile == null) {
+          throw ExecutionException(Angular2Bundle.message("angular.action.ng-add.pacakge-not-installed"))
+        }
+        val module = modules[0]
+        val handler = NpmPackageProjectGenerator.generate(
+          interpreter, NodePackage(module.virtualFile!!.path),
+          { pkg -> pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)!!.absolutePath },
+          cli, VfsUtilCore.virtualToIoFile(cli),
+          project, { GistManager.getInstance().invalidateData() },
+          Angular2Bundle.message("angular.action.ng-add.installing-for", packageSpec, cli.name),
+          arrayOf<Filter>(AngularCliFilter(project, cli.path)),
+          "add", packageSpec)
+        if (proposeLatestVersionIfNeeded) {
+          handler.addProcessListener(object : ProcessAdapter() {
+            override fun processTerminated(event: ProcessEvent) {
+              if (event.exitCode != 0) {
+                installLatestIfFeasible(project, cli, packageSpec)
+              }
+            }
+          })
+        }
+      }
+      catch (e: Exception) {
+        LOG.error("Failed to execute `ng add`: " + e.message, e)
+      }
+
+    }
+
+    private fun installLatestIfFeasible(project: Project, cli: VirtualFile,
+                                        packageSpec: String) {
+      if (project.isDisposed) {
+        return
+      }
+      val packageJson = PackageJsonUtil.findChildPackageJsonFile(cli) ?: return
+      val finder = NodeInstalledPackageFinder(project, packageJson)
+      val index = packageSpec.lastIndexOf('@')
+      val packageName = if (index <= 0) packageSpec else packageSpec.substring(0, index)
+      val pkg = finder.findInstalledPackage(packageName) ?: return
+      if (!AngularCliSchematicsRegistryService.instance.supportsNgAdd(pkg)) {
+        ApplicationManager.getApplication().invokeLater(
+          {
+            @Suppress("DialogTitleCapitalization")
+            if (Messages.OK == Messages.showDialog(
+                project,
+                Angular2Bundle.message("angular.action.ng-add.not-supported-installed-try-latest"),
+                Angular2Bundle.message("angular.action.ng-add.title"),
+                arrayOf(Angular2Bundle.message("angular.action.ng-add.install-latest"), Messages.getCancelButton()),
+                0, Messages.getQuestionIcon())) {
+
+              runAndShowConsole(project, cli, "$packageName@$LATEST", false)
+            }
+          }, project.disposed
+        )
+      }
+    }
+
+    private fun chooseCustomPackageAndInstall(project: Project,
+                                              cli: VirtualFile,
+                                              existingPackages: Set<String>) {
+      val dialog = SelectCustomPackageDialog(project, existingPackages)
+      if (dialog.showAndGet()) {
+        runAndShowConsole(project, cli, dialog.`package`, false)
+      }
+    }
+
+    private fun updateListAsync(list: JBList<NodePackageBasicInfo>,
+                                model: SortedListModel<NodePackageBasicInfo>,
+                                popup: JBPopup, existingPackages: Set<String>) {
+      list.setPaintBusy(true)
+      model.clear()
+      ApplicationManager.getApplication().executeOnPooledThread {
+        if (popup.isDisposed) {
+          return@executeOnPooledThread
+        }
+        val packages = AngularCliSchematicsRegistryService
+          .instance
+          .getPackagesSupportingNgAdd(20000)
+        ApplicationManager.getApplication().invokeLater(
+          {
+            packages.forEach { pkg ->
+              if (!existingPackages.contains(pkg.name)) {
+                model.add(pkg)
+              }
+            }
+            model.add(OTHER)
+            list.setPaintBusy(false)
+          },
+          { popup.isDisposed })
+      }
     }
   }
 }

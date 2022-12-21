@@ -1,42 +1,35 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.editor;
+package org.angular2.editor
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.codeInsight.tags.Angular2ElementDescriptor;
-import org.angular2.entities.Angular2Directive;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
+import com.intellij.psi.xml.XmlTokenType.XML_NAME
+import org.angular2.Angular2InjectionUtils.getElementAtCaretFromContext
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.tags.Angular2ElementDescriptor
+import org.angular2.entities.Angular2Directive
 
-import java.util.Collections;
-import java.util.List;
+object Angular2EditorUtils {
 
-import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.Angular2InjectionUtils.getElementAtCaretFromContext;
-
-public final class Angular2EditorUtils {
-
-  static @NotNull List<Angular2Directive> getDirectivesAtCaret(@NotNull DataContext context) {
-    PsiElement element = getElementAtCaretFromContext(context);
-    List<Angular2Directive> directives = Collections.emptyList();
-    if (element != null && element.getNode().getElementType() == XML_NAME) {
-      element = element.getParent();
+  internal fun getDirectivesAtCaret(context: DataContext): List<Angular2Directive> {
+    var element = getElementAtCaretFromContext(context)
+    var directives = emptyList<Angular2Directive>()
+    if (element != null && element.node.elementType === XML_NAME) {
+      element = element.parent
     }
-    if (element instanceof XmlAttribute) {
-      Angular2AttributeDescriptor descriptor = tryCast(((XmlAttribute)element).getDescriptor(), Angular2AttributeDescriptor.class);
+    if (element is XmlAttribute) {
+      val descriptor = element.descriptor as? Angular2AttributeDescriptor
       if (descriptor != null) {
-        directives = descriptor.getSourceDirectives();
+        directives = descriptor.sourceDirectives
       }
     }
-    else if (element instanceof XmlTag) {
-      Angular2ElementDescriptor descriptor = tryCast(((XmlTag)element).getDescriptor(), Angular2ElementDescriptor.class);
+    else if (element is XmlTag) {
+      val descriptor = element.descriptor as? Angular2ElementDescriptor
       if (descriptor != null) {
-        directives = descriptor.getSourceDirectives();
+        directives = descriptor.sourceDirectives
       }
     }
-    return directives;
+    return directives
   }
 }

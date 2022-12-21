@@ -1,283 +1,245 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight.template;
+package org.angular2.codeInsight.template
 
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
-import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.ResolveResult;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Stack;
-import one.util.streamex.StreamEx;
-import org.angular2.Angular2InjectionUtils;
-import org.angular2.lang.expr.psi.Angular2TemplateBinding;
-import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.angular2.lang.html.psi.*;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.ResolveResult
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.containers.Stack
+import org.angular2.Angular2InjectionUtils
+import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.parser.Angular2AttributeType.*
+import org.angular2.lang.html.psi.*
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG_TEMPLATE
+import org.jetbrains.annotations.NonNls
+import java.util.function.Consumer
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
+class Angular2TemplateElementsScopeProvider : Angular2TemplateScopesProvider() {
 
-import static com.intellij.util.ObjectUtils.notNull;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE;
+  override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<Angular2TemplateScope> {
+    val hostFile = CompletionUtil.getOriginalOrSelf(hostElement ?: element).containingFile
 
-public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScopesProvider {
-
-  @NonNls private static final String LEGACY_TEMPLATE_TAG = "template";
-
-  public static boolean isTemplateTag(@Nullable XmlTag tag) {
-    return tag != null && isTemplateTag(tag.getLocalName());
-  }
-
-  public static boolean isTemplateTag(@Nullable String tagName) {
-    return ELEMENT_NG_TEMPLATE.equalsIgnoreCase(tagName)
-           || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
-  }
-
-  @Override
-  public @NotNull List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
-    final PsiFile hostFile = CompletionUtil.getOriginalOrSelf(notNull(hostElement, element)).getContainingFile();
-
-    boolean isInjected = hostElement != null;
-    final Angular2TemplateElementScope templateRootScope = CachedValuesManager.getCachedValue(hostFile, () -> {
-      final Angular2TemplateElementScope result;
+    val isInjected = hostElement != null
+    val templateRootScope = CachedValuesManager.getCachedValue(hostFile) {
+      val result: Angular2TemplateElementScope
       if (!isInjected) {
-        result = new Angular2TemplateScopeBuilder(hostFile).getTopLevelScope();
+        result = Angular2TemplateScopeBuilder(hostFile).topLevelScope
       }
       else {
-        result = new Angular2ForeignTemplateScopeBuilder(hostFile).getTopLevelScope();
+        result = Angular2ForeignTemplateScopeBuilder(hostFile).topLevelScope
       }
-      return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
-    });
-    return Collections.singletonList(templateRootScope.findBestMatchingTemplateScope(notNull(hostElement, element)));
+      CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+    }
+    return listOfNotNull(templateRootScope.findBestMatchingTemplateScope(hostElement ?: element))
   }
 
-  private static final class Angular2TemplateElementScope extends Angular2TemplateScope {
+  private class Angular2TemplateElementScope(root: PsiElement, parent: Angular2TemplateElementScope?)
+    : Angular2TemplateScope(parent) {
 
-    private final List<JSPsiElementBase> elements = new ArrayList<>();
+    private val elements = ArrayList<JSPsiElementBase>()
 
-    private final @NotNull TextRange myRange;
+    private val myRange: TextRange
 
-    private Angular2TemplateElementScope(@NotNull PsiElement root, @Nullable Angular2TemplateElementScope parent) {
-      super(parent);
-      myRange = root.getTextRange();
+    init {
+      myRange = root.textRange
       if (parent != null) {
-        assert parent.myRange.contains(myRange);
+        assert(parent.myRange.contains(myRange))
       }
     }
 
-    @Override
-    public void resolve(@NotNull Consumer<? super ResolveResult> consumer) {
-      elements.forEach(el -> consumer.accept(new JSResolveResult(el)));
+    override fun resolve(consumer: Consumer<in ResolveResult>) {
+      elements.forEach { el -> consumer.accept(JSResolveResult(el)) }
     }
 
-    public void add(@NotNull JSPsiElementBase element) {
-      elements.add(element);
+    fun add(element: JSPsiElementBase) {
+      elements.add(element)
     }
 
-    public @Nullable Angular2TemplateElementScope findBestMatchingTemplateScope(@NotNull PsiElement element) {
-      if (!myRange.contains(element.getTextOffset())) {
-        return null;
+    fun findBestMatchingTemplateScope(element: PsiElement): Angular2TemplateElementScope? {
+      if (!myRange.contains(element.textOffset)) {
+        return null
       }
-      Angular2TemplateElementScope curScope = null;
-      Angular2TemplateElementScope innerScope = this;
+      var curScope: Angular2TemplateElementScope? = null
+      var innerScope: Angular2TemplateElementScope? = this
       while (innerScope != null) {
-        curScope = innerScope;
-        innerScope = null;
-        for (Angular2TemplateScope child : curScope.getChildren()) {
-          if (child instanceof Angular2TemplateElementScope
-              && ((Angular2TemplateElementScope)child).myRange.contains(element.getTextOffset())) {
-            innerScope = (Angular2TemplateElementScope)child;
-            break;
+        curScope = innerScope
+        innerScope = null
+        for (child in curScope.getChildren()) {
+          if (child is Angular2TemplateElementScope && child.myRange.contains(element.textOffset)) {
+            innerScope = child
+            break
           }
         }
       }
-      if (PsiTreeUtil.getParentOfType(element, Angular2HtmlTemplateBindings.class) != null
-          && curScope != this) {
-        curScope = (Angular2TemplateElementScope)curScope.getParent();
+      if (PsiTreeUtil.getParentOfType(element, Angular2HtmlTemplateBindings::class.java) != null && curScope != this) {
+        curScope = curScope!!.parent as Angular2TemplateElementScope?
       }
-      return curScope;
+      return curScope
     }
   }
 
-  private static JSImplicitElement createVariable(@NotNull String name,
-                                                  @NotNull PsiElement contributor) {
-    return new JSImplicitElementImpl.Builder(name, contributor)
-      .setType(JSImplicitElement.Type.Variable).toImplicitElement();
-  }
+  private open class Angular2BaseScopeBuilder(private val myTemplateFile: PsiFile) : Angular2HtmlRecursiveElementVisitor() {
+    private val scopes = Stack<Angular2TemplateElementScope>()
 
-  private static class Angular2BaseScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
+    val topLevelScope: Angular2TemplateElementScope
+      get() {
+        myTemplateFile.accept(this)
+        assert(scopes.size == 1)
+        return scopes.peek()
+      }
 
-    private final @NotNull PsiFile myTemplateFile;
-    private final Stack<Angular2TemplateElementScope> scopes = new Stack<>();
-
-    Angular2BaseScopeBuilder(@NotNull PsiFile templateFile) {
-      myTemplateFile = templateFile;
-      scopes.add(new Angular2TemplateElementScope(templateFile, null));
+    init {
+      scopes.add(Angular2TemplateElementScope(myTemplateFile, null))
     }
 
-    public @NotNull Angular2TemplateElementScope getTopLevelScope() {
-      myTemplateFile.accept(this);
-      assert scopes.size() == 1;
-      return scopes.peek();
+    fun currentScope(): Angular2TemplateElementScope {
+      return scopes.peek()
     }
 
-    Angular2TemplateElementScope currentScope() {
-      return scopes.peek();
+    fun popScope() {
+      scopes.pop()
     }
 
-    void popScope() {
-      scopes.pop();
+    fun pushScope(tag: XmlTag) {
+      scopes.push(Angular2TemplateElementScope(tag, currentScope()))
     }
 
-    void pushScope(@NotNull XmlTag tag) {
-      scopes.push(new Angular2TemplateElementScope(tag, currentScope()));
+    fun addElement(element: JSPsiElementBase) {
+      currentScope().add(element)
     }
 
-    void addElement(@NotNull JSPsiElementBase element) {
-      currentScope().add(element);
-    }
-
-    @NotNull
-    Angular2TemplateElementScope prevScope() {
-      return scopes.get(scopes.size() - 2);
+    fun prevScope(): Angular2TemplateElementScope {
+      return scopes[scopes.size - 2]
     }
   }
 
-  private static class Angular2TemplateScopeBuilder extends Angular2BaseScopeBuilder {
+  private class Angular2TemplateScopeBuilder(templateFile: PsiFile) : Angular2BaseScopeBuilder(templateFile) {
 
-    Angular2TemplateScopeBuilder(@NotNull PsiFile templateFile) {
-      super(templateFile);
-    }
-
-    @Override
-    public void visitXmlTag(@NotNull XmlTag tag) {
-      boolean isTemplateTag = ContainerUtil.or(tag.getChildren(), Angular2HtmlTemplateBindings.class::isInstance)
-                              || isTemplateTag(tag);
+    override fun visitXmlTag(tag: XmlTag) {
+      val isTemplateTag = tag.children.any { it is Angular2HtmlTemplateBindings } || isTemplateTag(tag)
       if (isTemplateTag) {
-        pushScope(tag);
+        pushScope(tag)
       }
-      super.visitXmlTag(tag);
+      super.visitXmlTag(tag)
       if (isTemplateTag) {
-        popScope();
+        popScope()
       }
     }
 
-    @Override
-    public void visitBoundAttribute(Angular2HtmlBoundAttribute boundAttribute) {
+    override fun visitBoundAttribute(boundAttribute: Angular2HtmlBoundAttribute) {
       //do not visit expressions
     }
 
-    @Override
-    public void visitReference(Angular2HtmlReference reference) {
-      JSVariable var = reference.getVariable();
-      if (var != null) {
-        if (isTemplateTag(reference.getParent())) {
-          // References on ng-template are visible within parent scope
-          prevScope().add(var);
-        }
-        else {
-          currentScope().add(var);
-        }
+    override fun visitReference(reference: Angular2HtmlReference) {
+      val `var` = reference.variable
+                  ?: return
+      if (isTemplateTag(reference.parent)) {
+        // References on ng-template are visible within parent scope
+        prevScope().add(`var`)
+      }
+      else {
+        currentScope().add(`var`)
       }
     }
 
-    @Override
-    public void visitLet(Angular2HtmlLet let) {
-      JSVariable var = let.getVariable();
-      if (var != null) {
-        addElement(var);
-      }
+    override fun visitLet(variable: Angular2HtmlLet) {
+      variable.variable?.let { addElement(it) }
     }
 
-    @Override
-    public void visitTemplateBindings(Angular2HtmlTemplateBindings bindings) {
-      for (Angular2TemplateBinding b : bindings.getBindings().getBindings()) {
-        if (b.keyIsVar() && b.getVariableDefinition() != null) {
-          addElement(b.getVariableDefinition());
+    override fun visitTemplateBindings(bindings: Angular2HtmlTemplateBindings) {
+      for (b in bindings.bindings.bindings) {
+        if (b.keyIsVar() && b.variableDefinition != null) {
+          addElement(b.variableDefinition!!)
         }
       }
     }
   }
 
-  private static class Angular2ForeignTemplateScopeBuilder extends Angular2BaseScopeBuilder {
+  private class Angular2ForeignTemplateScopeBuilder(templateFile: PsiFile) : Angular2BaseScopeBuilder(templateFile) {
 
-    Angular2ForeignTemplateScopeBuilder(@NotNull PsiFile templateFile) {
-      super(templateFile);
-    }
-
-    @Override
-    public void visitXmlTag(@NotNull XmlTag tag) {
-      boolean isTemplateTag = StreamEx.of(tag.getChildren())
-                                .select(XmlAttribute.class)
-                                .anyMatch(attr -> attr.getName().startsWith("*"))
-                              || isTemplateTag(tag);
+    override fun visitXmlTag(tag: XmlTag) {
+      val isTemplateTag = tag.children.any { it is XmlAttribute && it.name.startsWith("*") }
+                          || isTemplateTag(tag)
       if (isTemplateTag) {
-        pushScope(tag);
+        pushScope(tag)
       }
-      super.visitXmlTag(tag);
+      super.visitXmlTag(tag)
       if (isTemplateTag) {
-        popScope();
+        popScope()
       }
     }
 
-    @Override
-    public void visitXmlAttribute(@NotNull XmlAttribute attribute) {
-      if (attribute.getParent() == null) {
-        return;
-      }
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
-        attribute.getName(), attribute.getParent());
-      switch (info.type) {
-        case REFERENCE -> addReference(attribute, info, isTemplateTag(attribute.getParent()));
-        case LET -> addVariable(attribute, info);
-        case TEMPLATE_BINDINGS -> addTemplateBindings(attribute);
-        default -> {}
+    override fun visitXmlAttribute(attribute: XmlAttribute) {
+      val parent = attribute.parent
+                   ?: return
+      val info = Angular2AttributeNameParser.parse(attribute.name, parent)
+      when (info.type) {
+        REFERENCE -> addReference(attribute, info, isTemplateTag(parent))
+        LET -> addVariable(attribute, info)
+        TEMPLATE_BINDINGS -> addTemplateBindings(attribute)
+        else -> {}
       }
     }
 
-    public void addReference(@NotNull XmlAttribute attribute,
-                             @NotNull Angular2AttributeNameParser.AttributeInfo info,
-                             boolean isTemplateTag) {
-      JSImplicitElement var = createVariable(info.name, attribute);
+    fun addReference(attribute: XmlAttribute,
+                     info: Angular2AttributeNameParser.AttributeInfo,
+                     isTemplateTag: Boolean) {
+      val `var` = createVariable(info.name, attribute)
       if (isTemplateTag) {
         // References on ng-template are visible within parent scope
-        prevScope().add(var);
+        prevScope().add(`var`)
       }
       else {
-        currentScope().add(var);
+        currentScope().add(`var`)
       }
     }
 
-    public void addVariable(@NotNull XmlAttribute attribute, @NotNull Angular2AttributeNameParser.AttributeInfo info) {
-      addElement(createVariable(info.name, attribute));
+    fun addVariable(attribute: XmlAttribute, info: Angular2AttributeNameParser.AttributeInfo) {
+      addElement(createVariable(info.name, attribute))
     }
 
-    public void addTemplateBindings(@NotNull XmlAttribute attribute) {
-      Angular2TemplateBindings bindings = Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2TemplateBindings.class);
-      if (bindings != null) {
-        for (Angular2TemplateBinding b : bindings.getBindings()) {
-          if (b.keyIsVar() && b.getVariableDefinition() != null) {
-            addElement(b.getVariableDefinition());
-          }
+    fun addTemplateBindings(attribute: XmlAttribute) {
+      val bindings = Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2TemplateBindings::class.java)
+                     ?: return
+      for (b in bindings.bindings) {
+        if (b.keyIsVar()) {
+          b.variableDefinition?.let { addElement(it) }
         }
       }
+    }
+  }
+
+  companion object {
+
+    @NonNls
+    private val LEGACY_TEMPLATE_TAG = "template"
+
+    @JvmStatic
+    fun isTemplateTag(tag: XmlTag?): Boolean {
+      return tag != null && isTemplateTag(tag.localName)
+    }
+
+    @JvmStatic
+    fun isTemplateTag(tagName: String?): Boolean {
+      return ELEMENT_NG_TEMPLATE.equals(tagName!!, ignoreCase = true) || LEGACY_TEMPLATE_TAG.equals(tagName, ignoreCase = true)
+    }
+
+    private fun createVariable(name: String,
+                               contributor: PsiElement): JSImplicitElement {
+      return JSImplicitElementImpl.Builder(name, contributor)
+        .setType(JSImplicitElement.Type.Variable).toImplicitElement()
     }
   }
 }

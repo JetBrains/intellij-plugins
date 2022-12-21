@@ -1,64 +1,56 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataElement;
-import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
-import org.angular2.index.Angular2MetadataFunctionIndex;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonValue
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataFunction
+import org.angular2.index.Angular2MetadataFunctionIndex
+import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
+import org.jetbrains.annotations.NonNls
+import java.io.IOException
 
-import java.io.IOException;
+class Angular2MetadataFunctionStub : Angular2MetadataElementStub<Angular2MetadataFunction> {
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
+  val functionValue: Angular2MetadataElementStub<*>?
+    get() = findMember(VALUE_OBJ) as? Angular2MetadataElementStub<*>
 
-public class Angular2MetadataFunctionStub extends Angular2MetadataElementStub<Angular2MetadataFunction> {
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parent: StubElement<*>?)
+    : super(stream, parent, Angular2MetadataElementTypes.FUNCTION)
 
-  @NonNls private static final String VALUE_OBJ = "#value";
+  constructor(memberName: String, value: JsonValue, parent: StubElement<*>?)
+    : super(memberName, parent, Angular2MetadataElementTypes.FUNCTION) {
+    createMember(VALUE_OBJ, value)
+  }
 
-  public static Angular2MetadataFunctionStub createFunctionStub(@Nullable String memberName,
-                                                                @NotNull JsonValue source,
-                                                                @Nullable StubElement parent) {
-    JsonObject sourceObject = (JsonObject)source;
-    if (memberName != null && SYMBOL_FUNCTION.equals(readStringPropertyValue(sourceObject.findProperty(SYMBOL_TYPE)))) {
-      JsonValue value = doIfNotNull(sourceObject.findProperty(FUNCTION_VALUE), JsonProperty::getValue);
-      if (value != null) {
-        return new Angular2MetadataFunctionStub(memberName, value, parent);
-      }
+  override fun index(sink: IndexSink) {
+    super.index(sink)
+    if (memberName != null) {
+      sink.occurrence(Angular2MetadataFunctionIndex.KEY, memberName!!)
     }
-    return null;
   }
 
-  public Angular2MetadataFunctionStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
-    super(stream, parent, Angular2MetadataElementTypes.FUNCTION);
-  }
+  companion object {
 
-  public Angular2MetadataFunctionStub(@NotNull String memberName,
-                                      @NotNull JsonValue value,
-                                      @Nullable StubElement parent) {
-    super(memberName, parent, Angular2MetadataElementTypes.FUNCTION);
-    createMember(VALUE_OBJ, value);
-  }
+    @NonNls
+    private val VALUE_OBJ = "#value"
 
-  public @Nullable Angular2MetadataElementStub<? extends Angular2MetadataElement> getFunctionValue() {
-    //noinspection unchecked
-    return tryCast(findMember(VALUE_OBJ), Angular2MetadataElementStub.class);
-  }
-
-  @Override
-  public void index(@NotNull IndexSink sink) {
-    super.index(sink);
-    if (getMemberName() != null) {
-      sink.occurrence(Angular2MetadataFunctionIndex.KEY, getMemberName());
+    fun createFunctionStub(memberName: String?,
+                           source: JsonValue,
+                           parent: StubElement<*>?): Angular2MetadataFunctionStub? {
+      val sourceObject = source as JsonObject
+      if (memberName != null && SYMBOL_FUNCTION == readStringPropertyValue(
+          sourceObject.findProperty(SYMBOL_TYPE))) {
+        val value = sourceObject.findProperty(FUNCTION_VALUE)?.value
+        if (value != null) {
+          return Angular2MetadataFunctionStub(memberName, value, parent)
+        }
+      }
+      return null
     }
   }
 }

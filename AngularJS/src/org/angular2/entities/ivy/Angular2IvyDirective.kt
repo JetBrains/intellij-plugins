@@ -1,200 +1,179 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.ivy;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.ivy
 
-import com.intellij.lang.javascript.psi.JSRecordType;
-import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
-import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.Angular2DecoratorUtil;
-import org.angular2.entities.*;
-import org.angular2.entities.source.Angular2SourceDirectiveProperty;
-import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptStringLiteralType
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
+import com.intellij.lang.javascript.psi.util.JSClassUtils
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
+import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiTreeUtil
+import org.angular2.Angular2DecoratorUtil
+import org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs
+import org.angular2.entities.*
+import org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity
+import org.angular2.entities.source.Angular2SourceDirective.Companion.getDirectiveKindNoCache
+import org.angular2.entities.source.Angular2SourceDirectiveProperty
+import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-import java.util.*;
+open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive) : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(
+  entityDef), Angular2Directive {
 
-import static com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS;
-import static com.intellij.psi.util.CachedValueProvider.Result.create;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
-import static org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity;
-import static org.angular2.entities.source.Angular2SourceDirective.getDirectiveKindNoCache;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_INPUTS;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_OUTPUTS;
+  override val selector: Angular2DirectiveSelector
+    get() = getLazyValue(IVY_SELECTOR) {
+      myEntityDef.selectorElement
+        ?.let { createSelectorFromStringLiteralType(it) }
+      ?: Angular2DirectiveSelectorImpl(myEntityDef.field, null, null)
+    }
 
-public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymbolDef.Directive> implements Angular2Directive {
+  override val exportAsList: List<String>
+    get() = getLazyValue(IVY_EXPORT_AS) { myEntityDef.exportAsList }
 
-  private static final Key<Angular2DirectiveSelector> IVY_SELECTOR = new Key<>("ng.ivy.selector");
-  private static final Key<List<String>> IVY_EXPORT_AS = new Key<>("ng.ivy.export-as");
+  override val attributes: Collection<Angular2DirectiveAttribute>
+    get() = getAttributes(myEntityDef)
 
-  public Angular2IvyDirective(@NotNull Angular2IvySymbolDef.Directive entityDef) {
-    super(entityDef);
-  }
+  override val directiveKind: Angular2DirectiveKind
+    get() = getCachedValue {
+      create(
+        getDirectiveKindNoCache(typeScriptClass), classModificationDependencies)
+    }
 
-  @Override
-  public @NotNull Pointer<? extends Angular2Directive> createPointer() {
-    var entityDef = myEntityDef.createPointer();
-    return () -> {
-      var newEntityDef = entityDef.dereference();
-      return newEntityDef != null ? new Angular2IvyDirective(newEntityDef) : null;
-    };
-  }
+  override val bindings: Angular2DirectiveProperties
+    get() = getCachedValue {
+      create(propertiesNoCache, classModificationDependencies)
+    }
 
-  @Override
-  public @NotNull Angular2DirectiveSelector getSelector() {
-    return getLazyValue(IVY_SELECTOR, () -> {
-      TypeScriptStringLiteralType element = myEntityDef.getSelectorElement();
-      if (element != null) {
-        return createSelectorFromStringLiteralType(element);
-      }
-      return new Angular2DirectiveSelectorImpl(myEntityDef.getField(), null, null);
-    });
-  }
+  private val propertiesNoCache: Angular2DirectiveProperties
+    get() {
+      val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
+      val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
 
-  @Override
-  public @NotNull List<String> getExportAsList() {
-    return getLazyValue(IVY_EXPORT_AS, () -> myEntityDef.getExportAsList());
-  }
+      val inputMap = LinkedHashMap<String, String>()
+      val outputMap = LinkedHashMap<String, String>()
 
-  @Override
-  public @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes() {
-    return getAttributes(myEntityDef);
-  }
+      val clazz = typeScriptClass
 
-  private static Collection<? extends Angular2DirectiveAttribute> getAttributes(Angular2IvySymbolDef.Directive entityDef) {
-    return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
-      TypeScriptClass cls = entityDef.getContextClass();
-      if (cls == null) {
-        return create(Collections.emptyList(), entityDef.getField());
-      }
-
-      // find class with constructor
-      Set<Object> dependencies = new HashSet<>();
-      dependencies.add(cls);
-      Ref<TypeScriptFunction> constructor = new Ref<>(ContainerUtil.find(cls.getConstructors(), fun -> !fun.isOverloadImplementation()));
-      if (constructor.isNull()) {
-        JSClassUtils.processClassesInHierarchy(cls, false, (aClass, typeSubstitutor, fromImplements) -> {
-          dependencies.add(aClass);
-          if (aClass instanceof TypeScriptClass) {
-            constructor.set(ContainerUtil.find(((TypeScriptClass)aClass).getConstructors(), fun -> !fun.isOverloadImplementation()));
+      JSClassUtils.processClassesInHierarchy(clazz, false) { aClass, _, _ ->
+        if (aClass is TypeScriptClass) {
+          val entityDef = Angular2IvySymbolDef.get(aClass, true)
+          if (entityDef is Angular2IvySymbolDef.Directive) {
+            readMappingsInto(entityDef, Angular2DecoratorUtil.INPUTS_PROP, inputMap)
+            readMappingsInto(entityDef, Angular2DecoratorUtil.OUTPUTS_PROP, outputMap)
           }
-          return constructor.isNull();
-        });
-        if (constructor.isNull()) {
-          return create(Collections.emptyList(), dependencies.toArray());
         }
+        true
       }
 
-      TypeScriptClass constructorClass = PsiTreeUtil.getContextOfType(constructor.get(), TypeScriptClass.class);
-      if (constructorClass != null) {
-        Map<String, JSTypeDeclaration> attributeNames =
-          doIfNotNull(Angular2IvySymbolDef.getFactory(constructorClass), Angular2IvySymbolDef.Factory::getAttributeNames);
-        if (attributeNames != null) {
-          return create(
-            ContainerUtil.map(attributeNames.entrySet(), entry -> new Angular2IvyDirectiveAttribute(entry.getKey(), entry.getValue())),
-            dependencies.toArray());
+      TypeScriptTypeParser
+        .buildTypeFromClass(clazz, false)
+        .properties
+        .forEach { prop ->
+          if (prop.memberSource.singleElement != null) {
+            processProperty(clazz, prop, inputMap, KIND_NG_DIRECTIVE_INPUTS, inputs)
+            processProperty(clazz, prop, outputMap, KIND_NG_DIRECTIVE_OUTPUTS, outputs)
+          }
         }
+
+      hackIonicComponentOutputs(this, outputMap)
+
+      inputMap.values.forEach { input -> inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS) }
+      outputMap.values.forEach { output ->
+        outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)
       }
 
-      // Try to fallback to metadata JSON information - Angular 9.0.x case
-      Angular2Directive metadataDirective = getMetadataDirective(cls);
-      if (metadataDirective == null) {
-        return create(Collections.emptyList(), cls, VFS_STRUCTURE_MODIFICATIONS);
-      }
-      return create(metadataDirective.getAttributes(), cls, metadataDirective);
-    });
+      return Angular2DirectiveProperties(inputs.values, outputs.values)
+    }
+
+  override fun createPointer(): Pointer<out Angular2Directive> {
+    val entityDef = myEntityDef.createPointer()
+    return Pointer {
+      entityDef.dereference()?.let { Angular2IvyDirective(it) }
+    }
   }
 
-  @Override
-  public @NotNull Angular2DirectiveKind getDirectiveKind() {
-    return getCachedValue(() -> create(
-      getDirectiveKindNoCache(myClass), getClassModificationDependencies()));
+  protected fun createSelectorFromStringLiteralType(type: TypeScriptStringLiteralType): Angular2DirectiveSelector {
+    return Angular2DirectiveSelectorImpl(type, type.innerText, 1)
   }
 
-  protected static Angular2Directive getMetadataDirective(TypeScriptClass clazz) {
-    return CachedValuesManager.getCachedValue(clazz, () -> {
-      Angular2Directive metadataDirective = tryCast(getMetadataEntity(clazz), Angular2Directive.class);
-      if (metadataDirective != null) {
-        return create(metadataDirective, clazz, metadataDirective);
-      }
-      return create(null, clazz, VFS_STRUCTURE_MODIFICATIONS);
-    });
-  }
+  companion object {
 
-  protected Angular2DirectiveSelector createSelectorFromStringLiteralType(TypeScriptStringLiteralType type) {
-    return new Angular2DirectiveSelectorImpl(type, type.getInnerText(), 1);
-  }
+    private val IVY_SELECTOR = Key<Angular2DirectiveSelector>("ng.ivy.selector")
+    private val IVY_EXPORT_AS = Key<List<String>>("ng.ivy.export-as")
 
-  @Override
-  public @NotNull Angular2DirectiveProperties getBindings() {
-    return getCachedValue(
-      () -> create(getPropertiesNoCache(),
-                   getClassModificationDependencies())
-    );
-  }
-
-  private @NotNull Angular2DirectiveProperties getPropertiesNoCache() {
-    Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
-    Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
-
-    Map<String, String> inputMap = new LinkedHashMap<>();
-    Map<String, String> outputMap = new LinkedHashMap<>();
-
-    TypeScriptClass clazz = myClass;
-
-    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
-      if (aClass instanceof TypeScriptClass) {
-        Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClass)aClass, true);
-        if (entityDef instanceof Angular2IvySymbolDef.Directive) {
-          readMappingsInto((Angular2IvySymbolDef.Directive)entityDef, Angular2DecoratorUtil.INPUTS_PROP, inputMap);
-          readMappingsInto((Angular2IvySymbolDef.Directive)entityDef, Angular2DecoratorUtil.OUTPUTS_PROP, outputMap);
+    private fun getAttributes(entityDef: Angular2IvySymbolDef.Directive): Collection<Angular2DirectiveAttribute> {
+      return CachedValuesManager.getCachedValue(entityDef.field) {
+        val cls = entityDef.contextClass
+        if (cls == null) {
+          return@getCachedValue create(emptyList(), entityDef.field)
         }
-      }
-      return true;
-    });
 
-    TypeScriptTypeParser
-      .buildTypeFromClass(clazz, false)
-      .getProperties()
-      .forEach(prop -> {
-        if (prop.getMemberSource().getSingleElement() != null) {
-          processProperty(clazz, prop, inputMap, KIND_NG_DIRECTIVE_INPUTS, inputs);
-          processProperty(clazz, prop, outputMap, KIND_NG_DIRECTIVE_OUTPUTS, outputs);
+        // find class with constructor
+        val dependencies = HashSet<Any>()
+        dependencies.add(cls)
+        var constructor = cls.constructors.find { !it.isOverloadImplementation }
+        if (constructor == null) {
+          JSClassUtils.processClassesInHierarchy(cls, false) { aClass, _, _ ->
+            dependencies.add(aClass)
+            if (aClass is TypeScriptClass) {
+              constructor = aClass.constructors.find { !it.isOverloadImplementation }
+            }
+            constructor == null
+          }
+          if (constructor == null) {
+            return@getCachedValue create(emptyList(), *dependencies.toTypedArray())
+          }
         }
-      });
 
-    hackIonicComponentOutputs(this, outputMap);
+        val constructorClass = PsiTreeUtil.getContextOfType(constructor, TypeScriptClass::class.java)
+        if (constructorClass != null) {
+          val attributeNames = Angular2IvySymbolDef.getFactory(constructorClass)?.attributeNames
+          if (attributeNames != null) {
+            return@getCachedValue create(
+              attributeNames.entries.map { entry -> Angular2IvyDirectiveAttribute(entry.key, entry.value) },
+              *dependencies.toTypedArray())
+          }
+        }
 
-    inputMap.values().forEach(
-      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS)));
-    outputMap.values().forEach(
-      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)));
+        // Try to fallback to metadata JSON information - Angular 9.0.x case
+        val metadataDirective = getMetadataDirective(cls)
+        if (metadataDirective == null) {
+          return@getCachedValue create(emptyList(), cls, VFS_STRUCTURE_MODIFICATIONS)
+        }
+        create(metadataDirective.attributes, cls, metadataDirective)
+      }
+    }
 
-    return new Angular2DirectiveProperties(inputs.values(), outputs.values());
-  }
+    @JvmStatic
+    protected fun getMetadataDirective(clazz: TypeScriptClass): Angular2Directive? {
+      return CachedValuesManager.getCachedValue(clazz) {
+        val metadataDirective = getMetadataEntity(clazz) as? Angular2Directive
+        if (metadataDirective != null) {
+          return@getCachedValue create(metadataDirective, clazz, metadataDirective)
+        }
+        create(null, clazz, VFS_STRUCTURE_MODIFICATIONS)
+      }
+    }
 
-  private static void readMappingsInto(Angular2IvySymbolDef.Directive directiveDef, String field, Map<String, String> target) {
-    directiveDef.readPropertyMappings(field).forEach((key, value) -> target.putIfAbsent(key, value));
-  }
+    private fun readMappingsInto(directiveDef: Angular2IvySymbolDef.Directive, field: String, target: MutableMap<String, String>) {
+      directiveDef.readPropertyMappings(field)
+        .forEach { (key, value) -> target.putIfAbsent(key, value) }
+    }
 
-  private static void processProperty(@NotNull TypeScriptClass clazz,
-                                      @NotNull JSRecordType.PropertySignature property,
-                                      @NotNull Map<String, String> mappings,
-                                      @NotNull String kind,
-                                      @NotNull Map<String, Angular2DirectiveProperty> result) {
-    String bindingName = mappings.remove(property.getMemberName());
-    if (bindingName != null) {
-      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(clazz, property, kind, bindingName));
+    private fun processProperty(clazz: TypeScriptClass,
+                                property: JSRecordType.PropertySignature,
+                                mappings: MutableMap<String, String>,
+                                kind: String,
+                                result: MutableMap<String, Angular2DirectiveProperty>) {
+      val bindingName = mappings.remove(property.memberName)
+      if (bindingName != null) {
+        result.putIfAbsent(bindingName, Angular2SourceDirectiveProperty(clazz, property, kind, bindingName))
+      }
     }
   }
 }

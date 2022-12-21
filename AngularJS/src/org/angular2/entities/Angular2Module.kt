@@ -1,48 +1,42 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import org.jetbrains.annotations.NotNull;
+import org.angular2.entities.Angular2EntityUtils.forEachEntity
+import org.angular2.entities.Angular2EntityUtils.forEachModule
 
-import java.util.HashSet;
-import java.util.Set;
+interface Angular2Module : Angular2Entity, Angular2ImportsOwner {
 
-import static org.angular2.entities.Angular2EntityUtils.forEachEntity;
-import static org.angular2.entities.Angular2EntityUtils.forEachModule;
+  val declarations: Set<Angular2Declaration>
 
-public interface Angular2Module extends Angular2Entity, Angular2ImportsOwner {
+  val exports: Set<Angular2Entity>
 
-  @NotNull
-  Set<Angular2Declaration> getDeclarations();
+  val isScopeFullyResolved: Boolean
 
-  boolean areDeclarationsFullyResolved();
+  val isPublic: Boolean
 
-  @NotNull
-  Set<Angular2Entity> getExports();
-
-  boolean areExportsFullyResolved();
-
-  boolean isScopeFullyResolved();
-
-  boolean isPublic();
-
-  @NotNull
-  Set<Angular2Declaration> getAllExportedDeclarations();
+  val allExportedDeclarations: Set<Angular2Declaration>
 
   /**
-   * @see Angular2Component#getDeclarationsInScope()
+   * @see Angular2Component.declarationsInScope
    */
-  default @NotNull Set<Angular2Declaration> getDeclarationsInScope() {
-    Set<Angular2Declaration> result = new HashSet<>(getDeclarations());
-    forEachEntity(
-      getImports(),
-      module -> result.addAll(module.getAllExportedDeclarations()),
-      declaration -> {
-        if (declaration.isStandalone()) result.add(declaration);
-      }
-    );
-    forEachModule(getExports(), module -> result.addAll(module.getAllExportedDeclarations()));
-    return result;
-  }
+  val declarationsInScope: Set<Angular2Declaration>
+    get() {
+      val result = HashSet(declarations)
+      forEachEntity(
+        imports,
+        { module -> result.addAll(module.allExportedDeclarations) },
+        { declaration -> if (declaration.isStandalone) result.add(declaration) }
+      )
+      forEachModule(exports) { module -> result.addAll(module.allExportedDeclarations) }
+      return result
+    }
 
-  Angular2Module[] EMPTY_ARRAY = new Angular2Module[0];
+  fun areDeclarationsFullyResolved(): Boolean
+
+  fun areExportsFullyResolved(): Boolean
+
+  companion object {
+
+    val EMPTY_ARRAY = arrayOfNulls<Angular2Module>(0)
+  }
 }

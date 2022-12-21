@@ -1,103 +1,71 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.expr.lexer;
+package org.angular2.lang.expr.lexer
 
-import com.intellij.lexer.*;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lexer.*
+import com.intellij.psi.tree.IElementType
+import org.angular2.lang.expr.lexer.Angular2TokenTypes.Companion.STRING_PART_SPECIAL_SEQ
 
-import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
+class Angular2Lexer : MergingLexerAdapterBase(FlexAdapter(_Angular2Lexer(null))) {
 
-public class Angular2Lexer extends MergingLexerAdapterBase {
+  private var myMergeFunction: MyMergeFunction? = null
 
-  private MyMergeFunction myMergeFunction;
-
-  public Angular2Lexer() {
-    super(new FlexAdapter(new _Angular2Lexer(null)));
+  override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
+    super.start(buffer, startOffset, endOffset, initialState)
+    myMergeFunction = MyMergeFunction(false)
   }
 
-  @Override
-  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
-    super.start(buffer, startOffset, endOffset, initialState);
-    myMergeFunction = new MyMergeFunction(false);
+  override fun getMergeFunction(): MergeFunction? {
+    return myMergeFunction
   }
 
-  @Override
-  public MergeFunction getMergeFunction() {
-    return myMergeFunction;
+  override fun restore(position: LexerPosition) {
+    val pos = position as MyLexerPosition
+    myMergeFunction = MyMergeFunction(pos.isPrevTokenEscapeSequence)
+    super.restore(pos.original)
   }
 
-  @Override
-  public void restore(@NotNull LexerPosition position) {
-    MyLexerPosition pos = (MyLexerPosition)position;
-    myMergeFunction = new MyMergeFunction(pos.isPrevTokenEscapeSequence());
-    super.restore(pos.getOriginal());
+  override fun getCurrentPosition(): LexerPosition {
+    return MyLexerPosition(super.getCurrentPosition(), myMergeFunction!!.isPrevTokenEscapeSequence)
   }
 
-  @Override
-  public @NotNull LexerPosition getCurrentPosition() {
-    return new MyLexerPosition(super.getCurrentPosition(), myMergeFunction.isPrevTokenEscapeSequence());
-  }
+  private class MyLexerPosition(val original: LexerPosition, val isPrevTokenEscapeSequence: Boolean) : LexerPosition {
 
-  private static final class MyLexerPosition implements LexerPosition {
-
-    private final LexerPosition myOriginal;
-    private final boolean myPrevTokenEscapeSequence;
-
-    private MyLexerPosition(LexerPosition original, boolean prevTokenEscapeSequence) {
-      myOriginal = original;
-      myPrevTokenEscapeSequence = prevTokenEscapeSequence;
+    override fun getOffset(): Int {
+      return original.offset
     }
 
-    public boolean isPrevTokenEscapeSequence() {
-      return myPrevTokenEscapeSequence;
-    }
-
-    public LexerPosition getOriginal() {
-      return myOriginal;
-    }
-
-    @Override
-    public int getOffset() {
-      return myOriginal.getOffset();
-    }
-
-    @Override
-    public int getState() {
-      return myOriginal.getState();
+    override fun getState(): Int {
+      return original.state
     }
   }
 
-  private static final class MyMergeFunction implements MergeFunction {
+  private class MyMergeFunction(prevTokenEscapeSequence: Boolean) : MergeFunction {
 
-    private boolean myPrevTokenEscapeSequence;
+    var isPrevTokenEscapeSequence: Boolean = false
+      private set
 
-    private MyMergeFunction(boolean prevTokenEscapeSequence) {
-      this.myPrevTokenEscapeSequence = prevTokenEscapeSequence;
+    init {
+      this.isPrevTokenEscapeSequence = prevTokenEscapeSequence
     }
 
-    public boolean isPrevTokenEscapeSequence() {
-      return myPrevTokenEscapeSequence;
-    }
-
-    @Override
-    public IElementType merge(IElementType type, Lexer originalLexer) {
-      if (type != STRING_LITERAL_PART) {
-        myPrevTokenEscapeSequence = STRING_PART_SPECIAL_SEQ.contains(type);
-        return type;
+    override fun merge(type: IElementType, originalLexer: Lexer): IElementType? {
+      if (type != JSTokenTypes.STRING_LITERAL_PART) {
+        isPrevTokenEscapeSequence = STRING_PART_SPECIAL_SEQ.contains(type)
+        return type
       }
       while (true) {
-        final IElementType tokenType = originalLexer.getTokenType();
-        if (tokenType != STRING_LITERAL_PART) {
-          if (myPrevTokenEscapeSequence
-              || STRING_PART_SPECIAL_SEQ.contains(tokenType)) {
-            myPrevTokenEscapeSequence = false;
-            return STRING_LITERAL_PART;
+        val tokenType = originalLexer.tokenType
+        if (tokenType != JSTokenTypes.STRING_LITERAL_PART) {
+          if (isPrevTokenEscapeSequence || STRING_PART_SPECIAL_SEQ.contains(tokenType)) {
+            isPrevTokenEscapeSequence = false
+            return JSTokenTypes.STRING_LITERAL_PART
           }
           else {
-            return STRING_LITERAL;
+            return JSTokenTypes.STRING_LITERAL
           }
         }
-        originalLexer.advance();
+        originalLexer.advance()
       }
     }
   }

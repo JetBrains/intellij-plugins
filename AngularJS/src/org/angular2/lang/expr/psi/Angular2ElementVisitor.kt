@@ -1,47 +1,46 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.expr.psi;
+package org.angular2.lang.expr.psi
 
-import com.intellij.lang.javascript.psi.JSElementVisitor;
+import com.intellij.lang.javascript.psi.JSElementVisitor
 
-public class Angular2ElementVisitor extends JSElementVisitor {
-
-  public void visitAngular2Action(Angular2Action action) {
-    visitJSSourceElement(action);
+open class Angular2ElementVisitor : JSElementVisitor() {
+  open fun visitAngular2Action(action: Angular2Action) {
+    visitJSSourceElement(action)
   }
 
-  public void visitAngular2Binding(Angular2Binding binding) {
-    visitJSSourceElement(binding);
+  open fun visitAngular2Binding(binding: Angular2Binding) {
+    visitJSSourceElement(binding)
   }
 
-  public void visitAngular2Chain(Angular2Chain expressionChain) {
-    visitJSStatement(expressionChain);
+  open fun visitAngular2Chain(expressionChain: Angular2Chain) {
+    visitJSStatement(expressionChain)
   }
 
-  public void visitAngular2Interpolation(Angular2Interpolation interpolation) {
-    visitJSSourceElement(interpolation);
+  open fun visitAngular2Interpolation(interpolation: Angular2Interpolation) {
+    visitJSSourceElement(interpolation)
   }
 
-  public void visitAngular2PipeExpression(Angular2PipeExpression pipe) {
-    visitJSCallExpression(pipe);
+  open fun visitAngular2PipeExpression(pipe: Angular2PipeExpression) {
+    visitJSCallExpression(pipe)
   }
 
-  public void visitAngular2Quote(Angular2Quote quote) {
-    visitJSStatement(quote);
+  open fun visitAngular2Quote(quote: Angular2Quote) {
+    visitJSStatement(quote)
   }
 
-  public void visitAngular2SimpleBinding(Angular2SimpleBinding simpleBinding) {
-    visitJSSourceElement(simpleBinding);
+  open fun visitAngular2SimpleBinding(simpleBinding: Angular2SimpleBinding) {
+    visitJSSourceElement(simpleBinding)
   }
 
-  public void visitAngular2TemplateBinding(Angular2TemplateBinding templateBinding) {
-    visitJSStatement(templateBinding);
+  fun visitAngular2TemplateBinding(templateBinding: Angular2TemplateBinding) {
+    visitJSStatement(templateBinding)
   }
 
-  public void visitAngular2TemplateBindingKey(Angular2TemplateBindingKey templateBindingKey) {
-    visitJSExpression(templateBindingKey);
+  fun visitAngular2TemplateBindingKey(templateBindingKey: Angular2TemplateBindingKey) {
+    visitJSExpression(templateBindingKey)
   }
 
-  public void visitAngular2TemplateBindings(Angular2TemplateBindings templateBindings) {
-    visitJSSourceElement(templateBindings);
+  fun visitAngular2TemplateBindings(templateBindings: Angular2TemplateBindings) {
+    visitJSSourceElement(templateBindings)
   }
 }

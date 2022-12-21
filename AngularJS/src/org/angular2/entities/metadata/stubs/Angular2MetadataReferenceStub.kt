@@ -1,84 +1,77 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
-import com.intellij.lang.javascript.index.flags.FlagsStructure;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
-import org.angular2.entities.metadata.Angular2MetadataElementTypes;
-import org.angular2.entities.metadata.psi.Angular2MetadataReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonValue
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement
+import com.intellij.lang.javascript.index.flags.FlagsStructure
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.StringRef
+import org.angular2.entities.metadata.Angular2MetadataElementTypes
+import org.angular2.entities.metadata.psi.Angular2MetadataReference
+import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
+import java.io.IOException
 
-import java.io.IOException;
+class Angular2MetadataReferenceStub : Angular2MetadataElementStub<Angular2MetadataReference> {
 
-import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
+  private val myName: StringRef?
+  private val myModule: StringRef?
 
-public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<Angular2MetadataReference> {
+  val name: String
+    get() = StringRef.toString(myName)
 
-  public static Angular2MetadataReferenceStub createReferenceStub(@Nullable String memberName,
-                                                                  @NotNull JsonValue source,
-                                                                  @Nullable StubElement parent) {
-    JsonObject sourceObject = (JsonObject)source;
-    if (SYMBOL_REFERENCE.equals(readStringPropertyValue(sourceObject.findProperty(SYMBOL_TYPE)))) {
-      String name = readStringPropertyValue(sourceObject.findProperty(REFERENCE_NAME));
-      String module = readStringPropertyValue(sourceObject.findProperty(REFERENCE_MODULE));
-      if (name != null) {
-        return new Angular2MetadataReferenceStub(memberName, name, module, parent);
-      }
-    }
-    return null;
+  val module: String?
+    get() = StringRef.toString(myModule)
+
+  private constructor(memberName: String?,
+                      name: String,
+                      module: String?,
+                      parent: StubElement<*>?) : super(memberName, parent, Angular2MetadataElementTypes.REFERENCE) {
+    myName = StringRef.fromString(name)
+    myModule = StringRef.fromString(module)
   }
 
-  private static final BooleanStructureElement HAS_MODULE_NAME = new BooleanStructureElement();
-  @SuppressWarnings("StaticFieldReferencedViaSubclass")
-  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
-    Angular2MetadataElementStub.FLAGS_STRUCTURE,
-    HAS_MODULE_NAME
-  );
-
-  private final StringRef myName;
-  private final StringRef myModule;
-
-  private Angular2MetadataReferenceStub(@Nullable String memberName,
-                                        @NotNull String name,
-                                        @Nullable String module,
-                                        @Nullable StubElement parent) {
-    super(memberName, parent, Angular2MetadataElementTypes.REFERENCE);
-    myName = StringRef.fromString(name);
-    myModule = StringRef.fromString(module);
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream, parent: StubElement<*>?) : super(stream, parent, Angular2MetadataElementTypes.REFERENCE) {
+    myName = stream.readName()
+    myModule = if (readFlag(HAS_MODULE_NAME)) stream.readName() else null
   }
 
-  public Angular2MetadataReferenceStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
-    super(stream, parent, Angular2MetadataElementTypes.REFERENCE);
-    myName = stream.readName();
-    myModule = readFlag(HAS_MODULE_NAME) ? stream.readName() : null;
-  }
-
-  @Override
-  public void serialize(@NotNull StubOutputStream stream) throws IOException {
-    writeFlag(HAS_MODULE_NAME, myModule != null);
-    super.serialize(stream);
-    writeString(myName, stream);
+  @Throws(IOException::class)
+  override fun serialize(stream: StubOutputStream) {
+    writeFlag(HAS_MODULE_NAME, myModule != null)
+    super.serialize(stream)
+    writeString(myName, stream)
     if (myModule != null) {
-      writeString(myModule, stream);
+      writeString(myModule, stream)
     }
   }
 
-  public @NotNull String getName() {
-    return StringRef.toString(myName);
-  }
+  override val flagsStructure: FlagsStructure
+    get() = FLAGS_STRUCTURE
 
-  public @Nullable String getModule() {
-    return StringRef.toString(myModule);
-  }
+  companion object {
 
-  @Override
-  public FlagsStructure getFlagsStructure() {
-    return FLAGS_STRUCTURE;
+    fun createReferenceStub(memberName: String?,
+                            source: JsonValue,
+                            parent: StubElement<*>?): Angular2MetadataReferenceStub? {
+      val sourceObject = source as JsonObject
+      if (SYMBOL_REFERENCE == readStringPropertyValue(sourceObject.findProperty(SYMBOL_TYPE))) {
+        val name = readStringPropertyValue(sourceObject.findProperty(REFERENCE_NAME))
+        val module = readStringPropertyValue(sourceObject.findProperty(REFERENCE_MODULE))
+        if (name != null) {
+          return Angular2MetadataReferenceStub(memberName, name, module, parent)
+        }
+      }
+      return null
+    }
+
+    private val HAS_MODULE_NAME = BooleanStructureElement()
+    private val FLAGS_STRUCTURE = FlagsStructure(
+      Angular2MetadataElementStub.FLAGS_STRUCTURE,
+      HAS_MODULE_NAME
+    )
   }
 }

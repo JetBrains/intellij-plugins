@@ -1,163 +1,133 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.source;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.source
 
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.containers.Stack;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
-import org.angular2.entities.Angular2ModuleResolver;
-import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.util.AstLoadingFilter
+import com.intellij.util.containers.Stack
+import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
+import org.angular2.Angular2DecoratorUtil.getReferencedObjectLiteralInitializer
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.Angular2Entity
+import org.angular2.entities.Angular2Module
+import org.angular2.entities.Angular2ModuleResolver
+import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+class Angular2SourceModule(decorator: ES6Decorator, implicitElement: JSImplicitElement)
+  : Angular2SourceEntity(decorator, implicitElement), Angular2Module {
 
-import static org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer;
-import static org.angular2.Angular2DecoratorUtil.getReferencedObjectLiteralInitializer;
+  private val myModuleResolver = Angular2ModuleResolver({ decorator }, symbolCollector)
 
-public class Angular2SourceModule extends Angular2SourceEntity implements Angular2Module {
+  override val declarations: Set<Angular2Declaration>
+    get() = myModuleResolver.declarations
 
-  private final Angular2ModuleResolver<ES6Decorator> myModuleResolver = new Angular2ModuleResolver<>(
-    this::getDecorator, Angular2SourceModule::collectSymbols);
+  override val imports: Set<Angular2Entity>
+    get() = myModuleResolver.imports
 
-  public Angular2SourceModule(@NotNull ES6Decorator decorator,
-                              @NotNull JSImplicitElement implicitElement) {
-    super(decorator, implicitElement);
+  override val exports: Set<Angular2Entity>
+    get() = myModuleResolver.exports
+
+  override val allExportedDeclarations: Set<Angular2Declaration>
+    get() = myModuleResolver.allExportedDeclarations
+
+  override val isScopeFullyResolved: Boolean
+    get() = myModuleResolver.isScopeFullyResolved
+
+  override val isPublic: Boolean
+    get() = !getName().startsWith("ɵ")
+
+  override fun areExportsFullyResolved(): Boolean {
+    return myModuleResolver.areExportsFullyResolved()
   }
 
-  @Override
-  public @NotNull Set<Angular2Declaration> getDeclarations() {
-    return myModuleResolver.getDeclarations();
+  override fun areDeclarationsFullyResolved(): Boolean {
+    return myModuleResolver.areDeclarationsFullyResolved()
   }
 
-  @Override
-  public @NotNull Set<Angular2Entity> getImports() {
-    return myModuleResolver.getImports();
-  }
+  private class SourceSymbolCollector<T : Angular2Entity>(entityClass: Class<T>, private val myDecorator: ES6Decorator)
+    : Angular2SourceEntityListProcessor<T>(entityClass) {
 
-  @Override
-  public @NotNull Set<Angular2Entity> getExports() {
-    return myModuleResolver.getExports();
-  }
+    private var myIsFullyResolved = true
+    private val myResult = HashSet<T>()
+    private val myDependencies = HashSet<PsiElement>()
+    private val myResolveQueue = Stack<PsiElement>()
 
-  @Override
-  public @NotNull Set<Angular2Declaration> getAllExportedDeclarations() {
-    return myModuleResolver.getAllExportedDeclarations();
-  }
-
-  @Override
-  public boolean isScopeFullyResolved() {
-    return myModuleResolver.isScopeFullyResolved();
-  }
-
-  @Override
-  public boolean areExportsFullyResolved() {
-    return myModuleResolver.areExportsFullyResolved();
-  }
-
-  @Override
-  public boolean areDeclarationsFullyResolved() {
-    return myModuleResolver.areDeclarationsFullyResolved();
-  }
-
-  @Override
-  public boolean isPublic() {
-    //noinspection HardCodedStringLiteral
-    return !getName().startsWith("ɵ");
-  }
-
-  public static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull ES6Decorator decorator,
-                                                                                           @NotNull String propertyName,
-                                                                                           @NotNull Class<T> symbolClazz) {
-    JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
-    if (initializer == null) {
-      initializer = getReferencedObjectLiteralInitializer(decorator);
-    }
-    JSProperty property = initializer != null ? initializer.findProperty(propertyName)
-                                              : null;
-    if (property == null) {
-      return ResolvedEntitiesList.createResult(Collections.emptySet(), true, decorator);
-    }
-    return AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(), () ->
-      new SourceSymbolCollector<>(symbolClazz, decorator).collect(property.getValue()));
-  }
-
-  private static class SourceSymbolCollector<T extends Angular2Entity> extends Angular2SourceEntityListProcessor<T> {
-
-    private boolean myIsFullyResolved = true;
-    private final Set<T> myResult = new HashSet<>();
-    private final Set<PsiElement> myDependencies = new HashSet<>();
-    private final Stack<PsiElement> myResolveQueue = new Stack<>();
-    private final ES6Decorator myDecorator;
-
-    SourceSymbolCollector(@NotNull Class<T> entityClass, @NotNull ES6Decorator decorator) {
-      super(entityClass);
-      myDecorator = decorator;
-    }
-
-    public Result<ResolvedEntitiesList<T>> collect(@Nullable JSExpression value) {
+    fun collect(value: JSExpression?): Result<ResolvedEntitiesList<T>> {
       if (value == null) {
-        return ResolvedEntitiesList.createResult(myResult, false, myDecorator);
+        return ResolvedEntitiesList.createResult(myResult, false, myDecorator)
       }
-      Set<PsiElement> visited = new HashSet<>();
-      processCacheDependency(myDecorator);
-      myResolveQueue.push(value);
+      val visited = HashSet<PsiElement>()
+      processCacheDependency(myDecorator)
+      myResolveQueue.push(value)
       while (!myResolveQueue.empty()) {
-        ProgressManager.checkCanceled();
-        PsiElement element = myResolveQueue.pop();
+        ProgressManager.checkCanceled()
+        val element = myResolveQueue.pop()
         if (!visited.add(element)) {
           // Protect against cyclic references or visiting same thing several times
-          continue;
+          continue
         }
-        processCacheDependency(element);
-        List<PsiElement> children = resolve(element);
+        processCacheDependency(element)
+        val children = resolve(element)
         if (children.isEmpty()) {
-          element.accept(getResultsVisitor());
+          element.accept(resultsVisitor)
         }
         else {
-          myResolveQueue.addAll(children);
+          myResolveQueue.addAll(children)
         }
       }
-      return ResolvedEntitiesList.createResult(myResult, myIsFullyResolved, myDependencies);
+      return ResolvedEntitiesList.createResult(myResult, myIsFullyResolved, myDependencies)
     }
 
-    @Override
-    protected void processCacheDependency(PsiElement element) {
-      myDependencies.add(element);
+    override fun processCacheDependency(element: PsiElement) {
+      myDependencies.add(element)
     }
 
-    @Override
-    protected void processNonAcceptableEntityClass(@NotNull JSClass aClass) {
-      myIsFullyResolved = false;
+    override fun processNonAcceptableEntityClass(aClass: JSClass) {
+      myIsFullyResolved = false
     }
 
-    @Override
-    protected void processAcceptableEntity(@NotNull T entity) {
-      myResult.add(entity);
+    override fun processAcceptableEntity(entity: T) {
+      myResult.add(entity)
     }
 
-    @Override
-    protected void processAnyType() {
-      myIsFullyResolved = false;
+    override fun processAnyType() {
+      myIsFullyResolved = false
     }
 
-    @Override
-    protected void processAnyElement(JSElement node) {
-      myIsFullyResolved = false;
+    override fun processAnyElement(node: JSElement) {
+      myIsFullyResolved = false
     }
+  }
+
+  companion object {
+    @JvmField
+    val symbolCollector = object : Angular2ModuleResolver.SymbolCollector<ES6Decorator> {
+      override fun <U : Angular2Entity> collect(source: ES6Decorator,
+                                                propertyName: String,
+                                                symbolClazz: Class<U>): Result<ResolvedEntitiesList<U>> {
+        return collectSymbols(source, propertyName, symbolClazz)
+      }
+    }
+
+    private fun <T : Angular2Entity> collectSymbols(decorator: ES6Decorator,
+                                                    propertyName: String,
+                                                    symbolClazz: Class<T>): Result<ResolvedEntitiesList<T>> {
+      val initializer = getObjectLiteralInitializer(decorator)
+                        ?: getReferencedObjectLiteralInitializer(decorator)
+      val property = initializer?.findProperty(propertyName)
+      return if (property == null) {
+        ResolvedEntitiesList.createResult(emptySet(), true, decorator)
+      }
+      else AstLoadingFilter.forceAllowTreeLoading<Result<ResolvedEntitiesList<T>>, RuntimeException>(property.containingFile) {
+        SourceSymbolCollector(symbolClazz, decorator).collect(property.value)
+      }
+    }
+
   }
 }

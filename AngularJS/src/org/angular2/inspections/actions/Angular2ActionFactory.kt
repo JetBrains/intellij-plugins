@@ -1,82 +1,78 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections.actions;
+package org.angular2.inspections.actions
 
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.source.Angular2SourceDeclaration;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.NlsContexts
+import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.SmartPsiElementPointer
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.source.Angular2SourceDeclaration
+import org.angular2.lang.Angular2Bundle
+import org.jetbrains.annotations.Nls
 
-import static com.intellij.util.ObjectUtils.tryCast;
+object Angular2ActionFactory {
 
-public final class Angular2ActionFactory {
+  fun createAddNgModuleDeclarationAction(editor: Editor?,
+                                         element: PsiElement,
+                                         declaration: Angular2Declaration,
+                                         codeCompletion: Boolean): AddNgModuleDeclarationAction? {
 
-  public static @Nullable AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                          @NotNull PsiElement element,
-                                                                                          @NotNull Angular2Declaration declaration,
-                                                                                          boolean codeCompletion) {
+    val sourceDeclaration = declaration as? Angular2SourceDeclaration
+                            ?: return null
+    val className = sourceDeclaration.typeScriptClass.name
+                    ?: return null
 
-    Angular2SourceDeclaration sourceDeclaration = tryCast(declaration, Angular2SourceDeclaration.class);
-    String className;
-    //noinspection DialogTitleCapitalization
-    return sourceDeclaration == null || (className = sourceDeclaration.getTypeScriptClass().getName()) == null
-           ? null
-           : createAddNgModuleDeclarationAction(editor, element,
-                                                SmartPointerManager.createPointer(sourceDeclaration.getDecorator()), className,
-                                                Angular2Bundle.message("angular.quickfix.ngmodule.declare.name.choice",
-                                                                       className),
-                                                codeCompletion);
+    return createAddNgModuleDeclarationAction(editor, element,
+                                              SmartPointerManager.createPointer(sourceDeclaration.decorator), className,
+                                              Angular2Bundle.message("angular.quickfix.ngmodule.declare.name.choice",
+                                                                     className),
+                                              codeCompletion)
   }
 
-  public static @NotNull AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                         @NotNull PsiElement element,
-                                                                                         @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
-                                                                                         @NotNull String declarationName,
-                                                                                         @NotNull @NlsContexts.Command String actionName,
-                                                                                         boolean codeCompletion) {
-    return new AddNgModuleDeclarationAction(editor, element, declarationDecorator, declarationName, actionName, codeCompletion);
+  fun createAddNgModuleDeclarationAction(editor: Editor?,
+                                         element: PsiElement,
+                                         declarationDecorator: SmartPsiElementPointer<ES6Decorator>,
+                                         declarationName: String,
+                                         @NlsContexts.Command actionName: String,
+                                         codeCompletion: Boolean): AddNgModuleDeclarationAction {
+    return AddNgModuleDeclarationAction(editor, element, declarationDecorator, declarationName, actionName, codeCompletion)
   }
 
-  public static @NotNull NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
-                                                                         @NotNull PsiElement element,
-                                                                         boolean codeCompletion) {
-    //noinspection DialogTitleCapitalization
+  fun createNgModuleImportAction(editor: Editor?,
+                                 element: PsiElement,
+                                 codeCompletion: Boolean): NgModuleImportAction {
+    @Suppress("DialogTitleCapitalization")
     return createNgModuleImportAction(editor, element, Angular2Bundle.message("angular.quickfix.ngmodule.import.name.choice"),
-                                      codeCompletion);
+                                      codeCompletion)
   }
 
-  public static @NotNull NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
-                                                                         @NotNull PsiElement element,
-                                                                         @NotNull @NlsContexts.Command String actionName,
-                                                                         boolean codeCompletion) {
-    return new NgModuleImportAction(editor, element, actionName, codeCompletion);
+  fun createNgModuleImportAction(editor: Editor?,
+                                 element: PsiElement,
+                                 @NlsContexts.Command actionName: String,
+                                 codeCompletion: Boolean): NgModuleImportAction {
+    return NgModuleImportAction(editor, element, actionName, codeCompletion)
   }
 
-  public static @Nullable ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                                @NotNull PsiElement element,
-                                                                                                @NotNull Angular2Declaration declaration,
-                                                                                                boolean codeCompletion) {
-    Angular2SourceDeclaration sourceDeclaration = tryCast(declaration, Angular2SourceDeclaration.class);
-    String className;
-    return sourceDeclaration == null || (className = sourceDeclaration.getTypeScriptClass().getName()) == null
-           ? null
-           : createExportNgModuleDeclarationAction(editor, element, SmartPointerManager.createPointer(sourceDeclaration.getDecorator()),
-                                                   Angular2Bundle.message("angular.quickfix.ngmodule.export.name", className),
-                                                   codeCompletion);
+  fun createExportNgModuleDeclarationAction(editor: Editor?,
+                                            element: PsiElement,
+                                            declaration: Angular2Declaration,
+                                            codeCompletion: Boolean): ExportNgModuleDeclarationAction? {
+    val sourceDeclaration = declaration as? Angular2SourceDeclaration
+                            ?: return null
+    val className = sourceDeclaration.typeScriptClass.name
+                    ?: return null
+    return createExportNgModuleDeclarationAction(editor, element, SmartPointerManager.createPointer(sourceDeclaration.decorator),
+                                                 Angular2Bundle.message("angular.quickfix.ngmodule.export.name", className),
+                                                 codeCompletion)
   }
 
-  public static @NotNull ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                               @NotNull PsiElement element,
-                                                                                               @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
-                                                                                               @NotNull @Nls String actionName,
-                                                                                               boolean codeCompletion) {
-    return new ExportNgModuleDeclarationAction(editor, element, declarationDecorator, actionName, codeCompletion);
+  fun createExportNgModuleDeclarationAction(editor: Editor?,
+                                            element: PsiElement,
+                                            declarationDecorator: SmartPsiElementPointer<ES6Decorator>,
+                                            @Nls actionName: String,
+                                            codeCompletion: Boolean): ExportNgModuleDeclarationAction {
+    return ExportNgModuleDeclarationAction(editor, element, declarationDecorator, actionName, codeCompletion)
   }
 }

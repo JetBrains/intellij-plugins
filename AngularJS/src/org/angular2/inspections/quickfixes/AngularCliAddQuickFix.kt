@@ -1,58 +1,46 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections.quickfixes;
+package org.angular2.inspections.quickfixes
 
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.angular2.cli.AngularCliUtil;
-import org.angular2.cli.actions.AngularCliAddDependencyAction;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.codeInsight.intention.HighPriorityAction
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import org.angular2.cli.AngularCliUtil
+import org.angular2.cli.actions.AngularCliAddDependencyAction
+import org.angular2.lang.Angular2Bundle
+import org.jetbrains.annotations.Nls
 
-public class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction {
-  private final VirtualFile myPackageJson;
-  private final String myPackageName;
-  private final String myVersionSpec;
-  private final boolean myReinstall;
+class AngularCliAddQuickFix(private val myPackageJson: VirtualFile, private val myPackageName: String,
+                            private val myVersionSpec: String, private val myReinstall: Boolean) : LocalQuickFix, HighPriorityAction {
 
-  public AngularCliAddQuickFix(@NotNull VirtualFile packageJson, @NotNull String packageName,
-                               @NotNull String versionSpec, boolean reinstall) {
-    myPackageJson = packageJson;
-    myPackageName = packageName;
-    myVersionSpec = versionSpec;
-    myReinstall = reinstall;
+  @Nls
+  override fun getName(): String {
+    return Angular2Bundle.message(if (myReinstall)
+                                    "angular.quickfix.json.ng-add.name.reinstall"
+                                  else
+                                    "angular.quickfix.json.ng-add.name.run",
+                                  myPackageName)
   }
 
-  @Override
-  public @Nls @NotNull String getName() {
-    return Angular2Bundle.message(myReinstall ? "angular.quickfix.json.ng-add.name.reinstall"
-                                              : "angular.quickfix.json.ng-add.name.run",
-                                  myPackageName);
+  @Nls
+  override fun getFamilyName(): String {
+    return Angular2Bundle.message("angular.quickfix.json.ng-add.family")
   }
 
-  @Override
-  public @Nls @NotNull String getFamilyName() {
-    return Angular2Bundle.message("angular.quickfix.json.ng-add.family");
-  }
-
-  @Override
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    if (AngularCliUtil.hasAngularCLIPackageInstalled(project, myPackageJson)) {
+  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    if (AngularCliUtil.hasAngularCLIPackageInstalled(myPackageJson)) {
       AngularCliAddDependencyAction.runAndShowConsoleLater(
-        project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
+        project, myPackageJson.parent, myPackageName, myVersionSpec.trim { it <= ' ' }, !myReinstall)
     }
     else {
-      AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(),
-                                                  Angular2Bundle.message("angular.quickfix.json.ng-add.error.cant-run"));
+      AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.parent,
+                                                  Angular2Bundle.message("angular.quickfix.json.ng-add.error.cant-run"))
     }
   }
 
-  @Override
-  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
-    return IntentionPreviewInfo.EMPTY;
+  override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo {
+    return IntentionPreviewInfo.EMPTY
   }
 }

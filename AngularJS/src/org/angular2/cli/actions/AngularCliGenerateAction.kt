@@ -8,6 +8,7 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditor
@@ -17,6 +18,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
@@ -55,14 +57,14 @@ class AngularCliGenerateAction : DumbAwareAction() {
       return
     }
 
-    val model = SortedListModel<Schematic>(Comparator.comparing { b1: Schematic ->
+    val model = SortedListModel(Comparator.comparing { b1: Schematic ->
       when {
         b1.error != null -> 2
         b1.name!!.contains(":") -> 1
         else -> 0
       }
     }.thenComparing { b1: Schematic -> b1.name!! })
-    val list = JBList<Schematic>(model)
+    val list = JBList(model)
     updateList(list, model, project, cli)
     list.cellRenderer = object : ColoredListCellRenderer<Schematic>() {
       override fun customizeCellRenderer(list: JList<out Schematic>,
@@ -76,7 +78,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
         icon = JBUIScale.scaleIcon(EmptyIcon.create(5) as JBScalableIcon)
         if (value.error != null) {
           append(value.name!!, SimpleTextAttributes.ERROR_ATTRIBUTES, true)
-          append(Angular2Bundle.message("angular.action.ng-generate.error-label", value.error!!.decapitalize()),
+          append(Angular2Bundle.message("angular.action.ng-generate.error-label", StringUtil.decapitalize(value.error!!)),
                  SimpleTextAttributes.GRAY_ATTRIBUTES, false)
         }
         else {
@@ -95,7 +97,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        AngularCliSchematicsRegistryService.getInstance().clearProjectSchematicsCache()
+        AngularCliSchematicsRegistryService.instance.clearProjectSchematicsCache()
         updateList(list, model, project, cli)
       }
 
@@ -171,7 +173,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     reloadingList = true
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread {
-      val schematics = AngularCliSchematicsRegistryService.getInstance().getSchematics(project, cli)
+      val schematics = AngularCliSchematicsRegistryService.instance.getSchematics(project, cli)
       ApplicationManager.getApplication().invokeLater {
         model.clear()
         schematics.forEach {
@@ -211,7 +213,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val module = modules.firstOrNull() ?: return
 
     val filter = AngularCliFilter(project, cli.path)
-    AngularCliProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
+    NpmPackageProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
                                         Function { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, JavaScriptBundle.message("generating.0", cli.name),

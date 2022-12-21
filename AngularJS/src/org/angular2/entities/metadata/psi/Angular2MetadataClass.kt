@@ -1,17 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.psi
 
-import org.angular2.entities.metadata.stubs.Angular2MetadataClassStub;
-import org.jetbrains.annotations.NotNull;
+import org.angular2.entities.metadata.stubs.Angular2MetadataClassStub
 
-public class Angular2MetadataClass extends Angular2MetadataClassBase<Angular2MetadataClassStub> {
+class Angular2MetadataClass(element: Angular2MetadataClassStub) : Angular2MetadataClassBase<Angular2MetadataClassStub>(element) {
 
-  public Angular2MetadataClass(@NotNull Angular2MetadataClassStub element) {
-    super(element);
-  }
-
-  @Override
-  public String toString() {
-    return getName() + " <metadata class>";
+  override fun toString(): String {
+    return "${getName()} <metadata class>"
   }
 }

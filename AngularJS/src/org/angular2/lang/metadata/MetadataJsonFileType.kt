@@ -1,41 +1,32 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata
 
-import com.intellij.json.psi.JsonValue;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
-import com.intellij.psi.tree.IStubFileElementType;
-import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.json.psi.JsonValue
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile
+import com.intellij.psi.tree.IStubFileElementType
+import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
+import javax.swing.Icon
 
-import javax.swing.*;
+abstract class MetadataJsonFileType protected constructor() : FileType, FileTypeIdentifiableByVirtualFile {
 
-public abstract class MetadataJsonFileType implements FileType, FileTypeIdentifiableByVirtualFile {
+  abstract val fileElementType: IStubFileElementType<*>
 
-  protected MetadataJsonFileType() {
+  override fun getDefaultExtension(): String {
+    return "json"
   }
 
-  @Override
-  public @NotNull String getDefaultExtension() {
-    return "json";
+  override fun getIcon(): Icon? {
+    return null
   }
 
-  @Override
-  public Icon getIcon() {
-    return null;
+  override fun isBinary(): Boolean {
+    return true
   }
 
-  @Override
-  public boolean isBinary() {
-    return true;
+  override fun isReadOnly(): Boolean {
+    return true
   }
 
-  @Override
-  public boolean isReadOnly() {
-    return true;
-  }
-
-  public abstract IStubFileElementType getFileElementType();
-
-  protected abstract void createRootStub(MetadataFileStubImpl result, JsonValue value);
+  abstract fun createRootStub(fileStub: MetadataFileStubImpl, jsonRoot: JsonValue)
 }

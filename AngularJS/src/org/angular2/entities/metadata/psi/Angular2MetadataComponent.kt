@@ -1,57 +1,39 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.psi
 
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.html.HtmlFileImpl;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2DirectiveKind;
-import org.angular2.entities.Angular2DirectiveSelector;
-import org.angular2.entities.Angular2DirectiveSelectorImpl;
-import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.refactoring.suggested.createSmartPointer
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2DirectiveKind
+import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.entities.Angular2DirectiveSelectorImpl
+import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub
 
-import java.util.Collections;
-import java.util.List;
+class Angular2MetadataComponent(element: Angular2MetadataComponentStub)
+  : Angular2MetadataDirectiveBase<Angular2MetadataComponentStub>(element), Angular2Component {
 
-import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
-
-public final class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Angular2MetadataComponentStub> implements Angular2Component {
-  private final NotNullLazyValue<List<Angular2DirectiveSelector>> myNgContentSelectors = NotNullLazyValue.lazy(() -> {
-    return ContainerUtil.map(getStub().getNgContentSelectors(), selector -> {
-      return new Angular2DirectiveSelectorImpl(this, selector, null);
-    });
-  });
-
-  @Override
-  public @NotNull Pointer<? extends Angular2Component> createPointer() {
-    return createSmartPointer(this);
+  private val myNgContentSelectors = NotNullLazyValue.lazy {
+    stub.ngContentSelectors.map { selector ->
+      Angular2DirectiveSelectorImpl(this, selector, null)
+    }
   }
 
-  public Angular2MetadataComponent(@NotNull Angular2MetadataComponentStub element) {
-    super(element);
-  }
+  override val templateFile: HtmlFileImpl?
+    get() = null
 
-  @Override
-  public @Nullable HtmlFileImpl getTemplateFile() {
-    return null;
-  }
+  override val cssFiles: List<PsiFile>
+    get() = emptyList()
 
-  @Override
-  public @NotNull List<PsiFile> getCssFiles() {
-    return Collections.emptyList();
-  }
+  override val ngContentSelectors: List<Angular2DirectiveSelector>
+    get() = myNgContentSelectors.value
 
-  @Override
-  public @NotNull List<Angular2DirectiveSelector> getNgContentSelectors() {
-    return myNgContentSelectors.getValue();
-  }
+  override val directiveKind: Angular2DirectiveKind
+    get() = Angular2DirectiveKind.REGULAR
 
-  @Override
-  public @NotNull Angular2DirectiveKind getDirectiveKind() {
-    return Angular2DirectiveKind.REGULAR;
+  override fun createPointer(): Pointer<out Angular2Component> {
+    return this.createSmartPointer()
   }
 }

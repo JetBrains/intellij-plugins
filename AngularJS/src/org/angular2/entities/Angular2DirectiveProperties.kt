@@ -1,146 +1,105 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.webSymbols.PsiSourcedWebSymbol;
-import com.intellij.lang.documentation.DocumentationTarget;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
-import org.angular2.web.Angular2Symbol;
-import org.angular2.web.Angular2SymbolDelegate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.documentation.DocumentationTarget
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.webSymbols.WebSymbol
+import org.angular2.entities.Angular2DirectiveProperty.Companion.hasNonPrivateDocComment
+import org.angular2.entities.impl.TypeScriptElementDocumentationTarget
+import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
+import org.angular2.web.Angular2PsiSourcedSymbolDelegate
+import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
+import java.util.*
 
-import java.util.*;
+class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
+                                  outputs: Collection<Angular2DirectiveProperty>) {
 
-import static org.angular2.entities.Angular2DirectiveProperty.hasNonPrivateDocComment;
-import static org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.KIND_NG_DIRECTIVE_IN_OUTS;
+  val inputs: Collection<Angular2DirectiveProperty>
+  val outputs: Collection<Angular2DirectiveProperty>
 
-public class Angular2DirectiveProperties {
-
-  private final Collection<? extends Angular2DirectiveProperty> myInputs;
-  private final Collection<? extends Angular2DirectiveProperty> myOutputs;
-  private final NotNullLazyValue<List<? extends Angular2Symbol>> myInOuts =
-    NotNullLazyValue.createValue(() -> {
-      Collection<? extends Angular2DirectiveProperty> outputs = getOutputs();
-      Collection<? extends Angular2DirectiveProperty> inputs = getInputs();
-
-      if (inputs.isEmpty() || outputs.isEmpty()) {
-        return Collections.emptyList();
-      }
-      Map<String, Angular2DirectiveProperty> inputMap = new HashMap<>();
-      for (Angular2DirectiveProperty p : inputs) {
-        inputMap.putIfAbsent(p.getName(), p);
-      }
-      List<Angular2Symbol> result = new ArrayList<>();
-      for (Angular2DirectiveProperty output : outputs) {
-        String name = output.getName();
-        if (output.getName().endsWith(OUTPUT_CHANGE_SUFFIX)) {
-          Angular2DirectiveProperty input = inputMap.get(
-            name.substring(0, name.length() - OUTPUT_CHANGE_SUFFIX.length()));
-          if (input != null) {
-            result.add(new InOutDirectiveProperty(input, output));
-          }
+  private val myInOuts = NotNullLazyValue.createValue<List<Angular2Symbol>> {
+    if (inputs.isEmpty() || outputs.isEmpty()) {
+      return@createValue emptyList<Angular2Symbol>()
+    }
+    val inputMap = HashMap<String, Angular2DirectiveProperty>()
+    for (p in inputs) {
+      inputMap.putIfAbsent(p.name, p)
+    }
+    val result = ArrayList<Angular2Symbol>()
+    for (output in outputs) {
+      val name = output.name
+      if (output.name.endsWith(OUTPUT_CHANGE_SUFFIX)) {
+        val input = inputMap[name.substring(0, name.length - OUTPUT_CHANGE_SUFFIX.length)]
+        if (input != null) {
+          result.add(InOutDirectiveProperty(input, output))
         }
       }
-      return result;
-    });
-
-  public Angular2DirectiveProperties(Collection<? extends Angular2DirectiveProperty> inputs,
-                                     Collection<? extends Angular2DirectiveProperty> outputs) {
-    myInputs = Collections.unmodifiableCollection(inputs);
-    myOutputs = Collections.unmodifiableCollection(outputs);
+    }
+    result
   }
 
-  public @NotNull Collection<? extends Angular2DirectiveProperty> getInputs() {
-    return myInputs;
+  val inOuts: List<Angular2Symbol>
+    get() = myInOuts.value
+
+  init {
+    this.inputs = Collections.unmodifiableCollection(inputs)
+    this.outputs = Collections.unmodifiableCollection(outputs)
   }
 
-  public @NotNull Collection<? extends Angular2DirectiveProperty> getOutputs() {
-    return myOutputs;
-  }
+  private class InOutDirectiveProperty(input: Angular2DirectiveProperty, private val myOutput: Angular2DirectiveProperty)
+    : Angular2PsiSourcedSymbolDelegate<Angular2DirectiveProperty>(input) {
 
-  public List<? extends Angular2Symbol> getInOuts() {
-    return myInOuts.getValue();
-  }
+    override val source: PsiElement
+      get() = myOutput.source
 
-  private static class InOutDirectiveProperty extends Angular2SymbolDelegate<Angular2DirectiveProperty>
-    implements PsiSourcedWebSymbol {
+    override val namespace: String
+      get() = WebSymbol.NAMESPACE_JS
 
-    private final Angular2DirectiveProperty myOutput;
+    override val kind: String
+      get() = KIND_NG_DIRECTIVE_IN_OUTS
 
-    private InOutDirectiveProperty(@NotNull Angular2DirectiveProperty input, @NotNull Angular2DirectiveProperty output) {
-      super(input);
-      myOutput = output;
-    }
-
-    @Nullable
-    @Override
-    public PsiElement getSource() {
-      return myOutput.getSource();
-    }
-
-    @NotNull
-    @Override
-    public Pointer<? extends Angular2SymbolDelegate<Angular2DirectiveProperty>> createPointer() {
-      var input = getDelegate().createPointer();
-      var output = myOutput.createPointer();
-      return () -> {
-        var newInput = input.dereference();
-        var newOutput = output.dereference();
-        return newInput != null && newOutput != null ? new InOutDirectiveProperty(newInput, newOutput) : null;
-      };
-    }
-
-    @NotNull
-    @Override
-    public String getNamespace() {
-      return NAMESPACE_JS;
-    }
-
-    @NotNull
-    @Override
-    public String getKind() {
-      return KIND_NG_DIRECTIVE_IN_OUTS;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      InOutDirectiveProperty property = (InOutDirectiveProperty)o;
-      return myOutput.equals(property.myOutput)
-        && getDelegate().equals(property.getDelegate());
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(myOutput, getDelegate());
-    }
-
-    @Override
-    public String toString() {
-      return "<" + getDelegate() + "," + myOutput + ">";
-    }
-
-    @NotNull
-    @Override
-    public DocumentationTarget getDocumentationTarget() {
-      if (hasNonPrivateDocComment(getDelegate().getSourceElement())){
-        return new TypeScriptElementDocumentationTarget(getName(), getDelegate().getSourceElement());
+    override fun createPointer(): Pointer<out Angular2PsiSourcedSymbolDelegate<Angular2DirectiveProperty>> {
+      val input = delegate.createPointer()
+      val output = myOutput.createPointer()
+      return Pointer {
+        val newInput = input.dereference()
+        val newOutput = output.dereference()
+        if (newInput != null && newOutput != null) InOutDirectiveProperty(newInput, newOutput) else null
       }
-      if (hasNonPrivateDocComment(myOutput.getSourceElement())){
-        return new TypeScriptElementDocumentationTarget(getName(), myOutput.getSourceElement());
+    }
+
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other == null || javaClass != other.javaClass) return false
+      val property = other as InOutDirectiveProperty?
+      return myOutput == property!!.myOutput && delegate == property.delegate
+    }
+
+    override fun hashCode(): Int {
+      return Objects.hash(myOutput, delegate)
+    }
+
+    override fun toString(): String {
+      return "<$delegate,$myOutput>"
+    }
+
+    override fun getDocumentationTarget(): DocumentationTarget {
+      if (hasNonPrivateDocComment(delegate.sourceElement)) {
+        return TypeScriptElementDocumentationTarget(name, delegate.sourceElement)
       }
-      var clazz = PsiTreeUtil.getContextOfType(getSource(), TypeScriptClass.class);
-      if (clazz != null) {
-        return new TypeScriptElementDocumentationTarget(getName(), clazz);
+      if (hasNonPrivateDocComment(myOutput.sourceElement)) {
+        return TypeScriptElementDocumentationTarget(name, myOutput.sourceElement)
       }
-      return super.getDocumentationTarget();
+      val clazz = PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java)
+      return if (clazz != null) {
+        TypeScriptElementDocumentationTarget(name, clazz)
+      }
+      else super.getDocumentationTarget()
     }
   }
 

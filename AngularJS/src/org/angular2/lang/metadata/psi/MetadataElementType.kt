@@ -1,63 +1,52 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata.psi
 
-import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
-import org.angular2.lang.metadata.stubs.MetadataElementStub;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.Language
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.*
+import org.angular2.lang.metadata.stubs.MetadataElementStub
 
-import java.io.IOException;
+import java.io.IOException
 
-public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IStubElementType<Stub, MetadataElement<Stub>> {
+open class MetadataElementType<Stub : MetadataElementStub<*>>(debugName: String,
+                                                              language: Language,
+                                                              private val myStubConstructor: MetadataStubConstructor<out Stub>,
+                                                              private val myPsiConstructor: MetadataElementConstructor<Stub>) : IStubElementType<Stub, MetadataElement<Stub>>(
+  debugName, language) {
 
-  private final @NotNull MetadataStubConstructor<? extends Stub> myStubConstructor;
-  private final @NotNull MetadataElementConstructor<Stub> myPsiConstructor;
-
-  public MetadataElementType(@NotNull String debugName,
-                             Language language,
-                             @NotNull MetadataStubConstructor<? extends Stub> stubConstructor,
-                             @NotNull MetadataElementConstructor<Stub> psiConstructor) {
-    super(debugName, language);
-    myStubConstructor = stubConstructor;
-    myPsiConstructor = psiConstructor;
+  override fun createPsi(stub: Stub): MetadataElement<Stub> {
+    return myPsiConstructor.construct(stub)
   }
 
-  @Override
-  public MetadataElement<Stub> createPsi(@NotNull Stub stub) {
-    return myPsiConstructor.construct(stub);
-  }
-
-  @Override
-  public @NotNull Stub createStub(@NotNull MetadataElement psi, StubElement parentStub) {
-    throw new UnsupportedOperationException();
+  override fun createStub(psi: MetadataElement<Stub>, parentStub: StubElement<out PsiElement>?): Stub {
+    throw UnsupportedOperationException()
   }
 
 
-  @Override
-  public @NotNull String getExternalId() {
-    return toString();
+  override fun getExternalId(): String {
+    return toString()
   }
 
-  @Override
-  public void serialize(@NotNull Stub stub, @NotNull StubOutputStream dataStream) throws IOException {
-    stub.serialize(dataStream);
+  @Throws(IOException::class)
+  override fun serialize(stub: Stub, dataStream: StubOutputStream) {
+    stub.serialize(dataStream)
   }
 
-  @Override
-  public @NotNull Stub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-    return myStubConstructor.construct(dataStream, parentStub);
+  @Throws(IOException::class)
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): Stub {
+    return myStubConstructor.construct(dataStream, parentStub)
   }
 
-  @Override
-  public void indexStub(@NotNull Stub stub, @NotNull IndexSink sink) {
-    stub.index(sink);
+  override fun indexStub(stub: Stub, sink: IndexSink) {
+    stub.index(sink)
   }
 
-  public interface MetadataStubConstructor<Stub extends MetadataElementStub<?>> {
-    Stub construct(StubInputStream stream, StubElement parent) throws IOException;
+  fun interface MetadataStubConstructor<Stub : MetadataElementStub<*>> {
+    @Throws(IOException::class)
+    fun construct(stream: StubInputStream, parent: StubElement<*>): Stub
   }
 
-  public interface MetadataElementConstructor<Stub extends MetadataElementStub<?>> {
-    MetadataElement<Stub> construct(@NotNull Stub stub);
+  fun interface MetadataElementConstructor<Stub : MetadataElementStub<*>> {
+    fun construct(stub: Stub): MetadataElement<Stub>
   }
 }

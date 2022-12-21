@@ -1,56 +1,66 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.expr.parser;
+package org.angular2.lang.expr.parser
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiParser;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.resolve.FileContextUtil;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.ASTNode
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.PsiParser
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.psi.impl.source.resolve.FileContextUtil
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.annotations.NonNls
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-
-public class Angular2PsiParser implements PsiParser {
-
-  @NonNls public static final String ACTION = "action";
-  @NonNls public static final String BINDING = "binding";
-  @NonNls public static final String TEMPLATE_BINDINGS = "template_bindings";
-  @NonNls public static final String INTERPOLATION = "interpolation";
-  @NonNls public static final String SIMPLE_BINDING = "simple_binding";
-
-  @NonNls private static final Logger LOG = Logger.getInstance(Angular2PsiParser.class);
-
-  private static final Map<String, BiConsumer<PsiBuilder, IElementType>> parseMappings = Map.of(ACTION, Angular2Parser::parseAction, BINDING, Angular2Parser::parseBinding, INTERPOLATION, Angular2Parser::parseInterpolation, SIMPLE_BINDING, Angular2Parser::parseSimpleBinding);
-
-  @Override
-  public @NotNull ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
-    PsiFile containingFile = builder.getUserData(FileContextUtil.CONTAINING_FILE_KEY);
+class Angular2PsiParser : PsiParser {
+  override fun parse(root: IElementType, builder: PsiBuilder): ASTNode {
+    val containingFile = builder.getUserData(FileContextUtil.CONTAINING_FILE_KEY)
     if (containingFile != null) {
-      String ext = FileUtilRt.getExtension(containingFile.getName());
-      BiConsumer<PsiBuilder, IElementType> parseMethod = parseMappings.get(ext);
+      val ext = FileUtilRt.getExtension(containingFile.name)
+      val parseMethod = parseMappings[ext]
       if (parseMethod != null) {
-        parseMethod.accept(builder, root);
+        parseMethod(builder, root)
       }
-      else if (TEMPLATE_BINDINGS.equals(ext)) {
-        String templateKey = FileUtilRt.getExtension(FileUtilRt.getNameWithoutExtension(containingFile.getName()));
-        Angular2Parser.parseTemplateBindings(builder, root, templateKey);
+      else if (TEMPLATE_BINDINGS == ext) {
+        val templateKey = FileUtilRt.getExtension(FileUtilRt.getNameWithoutExtension(containingFile.name))
+        Angular2Parser.parseTemplateBindings(builder, root, templateKey)
       }
-      else if (ext.equals("js")) {
+      else if (ext == "js") {
         //special case for creation of AST from text
-        Angular2Parser.parseJS(builder, root);
+        Angular2Parser.parseJS(builder, root)
       }
       else {
-        Angular2Parser.parseInterpolation(builder, root);
+        Angular2Parser.parseInterpolation(builder, root)
       }
     }
     else {
-      LOG.error("No containing file while parsing Angular2 expression.");
+      LOG.error("No containing file while parsing Angular2 expression.")
     }
-    return builder.getTreeBuilt();
+    return builder.treeBuilt
+  }
+
+  companion object {
+    const val ACTION: @NonNls String = "action"
+
+    const val BINDING: @NonNls String = "binding"
+
+    const val TEMPLATE_BINDINGS: @NonNls String = "template_bindings"
+    const val INTERPOLATION: @NonNls String = "interpolation"
+
+    const val SIMPLE_BINDING: @NonNls String = "simple_binding"
+
+    private val LOG: @NonNls Logger = Logger.getInstance(Angular2PsiParser::class.java)
+
+    private val parseMappings = mapOf(
+      ACTION to { builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseAction(builder, root)
+      },
+      BINDING to { builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseBinding(builder, root)
+      },
+      INTERPOLATION to { builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseInterpolation(builder, root)
+      },
+      SIMPLE_BINDING to { builder: PsiBuilder, root: IElementType ->
+        Angular2Parser.parseSimpleBinding(builder, root)
+      })
   }
 }

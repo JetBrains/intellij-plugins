@@ -1,15 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement
 
-public interface Angular2Element {
+interface Angular2Element {
 
-  @NotNull
-  PsiElement getSourceElement();
+  val sourceElement: PsiElement
 
-  default @NotNull PsiElement getNavigableElement() {
-    return getSourceElement();
-  }
+  val navigableElement: PsiElement
+    get() = sourceElement
 }

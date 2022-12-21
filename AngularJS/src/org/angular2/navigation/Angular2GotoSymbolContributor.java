@@ -102,11 +102,10 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
   private static boolean processSelectorElement(@NotNull String name,
                                                 @Nullable Angular2DirectiveSelectorSymbol element,
                                                 @NotNull Processor<? super NavigationItem> processor) {
-    if (element == null   || !name.equals(element.getName())) return true;
-    for (var target: element.getNavigationTargets(element.getProject())) {
-      var navigatable = target.getNavigatable();
-      if (navigatable instanceof NavigationItem
-          && processor.process((NavigationItem)navigatable)) {
+    if (element == null || !name.equals(element.getName())) return true;
+    for (var target : element.getNavigationTargets(element.getProject())) {
+      var navigationItem = target.getNavigationItem();
+      if (navigationItem != null && processor.process(navigationItem)) {
         return true;
       }
     }

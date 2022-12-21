@@ -1,82 +1,54 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angular2.entities.metadata.psi;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.psi
 
-import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeOwner;
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.NullableLazyValue;
-import com.intellij.psi.PsiElement;
-import org.angular2.entities.Angular2DirectiveAttribute;
-import org.angular2.entities.Angular2EntityUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.NullableLazyValue
+import com.intellij.openapi.util.NullableLazyValue.lazyNullable
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.createSmartPointer
+import org.angular2.entities.Angular2DirectiveAttribute
+import org.angular2.entities.Angular2EntityUtils
+import java.util.*
 
-import java.util.Objects;
+class Angular2MetadataDirectiveAttribute internal constructor(private val myOwner: Angular2MetadataDirectiveBase<*>,
+                                                              private val myIndex: Int,
+                                                              override val name: String) : Angular2DirectiveAttribute {
 
-import static com.intellij.openapi.util.NullableLazyValue.lazyNullable;
-import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.notNull;
+  private val myParameter: NullableLazyValue<JSParameter>
 
-public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttribute {
+  override val type: JSType?
+    get() = myParameter.value?.jsType
 
-  private final Angular2MetadataDirectiveBase<?> myOwner;
-  private final int myIndex;
-  private final String myName;
+  override val sourceElement: PsiElement
+    get() = myParameter.value ?: myOwner.sourceElement
 
-  private final NullableLazyValue<JSParameter> myParameter;
-
-  Angular2MetadataDirectiveAttribute(@NotNull Angular2MetadataDirectiveBase<?> owner,
-                                     int index, @NotNull String name) {
-    myOwner = owner;
-    myIndex = index;
-    myName = name;
-    myParameter = lazyNullable(() -> myOwner.getConstructorParameter(myIndex));
+  init {
+    myParameter = lazyNullable { myOwner.getConstructorParameter(myIndex) }
   }
 
-  @Override
-  public @NotNull String getName() {
-    return myName;
+  override fun toString(): String {
+    return Angular2EntityUtils.toString(this)
   }
 
-  @Override
-  public @Nullable JSType getType() {
-    return doIfNotNull(myParameter.getValue(), JSTypeOwner::getJSType);
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val attribute = other as Angular2MetadataDirectiveAttribute?
+    return myIndex == attribute!!.myIndex && myOwner == attribute.myOwner && name == attribute.name
   }
 
-  @Override
-  public @NotNull PsiElement getSourceElement() {
-    return notNull(myParameter.getValue(), myOwner::getSourceElement);
+  override fun hashCode(): Int {
+    return Objects.hash(myOwner, myIndex, name)
   }
 
-  @Override
-  public String toString() {
-    return Angular2EntityUtils.toString(this);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2MetadataDirectiveAttribute attribute = (Angular2MetadataDirectiveAttribute)o;
-    return myIndex == attribute.myIndex && myOwner.equals(attribute.myOwner) && myName.equals(attribute.myName);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(myOwner, myIndex, myName);
-  }
-
-  @NotNull
-  @Override
-  public Pointer<Angular2MetadataDirectiveAttribute> createPointer() {
-    var owner = createSmartPointer(myOwner);
-    var index = myIndex;
-    var name = myName;
-    return () -> {
-      var newOwner = owner.dereference();
-      return newOwner != null ? new Angular2MetadataDirectiveAttribute(newOwner, index, name) : null;
-    };
+  override fun createPointer(): Pointer<Angular2MetadataDirectiveAttribute> {
+    val owner = myOwner.createSmartPointer()
+    val index = myIndex
+    val name = this.name
+    return Pointer {
+      owner.dereference()?.let { Angular2MetadataDirectiveAttribute(it, index, name) }
+    }
   }
 }

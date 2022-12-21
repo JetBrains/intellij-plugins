@@ -1,333 +1,300 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.cli;
+package org.angular2.cli
 
-import com.intellij.execution.configurations.CommandLineTokenizer;
-import com.intellij.execution.filters.Filter;
-import com.intellij.ide.util.projectWizard.ModuleNameLocationSettings;
-import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.javascript.nodejs.NodePackageVersionUtil;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
-import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.NlsContexts.DialogMessage;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.ProjectGeneratorPeer;
-import com.intellij.ui.TextAccessor;
-import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.text.SemVer;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.xml.util.XmlStringUtil;
-import icons.AngularJSIcons;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.configurations.CommandLineTokenizer
+import com.intellij.execution.filters.Filter
+import com.intellij.ide.util.projectWizard.SettingsStep
+import com.intellij.javascript.nodejs.NodePackageVersionUtil
+import com.intellij.javascript.nodejs.util.NodePackage
+import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
+import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.roots.ContentEntry
+import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.NlsContexts.DialogMessage
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ProjectGeneratorPeer
+import com.intellij.ui.TextAccessor
+import com.intellij.util.ArrayUtilRt
+import com.intellij.util.Consumer
+import com.intellij.util.PathUtil
+import com.intellij.util.text.SemVer
+import com.intellij.util.ui.UIUtil
+import com.intellij.xml.util.XmlStringUtil
+import icons.AngularJSIcons
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import java.awt.BorderLayout
+import java.io.File
+import java.util.function.Function
+import java.util.regex.Pattern
+import javax.swing.Icon
+import javax.swing.JCheckBox
+import javax.swing.JComponent
+import javax.swing.JPanel
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.util.List;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+class AngularCliProjectGenerator : NpmPackageProjectGenerator() {
 
-import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
-
-public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
-
-  @NonNls public static final String NG_EXECUTABLE = "ng";
-  private static final Logger LOG = Logger.getInstance(AngularCliProjectGenerator.class);
-  private static final Pattern NPX_PACKAGE_PATTERN =
-    Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng");
-  private static final Pattern VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*");
-  private static final SemVer UNKNOWN_VERSION = new SemVer("0.0.0", 0, 0, 0);
-
-  @Override
-  public String getId() {
-    return "AngularCLI";
+  override fun getId(): String {
+    return "AngularCLI"
   }
 
-  @Override
-  public @Nls @NotNull String getName() {
-    return Angular2Bundle.message("angular.action.new-project.name");
+  @Nls
+  override fun getName(): String {
+    return Angular2Bundle.message("angular.action.new-project.name")
   }
 
-  @Override
-  public @NotNull String getDescription() {
-    return Angular2Bundle.message("angular.action.new-project.description");
+  override fun getDescription(): String {
+    return Angular2Bundle.message("angular.action.new-project.description")
   }
 
-  @Override
-  public @NotNull Icon getIcon() {
-    return AngularJSIcons.Angular2;
+  override fun getIcon(): Icon {
+    return AngularJSIcons.Angular2
   }
 
-  @Override
-  protected void customizeModule(@NotNull VirtualFile baseDir, ContentEntry entry) {
+  override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry?) {
     if (entry != null) {
-      AngularJSProjectConfigurator.excludeDefault(baseDir, entry);
+      AngularJSProjectConfigurator.excludeDefault(baseDir, entry)
     }
   }
 
-  @Override
-  protected String @NotNull [] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return ArrayUtilRt.EMPTY_STRING_ARRAY;
+  override fun generatorArgs(project: Project, baseDir: VirtualFile): Array<String> {
+    return ArrayUtilRt.EMPTY_STRING_ARRAY
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
-  @Override
-  protected String @NotNull [] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
-    AngularCLIProjectSettings ngSettings = (AngularCLIProjectSettings)settings;
-    List<String> result = new ArrayList<>();
-    result.add("new");
-    result.add(baseDir.getName());
-    CommandLineTokenizer tokenizer = new CommandLineTokenizer(ngSettings.myOptions);
+  override fun generatorArgs(project: Project, baseDir: VirtualFile, settings: Settings): Array<String> {
+    val ngSettings = settings as AngularCLIProjectSettings
+    val result = ArrayList<String>()
+    result.add("new")
+    result.add(baseDir.name)
+    val tokenizer = CommandLineTokenizer(ngSettings.myOptions)
     while (tokenizer.hasMoreTokens()) {
-      result.add(tokenizer.nextToken());
+      result.add(tokenizer.nextToken())
     }
 
     if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.myUseDefaults) {
-      if (!ContainerUtil.exists(result, param -> param.equals("--defaults") || param.startsWith("--defaults="))) {
-        result.add("--defaults");
+      if (result.none { param -> param == "--defaults" || param.startsWith("--defaults=") }) {
+        result.add("--defaults")
       }
     }
 
-    return ArrayUtilRt.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result)
   }
 
-  @SuppressWarnings("SameParameterValue")
-  private static boolean isPackageGreaterOrEqual(NodePackage pkg, int major, int minor, int patch) {
-    SemVer ver = null;
-    if (pkg.getName().equals(ANGULAR_CLI_PACKAGE)) {
-      ver = pkg.getVersion();
-    }
-    else {
-      Matcher m = NPX_PACKAGE_PATTERN.matcher(pkg.getSystemIndependentPath());
-      if (m.matches()) {
-        ver = SemVer.parseFromText(m.group(1));
+  override fun filters(project: Project, baseDir: VirtualFile): Array<Filter> {
+    return arrayOf(AngularCliFilter(project, baseDir.parent.path))
+  }
+
+  override fun executable(pkg: NodePackage): String {
+    return ng(pkg.systemDependentPath)
+  }
+
+  override fun packageName(): String {
+    return ANGULAR_CLI_PACKAGE
+  }
+
+  override fun presentablePackageName(): String {
+    return Angular2Bundle.message("angular.action.new-project.presentable-package-name")
+  }
+
+  override fun getNpxCommands(): List<NpxPackageDescriptor.NpxCommand> {
+    return listOf(NpxPackageDescriptor.NpxCommand(ANGULAR_CLI_PACKAGE, NG_EXECUTABLE))
+  }
+
+  override fun validateProjectPath(path: String): String? {
+    return validateFolderName(path, Angular2Bundle.message("angular.action.new-project.label-project-name"))
+           ?: super.validateProjectPath(path)
+  }
+
+  override fun createPeer(): ProjectGeneratorPeer<Settings> {
+    return AngularCLIProjectGeneratorPeer()
+  }
+
+  override fun workingDir(settings: Settings, baseDir: VirtualFile): File {
+    return VfsUtilCore.virtualToIoFile(baseDir).parentFile
+  }
+
+
+  override fun postInstall(project: Project,
+                           baseDir: VirtualFile,
+                           workingDir: File): Runnable {
+    return Runnable {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        super.postInstall(project, baseDir, workingDir).run()
+        AngularCliUtil.createRunConfigurations(project, baseDir)
       }
     }
-    return ver == null
-           || ver.isGreaterOrEqualThan(major, minor, patch);
-  }
-
-  @Override
-  protected Filter @NotNull [] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return new Filter[]{new AngularCliFilter(project, baseDir.getParent().getPath())};
-  }
-
-  @Override
-  protected @NotNull String executable(@NotNull NodePackage pkg) {
-    return ng(pkg.getSystemDependentPath());
-  }
-
-  public static @NotNull String ng(String path) {
-    return path + File.separator + "bin" + File.separator + NG_EXECUTABLE;
-  }
-
-  @Override
-  protected @NotNull String packageName() {
-    return ANGULAR_CLI_PACKAGE;
-  }
-
-  @Override
-  protected @NotNull String presentablePackageName() {
-    return Angular2Bundle.message("angular.action.new-project.presentable-package-name");
-  }
-
-  @Override
-  protected @NotNull List<NpxPackageDescriptor.NpxCommand> getNpxCommands() {
-    return Collections.singletonList(new NpxPackageDescriptor.NpxCommand(ANGULAR_CLI_PACKAGE, NG_EXECUTABLE));
-  }
-
-  @Override
-  protected String validateProjectPath(@NotNull String path) {
-    return Optional.ofNullable(validateFolderName(path, Angular2Bundle.message("angular.action.new-project.label-project-name")))
-      .orElseGet(() -> super.validateProjectPath(path));
-  }
-
-  @Override
-  public @NotNull ProjectGeneratorPeer<Settings> createPeer() {
-    return new AngularCLIProjectGeneratorPeer();
-  }
-
-  @Override
-  protected @NotNull File workingDir(Settings settings, @NotNull VirtualFile baseDir) {
-    return VfsUtilCore.virtualToIoFile(baseDir).getParentFile();
   }
 
 
-  @Override
-  protected @NotNull Runnable postInstall(@NotNull Project project,
-                                          @NotNull VirtualFile baseDir,
-                                          File workingDir) {
-    return () -> ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      super.postInstall(project, baseDir, workingDir).run();
-      AngularCliUtil.createRunConfigurations(project, baseDir);
-    });
-  }
+  private inner class AngularCLIProjectGeneratorPeer : NpmPackageProjectGenerator.NpmPackageGeneratorPeer() {
 
-  private static @DialogMessage @Nullable String validateFolderName(String path, String label) {
-    String fileName = PathUtil.getFileName(path);
-    if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
-      return XmlStringUtil.wrapInHtml(
-        Angular2Bundle.message("angular.action.new-project.wrong-folder-name", label, fileName)
-      );
-    }
-    return null;
-  }
+    private var myContentRoot: TextAccessor? = null
 
+    private var myOptionsTextField: SchematicOptionsTextField? = null
+    private var myUseDefaults: JCheckBox? = null
 
-  private class AngularCLIProjectGeneratorPeer extends NpmPackageGeneratorPeer {
+    override fun createPanel(): JPanel {
+      val panel = super.createPanel()
 
-    private TextAccessor myContentRoot;
+      myOptionsTextField = SchematicOptionsTextField(ProjectManager.getInstance().defaultProject,
+                                                     emptyList(), UNKNOWN_VERSION)
+      myOptionsTextField!!.setVariants(listOf(Option("test")))
 
-    private SchematicOptionsTextField myOptionsTextField;
-    private JCheckBox myUseDefaults;
+      val component = LabeledComponent.create(
+        myOptionsTextField!!, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"))
+      component.setAnchor(panel.getComponent(0) as JComponent)
+      component.labelLocation = BorderLayout.WEST
+      panel.add(component)
 
-    @Override
-    protected JPanel createPanel() {
-      final JPanel panel = super.createPanel();
+      myUseDefaults = JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true)
+      panel.add(myUseDefaults)
 
-      myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
-                                                         Collections.emptyList(), UNKNOWN_VERSION);
-      myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
-
-      LabeledComponent component = LabeledComponent.create(
-        myOptionsTextField, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"));
-      component.setAnchor((JComponent)panel.getComponent(0));
-      component.setLabelLocation(BorderLayout.WEST);
-      panel.add(component);
-
-      myUseDefaults = new JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true);
-      panel.add(myUseDefaults);
-
-      return panel;
+      return panel
     }
 
-    @Override
-    public void buildUI(@NotNull SettingsStep settingsStep) {
-      super.buildUI(settingsStep);
-      final ModuleNameLocationSettings field = settingsStep.getModuleNameLocationSettings();
+    override fun buildUI(settingsStep: SettingsStep) {
+      super.buildUI(settingsStep)
+      val field = settingsStep.moduleNameLocationSettings
       if (field != null) {
-        myContentRoot = new TextAccessor() {
-          @Override
-          public void setText(@NotNull String text) {
-            field.setModuleContentRoot(text);
+        myContentRoot = object : TextAccessor {
+          override fun setText(text: String) {
+            field.moduleContentRoot = text
           }
 
-          @Override
-          public @NotNull String getText() {
-            return field.getModuleContentRoot();
+          override fun getText(): String {
+            return field.moduleContentRoot
           }
-        };
+        }
       }
       settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand(
-        Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField);
-      settingsStep.addSettingsComponent(myUseDefaults);
-      getPackageField().addSelectionListener(this::nodePackageChanged);
-      nodePackageChanged(getPackageField().getSelected());
+        Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField!!)
+      settingsStep.addSettingsComponent(myUseDefaults!!)
+      packageField.addSelectionListener(Consumer { this.nodePackageChanged(it) })
+      nodePackageChanged(packageField.selected)
     }
 
-    @Override
-    public @NotNull Settings getSettings() {
-      return new AngularCLIProjectSettings(super.getSettings(), myUseDefaults.isSelected(), myOptionsTextField.getText());
+    override fun getSettings(): Settings {
+      return AngularCLIProjectSettings(super.getSettings(), myUseDefaults!!.isSelected, myOptionsTextField!!.text)
     }
 
-    @Override
-    public @Nullable ValidationInfo validate() {
-      final ValidationInfo info = super.validate();
+    override fun validate(): ValidationInfo? {
+      val info = super.validate()
       if (info != null) {
-        return info;
+        return info
       }
       if (myContentRoot != null) {
-        String message = validateFolderName(myContentRoot.getText(),
-                                            Angular2Bundle.message("angular.action.new-project.label-content-root-folder"));
+        val message = validateFolderName(myContentRoot!!.text,
+                                         Angular2Bundle.message("angular.action.new-project.label-content-root-folder"))
         if (message != null) {
-          return new ValidationInfo(message);
+          return ValidationInfo(message)
         }
       }
-      return null;
+      return null
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    private void nodePackageChanged(NodePackage nodePackage) {
-      ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        Ref<List<Option>> options = Ref.create(Collections.emptyList());
-        Ref<SemVer> cliVersion = Ref.create(UNKNOWN_VERSION);
-        if (nodePackage.getSystemIndependentPath().endsWith("/node_modules/@angular/cli")) {
-          VirtualFile localFile = StandardFileSystems.local().findFileByPath(
-            nodePackage.getSystemDependentPath());
+    private fun nodePackageChanged(nodePackage: NodePackage) {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        val options = Ref.create(emptyList<Option>())
+        val cliVersion = Ref.create(UNKNOWN_VERSION)
+        if (nodePackage.systemIndependentPath.endsWith("/node_modules/@angular/cli")) {
+          var localFile = StandardFileSystems.local().findFileByPath(
+            nodePackage.systemDependentPath)
           if (localFile != null) {
-            localFile = localFile.getParent().getParent().getParent();
+            localFile = localFile.parent.parent.parent
             try {
-              List<Option> availableOptions = AngularCliSchematicsRegistryService.getInstance()
-                .getSchematics(ProjectManager.getInstance().getDefaultProject(), localFile, true, false)
-                .stream()
-                .filter(s -> "ng-new".equals(s.getName()))
-                .findFirst()
-                .map(schematic -> {
-                  List<Option> list = new ArrayList<>(schematic.getOptions());
-                  list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
-                  list.add(createOption("collection", "String", null, "Schematics collection to use"));
-                  list.sort(Comparator.comparing(Option::getName));
-                  return list;
-                })
-                .orElse(Collections.emptyList());
+              val availableOptions =
+                AngularCliSchematicsRegistryService.instance
+                  .getSchematics(ProjectManager.getInstance().defaultProject, localFile!!, true, false)
+                  .asSequence()
+                  .filter { s -> "ng-new" == s.name }
+                  .firstOrNull()
+                  ?.let { schematic ->
+                    val list = ArrayList(schematic.options)
+                    list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."))
+                    list.add(createOption("collection", "String", null, "Schematics collection to use"))
+                    list.sortWith(Comparator.comparing(Function<Option, String> { it.name }))
+                    list
+                  }
+                ?: emptyList()
 
-              options.set(availableOptions);
+              options.set(availableOptions)
             }
-            catch (Exception e) {
-              LOG.error("Failed to load schematics", e);
+            catch (e: Exception) {
+              LOG.error("Failed to load schematics", e)
             }
 
-            var packageVersion = NodePackageVersionUtil.getPackageVersion(nodePackage.getSystemIndependentPath());
-            if (packageVersion != null && packageVersion.getSemVer() != null) {
-              cliVersion.set(packageVersion.getSemVer());
+            val packageVersion = NodePackageVersionUtil.getPackageVersion(nodePackage.systemIndependentPath)
+            if (packageVersion != null && packageVersion.semVer != null) {
+              cliVersion.set(packageVersion.semVer)
             }
           }
         }
 
-        ReadAction.run(() -> {
-          myOptionsTextField.setVariants(options.get(), cliVersion.get());
-        });
-      });
+        ReadAction.run<RuntimeException> { myOptionsTextField!!.setVariants(options.get(), cliVersion.get()) }
+      }
     }
 
-    private Option createOption(String name, String type, Object defaultVal, String description) {
-      Option res = new Option(name);
-      res.setType(type);
-      res.setDefault(defaultVal);
-      res.setDescription(description);
-      return res;
+    private fun createOption(name: String, type: String, defaultVal: Any?, description: String): Option {
+      val res = Option(name)
+      res.type = type
+      res.default = defaultVal
+      res.description = description
+      return res
     }
   }
 
-  private static class AngularCLIProjectSettings extends Settings {
+  private class AngularCLIProjectSettings(settings: Settings,
+                                          val myUseDefaults: Boolean,
+                                          val myOptions: String) : Settings(
+    settings.myInterpreterRef, settings.myPackage)
 
-    public final @NotNull String myOptions;
-    public final boolean myUseDefaults;
+  companion object {
 
-    AngularCLIProjectSettings(@NotNull Settings settings,
-                              boolean useDefaults,
-                              @NotNull String options) {
-      super(settings.myInterpreterRef, settings.myPackage);
-      myUseDefaults = useDefaults;
-      myOptions = options;
+    @NonNls
+    val NG_EXECUTABLE = "ng"
+    private val LOG = Logger.getInstance(AngularCliProjectGenerator::class.java)
+    private val NPX_PACKAGE_PATTERN = Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng")
+    private val VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*")
+    private val UNKNOWN_VERSION = SemVer("0.0.0", 0, 0, 0)
+
+    private fun isPackageGreaterOrEqual(pkg: NodePackage, major: Int, minor: Int, patch: Int): Boolean {
+      var ver: SemVer? = null
+      if (pkg.name == ANGULAR_CLI_PACKAGE) {
+        ver = pkg.version
+      }
+      else {
+        val m = NPX_PACKAGE_PATTERN.matcher(pkg.systemIndependentPath)
+        if (m.matches()) {
+          ver = SemVer.parseFromText(m.group(1))
+        }
+      }
+      return ver == null || ver.isGreaterOrEqualThan(major, minor, patch)
+    }
+
+    fun ng(path: String): String {
+      return path + File.separator + "bin" + File.separator + NG_EXECUTABLE
+    }
+
+    @DialogMessage
+    private fun validateFolderName(path: String, label: String): String? {
+      val fileName = PathUtil.getFileName(path)
+      return if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
+        XmlStringUtil.wrapInHtml(
+          Angular2Bundle.message("angular.action.new-project.wrong-folder-name", label, fileName)
+        )
+      }
+      else null
     }
   }
 }

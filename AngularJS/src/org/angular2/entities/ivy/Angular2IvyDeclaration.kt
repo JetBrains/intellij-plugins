@@ -1,17 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.ivy;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.ivy
 
-import org.angular2.entities.Angular2Declaration;
-import org.jetbrains.annotations.NotNull;
+import org.angular2.entities.Angular2Declaration
 
-public abstract class Angular2IvyDeclaration<T extends Angular2IvySymbolDef.Entity> extends Angular2IvyEntity<T>
-  implements Angular2Declaration {
-  public Angular2IvyDeclaration(@NotNull T entityDef) {
-    super(entityDef);
-  }
+abstract class Angular2IvyDeclaration<T : Angular2IvySymbolDef.Entity>(entityDef: T)
+  : Angular2IvyEntity<T>(entityDef), Angular2Declaration {
 
-  @Override
-  public boolean isStandalone() {
-    return myEntityDef.isStandalone();
-  }
+  override val isStandalone: Boolean
+    get() = myEntityDef.isStandalone
 }

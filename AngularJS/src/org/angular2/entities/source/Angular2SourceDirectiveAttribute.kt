@@ -1,75 +1,47 @@
-package org.angular2.entities.source;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.source
 
-import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.model.Pointer;
-import com.intellij.psi.PsiElement;
-import org.angular2.entities.Angular2DirectiveAttribute;
-import org.angular2.entities.Angular2EntityUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.model.Pointer
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.createSmartPointer
+import org.angular2.entities.Angular2DirectiveAttribute
+import org.angular2.entities.Angular2EntityUtils
+import java.util.*
 
-import java.util.Objects;
+class Angular2SourceDirectiveAttribute internal constructor(private val myParameter: JSParameter,
+                                                            override val name: String) : Angular2DirectiveAttribute {
 
-import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
+  override val type: JSType?
+    get() = myParameter.jsType
 
-public class Angular2SourceDirectiveAttribute implements Angular2DirectiveAttribute {
-  private final JSParameter myParameter;
-  private final String myName;
+  override val sourceElement: PsiElement
+    get() = myParameter
 
-  Angular2SourceDirectiveAttribute(final @NotNull JSParameter parameter,
-                                   final @NotNull String bindingName) {
-    myParameter = parameter;
-    myName = bindingName;
+  override val navigableElement: PsiElement
+    get() = myParameter.navigationElement
+
+  override fun toString(): String {
+    return Angular2EntityUtils.toString(this)
   }
 
-  @Override
-  public @NotNull String getName() {
-    return myName;
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val attribute = other as Angular2SourceDirectiveAttribute?
+    return myParameter == attribute!!.myParameter && name == attribute.name
   }
 
-  @Override
-  public @Nullable JSType getType() {
-    return myParameter.getJSType();
+  override fun hashCode(): Int {
+    return Objects.hash(myParameter, name)
   }
 
-  @Override
-  public @NotNull PsiElement getSourceElement() {
-    return myParameter;
-  }
-
-  @Override
-  public @NotNull PsiElement getNavigableElement() {
-    return myParameter.getNavigationElement();
-  }
-
-  @Override
-  public String toString() {
-    return Angular2EntityUtils.toString(this);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2SourceDirectiveAttribute attribute = (Angular2SourceDirectiveAttribute)o;
-    return myParameter.equals(attribute.myParameter)
-           && myName.equals(attribute.myName);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(myParameter, myName);
-  }
-
-  @NotNull
-  @Override
-  public Pointer<Angular2SourceDirectiveAttribute> createPointer() {
-    var name = myName;
-    var parameter = createSmartPointer(myParameter);
-    return () -> {
-      var newParameter = parameter.getElement();
-      return newParameter != null ? new Angular2SourceDirectiveAttribute(newParameter, name) : null;
-    };
+  override fun createPointer(): Pointer<Angular2SourceDirectiveAttribute> {
+    val name = this.name
+    val parameter = myParameter.createSmartPointer()
+    return Pointer {
+      parameter.element?.let { Angular2SourceDirectiveAttribute(it, name) }
+    }
   }
 }

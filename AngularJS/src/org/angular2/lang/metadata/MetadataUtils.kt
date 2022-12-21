@@ -1,43 +1,30 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonProperty
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonValue
+import com.intellij.openapi.util.Pair
+import com.intellij.util.asSafely
 
-import java.util.stream.Stream;
+object MetadataUtils {
 
-import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.util.ObjectUtils.tryCast;
-
-public final class MetadataUtils {
-
-  public static @NotNull Stream<JsonProperty> streamObjectProperty(@Nullable JsonProperty property) {
-    if (property == null || !(property.getValue() instanceof JsonObject)) {
-      return Stream.empty();
+  fun listObjectProperties(property: JsonProperty?): List<JsonProperty> {
+    return if (property == null || property.value !is JsonObject) {
+      emptyList()
     }
-    return ((JsonObject)property.getValue()).getPropertyList().stream();
+    else (property.value as JsonObject).propertyList
   }
 
-  public static @Nullable Pair<String, String> readStringProperty(@Nullable JsonProperty property) {
-    if (property != null && property.getValue() instanceof JsonStringLiteral) {
-      return pair(property.getName(), ((JsonStringLiteral)property.getValue()).getValue());
+  fun readStringProperty(property: JsonProperty?): Pair<String, String>? =
+    property?.value?.asSafely<JsonStringLiteral>()?.value?.let {
+      Pair(property.name, it)
     }
-    return null;
-  }
 
-  public static @Nullable String readStringPropertyValue(@Nullable JsonProperty property) {
-    if (property != null && property.getValue() instanceof JsonStringLiteral) {
-      return ((JsonStringLiteral)property.getValue()).getValue();
-    }
-    return null;
-  }
+  fun readStringPropertyValue(property: JsonProperty?): String? =
+    property?.value?.asSafely<JsonStringLiteral>()?.value
 
-  public static @Nullable <T extends JsonValue> T getPropertyValue(@Nullable JsonProperty property, Class<T> valueClass) {
-    return property != null ? tryCast(property.getValue(), valueClass) : null;
-  }
+  inline fun <reified T : JsonValue> getPropertyValue(property: JsonProperty?): T? =
+    property?.value as? T
 }

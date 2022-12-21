@@ -1,60 +1,52 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections;
+package org.angular2.inspections
 
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.javascript.psi.JSElementVisitor;
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
-import org.angular2.inspections.quickfixes.RemoveJSProperty;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.javascript.psi.JSElementVisitor
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElementVisitor
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP
+import org.angular2.Angular2DecoratorUtil.TEMPLATE_URL_PROP
+import org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer
+import org.angular2.Angular2DecoratorUtil.isAngularEntityDecorator
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix
+import org.angular2.inspections.quickfixes.RemoveJSProperty
+import org.angular2.lang.Angular2Bundle
 
-import static org.angular2.Angular2DecoratorUtil.*;
+class AngularIncorrectTemplateDefinitionInspection : LocalInspectionTool() {
 
-public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectionTool {
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+    return object : JSElementVisitor() {
 
-  @Override
-  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new JSElementVisitor() {
-
-      @Override
-      public void visitES6Decorator(@NotNull ES6Decorator decorator) {
+      override fun visitES6Decorator(decorator: ES6Decorator) {
         if (isAngularEntityDecorator(decorator, COMPONENT_DEC)) {
-          JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
-          if (initializer == null) {
-            return;
-          }
-          JSProperty templateUrl = initializer.findProperty(TEMPLATE_URL_PROP);
-          JSProperty template = initializer.findProperty(TEMPLATE_PROP);
+          val initializer = getObjectLiteralInitializer(decorator) ?: return
+          val templateUrl = initializer.findProperty(TEMPLATE_URL_PROP)
+          val template = initializer.findProperty(TEMPLATE_PROP)
           if (template == null && templateUrl == null) {
-            Angular2Component component = Angular2EntitiesProvider.getComponent(decorator);
-            if (component != null
-                && component.getTypeScriptClass() != null
-                && component.getTypeScriptClass().getName() != null) {
+            val component = Angular2EntitiesProvider.getComponent(decorator)
+            val name = component?.typeScriptClass?.name
+            if (name != null) {
               holder.registerProblem(initializer,
-                                     Angular2Bundle.message("angular.inspection.invalid-template-definition.message.missing",
-                                                            component.getTypeScriptClass().getName()),
-                                     new AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
-                                     new AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false));
+                                     Angular2Bundle.message("angular.inspection.invalid-template-definition.message.missing", name),
+                                     AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
+                                     AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false))
             }
           }
           else if (template != null && templateUrl != null) {
-            //noinspection DialogTitleCapitalization
-            ContainerUtil.packNullables(template.getNameIdentifier(), templateUrl.getNameIdentifier())
-              .forEach(id -> holder.registerProblem(
-                id, Angular2Bundle.message("angular.inspection.invalid-template-definition.message.duplicated"),
-                new RemoveJSProperty(StringUtil.unquoteString(id.getText()))));
+            listOfNotNull(template.nameIdentifier, templateUrl.nameIdentifier)
+              .forEach { id ->
+                holder.registerProblem(
+                  id, Angular2Bundle.message("angular.inspection.invalid-template-definition.message.duplicated"),
+                  RemoveJSProperty(StringUtil.unquoteString(id.text)))
+              }
           }
         }
       }
-    };
+    }
   }
 }

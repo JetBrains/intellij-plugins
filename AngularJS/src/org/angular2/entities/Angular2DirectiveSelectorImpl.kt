@@ -1,205 +1,158 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities
 
-import com.intellij.model.Pointer;
-import com.intellij.openapi.util.ClearableLazyValue;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.ElementManipulators;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.JBIterable;
-import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Angular2DirectiveSimpleSelectorWithRanges;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.model.Pointer
+import com.intellij.openapi.util.ClearableLazyValue
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.SmartList
+import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi
+import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Angular2DirectiveSimpleSelectorWithRanges
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
-import static com.intellij.util.ObjectUtils.notNull;
-
-public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector {
-  private final ClearableLazyValue<PsiElement> myLazyParent;
-  private PsiElement myElement;
-  private final String myText;
-  private final Integer myRangeOffset;
-  private final NotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors;
-  private final NotNullLazyValue<List<SimpleSelectorWithPsi>> mySimpleSelectorsWithPsi;
-
-  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
-                                       @Nullable String text,
-                                       @Nullable Integer rangeOffset) {
-    myElement = element;
-    myLazyParent = element instanceof Angular2MetadataDirectiveBase
-                   ? ClearableLazyValue.createAtomic(() -> notNull(((Angular2MetadataDirectiveBase<?>)myElement).getTypeScriptClass(),
-                                                                   myElement))
-                   : null;
-    myText = text;
-    myRangeOffset = rangeOffset;
-    mySimpleSelectors = NotNullLazyValue.lazy(() -> {
-      if (myText == null) {
-        return Collections.emptyList();
-      }
-      try {
-        return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
-      }
-      catch (ParseException e) {
-        return Collections.emptyList();
-      }
-    });
-    mySimpleSelectorsWithPsi = NotNullLazyValue.lazy(() -> {
-      if (myText == null) {
-        return Collections.emptyList();
-      }
-      try {
-        List<Angular2DirectiveSimpleSelectorWithRanges> simpleSelectorsWithRanges = Angular2DirectiveSimpleSelector.parseRanges(myText);
-        List<SimpleSelectorWithPsi> result = new ArrayList<>(simpleSelectorsWithRanges.size());
-        for (Angular2DirectiveSimpleSelectorWithRanges sel : simpleSelectorsWithRanges) {
-          result.add(new SimpleSelectorWithPsiImpl(sel, null));
-        }
-        return Collections.unmodifiableList(result);
-      }
-      catch (ParseException e) {
-        return Collections.emptyList();
-      }
-    });
+class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
+                                    private val myText: String?,
+                                    private val myRangeOffset: Int?) : Angular2DirectiveSelector {
+  private val myLazyParent: ClearableLazyValue<PsiElement>? = if (myElement is Angular2MetadataDirectiveBase<*>)
+    ClearableLazyValue.createAtomic { myElement.typeScriptClass ?: myElement }
+  else
+    null
+  private val mySimpleSelectors: NotNullLazyValue<List<Angular2DirectiveSimpleSelector>> = NotNullLazyValue.lazy {
+    if (myText == null) {
+      emptyList()
+    }
+    else try {
+      Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText))
+    }
+    catch (e: ParseException) {
+      emptyList()
+    }
+  }
+  private val mySimpleSelectorsWithPsi: NotNullLazyValue<List<SimpleSelectorWithPsi>> = NotNullLazyValue.lazy {
+    if (myText == null) {
+      emptyList()
+    }
+    else try {
+      Angular2DirectiveSimpleSelector.parseRanges(myText)
+        .map { SimpleSelectorWithPsiImpl(it, null) }
+    }
+    catch (e: ParseException) {
+      emptyList()
+    }
   }
 
-  public Pointer<Angular2DirectiveSelectorImpl> createPointer() {
-    var element = createSmartPointer(myElement);
-    var text = myText;
-    var rangeOffset = myRangeOffset;
-    return () -> {
-      var newElement = element.getElement();
-      return newElement != null ? new Angular2DirectiveSelectorImpl(newElement, text, rangeOffset) : null;
-    };
+  override val text: String
+    get() = myText ?: "<null>"
+
+  val psiParent: PsiElement
+    get() = if (myElement is Angular2MetadataDirectiveBase<*>) myLazyParent!!.value else myElement
+
+  override val simpleSelectors: List<Angular2DirectiveSimpleSelector>
+    get() = mySimpleSelectors.value
+
+  override val simpleSelectorsWithPsi: List<SimpleSelectorWithPsi>
+    get() = mySimpleSelectorsWithPsi.value
+
+  fun createPointer(): Pointer<Angular2DirectiveSelectorImpl> {
+    val element = myElement.createSmartPointer()
+    val text = myText
+    val rangeOffset = myRangeOffset
+    return Pointer {
+      element.element?.let { Angular2DirectiveSelectorImpl(it, text, rangeOffset) }
+    }
   }
 
-  @Override
-  public @NotNull String getText() {
-    return myText == null ? "<null>" : myText;
-  }
-
-  @NotNull
-  public PsiElement getPsiParent() {
-    return myElement instanceof Angular2MetadataDirectiveBase ? myLazyParent.getValue() : myElement;
-  }
-
-  @Override
-  public @NotNull List<Angular2DirectiveSimpleSelector> getSimpleSelectors() {
-    return mySimpleSelectors.getValue();
-  }
-
-  @Override
-  public @NotNull List<SimpleSelectorWithPsi> getSimpleSelectorsWithPsi() {
-    return mySimpleSelectorsWithPsi.getValue();
-  }
-
-  @Override
-  public @NotNull Angular2DirectiveSelectorSymbol getSymbolForElement(@NotNull String elementName) {
-    for (SimpleSelectorWithPsi selector : getSimpleSelectorsWithPsi()) {
-      if (selector.getElement() != null && elementName.equalsIgnoreCase(selector.getElement().getName())) {
-        return selector.getElement();
+  override fun getSymbolForElement(elementName: String): Angular2DirectiveSelectorSymbol {
+    for (selector in simpleSelectorsWithPsi) {
+      val selectorElement = selector.element
+      if (selectorElement != null && elementName.equals(selectorElement.name, ignoreCase = true)) {
+        return selectorElement
       }
-      for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
-        if (notSelector.getElement() != null && elementName.equalsIgnoreCase(notSelector.getElement().getName())) {
-          return notSelector.getElement();
+      for (notSelector in selector.notSelectors) {
+        val notSelectorElement = notSelector.element
+        if (notSelectorElement != null && elementName.equals(notSelectorElement.name, ignoreCase = true)) {
+          return notSelectorElement
         }
       }
     }
-    return new Angular2DirectiveSelectorSymbol(this, new TextRange(0, 0), elementName, null, true);
+    return Angular2DirectiveSelectorSymbol(this, TextRange(0, 0), elementName, null, true)
   }
 
-  @Override
-  public String toString() {
-    return getText();
+  override fun toString(): String {
+    return text
   }
 
-  @NotNull
-  private Angular2DirectiveSelectorSymbol convert(@NotNull Pair<String, Integer> range,
-                                                  @Nullable String elementSelector,
-                                                  boolean isElement) {
-    return new Angular2DirectiveSelectorSymbol(
+  private fun convert(range: Pair<String, Int>,
+                      elementSelector: String?,
+                      isElement: Boolean): Angular2DirectiveSelectorSymbol {
+    return Angular2DirectiveSelectorSymbol(
       this,
-      myRangeOffset != null
-      ? new TextRange(range.second + myRangeOffset, range.second + range.first.length() + myRangeOffset)
-      : TextRange.EMPTY_RANGE,
-      range.first, elementSelector, isElement);
+      if (myRangeOffset != null)
+        TextRange(range.second + myRangeOffset, range.second + range.first.length + myRangeOffset)
+      else
+        TextRange.EMPTY_RANGE,
+      range.first, elementSelector, isElement)
   }
 
-  public void replaceText(@NotNull TextRange range, @NotNull String name) {
-    myElement = ElementManipulators.getManipulator(myElement)
-      .handleContentChange(myElement, range, name);
+  /*fun replaceText(range: TextRange, name: String) {
+    myElement = ElementManipulators.getManipulator(myElement!!)!!
+      .handleContentChange(myElement!!, range, name)
+  }*/
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val selector = other as Angular2DirectiveSelectorImpl?
+    return myElement == selector!!.myElement &&
+           myText == selector.myText &&
+           myRangeOffset == selector.myRangeOffset
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2DirectiveSelectorImpl selector = (Angular2DirectiveSelectorImpl)o;
-    return Objects.equals(myElement, selector.myElement) &&
-           Objects.equals(myText, selector.myText) &&
-           Objects.equals(myRangeOffset, selector.myRangeOffset);
+  override fun hashCode(): Int {
+    return Objects.hash(myElement, myText, myRangeOffset)
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(myElement, myText, myRangeOffset);
-  }
+  private inner class SimpleSelectorWithPsiImpl(selectorWithRanges: Angular2DirectiveSimpleSelectorWithRanges,
+                                                mainElementSelector: String?) : SimpleSelectorWithPsi {
 
-  private class SimpleSelectorWithPsiImpl implements SimpleSelectorWithPsi {
+    override val element: Angular2DirectiveSelectorSymbol?
+    private val myAttributes = SmartList<Angular2DirectiveSelectorSymbol>()
+    private val myNotSelectors = SmartList<SimpleSelectorWithPsi>()
 
-    private final Angular2DirectiveSelectorSymbol myElement;
-    private final List<Angular2DirectiveSelectorSymbol> myAttributes = new SmartList<>();
-    private final List<SimpleSelectorWithPsi> myNotSelectors = new SmartList<>();
+    override val attributes: List<Angular2DirectiveSelectorSymbol>
+      get() = myAttributes
 
-    SimpleSelectorWithPsiImpl(@NotNull Angular2DirectiveSimpleSelectorWithRanges selectorWithRanges,
-                              @Nullable String mainElementSelector) {
-      String myElementName = null;
-      if (selectorWithRanges.getElementRange() != null) {
-        myElement = convert(selectorWithRanges.getElementRange(), null, true);
-        myElementName = myElement.getName();
+    override val notSelectors: List<SimpleSelectorWithPsi>
+      get() = myNotSelectors
+
+    init {
+      var myElementName: String? = null
+      if (selectorWithRanges.elementRange != null) {
+        element = convert(selectorWithRanges.elementRange!!, null, true)
+        myElementName = element.name
       }
       else {
-        myElement = null;
+        element = null
       }
-      for (Pair<String, Integer> attr : selectorWithRanges.getAttributeRanges()) {
-        myAttributes.add(convert(attr, myElementName != null ? myElementName : mainElementSelector, false));
+      for (attr in selectorWithRanges.attributeRanges) {
+        myAttributes.add(convert(attr, myElementName ?: mainElementSelector, false))
       }
-      for (Angular2DirectiveSimpleSelectorWithRanges notSelector : selectorWithRanges.getNotSelectors()) {
-        myNotSelectors.add(new SimpleSelectorWithPsiImpl(notSelector, myElementName));
+      for (notSelector in selectorWithRanges.notSelectors) {
+        myNotSelectors.add(SimpleSelectorWithPsiImpl(notSelector, myElementName))
       }
     }
 
-    @Override
-    public @Nullable Angular2DirectiveSelectorSymbol getElement() {
-      return myElement;
-    }
-
-    @Override
-    public @NotNull List<@NotNull Angular2DirectiveSelectorSymbol> getAttributes() {
-      return myAttributes;
-    }
-
-    @Override
-    public @NotNull List<@NotNull SimpleSelectorWithPsi> getNotSelectors() {
-      return myNotSelectors;
-    }
-
-    @Override
-    public @Nullable Angular2DirectiveSelectorSymbol getElementAt(int offset) {
-      return JBIterable.from(myAttributes)
-        .append(JBIterable.from(myNotSelectors).flatMap(sel -> sel.getAttributes()))
-        .append(myElement)
-        .filter(element -> element.getTextRangeInSource().contains(offset))
-        .first();
+    override fun getElementAt(offset: Int): Angular2DirectiveSelectorSymbol? {
+      return myAttributes
+        .plus(myNotSelectors.flatMap { it.attributes })
+        .plus(element)
+        .firstOrNull { it?.textRangeInSource?.contains(offset) == true }
     }
   }
 }

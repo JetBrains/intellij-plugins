@@ -1,219 +1,210 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.json.psi.*;
-import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
-import com.intellij.lang.javascript.index.flags.FlagsStructure;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.Angular2DirectiveKind;
-import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
-import org.angular2.index.Angular2MetadataClassNameIndex;
-import org.angular2.lang.metadata.MetadataUtils;
-import org.angular2.lang.metadata.psi.MetadataElementType;
-import org.angular2.lang.metadata.stubs.MetadataElementStub;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.json.psi.*
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement
+import com.intellij.lang.javascript.index.flags.FlagsStructure
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
+import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
+import org.angular2.Angular2DecoratorUtil.INPUT_DEC
+import org.angular2.Angular2DecoratorUtil.MODULE_DEC
+import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
+import org.angular2.Angular2DecoratorUtil.PIPE_DEC
+import org.angular2.entities.Angular2DirectiveKind
+import org.angular2.entities.Angular2EntityUtils
+import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase.EntityFactory
+import org.angular2.index.Angular2MetadataClassNameIndex
+import org.angular2.lang.metadata.MetadataUtils
+import org.angular2.lang.metadata.MetadataUtils.getPropertyValue
+import org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue
+import org.angular2.lang.metadata.psi.MetadataElementType
+import org.jetbrains.annotations.NonNls
+import java.io.IOException
+import java.util.*
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+open class Angular2MetadataClassStubBase<Psi : PsiElement> : Angular2MetadataElementStub<Psi> {
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.lang.metadata.MetadataUtils.getPropertyValue;
-import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
+  protected val myInputMappings: MutableMap<String, String>
+  protected val myOutputMappings: MutableMap<String, String>
+  protected open val loadInOuts: Boolean get() = true
 
-public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase<?>> extends Angular2MetadataElementStub<Psi> {
-  @NonNls private static final String EXTENDS_MEMBER = "#ext";
+  val className: String?
+    get() = memberName
 
-  private static final NotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES = NotNullLazyValue.lazy(() -> {
-    return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
-      .put(MODULE_DEC, Angular2MetadataModuleStub::new)
-      .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
-      .put(COMPONENT_DEC, Angular2MetadataComponentStub::new)
-      .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::new)
-      .build();
-  });
+  val extendsReference: Angular2MetadataReferenceStub?
+    get() = childrenStubs
+      .find { it is Angular2MetadataReferenceStub && EXTENDS_MEMBER == it.memberName } as? Angular2MetadataReferenceStub
 
-  private static Map<String, EntityFactory> getEntityFactories() {
-    return ENTITY_FACTORIES.getValue();
-  }
+  val inputMappings: Map<String, String>
+    get() = Collections.unmodifiableMap(myInputMappings)
 
-  public static Angular2MetadataClassStubBase<?> createClassStub(@Nullable String memberName,
-                                                                 @NotNull JsonValue source,
-                                                                 @Nullable StubElement parent) {
-    return streamDecorators((JsonObject)source)
-      .map(pair -> doIfNotNull(getEntityFactories().get(pair.first),
-                               factory -> factory.create(memberName, parent, (JsonObject)source, pair.second)))
-      .filter(Objects::nonNull)
-      .findFirst()
-      .orElseGet(() -> new Angular2MetadataClassStub(memberName, source, parent));
-  }
+  val outputMappings: Map<String, String>
+    get() = Collections.unmodifiableMap(myOutputMappings)
 
-  private static final BooleanStructureElement IS_STRUCTURAL_DIRECTIVE_FLAG = new BooleanStructureElement();
-  private static final BooleanStructureElement IS_REGULAR_DIRECTIVE_FLAG = new BooleanStructureElement();
-  private static final BooleanStructureElement HAS_INPUT_MAPPINGS = new BooleanStructureElement();
-  private static final BooleanStructureElement HAS_OUTPUT_MAPPINGS = new BooleanStructureElement();
-  @SuppressWarnings("StaticFieldReferencedViaSubclass")
-  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
-    Angular2MetadataElementStub.FLAGS_STRUCTURE,
-    IS_STRUCTURAL_DIRECTIVE_FLAG,
-    IS_REGULAR_DIRECTIVE_FLAG,
-    HAS_INPUT_MAPPINGS,
-    HAS_OUTPUT_MAPPINGS
-  );
-
-  protected final Map<String, String> myInputMappings;
-  protected final Map<String, String> myOutputMappings;
-
-  public Angular2MetadataClassStubBase(@Nullable String memberName,
-                                       @Nullable StubElement parent,
-                                       @NotNull JsonObject source,
-                                       @NotNull MetadataElementType elementType) {
-    super(memberName, parent, elementType);
-    if (loadInOuts()) {
-      readTemplateFlag(source);
+  open val directiveKind: Angular2DirectiveKind?
+    get() {
+      val isStructural = readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG)
+      val isRegular = readFlag(IS_REGULAR_DIRECTIVE_FLAG)
+      return if (isStructural || isRegular) {
+        Angular2DirectiveKind.get(isRegular, isStructural)
+      }
+      else null
     }
-    JsonObject extendsClass = getPropertyValue(source.findProperty(EXTENDS), JsonObject.class);
+
+  constructor(memberName: String?,
+              parent: StubElement<*>?,
+              source: JsonObject,
+              elementType: MetadataElementType<*>) : super(memberName, parent, elementType) {
+    @Suppress("LeakingThis")
+    if (loadInOuts) {
+      readTemplateFlag(source)
+    }
+    val extendsClass = getPropertyValue<JsonObject>(source.findProperty(EXTENDS))
     if (extendsClass != null) {
-      Angular2MetadataReferenceStub.createReferenceStub(EXTENDS_MEMBER, extendsClass, this);
+      @Suppress("LeakingThis")
+      Angular2MetadataReferenceStub.createReferenceStub(EXTENDS_MEMBER, extendsClass, this)
     }
-    myOutputMappings = new HashMap<>();
-    myInputMappings = new HashMap<>();
-    MetadataUtils.streamObjectProperty(source.findProperty(MEMBERS))
-      .forEach(this::loadMember);
-    MetadataUtils.streamObjectProperty(source.findProperty(STATICS))
-      .filter(prop -> prop.getValue() instanceof JsonObject
-                      && SYMBOL_FUNCTION.equals(readStringPropertyValue(((JsonObject)prop.getValue()).findProperty(SYMBOL_TYPE))))
-      .forEach(this::loadMemberProperty);
+    myOutputMappings = HashMap<String, String>()
+    myInputMappings = HashMap<String, String>()
+    MetadataUtils.listObjectProperties(source.findProperty(MEMBERS))
+      .forEach { this.loadMember(it, myInputMappings, myOutputMappings) }
+    MetadataUtils.listObjectProperties(source.findProperty(STATICS))
+      .filter { prop ->
+        prop.value is JsonObject
+        && SYMBOL_FUNCTION == readStringPropertyValue((prop.value as JsonObject).findProperty(SYMBOL_TYPE))
+      }
+      .forEach { this.loadMemberProperty(it) }
   }
 
-  public Angular2MetadataClassStubBase(@NotNull StubInputStream stream,
-                                       @Nullable StubElement parent, @NotNull MetadataElementType elementType) throws IOException {
-    super(stream, parent, elementType);
-    myInputMappings = readFlag(HAS_INPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
-    myOutputMappings = readFlag(HAS_OUTPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream,
+              parent: StubElement<*>?, elementType: MetadataElementType<*>) : super(stream, parent, elementType) {
+    myInputMappings = if (readFlag(HAS_INPUT_MAPPINGS)) readStringMap(stream).toMutableMap() else mutableMapOf()
+    myOutputMappings = if (readFlag(HAS_OUTPUT_MAPPINGS)) readStringMap(stream).toMutableMap() else mutableMapOf()
   }
 
-  public @Nullable String getClassName() {
-    return getMemberName();
-  }
-
-  public Angular2MetadataReferenceStub getExtendsReference() {
-    return (Angular2MetadataReferenceStub)ContainerUtil.find(
-      getChildrenStubs(),
-      child -> child instanceof Angular2MetadataReferenceStub
-               && EXTENDS_MEMBER.equals(((Angular2MetadataReferenceStub)child).getMemberName()));
-  }
-
-  public Map<String, String> getInputMappings() {
-    return Collections.unmodifiableMap(myInputMappings);
-  }
-
-  public Map<String, String> getOutputMappings() {
-    return Collections.unmodifiableMap(myOutputMappings);
-  }
-
-  public @Nullable Angular2DirectiveKind getDirectiveKind() {
-    boolean isStructural = readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
-    boolean isRegular = readFlag(IS_REGULAR_DIRECTIVE_FLAG);
-    if (isStructural || isRegular) {
-      return Angular2DirectiveKind.get(isRegular, isStructural);
-    }
-    return null;
-  }
-
-  @Override
-  public void serialize(@NotNull StubOutputStream stream) throws IOException {
-    writeFlag(HAS_INPUT_MAPPINGS, !myInputMappings.isEmpty());
-    writeFlag(HAS_OUTPUT_MAPPINGS, !myOutputMappings.isEmpty());
-    super.serialize(stream);
+  @Throws(IOException::class)
+  override fun serialize(stream: StubOutputStream) {
+    writeFlag(HAS_INPUT_MAPPINGS, !myInputMappings.isEmpty())
+    writeFlag(HAS_OUTPUT_MAPPINGS, !myOutputMappings.isEmpty())
+    super.serialize(stream)
     if (!myInputMappings.isEmpty()) {
-      writeStringMap(myInputMappings, stream);
+      writeStringMap(myInputMappings, stream)
     }
     if (!myOutputMappings.isEmpty()) {
-      writeStringMap(myOutputMappings, stream);
+      writeStringMap(myOutputMappings, stream)
     }
   }
 
-  @Override
-  public void index(@NotNull IndexSink sink) {
-    super.index(sink);
-    if (getClassName() != null) {
-      sink.occurrence(Angular2MetadataClassNameIndex.KEY, getClassName());
+  override fun index(sink: IndexSink) {
+    super.index(sink)
+    if (className != null) {
+      sink.occurrence(Angular2MetadataClassNameIndex.KEY, className!!)
     }
   }
 
-  protected boolean loadInOuts() {
-    return true;
+  override val flagsStructure: FlagsStructure
+    get() = FLAGS_STRUCTURE
+
+  private fun readTemplateFlag(source: JsonObject) {
+    val members = source.findProperty(MEMBERS)?.value as? JsonObject
+    val constructor = members?.findProperty(CONSTRUCTOR)
+    val constructorText = if (constructor != null) constructor.text else ""
+    val kind = Angular2DirectiveKind.get(constructorText.contains(Angular2EntityUtils.ELEMENT_REF),
+                                         constructorText.contains(Angular2EntityUtils.TEMPLATE_REF),
+                                         constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF))
+    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, kind != null && kind.isStructural)
+    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, kind != null && kind.isRegular)
   }
 
-  @Override
-  protected FlagsStructure getFlagsStructure() {
-    return FLAGS_STRUCTURE;
-  }
-
-  private void readTemplateFlag(JsonObject source) {
-    JsonObject members = tryCast(doIfNotNull(source.findProperty(MEMBERS), JsonProperty::getValue), JsonObject.class);
-    JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
-    String constructorText = constructor != null ? constructor.getText() : "";
-    Angular2DirectiveKind kind = Angular2DirectiveKind.get(
-      constructorText.contains(Angular2EntityUtils.ELEMENT_REF),
-      constructorText.contains(Angular2EntityUtils.TEMPLATE_REF),
-      constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF)
-    );
-    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, kind != null && kind.isStructural());
-    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, kind != null && kind.isRegular());
-  }
-
-  private void loadMember(@NotNull JsonProperty property) {
-    String name = property.getName();
-    JsonArray val = tryCast(property.getValue(), JsonArray.class);
-    if (val == null || val.getValueList().size() != 1) {
-      return;
+  private fun loadMember(property: JsonProperty, inputMappings: MutableMap<String, String>, outputMappings: MutableMap<String, String>) {
+    val name = property.name
+    val `val` = property.value as? JsonArray
+    if (`val` == null || `val`.valueList.size != 1) {
+      return
     }
-    JsonObject obj = tryCast(val.getValueList().get(0), JsonObject.class);
-    if (obj == null) {
-      return;
-    }
-    String memberSymbol = readStringPropertyValue(obj.findProperty(SYMBOL_TYPE));
-    if (loadInOuts() && (SYMBOL_PROPERTY.equals(memberSymbol) || SYMBOL_METHOD.equals(memberSymbol))) {
-      streamDecorators(obj).forEach(dec -> {
-        if (INPUT_DEC.equals(dec.first)) {
-          addBindingMapping(name, myInputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));
+    val obj = `val`.valueList[0] as? JsonObject ?: return
+    val memberSymbol = readStringPropertyValue(obj.findProperty(SYMBOL_TYPE))
+    if (loadInOuts && (SYMBOL_PROPERTY == memberSymbol || SYMBOL_METHOD == memberSymbol)) {
+      decoratorsSequence(obj).forEach { dec ->
+        if (INPUT_DEC == dec.first) {
+          addBindingMapping(name, inputMappings, getDecoratorInitializer(dec.second))
         }
-        else if (OUTPUT_DEC.equals(dec.first)) {
-          addBindingMapping(name, myOutputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));
+        else if (OUTPUT_DEC == dec.first) {
+          addBindingMapping(name, outputMappings, getDecoratorInitializer(dec.second))
         }
-      });
+      }
     }
-    else if (SYMBOL_FUNCTION.equals(memberSymbol)) {
-      loadMemberProperty(property);
+    else if (SYMBOL_FUNCTION == memberSymbol) {
+      loadMemberProperty(property)
     }
   }
 
-  private static void addBindingMapping(@NotNull String fieldName,
-                                        @NotNull Map<String, String> mappings,
-                                        @Nullable JsonStringLiteral initializer) {
-    String bindingName = initializer != null ? initializer.getValue() : fieldName;
-    mappings.put(fieldName, bindingName);
+  private fun interface EntityFactory {
+    fun create(memberName: String?,
+               parent: StubElement<*>?,
+               classSource: JsonObject,
+               decoratorSource: JsonObject): Angular2MetadataClassStubBase<*>?
   }
 
-  private interface EntityFactory {
-    @Nullable
-    Angular2MetadataClassStubBase create(@Nullable String memberName,
-                                         @Nullable StubElement parent,
-                                         @NotNull JsonObject classSource,
-                                         @NotNull JsonObject decoratorSource);
+  companion object {
+    @NonNls
+    private val EXTENDS_MEMBER = "#ext"
+
+    private val ENTITY_FACTORIES = NotNullLazyValue.lazy {
+      mapOf(
+        MODULE_DEC to EntityFactory { memberName, parent, classSource, decoratorSource ->
+          Angular2MetadataModuleStub(memberName, parent, classSource, decoratorSource)
+        },
+        PIPE_DEC to EntityFactory { memberName, parent, classSource, decoratorSource ->
+          Angular2MetadataPipeStub.createPipeStub(memberName, parent, classSource, decoratorSource)
+        },
+        COMPONENT_DEC to EntityFactory { memberName, parent, source, decoratorSource ->
+          Angular2MetadataComponentStub(memberName, parent, source, decoratorSource)
+        },
+        DIRECTIVE_DEC to EntityFactory { memberName, parent, source, decoratorSource ->
+          Angular2MetadataDirectiveStub(memberName, parent, source, decoratorSource)
+        }
+      )
+    }
+
+    private val entityFactories: Map<String, EntityFactory>
+      get() = ENTITY_FACTORIES.value
+
+    fun createClassStub(memberName: String?,
+                        source: JsonValue,
+                        parent: StubElement<*>?): Angular2MetadataClassStubBase<*> {
+      return decoratorsSequence(source as JsonObject)
+               .mapNotNull { entityFactories[it.first]?.create(memberName, parent, source, it.second) }
+               .firstOrNull()
+             ?: Angular2MetadataClassStub(memberName, source, parent)
+    }
+
+    private val IS_STRUCTURAL_DIRECTIVE_FLAG = BooleanStructureElement()
+    private val IS_REGULAR_DIRECTIVE_FLAG = BooleanStructureElement()
+    private val HAS_INPUT_MAPPINGS = BooleanStructureElement()
+    private val HAS_OUTPUT_MAPPINGS = BooleanStructureElement()
+
+    @JvmStatic
+    protected val FLAGS_STRUCTURE = FlagsStructure(
+      Angular2MetadataElementStub.FLAGS_STRUCTURE,
+      IS_STRUCTURAL_DIRECTIVE_FLAG,
+      IS_REGULAR_DIRECTIVE_FLAG,
+      HAS_INPUT_MAPPINGS,
+      HAS_OUTPUT_MAPPINGS
+    )
+
+    private fun addBindingMapping(fieldName: String,
+                                  mappings: MutableMap<String, String>,
+                                  initializer: JsonStringLiteral?) {
+      val bindingName = initializer?.value ?: fieldName
+      mappings[fieldName] = bindingName
+    }
   }
 }

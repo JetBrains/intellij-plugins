@@ -1,506 +1,462 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.ivy;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.ivy
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import com.intellij.lang.javascript.JSStubElementTypes;
-import com.intellij.lang.javascript.psi.JSField;
-import com.intellij.lang.javascript.psi.JSParameterListElement;
-import com.intellij.lang.javascript.psi.ecma6.*;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.psi.stubs.*;
-import com.intellij.lang.typescript.TypeScriptStubElementTypes;
-import com.intellij.model.Pointer;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import one.util.streamex.StreamEx;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.psi.ecma6.*
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.stubs.JSVarStatementStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub
+import com.intellij.lang.javascript.psi.stubs.TypeScriptFieldStub
+import com.intellij.lang.typescript.TypeScriptStubElementTypes
+import com.intellij.model.Pointer
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.suggested.createSmartPointer
+import org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP
+import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
+import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
+import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
+import org.jetbrains.annotations.NonNls
+import java.util.*
+import java.util.function.BiConsumer
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+import kotlin.reflect.KClass
+import kotlin.reflect.safeCast
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStub: Any) {
 
-import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.Angular2DecoratorUtil.*;
+  val field: TypeScriptField
+    get() = if (myFieldOrStub is TypeScriptFieldStub) myFieldOrStub.psi as TypeScriptField
+    else myFieldOrStub as TypeScriptField
 
-@SuppressWarnings({"SameParameterValue", "NonAsciiCharacters"})
-public abstract class Angular2IvySymbolDef {
+  protected abstract val defTypeNames: List<String>
 
-  public static @Nullable Entity get(@NotNull TypeScriptClass typeScriptClass, boolean allowAbstractClass) {
-    return getSymbolDef(typeScriptClass, allowAbstractClass, Angular2IvySymbolDef::createEntityDef);
+  val contextClass: TypeScriptClass?
+    get() = PsiTreeUtil.getContextOfType(this.field, TypeScriptClass::class.java)
+
+  abstract class Entity protected constructor(fieldOrStub: Any) : Angular2IvySymbolDef(fieldOrStub) {
+
+    abstract val isStandalone: Boolean
+
+    abstract fun createEntity(): Angular2IvyEntity<*>
   }
 
-  public static @Nullable Factory getFactory(@NotNull TypeScriptClass typeScriptClass) {
-    return getSymbolDef(typeScriptClass, true, Angular2IvySymbolDef::createFactoryDef);
-  }
+  class Module internal constructor(fieldStubOrPsi: Any) : Entity(fieldStubOrPsi) {
 
+    override val isStandalone: Boolean
+      get() = false
 
-  public static @Nullable Entity get(@NotNull TypeScriptClassStub stub, boolean allowAbstractClass) {
-    return getSymbolDefStubbed(stub, allowAbstractClass, Angular2IvySymbolDef::createEntityDef);
-  }
+    override val defTypeNames: List<String>
+      get() = TYPE_MODULE_DEFS
 
-  public static @Nullable Entity get(@NotNull TypeScriptField field, boolean allowAbstractClass) {
-    return getSymbolDef(field, allowAbstractClass, Angular2IvySymbolDef::createEntityDef);
-  }
-
-  public abstract static class Entity extends Angular2IvySymbolDef {
-
-    private Entity(@NotNull Object fieldOrStub) {
-      super(fieldOrStub);
+    fun getTypesList(property: String): List<TypeScriptTypeofType> {
+      val index: Int
+      when (property) {
+        DECLARATIONS_PROP -> index = 1
+        IMPORTS_PROP -> index = 2
+        EXPORTS_PROP -> index = 3
+        else -> return emptyList()
+      }
+      return processTupleArgument(index, TypeScriptTypeofType::class, { it }, false)!!
     }
 
-    public abstract Angular2IvyEntity<?> createEntity();
-
-    public abstract boolean isStandalone();
-  }
-
-  public static final class Module extends Entity {
-    private Module(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
-
-    public @NotNull List<TypeScriptTypeofType> getTypesList(@NotNull String property) {
-      int index;
-      if (property.equals(DECLARATIONS_PROP)) {
-        index = 1;
-      }
-      else if (property.equals(IMPORTS_PROP)) {
-        index = 2;
-      }
-      else if (property.equals(EXPORTS_PROP)) {
-        index = 3;
-      }
-      else {
-        return Collections.emptyList();
-      }
-      return processTupleArgument(index, TypeScriptTypeofType.class, Function.identity(), false);
-    }
-
-    @Override
-    public Angular2IvyModule createEntity() {
-      return new Angular2IvyModule(this);
-    }
-
-    @Override
-    public boolean isStandalone() {
-      return false;
-    }
-
-    @Override
-    protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_MODULE_DEFS;
+    override fun createEntity(): Angular2IvyModule {
+      return Angular2IvyModule(this)
     }
   }
 
-  public static class Directive extends Entity {
-    private Directive(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
+  open class Directive internal constructor(fieldStubOrPsi: Any) : Entity(fieldStubOrPsi) {
 
-    public Pointer<? extends Directive> createPointer() {
-      var fieldPtr = createSmartPointer(getField());
-      return () -> {
-        var field = fieldPtr.dereference();
-        return field != null ? new Directive(field) : null;
-      };
-    }
-
-    @Override
-    public Angular2IvyDirective createEntity() {
-      return new Angular2IvyDirective(this);
-    }
-
-    @Override
-    public boolean isStandalone() {
-      var type = getDefFieldArgument(7);
-      return type instanceof TypeScriptBooleanLiteralType && ((TypeScriptBooleanLiteralType)type).getValue();
-    }
-
-    public @Nullable String getSelector() {
-      return getStringGenericParam(1);
-    }
-
-    public @Nullable TypeScriptStringLiteralType getSelectorElement() {
-      return tryCast(getDefFieldArgument(1), TypeScriptStringLiteralType.class);
-    }
-
-    public @NotNull List<String> getExportAsList() {
-      return processTupleArgument(2, TypeScriptStringLiteralType.class,
-                                  TypeScriptStringLiteralType::getInnerText, false);
-    }
-
-    public @NotNull Map<String, String> readPropertyMappings(@NotNull String kind) {
-      int index;
-      if (kind.equals(INPUTS_PROP)) {
-        index = 3;
+    override val isStandalone: Boolean
+      get() {
+        val type = getDefFieldArgument(7)
+        return type is TypeScriptBooleanLiteralType && type.value
       }
-      else if (kind.equals(OUTPUTS_PROP)) {
-        index = 4;
+
+    val selector: String?
+      get() = getStringGenericParam(1)
+
+    val selectorElement: TypeScriptStringLiteralType?
+      get() = getDefFieldArgument(1) as? TypeScriptStringLiteralType
+
+    val exportAsList: List<String>
+      get() = processTupleArgument(2, TypeScriptStringLiteralType::class,
+                                   { it.innerText }, false)!!
+
+    override val defTypeNames: List<String>
+      get() = TYPE_DIRECTIVE_DEFS
+
+    open fun createPointer(): Pointer<out Directive> {
+      val fieldPtr = field.createSmartPointer()
+      return Pointer {
+        fieldPtr.dereference()?.let { Directive(field) }
       }
-      else {
-        return Collections.emptyMap();
-      }
-      return processObjectArgument(index, TypeScriptStringLiteralType.class,
-                                   TypeScriptStringLiteralType::getInnerText
-      );
     }
 
-    @Override
-    protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_DIRECTIVE_DEFS;
+    override fun createEntity(): Angular2IvyDirective {
+      return Angular2IvyDirective(this)
+    }
+
+    fun readPropertyMappings(kind: String): Map<String, String> {
+      val index: Int
+      when (kind) {
+        INPUTS_PROP -> index = 3
+        OUTPUTS_PROP -> index = 4
+        else -> return emptyMap()
+      }
+      return processObjectArgument(index, TypeScriptStringLiteralType::class) { it.innerText }
     }
   }
 
-  public static final class Component extends Directive {
-
-    private Component(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
-
-    @Override
-    public Pointer<Component> createPointer() {
-      var fieldPtr = createSmartPointer(getField());
-      return () -> {
-        var field = fieldPtr.dereference();
-        return field != null ? new Component(field) : null;
-      };
-    }
-
-    @Override
-    public Angular2IvyDirective createEntity() {
-      return new Angular2IvyComponent(this);
-    }
+  class Component internal constructor(fieldStubOrPsi: Any) : Directive(fieldStubOrPsi) {
 
     /**
      * Returns null if the type doesn't contain the argument and logic should fall back to metadata.json
      */
-    public @Nullable Collection<TypeScriptStringLiteralType> getNgContentSelectors() {
-      return processTupleArgument(6, TypeScriptStringLiteralType.class,
-                                  Function.identity(), true);
+    val ngContentSelectors: Collection<TypeScriptStringLiteralType>?
+      get() = processTupleArgument(6, TypeScriptStringLiteralType::class, { it }, true)
+
+    override val defTypeNames: List<String>
+      get() = TYPE_COMPONENT_DEFS
+
+    override fun createPointer(): Pointer<Component> {
+      val fieldPtr = field.createSmartPointer()
+      return Pointer {
+        fieldPtr.dereference()?.let { Component(it) }
+      }
     }
 
-    @Override
-    protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_COMPONENT_DEFS;
-    }
-  }
-
-  public static final class Pipe extends Entity {
-
-    private Pipe(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
-
-    @Override
-    public Angular2IvyPipe createEntity() {
-      return new Angular2IvyPipe(this);
-    }
-
-    @Override
-    public boolean isStandalone() {
-      var type = getDefFieldArgument(2);
-      return type instanceof TypeScriptBooleanLiteralType && ((TypeScriptBooleanLiteralType)type).getValue();
-    }
-
-    public @Nullable String getName() {
-      return getStringGenericParam(1);
-    }
-
-    @Override
-    protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_PIPE_DEFS;
+    override fun createEntity(): Angular2IvyDirective {
+      return Angular2IvyComponent(this)
     }
   }
 
-  public static final class Factory extends Angular2IvySymbolDef {
+  class Pipe internal constructor(fieldStubOrPsi: Any) : Entity(fieldStubOrPsi) {
 
-    private Factory(@NotNull Object fieldStubOrPsi) { super(fieldStubOrPsi); }
+    override val isStandalone: Boolean
+      get() {
+        val type = getDefFieldArgument(2)
+        return type is TypeScriptBooleanLiteralType && type.value
+      }
 
-    @Override
-    protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_FACTORY_DEFS;
+    val name: String?
+      get() = getStringGenericParam(1)
+
+    override val defTypeNames: List<String>
+      get() = TYPE_PIPE_DEFS
+
+    override fun createEntity(): Angular2IvyPipe {
+      return Angular2IvyPipe(this)
     }
+  }
+
+  class Factory internal constructor(fieldStubOrPsi: Any) : Angular2IvySymbolDef(fieldStubOrPsi) {
+
+    override val defTypeNames: List<String>
+      get() = TYPE_FACTORY_DEFS
 
     /**
      * Returns null if the type doesn't contain the argument and logic should fall back to metadata.json
      */
-    public @Nullable Map<String, JSTypeDeclaration> getAttributeNames() {
-      Map<String, JSTypeDeclaration> result = new HashMap<>();
-      if (!processConstructorArguments("attribute", TypeScriptStringLiteralType.class, (name, type) -> {
-        doIfNotNull(name.getInnerText(), value -> result.put(value, type));
-      })) {
-        return null;
-      }
-      return result;
-    }
-
-    private <T extends TypeScriptType> boolean processConstructorArguments(String kind, Class<T> valueClass,
-                                                                           BiConsumer<@NotNull T, @Nullable TypeScriptType> consumer) {
-      JSTypeDeclaration declaration = getDefFieldArgument(1);
-      if (declaration == null) {
-        return false;
-      }
-      TypeScriptClass cls = getContextClass();
-      if (!(declaration instanceof TypeScriptTupleType) || cls == null) {
-        return true;
+    val attributeNames: Map<String, JSTypeDeclaration>?
+      get() {
+        val result = HashMap<String, JSTypeDeclaration>()
+        if (
+          !processConstructorArguments("attribute", TypeScriptStringLiteralType::class) { name, type ->
+            name.innerText?.let { result[it] = type }
+          }
+        ) {
+          return null
+        }
+        return result
       }
 
-      TypeScriptFunction constructor = ContainerUtil.find(cls.getConstructors(), fun -> !fun.isOverloadImplementation());
-      if (constructor == null) {
-        // TODO support annotations in super constructors
-        return true;
+    private fun <T : TypeScriptType> processConstructorArguments(kind: String, valueClass: KClass<T>,
+                                                                 consumer: BiConsumer<T, TypeScriptType>): Boolean {
+      val declaration = getDefFieldArgument(1) ?: return false
+      val cls = contextClass
+      if (declaration !is TypeScriptTupleType || cls == null) {
+        return true
       }
 
-      JSParameterListElement[] params = constructor.getParameters();
-      JSTypeDeclaration[] paramsDecoratorsInfo = ((TypeScriptTupleType)declaration).getElements();
-      if (params.length != paramsDecoratorsInfo.length) {
-        return true;
+      val constructor = cls.constructors.find { !it.isOverloadImplementation }
+                        ?: // TODO support annotations in super constructors
+                        return true
+
+      val params = constructor.parameters
+      val paramsDecoratorsInfo = declaration.elements
+      if (params.size != paramsDecoratorsInfo.size) {
+        return true
       }
-      for (int i = 0; i < params.length; i++) {
-        TypeScriptObjectType info = tryCast(paramsDecoratorsInfo[i], TypeScriptObjectType.class);
+      for (i in params.indices) {
+        val info = paramsDecoratorsInfo[i] as? TypeScriptObjectType
         if (info != null) {
-          TypeScriptPropertySignature kindInfo = tryCast(ContainerUtil.find(info.getTypeMembers(), member -> kind.equals(member.getName())),
-                                                         TypeScriptPropertySignature.class);
-          if (kindInfo == null) {
-            continue;
-          }
-          T value = tryCast(kindInfo.getTypeDeclaration(), valueClass);
+          val kindInfo = info.typeMembers.find { member -> kind == member.name } as? TypeScriptPropertySignature
+                         ?: continue
+          val value = valueClass.safeCast(kindInfo.typeDeclaration)
           if (value != null) {
-            consumer.accept(value, tryCast(params[i].getTypeElement(), TypeScriptType.class));
+            consumer.accept(value, params[i].typeElement as? TypeScriptType ?: continue)
           }
         }
       }
-      return true;
+      return true
     }
   }
 
-  @NonNls private static final String FIELD_DIRECTIVE_DEF = "ɵdir";
-  @NonNls private static final String FIELD_MODULE_DEF = "ɵmod";
-  @NonNls private static final String FIELD_PIPE_DEF = "ɵpipe";
-  @NonNls private static final String FIELD_COMPONENT_DEF = "ɵcmp";
-  @NonNls private static final String FIELD_FACTORY_DEF = "ɵfac";
-
-  /* NG 9-11: *Def(WithMeta), NG 12+: *Declaration */
-  @NonNls private static final List<String> TYPE_DIRECTIVE_DEFS = List.of("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration");
-  @NonNls private static final List<String> TYPE_MODULE_DEFS = List.of("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration");
-  @NonNls private static final List<String> TYPE_PIPE_DEFS = List.of("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration");
-  @NonNls private static final List<String> TYPE_COMPONENT_DEFS = List.of("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration");
-  @NonNls private static final List<String> TYPE_FACTORY_DEFS = List.of("ɵɵFactoryDef", "ɵɵFactoryDeclaration");
-
-  private final Object myFieldOrStub;
-
-  private Angular2IvySymbolDef(@NotNull Object fieldOrStub) {
-    this.myFieldOrStub = fieldOrStub;
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val entityDef = other as Angular2IvySymbolDef?
+    return field == entityDef!!.field
   }
 
-  public @NotNull TypeScriptField getField() {
-    if (myFieldOrStub instanceof TypeScriptFieldStub) {
-      return (TypeScriptField)((TypeScriptFieldStub)myFieldOrStub).getPsi();
+  override fun hashCode(): Int {
+    return Objects.hash(field)
+  }
+
+  protected fun getDefFieldArgument(index: Int): JSTypeDeclaration? {
+    val stub = if (myFieldOrStub is TypeScriptFieldStub)
+      myFieldOrStub
+    else
+      (myFieldOrStub as? StubBasedPsiElementBase<*>)?.stub
+    return if (stub != null) {
+      getDefFieldArgumentStubbed(stub as TypeScriptFieldStub, index, defTypeNames)
     }
-    return (TypeScriptField)myFieldOrStub;
+    else getDefFieldArgumentPsi(myFieldOrStub as TypeScriptField, index, defTypeNames)
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Angular2IvySymbolDef entityDef = (Angular2IvySymbolDef)o;
-    return getField().equals(entityDef.getField());
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getField());
-  }
-
-  protected abstract @NotNull List<String> getDefTypeNames();
-
-  protected @Nullable TypeScriptClass getContextClass() {
-    return PsiTreeUtil.getContextOfType(getField(), TypeScriptClass.class);
-  }
-
-  protected @Nullable JSTypeDeclaration getDefFieldArgument(int index) {
-    StubElement<?> stub = myFieldOrStub instanceof TypeScriptFieldStub
-                          ? (TypeScriptFieldStub)myFieldOrStub
-                          : doIfNotNull(tryCast(myFieldOrStub, StubBasedPsiElementBase.class),
-                                        StubBasedPsiElementBase::getStub);
-    if (stub != null) {
-      return getDefFieldArgumentStubbed((TypeScriptFieldStub)stub, index, getDefTypeNames());
+  protected fun getStringGenericParam(index: Int): String? {
+    val declaration = getDefFieldArgument(index)
+    return if (declaration is TypeScriptStringLiteralType) {
+      declaration.innerText
     }
-    return getDefFieldArgumentPsi((TypeScriptField)myFieldOrStub, index, getDefTypeNames());
+    else null
   }
 
-  protected @Nullable String getStringGenericParam(int index) {
-    JSTypeDeclaration declaration = getDefFieldArgument(index);
-    if (declaration instanceof TypeScriptStringLiteralType) {
-      return ((TypeScriptStringLiteralType)declaration).getInnerText();
+  @OptIn(ExperimentalContracts::class)
+  protected fun <T : TypeScriptType, R> processTupleArgument(index: Int,
+                                                             itemsClass: KClass<T>,
+                                                             itemMapper: (T) -> R?,
+                                                             nullIfNotFound: Boolean): List<R>? {
+    contract {
+      returnsNotNull() implies (!nullIfNotFound)
     }
-    return null;
+    val declaration = getDefFieldArgument(index)
+                      ?: return if (nullIfNotFound) null else emptyList()
+    return if (declaration !is TypeScriptTupleType) {
+      emptyList()
+    }
+    else declaration.elements
+      .filterIsInstance(itemsClass.java)
+      .mapNotNull(itemMapper)
   }
 
-  @Contract("_,_,_,false->!null")
-  protected @Nullable <T extends TypeScriptType, R> List<R> processTupleArgument(int index,
-                                                                                 @NotNull Class<T> itemsClass,
-                                                                                 @NotNull Function<T, R> itemMapper,
-                                                                                 boolean nullIfNotFound) {
-    JSTypeDeclaration declaration = getDefFieldArgument(index);
-    if (declaration == null) {
-      return nullIfNotFound ? null : Collections.emptyList();
+  protected fun <T : JSTypeDeclaration, R> processObjectArgument(index: Int,
+                                                                 valueClass: KClass<T>,
+                                                                 valueMapper: (T) -> R?): Map<String, R> {
+    val `object` = getDefFieldArgument(index)
+    if (`object` !is TypeScriptObjectType) {
+      return emptyMap()
     }
-    if (!(declaration instanceof TypeScriptTupleType)) {
-      return Collections.emptyList();
-    }
-    return StreamEx.of(((TypeScriptTupleType)declaration).getElements())
-      .select(itemsClass)
-      .map(itemMapper)
-      .toList();
-  }
-
-  protected @NotNull <T extends JSTypeDeclaration, R> Map<String, R> processObjectArgument(int index,
-                                                                                           @NotNull Class<T> valueClass,
-                                                                                           @NotNull Function<T, R> valueMapper) {
-    JSTypeDeclaration object = getDefFieldArgument(index);
-    if (!(object instanceof TypeScriptObjectType)) {
-      return Collections.emptyMap();
-    }
-    Map<String, R> result = new LinkedHashMap<>();
-    for (TypeScriptTypeMember child : ((TypeScriptObjectType)object).getTypeMembers()) {
-      TypeScriptPropertySignature prop = tryCast(child, TypeScriptPropertySignature.class);
-      if (prop != null) {
-        Optional.ofNullable(tryCast(prop.getTypeDeclaration(), valueClass))
-          .map(valueMapper)
-          .ifPresent(value -> result.put(prop.getName(), value));
+    val result = LinkedHashMap<String, R>()
+    for (child in `object`.typeMembers) {
+      val prop = child as? TypeScriptPropertySignature
+      if (prop != null && prop.name != null) {
+        valueClass.safeCast(prop.typeDeclaration)
+          ?.let { valueMapper(it) }
+          ?.let { value -> result[prop.name!!] = value }
       }
     }
-    return result;
+    return result
   }
 
-  private static boolean isAbstractClass(@NotNull TypeScriptClass tsClass) {
-    return Objects.requireNonNull(tsClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.ABSTRACT);
-  }
-
-  private static @Nullable <T extends Angular2IvySymbolDef> T getSymbolDefStubbed(@NotNull TypeScriptClassStub jsClassStub,
-                                                                                  boolean allowAbstractClasses,
-                                                                                  BiFunction<String, Object, T> symbolFactory) {
-    JSAttributeListStub clsAttrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
-    if (clsAttrs == null || (!allowAbstractClasses && clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT))) {
-      return null;
-    }
-    for (StubElement<?> classChild : jsClassStub.getChildrenStubs()) {
-      if (!(classChild instanceof JSVarStatementStub)) {
-        continue;
-      }
-      JSAttributeListStub attrs = classChild.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
-      if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
-        continue;
-      }
-      JSVariableStub<?> fieldStub = classChild.findChildStubByType(TypeScriptStubElementTypes.TYPESCRIPT_FIELD);
-      if (!(fieldStub instanceof TypeScriptFieldStub)) {
-        continue;
-      }
-      T entityDefKind = symbolFactory.apply(fieldStub.getName(), fieldStub);
-      if (entityDefKind != null) {
-        return entityDefKind;
+  companion object {
+    @JvmStatic
+    fun get(typeScriptClass: TypeScriptClass, allowAbstractClass: Boolean): Entity? {
+      return getSymbolDef(typeScriptClass, allowAbstractClass) { fieldName, fieldPsiOrStub ->
+        createEntityDef(fieldName, fieldPsiOrStub)
       }
     }
-    return null;
-  }
 
-  private static @Nullable <T extends Angular2IvySymbolDef> T findSymbolDefFieldPsi(@NotNull TypeScriptClass jsClass,
-                                                                                    boolean allowAbstractClass,
-                                                                                    BiFunction<String, Object, T> symbolFactory) {
-    for (JSField field : jsClass.getFields()) {
-      if (!(field instanceof TypeScriptField)) {
-        continue;
-      }
-      T entityDefKind = getSymbolDef((TypeScriptField)field, allowAbstractClass, symbolFactory);
-      if (entityDefKind != null) {
-        return entityDefKind;
+    @JvmStatic
+    fun getFactory(typeScriptClass: TypeScriptClass): Factory? {
+      return getSymbolDef(typeScriptClass, true) { fieldName, fieldPsiOrStub ->
+        createFactoryDef(fieldName, fieldPsiOrStub)
       }
     }
-    return null;
-  }
 
-  private static @Nullable <T extends Angular2IvySymbolDef> T getSymbolDef(@NotNull TypeScriptClass typeScriptClass,
-                                                                           boolean allowAbstractClass,
-                                                                           BiFunction<String, Object, T> symbolFactory) {
-    if (!allowAbstractClass && isAbstractClass(typeScriptClass)) {
-      return null;
+    @JvmStatic
+    fun get(stub: TypeScriptClassStub, allowAbstractClass: Boolean): Entity? {
+      return getSymbolDefStubbed(stub, allowAbstractClass) { fieldName, fieldPsiOrStub ->
+        createEntityDef(fieldName, fieldPsiOrStub)
+      }
     }
-    StubElement<?> stub = doIfNotNull(tryCast(typeScriptClass, StubBasedPsiElementBase.class),
-                                      StubBasedPsiElementBase::getStub);
-    if (stub instanceof TypeScriptClassStub) {
-      return getSymbolDefStubbed((TypeScriptClassStub)stub, allowAbstractClass, symbolFactory);
-    }
-    return findSymbolDefFieldPsi(typeScriptClass, allowAbstractClass, symbolFactory);
-  }
 
-  private static @Nullable <T extends Angular2IvySymbolDef> T getSymbolDef(@NotNull TypeScriptField field,
-                                                                           boolean allowAbstractClass,
-                                                                           BiFunction<String, Object, T> symbolFactory) {
-    JSAttributeList attrs = field.getAttributeList();
-    if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
-      return null;
+    @JvmStatic
+    fun get(field: TypeScriptField, allowAbstractClass: Boolean): Entity? {
+      return getSymbolDef(field, allowAbstractClass) { fieldName, fieldPsiOrStub ->
+        createEntityDef(fieldName, fieldPsiOrStub)
+      }
     }
-    TypeScriptClass tsClass = PsiTreeUtil.getContextOfType(field, TypeScriptClass.class);
-    if (tsClass == null || (!allowAbstractClass && isAbstractClass(tsClass))) {
-      return null;
-    }
-    return symbolFactory.apply(field.getName(), field);
-  }
 
-  private static @Nullable Angular2IvySymbolDef.Entity createEntityDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
-    if (fieldName == null) {
-      return null;
-    }
-    if (fieldName.equals(FIELD_COMPONENT_DEF)) {
-      return new Component(fieldPsiOrStub);
-    }
-    else if (fieldName.equals(FIELD_DIRECTIVE_DEF)) {
-      return new Directive(fieldPsiOrStub);
-    }
-    else if (fieldName.equals(FIELD_MODULE_DEF)) {
-      return new Module(fieldPsiOrStub);
-    }
-    else if (fieldName.equals(FIELD_PIPE_DEF)) {
-      return new Pipe(fieldPsiOrStub);
-    }
-    return null;
-  }
+    @NonNls
+    private const val FIELD_DIRECTIVE_DEF = "ɵdir"
 
-  private static @Nullable Factory createFactoryDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
-    return fieldName != null && fieldName.equals(FIELD_FACTORY_DEF) ? new Factory(fieldPsiOrStub) : null;
-  }
+    @NonNls
+    private const val FIELD_MODULE_DEF = "ɵmod"
 
-  private static @Nullable JSTypeDeclaration getDefFieldArgumentStubbed(@NotNull TypeScriptFieldStub field,
-                                                                        int index,
-                                                                        @NotNull List<String> typeNames) {
-    TypeScriptSingleTypeStub type = field.findChildStubByType(TypeScriptStubElementTypes.SINGLE_TYPE);
-    String qualifiedName = doIfNotNull(type, TypeScriptSingleTypeStub::getQualifiedTypeName);
-    if (qualifiedName == null) return null;
-    if (ContainerUtil.find(typeNames, name -> qualifiedName.endsWith(name)) != null) {
-      TypeScriptTypeArgumentListStub typeArguments = type.findChildStubByType(TypeScriptStubElementTypes.TYPE_ARGUMENT_LIST);
-      if (typeArguments != null) {
-        @SuppressWarnings("rawtypes")
-        List<StubElement> declarations = typeArguments.getChildrenStubs();
-        if (index < declarations.size()) {
-          return tryCast(declarations.get(index).getPsi(), JSTypeDeclaration.class);
+    @NonNls
+    private const val FIELD_PIPE_DEF = "ɵpipe"
+
+    @NonNls
+    private const val FIELD_COMPONENT_DEF = "ɵcmp"
+
+    @NonNls
+    private const val FIELD_FACTORY_DEF = "ɵfac"
+
+    /* NG 9-11: *Def(WithMeta), NG 12+: *Declaration */
+    @NonNls
+    private val TYPE_DIRECTIVE_DEFS = listOf("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration")
+
+    @NonNls
+    private val TYPE_MODULE_DEFS = listOf("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration")
+
+    @NonNls
+    private val TYPE_PIPE_DEFS = listOf("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration")
+
+    @NonNls
+    private val TYPE_COMPONENT_DEFS = listOf("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration")
+
+    @NonNls
+    private val TYPE_FACTORY_DEFS = listOf("ɵɵFactoryDef", "ɵɵFactoryDeclaration")
+
+    private fun isAbstractClass(tsClass: TypeScriptClass): Boolean {
+      return tsClass.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) ?: false
+    }
+
+    private fun <T : Angular2IvySymbolDef> getSymbolDefStubbed(jsClassStub: TypeScriptClassStub,
+                                                               allowAbstractClasses: Boolean,
+                                                               symbolFactory: (String, Any) -> T?): T? {
+      val clsAttrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST)
+      if (clsAttrs == null || !allowAbstractClasses && clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
+        return null
+      }
+      for (classChild in jsClassStub.childrenStubs) {
+        if (classChild !is JSVarStatementStub) {
+          continue
+        }
+        val attrs = classChild.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST)
+        if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
+          continue
+        }
+        val fieldStub = classChild.findChildStubByType(TypeScriptStubElementTypes.TYPESCRIPT_FIELD)
+        if (fieldStub !is TypeScriptFieldStub) {
+          continue
+        }
+        val entityDefKind = fieldStub.name?.let { symbolFactory(it, fieldStub) }
+        if (entityDefKind != null) {
+          return entityDefKind
         }
       }
+      return null
     }
-    return null;
-  }
 
-  private static @Nullable JSTypeDeclaration getDefFieldArgumentPsi(@NotNull TypeScriptField field,
-                                                                    int index,
-                                                                    @NotNull List<String> typeNames) {
-    TypeScriptSingleType type = PsiTreeUtil.getChildOfType(field, TypeScriptSingleType.class);
-    String qualifiedName = doIfNotNull(type, TypeScriptSingleType::getQualifiedTypeName);
-    if (qualifiedName == null) return null;
-    if (ContainerUtil.find(typeNames, name -> qualifiedName.endsWith(name)) != null) {
-      JSTypeDeclaration[] declarations = type.getTypeArguments();
-      if (index < declarations.length) {
-        return declarations[index];
+    private fun <T : Angular2IvySymbolDef> findSymbolDefFieldPsi(jsClass: TypeScriptClass,
+                                                                 allowAbstractClass: Boolean,
+                                                                 symbolFactory: (String, Any) -> T?): T? {
+      for (field in jsClass.fields) {
+        if (field !is TypeScriptField) {
+          continue
+        }
+        val entityDefKind = getSymbolDef(field, allowAbstractClass, symbolFactory)
+        if (entityDefKind != null) {
+          return entityDefKind
+        }
       }
+      return null
     }
-    return null;
+
+    private fun <T : Angular2IvySymbolDef> getSymbolDef(typeScriptClass: TypeScriptClass,
+                                                        allowAbstractClass: Boolean,
+                                                        symbolFactory: (String, Any) -> T?): T? {
+      if (!allowAbstractClass && isAbstractClass(typeScriptClass)) {
+        return null
+      }
+      val stub = (typeScriptClass as? StubBasedPsiElementBase<*>)?.stub
+      return if (stub is TypeScriptClassStub) {
+        getSymbolDefStubbed(stub, allowAbstractClass, symbolFactory)
+      }
+      else findSymbolDefFieldPsi(typeScriptClass, allowAbstractClass, symbolFactory)
+    }
+
+    private fun <T : Angular2IvySymbolDef> getSymbolDef(field: TypeScriptField,
+                                                        allowAbstractClass: Boolean,
+                                                        symbolFactory: (String, Any) -> T?): T? {
+      val attrs = field.attributeList
+      if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
+        return null
+      }
+      val tsClass = PsiTreeUtil.getContextOfType(field, TypeScriptClass::class.java)
+      return if (tsClass == null || !allowAbstractClass && isAbstractClass(tsClass)) {
+        null
+      }
+      else field.name?.let { symbolFactory(it, field) }
+    }
+
+    private fun createEntityDef(fieldName: String?, fieldPsiOrStub: Any): Entity? {
+      if (fieldName == null) {
+        return null
+      }
+      if (fieldName == FIELD_COMPONENT_DEF) {
+        return Component(fieldPsiOrStub)
+      }
+      else if (fieldName == FIELD_DIRECTIVE_DEF) {
+        return Directive(fieldPsiOrStub)
+      }
+      else if (fieldName == FIELD_MODULE_DEF) {
+        return Module(fieldPsiOrStub)
+      }
+      else if (fieldName == FIELD_PIPE_DEF) {
+        return Pipe(fieldPsiOrStub)
+      }
+      return null
+    }
+
+    private fun createFactoryDef(fieldName: String?, fieldPsiOrStub: Any): Factory? {
+      return if (fieldName != null && fieldName == FIELD_FACTORY_DEF) Factory(fieldPsiOrStub) else null
+    }
+
+    private fun getDefFieldArgumentStubbed(field: TypeScriptFieldStub,
+                                           index: Int,
+                                           typeNames: List<String>): JSTypeDeclaration? {
+      val type = field.findChildStubByType(TypeScriptStubElementTypes.SINGLE_TYPE)
+      val qualifiedName = type?.qualifiedTypeName ?: return null
+      if (typeNames.any { name -> qualifiedName.endsWith(name) }) {
+        val typeArguments = type.findChildStubByType(TypeScriptStubElementTypes.TYPE_ARGUMENT_LIST)
+        if (typeArguments != null) {
+          val declarations = typeArguments.childrenStubs
+          if (index < declarations.size) {
+            return declarations[index].psi as? JSTypeDeclaration
+          }
+        }
+      }
+      return null
+    }
+
+    private fun getDefFieldArgumentPsi(field: TypeScriptField,
+                                       index: Int,
+                                       typeNames: List<String>): JSTypeDeclaration? {
+      val type = PsiTreeUtil.getChildOfType(field, TypeScriptSingleType::class.java)
+      val qualifiedName = type?.qualifiedTypeName ?: return null
+      if (typeNames.any { name -> qualifiedName.endsWith(name) }) {
+        val declarations = type.typeArguments
+        if (index < declarations.size) {
+          return declarations[index]
+        }
+      }
+      return null
+    }
   }
 }

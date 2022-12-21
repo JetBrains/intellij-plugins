@@ -1,215 +1,254 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2;
+package org.angular2
 
-import com.intellij.lang.ecmascript6.psi.ES6FromClause;
-import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration;
-import com.intellij.lang.javascript.injections.JSInjectionUtil;
-import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.StubBasedPsiElement;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.AstLoadingFilter;
-import org.angular2.lang.Angular2LangUtil;
-import org.angularjs.index.AngularJSIndexingHandler;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
+import com.intellij.lang.javascript.injections.JSInjectionUtil
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.util.PsiTreeUtil.getContextOfType
+import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
+import com.intellij.util.ArrayUtil.contains
+import com.intellij.util.AstLoadingFilter
+import com.intellij.util.asSafely
+import org.angular2.index.Angular2IndexingHandler
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
+import org.angularjs.index.AngularJSIndexingHandler
+import org.jetbrains.annotations.NonNls
 
-import java.util.Optional;
+object Angular2DecoratorUtil {
 
-import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
-import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
-import static com.intellij.util.ArrayUtil.contains;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.index.Angular2IndexingHandler.TS_CLASS_TOKENS;
-import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
+  @NonNls
+  const val DIRECTIVE_DEC = "Directive"
 
-public final class Angular2DecoratorUtil {
+  @NonNls
+  const val COMPONENT_DEC = "Component"
 
-  @NonNls public static final String DIRECTIVE_DEC = "Directive";
-  @NonNls public static final String COMPONENT_DEC = "Component";
-  @NonNls public static final String PIPE_DEC = "Pipe";
-  @NonNls public static final String MODULE_DEC = "NgModule";
-  @NonNls public static final String INPUT_DEC = "Input";
-  @NonNls public static final String OUTPUT_DEC = "Output";
-  @NonNls public static final String ATTRIBUTE_DEC = "Attribute";
-  @NonNls public static final String VIEW_CHILD_DEC = "ViewChild";
-  @NonNls public static final String VIEW_CHILDREN_DEC = "ViewChildren";
-  @NonNls public static final String VIEW_DEC = "View";
+  @NonNls
+  const val PIPE_DEC = "Pipe"
 
-  @NonNls public static final String NAME_PROP = "name";
-  @NonNls public static final String SELECTOR_PROP = "selector";
-  @NonNls public static final String EXPORT_AS_PROP = "exportAs";
-  @NonNls public static final String INPUTS_PROP = "inputs";
-  @NonNls public static final String OUTPUTS_PROP = "outputs";
-  @NonNls public static final String STANDALONE_PROP = "standalone";
-  @NonNls public static final String IMPORTS_PROP = "imports";
-  @NonNls public static final String EXPORTS_PROP = "exports";
-  @NonNls public static final String DECLARATIONS_PROP = "declarations";
-  @NonNls public static final String ENTRY_COMPONENTS_PROP = "entryComponents";
-  @NonNls public static final String BOOTSTRAP_PROP = "bootstrap";
+  @NonNls
+  const val MODULE_DEC = "NgModule"
 
-  @NonNls public static final String TEMPLATE_URL_PROP = "templateUrl";
-  @NonNls public static final String TEMPLATE_PROP = "template";
-  @NonNls public static final String STYLE_URLS_PROP = "styleUrls";
-  @NonNls public static final String STYLES_PROP = "styles";
+  @NonNls
+  const val INPUT_DEC = "Input"
 
-  public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
-    if (element instanceof JSLiteralExpression) {
-      final JSLiteralExpression literal = (JSLiteralExpression)element;
-      final PsiElement parent;
-      return literal.isQuotedLiteral()
-             && (parent = literal.getParent()) instanceof JSProperty
-             && propertyName.equals(((JSProperty)parent).getName())
-             && doIfNotNull(getContextOfType(parent, ES6Decorator.class),
-                            decorator -> isAngularEntityDecorator(decorator, decoratorNames)) == Boolean.TRUE;
-    }
-    return false;
+  @NonNls
+  const val OUTPUT_DEC = "Output"
+
+  @NonNls
+  const val ATTRIBUTE_DEC = "Attribute"
+
+  @NonNls
+  const val VIEW_CHILD_DEC = "ViewChild"
+
+  @NonNls
+  const val VIEW_CHILDREN_DEC = "ViewChildren"
+
+  @NonNls
+  const val VIEW_DEC = "View"
+
+  @NonNls
+  const val NAME_PROP = "name"
+
+  @NonNls
+  const val SELECTOR_PROP = "selector"
+
+  @NonNls
+  const val EXPORT_AS_PROP = "exportAs"
+
+  @NonNls
+  const val INPUTS_PROP = "inputs"
+
+  @NonNls
+  const val OUTPUTS_PROP = "outputs"
+
+  @NonNls
+  const val STANDALONE_PROP = "standalone"
+
+  @NonNls
+  const val IMPORTS_PROP = "imports"
+
+  @NonNls
+  const val EXPORTS_PROP = "exports"
+
+  @NonNls
+  const val DECLARATIONS_PROP = "declarations"
+
+  @NonNls
+  const val ENTRY_COMPONENTS_PROP = "entryComponents"
+
+  @NonNls
+  const val BOOTSTRAP_PROP = "bootstrap"
+
+  @NonNls
+  const val TEMPLATE_URL_PROP = "templateUrl"
+
+  @NonNls
+  const val TEMPLATE_PROP = "template"
+
+  @NonNls
+  const val STYLE_URLS_PROP = "styleUrls"
+
+  @NonNls
+  const val STYLES_PROP = "styles"
+
+  @JvmStatic
+  fun isLiteralInNgDecorator(element: PsiElement?, propertyName: String, vararg decoratorNames: String): Boolean {
+    val parent = (element as? JSLiteralExpression)?.takeIf { it.isQuotedLiteral }?.parent?.asSafely<JSProperty>()
+    return parent != null
+           && propertyName == parent.name
+           && (getContextOfType(parent, ES6Decorator::class.java)
+      ?.let { decorator -> isAngularEntityDecorator(decorator, *decoratorNames) } == true)
   }
 
-  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, @NotNull String name) {
-    return findDecorator(attributeListOwner, new String[]{name});
+  @JvmStatic
+  fun findDecorator(attributeListOwner: JSAttributeListOwner, name: String): ES6Decorator? {
+    return findDecorator(attributeListOwner, *arrayOf(name))
   }
 
   @StubSafe
-  public static @Nullable ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, String @NotNull ... names) {
-    JSAttributeList list = attributeListOwner.getAttributeList();
-    if (list == null || names.length == 0) {
-      return null;
+  @JvmStatic
+  fun findDecorator(attributeListOwner: JSAttributeListOwner, vararg names: String): ES6Decorator? {
+    val list = attributeListOwner.attributeList
+    if (list == null || names.isEmpty()) {
+      return null
     }
-    for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      if (isAngularEntityDecorator(decorator, names)) {
-        return decorator;
+    for (decorator in getStubChildrenOfTypeAsList(list, ES6Decorator::class.java)) {
+      if (isAngularEntityDecorator(decorator, *names)) {
+        return decorator
       }
     }
-    if (attributeListOwner instanceof TypeScriptClassExpression) {
-      JSAttributeListOwner context = tryCast(attributeListOwner.getContext(), JSAttributeListOwner.class);
+    if (attributeListOwner is TypeScriptClassExpression) {
+      val context = attributeListOwner.getContext() as? JSAttributeListOwner
       if (context != null) {
-        return findDecorator(context, names);
+        return findDecorator(context, *names)
       }
     }
-    return null;
+    return null
   }
 
-  public static boolean isPrivateMember(JSPsiElementBase element) {
-    if (element instanceof JSAttributeListOwner) {
-      JSAttributeListOwner attributeListOwner = (JSAttributeListOwner)element;
-      return attributeListOwner.getAttributeList() != null
-             && attributeListOwner.getAttributeList().getAccessType() == JSAttributeList.AccessType.PRIVATE;
+  @JvmStatic
+  fun isPrivateMember(element: JSPsiElementBase): Boolean {
+    if (element is JSAttributeListOwner) {
+      val attributeListOwner = element as JSAttributeListOwner
+      return attributeListOwner.attributeList != null
+             && attributeListOwner.attributeList!!.accessType == JSAttributeList.AccessType.PRIVATE
     }
-    return false;
+    return false
   }
 
   /**
    * Returns null for all literals other than string, supports string concatenation.
    */
   @StubUnsafe
-  public static @Nullable String getPropertyStringValue(@Nullable ES6Decorator decorator, @NotNull String name) {
-    return getExpressionStringValue(doIfNotNull(getProperty(decorator, name), JSProperty::getValue));
+  @JvmStatic
+  fun getPropertyStringValue(decorator: ES6Decorator?, name: String): String? {
+    return getExpressionStringValue(getProperty(decorator, name)?.value)
   }
 
   @StubUnsafe
-  public static @Nullable String getExpressionStringValue(@Nullable JSExpression value) {
-    if (value instanceof JSBinaryExpression) {
-      return JSInjectionUtil.getConcatenationText(value);
+  @JvmStatic
+  fun getExpressionStringValue(value: JSExpression?): String? {
+    return when {
+      value is JSBinaryExpression -> {
+        JSInjectionUtil.getConcatenationText(value)
+      }
+      value is JSLiteralExpression && value.isQuotedLiteral -> {
+        AngularJSIndexingHandler.unquote(value)
+      }
+      else -> null
     }
-    if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-      return AngularJSIndexingHandler.unquote(value);
-    }
-    return null;
   }
 
   @StubSafe
-  public static @Nullable JSObjectLiteralExpression getObjectLiteralInitializer(@Nullable ES6Decorator decorator) {
-    for (PsiElement child : getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
-      if (child instanceof JSCallExpression) {
-        StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement<?>)child).getStub() : null;
+  @JvmStatic
+  fun getObjectLiteralInitializer(decorator: ES6Decorator?): JSObjectLiteralExpression? {
+    for (child in getStubChildrenOfTypeAsList(decorator, PsiElement::class.java)) {
+      if (child is JSCallExpression) {
+        val callStub = if (child is StubBasedPsiElement<*>) (child as StubBasedPsiElement<*>).stub else null
         if (callStub != null) {
-          for (StubElement callChildStub : callStub.getChildrenStubs()) {
-            PsiElement callChild = callChildStub.getPsi();
-            if (callChild instanceof JSObjectLiteralExpression) {
-              return (JSObjectLiteralExpression)callChild;
+          for (callChildStub in callStub.childrenStubs) {
+            val callChild = callChildStub.psi
+            if (callChild is JSObjectLiteralExpression) {
+              return callChild
             }
           }
         }
         else {
-          return tryCast(ArrayUtil.getFirstElement(((JSCallExpression)child).getArguments()),
-                         JSObjectLiteralExpression.class);
+          return child.arguments.firstOrNull() as? JSObjectLiteralExpression
         }
-        break;
+        break
       }
-      else if (child instanceof JSObjectLiteralExpression) {
-        return (JSObjectLiteralExpression)child;
+      else if (child is JSObjectLiteralExpression) {
+        return child
       }
     }
-    return null;
+    return null
   }
 
   @StubUnsafe
-  public static @Nullable JSObjectLiteralExpression getReferencedObjectLiteralInitializer(@NotNull ES6Decorator decorator) {
-    return AstLoadingFilter.forceAllowTreeLoading(decorator.getContainingFile(), () ->
-      Optional.ofNullable(decorator.getExpression())
-        .map(expr -> tryCast(expr, JSCallExpression.class))
-        .map(expr -> ArrayUtil.getFirstElement(expr.getArguments()))
-        .map(expr -> tryCast(expr, JSReferenceExpression.class))
-        .map(expr -> expr.resolve())
-        .map(expr -> tryCast(expr, JSVariable.class))
-        .map(var -> var.getInitializerOrStub())
-        .map(expr -> tryCast(expr, JSObjectLiteralExpression.class))
-        .orElse(null));
+  @JvmStatic
+  fun getReferencedObjectLiteralInitializer(decorator: ES6Decorator): JSObjectLiteralExpression? {
+    return AstLoadingFilter.forceAllowTreeLoading<JSObjectLiteralExpression, RuntimeException>(decorator.containingFile) {
+      decorator
+        .expression
+        ?.asSafely<JSCallExpression>()
+        ?.arguments?.firstOrNull()
+        ?.asSafely<JSReferenceExpression>()
+        ?.resolve()
+        ?.asSafely<JSVariable>()
+        ?.initializerOrStub
+        ?.asSafely<JSObjectLiteralExpression>()
+    }
   }
 
   @StubSafe
-  public static @Nullable JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
-    return doIfNotNull(getObjectLiteralInitializer(decorator),
-                       expr -> expr.findProperty(name));
+  @JvmStatic
+  fun getProperty(decorator: ES6Decorator?, name: String): JSProperty? {
+    return getObjectLiteralInitializer(decorator)?.findProperty(name)
   }
 
-  public static boolean isAngularEntityDecorator(@NotNull ES6Decorator decorator, String @NotNull ... names) {
-    String decoratorName = decorator.getDecoratorName();
-    return decoratorName != null
-           && contains(decoratorName, names)
-           && (!decoratorName.equals(DIRECTIVE_DEC) || getObjectLiteralInitializer(decorator) != null)
-           && doIfNotNull(doIfNotNull(getClassForDecoratorElement(decorator), JSAttributeListOwner::getAttributeList),
-                          attrList -> attrList.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) != Boolean.TRUE
+  @JvmStatic
+  fun isAngularEntityDecorator(decorator: ES6Decorator, vararg names: String): Boolean {
+    val decoratorName = decorator.decoratorName
+    return (decoratorName != null
+            && contains(decoratorName, *names)
+            && (decoratorName != DIRECTIVE_DEC || getObjectLiteralInitializer(decorator) != null)
+            && (getClassForDecoratorElement(decorator)
+      ?.attributeList?.hasModifier(JSAttributeList.ModifierType.ABSTRACT) != true)
+           )
            && Angular2LangUtil.isAngular2Context(decorator)
-           && hasAngularImport(decoratorName, decorator.getContainingFile());
+           && hasAngularImport(decoratorName, decorator.containingFile)
   }
 
-  private static boolean hasAngularImport(@NotNull String name, @NotNull PsiFile file) {
-    return Optional.ofNullable(JSStubBasedPsiTreeUtil.resolveLocally(name, file))
-      .map(element -> getContextOfType(element, ES6ImportDeclaration.class))
-      .map(ES6ImportExportDeclaration::getFromClause)
-      .map(ES6FromClause::getReferenceText)
-      .map(StringUtil::unquoteString)
-      .map(from -> ANGULAR_CORE_PACKAGE.equals(from))
-      .orElse(false);
+  private fun hasAngularImport(name: String, file: PsiFile): Boolean {
+    return JSStubBasedPsiTreeUtil.resolveLocally(name, file)
+             ?.let { getContextOfType(it, ES6ImportDeclaration::class.java) }
+             ?.fromClause
+             ?.referenceText
+             ?.let { StringUtil.unquoteString(it) }
+             ?.let { from -> ANGULAR_CORE_PACKAGE == from }
+           ?: false
   }
 
-  public static @Nullable TypeScriptClass getClassForDecoratorElement(@Nullable PsiElement element) {
-    ES6Decorator decorator = element instanceof ES6Decorator ? (ES6Decorator)element
-                                                             : getContextOfType(element, ES6Decorator.class, false);
-    if (decorator == null) {
-      return null;
-    }
-    JSAttributeListOwner context = getContextOfType(decorator, JSAttributeListOwner.class);
-    if (context == null) {
-      return null;
-    }
-    if (context instanceof TypeScriptClass) {
-      return (TypeScriptClass)context;
-    }
-    return (TypeScriptClass)ArrayUtil.getFirstElement(JSStubBasedPsiTreeUtil.getChildrenByType(context, TS_CLASS_TOKENS));
+  @JvmStatic
+  fun getClassForDecoratorElement(element: PsiElement?): TypeScriptClass? {
+    val decorator = element.asSafely<ES6Decorator>()
+                    ?: getContextOfType(element, ES6Decorator::class.java, false)
+                    ?: return null
+    val context = getContextOfType(decorator, JSAttributeListOwner::class.java) ?: return null
+    return context.asSafely<TypeScriptClass>()
+           ?: JSStubBasedPsiTreeUtil.getChildrenByType(context, Angular2IndexingHandler.TS_CLASS_TOKENS)
+             .firstOrNull() as? TypeScriptClass
   }
 }

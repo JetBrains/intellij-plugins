@@ -1,84 +1,75 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.inspections.quickfixes;
+package org.angular2.inspections.quickfixes
 
-import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.source.Angular2SourceDeclaration;
-import org.angular2.inspections.actions.Angular2ActionFactory;
-import org.angular2.inspections.actions.ExportNgModuleDeclarationAction;
-import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.SmartPsiElementPointer
+import org.angular2.entities.Angular2Declaration
+import org.angular2.entities.source.Angular2SourceDeclaration
+import org.angular2.inspections.actions.Angular2ActionFactory
+import org.angular2.lang.Angular2Bundle
+import org.jetbrains.annotations.Nls
 
-import java.util.List;
-import java.util.Objects;
+class ExportNgModuleDeclarationQuickFix private constructor(context: PsiElement,
+                                                            declaration: Angular2SourceDeclaration)
+  : LocalQuickFixAndIntentionActionOnPsiElement(context) {
 
-public final class ExportNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
+  private val myDeclarationName: String
+  private val myDeclarationDecorator: SmartPsiElementPointer<ES6Decorator>
 
-  public static void add(@NotNull PsiElement context,
-                         @NotNull Angular2Declaration declaration,
-                         @NotNull List<LocalQuickFix> fixes) {
-    if (declaration instanceof Angular2SourceDeclaration
-        && ((Angular2SourceDeclaration)declaration).getTypeScriptClass().getName() != null) {
-      fixes.add(new ExportNgModuleDeclarationQuickFix(context, (Angular2SourceDeclaration)declaration));
+  init {
+    myDeclarationName = declaration.typeScriptClass.name!!
+    myDeclarationDecorator = SmartPointerManager.createPointer(declaration.decorator)
+  }
+
+  override fun getText(): String {
+    return Angular2Bundle.message("angular.quickfix.ngmodule.export.name", myDeclarationName)
+  }
+
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  override fun getFamilyName(): String {
+    return Angular2Bundle.message("angular.quickfix.ngmodule.export.family")
+  }
+
+  override fun invoke(project: Project,
+                      file: PsiFile,
+                      editor: Editor?,
+                      startElement: PsiElement,
+                      endElement: PsiElement) {
+    if (myDeclarationDecorator.element == null) return
+    val action = Angular2ActionFactory.createExportNgModuleDeclarationAction(
+      editor, startElement, myDeclarationDecorator, text, false)
+    val candidates = action.candidates
+    if (candidates.size == 1 || editor != null) {
+      action.execute()
     }
   }
 
-  private final @NotNull String myDeclarationName;
-  private final @NotNull SmartPsiElementPointer<ES6Decorator> myDeclarationDecorator;
-
-  private ExportNgModuleDeclarationQuickFix(@NotNull PsiElement context,
-                                            @NotNull Angular2SourceDeclaration declaration) {
-    super(context);
-    myDeclarationName = Objects.requireNonNull(declaration.getTypeScriptClass().getName());
-    myDeclarationDecorator = SmartPointerManager.createPointer(declaration.getDecorator());
+  override fun generatePreview(project: Project, editor: Editor, file: PsiFile): IntentionPreviewInfo {
+    return IntentionPreviewInfo.EMPTY
   }
 
-  @Override
-  public @NotNull String getText() {
-    return Angular2Bundle.message("angular.quickfix.ngmodule.export.name", myDeclarationName);
+  override fun generatePreview(project: Project, previewDescriptor: ProblemDescriptor): IntentionPreviewInfo {
+    return IntentionPreviewInfo.EMPTY
   }
 
-  @Override
-  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getFamilyName() {
-    return Angular2Bundle.message("angular.quickfix.ngmodule.export.family");
-  }
+  companion object {
 
-  @Override
-  public void invoke(@NotNull Project project,
-                     @NotNull PsiFile file,
-                     @Nullable Editor editor,
-                     @NotNull PsiElement startElement,
-                     @NotNull PsiElement endElement) {
-    if (myDeclarationDecorator.getElement() == null) return;
-    ExportNgModuleDeclarationAction action = Angular2ActionFactory.createExportNgModuleDeclarationAction(
-      editor, startElement, myDeclarationDecorator, getText(), false);
-    List<? extends JSImportCandidate> candidates = action.getCandidates();
-    if (candidates.size() == 1 || editor != null) {
-      action.execute();
+    fun add(context: PsiElement,
+            declaration: Angular2Declaration,
+            fixes: MutableList<LocalQuickFix>) {
+      if (declaration is Angular2SourceDeclaration && declaration.typeScriptClass.name != null) {
+        fixes.add(ExportNgModuleDeclarationQuickFix(context, declaration))
+      }
     }
-  }
-
-  @Override
-  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    return IntentionPreviewInfo.EMPTY;
-  }
-
-  @Override
-  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
-    return IntentionPreviewInfo.EMPTY;
   }
 
 }

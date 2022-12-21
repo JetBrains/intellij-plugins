@@ -1,47 +1,58 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.entities.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.entities.metadata.stubs
 
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.metadata.psi.MetadataElement;
-import org.angular2.lang.metadata.psi.MetadataElementType;
-import org.angular2.lang.metadata.stubs.MetadataElementStub;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import org.angular2.lang.metadata.psi.MetadataElementType
+import org.angular2.lang.metadata.stubs.MetadataElementStub
+import org.angular2.lang.metadata.stubs.MetadataElementStub.ConstructorFromJsonValue
+import java.io.IOException
 
-import java.io.IOException;
-import java.util.Map;
+abstract class Angular2MetadataElementStub<Psi : PsiElement> : MetadataElementStub<Psi> {
 
-public abstract class Angular2MetadataElementStub<Psi extends MetadataElement<?>> extends MetadataElementStub<Psi> {
-  private static final NotNullLazyValue<Map<String, ConstructorFromJsonValue>> TYPE_FACTORY =
-    NotNullLazyValue.lazy(() -> {
-      return ContainerUtil.<String, ConstructorFromJsonValue>immutableMapBuilder()
-        .put(SYMBOL_CLASS, Angular2MetadataClassStubBase::createClassStub)
-        .put(SYMBOL_REFERENCE, Angular2MetadataReferenceStub::createReferenceStub)
-        .put(SYMBOL_FUNCTION, Angular2MetadataFunctionStub::createFunctionStub)
-        .put(SYMBOL_CALL, Angular2MetadataCallStub::createCallStub)
-        .put(SYMBOL_SPREAD, Angular2MetadataSpreadStub::createSpreadStub)
-        .put(STRING_TYPE, Angular2MetadataStringStub::new)
-        .put(ARRAY_TYPE, Angular2MetadataArrayStub::new)
-        .put(OBJECT_TYPE, Angular2MetadataObjectStub::new)
-        .build();
-    });
+  constructor(memberName: String?, parent: StubElement<*>?, elementType: MetadataElementType<*>) : super(memberName, parent, elementType)
 
-  public Angular2MetadataElementStub(@Nullable String memberName, @Nullable StubElement parent, @NotNull MetadataElementType elementType) {
-    super(memberName, parent, elementType);
-  }
+  @Throws(IOException::class)
+  constructor(stream: StubInputStream,
+              parent: StubElement<*>?,
+              elementType: MetadataElementType<*>) : super(stream, parent, elementType)
 
-  public Angular2MetadataElementStub(@NotNull StubInputStream stream,
-                                     @Nullable StubElement parent,
-                                     @NotNull MetadataElementType elementType)
-    throws IOException {
-    super(stream, parent, elementType);
-  }
+  override val typeFactory: Map<String, ConstructorFromJsonValue>
+    get() = TYPE_FACTORY.value
 
-  @Override
-  protected Map<String, ConstructorFromJsonValue> getTypeFactory() {
-    return TYPE_FACTORY.getValue();
+  companion object {
+    @JvmStatic
+    protected val FLAGS_STRUCTURE = MetadataElementStub.FLAGS_STRUCTURE
+
+    private val TYPE_FACTORY = NotNullLazyValue.lazy {
+      mapOf(
+        SYMBOL_CLASS to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataClassStubBase.createClassStub(memberName, source, parent)
+        },
+        SYMBOL_REFERENCE to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataReferenceStub.createReferenceStub(memberName, source, parent)
+        },
+        SYMBOL_FUNCTION to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataFunctionStub.createFunctionStub(memberName, source, parent)
+        },
+        SYMBOL_CALL to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataCallStub.createCallStub(memberName, source, parent)
+        },
+        SYMBOL_SPREAD to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataSpreadStub.createSpreadStub(memberName, source, parent)
+        },
+        STRING_TYPE to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataStringStub(memberName, source, parent)
+        },
+        ARRAY_TYPE to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataArrayStub(memberName, source, parent)
+        },
+        OBJECT_TYPE to ConstructorFromJsonValue { memberName, source, parent ->
+          Angular2MetadataObjectStub(memberName, source, parent)
+        }
+      )
+    }
   }
 }

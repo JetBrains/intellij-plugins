@@ -1,62 +1,49 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight.template;
+package org.angular2.codeInsight.template
 
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.ResolveResult;
-import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.ResolveResult
+import com.intellij.util.Processor
+import java.util.*
+import java.util.function.Consumer
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
+abstract class Angular2TemplateScope
+/**
+ * A scope can be created with parent scope, which contents will be included in the resolution.
+ * See [Angular2TemplateScope.resolveAllScopesInHierarchy]
+ */
+protected constructor(val parent: Angular2TemplateScope?) {
+  private val children = ArrayList<Angular2TemplateScope>()
 
-public abstract class Angular2TemplateScope {
-
-  private final @Nullable Angular2TemplateScope myParent;
-  private final List<Angular2TemplateScope> children = new ArrayList<>();
-
-  /**
-   * A scope can be created with parent scope, which contents will be included in the resolution.
-   * See {@link Angular2TemplateScope#resolveAllScopesInHierarchy}
-   */
-  protected Angular2TemplateScope(@Nullable Angular2TemplateScope parent) {
-    myParent = parent;
-    if (parent != null) {
-      parent.add(this);
-    }
+  init {
+    @Suppress("LeakingThis")
+    parent?.add(this)
   }
 
-  public final @Nullable Angular2TemplateScope getParent() {
-    return myParent;
+  fun getChildren(): List<Angular2TemplateScope> {
+    return Collections.unmodifiableList(children)
   }
 
-  public final @NotNull List<Angular2TemplateScope> getChildren() {
-    return Collections.unmodifiableList(children);
-  }
-
-  private void add(Angular2TemplateScope scope) {
-    this.children.add(scope);
+  private fun add(scope: Angular2TemplateScope) {
+    this.children.add(scope)
   }
 
   /**
    * This method is called on every provided scope and allows for providing resolve results from enclosing scopes.
    */
-  public final boolean resolveAllScopesInHierarchy(@NotNull Processor<? super ResolveResult> processor) {
-    Angular2TemplateScope scope = this;
-    Ref<Boolean> found = new Ref<>(false);
-    Consumer<? super ResolveResult> consumer = resolveResult -> {
+  fun resolveAllScopesInHierarchy(processor: Processor<in ResolveResult>): Boolean {
+    var scope: Angular2TemplateScope? = this
+    var found = false
+    val consumer = { resolveResult: ResolveResult ->
       if (!processor.process(resolveResult)) {
-        found.set(true);
+        found = true
       }
-    };
-    while (scope != null && found.get() != Boolean.TRUE) {
-      scope.resolve(consumer);
-      scope = scope.getParent();
     }
-    return found.get() == Boolean.TRUE;
+    while (scope != null && !found) {
+      scope.resolve(consumer)
+      scope = scope.parent
+    }
+    return found
   }
 
-  public abstract void resolve(@NotNull Consumer<? super ResolveResult> consumer);
+  abstract fun resolve(consumer: Consumer<in ResolveResult>)
 }

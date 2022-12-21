@@ -1,34 +1,23 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.metadata.stubs;
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.angular2.lang.metadata.stubs
 
-import com.intellij.lang.Language;
-import com.intellij.psi.stubs.PsiFileStub;
-import com.intellij.psi.stubs.PsiFileStubImpl;
-import com.intellij.psi.tree.IStubFileElementType;
-import org.angular2.lang.metadata.psi.MetadataFileImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.Language
+import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.psi.stubs.PsiFileStubImpl
+import com.intellij.psi.tree.IStubFileElementType
+import org.angular2.lang.metadata.psi.MetadataFileImpl
 
-public class MetadataFileStubImpl extends PsiFileStubImpl<MetadataFileImpl> implements PsiFileStub<MetadataFileImpl> {
+class MetadataFileStubImpl(file: MetadataFileImpl?, private val myType: IStubFileElementType<*>) : PsiFileStubImpl<MetadataFileImpl>(
+  file), PsiFileStub<MetadataFileImpl> {
 
-  private final IStubFileElementType myType;
+  val language: Language
+    get() = type.language
 
-  public MetadataFileStubImpl(@Nullable MetadataFileImpl file, IStubFileElementType type) {
-    super(file);
-    myType = type;
+  override fun setPsi(psi: MetadataFileImpl) {
+    super.setPsi(psi)
   }
 
-  @Override
-  public void setPsi(@NotNull MetadataFileImpl psi) {
-    super.setPsi(psi);
-  }
-
-  @Override
-  public @NotNull IStubFileElementType getType() {
-    return myType;
-  }
-
-  public Language getLanguage() {
-    return getType().getLanguage();
+  override fun getType(): IStubFileElementType<*> {
+    return myType
   }
 }
