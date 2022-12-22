@@ -39,7 +39,8 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
       return null
     }
 
-    val schemaElement = PrismaSchemaProvider.getSchema().match(element) ?: return null
+    val schema = PrismaSchemaProvider.getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(element))
+    val schemaElement = schema.match(element) ?: return null
     val declaration = schemaElement as? PrismaSchemaDeclaration
     val file = element.containingFile as? PrismaFile
     val params = declaration?.getAvailableParams(file?.datasourceType, false) ?: emptyList()

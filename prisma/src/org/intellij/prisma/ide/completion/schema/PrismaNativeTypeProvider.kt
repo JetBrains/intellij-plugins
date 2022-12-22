@@ -23,7 +23,17 @@ object PrismaNativeTypeProvider : PrismaCompletionProvider() {
   override val pattern: ElementPattern<out PsiElement> = psiElement().withParent(
     psiElement(PrismaPathExpression::class.java)
       .withParent(PrismaFieldAttribute::class.java)
-      .with("withQualifier") { el -> el.qualifier?.textMatches("db") ?: false }
+      .with("withQualifier") { el ->
+        val datasourceName = (el.containingFile as? PrismaFile)?.datasourceName
+        val qualifier = el.qualifier
+
+        if (qualifier != null && datasourceName != null) {
+          qualifier.textMatches(datasourceName)
+        }
+        else {
+          false
+        }
+      }
   )
 
   override fun addCompletions(

@@ -45,7 +45,9 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
     val file = parameters.originalFile as? PrismaFile ?: return
     val parent =
       parameters.position.parentOfTypes(PrismaArgument::class, PrismaMemberDeclaration::class) ?: return
-    val schemaElement = PrismaSchemaProvider.getSchema().match(parent) ?: return
+    val schema = PrismaSchemaProvider
+      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(parameters.originalPosition ?: parameters.position))
+    val schemaElement = schema.match(parent) ?: return
 
     val isInString = parameters.position.elementType == STRING_LITERAL
     val listExpression = findListExpression(parameters)
@@ -58,8 +60,7 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
     val usedValues = mutableSetOf<String>()
     listExpression?.expressionList?.mapNotNullTo(usedValues) { PrismaSchemaContext.getSchemaLabel(it) }
 
-    schemaElement.variants
-      .expandRefs()
+    schema.expandRefs(schemaElement.variants)
       .asSequence()
       .filter { it.label !in usedValues }
       .filterNot { isInString && it is PrismaSchemaDeclaration }

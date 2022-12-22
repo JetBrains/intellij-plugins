@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
+import org.intellij.prisma.ide.schema.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.PrismaSchemaParameter
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.lang.PrismaConstants
@@ -25,7 +26,8 @@ class PrismaPathReference(
     element: PsiElement,
   ) {
     val context = findContext(element) ?: return
-    val schemaElement = PrismaSchemaProvider.getSchema().match(context) ?: return
+    val schema = PrismaSchemaProvider.getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(element))
+    val schemaElement = schema.match(context) ?: return
     if (schemaElement is PrismaSchemaParameter) {
       when (schemaElement.label) {
         PrismaConstants.ParameterNames.FIELDS -> {

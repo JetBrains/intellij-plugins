@@ -15,16 +15,26 @@ import org.intellij.prisma.lang.PrismaFileType
 import org.intellij.prisma.lang.PrismaLanguage
 
 class PrismaFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, PrismaLanguage) {
+
   override fun getFileType(): FileType = PrismaFileType
+
+  val datasource: PrismaDatasourceDeclaration?
+    get() = CachedValuesManager.getCachedValue(this) {
+      val declaration = declarations.find { it is PrismaDatasourceDeclaration } as? PrismaDatasourceDeclaration
+      CachedValueProvider.Result.create(declaration, this)
+    }
 
   val datasourceType: PrismaDatasourceType?
     get() = CachedValuesManager.getCachedValue(this) {
-      val declaration = declarations.find { it is PrismaDatasourceDeclaration } as? PrismaDatasourceDeclaration
-      val provider =
-        declaration?.findMemberByName(PrismaConstants.DatasourceFields.PROVIDER) as? PrismaKeyValue
+      val provider = datasource?.findMemberByName(PrismaConstants.DatasourceFields.PROVIDER) as? PrismaKeyValue
       val providerValue = (provider?.expression as? PrismaLiteralExpression)?.value as? String
       val type = PrismaDatasourceType.fromString(providerValue)
       CachedValueProvider.Result.create(type, this)
+    }
+
+  val datasourceName: String?
+    get() = CachedValuesManager.getCachedValue(this) {
+      CachedValueProvider.Result.create(datasource?.name, this)
     }
 
   val declarations: List<PrismaDeclaration>

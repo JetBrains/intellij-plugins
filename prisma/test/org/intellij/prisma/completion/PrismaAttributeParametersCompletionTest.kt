@@ -1,6 +1,7 @@
 package org.intellij.prisma.completion
 
 import junit.framework.TestCase
+import org.intellij.prisma.ide.schema.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.lang.PrismaConstants.BlockAttributes
@@ -415,5 +416,7 @@ class PrismaAttributeParametersCompletionTest : PrismaCompletionTestBase() {
   private fun getFieldAttributeParams(label: String) = getAttributeParams(PrismaSchemaKind.FIELD_ATTRIBUTE, label)
 
   private fun getAttributeParams(kind: PrismaSchemaKind, label: String) =
-    PrismaSchemaProvider.getSchema().getElement(kind, label)!!.params.map { it.label }
+    PrismaSchemaProvider
+      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(myFixture.file.findElementAt(myFixture.caretOffset)))
+      .getElement(kind, label)!!.params.map { it.label }
 }
