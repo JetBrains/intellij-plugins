@@ -9,10 +9,12 @@ object PrismaSchemaProvider {
       compose(PRISMA_SCHEMA_KEYWORDS)
       compose(PRISMA_SCHEMA_PRIMITIVE_TYPES)
       compose(PRISMA_SCHEMA_FIELDS)
-      compose(PRISMA_SCHEMA_ATTRIBUTES)
+      compose(PRISMA_SCHEMA_FIELD_ATTRIBUTES)
+      compose(PRISMA_SCHEMA_BLOCK_ATTRIBUTES)
       compose(PRISMA_SCHEMA_FUNCTIONS)
     }
   }
 
-  fun getSchema(): PrismaSchema = PRISMA_SCHEMA_DEFINITION.value
+  fun getEvaluatedSchema(evaluationContext: PrismaSchemaEvaluationContext): PrismaEvaluatedSchema =
+    PRISMA_SCHEMA_DEFINITION.value.evaluate(evaluationContext)
 }

@@ -4,16 +4,75 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.ElementPattern
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
 
-class PrismaSchema(private val elements: Map<PrismaSchemaKind, PrismaSchemaElementGroup>) {
+class PrismaCompoundSchema(private val groups: List<PrismaSchemaElementGroup>,
+                           private val factories: List<PrismaSchemaDynamicFactory>) {
+  fun evaluate(evaluationContext: PrismaSchemaEvaluationContext): PrismaEvaluatedSchema {
+    val newGroups = mutableMapOf<PrismaSchemaKind, PrismaSchemaElementGroup.Builder>()
+
+    factories.asSequence()
+      .map { it.invoke(evaluationContext) }
+      .plus(groups)
+      .forEach { group ->
+        newGroups
+          .computeIfAbsent(group.kind) { PrismaSchemaElementGroup.Builder(group.kind) }
+          .compose(group)
+      }
+
+    return PrismaEvaluatedSchema(newGroups.mapValues { it.value.build() })
+  }
+
+  class Builder : SchemaDslBuilder<PrismaCompoundSchema> {
+    private val groups: MutableList<PrismaSchemaElementGroup> = mutableListOf()
+    private val factories: MutableList<PrismaSchemaDynamicFactory> = mutableListOf()
+
+    fun group(kind: PrismaSchemaKind, block: PrismaSchemaElementGroup.Builder.() -> Unit) {
+      val groupBuilder = PrismaSchemaElementGroup.Builder(kind)
+      groupBuilder.block()
+      val group = groupBuilder.build()
+      groups.add(group)
+    }
+
+    fun dynamic(kind: PrismaSchemaKind, block: PrismaSchemaElementGroup.Builder.(PrismaSchemaEvaluationContext) -> Unit) {
+      factories.add { ctx ->
+        val builder = PrismaSchemaElementGroup.Builder(kind)
+        builder.block(ctx)
+        builder.build()
+      }
+    }
+
+    fun compose(schema: PrismaCompoundSchema) {
+      groups.addAll(schema.groups)
+      factories.addAll(schema.factories)
+    }
+
+    override fun build(): PrismaCompoundSchema {
+      return PrismaCompoundSchema(groups, factories)
+    }
+  }
+}
+
+class PrismaEvaluatedSchema(private val groups: Map<PrismaSchemaKind, PrismaSchemaElementGroup>) {
   fun getElementsByKind(kind: PrismaSchemaKind): Collection<PrismaSchemaDeclaration> {
-    return elements[kind]?.values ?: emptyList()
+    return groups[kind]?.elements?.values ?: emptyList()
   }
 
   fun getElement(kind: PrismaSchemaKind, label: String?): PrismaSchemaDeclaration? {
-    return elements[kind]?.get(label)
+    return groups[kind]?.elements?.get(label)
+  }
+
+  fun expandRefs(elements: List<PrismaSchemaElement>): List<PrismaSchemaElement> {
+    return elements.mapNotNull {
+      if (it.ref != null) {
+        this.getElement(it.ref.kind, it.ref.label)
+      }
+      else {
+        it
+      }
+    }
   }
 
   fun match(element: PsiElement?): PrismaSchemaElement? {
@@ -48,42 +107,29 @@ class PrismaSchema(private val elements: Map<PrismaSchemaKind, PrismaSchemaEleme
       }
     }
   }
-
-  class Builder : SchemaDslBuilder<PrismaSchema> {
-    private val elements: MutableMap<PrismaSchemaKind, PrismaSchemaElementGroup> = mutableMapOf()
-
-    fun group(kind: PrismaSchemaKind, block: PrismaSchemaElementGroup.Builder.() -> Unit) {
-      val groupBuilder = PrismaSchemaElementGroup.Builder(kind)
-      groupBuilder.block()
-      val group = groupBuilder.build()
-      elements[kind] = group
-    }
-
-    fun compose(schema: PrismaSchema) {
-      elements.putAll(schema.elements)
-    }
-
-    override fun build(): PrismaSchema {
-      return PrismaSchema(elements)
-    }
-  }
 }
 
-class PrismaSchemaElementGroup(val group: Map<String, PrismaSchemaDeclaration>) :
-  Map<String, PrismaSchemaDeclaration> by group {
+private typealias PrismaSchemaDynamicFactory = (PrismaSchemaEvaluationContext) -> PrismaSchemaElementGroup
+
+class PrismaSchemaElementGroup(val kind: PrismaSchemaKind, val elements: Map<String, PrismaSchemaDeclaration>) {
 
   class Builder(private val kind: PrismaSchemaKind) : SchemaDslBuilder<PrismaSchemaElementGroup> {
-    private val group: MutableMap<String, PrismaSchemaDeclaration> = mutableMapOf()
+    private val elements: MutableMap<String, PrismaSchemaDeclaration> = mutableMapOf()
 
     fun element(block: PrismaSchemaDeclaration.Builder.() -> Unit) {
       val elementBuilder = PrismaSchemaDeclaration.Builder(kind)
       elementBuilder.block()
       val schemaElement = elementBuilder.build()
-      group[schemaElement.label] = schemaElement
+      elements[schemaElement.label] = schemaElement
+    }
+
+    fun compose(group: PrismaSchemaElementGroup) {
+      require(kind == group.kind)
+      elements.putAll(group.elements)
     }
 
     override fun build(): PrismaSchemaElementGroup {
-      return PrismaSchemaElementGroup(group)
+      return PrismaSchemaElementGroup(kind, elements)
     }
   }
 
@@ -253,20 +299,16 @@ class PrismaSchemaVariant(
   }
 }
 
-fun schema(block: PrismaSchema.Builder.() -> Unit): PrismaSchema {
-  val builder = PrismaSchema.Builder()
+fun schema(block: PrismaCompoundSchema.Builder.() -> Unit): PrismaCompoundSchema {
+  val builder = PrismaCompoundSchema.Builder()
   builder.block()
   return builder.build()
 }
 
-fun List<PrismaSchemaElement>.expandRefs(): List<PrismaSchemaElement> {
-  val schema = PrismaSchemaProvider.getSchema()
-  return mapNotNull {
-    if (it.ref != null) {
-      schema.getElement(it.ref.kind, it.ref.label)
-    }
-    else {
-      it
+class PrismaSchemaEvaluationContext(val position: PsiElement?, val file: PsiFile?) {
+  companion object {
+    fun forElement(element: PsiElement?): PrismaSchemaEvaluationContext {
+      return PrismaSchemaEvaluationContext(element, element?.containingFile)
     }
   }
 }

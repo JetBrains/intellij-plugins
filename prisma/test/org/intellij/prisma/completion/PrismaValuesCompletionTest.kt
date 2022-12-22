@@ -1,5 +1,6 @@
 package org.intellij.prisma.completion
 
+import org.intellij.prisma.ide.schema.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.lang.PrismaConstants
@@ -23,7 +24,8 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
             """.trimIndent(),
       "\"sqlserver\""
     )
-    val element = PrismaSchemaProvider.getSchema()
+    val element = PrismaSchemaProvider
+      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(myFixture.file.findElementAt(myFixture.caretOffset)))
       .getElement(PrismaSchemaKind.DATASOURCE_FIELD, PrismaConstants.DatasourceFields.PROVIDER)!!
     assertSameElements(lookupElements.strings, element.variants.map { quoted(it.label) })
     checkLookupDocumentation(lookupElements, "\"sqlserver\"")

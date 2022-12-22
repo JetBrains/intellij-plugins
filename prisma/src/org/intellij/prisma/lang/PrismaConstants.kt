@@ -68,9 +68,8 @@ object PrismaConstants {
     const val RELATION = "@relation"
     const val UPDATED_AT = "@updatedAt"
     const val IGNORE = "@ignore"
-    const val DB = "@db"
 
-    val ALL = setOf(ID, MAP, UNIQUE, DEFAULT, RELATION, UPDATED_AT, IGNORE, DB)
+    val ALL = setOf(ID, MAP, UNIQUE, DEFAULT, RELATION, UPDATED_AT, IGNORE)
   }
 
   object PreviewFeatures {

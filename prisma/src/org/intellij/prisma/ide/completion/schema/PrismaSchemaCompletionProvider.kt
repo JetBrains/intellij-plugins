@@ -5,10 +5,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
-import org.intellij.prisma.ide.schema.PrismaSchemaElement
-import org.intellij.prisma.ide.schema.PrismaSchemaFakeElement
-import org.intellij.prisma.ide.schema.PrismaSchemaKind
-import org.intellij.prisma.ide.schema.PrismaSchemaProvider
+import org.intellij.prisma.ide.schema.*
 import org.intellij.prisma.lang.psi.PrismaFile
 
 abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
@@ -34,12 +31,14 @@ abstract class PrismaSchemaCompletionProvider : PrismaCompletionProvider() {
   ): Collection<PrismaSchemaElement> {
     val file = parameters.originalFile as? PrismaFile ?: return emptyList()
     val datasourceType = file.datasourceType
+    val position = parameters.originalPosition ?: parameters.position
 
-    return PrismaSchemaProvider.getSchema()
+    return PrismaSchemaProvider
+      .getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(position))
       .getElementsByKind(kind)
       .asSequence()
       .filter { it.isAvailableForDatasource(datasourceType) }
-      .filter { it.isAcceptedByPattern(parameters.originalPosition ?: parameters.position, context) }
+      .filter { it.isAcceptedByPattern(position, context) }
       .toList()
   }
 

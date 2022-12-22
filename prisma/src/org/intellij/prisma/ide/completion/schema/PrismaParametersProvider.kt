@@ -9,6 +9,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import org.intellij.prisma.ide.completion.PrismaCompletionProvider
 import org.intellij.prisma.ide.schema.PrismaSchemaDeclaration
+import org.intellij.prisma.ide.schema.PrismaSchemaEvaluationContext
 import org.intellij.prisma.ide.schema.PrismaSchemaFakeElement
 import org.intellij.prisma.ide.schema.PrismaSchemaProvider
 import org.intellij.prisma.lang.psi.*
@@ -33,8 +34,9 @@ object PrismaParametersProvider : PrismaCompletionProvider() {
     if (isFieldArgument) {
       argumentsOwner = argumentsOwner.parentOfType() ?: return
     }
+    val schema = PrismaSchemaProvider.getEvaluatedSchema(PrismaSchemaEvaluationContext.forElement(position))
     val schemaDeclaration =
-      PrismaSchemaProvider.getSchema().match(argumentsOwner) as? PrismaSchemaDeclaration ?: return
+      schema.match(argumentsOwner) as? PrismaSchemaDeclaration ?: return
     val parent = PrismaSchemaFakeElement.createForCompletion(parameters, schemaDeclaration)
     val usedParams = argumentsOwner.getArgumentsList()?.arguments
                        ?.asSequence()

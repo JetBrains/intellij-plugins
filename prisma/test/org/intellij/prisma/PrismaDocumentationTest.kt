@@ -122,6 +122,10 @@ class PrismaDocumentationTest : PrismaTestCase() {
     doTest()
   }
 
+  fun testNativeTypeNamespace() {
+    doTest()
+  }
+
   private fun doTest() {
     val file = myFixture.configureByFile(getTestName())
     val originalElement = file.findElementAt(myFixture.caretOffset)
