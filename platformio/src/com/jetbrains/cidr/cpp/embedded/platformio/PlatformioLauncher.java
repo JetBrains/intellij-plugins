@@ -73,7 +73,7 @@ public class PlatformioLauncher extends CLionLauncher {
   protected Pair<File, CPPEnvironment> getRunFileAndEnvironment() {
     PlatformioBaseConfiguration configuration = (PlatformioBaseConfiguration)getConfiguration();
     CPPToolchains.Toolchain toolchain = configuration.getToolchain();
-    return new Pair<>(new File(toolchain.getDebugger().getGdbExecutable()), new CPPEnvironment(toolchain));
+    return new Pair<>(toolchain.getDebugger().getGdbExecutable(), new CPPEnvironment(toolchain));
   }
 
   @NotNull
