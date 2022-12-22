@@ -103,7 +103,7 @@ public final class MeteorProjectStartupActivity implements StartupActivity.Backg
         setMeteorLibraryWasEnabled(project);
         updateLibrariesFiles(project);
       };
-      if (ApplicationManager.getApplication().isWriteThread()) {
+      if (ApplicationManager.getApplication().isWriteIntentLockAcquired()) {
         ApplicationManager.getApplication().runWriteAction(runnable);
       }
       else {
