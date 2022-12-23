@@ -80,30 +80,30 @@ class PrismaEvaluatedSchema(private val groups: Map<PrismaSchemaKind, PrismaSche
       return element.schemaElement
     }
 
-    val context = PrismaSchemaContext.forElement(element) ?: return null
-    return match(context)
+    val path = PrismaSchemaPath.forElement(element) ?: return null
+    return match(path)
   }
 
-  private fun match(context: PrismaSchemaContext): PrismaSchemaElement? {
-    return when (context) {
-      is PrismaSchemaDeclarationContext -> {
-        getElement(context.kind, context.label)
+  private fun match(path: PrismaSchemaPath): PrismaSchemaElement? {
+    return when (path) {
+      is PrismaSchemaDeclarationPath -> {
+        getElement(path.kind, path.label)
       }
 
-      is PrismaSchemaParameterContext -> {
-        val declaration = match(context.parent) as? PrismaSchemaDeclaration
+      is PrismaSchemaParameterPath -> {
+        val declaration = match(path.parent) as? PrismaSchemaDeclaration
         val params = declaration?.params
-        if (context is PrismaSchemaDefaultParameterContext) {
+        if (path is PrismaSchemaDefaultParameterPath) {
           params?.firstOrNull()
         }
         else {
-          params?.find { it.label == context.label }
+          params?.find { it.label == path.label }
         }
       }
 
-      is PrismaSchemaVariantContext -> {
-        val parent = match(context.parent)
-        parent?.variants?.find { it.label == context.label }
+      is PrismaSchemaVariantPath -> {
+        val parent = match(path.parent)
+        parent?.variants?.find { it.label == path.label }
       }
     }
   }

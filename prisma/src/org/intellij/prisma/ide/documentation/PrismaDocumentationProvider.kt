@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.startOffset
-import org.intellij.prisma.ide.schema.PrismaSchemaContext
+import org.intellij.prisma.ide.schema.PrismaSchemaPath
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.resolve.PrismaResolver
 import java.util.function.Consumer
@@ -30,9 +30,9 @@ class PrismaDocumentationProvider : AbstractDocumentationProvider() {
     contextElement: PsiElement?,
     targetOffset: Int
   ): PsiElement? {
-    val context = contextElement?.let { PrismaSchemaContext.adjustContextElement(it) }
-    if (acceptCustomElement(context)) {
-      return context
+    val path = contextElement?.let { PrismaSchemaPath.adjustPathElement(it) }
+    if (acceptCustomElement(path)) {
+      return path
     }
 
     return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset)

@@ -58,7 +58,7 @@ object PrismaValuesProvider : PrismaCompletionProvider() {
 
     val datasourceType = file.datasourceType
     val usedValues = mutableSetOf<String>()
-    listExpression?.expressionList?.mapNotNullTo(usedValues) { PrismaSchemaContext.getSchemaLabel(it) }
+    listExpression?.expressionList?.mapNotNullTo(usedValues) { PrismaSchemaPath.getSchemaLabel(it) }
 
     schema.expandRefs(schemaElement.variants)
       .asSequence()
