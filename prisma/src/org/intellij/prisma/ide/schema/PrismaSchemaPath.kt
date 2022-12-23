@@ -12,45 +12,45 @@ import org.intellij.prisma.lang.presentation.PrismaPsiRenderer
 import org.intellij.prisma.lang.psi.*
 import org.intellij.prisma.lang.psi.PrismaElementTypes.*
 
-sealed class PrismaSchemaContext(
+sealed class PrismaSchemaPath(
   val label: String,
   val element: PsiElement,
 ) {
   companion object {
-    fun forElement(element: PsiElement?): PrismaSchemaContext? {
+    fun forElement(element: PsiElement?): PrismaSchemaPath? {
       if (element == null || element is PrismaSchemaFakeElement) {
         return null
       }
 
       return CachedValuesManager.getCachedValue(element) {
-        CachedValueProvider.Result.create(buildContext(element), element)
+        CachedValueProvider.Result.create(buildPath(element), element)
       }
     }
 
-    private fun buildContext(element: PsiElement): PrismaSchemaContext? {
-      val contextElement = adjustContextElement(element) ?: return null
-      return when (contextElement) {
-        is PrismaArgument -> createParameterContext(contextElement)
-        is PrismaLiteralExpression -> createVariantContext(contextElement)
-        else -> createDeclarationContext(contextElement)
+    private fun buildPath(element: PsiElement): PrismaSchemaPath? {
+      val pathElement = adjustPathElement(element) ?: return null
+      return when (pathElement) {
+        is PrismaArgument -> createParameterPath(pathElement)
+        is PrismaLiteralExpression -> createVariantPath(pathElement)
+        else -> createDeclarationPath(pathElement)
       }
     }
 
-    private fun createParameterContext(element: PrismaArgument): PrismaSchemaParameterContext? {
+    private fun createParameterPath(element: PrismaArgument): PrismaSchemaParameterPath? {
       var parentElement = element.parentOfType<PrismaArgumentsOwner>() ?: return null
       var isFieldExpression = false
       if (parentElement is PrismaFunctionCall && parentElement.parent is PrismaArrayExpression) {
         parentElement = parentElement.parentOfType() ?: return null
         isFieldExpression = true
       }
-      val parentContext = forElement(parentElement) as? PrismaSchemaDeclarationContext ?: return null
+      val parentPath = forElement(parentElement) as? PrismaSchemaDeclarationPath ?: return null
       return when (element) {
         is PrismaNamedArgument -> element.referenceName?.let {
-          PrismaSchemaParameterContext(it, element, parentContext)
+          PrismaSchemaParameterPath(it, element, parentPath)
         }
 
         is PrismaValueArgument -> if (element.isDefault && !isFieldExpression) {
-          PrismaSchemaDefaultParameterContext(element, parentContext)
+          PrismaSchemaDefaultParameterPath(element, parentPath)
         }
         else {
           null
@@ -60,21 +60,21 @@ sealed class PrismaSchemaContext(
       }
     }
 
-    private fun createVariantContext(element: PrismaLiteralExpression): PrismaSchemaVariantContext? {
+    private fun createVariantPath(element: PrismaLiteralExpression): PrismaSchemaVariantPath? {
       val parent =
         element.parentOfTypes(PrismaArgument::class, PrismaMemberDeclaration::class) ?: return null
-      val parentContext = forElement(parent) ?: return null
+      val parentPath = forElement(parent) ?: return null
       val label = getSchemaLabel(element) ?: return null
-      return PrismaSchemaVariantContext(label, element, parentContext)
+      return PrismaSchemaVariantPath(label, element, parentPath)
     }
 
-    private fun createDeclarationContext(element: PsiElement): PrismaSchemaDeclarationContext? {
+    private fun createDeclarationPath(element: PsiElement): PrismaSchemaDeclarationPath? {
       val kind = getSchemaKind(element) ?: return null
       val label = getSchemaLabel(element) ?: return null
-      return PrismaSchemaDeclarationContext(label, element, kind)
+      return PrismaSchemaDeclarationPath(label, element, kind)
     }
 
-    fun adjustContextElement(element: PsiElement): PsiElement? {
+    fun adjustPathElement(element: PsiElement): PsiElement? {
       return when (element.elementType) {
         IDENTIFIER -> findIdentifierParent(element)
 
@@ -155,25 +155,25 @@ sealed class PrismaSchemaContext(
   }
 }
 
-class PrismaSchemaDeclarationContext(
+class PrismaSchemaDeclarationPath(
   label: String,
   element: PsiElement,
   val kind: PrismaSchemaKind,
-) : PrismaSchemaContext(label, element)
+) : PrismaSchemaPath(label, element)
 
-open class PrismaSchemaParameterContext(
+open class PrismaSchemaParameterPath(
   label: String,
   element: PsiElement,
-  val parent: PrismaSchemaDeclarationContext,
-) : PrismaSchemaContext(label, element)
+  val parent: PrismaSchemaDeclarationPath,
+) : PrismaSchemaPath(label, element)
 
-class PrismaSchemaDefaultParameterContext(
+class PrismaSchemaDefaultParameterPath(
   element: PsiElement,
-  parent: PrismaSchemaDeclarationContext,
-) : PrismaSchemaParameterContext("#DEFAULT", element, parent)
+  parent: PrismaSchemaDeclarationPath,
+) : PrismaSchemaParameterPath("#DEFAULT", element, parent)
 
-class PrismaSchemaVariantContext(
+class PrismaSchemaVariantPath(
   label: String,
   element: PsiElement,
-  val parent: PrismaSchemaContext,
-) : PrismaSchemaContext(label, element)
+  val parent: PrismaSchemaPath,
+) : PrismaSchemaPath(label, element)
