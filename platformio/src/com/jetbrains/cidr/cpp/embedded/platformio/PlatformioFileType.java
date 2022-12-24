@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class PlatformioFileType extends LanguageFileType {
-  public static final String EXTENSION = "ini";
   public static final PlatformioFileType INSTANCE = new PlatformioFileType();
   public static final String FILE_NAME = "platformio.ini";
 
@@ -36,7 +35,7 @@ public class PlatformioFileType extends LanguageFileType {
   @Override
   public @NotNull
   String getDefaultExtension() {
-    return EXTENSION;
+    return "";
   }
 
   @Override

@@ -5,7 +5,6 @@
   <category>Embedded Development</category>
 
   <description><![CDATA[
-<b>EXPERIMENTAL</b>
 <a href="https://platformio.org/">PlatformIO.org</a> plugin for CLion integration
 <br>
 <p>A new generation toolset for embedded C/C++ development</p>
@@ -42,8 +41,10 @@
 <a href="https://docs.platformio.org/en/latest/ide/clion.html">Documentation</a>]]>
   </description>
 
+
+  <depends>com.intellij.cidr.base</depends>
   <depends>com.intellij.modules.clion</depends>
-  <depends>com.intellij.modules.clion.cmake</depends>
+  <depends>com.intellij.modules.externalSystem</depends>
   <depends>com.intellij.clion.embedded</depends>
   <depends>com.jetbrains.plugins.ini4idea</depends>
   <depends optional="true" config-file="terminal-dep.xml">org.jetbrains.plugins.terminal</depends>
@@ -53,14 +54,11 @@
                        implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType"/>
     <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE" language="Ini"
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
-    <stepsBeforeRunProvider
-      implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
-    <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
-                               id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
-    <notificationGroup id="PlatformIO plugin" displayType="BALLOON" bundle="messages.ClionEmbeddedPlatformioBundle" key="notification.group.platformio"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUploadBeforeRunTaskProvider"/>
+    <notificationGroup id="PlatformIO plugin" displayType="BALLOON" bundle="messages.ClionEmbeddedPlatformioBundle"
+                       key="notification.group.platformio"/>
     <directoryIndexExcludePolicy implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExcludePolicy"/>
-    <vfs.asyncListener implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
-    <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
     <applicationConfigurable order="last" id="clion.platformio.config"
                              instance="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable"
                              bundle="messages.ClionEmbeddedPlatformioBundle"
@@ -68,27 +66,58 @@
                              groupId="language"/>
     <statistics.counterUsagesCollector implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector"/>
     <projectService serviceImplementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState"/>
+    <projectOpenProcessor id="PlatformioProjectOpenProcessor"
+                          implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectOpenProcessor"/>
+    <externalSystemManager implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioManager"/>
+    <projectTaskRunner implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioProjectTaskRunner"
+                       id="PlatformioProjectTaskRunner"/>
+    <registryKey key="PlatformIO.system.in.process" defaultValue="true" restartRequired="true"
+                 description="Whether IDE should use 'in-process' mode for PlatformIO"/>
+    <registryKey key="PlatformIO.use.webview" defaultValue="false" restartRequired="false"
+                 description="Whether IDE should display `pio home` in a dialog and use `pio home` for new project creation"/>
+    <externalIconProvider key="PlatformIO" implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioIconProvider"/>
+    <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspace$PlatformioStartupActivity"/>
+    <fileTypeOverrider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioFileTypeDetector"/>
+    <executionTargetProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExecutionTargetProvider"/>
+    <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
+                               id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
+    <toolWindow id="PlatformIO" anchor="right"
+                factoryClass="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioToolWindowFactory"/>
+    <project.converterProvider
+      implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.migration.PlatformioProjectMigrationProvider"
+      id="clion.platformio.experimental.convert"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="clion">
+    <compoundConfigurationContext
+      implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioConfigurationContext"/>
+  </extensions>
+  <extensions defaultExtensionNs="cidr">
+    <buildConfigurationProvider
+      implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.builds.PlatformioBuildConfigurationProvider"/>
+    <project.workspaceProvider implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioWorkspaceProvider"/>
   </extensions>
 
   <actions>
+    <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioRefreshAction"
+            id="PlatformioRefreshAction"/>
     <group id="platformio-group" popup="true" icon="ClionEmbeddedPlatformioIcons.Platformio">
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioBuildProductionAction"/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioBuildAction"/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction"/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction"/>
-      <separator/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioReInitAction"/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUpdateAllAction"/>
-      <separator/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioMonitorAction"/>
-      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioHomeAction"/>
+      <reference id="PlatformioRefreshAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction"
+              id="PlatformioCheckAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioMonitorAction"
+              id="PlatformioMonitorAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioPkgUpdateAction"
+              id="PlatformioPkgUpdateAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.home.PlatformioHomeAction"
+              id="PlatformioHomeAction"/>
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
     <group id="platformio-group-file-popup"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup" popup="true">
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
+    <action id="target-platformio-upload-monitor" class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUploadMonitorAction"/>
   </actions>
-
   <resource-bundle>messages.ClionEmbeddedPlatformioBundle</resource-bundle>
 </idea-plugin>
