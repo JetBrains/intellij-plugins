@@ -64,11 +64,11 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
   }
 
   @Override
-  protected void reimportFacet(IdeModifiableModelsProvider modelsProvider, Module module,
-                               MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
-                               MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
-                               MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
-                               List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
+  protected void reimportFacet(@NotNull IdeModifiableModelsProvider modelsProvider, @NotNull Module module,
+                               @NotNull MavenRootModelAdapter mavenRootModelAdapter, @NotNull OsmorcFacet osmorcFacet,
+                               @NotNull MavenProjectsTree mavenProjectsTree, @NotNull MavenProject mavenProject,
+                               @NotNull MavenProjectChanges changes, @NotNull Map<MavenProject, String> mavenProjectStringMap,
+                               @NotNull List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
     OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
     if (conf.isDoNotSynchronizeWithMaven()) {
       return;

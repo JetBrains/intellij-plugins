@@ -120,14 +120,14 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   @Override
-  public void process(final IdeModifiableModelsProvider modelsProvider,
-                      final Module module,
-                      final MavenRootModelAdapter modelAdapter,
-                      final MavenProjectsTree mavenTree,
-                      final MavenProject mavenProject,
-                      final MavenProjectChanges changes,
-                      final Map<MavenProject, String> mavenProjectToModuleName,
-                      final List<MavenProjectsProcessorTask> postTasks) {
+  public void process(final @NotNull IdeModifiableModelsProvider modelsProvider,
+                      final @NotNull Module module,
+                      final @NotNull MavenRootModelAdapter modelAdapter,
+                      final @NotNull MavenProjectsTree mavenTree,
+                      final @NotNull MavenProject mavenProject,
+                      final @NotNull MavenProjectChanges changes,
+                      final @NotNull Map<MavenProject, String> mavenProjectToModuleName,
+                      final @NotNull List<MavenProjectsProcessorTask> postTasks) {
     expireNotification();
 
     final FlexProjectConfigurationEditor currentEditor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
