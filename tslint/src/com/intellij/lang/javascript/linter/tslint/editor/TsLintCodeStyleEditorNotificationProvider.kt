@@ -34,7 +34,7 @@ class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : 
     EditorNotifications.getInstance(project).updateAllNotifications()
   }
 
-  override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?> {
+  override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
     return Function { createNotificationPanel(file, it, project) }
   }
 
