@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package icons;
 
 import com.intellij.ui.IconManager;
@@ -16,12 +16,12 @@ public final class HandlebarsIcons {
   }
 
   public static final class Elements {
-    /** 16x16 */ public static final @NotNull Icon OpenBlock = load("icons/elements/openBlock.svg", -703247134, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenInverse = load("icons/elements/openInverse.svg", 2069608479, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenMustache = load("icons/elements/openMustache.svg", 152218795, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenPartial = load("icons/elements/openPartial.svg", 1441425259, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenUnescaped = load("icons/elements/openUnescaped.svg", -406034899, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenBlock = load("icons/elements/openBlock.svg", -1862257554, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenInverse = load("icons/elements/openInverse.svg", 664434751, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenMustache = load("icons/elements/openMustache.svg", -46606889, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenPartial = load("icons/elements/openPartial.svg", -1935351293, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenUnescaped = load("icons/elements/openUnescaped.svg", 36741477, 2);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Handlebars_icon = load("icons/handlebars_icon.svg", -1046787501, 0);
+  /** 16x16 */ public static final @NotNull Icon Handlebars_icon = load("icons/handlebars_icon.svg", -153626154, 0);
 }
