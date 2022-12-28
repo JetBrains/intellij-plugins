@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
@@ -35,7 +36,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
  * @see DartFileListener
  * @see DartWorkspaceModelChangeListener
  */
-public final class DartStartupActivity implements StartupActivity.Background {
+public final class DartStartupActivity implements StartupActivity, DumbAware {
   @Override
   public void runActivity(@NotNull Project project) {
     ReadAction.nonBlocking(() -> {
