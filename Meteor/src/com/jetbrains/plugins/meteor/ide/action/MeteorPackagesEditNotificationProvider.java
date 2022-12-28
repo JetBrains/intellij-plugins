@@ -21,15 +21,11 @@ public final class MeteorPackagesEditNotificationProvider implements EditorNotif
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
+    if (!file.isInLocalFileSystem() || (!file.getName().equals(VERSIONS_FILE_NAME) && !file.getName().equals(PACKAGES_FILE))) return null;
+    if (!MeteorFacade.getInstance().isMeteorProject(project)) return null;
+
     return fileEditor -> {
-      if (file.isInLocalFileSystem() && (file.getName().equals(VERSIONS_FILE_NAME) || file.getName().equals(PACKAGES_FILE))) {
-        if (MeteorFacade.getInstance().isMeteorProject(project)) {
-
-          return new ImportPackagesPanel(fileEditor, project);
-        }
-      }
-
-      return null;
+      return new ImportPackagesPanel(fileEditor, project);
     };
   }
 
