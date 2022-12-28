@@ -75,6 +75,11 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
+  protected boolean shouldIgnoreDeletion(@NotNull FileStatus status) {
+    return status == FileStatus.UNKNOWN;
+  }
+
+  @Override
   protected boolean isEventAccepted(@NotNull VFileEvent event) {
     return !(event.getRequestor() instanceof PerforceOfflineRollbackEnvironment) && super.isEventAccepted(event);
   }
@@ -161,11 +166,6 @@ public final class PerforceVFSListener extends VcsVFSListener {
   @Override
   protected String getAddTitle() {
     return PerforceBundle.message("add.select.files");
-  }
-
-  @Override
-  protected boolean shouldIgnoreDeletion(@NotNull final VirtualFile file) {
-    return ChangeListManager.getInstance(myProject).isUnversioned(file);
   }
 
   @Override
