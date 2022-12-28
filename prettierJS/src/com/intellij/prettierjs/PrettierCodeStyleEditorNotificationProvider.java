@@ -50,39 +50,29 @@ public final class PrettierCodeStyleEditorNotificationProvider implements Editor
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
-    if (JSProjectUtil.isInLibrary(file, project)) {
-      return null;
+    if (JSProjectUtil.isInLibrary(file, project)) return null;
+
+    if (!file.isWritable() || JSLibraryUtil.isProbableLibraryFile(file)) return null;
+    if (isNotificationDismissed(file)) return null;
+
+    PrettierConfig config = null;
+    if (PrettierUtil.isConfigFile(file)) {
+      config = PrettierUtil.parseConfig(project, file);
     }
-
-    return fileEditor -> {
-      if (!(fileEditor instanceof TextEditor)) return null;
-      if (!file.isWritable() || JSLibraryUtil.isProbableLibraryFile(file)) {
-        return null;
+    if (PackageJsonUtil.isPackageJsonFile(file)) {
+      //if package.json is currently opened, but there is a neighboring config file
+      VirtualFile configVFile = PrettierUtil.findSingleConfigInDirectory(file.getParent());
+      if (configVFile != null) {
+        config = PrettierUtil.parseConfig(project, configVFile);
       }
-      if (isNotificationDismissed(file)) {
-        return null;
-      }
-
-      PrettierConfig config = null;
-      if (PrettierUtil.isConfigFile(file)) {
+      else {
         config = PrettierUtil.parseConfig(project, file);
       }
-      if (PackageJsonUtil.isPackageJsonFile(file)) {
-        //if package.json is currently opened, but there is a neighboring config file
-        VirtualFile configVFile = PrettierUtil.findSingleConfigInDirectory(file.getParent());
-        if (configVFile != null) {
-          config = PrettierUtil.parseConfig(project, configVFile);
-        }
-        else {
-          config = PrettierUtil.parseConfig(project, file);
-        }
-      }
-      if (config == null) {
-        return null;
-      }
-      if (config.isInstalled(project)) {
-        return null;
-      }
+    }
+    if (config == null) return null;
+    if (config.isInstalled(project)) return null;
+
+    return fileEditor -> {
       final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, EditorNotificationPanel.Status.Info);
       panel.setText(PrettierBundle.message("editor.notification.title"));
 
