@@ -101,9 +101,9 @@ public class CustomVariablesStep extends AbstractWizardStepEx {
     myTitleLabel.setDisplayedMnemonic(text.charAt(UIUtil.getDisplayMnemonicIndex(text) + 1));
 
     ListTableModel<Item> model = new ListTableModel<>(NAME, VALUE);
-    List<Item> items =
-      ContainerUtil.map(myModel.getCustomTemplateAttributes(myModel.getTemplateName()).entrySet(), e -> new Item(e.getKey(), e.getValue()));
-    ContainerUtil.sort(items, (o1, o2) -> StringUtil.naturalCompare(o1.name, o2.name));
+    List<Item> items = ContainerUtil.sorted(
+      ContainerUtil.map(myModel.getCustomTemplateAttributes(myModel.getTemplateName()).entrySet(), e -> new Item(e.getKey(), e.getValue())),
+    (o1, o2) -> StringUtil.naturalCompare(o1.name, o2.name));
     model.addRows(items);
     myTable.setModelAndUpdateColumns(model);
   }

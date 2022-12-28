@@ -194,11 +194,10 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, () -> {
       textFieldWithHistory.setHistory(Collections.emptyList());
       List<VirtualFile> newFiles = KarmaUtil.listPossibleConfigFilesInProject(project);
-      List<String> newFilePaths = ContainerUtil.map(newFiles, file -> {
+      List<String> newFilePaths = ContainerUtil.sorted(ContainerUtil.map(newFiles, file -> {
         String path = FileUtil.toSystemDependentName(file.getPath());
         return FileUtil.getLocationRelativeToUserHome(path, false);
-      });
-      Collections.sort(newFilePaths);
+      }));
       return newFilePaths;
     });
 
