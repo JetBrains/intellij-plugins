@@ -33,14 +33,13 @@ public final class MeteorHtmlFileTypeEditNotificationProvider implements EditorN
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
+    if (!MeteorFacade.getInstance().isMeteorProject(project)) return null;
+    FileType html = FileTypeManager.getInstance().getFileTypeByExtension("html");
+    if (html == HtmlFileType.INSTANCE) return null;
+
     return fileEditor -> {
-      if (MeteorFacade.getInstance().isMeteorProject(project)) {
-        FileType html = FileTypeManager.getInstance().getFileTypeByExtension("html");
-        if (html != HtmlFileType.INSTANCE) {
-          if (!PropertiesComponent.getInstance(project).getBoolean(METEOR_CHANGE_ASSOCIATION_DISMISSED)) {
-            return new IncorrectHtmlAssociationPanel(project);
-          }
-        }
+      if (!PropertiesComponent.getInstance(project).getBoolean(METEOR_CHANGE_ASSOCIATION_DISMISSED)) {
+        return new IncorrectHtmlAssociationPanel(project);
       }
 
       return null;
