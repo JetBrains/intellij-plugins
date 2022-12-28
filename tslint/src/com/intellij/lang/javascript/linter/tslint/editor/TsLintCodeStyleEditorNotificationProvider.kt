@@ -35,24 +35,20 @@ class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : 
   }
 
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
-    return Function { createNotificationPanel(file, it, project) }
-  }
-
-  private fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
-    if (fileEditor !is TextEditor || fileEditor.editor !is EditorEx) return null
     if (isNotificationDismissed(file)) return null
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     val wrapper = TsLintConfigWrapper.getConfigForFile(psiFile) ?: return null
     val rules = wrapper.getRulesToApply(project)
-
     if (rules.isEmpty()) return null
 
-    return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, Status.Info) {
-      init {
-        text = TsLintBundle.message("tslint.code.style.apply.message")
-        createActionLabel(CommonBundle.message("button.without.mnemonic.yes"), TsLintImportCodeStyleAction.ACTION_ID, false)
-        createActionLabel(CommonBundle.message("button.without.mnemonic.no"), Runnable { dismissNotification() }, false)
+    return Function {
+      object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND, Status.Info) {
+        init {
+          text = TsLintBundle.message("tslint.code.style.apply.message")
+          createActionLabel(CommonBundle.message("button.without.mnemonic.yes"), TsLintImportCodeStyleAction.ACTION_ID, false)
+          createActionLabel(CommonBundle.message("button.without.mnemonic.no"), Runnable { dismissNotification() }, false)
+        }
       }
     }
   }
