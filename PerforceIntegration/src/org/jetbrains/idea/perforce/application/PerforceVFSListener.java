@@ -212,11 +212,6 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
-  protected boolean isDirectoryVersioningSupported() {
-    return false;
-  }
-
-  @Override
   protected boolean processBeforeContentsChange() {
     return true;
   }
