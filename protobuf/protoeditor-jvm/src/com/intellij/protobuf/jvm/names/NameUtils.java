@@ -16,7 +16,7 @@
 package com.intellij.protobuf.jvm.names;
 
 /** Utilities for mapping from proto names to various other forms of names useful for Java. */
-public class NameUtils {
+public final class NameUtils {
 
   public static String underscoreToCamelCase(String input) {
     return underscoresToCamelCase(input, false);

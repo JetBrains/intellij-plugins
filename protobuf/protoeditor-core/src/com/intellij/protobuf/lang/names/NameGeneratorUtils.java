@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * Utility methods for implementations of {@link NameGeneratorContributer}
  */
-public class NameGeneratorUtils {
+public final class NameGeneratorUtils {
   /** Convert the provided {@link PbOptionExpression} to an {@link Integer} if possible. */
   public static Optional<Integer> parseIntOption(PbOptionExpression optionExpression) {
     return Optional.ofNullable(optionExpression.getNumberValue())

@@ -31,7 +31,7 @@ import java.util.Set;
  * Check if a resolved java reference refers to elements generated from protos, and gathers
  * contextual information like the containing class.
  */
-public class PbJavaGotoReferenceMatch {
+public final class PbJavaGotoReferenceMatch {
 
   // All protobuf generated code inherits from classes/interfaces in this package.
   private static final String PROTO2_PACKAGE = "com.google.protobuf";

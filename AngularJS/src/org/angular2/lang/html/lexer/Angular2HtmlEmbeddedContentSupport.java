@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.html.lexer;
 
 import com.intellij.html.embedding.*;
@@ -25,7 +25,7 @@ import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.
 
 public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSupport {
 
-  public static class Holder {
+  public static final class Holder {
     public static final EnumSet<Angular2AttributeType> NG_EL_ATTRIBUTES = EnumSet.of(
       Angular2AttributeType.EVENT, Angular2AttributeType.BANANA_BOX_BINDING,
       Angular2AttributeType.PROPERTY_BINDING, Angular2AttributeType.TEMPLATE_BINDINGS);
