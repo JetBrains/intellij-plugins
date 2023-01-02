@@ -70,6 +70,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
       label = "relationMode"
       type = PrimitiveTypes.STRING
       datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
+      documentation = "Set the global relation mode for all relations. Values can be either `\"foreignKeys\"` (Default), or `\"prisma\"`. [learn more](https://pris.ly/d/relationMode)"
 
       variant {
         label = "foreignKeys"
