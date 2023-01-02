@@ -5,8 +5,12 @@ val PRISMA_BINARY_TARGETS = setOf(
   "native",
 
   "darwin",
+  "darwin-arm64",
+
   "windows",
+
   "linux-musl",
+  "linux-musl-openssl-3.0.x",
 
   "debian-openssl-1.0.x",
   "debian-openssl-1.1.x",
