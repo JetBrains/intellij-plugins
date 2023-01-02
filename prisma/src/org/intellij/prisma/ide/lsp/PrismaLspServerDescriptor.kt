@@ -2,11 +2,13 @@ package org.intellij.prisma.ide.lsp
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.OSProcessHandler
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.lsp.LanguageServerConnector
 import com.intellij.lsp.LspServerDescriptorBase
 import com.intellij.lsp.SocketModeDescriptor
 import com.intellij.openapi.project.Project
@@ -36,6 +38,12 @@ class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServer
       NodeCommandLineConfigurator.find(interpreter)
         .configure(this, NodeCommandLineConfigurator.defaultOptions(project))
     }
+  }
+
+  override fun createServerConnector(): LanguageServerConnector {
+    val startingCommandLine = createStdioServerStartingCommandLine()
+    LOG.debug("$this: starting server process using: $startingCommandLine")
+    return PrismaServerConnector(this, OSProcessHandler(startingCommandLine))
   }
 
   override fun getSocketModeDescriptor(): SocketModeDescriptor? = null
