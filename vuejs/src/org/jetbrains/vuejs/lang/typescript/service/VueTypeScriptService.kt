@@ -154,10 +154,14 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun createFixSet(file: PsiFile,
                             cache: JSLanguageServiceFileCommandCache,
                             typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
-    val textRanges = mutableListOf<TextRange>()
-    findModule(file, true)?.let { textRanges.add(it.textRange) }
-    findModule(file, false)?.let { textRanges.add(it.textRange) }
-    return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRanges)
+    if (isVueFile(file.virtualFile)) {
+      val textRanges = mutableListOf<TextRange>()
+      findModule(file, true)?.let { textRanges.add(it.textRange) }
+      findModule(file, false)?.let { textRanges.add(it.textRange) }
+      return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRanges)
+    }
+
+    return super.createFixSet(file, cache, typescriptResult)
   }
 
   private fun isVueFile(virtualFile: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(virtualFile, VueFileType.INSTANCE)
