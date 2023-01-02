@@ -5,6 +5,7 @@ import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaRef
 import org.intellij.prisma.ide.schema.schema
 import org.intellij.prisma.ide.schema.types.PRISMA_BINARY_TARGETS
+import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
 import org.intellij.prisma.ide.schema.types.PrismaPreviewFeatures
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
@@ -63,6 +64,22 @@ val PRISMA_SCHEMA_FIELDS = schema {
 
       variant {
         ref = PrismaSchemaRef(PrismaSchemaKind.FUNCTION, Functions.ENV)
+      }
+    }
+    element {
+      label = "relationMode"
+      type = PrimitiveTypes.STRING
+      datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
+
+      variant {
+        label = "foreignKeys"
+        type = PrimitiveTypes.STRING
+        documentation = "Default value. The relation will use the Foreign Keys from the database."
+      }
+      variant {
+        label = "prisma"
+        type = PrimitiveTypes.STRING
+        documentation = "The relation will not use Foreign Keys from the database. Prisma Client will emulate their behavior for update and delete queries [learn more](https://pris.ly/d/relationMode)"
       }
     }
     element {
