@@ -9,6 +9,7 @@ import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
 import org.intellij.prisma.ide.schema.types.PrismaPreviewFeature
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
+import java.util.*
 
 val PRISMA_SCHEMA_FIELDS = schema {
   group(PrismaSchemaKind.DATASOURCE_FIELD) {
@@ -58,7 +59,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
     element {
       label = "url"
       documentation =
-        "Connection URL including authentication info. Each datasource provider documents the URL syntax. Most providers use the syntax provided by the database [learn more](https://pris.ly/d/connection-strings)."
+        "Connection URL including authentication info. Each datasource provider documents the URL syntax. Most providers use the syntax provided by the database. [Learn more](https://pris.ly/d/connection-strings)."
       type = PrimitiveTypes.STRING
       insertHandler = PrismaInsertHandler.EQUALS
 
@@ -70,7 +71,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
       label = "relationMode"
       type = PrimitiveTypes.STRING
       datasources = PrismaDatasourceType.except(PrismaDatasourceType.MONGODB)
-      documentation = "Set the global relation mode for all relations. Values can be either `\"foreignKeys\"` (Default), or `\"prisma\"`. [learn more](https://pris.ly/d/relationMode)"
+      documentation = "Set the global relation mode for all relations. Values can be either `\"foreignKeys\"` (Default), or `\"prisma\"`. [Learn more](https://pris.ly/d/relationMode)"
 
       variant {
         label = "foreignKeys"
@@ -80,7 +81,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
       variant {
         label = "prisma"
         type = PrimitiveTypes.STRING
-        documentation = "The relation will not use Foreign Keys from the database. Prisma Client will emulate their behavior for update and delete queries [learn more](https://pris.ly/d/relationMode)"
+        documentation = "The relation will not use Foreign Keys from the database. Prisma Client will emulate their behavior for update and delete queries. [Learn more](https://pris.ly/d/relationMode)"
       }
     }
     element {
@@ -88,6 +89,13 @@ val PRISMA_SCHEMA_FIELDS = schema {
       documentation =
         "Connection URL including authentication info to use for Migrate's [shadow database](https://pris.ly/d/migrate-shadow). Each datasource provider documents the URL syntax. Most providers use the syntax provided by the database."
       type = PrimitiveTypes.STRING
+    }
+    element {
+      label = "extensions"
+      insertHandler = PrismaInsertHandler.EQUALS_LIST
+      documentation = "Enable PostgreSQL extensions. [Learn more](https://pris.ly/d/postgresql-extensions)"
+      datasources = EnumSet.of(PrismaDatasourceType.POSTGRESQL)
+      type = "[]"
     }
   }
 
@@ -107,7 +115,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
     element {
       label = "output"
       documentation =
-        "Determines the location for the generated client [learn more](https://pris.ly/d/prisma-schema)"
+        "Determines the location for the generated client. [Learn more](https://pris.ly/d/prisma-schema)"
       type = PrimitiveTypes.STRING
     }
     element {

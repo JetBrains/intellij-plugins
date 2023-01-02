@@ -16,7 +16,7 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase() {
       """.trimIndent(),
       "url"
     )
-    assertSameElements(lookupElements.strings, "provider", "url", "shadowDatabaseUrl", "relationMode")
+    assertSameElements(lookupElements.strings, "provider", "url", "shadowDatabaseUrl", "relationMode", "extensions")
     checkLookupDocumentation(lookupElements, "url")
   }
 
@@ -30,6 +30,25 @@ class PrismaKeyValueCompletionTest : PrismaCompletionTestBase() {
       """.trimIndent()
     )
     assertSameElements(lookupElements.strings, "url", "shadowDatabaseUrl")
+  }
+
+  fun testDatasourceExtensions() {
+    completeSelected(
+      """
+          datasource db {
+            provider   = "postgresql"
+            url        = env("DATABASE_URL")
+            <caret>
+          }
+      """.trimIndent(), """
+          datasource db {
+            provider   = "postgresql"
+            url        = env("DATABASE_URL")
+            extensions = [<caret>]
+          }
+      """.trimIndent(),
+      "extensions"
+    )
   }
 
   fun testGeneratorField() {
