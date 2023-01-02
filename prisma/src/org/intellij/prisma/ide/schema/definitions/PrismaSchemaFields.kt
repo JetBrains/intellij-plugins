@@ -6,7 +6,7 @@ import org.intellij.prisma.ide.schema.PrismaSchemaRef
 import org.intellij.prisma.ide.schema.schema
 import org.intellij.prisma.ide.schema.types.PRISMA_BINARY_TARGETS
 import org.intellij.prisma.ide.schema.types.PrismaDatasourceType
-import org.intellij.prisma.ide.schema.types.PrismaPreviewFeatures
+import org.intellij.prisma.ide.schema.types.PrismaPreviewFeature
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
 
@@ -127,7 +127,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
       documentation = "Enables preview feature flags."
       type = "String[]"
 
-      PrismaPreviewFeatures.values().forEach {
+      PrismaPreviewFeature.values().forEach {
         variant {
           label = it.presentation
           type = PrimitiveTypes.STRING
