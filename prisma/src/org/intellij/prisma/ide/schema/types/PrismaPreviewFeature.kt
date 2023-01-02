@@ -3,7 +3,7 @@ package org.intellij.prisma.ide.schema.types
 
 import com.intellij.openapi.util.text.StringUtil
 
-enum class PrismaPreviewFeatures {
+enum class PrismaPreviewFeature {
   Deno,
   FullTextSearch,
   FullTextIndex,
