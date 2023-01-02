@@ -13,15 +13,15 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testDatasourceProvider() {
     val lookupElements = completeSelected(
       """
-                datasource db {
-                  provider = <caret>
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = <caret>
+          }
+      """.trimIndent(),
       """
-                datasource db {
-                  provider = "sqlserver"
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "sqlserver"
+          }
+      """.trimIndent(),
       "\"sqlserver\""
     )
     val element = PrismaSchemaProvider
@@ -34,15 +34,15 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testDatasourceProviderInLiteral() {
     completeSelected(
       """
-                datasource db {
-                  provider = "sql<caret>"
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "sql<caret>"
+          }
+      """.trimIndent(),
       """
-                datasource db {
-                  provider = "sqlite"
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "sqlite"
+          }
+      """.trimIndent(),
       "sqlite"
     )
   }
@@ -50,17 +50,17 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testDatasourceUrlFunction() {
     val lookupElements = completeSelected(
       """
-                datasource db {
-                  provider = "postgresql"
-                  url = <caret>
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+            url = <caret>
+          }
+      """.trimIndent(),
       """
-                datasource db {
-                  provider = "postgresql"
-                  url = env("<caret>")
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+            url = env("<caret>")
+          }
+      """.trimIndent(),
       "env"
     )
 
@@ -71,10 +71,10 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testDatasourceUrlFunctionSkipInQuotes() {
     noCompletion(
       """
-                datasource db {
-                  url = "<caret>"
-                }
-            """.trimIndent()
+          datasource db {
+            url = "<caret>"
+          }
+      """.trimIndent()
     )
   }
 
@@ -82,17 +82,17 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
     val item = quoted("DATABASE_URL")
     val lookupElements = completeSelected(
       """
-                datasource db {
-                  provider = "postgresql"
-                  url = env(<caret>)
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+            url = env(<caret>)
+          }
+      """.trimIndent(),
       """
-                datasource db {
-                  provider = "postgresql"
-                  url = env("DATABASE_URL")
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+            url = env("DATABASE_URL")
+          }
+      """.trimIndent(),
       item
     )
     assertSameElements(lookupElements.strings, item)
@@ -102,33 +102,51 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
     val item = "DATABASE_URL"
     completeSelected(
       """
-                datasource db {
-                  provider = "postgresql"
-                  url = env("<caret>")
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+            url = env("<caret>")
+          }
+      """.trimIndent(),
       """
-                datasource db {
-                  provider = "postgresql"
-                  url = env("DATABASE_URL")
-                }
-            """.trimIndent(),
+          datasource db {
+            provider = "postgresql"
+            url = env("DATABASE_URL")
+          }
+      """.trimIndent(),
       item
+    )
+  }
+
+  fun testDatasourceRelationMode() {
+    completeSelected(
+      """
+          datasource db {
+            provider = "postgresql"
+            relationMode = <caret>
+          }
+      """.trimIndent(),
+      """
+          datasource db {
+            provider = "postgresql"
+            relationMode = "prisma"
+          }
+      """.trimIndent(),
+      "\"prisma\""
     )
   }
 
   fun testGeneratorPreviewFeatures() {
     completeSelected(
       """
-                generator client {
-                  previewFeatures = [<caret>]
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = [<caret>]
+          }
+      """.trimIndent(),
       """
-                generator client {
-                  previewFeatures = ["fullTextIndex"]
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = ["fullTextIndex"]
+          }
+      """.trimIndent(),
       quoted("fullTextIndex"),
     )
   }
@@ -136,15 +154,15 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testGeneratorPreviewFeaturesLastItem() {
     val lookupElements = completeSelected(
       """
-                generator client {
-                  previewFeatures = ["fullTextIndex", <caret>]
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = ["fullTextIndex", <caret>]
+          }
+      """.trimIndent(),
       """
-                generator client {
-                  previewFeatures = ["fullTextIndex", "fullTextSearch"]
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = ["fullTextIndex", "fullTextSearch"]
+          }
+      """.trimIndent(),
       quoted("fullTextSearch"),
     )
 
@@ -154,15 +172,15 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testGeneratorPreviewFeaturesCompleteUnquoted() {
     completeSelected(
       """
-                generator client {
-                  previewFeatures = [full<caret>]
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = [full<caret>]
+          }
+      """.trimIndent(),
       """
-                generator client {
-                  previewFeatures = ["fullTextIndex"]
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = ["fullTextIndex"]
+          }
+      """.trimIndent(),
       quoted("fullTextIndex"),
     )
   }
@@ -170,41 +188,41 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testGeneratorPreviewFeaturesOnlyInList() {
     noCompletion(
       """
-                generator client {
-                  previewFeatures = <caret>
-                }
-            """.trimIndent(),
+          generator client {
+            previewFeatures = <caret>
+          }
+      """.trimIndent(),
     )
   }
 
   fun testGeneratorPreviewFeaturesNotAfterComma() {
     noCompletion(
       """
-                generator client {
-                  provider = "prisma-client-js"
-                  previewFeatures = ["referentialIntegrity", "filteredRelationCount"<caret>]
-                  engineType = "binary"
-                }
-            """.trimIndent(),
+          generator client {
+            provider = "prisma-client-js"
+            previewFeatures = ["referentialIntegrity", "filteredRelationCount"<caret>]
+            engineType = "binary"
+          }
+      """.trimIndent(),
     )
   }
 
   fun testGeneratorPreviewFeaturesBetweenCommaAndValue() {
     completeSelected(
       """
-                generator client {
-                  provider = "prisma-client-js"
-                  previewFeatures = ["referentialIntegrity", <caret>"filteredRelationCount"]
-                  engineType = "binary"
-                }
-            """.trimIndent(),
+          generator client {
+            provider = "prisma-client-js"
+            previewFeatures = ["referentialIntegrity", <caret>"filteredRelationCount"]
+            engineType = "binary"
+          }
+      """.trimIndent(),
       """
-                generator client {
-                  provider = "prisma-client-js"
-                  previewFeatures = ["referentialIntegrity", "fullTextIndex""filteredRelationCount"]
-                  engineType = "binary"
-                }
-            """.trimIndent(),
+          generator client {
+            provider = "prisma-client-js"
+            previewFeatures = ["referentialIntegrity", "fullTextIndex""filteredRelationCount"]
+            engineType = "binary"
+          }
+      """.trimIndent(),
       quoted("fullTextIndex")
     )
   }
@@ -212,19 +230,19 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
   fun testGeneratorPreviewFeaturesAtStart() {
     val lookupElements = completeSelected(
       """
-                generator client {
-                  provider = "prisma-client-js"
-                  previewFeatures = [<caret>"referentialIntegrity", "filteredRelationCount"]
-                  engineType = "binary"
-                }
-            """.trimIndent(),
+          generator client {
+            provider = "prisma-client-js"
+            previewFeatures = [<caret>"referentialIntegrity", "filteredRelationCount"]
+            engineType = "binary"
+          }
+      """.trimIndent(),
       """
-                generator client {
-                  provider = "prisma-client-js"
-                  previewFeatures = ["fullTextIndex""referentialIntegrity", "filteredRelationCount"]
-                  engineType = "binary"
-                }
-            """.trimIndent(),
+          generator client {
+            provider = "prisma-client-js"
+            previewFeatures = ["fullTextIndex""referentialIntegrity", "filteredRelationCount"]
+            engineType = "binary"
+          }
+      """.trimIndent(),
       quoted("fullTextIndex")
     )
     assertDoesntContain(
