@@ -126,10 +126,10 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
             """.trimIndent(),
       """
                 generator client {
-                  previewFeatures = ["FullTextIndex"]
+                  previewFeatures = ["fullTextIndex"]
                 }
             """.trimIndent(),
-      quoted("FullTextIndex"),
+      quoted("fullTextIndex"),
     )
   }
 
@@ -137,33 +137,33 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
     val lookupElements = completeSelected(
       """
                 generator client {
-                  previewFeatures = ["FullTextIndex", <caret>]
+                  previewFeatures = ["fullTextIndex", <caret>]
                 }
             """.trimIndent(),
       """
                 generator client {
-                  previewFeatures = ["FullTextIndex", "FullTextSearch"]
+                  previewFeatures = ["fullTextIndex", "fullTextSearch"]
                 }
             """.trimIndent(),
-      quoted("FullTextSearch"),
+      quoted("fullTextSearch"),
     )
 
-    assertDoesntContain(lookupElements.strings, quoted("FullTextIndex"))
+    assertDoesntContain(lookupElements.strings, quoted("fullTextIndex"))
   }
 
   fun testGeneratorPreviewFeaturesCompleteUnquoted() {
     completeSelected(
       """
                 generator client {
-                  previewFeatures = [Full<caret>]
+                  previewFeatures = [full<caret>]
                 }
             """.trimIndent(),
       """
                 generator client {
-                  previewFeatures = ["FullTextIndex"]
+                  previewFeatures = ["fullTextIndex"]
                 }
             """.trimIndent(),
-      quoted("FullTextIndex"),
+      quoted("fullTextIndex"),
     )
   }
 
@@ -182,7 +182,7 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
       """
                 generator client {
                   provider = "prisma-client-js"
-                  previewFeatures = ["ReferentialIntegrity", "FilteredRelationCount"<caret>]
+                  previewFeatures = ["referentialIntegrity", "filteredRelationCount"<caret>]
                   engineType = "binary"
                 }
             """.trimIndent(),
@@ -194,18 +194,18 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
       """
                 generator client {
                   provider = "prisma-client-js"
-                  previewFeatures = ["ReferentialIntegrity", <caret>"FilteredRelationCount"]
+                  previewFeatures = ["referentialIntegrity", <caret>"filteredRelationCount"]
                   engineType = "binary"
                 }
             """.trimIndent(),
       """
                 generator client {
                   provider = "prisma-client-js"
-                  previewFeatures = ["ReferentialIntegrity", "FullTextIndex""FilteredRelationCount"]
+                  previewFeatures = ["referentialIntegrity", "fullTextIndex""filteredRelationCount"]
                   engineType = "binary"
                 }
             """.trimIndent(),
-      quoted("FullTextIndex")
+      quoted("fullTextIndex")
     )
   }
 
@@ -214,23 +214,23 @@ class PrismaValuesCompletionTest : PrismaCompletionTestBase() {
       """
                 generator client {
                   provider = "prisma-client-js"
-                  previewFeatures = [<caret>"ReferentialIntegrity", "FilteredRelationCount"]
+                  previewFeatures = [<caret>"referentialIntegrity", "filteredRelationCount"]
                   engineType = "binary"
                 }
             """.trimIndent(),
       """
                 generator client {
                   provider = "prisma-client-js"
-                  previewFeatures = ["FullTextIndex""ReferentialIntegrity", "FilteredRelationCount"]
+                  previewFeatures = ["fullTextIndex""referentialIntegrity", "filteredRelationCount"]
                   engineType = "binary"
                 }
             """.trimIndent(),
-      quoted("FullTextIndex")
+      quoted("fullTextIndex")
     )
     assertDoesntContain(
       lookupElements.strings,
-      quoted("ReferentialIntegrity"),
-      quoted("FilteredRelationCount")
+      quoted("referentialIntegrity"),
+      quoted("filteredRelationCount")
     )
   }
 }
