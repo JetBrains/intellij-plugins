@@ -72,10 +72,6 @@ object PrismaConstants {
     val ALL = setOf(ID, MAP, UNIQUE, DEFAULT, RELATION, UPDATED_AT, IGNORE)
   }
 
-  object PreviewFeatures {
-    const val FULLTEXT_INDEX = "fulltextindex"
-  }
-
   object DatasourceFields {
     const val PROVIDER = "provider"
     const val URL = "url"

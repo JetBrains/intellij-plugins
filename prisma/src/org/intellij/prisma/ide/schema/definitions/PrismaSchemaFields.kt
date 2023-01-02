@@ -4,28 +4,10 @@ import org.intellij.prisma.ide.completion.PrismaInsertHandler
 import org.intellij.prisma.ide.schema.PrismaSchemaKind
 import org.intellij.prisma.ide.schema.PrismaSchemaRef
 import org.intellij.prisma.ide.schema.schema
+import org.intellij.prisma.ide.schema.types.PRISMA_BINARY_TARGETS
+import org.intellij.prisma.ide.schema.types.PrismaPreviewFeatures
 import org.intellij.prisma.lang.PrismaConstants.Functions
 import org.intellij.prisma.lang.PrismaConstants.PrimitiveTypes
-
-private val BINARY_TARGETS = setOf(
-  "native",
-
-  "darwin",
-  "windows",
-  "linux-musl",
-
-  "debian-openssl-1.0.x",
-  "debian-openssl-1.1.x",
-  "debian-openssl-3.0.x",
-
-  "rhel-openssl-1.0.x",
-  "rhel-openssl-1.1.x",
-  "rhel-openssl-3.0.x",
-
-  "linux-arm64-openssl-1.0.x",
-  "linux-arm64-openssl-1.1.x",
-  "linux-arm64-openssl-3.0.x"
-)
 
 val PRISMA_SCHEMA_FIELDS = schema {
   group(PrismaSchemaKind.DATASOURCE_FIELD) {
@@ -116,7 +98,7 @@ val PRISMA_SCHEMA_FIELDS = schema {
         "Specifies the OS on which the Prisma Client will run to ensure binary compatibility of the query engine."
       type = "String[]"
 
-      BINARY_TARGETS.forEach {
+      PRISMA_BINARY_TARGETS.forEach {
         variant {
           label = it
           type = PrimitiveTypes.STRING
@@ -128,37 +110,11 @@ val PRISMA_SCHEMA_FIELDS = schema {
       documentation = "Enables preview feature flags."
       type = "String[]"
 
-      variant {
-        label = "ReferentialIntegrity"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "InteractiveTransactions"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "FullTextSearch"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "FullTextIndex"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "Tracing"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "Metrics"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "OrderByNulls"
-        type = PrimitiveTypes.STRING
-      }
-      variant {
-        label = "FilteredRelationCount"
-        type = PrimitiveTypes.STRING
+      PrismaPreviewFeatures.values().forEach {
+        variant {
+          label = it.presentation
+          type = PrimitiveTypes.STRING
+        }
       }
     }
     element {
