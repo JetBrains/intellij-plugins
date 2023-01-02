@@ -48,7 +48,7 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
       "CodeUri", "DeadLetterQueue", "DeploymentPreference", "Description", "Environment", "EphemeralStorage",
       "EventInvokeConfig", "Events", "FileSystemConfigs", "FunctionName", "FunctionUrlConfig", "ImageConfig", "ImageUri",
       "InlineCode", "KmsKeyArn", "Layers", "MemorySize", "PackageType", "PermissionsBoundary", "Policies",
-      "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "Tags", "Timeout", "Tracing",
+      "ProvisionedConcurrencyConfig", "ReservedConcurrentExecutions", "Role", "Tags", "SnapStart", "Timeout", "Tracing",
       "VersionDescription", "VpcConfig"
     )
 
@@ -57,14 +57,37 @@ class YamlCompletionTest : CodeInsightFixtureTestCase<ModuleFixtureBuilder<Modul
 
   fun testServerless2() {
     val types = arrayOf(
-      "AWS::Serverless::Api", "AWS::Serverless::Application", "AWS::Serverless::Function", "AWS::Serverless::HttpApi",
-      "AWS::Serverless::LayerVersion", "AWS::Serverless::SimpleTable", "AWS::Serverless::StateMachine"
+      "AWS::Serverless::Api",
+      "AWS::Serverless::Application",
+      "AWS::Serverless::Function",
+      "AWS::Serverless::HttpApi",
+      "AWS::Serverless::LayerVersion",
+      "AWS::Serverless::SimpleTable",
+      "AWS::Serverless::StateMachine",
+      "AWS::EMRServerless::Application",
+      "AWS::RedshiftServerless::Namespace",
+      "AWS::RedshiftServerless::Workgroup",
+      "AWS::OpenSearchServerless::AccessPolicy",
+      "AWS::OpenSearchServerless::Collection",
+      "AWS::OpenSearchServerless::SecurityConfig",
+      "AWS::OpenSearchServerless::SecurityPolicy",
+      "AWS::OpenSearchServerless::VpcEndpoint"
     )
 
     checkBasicCompletion("serverless_2.yaml", *types)
   }
 
-  fun testServerless3() = checkBasicCompletion("serverless_3.yaml")
+  fun testServerless3() {
+    checkBasicCompletion("serverless_3.yaml",
+                         "AWS::EMRServerless::Application",
+                         "AWS::RedshiftServerless::Namespace",
+                         "AWS::RedshiftServerless::Workgroup",
+                         "AWS::OpenSearchServerless::AccessPolicy",
+                         "AWS::OpenSearchServerless::Collection",
+                         "AWS::OpenSearchServerless::SecurityConfig",
+                         "AWS::OpenSearchServerless::SecurityPolicy",
+                         "AWS::OpenSearchServerless::VpcEndpoint")
+  }
 
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
     myFixture.configureByFiles(fileName)
