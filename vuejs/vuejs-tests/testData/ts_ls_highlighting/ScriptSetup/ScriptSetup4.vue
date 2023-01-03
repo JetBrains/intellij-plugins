@@ -1,12 +1,12 @@
-<script>
-import {defineComponent} from "vue"
-const foo = 123
+<script lang='ts'>
+import {defineComponent} from "vue";
+const <error>foo</error> = 123;
 export default defineComponent({
   props: {
     a: Boolean
   }
-})
-<error descr="Unresolved variable or type bar">bar</error> = 234;
+});
+<error>bar</error> = 234;
 </script>
 
 <script setup lang='ts'>
@@ -20,6 +20,7 @@ var bar = 123;
 <error descr="TS2588: Cannot assign to 'foo' because it is a constant.">foo</error> = 12
 
 </script>
+
 <template>
   <MyComponent :count="12" :bar="'foo'"/>
   <<warning descr="Unknown html tag MyComponents">MyComponents</warning>/>
