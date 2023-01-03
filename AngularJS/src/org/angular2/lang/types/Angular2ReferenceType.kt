@@ -1,132 +1,111 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.types;
+package org.angular2.lang.types
 
-import com.intellij.javascript.web.js.WebJSTypesUtil;
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
-import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopeUtil;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ObjectUtils;
-import one.util.streamex.StreamEx;
-import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
-import org.angular2.entities.Angular2ComponentLocator;
-import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
-import org.angular2.lang.html.psi.Angular2HtmlReference;
-import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.javascript.web.js.WebJSTypesUtil.getHtmlElementClassType
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScopeUtil
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
+import org.angular2.codeInsight.Angular2DeclarationsScope
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
+import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
+import org.angular2.entities.Angular2ComponentLocator.findComponentClass
+import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
+import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.html.psi.Angular2HtmlAttrVariable
+import org.angular2.lang.html.psi.Angular2HtmlReference
+import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl
 
-import static com.intellij.psi.util.CachedValueProvider.Result.create;
-import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
-import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
-import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
-import static org.angular2.lang.types.Angular2TypeUtils.*;
-
-public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVariableImpl> {
-
-  public static SearchScope getUseScope(Angular2HtmlAttrVariableImpl variable) {
-    final JSClass
-      clazz = Angular2ComponentLocator.findComponentClass(variable);
-    LocalSearchScope localScope;
-    if (clazz != null) {
-      localScope = new LocalSearchScope(new PsiElement[]{clazz, variable.getContainingFile()});
-    }
-    else {
-      localScope = new LocalSearchScope(variable.getContainingFile());
-    }
-    return GlobalSearchScope.filesScope(variable.getProject(), GlobalSearchScopeUtil.getLocalScopeFiles(localScope));
+class Angular2ReferenceType : Angular2BaseType<Angular2HtmlAttrVariableImpl> {
+  constructor(variable: Angular2HtmlAttrVariableImpl) : super(variable, Angular2HtmlAttrVariableImpl::class.java) {
+    assert(variable.kind == Angular2HtmlAttrVariable.Kind.REFERENCE) { variable }
   }
 
-  public Angular2ReferenceType(@NotNull Angular2HtmlAttrVariableImpl variable) {
-    super(variable, Angular2HtmlAttrVariableImpl.class);
-    assert variable.getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE : variable;
+  private constructor(source: JSTypeSource) : super(source, Angular2HtmlAttrVariableImpl::class.java) {
+    assert(sourceElement.kind == Angular2HtmlAttrVariable.Kind.REFERENCE) { sourceElement }
   }
 
-  protected Angular2ReferenceType(@NotNull JSTypeSource source) {
-    super(source, Angular2HtmlAttrVariableImpl.class);
-    assert getSourceElement().getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE : getSourceElement();
+  override val typeOfText: String?
+    get() = PsiTreeUtil.getContextOfType(sourceElement, XmlAttribute::class.java)?.name
+
+  override fun copyWithNewSource(source: JSTypeSource): JSType {
+    return Angular2ReferenceType(source)
   }
 
-  @Override
-  protected @Nullable String getTypeOfText() {
-    return doIfNotNull(PsiTreeUtil.getContextOfType(getSourceElement(), XmlAttribute.class), XmlAttribute::getName);
-  }
-
-  @Override
-  protected @NotNull JSType copyWithNewSource(@NotNull JSTypeSource source) {
-    return new Angular2ReferenceType(source);
-  }
-
-  @Override
-  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
-    Angular2HtmlReference reference = getReferenceDefinitionAttribute();
-    if (reference == null) {
-      return null;
-    }
-    XmlTag tag = reference.getParent();
+  override fun resolveType(context: JSTypeSubstitutionContext): JSType? {
+    val reference = referenceDefinitionAttribute ?: return null
+    val tag = reference.parent
     if (tag != null) {
-      Angular2DeclarationsScope scope = new Angular2DeclarationsScope(reference);
-      String exportName = reference.getValue();
-      boolean hasExport = exportName != null && !exportName.isEmpty();
-      return StreamEx.of(new Angular2ApplicableDirectivesProvider(tag).getMatched())
-        .filter(directive -> scope.contains(directive)
-                             && hasExport ? directive.getExportAsList().contains(exportName)
-                                          : directive.isComponent())
-        .map(directive -> directive.getTypeScriptClass())
-        .nonNull()
-        .map(TypeScriptClass::getJSType)
-        .findFirst()
-        .orElseGet(() -> hasExport ? null
-                                   : isTemplateTag(tag)
-                                     ? getTemplateRefType(Angular2ComponentLocator.findComponentClass(tag),
-                                                          getNgTemplateTagContextType(tag))
-                                     : WebJSTypesUtil.getHtmlElementClassType(createJSTypeSourceForXmlElement(tag), tag.getName()));
+      val scope = Angular2DeclarationsScope(reference)
+      val exportName = reference.value
+      val hasExport = !exportName.isNullOrEmpty()
+      return Angular2ApplicableDirectivesProvider(tag).matched
+               .asSequence()
+               .filter { directive ->
+                 if (scope.contains(directive) && hasExport)
+                   directive.exportAsList.contains(exportName)
+                 else
+                   directive.isComponent
+               }
+               .mapNotNull { directive -> directive.typeScriptClass?.jsType }
+               .firstOrNull()
+             ?: when {
+               hasExport -> null
+               isTemplateTag(tag) -> getTemplateRefType(findComponentClass(tag), Angular2TypeUtils.getNgTemplateTagContextType(tag))
+               else -> getHtmlElementClassType(Angular2TypeUtils.createJSTypeSourceForXmlElement(tag), tag.name)
+             }
+
     }
-    return null;
+    return null
   }
 
-  private @Nullable Angular2HtmlReference getReferenceDefinitionAttribute() {
-    return (Angular2HtmlReference)PsiTreeUtil.findFirstParent(
-      getSourceElement(), Angular2HtmlReference.class::isInstance);
-  }
+  private val referenceDefinitionAttribute: Angular2HtmlReference?
+    get() = PsiTreeUtil.findFirstParent(sourceElement) { obj -> obj is Angular2HtmlReference } as Angular2HtmlReference?
 
-  private static @Nullable JSType getTemplateRefType(@Nullable PsiElement scope, @Nullable JSType contextType) {
-    return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
-      for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
-        if (!(module instanceof JSElement)) continue;
-        TypeScriptClass templateRefClass = ObjectUtils.tryCast(
-          JSResolveResult.resolve(
-            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module)),
-          TypeScriptClass.class);
-        if (templateRefClass != null
-            && templateRefClass.getTypeParameters().length == 1) {
-          return create(templateRefClass, PsiModificationTracker.MODIFICATION_COUNT);
-        }
+  companion object {
+    fun getUseScope(variable: Angular2HtmlAttrVariableImpl): SearchScope {
+      val clazz: JSClass? = findComponentClass(variable)
+      val localScope = if (clazz != null) {
+        LocalSearchScope(arrayOf<PsiElement>(clazz, variable.containingFile))
       }
-      return create(null, PsiModificationTracker.MODIFICATION_COUNT);
-    }), templateRefClass -> {
-      JSType baseType = templateRefClass.getJSType();
-      return new JSGenericTypeImpl(baseType.getSource(), baseType,
-                                   contextType != null ? contextType : JSAnyType.get(templateRefClass, true));
-    });
+      else {
+        LocalSearchScope(variable.containingFile)
+      }
+      return GlobalSearchScope.filesScope(variable.project, GlobalSearchScopeUtil.getLocalScopeFiles(localScope))
+    }
+
+    private fun getTemplateRefType(scope: PsiElement?, contextType: JSType?): JSType? {
+      return if (scope == null) null
+      else CachedValuesManager.getCachedValue(scope) {
+        for (module in JSFileReferencesUtil.resolveModuleReference(scope, Angular2LangUtil.ANGULAR_CORE_PACKAGE)) {
+          if (module !is JSElement) continue
+          val templateRefClass = JSResolveResult.resolve(ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, module)) as? TypeScriptClass
+          if (templateRefClass != null && templateRefClass.typeParameters.size == 1) {
+            return@getCachedValue create(templateRefClass, PsiModificationTracker.MODIFICATION_COUNT)
+          }
+        }
+        create(null, PsiModificationTracker.MODIFICATION_COUNT)
+      }?.let { templateRefClass ->
+        val baseType = templateRefClass.jsType
+        JSGenericTypeImpl(baseType.source, baseType, contextType ?: JSAnyType.get(templateRefClass, true))
+      }
+    }
   }
 }

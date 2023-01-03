@@ -1,40 +1,27 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.selector;
+package org.angular2.lang.selector
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.SmartList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
+import java.util.function.Consumer
 
-import java.util.*;
-import java.util.function.BiConsumer;
-
-import static com.intellij.util.containers.ContainerUtil.concat;
-
-public class Angular2SelectorMatcher<T> {
-
-  public static <T> Angular2SelectorMatcher<T> createNotMatcher(List<Angular2DirectiveSimpleSelector> notSelectors) {
-    Angular2SelectorMatcher<T> notMatcher = new Angular2SelectorMatcher<>();
-    notMatcher.addSelectables(notSelectors, null);
-    return notMatcher;
-  }
-
-  private final Map<String, List<SelectorContext<T>>> _elementMap = new HashMap<>();
-  private final Map<String, Angular2SelectorMatcher<T>> _elementPartialMap = new HashMap<>();
-  private final Map<String, List<SelectorContext<T>>> _classMap = new HashMap<>();
-  private final Map<String, Angular2SelectorMatcher<T>> _classPartialMap = new HashMap<>();
-  private final Map<String, Map<String, List<SelectorContext<T>>>> _attrValueMap = new HashMap<>();
-  private final Map<String, Map<String, Angular2SelectorMatcher<T>>> _attrValuePartialMap = new HashMap<>();
-  private final List<SelectorListContext> _listContexts = new ArrayList<>();
-
-  public void addSelectables(@NotNull List<Angular2DirectiveSimpleSelector> cssSelectors, @Nullable T context) {
-    SelectorListContext listContext = null;
-    if (cssSelectors.size() > 1) {
-      listContext = new SelectorListContext(cssSelectors);
-      this._listContexts.add(listContext);
+class Angular2SelectorMatcher<T : Any> {
+  private val _elementMap: MutableMap<String, MutableList<SelectorContext<T>>> = HashMap()
+  private val _elementPartialMap: MutableMap<String, Angular2SelectorMatcher<T>> = HashMap()
+  private val _classMap: MutableMap<String, MutableList<SelectorContext<T>>> = HashMap()
+  private val _classPartialMap: MutableMap<String, Angular2SelectorMatcher<T>> = HashMap()
+  private val _attrValueMap: MutableMap<String?, MutableMap<String, MutableList<SelectorContext<T>>>> = HashMap()
+  private val _attrValuePartialMap: MutableMap<String?, MutableMap<String, Angular2SelectorMatcher<T>>> = HashMap()
+  private val _listContexts: MutableList<SelectorListContext> = ArrayList()
+  fun addSelectables(cssSelectors: List<Angular2DirectiveSimpleSelector>, context: T?) {
+    var listContext: SelectorListContext? = null
+    if (cssSelectors.size > 1) {
+      listContext = SelectorListContext(cssSelectors)
+      _listContexts.add(listContext)
     }
-    for (Angular2DirectiveSimpleSelector selector : cssSelectors) {
-      _addSelectable(selector, context, listContext);
+    for (selector in cssSelectors) {
+      addSelectable(selector, context, listContext)
     }
   }
 
@@ -42,65 +29,62 @@ public class Angular2SelectorMatcher<T> {
    * Add an object that can be found later on by calling `match`.
    *
    * @param cssSelector  A css selector
-   * @param callbackCtxt An opaque object that will be given to the callback of the `match` function
+   * @param callbackCtx An opaque object that will be given to the callback of the `match` function
    */
-  private void _addSelectable(@NotNull Angular2DirectiveSimpleSelector cssSelector,
-                              @Nullable T callbackCtxt,
-                              @Nullable SelectorListContext listContext) {
-    Angular2SelectorMatcher<T> matcher = this;
-    String element = cssSelector.element;
-    List<String> classNames = cssSelector.classNames;
-    List<String> attrs = cssSelector.attrs;
-    SelectorContext<T> selectable = new SelectorContext<>(cssSelector, callbackCtxt, listContext);
-
+  private fun addSelectable(cssSelector: Angular2DirectiveSimpleSelector,
+                            callbackCtx: T?,
+                            listContext: SelectorListContext?) {
+    var matcher: Angular2SelectorMatcher<T> = this
+    val element = cssSelector.elementName
+    val classNames = cssSelector.classNames
+    val attrs = cssSelector.attrs
+    val selectable = SelectorContext(cssSelector, callbackCtx, listContext)
     if (StringUtil.isNotEmpty(element)) {
-      boolean isTerminal = attrs.isEmpty() && classNames.isEmpty();
+      val isTerminal = attrs.isEmpty() && classNames.isEmpty()
       if (isTerminal) {
-        _addTerminal(matcher._elementMap, element, selectable);
+        addTerminal(matcher._elementMap, element!!, selectable)
       }
       else {
-        matcher = _addPartial(matcher._elementPartialMap, element);
+        matcher = addPartial(matcher._elementPartialMap, element!!)
       }
     }
-
-    for (int i = 0; i < classNames.size(); i++) {
-      boolean isTerminal = attrs.size() == 0 && i == classNames.size() - 1;
-      String className = classNames.get(i);
+    for (i in classNames.indices) {
+      val isTerminal = attrs.size == 0 && i == classNames.size - 1
+      val className = classNames[i]
       if (isTerminal) {
-        _addTerminal(matcher._classMap, className, selectable);
+        addTerminal(matcher._classMap, className, selectable)
       }
       else {
-        matcher = _addPartial(matcher._classPartialMap, className);
+        matcher = addPartial(matcher._classPartialMap, className)
       }
     }
-
-    for (int i = 0; i < attrs.size(); i += 2) {
-      boolean isTerminal = i == attrs.size() - 2;
-      String name = attrs.get(i);
-      String value = attrs.get(i + 1);
+    var i = 0
+    while (i < attrs.size) {
+      val isTerminal = i == attrs.size - 2
+      val name = attrs[i]
+      val value = attrs[i + 1]
       if (isTerminal) {
-        Map<String, List<SelectorContext<T>>> terminalValuesMap
-          = matcher._attrValueMap.computeIfAbsent(name, k -> new HashMap<>());
-        _addTerminal(terminalValuesMap, value, selectable);
+        val terminalValuesMap = matcher._attrValueMap.computeIfAbsent(name) { HashMap() }
+        addTerminal(terminalValuesMap, value, selectable)
       }
       else {
-        Map<String, Angular2SelectorMatcher<T>> partialValuesMap
-          = matcher._attrValuePartialMap.computeIfAbsent(name, k -> new HashMap<>());
-        matcher = _addPartial(partialValuesMap, value);
+        val partialValuesMap = matcher._attrValuePartialMap.computeIfAbsent(name) { HashMap() }
+        matcher = addPartial(partialValuesMap, value)
       }
+      i += 2
     }
   }
 
-  private void _addTerminal(@NotNull Map<String, List<SelectorContext<T>>> map,
-                            @NotNull String name,
-                            @NotNull SelectorContext<T> selectable) {
-    List<SelectorContext<T>> terminalList = map.computeIfAbsent(name, k -> new SmartList<>());
-    terminalList.add(selectable);
+  private fun addTerminal(map: MutableMap<String, MutableList<SelectorContext<T>>>,
+                          name: String,
+                          selectable: SelectorContext<T>) {
+    val terminalList = map.computeIfAbsent(name) { SmartList() }
+    terminalList.add(selectable)
   }
 
-  private Angular2SelectorMatcher<T> _addPartial(@NotNull Map<String, Angular2SelectorMatcher<T>> map,
-                                                 @NotNull String name) {
-    return map.computeIfAbsent(name, k -> new Angular2SelectorMatcher<>());
+  private fun addPartial(map: MutableMap<String, Angular2SelectorMatcher<T>>,
+                         name: String): Angular2SelectorMatcher<T> {
+    return map.computeIfAbsent(name) { Angular2SelectorMatcher() }
   }
 
   /**
@@ -111,117 +95,110 @@ public class Angular2SelectorMatcher<T> {
    * @param matchedCallback This callback will be called with the object handed into `addSelectable`
    * @return boolean true if a match was found
    */
-  public boolean match(@NotNull Angular2DirectiveSimpleSelector cssSelector,
-                       @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> matchedCallback) {
-    final String element = cssSelector.element;
-    final List<String> classNames = cssSelector.classNames;
-    final List<String> attrs = cssSelector.attrs;
-
-    _listContexts.forEach(l -> l.alreadyMatched = false);
-
-    boolean result = this._matchTerminal(this._elementMap, element, cssSelector, matchedCallback);
-    result |= this._matchPartial(this._elementPartialMap, element, cssSelector, matchedCallback);
-
-    for (String className : classNames) {
-      result |= this._matchTerminal(this._classMap, className, cssSelector, matchedCallback);
-      result |= this._matchPartial(this._classPartialMap, className, cssSelector, matchedCallback);
+  fun match(cssSelector: Angular2DirectiveSimpleSelector,
+            matchedCallback: ((Angular2DirectiveSimpleSelector, T?) -> Unit)?): Boolean {
+    val element = cssSelector.elementName
+    val classNames = cssSelector.classNames
+    val attrs = cssSelector.attrs
+    _listContexts.forEach(Consumer { l: SelectorListContext -> l.alreadyMatched = false })
+    var result = matchTerminal(_elementMap, element, cssSelector, matchedCallback)
+    result = result or matchPartial(_elementPartialMap, element, cssSelector, matchedCallback)
+    for (className in classNames) {
+      result = result or matchTerminal(_classMap, className, cssSelector, matchedCallback)
+      result = result or matchPartial(_classPartialMap, className, cssSelector, matchedCallback)
     }
-
-    for (int i = 0; i < attrs.size(); i += 2) {
-      String name = attrs.get(i);
-      String value = attrs.get(i + 1);
-
-      Map<String, List<SelectorContext<T>>> terminalValuesMap = this._attrValueMap.get(name);
+    var i = 0
+    while (i < attrs.size) {
+      val name = attrs[i]
+      val value = attrs[i + 1]
+      val terminalValuesMap = _attrValueMap[name]
       if (StringUtil.isNotEmpty(value)) {
-        result |= this._matchTerminal(terminalValuesMap, "", cssSelector, matchedCallback);
+        result = result or matchTerminal(terminalValuesMap, "", cssSelector, matchedCallback)
       }
-      result |= this._matchTerminal(terminalValuesMap, value, cssSelector, matchedCallback);
-
-      Map<String, Angular2SelectorMatcher<T>> partialValuesMap = this._attrValuePartialMap.get(name);
+      result = result or matchTerminal(terminalValuesMap, value, cssSelector, matchedCallback)
+      val partialValuesMap = _attrValuePartialMap[name]
       if (StringUtil.isNotEmpty(value)) {
-        result |= this._matchPartial(partialValuesMap, "", cssSelector, matchedCallback);
+        result = result or matchPartial(partialValuesMap, "", cssSelector, matchedCallback)
       }
-      result |= this._matchPartial(partialValuesMap, value, cssSelector, matchedCallback);
+      result = result or matchPartial(partialValuesMap, value, cssSelector, matchedCallback)
+      i += 2
     }
-    return result;
+    return result
   }
 
-  private boolean _matchTerminal(@Nullable Map<String, List<SelectorContext<T>>> map,
-                                 @Nullable String name,
-                                 @NotNull Angular2DirectiveSimpleSelector cssSelector,
-                                 @Nullable BiConsumer<? super Angular2DirectiveSimpleSelector, ? super T> matchedCallback) {
+  private fun matchTerminal(map: Map<String, MutableList<SelectorContext<T>>>?,
+                            name: String?,
+                            cssSelector: Angular2DirectiveSimpleSelector,
+                            matchedCallback: ((Angular2DirectiveSimpleSelector, T?) -> Unit)?): Boolean {
     if (map == null || name == null) {
-      return false;
+      return false
     }
-
-    List<SelectorContext<T>> selectables = map.getOrDefault(name, Collections.emptyList());
-    List<SelectorContext<T>> starSelectables = map.getOrDefault("*", Collections.emptyList());
+    val selectables = map.getOrDefault(name, emptyList())
+    val starSelectables = map.getOrDefault("*", emptyList())
     if (selectables.isEmpty() && starSelectables.isEmpty()) {
-      return false;
+      return false
     }
-    boolean result = false;
-    for (SelectorContext<T> selectable : concat(selectables, starSelectables)) {
-      result = selectable.finalize(cssSelector, matchedCallback) || result;
+    var result = false
+    for (selectable in ContainerUtil.concat(selectables, starSelectables)) {
+      result = selectable.finalize(cssSelector, matchedCallback) || result
     }
-    return result;
+    return result
   }
 
-  private boolean _matchPartial(@Nullable Map<String, Angular2SelectorMatcher<T>> map,
-                                @Nullable String name,
-                                @NotNull Angular2DirectiveSimpleSelector cssSelector,
-                                @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> matchedCallback) {
+  private fun matchPartial(map: Map<String, Angular2SelectorMatcher<T>>?,
+                           name: String?,
+                           cssSelector: Angular2DirectiveSimpleSelector,
+                           matchedCallback: ((Angular2DirectiveSimpleSelector, T?) -> Unit)?): Boolean {
     if (map == null || name == null) {
-      return false;
+      return false
     }
-
-    Angular2SelectorMatcher<T> nestedSelector = map.get(name);
-    if (nestedSelector == null) {
-      return false;
-    }
+    val nestedSelector = map[name] ?: return false
     // TODO(perf): get rid of recursion and measure again
     // TODO(perf): don't pass the whole selector into the recursion,
     // but only the not processed parts
-    return nestedSelector.match(cssSelector, matchedCallback);
+    return nestedSelector.match(cssSelector, matchedCallback)
   }
 
-
-  private static class SelectorListContext {
-    public boolean alreadyMatched = false;
-    public final List<Angular2DirectiveSimpleSelector> selectors;
-
-    SelectorListContext(@NotNull List<Angular2DirectiveSimpleSelector> selectors) {
-      this.selectors = selectors;
-    }
+  private class SelectorListContext(val selectors: List<Angular2DirectiveSimpleSelector>) {
+    var alreadyMatched = false
   }
 
   // Store context to pass back selector and context when a selector is matched
-  private static class SelectorContext<T> {
-    public final List<Angular2DirectiveSimpleSelector> notSelectors;
-    public final Angular2DirectiveSimpleSelector selector;
-    public final T context;
-    public final SelectorListContext listContext;
+  private class SelectorContext<T : Any>(val selector: Angular2DirectiveSimpleSelector,
+                                         context: T?,
+                                         listContext: SelectorListContext?) {
+    val notSelectors: List<Angular2DirectiveSimpleSelector>
+    val context: T?
+    val listContext: SelectorListContext?
 
-    SelectorContext(@NotNull Angular2DirectiveSimpleSelector selector, @Nullable T context, @Nullable SelectorListContext listContext) {
-      this.notSelectors = selector.notSelectors;
-      this.selector = selector;
-      this.context = context;
-      this.listContext = listContext;
+    init {
+      notSelectors = selector.notSelectors
+      this.context = context
+      this.listContext = listContext
     }
 
-    boolean finalize(@NotNull Angular2DirectiveSimpleSelector cssSelector,
-                     @Nullable BiConsumer<? super Angular2DirectiveSimpleSelector, ? super T> callback) {
-      boolean result = true;
+    fun finalize(cssSelector: Angular2DirectiveSimpleSelector,
+                 callback: ((Angular2DirectiveSimpleSelector, T?) -> Unit)?): Boolean {
+      var result = true
       if (!notSelectors.isEmpty() && (listContext == null || !listContext.alreadyMatched)) {
-        Angular2SelectorMatcher<T> notMatcher = createNotMatcher(notSelectors);
-        result = !notMatcher.match(cssSelector, null);
+        val notMatcher = createNotMatcher<T>(notSelectors)
+        result = !notMatcher.match(cssSelector, null)
       }
-      if (result && callback != null && (this.listContext == null || !listContext.alreadyMatched)) {
+      if (result && callback != null && (listContext == null || !listContext.alreadyMatched)) {
         if (listContext != null) {
-          listContext.alreadyMatched = true;
+          listContext.alreadyMatched = true
         }
-        callback.accept(selector, context);
+        callback(selector, context)
       }
-      return result;
+      return result
+    }
+  }
+
+  companion object {
+    fun <T : Any> createNotMatcher(notSelectors: List<Angular2DirectiveSimpleSelector>): Angular2SelectorMatcher<T> {
+      val notMatcher = Angular2SelectorMatcher<T>()
+      notMatcher.addSelectables(notSelectors, null)
+      return notMatcher
     }
   }
 }

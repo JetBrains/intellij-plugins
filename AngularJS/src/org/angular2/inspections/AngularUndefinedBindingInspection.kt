@@ -18,7 +18,7 @@ import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.C
 import org.angular2.entities.Angular2Directive
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.Angular2Bundle
-import org.angular2.lang.Angular2Bundle.BUNDLE
+import org.angular2.lang.Angular2Bundle.Companion.BUNDLE
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
 import org.angular2.lang.html.parser.Angular2AttributeType.*

@@ -1,26 +1,27 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang;
+package org.angular2.lang
 
-import com.intellij.DynamicBundle;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.PropertyKey;
+import com.intellij.DynamicBundle
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.PropertyKey
+import java.util.function.Supplier
 
-import java.util.function.Supplier;
+class Angular2Bundle : DynamicBundle(BUNDLE) {
 
-public final class Angular2Bundle extends DynamicBundle {
-  @NonNls public static final String BUNDLE = "messages.Angular2Bundle";
-  private static final Angular2Bundle INSTANCE = new Angular2Bundle();
+  companion object {
+    const val BUNDLE: @NonNls String = "messages.Angular2Bundle"
+    private val INSTANCE: Angular2Bundle = Angular2Bundle()
 
-  private Angular2Bundle() { super(BUNDLE); }
+    @JvmStatic
+    fun message(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any): @Nls String {
+      return INSTANCE.getMessage(key, *params)
+    }
 
-  public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
-    return INSTANCE.getMessage(key, params);
-  }
-
-  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key,
-                                                              Object @NotNull ... params) {
-    return INSTANCE.getLazyMessage(key, params);
+    @JvmStatic
+    fun messagePointer(key: @PropertyKey(resourceBundle = BUNDLE) String,
+                       vararg params: Any): Supplier<String> {
+      return INSTANCE.getLazyMessage(key, *params)
+    }
   }
 }

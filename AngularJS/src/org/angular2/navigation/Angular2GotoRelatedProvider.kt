@@ -1,152 +1,125 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.navigation;
+package org.angular2.navigation
 
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.navigation.GotoRelatedItem;
-import com.intellij.navigation.GotoRelatedProvider;
-import com.intellij.openapi.util.NlsContexts.ListItem;
-import com.intellij.openapi.util.NlsContexts.Separator;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testIntegration.TestFinderHelper;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.SmartList;
-import org.angular2.Angular2InjectionUtils;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2ComponentLocator;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Module;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
+import com.intellij.navigation.GotoRelatedItem
+import com.intellij.navigation.GotoRelatedProvider
+import com.intellij.openapi.util.NlsContexts
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testIntegration.TestFinderHelper
+import com.intellij.util.SmartList
+import org.angular2.Angular2InjectionUtils.getFirstInjectedFile
+import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2ComponentLocator.findComponentClasses
+import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.Angular2LangUtil
+import org.jetbrains.annotations.Nls
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import static com.intellij.util.containers.ContainerUtil.*;
-
-public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
-
-  private static final int COMPONENT_INDEX = 1;
-  private static final int TEMPLATE_INDEX = 2;
-  private static final int TEST_INDEX = 3;
-  private static final int STYLES_INDEX_START = 4;
-  private static final int MODULE_INDEX = 5;
-
-  @Override
-  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
-    PsiFile file = psiElement.getContainingFile();
+class Angular2GotoRelatedProvider : GotoRelatedProvider() {
+  override fun getItems(psiElement: PsiElement): List<GotoRelatedItem> {
+    val file = psiElement.containingFile
     if (file == null || !Angular2LangUtil.isAngular2Context(file)) {
-      return Collections.emptyList();
+      return emptyList()
     }
-    List<TypeScriptClass> componentClasses = new SmartList<>();
+    val componentClasses: MutableList<TypeScriptClass> = SmartList()
     if (DialectDetector.isTypeScript(file)) {
-      addIfNotNull(componentClasses, PsiTreeUtil.getParentOfType(psiElement, TypeScriptClass.class));
+      PsiTreeUtil.getParentOfType(psiElement, TypeScriptClass::class.java)?.let { componentClasses.add(it) }
       if (componentClasses.isEmpty()) {
-        for (PsiElement el : TestFinderHelper.findClassesForTest(file)) {
-          if (el instanceof JSFile) {
-            componentClasses.addAll(PsiTreeUtil.getStubChildrenOfTypeAsList(el, TypeScriptClass.class));
+        for (el in TestFinderHelper.findClassesForTest(file)) {
+          if (el is JSFile) {
+            componentClasses.addAll(PsiTreeUtil.getStubChildrenOfTypeAsList(el, TypeScriptClass::class.java))
           }
         }
       }
     }
     else {
-      componentClasses.addAll(Angular2ComponentLocator.findComponentClasses(file));
+      componentClasses.addAll(findComponentClasses(file))
     }
-
-    PsiFile filter = ObjectUtils.notNull(
-      Angular2InjectionUtils.getFirstInjectedFile(PsiTreeUtil.getParentOfType(psiElement, JSExpression.class)),
-      file);
-
-    List<Angular2Component> components = mapNotNull(componentClasses, Angular2EntitiesProvider::getComponent);
-    return switch (components.size()) {
-      case 0 -> Collections.emptyList();
-      case 1 -> filter(getRelatedItems(components.get(0)),
-                       f -> !filter.equals(ObjectUtils.doIfNotNull(
-                         f.getElement(), PsiElement::getContainingFile)));
-      default -> map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGroupName()));
-    };
+    val filter = getFirstInjectedFile(PsiTreeUtil.getParentOfType(psiElement, JSExpression::class.java)) ?: file
+    val components = componentClasses.mapNotNull { Angular2EntitiesProvider.getComponent(it) }
+    return when (components.size) {
+      0 -> emptyList()
+      1 -> getRelatedItems(components[0]).filter { filter != it.element?.containingFile }
+      else -> components.map { GotoRelatedItem(it.typeScriptClass!!, groupName) }
+    }
   }
 
-  private static List<GotoRelatedItem> getRelatedItems(Angular2Component component) {
-    List<GotoRelatedItem> result = new SmartList<>();
-    TypeScriptClass cls = component.getTypeScriptClass();
-    if (cls != null && cls.getName() != null) {
-      result.add(new Angular2GoToRelatedItem(cls, COMPONENT_INDEX, false,
-                                             Angular2Bundle.message("angular.action.goto-related.component-class")));
-    }
-    PsiFile file = component.getTemplateFile();
-    if (file != null) {
-      result.add(new Angular2GoToRelatedItem(file, TEMPLATE_INDEX, true,
-                                             Angular2Bundle.message("angular.action.goto-related.template")));
-    }
-    boolean first = true;
-    int count = 1;
-    Collection<PsiElement> tests = TestFinderHelper.findTestsForClass(component.getSourceElement());
-    for (PsiElement el : tests) {
-      result.add(new Angular2GoToRelatedItem(el, first ? TEST_INDEX : -1, false,
-                                             Angular2Bundle.message("angular.action.goto-related.tests",
-                                                                    tests.size() == 1 ? "" : " " + count++)));
-      first = false;
+  private class Angular2GoToRelatedItem(element: PsiElement,
+                                        mnemonic: Int,
+                                        inlineable: Boolean,
+                                        private val myName: @NlsContexts.ListItem String?)
+    : GotoRelatedItem(element, groupName, if (mnemonic > 9) -1 else mnemonic) {
+
+    private val myContainerName: @Nls String?
+
+    init {
+      myContainerName = if (inlineable && InjectedLanguageManager.getInstance(element.project)
+          .getTopLevelFile(element) !== element.containingFile) Angular2Bundle.message("angular.action.goto-related.inline")
+      else null
     }
 
-    List<PsiFile> cssFiles = component.getCssFiles();
-    int mnemonic = STYLES_INDEX_START;
-    count = 1;
-    for (PsiFile cssFile : cssFiles) {
-      result.add(new Angular2GoToRelatedItem(cssFile, mnemonic++, true,
-                                             Angular2Bundle.message("angular.action.goto-related.styles",
-                                                                    cssFiles.size() == 1 ? "" : " " + count++)));
+    override fun getCustomName(): String? {
+      return myName
     }
-    first = true;
-    for (TypeScriptClass moduleClass : mapNotNull(component.getAllDeclaringModules(), Angular2Module::getTypeScriptClass)) {
-      if (moduleClass.getName() != null) {
-        result.add(new Angular2GoToRelatedItem(moduleClass, first ? MODULE_INDEX : -1, false,
-                                               Angular2Bundle.message("angular.action.goto-related.module")));
-        first = false;
+
+    override fun getCustomContainerName(): String? {
+      return myContainerName
+    }
+  }
+
+  companion object {
+    private const val COMPONENT_INDEX = 1
+    private const val TEMPLATE_INDEX = 2
+    private const val TEST_INDEX = 3
+    private const val STYLES_INDEX_START = 4
+    private const val MODULE_INDEX = 5
+    private fun getRelatedItems(component: Angular2Component): List<GotoRelatedItem> {
+      val result: MutableList<GotoRelatedItem> = SmartList()
+      val cls = component.typeScriptClass
+      if (cls != null && cls.name != null) {
+        result.add(Angular2GoToRelatedItem(cls, COMPONENT_INDEX, false,
+                                           Angular2Bundle.message("angular.action.goto-related.component-class")))
       }
+      val file = component.templateFile
+      if (file != null) {
+        result.add(Angular2GoToRelatedItem(file, TEMPLATE_INDEX, true,
+                                           Angular2Bundle.message("angular.action.goto-related.template")))
+      }
+      var first = true
+      var count = 1
+      val tests = TestFinderHelper.findTestsForClass(component.sourceElement)
+      for (el in tests) {
+        result.add(Angular2GoToRelatedItem(el, if (first) TEST_INDEX else -1, false,
+                                           Angular2Bundle.message("angular.action.goto-related.tests",
+                                                                  if (tests.size == 1) "" else " " + count++)))
+        first = false
+      }
+      val cssFiles = component.cssFiles
+      var mnemonic = STYLES_INDEX_START
+      count = 1
+      for (cssFile in cssFiles) {
+        result.add(Angular2GoToRelatedItem(cssFile, mnemonic++, true,
+                                           Angular2Bundle.message("angular.action.goto-related.styles",
+                                                                  if (cssFiles.size == 1) "" else " " + count++)))
+      }
+      first = true
+      for (moduleClass in component.allDeclaringModules.mapNotNull { it.typeScriptClass }) {
+        if (moduleClass.name != null) {
+          result.add(Angular2GoToRelatedItem(moduleClass, if (first) MODULE_INDEX else -1, false,
+                                             Angular2Bundle.message("angular.action.goto-related.module")))
+          first = false
+        }
+      }
+      return result
     }
-    return result;
-  }
 
-  private static @Separator String getGroupName() {
-    return Angular2Bundle.message("angular.action.goto-related.group-name");
-  }
-
-  private static final class Angular2GoToRelatedItem extends GotoRelatedItem {
-
-    private final @Nls String myContainerName;
-    private final @ListItem String myName;
-
-    private Angular2GoToRelatedItem(@NotNull PsiElement element,
-                                    int mnemonic,
-                                    boolean inlineable,
-                                    @Nullable @ListItem String name) {
-      super(element, getGroupName(), mnemonic > 9 ? -1 : mnemonic);
-      myContainerName = inlineable && InjectedLanguageManager.getInstance(element.getProject())
-                                        .getTopLevelFile(element) != element.getContainingFile()
-                        ? Angular2Bundle.message("angular.action.goto-related.inline")
-                        : null;
-      myName = name;
-    }
-
-    @Override
-    public @Nullable String getCustomName() {
-      return myName;
-    }
-
-    @Override
-    public String getCustomContainerName() {
-      return myContainerName;
-    }
+    private val groupName: @NlsContexts.Separator String
+      get() = Angular2Bundle.message("angular.action.goto-related.group-name")
   }
 }

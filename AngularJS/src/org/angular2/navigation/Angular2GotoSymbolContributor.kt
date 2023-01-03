@@ -1,114 +1,100 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.navigation;
+package org.angular2.navigation
 
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
-import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.navigation.ChooseByNameContributorEx;
-import com.intellij.navigation.NavigationItem;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.util.Processor;
-import com.intellij.util.indexing.FindSymbolParameters;
-import com.intellij.util.indexing.IdFilter;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveSelector;
-import org.angular2.entities.Angular2DirectiveSelectorSymbol;
-import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.index.Angular2SourceDirectiveIndex;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSImplicitElementProvider
+import com.intellij.navigation.ChooseByNameContributorEx
+import com.intellij.navigation.NavigationItem
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
+import com.intellij.util.Processor
+import com.intellij.util.indexing.FindSymbolParameters
+import com.intellij.util.indexing.IdFilter
+import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi
+import org.angular2.entities.Angular2DirectiveSelectorSymbol
+import org.angular2.entities.Angular2EntitiesProvider.getDirective
+import org.angular2.entities.Angular2EntityUtils.getAttributeDirectiveIndexName
+import org.angular2.entities.Angular2EntityUtils.getAttributeName
+import org.angular2.entities.Angular2EntityUtils.getElementDirectiveIndexName
+import org.angular2.entities.Angular2EntityUtils.getElementName
+import org.angular2.entities.Angular2EntityUtils.isAttributeDirectiveIndexName
+import org.angular2.entities.Angular2EntityUtils.isElementDirectiveIndexName
+import org.angular2.index.Angular2SourceDirectiveIndex
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.angular2.entities.Angular2EntitiesProvider.getDirective;
-
-public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx {
-
-  @Override
-  public void processNames(@NotNull Processor<? super String> processor,
-                           @NotNull GlobalSearchScope scope,
-                           @Nullable IdFilter filter) {
-    StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, key -> {
-      if (Angular2EntityUtils.isElementDirectiveIndexName(key)) {
-        key = Angular2EntityUtils.getElementName(key);
-      }
-      else if (Angular2EntityUtils.isAttributeDirectiveIndexName(key)) {
-        key = Angular2EntityUtils.getAttributeName(key);
-      }
-      else {
-        return true;
-      }
-      if (!key.isEmpty()) {
-        return processor.process(key);
-      }
-      return true;
-    }, scope, filter);
-  }
-
-  @Override
-  public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<? super NavigationItem> processor,
-                                      @NotNull FindSymbolParameters parameters) {
-    Stream.of(Angular2EntityUtils.getAttributeDirectiveIndexName(name),
-              Angular2EntityUtils.getElementDirectiveIndexName(name))
-      .forEach(
-        indexName -> StubIndex.getInstance().processElements(
-          Angular2SourceDirectiveIndex.KEY, indexName, parameters.getProject(), parameters.getSearchScope(),
-          parameters.getIdFilter(), JSImplicitElementProvider.class, provider -> {
-            final JSElementIndexingData indexingData = provider.getIndexingData();
-            if (indexingData != null) {
-              final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
-              if (elements != null) {
-                for (JSImplicitElement element : elements) {
-                  if (element.isValid()) {
-                    Angular2Directive directive = getDirective(element);
-                    if (directive != null) {
-                      if (!processSelectors(name, directive.getSelector().getSimpleSelectorsWithPsi(), processor)) {
-                        return false;
-                      }
-                      return true;
-                    }
-                  }
-                }
-              }
-            }
-            return true;
-          }));
-  }
-
-  private static boolean processSelectors(@NotNull String name,
-                                          @NotNull List<Angular2DirectiveSelector.SimpleSelectorWithPsi> selectors,
-                                          @NotNull Processor<? super NavigationItem> processor) {
-
-    for (Angular2DirectiveSelector.SimpleSelectorWithPsi selector : selectors) {
-      if (!processSelectorElement(name, selector.getElement(), processor)) {
-        return false;
-      }
-      for (Angular2DirectiveSelectorSymbol attribute : selector.getAttributes()) {
-        if (!processSelectorElement(name, attribute, processor)) {
-          return false;
+class Angular2GotoSymbolContributor : ChooseByNameContributorEx {
+  override fun processNames(processor: Processor<in String>,
+                            scope: GlobalSearchScope,
+                            filter: IdFilter?) {
+    StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, { key: String ->
+      val name = when {
+        isElementDirectiveIndexName(key) -> {
+          getElementName(key)
+        }
+        isAttributeDirectiveIndexName(key) -> {
+          getAttributeName(key)
+        }
+        else -> {
+          return@processAllKeys true
         }
       }
-      if (!processSelectors(name, selector.getNotSelectors(), processor)) {
-        return false;
+      if (!name.isEmpty()) {
+        return@processAllKeys processor.process(name)
       }
-    }
-    return true;
+      true
+    }, scope, filter)
   }
 
-  private static boolean processSelectorElement(@NotNull String name,
-                                                @Nullable Angular2DirectiveSelectorSymbol element,
-                                                @NotNull Processor<? super NavigationItem> processor) {
-    if (element == null || !name.equals(element.getName())) return true;
-    for (var target : element.getNavigationTargets(element.getProject())) {
-      var navigationItem = target.getNavigationItem();
-      if (navigationItem != null && processor.process(navigationItem)) {
-        return true;
+  override fun processElementsWithName(name: String,
+                                       processor: Processor<in NavigationItem>,
+                                       parameters: FindSymbolParameters) {
+    for (indexName in sequenceOf(getAttributeDirectiveIndexName(name), getElementDirectiveIndexName(name))) {
+      StubIndex.getInstance().processElements(
+        Angular2SourceDirectiveIndex.KEY, indexName, parameters.project, parameters.searchScope,
+        parameters.idFilter, JSImplicitElementProvider::class.java
+      ) { provider ->
+        for (element in provider.indexingData?.implicitElements ?: emptyList()) {
+          if (element.isValid) {
+            val directive = getDirective(element)
+            if (directive != null) {
+              return@processElements processSelectors(name, directive.selector.simpleSelectorsWithPsi, processor)
+            }
+          }
+        }
+        true
       }
     }
-    return false;
+  }
+
+  companion object {
+    private fun processSelectors(name: String,
+                                 selectors: List<SimpleSelectorWithPsi>,
+                                 processor: Processor<in NavigationItem>): Boolean {
+      for (selector in selectors) {
+        if (!processSelectorElement(name, selector.element, processor)) {
+          return false
+        }
+        for (attribute in selector.attributes) {
+          if (!processSelectorElement(name, attribute, processor)) {
+            return false
+          }
+        }
+        if (!processSelectors(name, selector.notSelectors, processor)) {
+          return false
+        }
+      }
+      return true
+    }
+
+    private fun processSelectorElement(name: String,
+                                       element: Angular2DirectiveSelectorSymbol?,
+                                       processor: Processor<in NavigationItem>): Boolean {
+      if (element == null || name != element.name) return true
+      for (target in element.getNavigationTargets(element.project)) {
+        val navigationItem = target.getNavigationItem()
+        if (navigationItem != null && processor.process(navigationItem)) {
+          return true
+        }
+      }
+      return false
+    }
   }
 }

@@ -1,48 +1,37 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.types;
+package org.angular2.lang.types
 
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.psi.xml.XmlAttribute;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.psi.xml.XmlAttribute
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
+import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.lang.html.psi.PropertyBindingType
 
-import static org.angular2.lang.html.parser.Angular2AttributeType.BANANA_BOX_BINDING;
-import static org.angular2.lang.html.parser.Angular2AttributeType.PROPERTY_BINDING;
-import static org.angular2.lang.html.psi.PropertyBindingType.PROPERTY;
+class Angular2PropertyBindingType : Angular2BaseType<XmlAttribute> {
+  constructor(attribute: XmlAttribute) : super(attribute, XmlAttribute::class.java)
+  private constructor(source: JSTypeSource) : super(source, XmlAttribute::class.java)
 
-public class Angular2PropertyBindingType extends Angular2BaseType<XmlAttribute> {
+  override val typeOfText: String
+    get() = sourceElement.name
 
-  public Angular2PropertyBindingType(@NotNull XmlAttribute attribute) {
-    super(attribute, XmlAttribute.class);
+  override fun copyWithNewSource(source: JSTypeSource): JSType {
+    return Angular2PropertyBindingType(source)
   }
 
-  protected Angular2PropertyBindingType(@NotNull JSTypeSource source) {
-    super(source, XmlAttribute.class);
+  override fun resolveType(context: JSTypeSubstitutionContext): JSType? {
+    return BindingsTypeResolver.resolve(sourceElement,
+                                        { isPropertyBindingAttribute(it) },
+                                        { obj, key -> obj.resolveDirectiveInputType(key) })
   }
 
-  @Override
-  protected @Nullable String getTypeOfText() {
-    return getSourceElement().getName();
-  }
-
-  @Override
-  protected @NotNull JSType copyWithNewSource(@NotNull JSTypeSource source) {
-    return new Angular2PropertyBindingType(source);
-  }
-
-  @Override
-  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
-    return BindingsTypeResolver.resolve(getSourceElement(),
-                                        Angular2PropertyBindingType::isPropertyBindingAttribute,
-                                        BindingsTypeResolver::resolveDirectiveInputType);
-  }
-
-  static boolean isPropertyBindingAttribute(Angular2AttributeNameParser.AttributeInfo info) {
-    return info.type == BANANA_BOX_BINDING
-           || (info.type == PROPERTY_BINDING
-               && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PROPERTY);
+  companion object {
+    fun isPropertyBindingAttribute(info: Angular2AttributeNameParser.AttributeInfo): Boolean {
+      return (info.type == Angular2AttributeType.BANANA_BOX_BINDING
+              || (info.type == Angular2AttributeType.PROPERTY_BINDING
+                  && (info as PropertyBindingInfo).bindingType == PropertyBindingType.PROPERTY))
+    }
   }
 }

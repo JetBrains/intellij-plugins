@@ -1,76 +1,58 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.types;
+package org.angular2.lang.types
 
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
-import com.intellij.lang.javascript.psi.JSTypeTextBuilder;
-import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution;
-import com.intellij.lang.javascript.psi.types.JSCodeBasedType;
-import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSType.TypeTextFormat
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
+import com.intellij.lang.javascript.psi.JSTypeTextBuilder
+import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
+import com.intellij.lang.javascript.psi.types.JSCodeBasedType
+import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.psi.PsiElement
+import com.intellij.util.ProcessingContext
 
-import java.util.Objects;
+abstract class Angular2BaseType<T : PsiElement?> protected constructor(source: JSTypeSource, sourceClass: Class<T>)
+  : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
+  protected constructor(source: T, sourceClass: Class<T>) : this(JSTypeSourceFactory.createTypeSource(source, true), sourceClass)
 
-public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTypeBaseImpl
-  implements JSCodeBasedType,                                        JSTypeWithIncompleteSubstitution {
-
-  protected Angular2BaseType(@NotNull T source, Class<T> sourceClass) {
-    this(JSTypeSourceFactory.createTypeSource(source, true), sourceClass);
+  init {
+    sourceClass.cast(source.sourceElement)
   }
 
-  protected Angular2BaseType(@NotNull JSTypeSource source, Class<T> sourceClass) {
-    super(source);
-    PsiElement sourceElement = source.getSourceElement();
-    assert sourceElement != null;
-    sourceClass.cast(sourceElement);
+  protected abstract val typeOfText: String?
+  protected abstract fun resolveType(context: JSTypeSubstitutionContext): JSType?
+  override fun getSourceElement(): T {
+    @Suppress("UNCHECKED_CAST")
+    return super<JSSimpleTypeBaseImpl>.getSourceElement()!! as T
   }
 
-  protected abstract @Nullable String getTypeOfText();
-
-  protected abstract @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context);
-
-  @Override
-  public @NotNull T getSourceElement() {
-    //noinspection unchecked
-    return (T)Objects.requireNonNull(super.getSourceElement());
-  }
-
-  @Override
-  protected @Nullable JSType substituteImpl(@NotNull JSTypeSubstitutionContext context) {
-    JSType type = resolveType(context);
+  override fun substituteImpl(context: JSTypeSubstitutionContext): JSType? {
+    val type = resolveType(context)
     if (type != null) {
-      context.add(type);
+      context.add(type)
     }
-    return type;
+    return type
   }
 
-  @Override
-  public @NotNull JSType substituteCompletely() {
-    return this.substitute().substitute();
+  override fun substituteCompletely(): JSType {
+    return this.substitute().substitute()
   }
 
-  @Override
-  protected boolean isEquivalentToWithSameClass(@NotNull JSType type, @Nullable ProcessingContext context, boolean allowResolve) {
-    return type.getClass() == this.getClass()
-           && Objects.equals(type.getSourceElement(), getSourceElement());
+  override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean {
+    return type.javaClass == this.javaClass && type.sourceElement == sourceElement
   }
 
-  @Override
-  protected int hashCodeImpl() {
-    return getSourceHashCode();
+  override fun hashCodeImpl(): Int {
+    return sourceHashCode
   }
 
-  @Override
-  protected void buildTypeTextImpl(@NotNull TypeTextFormat format, @NotNull JSTypeTextBuilder builder) {
+  override fun buildTypeTextImpl(format: TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == TypeTextFormat.SIMPLE) {
-      builder.append("ngtypeof#" + getTypeOfText());
-      return;
+      builder.append("ngtypeof#$typeOfText")
+      return
     }
-    substitute().buildTypeText(format, builder);
+    substitute().buildTypeText(format, builder)
   }
 }

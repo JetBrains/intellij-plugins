@@ -27,7 +27,7 @@ import org.angular2.Angular2InjectionUtils
 import org.angular2.entities.*
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.Companion.NG_CONTENT_SELECTOR
 import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider
 
 class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)

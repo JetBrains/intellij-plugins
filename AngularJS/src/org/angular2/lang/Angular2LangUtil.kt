@@ -1,27 +1,25 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang;
+package org.angular2.lang
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import org.angular2.Angular2Framework;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import org.angular2.Angular2Framework.Companion.instance
 
-public final class Angular2LangUtil {
+object Angular2LangUtil {
+  const val ANGULAR_CORE_PACKAGE: String = "@angular/core"
+  const val ANGULAR_CLI_PACKAGE: String = "@angular/cli"
+  const val `$IMPLICIT`: String = "\$implicit"
+  const val EVENT_EMITTER: String = "EventEmitter"
+  const val OUTPUT_CHANGE_SUFFIX: String = "Change"
 
-  @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
-  @NonNls public static final String ANGULAR_CLI_PACKAGE = "@angular/cli";
-  @NonNls public static final String $IMPLICIT = "$implicit";
-  @NonNls public static final String EVENT_EMITTER = "EventEmitter";
-  @NonNls public static final String OUTPUT_CHANGE_SUFFIX = "Change";
-
-  public static boolean isAngular2Context(@NotNull PsiElement context) {
-    return Angular2Framework.getInstance().isInContext(context);
+  @JvmStatic
+  fun isAngular2Context(context: PsiElement): Boolean {
+    return instance.isInContext(context)
   }
 
-  public static boolean isAngular2Context(@NotNull Project project, @NotNull VirtualFile context) {
-    return Angular2Framework.getInstance().isInContext(context, project);
+  @JvmStatic
+  fun isAngular2Context(project: Project, context: VirtualFile): Boolean {
+    return instance.isInContext(context, project)
   }
-
 }

@@ -9,7 +9,9 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.lang.Angular2LangUtil
-import org.angular2.lang.html.parser.Angular2AttributeNameParser.*
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.parse
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.html.psi.PropertyBindingType.CLASS

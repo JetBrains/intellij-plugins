@@ -1,21 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.psi;
+package org.angular2.lang.html.psi
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWalkingState;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWalkingState
 
-public class Angular2HtmlRecursiveElementWalkingVisitor extends Angular2HtmlElementVisitor {
-
-  private final PsiWalkingState myWalkingState = new PsiWalkingState(this) {
-  };
-
-  @Override
-  public void visitElement(final @NotNull PsiElement element) {
-    myWalkingState.elementStarted(element);
+open class Angular2HtmlRecursiveElementWalkingVisitor : Angular2HtmlElementVisitor() {
+  @Suppress("LeakingThis")
+  private val myWalkingState: PsiWalkingState = object : PsiWalkingState(this) {}
+  override fun visitElement(element: PsiElement) {
+    myWalkingState.elementStarted(element)
   }
 
-  public void stopWalking() {
-    myWalkingState.stopWalking();
+  fun stopWalking() {
+    myWalkingState.stopWalking()
   }
 }

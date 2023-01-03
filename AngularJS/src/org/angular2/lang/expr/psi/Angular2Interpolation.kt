@@ -14,7 +14,8 @@ interface Angular2Interpolation : Angular2EmbeddedExpression {
   val expression: JSExpression?
 
   companion object {
-    operator fun get(attribute: XmlAttribute): Array<Angular2Interpolation> {
+    @JvmStatic
+    fun get(attribute: XmlAttribute): Array<Angular2Interpolation> {
       if (attribute is Angular2HtmlPropertyBinding) {
         return attribute.interpolations
       }

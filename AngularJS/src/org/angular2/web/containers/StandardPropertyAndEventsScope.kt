@@ -99,11 +99,11 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
 
       val typeSource = Angular2TypeUtils.createJSTypeSourceForXmlElement(templateFile)
       val tagClass = WebJSTypesUtil.getHtmlElementClassType(typeSource, tagName)
-      val elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource)?.asRecordType()
+      val elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource).asRecordType()
 
       val allowedElementProperties = DomElementSchemaRegistry.getElementProperties(tagNamespace, tagName).toMutableSet()
       val eventNames = DomElementSchemaRegistry.getElementEvents(tagNamespace, tagName).toMutableSet()
-      elementEventMap?.propertyNames?.forEach { name -> eventNames.add(name) }
+      elementEventMap.propertyNames.forEach { name -> eventNames.add(name) }
 
       fun addStandardProperty(name: String, project: Project, source: TypeScriptPropertySignature?) {
         propToAttrName[name]?.let { consumer(Angular2StandardProperty(it, project, source)) }
@@ -123,7 +123,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
             eventNames.remove(eventName)
             consumer(Angular2StandardEvent(eventName,
                                            propertyDeclaration.project, propertyDeclaration,
-                                           elementEventMap?.findPropertySignature(eventName)
+                                           elementEventMap.findPropertySignature(eventName)
                                              ?.memberSource?.singleElement as? TypeScriptPropertySignature))
           }
           else {
@@ -142,7 +142,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
         consumer(Angular2StandardEvent(eventName,
                                        templateFile.project,
                                        null,
-                                       elementEventMap?.findPropertySignature(eventName)
+                                       elementEventMap.findPropertySignature(eventName)
                                          ?.memberSource?.singleElement as? TypeScriptPropertySignature))
       }
       if (cacheDependencies.isEmpty()) {
@@ -153,8 +153,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
   }
 
   companion object {
-    private val propToAttrName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING
-      .asSequence().associate { Pair(it.value, it.key) }
+    private val propToAttrName = Angular2AttributeNameParser.ATTR_TO_PROP_MAPPING.entries.associateBy({ it.value }, { it.key })
   }
 
   private class Angular2StandardProperty(override val name: String,

@@ -1,95 +1,74 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.angular2.lang.html.lexer;
+package org.angular2.lang.html.lexer
 
-import com.intellij.html.embedding.*;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lexer.BaseHtmlLexer;
-import com.intellij.lexer.Lexer;
-import com.intellij.lexer.MergeFunction;
-import com.intellij.lexer.MergingLexerAdapterBase;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter;
-import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.angular2.lang.html.parser.Angular2AttributeType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.html.embedding.*
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lexer.BaseHtmlLexer
+import com.intellij.lexer.Lexer
+import com.intellij.lexer.MergeFunction
+import com.intellij.lexer.MergingLexerAdapterBase
+import com.intellij.psi.tree.IElementType
+import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter
+import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType
+import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.parser.Angular2AttributeType
+import java.util.*
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-
-import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
-import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPRESSION_WHITE_SPACE;
-
-public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSupport {
-
-  public static final class Holder {
-    public static final EnumSet<Angular2AttributeType> NG_EL_ATTRIBUTES = EnumSet.of(
+class Angular2HtmlEmbeddedContentSupport : HtmlEmbeddedContentSupport {
+  object Holder {
+    val NG_EL_ATTRIBUTES: EnumSet<Angular2AttributeType> = EnumSet.of(
       Angular2AttributeType.EVENT, Angular2AttributeType.BANANA_BOX_BINDING,
-      Angular2AttributeType.PROPERTY_BINDING, Angular2AttributeType.TEMPLATE_BINDINGS);
+      Angular2AttributeType.PROPERTY_BINDING, Angular2AttributeType.TEMPLATE_BINDINGS)
   }
 
-  @Override
-  public boolean isEnabled(@NotNull BaseHtmlLexer lexer) {
-    return lexer instanceof Angular2HtmlLexer || lexer instanceof Angular2HtmlHighlightingLexer;
+  override fun isEnabled(lexer: BaseHtmlLexer): Boolean {
+    return lexer is Angular2HtmlLexer || lexer is Angular2HtmlHighlightingLexer
   }
 
-  @NotNull
-  @Override
-  public List<HtmlEmbeddedContentProvider> createEmbeddedContentProviders(@NotNull BaseHtmlLexer lexer) {
-    return ContainerUtil.newArrayList(new HtmlTokenEmbeddedContentProvider(
-                                        lexer, INTERPOLATION_EXPR, () -> new Angular2EmbeddedHighlightingLexer()),
-                                      new Angular2AttributeContentProvider(lexer));
+  override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> {
+    return listOf(
+      HtmlTokenEmbeddedContentProvider(lexer, Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR, { Angular2EmbeddedHighlightingLexer() }),
+      Angular2AttributeContentProvider(lexer))
   }
 
-  public static class Angular2AttributeContentProvider extends HtmlAttributeEmbeddedContentProvider {
+  class Angular2AttributeContentProvider internal constructor(lexer: BaseHtmlLexer) : HtmlAttributeEmbeddedContentProvider(lexer) {
+    override fun createEmbedmentInfo(): HtmlEmbedmentInfo? {
+      val attributeName = attributeName ?: return null
+      val info = Angular2AttributeNameParser.parse(
+        attributeName.toString(), tagName!!.toString())
+      return if (info.type != Angular2AttributeType.REGULAR
+                 && Holder.NG_EL_ATTRIBUTES.contains(info.type)) {
+        object : HtmlEmbedmentInfo {
+          override fun createHighlightingLexer(): Lexer {
+            return Angular2EmbeddedHighlightingLexer()
+          }
 
-    Angular2AttributeContentProvider(@NotNull BaseHtmlLexer lexer) {
-      super(lexer);
-    }
-
-    @Nullable
-    @Override
-    protected HtmlEmbedmentInfo createEmbedmentInfo() {
-      CharSequence attributeName = getAttributeName();
-      if (attributeName == null) return null;
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
-        attributeName.toString(), Objects.requireNonNull(getTagName()).toString());
-      if (info.type != Angular2AttributeType.REGULAR
-          && Holder.NG_EL_ATTRIBUTES.contains(info.type)) {
-        return new HtmlEmbedmentInfo() {
-          @Override
-          public Lexer createHighlightingLexer() { return new Angular2EmbeddedHighlightingLexer(); }
-
-          @Override
-          public IElementType getElementType() { return null; }
-        };
+          override fun getElementType(): IElementType? {
+            return null
+          }
+        }
       }
-      return null;
+      else null
     }
 
-    @Override
-    protected boolean isInterestedInTag(@NotNull CharSequence tagName) {
-      return getLexer() instanceof Angular2HtmlHighlightingLexer;
+    override fun isInterestedInTag(tagName: CharSequence): Boolean {
+      return lexer is Angular2HtmlHighlightingLexer
     }
 
-    @Override
-    protected boolean isInterestedInAttribute(@NotNull CharSequence attributeName) {
-      return true;
+    override fun isInterestedInAttribute(attributeName: CharSequence): Boolean {
+      return true
     }
   }
 
-  public static class Angular2EmbeddedHighlightingLexer extends MergingLexerAdapterBase {
-
-    Angular2EmbeddedHighlightingLexer() {
-      super(new Angular2SyntaxHighlighter().getHighlightingLexer());
-    }
-
-    @Override
-    public MergeFunction getMergeFunction() {
-      return (type, lexer) -> type == JSTokenTypes.WHITE_SPACE ? EXPRESSION_WHITE_SPACE : type;
+  class Angular2EmbeddedHighlightingLexer internal constructor() : MergingLexerAdapterBase(Angular2SyntaxHighlighter().highlightingLexer) {
+    override fun getMergeFunction(): MergeFunction {
+      return MergeFunction { type, _ ->
+        if (type === JSTokenTypes.WHITE_SPACE)
+          Angular2HtmlHighlightingLexer.EXPRESSION_WHITE_SPACE
+        else
+          type
+      }
     }
   }
 }

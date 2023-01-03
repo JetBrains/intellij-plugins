@@ -50,7 +50,7 @@ class Angular2ApplicableDirectivesProvider private constructor(project: Project,
     val isTemplateTag = isTemplateTag(tagName)
     val matchedDirectives = HashSet<Angular2Directive>()
     matcher.match(cssSelector) { _, directive ->
-      if (directive.directiveKind.isRegular || isTemplateTag) {
+      if (directive != null && (directive.directiveKind.isRegular || isTemplateTag)) {
         matchedDirectives.add(directive)
       }
     }

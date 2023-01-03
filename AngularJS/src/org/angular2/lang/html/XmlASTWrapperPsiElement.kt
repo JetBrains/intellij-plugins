@@ -1,47 +1,36 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html;
+package org.angular2.lang.html
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.psi.JSEmbeddedContent;
-import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
-import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.xml.XmlElement;
-import com.intellij.xml.util.XmlPsiUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
+import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.xml.XmlElement
+import com.intellij.xml.util.XmlPsiUtil
 
-public class XmlASTWrapperPsiElement extends ASTWrapperPsiElement implements XmlElement, JSEmbeddedContent {
-  public XmlASTWrapperPsiElement(@NotNull ASTNode node) {
-    super(node);
+class XmlASTWrapperPsiElement(node: ASTNode) : ASTWrapperPsiElement(node), XmlElement, JSEmbeddedContent {
+  override fun processElements(processor: PsiElementProcessor<in PsiElement>, place: PsiElement): Boolean {
+    return XmlPsiUtil.processXmlElements(this, processor, false)
   }
 
-  @Override
-  public boolean processElements(PsiElementProcessor processor, PsiElement place) {
-    return XmlPsiUtil.processXmlElements(this, processor, false);
+  override fun subtreeChanged() {
+    super.subtreeChanged()
+    JSControlFlowService.getService(project).resetControlFlow(this)
   }
 
-  @Override
-  public void subtreeChanged() {
-    super.subtreeChanged();
-    JSControlFlowService.getService(getProject()).resetControlFlow(this);
+  override fun skipValidation(): Boolean {
+    return true
   }
 
-  @Override
-  public boolean skipValidation() {
-    return true;
+  override fun getElementType(): IElementType {
+    return node.elementType
   }
 
-  @Override
-  public IElementType getElementType() {
-    return getNode().getElementType();
-  }
-
-  @Override
-  public @Nullable Character getQuoteChar() {
-    return JSEmbeddedContentImpl.getQuoteChar(this);
+  override fun getQuoteChar(): Char? {
+    return JSEmbeddedContentImpl.getQuoteChar(this)
   }
 }

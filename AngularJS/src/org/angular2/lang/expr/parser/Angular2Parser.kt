@@ -62,7 +62,7 @@ class Angular2Parser private constructor(builder: PsiBuilder,
           }
         }
         else if (tokenType != null) {
-          builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.tokenText))
+          builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.tokenText!!))
         }
       }
       when (count) {

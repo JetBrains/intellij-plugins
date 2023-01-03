@@ -48,10 +48,10 @@ class Angular2AttributeNameCodeCompletionFilter(tag: XmlTag) : Predicate<String>
                             vararg types: Angular2AttributeType): List<String> {
     val result = ArrayList<String>()
     for (type in types) {
-      result.add(type.buildName(name, false))
+      result.add(type.buildName(name))
       type.buildName(name, true)?.let { result.add(it) }
       if (type == PROPERTY_BINDING) {
-        result.add(type.buildName("attr.$name", false))
+        result.add(type.buildName("attr.$name"))
         type.buildName("attr.$name", true)?.let { result.add(it) }
       }
     }

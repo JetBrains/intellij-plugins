@@ -18,8 +18,8 @@ import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 
 class Angular2TemplateVariableImpl : JSVariableImpl<JSVariableStub<in JSVariable>, JSVariable> {
-  constructor(node: ASTNode?) : super(node)
-  constructor(stub: JSVariableStub<JSVariable?>?) : super(stub, Angular2StubElementTypes.TEMPLATE_VARIABLE)
+  constructor(node: ASTNode) : super(node)
+  constructor(stub: JSVariableStub<JSVariable>) : super(stub, Angular2StubElementTypes.TEMPLATE_VARIABLE)
 
   override fun calculateType(): JSType? {
     val bindings = PsiTreeUtil.getParentOfType(this, Angular2TemplateBindings::class.java)

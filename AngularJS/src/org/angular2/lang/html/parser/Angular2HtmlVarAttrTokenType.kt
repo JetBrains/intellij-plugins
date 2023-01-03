@@ -1,101 +1,88 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.parser;
+package org.angular2.lang.html.parser
 
-import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType;
-import com.intellij.ide.highlighter.custom.AbstractCustomLexer;
-import com.intellij.ide.highlighter.custom.tokens.TokenParser;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.javascript.psi.JSStubElementType;
-import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
-import com.intellij.lexer.Lexer;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.html.XmlASTWrapperPsiElement;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
+import com.intellij.ide.highlighter.custom.AbstractCustomLexer
+import com.intellij.ide.highlighter.custom.tokens.TokenParser
+import com.intellij.lang.ASTNode
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.psi.JSStubElementType
+import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.lang.javascript.psi.stubs.JSVariableStub
+import com.intellij.lexer.Lexer
+import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlTokenType
+import com.intellij.util.containers.ContainerUtil
+import org.angular2.lang.expr.Angular2Language
+import org.angular2.lang.html.XmlASTWrapperPsiElement
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
+import java.util.function.Supplier
 
-import java.util.function.Supplier;
-
-import static com.intellij.lang.javascript.JSStubElementTypes.VAR_STATEMENT;
-import static com.intellij.lang.javascript.JSTokenTypes.IDENTIFIER;
-import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
-import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.LET_VARIABLE;
-import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.REFERENCE_VARIABLE;
-
-public class Angular2HtmlVarAttrTokenType extends HtmlCustomEmbeddedContentTokenType {
-
-  public static final Angular2HtmlVarAttrTokenType REFERENCE = new Angular2HtmlVarAttrTokenType(
-    "NG:REFERENCE_TOKEN", REFERENCE_VARIABLE, () -> new RefPrefixTokenParser());
-  public static final Angular2HtmlVarAttrTokenType LET = new Angular2HtmlVarAttrTokenType(
-    "NG:LET_TOKEN", LET_VARIABLE, () -> new LetPrefixTokenParser());
-
-
-  private final JSStubElementType<JSVariableStub<JSVariable>, JSVariable> myVarElementType;
-  private final Supplier<? extends TokenParser> myPrefixTokenParserConstructor;
-
-  protected Angular2HtmlVarAttrTokenType(String debugName,
-                                         JSStubElementType<JSVariableStub<JSVariable>, JSVariable> type,
-                                         Supplier<? extends TokenParser> prefixTokenParserConstructor) {
-    super(debugName, Angular2Language.INSTANCE);
-    myVarElementType = type;
-    myPrefixTokenParserConstructor = prefixTokenParserConstructor;
+class Angular2HtmlVarAttrTokenType(debugName: String,
+                                   private val myVarElementType: JSStubElementType<JSVariableStub<JSVariable>, JSVariable>,
+                                   private val myPrefixTokenParserConstructor: Supplier<out TokenParser>)
+  : HtmlCustomEmbeddedContentTokenType(debugName, Angular2Language.INSTANCE) {
+  override fun createLexer(): Lexer {
+    return AbstractCustomLexer(ContainerUtil.newArrayList(
+      myPrefixTokenParserConstructor.get(), VarIdentTokenParser()))
   }
 
-  @Override
-  protected @NotNull Lexer createLexer() {
-    return new AbstractCustomLexer(ContainerUtil.newArrayList(
-      myPrefixTokenParserConstructor.get(), new VarIdentTokenParser()));
+  override fun parse(builder: PsiBuilder) {
+    assert(builder.tokenType === XmlTokenType.XML_NAME)
+    val start = builder.mark()
+    builder.advanceLexer()
+    val `var` = builder.mark()
+    builder.advanceLexer()
+    `var`.done(myVarElementType)
+    `var`.precede().done(JSStubElementTypes.VAR_STATEMENT)
+    start.done(XmlTokenType.XML_NAME)
   }
 
-  @Override
-  protected void parse(@NotNull PsiBuilder builder) {
-    assert builder.getTokenType() == XML_NAME;
-    PsiBuilder.Marker start = builder.mark();
-    builder.advanceLexer();
-    PsiBuilder.Marker var = builder.mark();
-    builder.advanceLexer();
-    var.done(myVarElementType);
-    var.precede().done(VAR_STATEMENT);
-    start.done(XML_NAME);
+  override fun createPsi(node: ASTNode): PsiElement {
+    return XmlASTWrapperPsiElement(node)
   }
 
-  @Override
-  public @NotNull PsiElement createPsi(@NotNull ASTNode node) {
-    return new XmlASTWrapperPsiElement(node);
-  }
-
-  private static class VarIdentTokenParser extends TokenParser {
-    @Override
-    public boolean hasToken(int position) {
+  private class VarIdentTokenParser : TokenParser() {
+    override fun hasToken(position: Int): Boolean {
       if (position == myStartOffset) {
-        return false;
+        return false
       }
-      myTokenInfo.updateData(position, myEndOffset, IDENTIFIER);
-      return true;
+      myTokenInfo.updateData(position, myEndOffset, JSTokenTypes.IDENTIFIER)
+      return true
     }
   }
 
-  private static class RefPrefixTokenParser extends TokenParser {
-    @Override
-    public boolean hasToken(int position) {
+  private class RefPrefixTokenParser : TokenParser() {
+    override fun hasToken(position: Int): Boolean {
       if (position == myStartOffset) {
-        myTokenInfo.updateData(position, position + (myBuffer.charAt(0) == '#' ? 1 : 4), XML_NAME);
-        return true;
+        myTokenInfo.updateData(position, position + if (myBuffer[0] == '#') 1 else 4, XmlTokenType.XML_NAME)
+        return true
       }
-      return false;
+      return false
     }
   }
 
-  private static class LetPrefixTokenParser extends TokenParser {
-    @Override
-    public boolean hasToken(int position) {
+  private class LetPrefixTokenParser : TokenParser() {
+    override fun hasToken(position: Int): Boolean {
       if (position == myStartOffset) {
-        myTokenInfo.updateData(position, position + 4, XML_NAME);
-        return true;
+        myTokenInfo.updateData(position, position + 4, XmlTokenType.XML_NAME)
+        return true
       }
-      return false;
+      return false
+    }
+  }
+
+  companion object {
+    @JvmField
+    val REFERENCE = Angular2HtmlVarAttrTokenType("NG:REFERENCE_TOKEN", Angular2HtmlStubElementTypes.REFERENCE_VARIABLE) {
+      RefPrefixTokenParser()
+    }
+
+    @JvmField
+    val LET = Angular2HtmlVarAttrTokenType("NG:LET_TOKEN", Angular2HtmlStubElementTypes.LET_VARIABLE) {
+      LetPrefixTokenParser()
     }
   }
 }

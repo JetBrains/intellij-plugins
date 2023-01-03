@@ -1,314 +1,291 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.selector;
+package org.angular2.lang.selector
 
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.SmartList;
-import com.intellij.xml.util.XmlUtil;
-import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.expr.psi.Angular2TemplateBinding;
-import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.angular2.lang.html.parser.Angular2AttributeType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.xml.XmlTag
+import com.intellij.util.SmartList
+import com.intellij.xml.util.XmlUtil
+import org.angular2.lang.Angular2Bundle
+import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.jetbrains.annotations.NonNls
+import java.util.function.Consumer
+import java.util.regex.Pattern
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+class Angular2DirectiveSimpleSelector internal constructor() {
+  private var mElementName: String? = null
+  private val mClassNames: MutableList<String> = SmartList()
+  private val mAttrs: MutableList<String> = SmartList()
+  private val mNotSelectors: MutableList<Angular2DirectiveSimpleSelector> = SmartList()
 
-import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE;
+  val elementName: String?
+    get() = mElementName
 
-public class Angular2DirectiveSimpleSelector {
+  val classNames: List<String>
+    get() = mClassNames
 
-  private static final Pattern SELECTOR_REGEXP = Pattern.compile(
-    "(:not\\()|" +       //":not("
-    "([-\\w]+)|" +         // "tag"
-    "(?:\\.([-\\w]+))|" +  // ".class"
-    // "-" should appear first in the regexp below as FF31 parses "[.-\w]" as a range
-    "(?:\\[([-.\\w*]+)(?:=([\"']?)([^]\"']*)\\5)?])|" +  // "[name]", "[name=value]",
-    //                                                          "[name="value"]",
-    //                                                          "[name='value']"
-    "(\\))|" +             // ")"
-    "(\\s*,\\s*)"          // ","
-  );
+  val attrs: List<String>
+    get() = mAttrs
 
-  public static @NotNull List<Angular2DirectiveSimpleSelector> parse(@NotNull String selector) throws ParseException {
-    List<Angular2DirectiveSimpleSelector> results = new SmartList<>();
-    Consumer<Angular2DirectiveSimpleSelector> addResult = cssSel -> {
-      if (!cssSel.notSelectors.isEmpty() && cssSel.element == null && cssSel.classNames.isEmpty() &&
-          cssSel.attrs.isEmpty()) {
-        cssSel.element = "*";
-      }
-      results.add(cssSel);
-    };
-    Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
-    Angular2DirectiveSimpleSelector current = cssSelector;
-    boolean inNot = false;
+  val notSelectors: List<Angular2DirectiveSimpleSelector>
+    get() = mNotSelectors
 
-    Matcher matcher = SELECTOR_REGEXP.matcher(selector);
-    while (matcher.find()) {
-      if (matcher.start(1) >= 0) {
-        if (inNot) {
-          throw new ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
-                                   new TextRange(matcher.start(1), matcher.end(1)));
-        }
-        inNot = true;
-        current = new Angular2DirectiveSimpleSelector();
-        cssSelector.notSelectors.add(current);
-      }
-      else if (matcher.start(2) >= 0) {
-        current.setElement(matcher.group(2));
-      }
-      if (matcher.start(3) >= 0) {
-        current.addClassName(matcher.group(3));
-      }
-      if (matcher.start(4) >= 0) {
-        current.addAttribute(matcher.group(4), matcher.group(6));
-      }
-      if (matcher.start(7) >= 0) {
-        inNot = false;
-        current = cssSelector;
-      }
-      if (matcher.start(8) >= 0) {
-        if (inNot) {
-          throw new ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
-                                   new TextRange(matcher.start(8), matcher.end(8)));
-        }
-        addResult.accept(cssSelector);
-        cssSelector = current = new Angular2DirectiveSimpleSelector();
-      }
-    }
-    addResult.accept(cssSelector);
-    return results;
+  val isElementSelector: Boolean
+    get() = (hasElementSelector()
+             && classNames.isEmpty()
+             && attrs.isEmpty()
+             && notSelectors.isEmpty())
+
+  private fun hasElementSelector(): Boolean {
+    return elementName != null
   }
 
-  public static @NotNull List<Angular2DirectiveSimpleSelectorWithRanges> parseRanges(@NotNull String selector) throws ParseException {
-    List<Angular2DirectiveSimpleSelectorWithRanges> results = new SmartList<>();
-
-    Angular2DirectiveSimpleSelectorWithRanges cssSelector = new Angular2DirectiveSimpleSelectorWithRanges();
-    Angular2DirectiveSimpleSelectorWithRanges current = cssSelector;
-    boolean inNot = false;
-
-    Matcher matcher = SELECTOR_REGEXP.matcher(selector);
-    while (matcher.find()) {
-      if (matcher.start(1) >= 0) {
-        if (inNot) {
-          throw new ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
-                                   new TextRange(matcher.start(1), matcher.end(1)));
-        }
-        inNot = true;
-        current = new Angular2DirectiveSimpleSelectorWithRanges();
-        cssSelector.notSelectors.add(current);
-      }
-      else if (matcher.start(2) >= 0) {
-        current.setElement(matcher.group(2), matcher.start(2));
-      }
-      if (matcher.start(3) >= 0) {
-        current.addClassName(matcher.group(3), matcher.start(3));
-      }
-      if (matcher.start(4) >= 0) {
-        current.addAttribute(matcher.group(4), matcher.start(4));
-      }
-      if (matcher.start(7) >= 0) {
-        inNot = false;
-        current = cssSelector;
-      }
-      if (matcher.start(8) >= 0) {
-        if (inNot) {
-          throw new ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
-                                   new TextRange(matcher.start(8), matcher.end(8)));
-        }
-        results.add(cssSelector);
-        cssSelector = current = new Angular2DirectiveSimpleSelectorWithRanges();
-      }
-    }
-    results.add(cssSelector);
-    return results;
+  fun setElement(element: String?) {
+    mElementName = element
   }
-
-  public static Angular2DirectiveSimpleSelector createTemplateBindingsCssSelector(@NotNull Angular2TemplateBindings bindings) {
-    Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
-    cssSelector.setElement(ELEMENT_NG_TEMPLATE);
-    cssSelector.addAttribute(bindings.getTemplateName(), null);
-    for (Angular2TemplateBinding binding : bindings.getBindings()) {
-      if (!binding.keyIsVar()) {
-        cssSelector.addAttribute(binding.getKey(), ObjectUtils.doIfNotNull(binding.getExpression(), JSExpression::getText));
-      }
-    }
-    return cssSelector;
-  }
-
-  public static Angular2DirectiveSimpleSelector createElementCssSelector(@NotNull XmlTag element) {
-    Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
-    String elNameNoNs = XmlUtil.findLocalNameByQualifiedName(element.getName());
-
-    cssSelector.setElement(elNameNoNs);
-
-    for (XmlAttribute attr : element.getAttributes()) {
-      String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, element);
-      if (info.type == Angular2AttributeType.TEMPLATE_BINDINGS
-          || info.type == Angular2AttributeType.LET
-          || info.type == Angular2AttributeType.REFERENCE) {
-        continue;
-      }
-      cssSelector.addAttribute(info.name, attr.getValue());
-      if (StringUtil.toLowerCase(attr.getName()).equals("class") && attr.getValue() != null) {
-        StringUtil.split(attr.getValue(), " ")
-          .forEach(clsName -> cssSelector.addClassName(clsName));
-      }
-    }
-    return cssSelector;
-  }
-
-  String element;
-  final List<String> classNames = new SmartList<>();
-  final List<String> attrs = new SmartList<>();
-  final List<Angular2DirectiveSimpleSelector> notSelectors = new SmartList<>();
-
-  Angular2DirectiveSimpleSelector() {
-  }
-
-  public boolean isElementSelector() {
-    return this.hasElementSelector()
-           && this.classNames.isEmpty()
-           && this.attrs.isEmpty()
-           && this.notSelectors.isEmpty();
-  }
-
-  public boolean hasElementSelector() {
-    return element != null;
-  }
-
-  public @Nullable String getElementName() {
-    return element;
-  }
-
-  public void setElement(@Nullable String element) { this.element = element; }
 
   /**
    * The selectors are encoded in pairs where:
    * - even locations are attribute names
    * - odd locations are attribute values.
-   * <p>
+   *
+   *
    * Example:
    * Selector: `[key1=value1][key2]` would parse to:
    * ```
    * ['key1', 'value1', 'key2', '']
    * ```
    */
-  public @NotNull List<String> getAttrNames() {
-    List<String> result = new ArrayList<>();
-    if (!classNames.isEmpty()) {
-      result.add("class");
-    }
-    for (int i = 0; i < attrs.size(); i += 2) {
-      result.add(attrs.get(i));
-    }
-    return result;
-  }
-
-  public @NotNull List<Angular2DirectiveSimpleSelector> getNotSelectors() {
-    return notSelectors;
-  }
-
-  public void addAttribute(@NotNull String name, @Nullable String value) {
-    attrs.add(name);
-    attrs.add(value != null ? StringUtil.toLowerCase(value) : "");
-  }
-
-  public void addClassName(@NotNull String name) {
-    classNames.add(StringUtil.toLowerCase(name));
-  }
-
-  public @NotNull String toString() {
-    @NonNls StringBuilder result = new StringBuilder();
-    if (element != null) {
-      result.append(element);
-    }
-    classNames.forEach(cls -> {
-      result.append('.');
-      result.append(cls);
-    });
-    for (int i = 0; i < attrs.size(); i += 2) {
-      result.append('[');
-      result.append(attrs.get(i));
-      String value = attrs.get(i + 1);
-      if (!value.isEmpty()) {
-        result.append("=");
-        result.append(value);
+  val attrNames: List<String>
+    get() {
+      val result: MutableList<String> = ArrayList()
+      if (!classNames.isEmpty()) {
+        result.add("class")
       }
-      result.append(']');
+      var i = 0
+      while (i < attrs.size) {
+        result.add(attrs[i])
+        i += 2
+      }
+      return result
     }
-    notSelectors.forEach(selector -> {
-      result.append(":not(");
-      result.append(selector.toString());
-      result.append(')');
-    });
-    return result.toString();
+
+  fun addAttribute(name: String, value: String?) {
+    mAttrs.add(name)
+    mAttrs.add(if (value != null) StringUtil.toLowerCase(value) else "")
   }
 
-
-  public static final class Angular2DirectiveSimpleSelectorWithRanges {
-
-    private Pair<String, Integer> element;
-    private final List<Pair<String, Integer>> classNames = new SmartList<>();
-    private final List<Pair<String, Integer>> attrs = new SmartList<>();
-    private final List<Angular2DirectiveSimpleSelectorWithRanges> notSelectors = new SmartList<>();
-
-    private Angular2DirectiveSimpleSelectorWithRanges() {
-    }
-
-    private void addAttribute(@NotNull String name, int offset) {
-      attrs.add(pair(name, offset));
-    }
-
-    private void addClassName(@NotNull String name, int offset) {
-      classNames.add(pair(name, offset));
-    }
-
-    private void setElement(@NotNull String name, int offset) {
-      element = pair(name, offset);
-    }
-
-    public @Nullable Pair<String, Integer> getElementRange() {
-      return element;
-    }
-
-    public @NotNull List<Pair<String, Integer>> getClassNameRanges() {
-      return classNames;
-    }
-
-    public @NotNull List<Pair<String, Integer>> getAttributeRanges() {
-      return attrs;
-    }
-
-    public @NotNull List<Angular2DirectiveSimpleSelectorWithRanges> getNotSelectors() {
-      return notSelectors;
-    }
+  fun addClassName(name: String) {
+    mClassNames.add(StringUtil.toLowerCase(name))
   }
 
-  public static class ParseException extends Exception {
+  override fun toString(): String {
+    val result: @NonNls StringBuilder = StringBuilder()
+    if (elementName != null) {
+      result.append(elementName)
+    }
+    classNames.forEach(Consumer { cls: String? ->
+      result.append('.')
+      result.append(cls)
+    })
+    var i = 0
+    while (i < attrs.size) {
+      result.append('[')
+      result.append(attrs[i])
+      val value = attrs[i + 1]
+      if (!value.isEmpty()) {
+        result.append("=")
+        result.append(value)
+      }
+      result.append(']')
+      i += 2
+    }
+    notSelectors.forEach(Consumer { selector: Angular2DirectiveSimpleSelector ->
+      result.append(":not(")
+      result.append(selector.toString())
+      result.append(')')
+    })
+    return result.toString()
+  }
 
-    private final TextRange myErrorRange;
+  class Angular2DirectiveSimpleSelectorWithRanges {
+    var elementRange: Pair<String, Int>? = null
+      private set
+    private val classNames: MutableList<Pair<String, Int>> = SmartList()
+    private val attrs: MutableList<Pair<String, Int>> = SmartList()
+    internal val mNotSelectors: MutableList<Angular2DirectiveSimpleSelectorWithRanges> = SmartList()
 
-    public ParseException(String s, TextRange errorRange) {
-      super(s);
-      myErrorRange = errorRange;
+    val notSelectors: List<Angular2DirectiveSimpleSelectorWithRanges>
+      get() = mNotSelectors
+
+    fun addAttribute(name: String, offset: Int) {
+      attrs.add(Pair.pair(name, offset))
     }
 
-    public TextRange getErrorRange() {
-      return myErrorRange;
+    fun addClassName(name: String, offset: Int) {
+      classNames.add(Pair.pair(name, offset))
+    }
+
+    fun setElement(name: String, offset: Int) {
+      elementRange = Pair.pair(name, offset)
+    }
+
+    val classNameRanges: List<Pair<String, Int>>
+      get() = classNames
+
+    val attributeRanges: List<Pair<String, Int>>
+      get() = attrs
+
+  }
+
+  class ParseException(s: String?, val errorRange: TextRange) : Exception(s)
+  companion object {
+    private val SELECTOR_REGEXP = Pattern.compile(
+      "(:not\\()|" +  //":not("
+      "([-\\w]+)|" +  // "tag"
+      "(?:\\.([-\\w]+))|" +  // ".class"
+      // "-" should appear first in the regexp below as FF31 parses "[.-\w]" as a range
+      "(?:\\[([-.\\w*]+)(?:=([\"']?)([^]\"']*)\\5)?])|" +  // "[name]", "[name=value]",
+      //                                                          "[name="value"]",
+      //                                                          "[name='value']"
+      "(\\))|" +  // ")"
+      "(\\s*,\\s*)" // ","
+    )
+
+    @Throws(ParseException::class)
+    @JvmStatic
+    fun parse(selector: String): List<Angular2DirectiveSimpleSelector> {
+      val results: MutableList<Angular2DirectiveSimpleSelector> = SmartList()
+      val addResult = Consumer { cssSel: Angular2DirectiveSimpleSelector ->
+        if (!cssSel.notSelectors.isEmpty() && cssSel.elementName == null && cssSel.classNames.isEmpty() &&
+            cssSel.attrs.isEmpty()) {
+          cssSel.mElementName = "*"
+        }
+        results.add(cssSel)
+      }
+      var cssSelector = Angular2DirectiveSimpleSelector()
+      var current = cssSelector
+      var inNot = false
+      val matcher = SELECTOR_REGEXP.matcher(selector)
+      while (matcher.find()) {
+        if (matcher.start(1) >= 0) {
+          if (inNot) {
+            throw ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
+                                 TextRange(matcher.start(1), matcher.end(1)))
+          }
+          inNot = true
+          current = Angular2DirectiveSimpleSelector()
+          cssSelector.mNotSelectors.add(current)
+        }
+        else if (matcher.start(2) >= 0) {
+          current.setElement(matcher.group(2))
+        }
+        if (matcher.start(3) >= 0) {
+          current.addClassName(matcher.group(3))
+        }
+        if (matcher.start(4) >= 0) {
+          current.addAttribute(matcher.group(4), matcher.group(6))
+        }
+        if (matcher.start(7) >= 0) {
+          inNot = false
+          current = cssSelector
+        }
+        if (matcher.start(8) >= 0) {
+          if (inNot) {
+            throw ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
+                                 TextRange(matcher.start(8), matcher.end(8)))
+          }
+          addResult.accept(cssSelector)
+          current = Angular2DirectiveSimpleSelector()
+          cssSelector = current
+        }
+      }
+      addResult.accept(cssSelector)
+      return results
+    }
+
+    @Throws(ParseException::class)
+    @JvmStatic
+    fun parseRanges(selector: String): List<Angular2DirectiveSimpleSelectorWithRanges> {
+      val results: MutableList<Angular2DirectiveSimpleSelectorWithRanges> = SmartList()
+      var cssSelector = Angular2DirectiveSimpleSelectorWithRanges()
+      var current = cssSelector
+      var inNot = false
+      val matcher = SELECTOR_REGEXP.matcher(selector)
+      while (matcher.find()) {
+        if (matcher.start(1) >= 0) {
+          if (inNot) {
+            throw ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
+                                 TextRange(matcher.start(1), matcher.end(1)))
+          }
+          inNot = true
+          current = Angular2DirectiveSimpleSelectorWithRanges()
+          cssSelector.mNotSelectors.add(current)
+        }
+        else if (matcher.start(2) >= 0) {
+          current.setElement(matcher.group(2), matcher.start(2))
+        }
+        if (matcher.start(3) >= 0) {
+          current.addClassName(matcher.group(3), matcher.start(3))
+        }
+        if (matcher.start(4) >= 0) {
+          current.addAttribute(matcher.group(4), matcher.start(4))
+        }
+        if (matcher.start(7) >= 0) {
+          inNot = false
+          current = cssSelector
+        }
+        if (matcher.start(8) >= 0) {
+          if (inNot) {
+            throw ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
+                                 TextRange(matcher.start(8), matcher.end(8)))
+          }
+          results.add(cssSelector)
+          current = Angular2DirectiveSimpleSelectorWithRanges()
+          cssSelector = current
+        }
+      }
+      results.add(cssSelector)
+      return results
+    }
+
+    @JvmStatic
+    fun createTemplateBindingsCssSelector(bindings: Angular2TemplateBindings): Angular2DirectiveSimpleSelector {
+      val cssSelector = Angular2DirectiveSimpleSelector()
+      cssSelector.setElement(Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE)
+      cssSelector.addAttribute(bindings.templateName, null)
+      for (binding in bindings.bindings) {
+        if (!binding.keyIsVar()) {
+          cssSelector.addAttribute(binding.key, binding.expression?.text)
+        }
+      }
+      return cssSelector
+    }
+
+    @JvmStatic
+    fun createElementCssSelector(element: XmlTag): Angular2DirectiveSimpleSelector {
+      val cssSelector = Angular2DirectiveSimpleSelector()
+      val elNameNoNs = XmlUtil.findLocalNameByQualifiedName(element.name)
+      cssSelector.setElement(elNameNoNs)
+      for (attr in element.attributes) {
+        val attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.name)
+        val info = Angular2AttributeNameParser.parse(attrNameNoNs!!, element)
+        if (info.type == Angular2AttributeType.TEMPLATE_BINDINGS
+            || info.type == Angular2AttributeType.LET
+            || info.type == Angular2AttributeType.REFERENCE) {
+          continue
+        }
+        cssSelector.addAttribute(info.name, attr.value)
+        if (StringUtil.toLowerCase(attr.name) == "class" && attr.value != null) {
+          StringUtil.split(attr.value!!, " ")
+            .forEach(Consumer { clsName: String -> cssSelector.addClassName(clsName) })
+        }
+      }
+      return cssSelector
     }
   }
 }

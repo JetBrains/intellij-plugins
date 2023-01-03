@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttributeValue
 import org.angular2.lang.html.Angular2HtmlLanguage
-import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.INTERPOLATION_START
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes.Companion.INTERPOLATION_START
 
 class Angular2HtmlSuppressionProvider : DefaultXmlSuppressionProvider() {
 

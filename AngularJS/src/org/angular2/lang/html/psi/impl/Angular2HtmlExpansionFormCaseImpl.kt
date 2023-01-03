@@ -1,31 +1,25 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.psi.impl;
+package org.angular2.lang.html.psi.impl
 
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.impl.source.tree.CompositePsiElement;
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
-import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlExpansionFormCase;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.impl.source.tree.CompositePsiElement
+import org.angular2.lang.html.parser.Angular2HtmlElementTypes
+import org.angular2.lang.html.psi.Angular2HtmlElementVisitor
+import org.angular2.lang.html.psi.Angular2HtmlExpansionFormCase
 
-public class Angular2HtmlExpansionFormCaseImpl extends CompositePsiElement implements Angular2HtmlExpansionFormCase {
-
-  public Angular2HtmlExpansionFormCaseImpl(@NotNull Angular2ElementType type) {
-    super(type);
-  }
-
-  @Override
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Angular2HtmlElementVisitor) {
-      ((Angular2HtmlElementVisitor)visitor).visitExpansionFormCase(this);
-    }
-    else {
-      visitor.visitElement(this);
+class Angular2HtmlExpansionFormCaseImpl(type: Angular2HtmlElementTypes.Angular2ElementType)
+  : CompositePsiElement(type), Angular2HtmlExpansionFormCase {
+  override fun accept(visitor: PsiElementVisitor) {
+    when (visitor) {
+      is Angular2HtmlElementVisitor -> {
+        visitor.visitExpansionFormCase(this)
+      }
+      else -> {
+        visitor.visitElement(this)
+      }
     }
   }
 
-  @Override
-  public String getValue() {
-    return null;
-  }
+  override val value: String?
+    get() = null
 }

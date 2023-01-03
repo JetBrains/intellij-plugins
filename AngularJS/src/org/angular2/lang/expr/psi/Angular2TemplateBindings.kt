@@ -27,7 +27,8 @@ interface Angular2TemplateBindings : Angular2EmbeddedExpression, JSEvaluableElem
   }
 
   companion object {
-    operator fun get(attribute: XmlAttribute): Angular2TemplateBindings {
+    @JvmStatic
+    fun get(attribute: XmlAttribute): Angular2TemplateBindings {
       if (attribute is Angular2HtmlTemplateBindings) {
         return attribute.bindings
       }

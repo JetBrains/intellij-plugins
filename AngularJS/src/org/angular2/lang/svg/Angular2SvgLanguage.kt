@@ -1,21 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.svg;
+package org.angular2.lang.svg
 
-import com.intellij.javascript.web.html.WebFrameworkHtmlDialect;
-import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.javascript.web.html.WebFrameworkHtmlDialect
+import org.angular2.lang.html.Angular2HtmlLanguage
 
-public class Angular2SvgLanguage extends WebFrameworkHtmlDialect {
-
-  public static final Angular2SvgLanguage INSTANCE = new Angular2SvgLanguage();
-
-  protected Angular2SvgLanguage() {
-    super(Angular2HtmlLanguage.INSTANCE, "Angular2Svg");
+class Angular2SvgLanguage private constructor()
+  : WebFrameworkHtmlDialect(Angular2HtmlLanguage.INSTANCE, "Angular2Svg") {
+  override fun getDisplayName(): String {
+    return "Angular SVG template"
   }
 
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Angular SVG template";
+  companion object {
+    @JvmField
+    val INSTANCE = Angular2SvgLanguage()
   }
 }

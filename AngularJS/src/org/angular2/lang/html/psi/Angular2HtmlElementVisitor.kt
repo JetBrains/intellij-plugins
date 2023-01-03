@@ -1,47 +1,46 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.lang.html.psi;
+package org.angular2.lang.html.psi
 
-import com.intellij.psi.XmlElementVisitor;
+import com.intellij.psi.XmlElementVisitor
 
-public class Angular2HtmlElementVisitor extends XmlElementVisitor {
-
-  public void visitBananaBoxBinding(Angular2HtmlBananaBoxBinding bananaBoxBinding) {
-    visitBoundAttribute(bananaBoxBinding);
+open class Angular2HtmlElementVisitor : XmlElementVisitor() {
+  open fun visitBananaBoxBinding(bananaBoxBinding: Angular2HtmlBananaBoxBinding) {
+    visitBoundAttribute(bananaBoxBinding)
   }
 
-  public void visitBoundAttribute(Angular2HtmlBoundAttribute boundAttribute) {
-    visitXmlAttribute(boundAttribute);
+  open fun visitBoundAttribute(boundAttribute: Angular2HtmlBoundAttribute) {
+    visitXmlAttribute(boundAttribute)
   }
 
-  public void visitEvent(Angular2HtmlEvent event) {
-    visitBoundAttribute(event);
+  open fun visitEvent(event: Angular2HtmlEvent) {
+    visitBoundAttribute(event)
   }
 
-  public void visitExpansionForm(Angular2HtmlExpansionForm expansion) {
-    visitElement(expansion);
+  open fun visitExpansionForm(expansion: Angular2HtmlExpansionForm) {
+    visitElement(expansion)
   }
 
-  public void visitExpansionFormCase(Angular2HtmlExpansionFormCase expansionCase) {
-    visitElement(expansionCase);
+  fun visitExpansionFormCase(expansionCase: Angular2HtmlExpansionFormCase) {
+    visitElement(expansionCase)
   }
 
-  public void visitPropertyBinding(Angular2HtmlPropertyBinding propertyBinding) {
-    visitBoundAttribute(propertyBinding);
+  open fun visitPropertyBinding(propertyBinding: Angular2HtmlPropertyBinding) {
+    visitBoundAttribute(propertyBinding)
   }
 
-  public void visitReference(Angular2HtmlReference reference) {
-    visitXmlAttribute(reference);
+  open fun visitReference(reference: Angular2HtmlReference) {
+    visitXmlAttribute(reference)
   }
 
-  public void visitLet(Angular2HtmlLet variable) {
-    visitXmlAttribute(variable);
+  open fun visitLet(variable: Angular2HtmlLet) {
+    visitXmlAttribute(variable)
   }
 
-  public void visitTemplateBindings(Angular2HtmlTemplateBindings bindings) {
-    visitBoundAttribute(bindings);
+  open fun visitTemplateBindings(bindings: Angular2HtmlTemplateBindings) {
+    visitBoundAttribute(bindings)
   }
 
-  public void visitNgContentSelector(Angular2HtmlNgContentSelector ngContentSelect) {
-    visitElement(ngContentSelect);
+  open fun visitNgContentSelector(ngContentSelector: Angular2HtmlNgContentSelector) {
+    visitElement(ngContentSelector)
   }
 }

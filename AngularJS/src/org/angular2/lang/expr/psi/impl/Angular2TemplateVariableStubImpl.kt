@@ -9,13 +9,13 @@ import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 
-class Angular2TemplateVariableStubImpl : JSVariableStubBaseImpl<JSVariable?>, JSVariableStub<JSVariable?> {
-  constructor(clazz: JSVariable?,
+class Angular2TemplateVariableStubImpl : JSVariableStubBaseImpl<JSVariable>, JSVariableStub<JSVariable> {
+  constructor(clazz: JSVariable,
               parent: StubElement<*>?,
-              elementType: JSStubElementType<*, JSVariable?>)
+              elementType: JSStubElementType<*, JSVariable>)
     : super(clazz, parent, elementType, 0)
 
-  constructor(dataStream: StubInputStream?,
+  constructor(dataStream: StubInputStream,
               parentStub: StubElement<*>?,
               elementType: IStubElementType<*, *>)
     : super(dataStream, parentStub, elementType)

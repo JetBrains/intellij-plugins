@@ -14,7 +14,7 @@ interface Angular2Binding : Angular2EmbeddedExpression {
 
   companion object {
     @JvmStatic
-    operator fun get(attribute: XmlAttribute): Angular2Binding? {
+    fun get(attribute: XmlAttribute): Angular2Binding? {
       return when (attribute) {
         is Angular2HtmlPropertyBinding -> attribute.binding
         is Angular2HtmlBananaBoxBinding -> attribute.binding
