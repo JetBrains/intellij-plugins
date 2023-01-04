@@ -38,12 +38,12 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
-  fun testScriptEmpty() = doTest("""
+  fun testScriptBlank() = doTestWithoutInterpolations("""
     |<script>
     |</script>
   """)
 
-  fun testScriptEmpty2() = doTest("""
+  fun testScriptEmptyNested() = doTestWithoutInterpolations("""
     |<div :foo='something()'>
     |  <script></script>
     |  <div :foo='something()'>
@@ -210,7 +210,7 @@ open class VueLexerTest : LexerTestCase() {
     |</template>
   """, false)
 
-  /** Following 3 tests require fixes in JS lexer for html **/
+  //region Following 3 tests require fixes in JS lexer for html
   @Suppress("TestFunctionName")
   fun _testEscapes() = doTest("""
     |<template>
@@ -232,6 +232,7 @@ open class VueLexerTest : LexerTestCase() {
     | <div [foo]="&apos;test&apos; + 12">
     |</template>
   """)
+  //endregion
 
   fun testScriptSrc() = doTest("""
     |<template>
@@ -424,6 +425,10 @@ open class VueLexerTest : LexerTestCase() {
     doTest(text, true)
   }
 
+  fun doTestWithoutInterpolations(@NonNls text: String) {
+    doTest(text, true, true)
+  }
+
   override fun getExpectedFileExtension(): String {
     return if (interpolationConfig != null)
       ".${interpolationConfig!!.first}.${interpolationConfig!!.second}.txt"
@@ -442,7 +447,7 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
-  private fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean) {
+  private fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean, skipInterpolationCheck: Boolean = false) {
     val test = {
       val withoutMargin = text.trimMargin()
       super.doTest(withoutMargin)
@@ -454,7 +459,7 @@ open class VueLexerTest : LexerTestCase() {
       //}
     }
     test()
-    if (interpolationConfig == null) {
+    if (!skipInterpolationCheck && interpolationConfig == null) {
       testCustomInterpolation(Pair("{{", "}}"), test)
     }
   }
