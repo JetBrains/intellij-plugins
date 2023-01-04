@@ -1,6 +1,4 @@
 <idea-plugin>
-  <resource-bundle>messages.CppDiagnosticsBundle</resource-bundle>
-
   <extensions defaultExtensionNs="com.intellij">
     <troubleInfoCollector implementation="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction"/>
     <registryKey key="cpp.diagnostics.track.events" description="Track various events to dump them in the diagnostics info"
@@ -14,8 +12,7 @@
               topic="com.jetbrains.cidr.lang.workspace.OCWorkspaceListener"/>
   </projectListeners>
 
-
-  <actions>
+  <actions resource-bundle="messages.CppDiagnosticsBundle">
     <action id="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction" class="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction">
       <add-to-group group-id="HelpDiagnosticTools" anchor="after" relative-to-action="LogDebugConfigure"/>
     </action>
