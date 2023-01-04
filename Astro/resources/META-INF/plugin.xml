@@ -1,0 +1,40 @@
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/astro" package="org.jetbrains.astro">
+  <!--suppress PluginXmlCapitalization -->
+  <name>Astro</name>
+  <id>org.jetbrains.plugins.astro</id>
+  <description><![CDATA[
+    Support for <a href="https://astro.build/">Astro</a> projects.
+
+    ]]></description>
+  <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
+
+  <dependencies>
+    <plugin id="com.intellij.modules.xml"/>
+    <plugin id="JavaScript"/>
+    <plugin id="com.intellij.css"/>
+  </dependencies>
+
+  <extensionPoints>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <dependencySupport kind="astro" coordinate="npm:astro" displayName="Astro"/>
+
+    <internalFileTemplate name="Astro Component"/>
+    <createFromTemplateHandler implementation="org.jetbrains.astro.AstroCreateFromTemplateHandler"/>
+
+    <fileType name="Astro" extensions="astro" language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroFileType"
+              fieldName="INSTANCE"/>
+
+    <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
+    <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
+
+  </extensions>
+  <actions>
+    <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
+  </actions>
+
+</idea-plugin>

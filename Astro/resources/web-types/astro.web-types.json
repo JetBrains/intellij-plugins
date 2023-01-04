@@ -1,0 +1,31 @@
+{
+  "$schema": "../../../../community/platform/webSymbols/web-types-gen/resources/web-types.json",
+  "name": "astro",
+  "framework": "astro",
+  "version": "1.0.0",
+  "js-types-syntax": "typescript",
+  "description-markup": "markdown",
+  "default-icon": "icons/astro.svg",
+  "framework-config": {
+    "enable-when": {
+      "file-extensions": [
+        ".astro"
+      ]
+    }
+  },
+  "contexts-config": {
+    "astro": {
+      "kind": "astro-project",
+      "enable-when": {
+        "node-packages": [
+          "astro"
+        ],
+        "file-extensions": [
+          ".astro"
+        ]
+      }
+    }
+  },
+  "contributions": {
+  }
+}
