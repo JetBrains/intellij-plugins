@@ -1,11 +1,13 @@
 package com.jetbrains.lang.makefile.psi
 
-import com.intellij.openapi.project.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.*
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiWhiteSpace
+import com.jetbrains.lang.makefile.MakefileFile
+import com.jetbrains.lang.makefile.MakefileFileType
 
 object MakefileElementFactory {
-  fun createFile(project: Project, text: String) =
+  private fun createFile(project: Project, text: String) =
       PsiFileFactory.getInstance(project).createFileFromText("Makefile", MakefileFileType, text) as MakefileFile
 
   fun createRule(project: Project, target: String) =

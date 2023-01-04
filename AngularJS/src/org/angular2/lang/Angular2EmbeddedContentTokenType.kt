@@ -28,7 +28,7 @@ abstract class Angular2EmbeddedContentTokenType : IElementType, EmbeddingElement
     return builder.treeBuilt.firstChildNode
   }
 
-  protected fun doParseContents(chameleon: ASTNode): PsiBuilder {
+  private fun doParseContents(chameleon: ASTNode): PsiBuilder {
     val project: Project
     val psi = chameleon.psi
     project = psi.project

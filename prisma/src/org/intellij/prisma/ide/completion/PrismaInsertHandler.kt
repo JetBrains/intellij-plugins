@@ -83,7 +83,7 @@ object PrismaInsertHandler {
     showPopup(context)
   }
 
-  val COLON_ARGUMENT = InsertHandler<LookupElement> { context, item ->
+  private val COLON_ARGUMENT = InsertHandler<LookupElement> { context, item ->
     EditorModificationUtil.insertStringAtCaret(context.editor, ": ", false, true)
     showPopup(context)
   }
@@ -98,7 +98,7 @@ object PrismaInsertHandler {
     showPopup(context)
   }
 
-  val EQUALS_QUOTED = InsertHandler<LookupElement> { context, _ ->
+  private val EQUALS_QUOTED = InsertHandler<LookupElement> { context, _ ->
     EditorModificationUtil.insertStringAtCaret(context.editor, " = \"\"", false, true, 4)
     showPopup(context)
   }

@@ -13,7 +13,7 @@ object PrismaElementFactory {
       "dummy.prisma", PrismaLanguage, text, false, true
     ) as PrismaFile
 
-  inline fun <reified T : PrismaElement> createElement(project: Project, text: String): T? =
+  private inline fun <reified T : PrismaElement> createElement(project: Project, text: String): T? =
     PsiTreeUtil.findChildOfType(createFile(project, text), T::class.java, true)
 
   fun createIdentifier(project: Project, name: String): PsiElement =

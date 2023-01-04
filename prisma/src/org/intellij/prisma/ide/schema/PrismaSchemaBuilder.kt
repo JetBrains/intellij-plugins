@@ -283,7 +283,7 @@ class PrismaSchemaVariant(
   class Builder : SchemaDslBuilder<PrismaSchemaVariant> {
     var label: String? = null
     var documentation: String? = null
-    var insertHandler: InsertHandler<LookupElement>? = null
+    private var insertHandler: InsertHandler<LookupElement>? = null
     var type: String? = null
     var ref: PrismaSchemaRef? = null
     var datasources: Set<PrismaDatasourceType>? = null

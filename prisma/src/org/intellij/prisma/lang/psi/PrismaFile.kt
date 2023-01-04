@@ -40,7 +40,7 @@ class PrismaFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, Pri
   val declarations: List<PrismaDeclaration>
     get() = childrenOfType()
 
-  val entityDeclarations: List<PrismaEntityDeclaration>
+  private val entityDeclarations: List<PrismaEntityDeclaration>
     get() = childrenOfType()
 
   override fun processDeclarations(

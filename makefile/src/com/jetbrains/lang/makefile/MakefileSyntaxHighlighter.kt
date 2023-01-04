@@ -1,12 +1,13 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.openapi.editor.*
-import com.intellij.openapi.editor.colors.*
-import com.intellij.openapi.editor.colors.TextAttributesKey.*
-import com.intellij.openapi.fileTypes.*
-import com.intellij.psi.*
-import com.intellij.psi.tree.*
-import com.jetbrains.lang.makefile.psi.*
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.HighlighterColors
+import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey
+import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
+import com.intellij.psi.TokenType
+import com.intellij.psi.tree.IElementType
+import com.jetbrains.lang.makefile.psi.MakefileTypes
 
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   companion object {
@@ -33,7 +34,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     }
 */
 
-    val BAD_CHARACTER = createTextAttributesKey("MAKEFILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
+    private val BAD_CHARACTER = createTextAttributesKey("MAKEFILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
 
     private val BAD_CHAR_KEYS = arrayOf(BAD_CHARACTER)
     private val SEPARATOR_KEYS = arrayOf(SEPARATOR)

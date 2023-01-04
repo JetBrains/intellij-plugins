@@ -50,7 +50,7 @@ class PrismaSchemaFakeElement(
       return PrismaSchemaFakeElement(parent, schemaElement)
     }
 
-    fun findSuitableParent(parameters: CompletionParameters): PsiElement? {
+    private fun findSuitableParent(parameters: CompletionParameters): PsiElement? {
       var context = parameters.originalPosition
 
       if (context is PsiWhiteSpace) {

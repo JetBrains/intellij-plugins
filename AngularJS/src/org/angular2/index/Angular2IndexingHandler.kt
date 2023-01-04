@@ -244,7 +244,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
 
   companion object {
 
-    const val REQUIRE = "require"
+    private const val REQUIRE = "require"
 
     @NonNls
     private val ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui"

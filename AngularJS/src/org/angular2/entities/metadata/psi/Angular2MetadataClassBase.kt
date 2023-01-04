@@ -43,7 +43,7 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
   val bindings: Angular2DirectiveProperties
     get() = CachedValuesManager.getCachedValue(this, CachedValueProvider { propertiesNoCache })
 
-  protected val classAndDependencies: Pair<TypeScriptClass?, Collection<Any>>
+  private val classAndDependencies: Pair<TypeScriptClass?, Collection<Any>>
     get() = CachedValuesManager.getCachedValue(this) {
       ProgressManager.checkCanceled()
       val className = stub.className
