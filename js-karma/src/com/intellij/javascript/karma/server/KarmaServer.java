@@ -61,11 +61,13 @@ public final class KarmaServer {
   private final MyDisposable myDisposable;
   private final KarmaServerRestarter myRestarter;
   private final int myProcessHashCode;
+  private final NodeTargetRun myTargetRun;
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
     KillableProcessHandler processHandler = startServer(project, serverSettings, myCoveragePeer, myCommandLineFolder);
+    myTargetRun = NodeTargetRun.getTargetRun(processHandler);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
@@ -136,6 +138,10 @@ public final class KarmaServer {
 
   public @NotNull ConsoleCommandLineFolder getCommandLineFolder() {
     return myCommandLineFolder;
+  }
+
+  public @NotNull NodeTargetRun getTargetRun() {
+    return myTargetRun;
   }
 
   private static @NotNull KillableProcessHandler startServer(@NotNull Project project,

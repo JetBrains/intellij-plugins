@@ -4,7 +4,7 @@ package com.intellij.javascript.karma.coverage;
 import com.google.gson.JsonElement;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
-import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
@@ -57,7 +57,12 @@ public class KarmaCoveragePeer {
         if (coverageSession != null) {
           String path = JsonUtil.getString(eventBody);
           if (path != null) {
-            path = NodeInterpreterUtil.convertRemotePathToLocal(path, server.getServerSettings().getNodeInterpreter());
+            try {
+              path = server.getTargetRun().convertTargetPathToLocalPath(path);
+            }
+            catch (IllegalArgumentException e) {
+              Logger.getInstance(KarmaCoveragePeer.class).warn("Cannot read coverage file", e);
+            }
             File file = new File(path);
             if (file.isAbsolute() && file.isFile()) {
               coverageSession.onCoverageSessionFinished(file);
