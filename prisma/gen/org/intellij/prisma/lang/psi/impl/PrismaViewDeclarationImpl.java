@@ -10,14 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
 
-public class PrismaModelDeclarationImpl extends PrismaTableEntityDeclarationMixin implements PrismaModelDeclaration {
+public class PrismaViewDeclarationImpl extends PrismaTableEntityDeclarationMixin implements PrismaViewDeclaration {
 
-  public PrismaModelDeclarationImpl(@NotNull ASTNode node) {
+  public PrismaViewDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PrismaVisitor visitor) {
-    visitor.visitModelDeclaration(this);
+    visitor.visitViewDeclaration(this);
   }
 
   @Override

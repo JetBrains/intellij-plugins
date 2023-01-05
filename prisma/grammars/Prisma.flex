@@ -51,6 +51,7 @@ LINE_COMMENT = "//" .*
 <YYINITIAL> {
     "model"            { yybegin(DECL); return MODEL; }
     "type"             { yybegin(DECL); return TYPE; }
+    "view"             { yybegin(DECL); return VIEW; }
     "enum"             { yybegin(DECL); return ENUM; }
     "generator"        { yybegin(DECL); return GENERATOR; }
     "datasource"       { yybegin(DECL); return DATASOURCE; }

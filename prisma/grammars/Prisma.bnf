@@ -17,6 +17,7 @@
   tokens=[
     MODEL           = 'model'
     TYPE            = 'type'
+    VIEW            = 'view'
     ENUM            = 'enum'
     GENERATOR       = 'generator'
     DATASOURCE      = 'datasource'
@@ -45,9 +46,14 @@
   ]
 
   extends('FunctionCall|ArrayExpression|LiteralExpression|PathExpression')=Expression
-  implements('(Model|Type|Enum|Datasource|Generator)Declaration|TypeAlias')='org.intellij.prisma.lang.psi.PrismaDeclaration'
-  implements('(Model|Type|Enum)Declaration|TypeAlias')='org.intellij.prisma.lang.psi.PrismaEntityDeclaration'
+
+  implements('(Model|Type|View|Enum|Datasource|Generator)Declaration|TypeAlias')='org.intellij.prisma.lang.psi.PrismaDeclaration'
+  implements('(Model|Type|View|Enum)Declaration|TypeAlias')='org.intellij.prisma.lang.psi.PrismaEntityDeclaration'
   implements('(Datasource|Generator)Declaration')='org.intellij.prisma.lang.psi.PrismaKeyValueDeclaration'
+
+  implements('(Model|Type|View)Declaration')='org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration'
+  mixin('(Model|Type|View)Declaration')='org.intellij.prisma.lang.psi.impl.PrismaTableEntityDeclarationMixin'
+  pin('(Model|Type|View)Declaration')=1
 
   implements('.*Block')='org.intellij.prisma.lang.psi.PrismaBlock'
   mixin('.*Block')='org.intellij.prisma.lang.psi.impl.PrismaBlockMixin'
@@ -68,6 +74,7 @@ Schema ::= Declaration*
 private Declaration ::=
     ModelDeclaration
     | EnumDeclaration
+    | ViewDeclaration
     | DatasourceDeclaration
     | GeneratorDeclaration
     | TypeAlias
@@ -77,21 +84,13 @@ private Declaration ::=
         recoverWhile=Declaration_recover
     }
 private Declaration_recover ::= !TopLevelKeywords
-private TopLevelKeywords ::= MODEL | TYPE | ENUM | GENERATOR | DATASOURCE
+private TopLevelKeywords ::= MODEL | TYPE | VIEW | ENUM | GENERATOR | DATASOURCE
 
-ModelDeclaration ::= MODEL Identifier FieldDeclarationBlock {
-    mixin="org.intellij.prisma.lang.psi.impl.PrismaModelTypeDeclarationMixin"
-    implements="org.intellij.prisma.lang.psi.PrismaModelTypeDeclaration"
-    pin=1
-}
-TypeDeclaration ::= TYPE Identifier FieldDeclarationBlock {
-    mixin="org.intellij.prisma.lang.psi.impl.PrismaModelTypeDeclarationMixin"
-    implements="org.intellij.prisma.lang.psi.PrismaModelTypeDeclaration"
-    pin=1
-}
+ModelDeclaration ::= MODEL Identifier FieldDeclarationBlock
+TypeDeclaration ::= TYPE Identifier FieldDeclarationBlock
+ViewDeclaration ::= VIEW Identifier FieldDeclarationBlock
 
 FieldDeclarationBlock ::= '{' FieldDeclarationBlockItem* '}' {
-    pin=1
 }
 
 private FieldDeclarationBlockItem ::=

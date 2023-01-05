@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.intellij.prisma.lang.psi.PrismaElementTypes.*;
 import org.intellij.prisma.lang.psi.*;
 
-public class PrismaTypeDeclarationImpl extends PrismaModelTypeDeclarationMixin implements PrismaTypeDeclaration {
+public class PrismaTypeDeclarationImpl extends PrismaTableEntityDeclarationMixin implements PrismaTypeDeclaration {
 
   public PrismaTypeDeclarationImpl(@NotNull ASTNode node) {
     super(node);

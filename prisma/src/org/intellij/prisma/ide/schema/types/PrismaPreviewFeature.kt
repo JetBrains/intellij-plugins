@@ -15,7 +15,8 @@ enum class PrismaPreviewFeature {
   PostgresqlExtensions,
   ExtendedWhereUnique,
   ClientExtensions,
-  MultiSchema;
+  MultiSchema,
+  Views;
 
   val presentation: String = StringUtil.decapitalize(name)
 }
