@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PrismaTypeDeclaration extends PrismaDeclaration, PrismaEntityDeclaration, PrismaTableEntityDeclaration {
+public interface PrismaViewDeclaration extends PrismaDeclaration, PrismaEntityDeclaration, PrismaTableEntityDeclaration {
 
   @Nullable
   PrismaFieldDeclarationBlock getFieldDeclarationBlock();

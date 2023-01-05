@@ -33,7 +33,7 @@ fun getPresentation(element: PrismaElement): ItemPresentation = object : ItemPre
 
 val PrismaNamedElement.icon: Icon?
   get() = when (this) {
-    is PrismaModelTypeDeclaration -> PrismaIcons.TYPE
+    is PrismaTableEntityDeclaration -> PrismaIcons.TYPE
     is PrismaKeyValueDeclaration -> PrismaIcons.KEY_VALUE
     is PrismaEnumDeclaration -> PrismaIcons.ENUM
     is PrismaTypeAlias -> PrismaIcons.ALIAS

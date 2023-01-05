@@ -40,6 +40,7 @@ public interface PrismaElementTypes {
   IElementType UNSUPPORTED_OPTIONAL_LIST_TYPE = new PrismaElementType("UNSUPPORTED_OPTIONAL_LIST_TYPE");
   IElementType UNSUPPORTED_TYPE = new PrismaElementType("UNSUPPORTED_TYPE");
   IElementType VALUE_ARGUMENT = new PrismaElementType("VALUE_ARGUMENT");
+  IElementType VIEW_DECLARATION = new PrismaElementType("VIEW_DECLARATION");
 
   IElementType AT = new PrismaTokenType("@");
   IElementType ATAT = new PrismaTokenType("@@");
@@ -64,6 +65,7 @@ public interface PrismaElementTypes {
   IElementType STRING_LITERAL = new PrismaTokenType("STRING_LITERAL");
   IElementType TYPE = new PrismaTokenType("type");
   IElementType UNSUPPORTED = new PrismaTokenType("Unsupported");
+  IElementType VIEW = new PrismaTokenType("view");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -154,6 +156,9 @@ public interface PrismaElementTypes {
       }
       else if (type == VALUE_ARGUMENT) {
         return new PrismaValueArgumentImpl(node);
+      }
+      else if (type == VIEW_DECLARATION) {
+        return new PrismaViewDeclarationImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

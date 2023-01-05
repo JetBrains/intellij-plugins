@@ -84,6 +84,7 @@ class PrismaDocumentationDefinitionBuilder(private val element: PsiElement) {
       return when (this) {
         is PrismaModelDeclaration -> "model"
         is PrismaTypeDeclaration -> "type"
+        is PrismaViewDeclaration -> "view"
         is PrismaDatasourceDeclaration -> "datasource"
         is PrismaGeneratorDeclaration -> "generator"
         is PrismaTypeAlias -> "type"

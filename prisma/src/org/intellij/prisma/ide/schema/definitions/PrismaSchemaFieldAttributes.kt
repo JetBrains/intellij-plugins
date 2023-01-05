@@ -13,7 +13,7 @@ import org.intellij.prisma.lang.PrismaConstants.ParameterNames
 import org.intellij.prisma.lang.PrismaConstants.Types
 import org.intellij.prisma.lang.psi.PrismaFile
 import org.intellij.prisma.lang.psi.PrismaModelDeclaration
-import org.intellij.prisma.lang.psi.PrismaModelTypeDeclaration
+import org.intellij.prisma.lang.psi.PrismaTableEntityDeclaration
 import org.intellij.prisma.lang.psi.PrismaPsiPatterns
 import org.intellij.prisma.lang.types.PrismaBooleanType
 import java.util.*
@@ -68,7 +68,7 @@ val PRISMA_SCHEMA_FIELD_ATTRIBUTES = schema {
       label = FieldAttributes.DEFAULT
       insertHandler = ParenthesesInsertHandler.WITH_PARAMETERS
       documentation = "Defines a default value for this field. `@default` takes an expression as an argument."
-      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaModelTypeDeclaration::class.java))
+      pattern = PrismaPsiPatterns.insideEntityDeclaration(psiElement(PrismaTableEntityDeclaration::class.java))
 
       param {
         label = ParameterNames.EXPRESSION

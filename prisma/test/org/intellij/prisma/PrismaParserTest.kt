@@ -24,4 +24,6 @@ class PrismaParserTest : ParsingTestCase(
   fun testUnsupportedTypeInAlias() = doTest(true, true)
 
   fun testPathExpression() = doTest(true, true)
+
+  fun testViewDeclaration() = doTest(true, true)
 }

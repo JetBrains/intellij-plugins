@@ -136,11 +136,11 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
   private fun StringBuilder.additionalSections() {
     when (element) {
       is PrismaFieldDeclaration -> fieldAttributesSection(element)
-      is PrismaModelTypeDeclaration -> modelTypeMembers(element)
+      is PrismaTableEntityDeclaration -> tableEntityMembers(element)
     }
   }
 
-  private fun StringBuilder.modelTypeMembers(element: PrismaModelTypeDeclaration) {
+  private fun StringBuilder.tableEntityMembers(element: PrismaTableEntityDeclaration) {
     sections {
       val block = element.getFieldDeclarationBlock() ?: return@sections
 
