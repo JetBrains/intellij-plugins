@@ -7,9 +7,9 @@ import com.intellij.openapi.startup.ProjectPostStartupActivity
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.io.exists
 import com.intellij.util.io.outputStream
 import java.io.IOException
+import kotlin.io.path.exists
 
 internal class BundledProtoResourcesMigrationPostStartupActivity : ProjectPostStartupActivity {
   private val bundledProtoFiles = setOf(
