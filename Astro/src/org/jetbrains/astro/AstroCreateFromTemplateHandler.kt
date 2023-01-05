@@ -5,12 +5,12 @@ import com.intellij.ide.fileTemplates.DefaultCreateFromTemplateHandler
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
 import org.jetbrains.astro.CreateAstroComponentAction.Companion.ASTRO_TEMPLATE_NAME
-import org.jetbrains.astro.lang.sfc.AstroFileType
+import org.jetbrains.astro.lang.sfc.AstroSfcFileType
 
 class AstroCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
   override fun handlesTemplate(template: FileTemplate): Boolean {
     val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(template.extension)
-    return AstroFileType.INSTANCE == fileType && ASTRO_TEMPLATE_NAME == template.name
+    return AstroSfcFileType.INSTANCE == fileType && ASTRO_TEMPLATE_NAME == template.name
   }
 
   override fun isNameRequired(): Boolean = true

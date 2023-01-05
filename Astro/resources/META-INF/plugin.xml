@@ -24,12 +24,16 @@
     <internalFileTemplate name="Astro Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.astro.AstroCreateFromTemplateHandler"/>
 
-    <fileType name="Astro" extensions="astro" language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroFileType"
+    <fileType name="Astro" extensions="astro" language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroSfcFileType"
               fieldName="INSTANCE"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
 
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.sfc.AstroIndexedFileTypeProvider"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">

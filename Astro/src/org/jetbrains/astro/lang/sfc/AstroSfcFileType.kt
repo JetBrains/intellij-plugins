@@ -3,9 +3,9 @@ package org.jetbrains.astro.lang.sfc
 
 import com.intellij.javascript.web.html.WebFrameworkHtmlFileType
 
-class AstroFileType private constructor() : WebFrameworkHtmlFileType(AstroSfcLanguage.INSTANCE, "Astro", "astro") {
+class AstroSfcFileType private constructor() : WebFrameworkHtmlFileType(AstroSfcLanguage.INSTANCE, "Astro", "astro") {
   companion object {
     @JvmField
-    val INSTANCE: AstroFileType = AstroFileType()
+    val INSTANCE: AstroSfcFileType = AstroSfcFileType()
   }
 }
