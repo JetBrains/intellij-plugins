@@ -1,0 +1,5 @@
+XML_COMMENT_CHARACTERS ('Some comment\n')
+ASTRO:FRONTMATTER_SEPARATOR ('---')
+XML_DATA_CHARACTERS ('\nconst a = new Text<Foo>("12")\n')
+ASTRO:FRONTMATTER_SEPARATOR ('---')
+XML_BAD_CHARACTER ('\nResult is: { a }')

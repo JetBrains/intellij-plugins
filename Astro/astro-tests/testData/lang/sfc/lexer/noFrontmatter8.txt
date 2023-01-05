@@ -1,0 +1,2 @@
+XML_DATA_CHARACTERS ('Foo Bar ')
+XML_BAD_CHARACTER ('<a --- > Foo')
