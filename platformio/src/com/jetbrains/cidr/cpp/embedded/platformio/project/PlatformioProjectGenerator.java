@@ -228,7 +228,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
         }
       });
       ApplicationManager.getApplication().invokeLaterOnWriteThread(
-        () -> cmakeWorkspace.selectProjectDir(VfsUtilCore.virtualToIoFile(baseDir)) //Phase 3 started
+        () -> cmakeWorkspace.linkCMakeProject(VfsUtilCore.virtualToIoFile(baseDir)) //Phase 3 started
       );
     }
   }
