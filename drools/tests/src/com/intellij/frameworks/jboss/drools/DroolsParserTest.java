@@ -107,6 +107,10 @@ public class DroolsParserTest extends ParsingTestCase {
     doTest(CHECK_RESULT);
   }
 
+  public void testUnitDeclaration() {
+    doTest(CHECK_RESULT);
+  }
+
   public void testNullChecks() {
     doTest(CHECK_RESULT);
   }

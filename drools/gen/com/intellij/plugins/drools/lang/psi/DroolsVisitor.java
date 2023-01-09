@@ -526,6 +526,14 @@ public class DroolsVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitUnitName(@NotNull DroolsUnitName o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitUnitStatement(@NotNull DroolsUnitStatement o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitUpdateRhsStatement(@NotNull DroolsUpdateRhsStatement o) {
     visitSimpleRhsStatement(o);
   }

@@ -113,6 +113,7 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 "end"                         {  return      END; }
 "over"                        {  return      OVER; }
 "init"                        {  return      INIT; }
+"unit"                        {  return      UNIT; }
 "modify"                      {  return      MODIFY; }
 "update"                      {  return      UPDATE; }
 "retract"                     {  return      RETRACT; }

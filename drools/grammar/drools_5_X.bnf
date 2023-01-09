@@ -64,6 +64,7 @@
       RESULT="result"
       END="end"
       OVER="over"
+      UNIT="unit"
       INIT="init"
       MODIFY="modify"
       UPDATE="update"
@@ -159,6 +160,7 @@ namespace ::= JAVA_IDENTIFIER ("." JAVA_IDENTIFIER)*
 private statement ::= importStatement
     |  globalStatement
     |  declareStatement
+    |  unitStatement
     |  ruleStatement
     |  ruleAttribute
     |  functionStatement
@@ -169,7 +171,7 @@ private top_level_recover ::= !(';' | 'activation-group' | 'agenda-group' | 'aut
                                 'calendars' | 'date-effective' | 'date-expires' | 'declare' |
                                 'dialect' | 'duration' | 'enabled' |
                                 'function' | 'global' | 'import' | 'lock-on-active' |
-                                'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window')
+                                'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window' | 'unit')
 
 globalStatement ::= "global" varType nameId {pin=3 mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsGlobalVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
 varType ::= type
@@ -247,6 +249,9 @@ queryStatement ::= query stringId parameters? annotation* queryExpression end  {
 }
 queryExpression ::= lhsExpression {pin=1  recoverWhile="queryExpression_recover"}
 private queryExpression_recover ::= ! (';' | 'activation-group' | 'agenda-group' | 'auto-focus' | 'calendars' | 'date-effective' | 'date-expires' | 'declare' | 'dialect' | 'duration' | 'enabled' | 'function' | 'global' | 'import' | 'lock-on-active' | 'no-loop' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | end | query)
+
+unitStatement ::= "unit" unitName {pin=2 }
+unitName ::=stringId
 
 ruleStatement ::= "rule" ruleName ("extends" parentRule)? annotation* ruleAttributes? lhs? rhs* end {pin=2 }
 lhs ::= "when" ":"? lhsExpression  {pin=1 recoverWhile=lhs_recover}

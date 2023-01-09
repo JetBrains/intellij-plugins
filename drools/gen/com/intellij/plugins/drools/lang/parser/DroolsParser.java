@@ -3818,6 +3818,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   // importStatement
   //     |  globalStatement
   //     |  declareStatement
+  //     |  unitStatement
   //     |  ruleStatement
   //     |  ruleAttribute
   //     |  functionStatement
@@ -3829,6 +3830,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     r = importStatement(b, l + 1);
     if (!r) r = globalStatement(b, l + 1);
     if (!r) r = declareStatement(b, l + 1);
+    if (!r) r = unitStatement(b, l + 1);
     if (!r) r = ruleStatement(b, l + 1);
     if (!r) r = ruleAttribute(b, l + 1);
     if (!r) r = functionStatement(b, l + 1);
@@ -3947,7 +3949,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   //                                 'calendars' | 'date-effective' | 'date-expires' | 'declare' |
   //                                 'dialect' | 'duration' | 'enabled' |
   //                                 'function' | 'global' | 'import' | 'lock-on-active' |
-  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window')
+  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window' | 'unit')
   static boolean top_level_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover")) return false;
     boolean r;
@@ -3961,7 +3963,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   //                                 'calendars' | 'date-effective' | 'date-expires' | 'declare' |
   //                                 'dialect' | 'duration' | 'enabled' |
   //                                 'function' | 'global' | 'import' | 'lock-on-active' |
-  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window'
+  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window' | 'unit'
   private static boolean top_level_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover_0")) return false;
     boolean r;
@@ -3988,6 +3990,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, SALIENCE);
     if (!r) r = consumeToken(b, TIMER);
     if (!r) r = consumeToken(b, WINDOW);
+    if (!r) r = consumeToken(b, UNIT);
     return r;
   }
 
@@ -4246,6 +4249,31 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, THEN);
     if (!r) r = consumeToken(b, IF);
     if (!r) r = consumeToken(b, JAVA_IDENTIFIER);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // stringId
+  public static boolean unitName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unitName")) return false;
+    if (!nextTokenIs(b, "<unit name>", CHARACTER_LITERAL, JAVA_IDENTIFIER, STRING_TOKEN)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, UNIT_NAME, "<unit name>");
+    r = stringId(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // "unit" unitName
+  public static boolean unitStatement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unitStatement")) return false;
+    if (!nextTokenIs(b, UNIT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, UNIT);
+    r = r && unitName(b, l + 1);
+    exit_section_(b, m, UNIT_STATEMENT, r);
     return r;
   }
 

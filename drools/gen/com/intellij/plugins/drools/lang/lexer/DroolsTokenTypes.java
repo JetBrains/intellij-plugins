@@ -138,6 +138,8 @@ public interface DroolsTokenTypes {
   IElementType UNARY_ASSIGN_EXPR = new DroolsElementType("UNARY_ASSIGN_EXPR");
   IElementType UNARY_EXPR = new DroolsElementType("UNARY_EXPR");
   IElementType UNARY_NOT_PLUS_MINUS_EXPR = new DroolsElementType("UNARY_NOT_PLUS_MINUS_EXPR");
+  IElementType UNIT_NAME = new DroolsElementType("UNIT_NAME");
+  IElementType UNIT_STATEMENT = new DroolsElementType("UNIT_STATEMENT");
   IElementType UPDATE_RHS_STATEMENT = new DroolsElementType("UPDATE_RHS_STATEMENT");
   IElementType VARIABLE_INITIALIZER = new DroolsElementType("VARIABLE_INITIALIZER");
   IElementType VAR_TYPE = new DroolsElementType("VAR_TYPE");
@@ -266,6 +268,7 @@ public interface DroolsTokenTypes {
   IElementType THIS = DroolsElementFactory.getTokenType("this");
   IElementType TIMER = DroolsElementFactory.getTokenType("timer");
   IElementType TRUE = DroolsElementFactory.getTokenType("true");
+  IElementType UNIT = DroolsElementFactory.getTokenType("unit");
   IElementType UPDATE = DroolsElementFactory.getTokenType("update");
   IElementType VOID = DroolsElementFactory.getTokenType("void");
   IElementType WHEN = DroolsElementFactory.getTokenType("when");
@@ -651,6 +654,12 @@ public interface DroolsTokenTypes {
       }
       else if (type == UNARY_NOT_PLUS_MINUS_EXPR) {
         return new DroolsUnaryNotPlusMinusExprImpl(node);
+      }
+      else if (type == UNIT_NAME) {
+        return new DroolsUnitNameImpl(node);
+      }
+      else if (type == UNIT_STATEMENT) {
+        return new DroolsUnitStatementImpl(node);
       }
       else if (type == UPDATE_RHS_STATEMENT) {
         return new DroolsUpdateRhsStatementImpl(node);
