@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.asSafely
 import com.intellij.util.indexing.*
+import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.componentDecorator.findComponentDecorator
@@ -57,7 +58,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     }
   }
 
-  override fun getVersion(): Int = 8
+  override fun getVersion(): Int = 9
 
   override fun getInputFilter(): FileBasedIndex.InputFilter = object : DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE) {
     override fun acceptInput(file: VirtualFile): Boolean {
@@ -69,7 +70,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")
   }
 
-  override fun getKeyDescriptor(): KeyDescriptor<Boolean> = BooleanKeyDescriptor()
+  override fun getKeyDescriptor(): KeyDescriptor<Boolean> = BooleanDataDescriptor.INSTANCE
 
   override fun dependsOnFileContent(): Boolean = true
 
