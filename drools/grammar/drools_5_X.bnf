@@ -68,12 +68,14 @@
       MODIFY="modify"
       UPDATE="update"
       RETRACT="retract"
+      REFRACT="refract"
       INSERT="insert"
       INSERT_LOGICAL="insertLogical"
       ATTRIBUTES="attributes"
       IF="if"
       BREAK="break"
       DO="do"
+      WINDOW="window"
 
       LBRACE="{"
       RBRACE="}"
@@ -166,7 +168,7 @@ private top_level_recover ::= !(';' | 'activation-group' | 'agenda-group' | 'aut
                                 'calendars' | 'date-effective' | 'date-expires' | 'declare' |
                                 'dialect' | 'duration' | 'enabled' |
                                 'function' | 'global' | 'import' | 'lock-on-active' |
-                                'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer')
+                                'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window')
 
 globalStatement ::= "global" varType nameId {pin=3 mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsGlobalVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
 varType ::= type
@@ -301,7 +303,10 @@ private constraints ::= constraint ("," constraint)*
 
 constraint ::= expression
 
-patternFilter ::= "over" filterDef {pin=1}
+patternFilter ::= "over" (filterDef | windowDef) {pin=1}
+private windowDef ::= "window" ':' (windowLength | windowTime) {pin=1}
+private windowLength ::= "length" "(" numberLiteral ")"
+private windowTime ::= "time" "(" stringSequence ")"
 
 filterDef ::= label identifier "(" parameters ")"
 
@@ -311,7 +316,7 @@ fromExpression ::= expression
 
 fromEntryPoint ::= "entry-point" stringId  {pin=2}
 
-fromWindow ::= "window" identifier   {pin=2}
+fromWindow ::= "window" windowId   {pin=1}
 
 fromCollect ::= "collect" "(" lhsPatternBind ")"
 
@@ -494,6 +499,10 @@ booleanLiteral ::= FALSE | TRUE
 stringLiteral ::= STRING_TOKEN | CHARACTER_LITERAL
 
 private integerTypeSuffix ::= "l" | "L" | "I"
+
+windowId::=JAVA_IDENTIFIER
+{mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsWindowReferenceImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsWindowReference"}
+stringSequence::= STRING_IDENTIFIER
 
 identifier::= JAVA_IDENTIFIER
 {mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsReferenceImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsReference"}

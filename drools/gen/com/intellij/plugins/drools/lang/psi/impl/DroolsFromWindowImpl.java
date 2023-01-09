@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi.impl;
 
@@ -20,15 +22,16 @@ public class DroolsFromWindowImpl extends DroolsPsiCompositeElementImpl implemen
     visitor.visitFromWindow(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DroolsVisitor) accept((DroolsVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @NotNull
-  public DroolsIdentifier getIdentifier() {
-    return findNotNullChildByClass(DroolsIdentifier.class);
+  @Nullable
+  public DroolsWindowId getWindowId() {
+    return findChildByClass(DroolsWindowId.class);
   }
 
 }

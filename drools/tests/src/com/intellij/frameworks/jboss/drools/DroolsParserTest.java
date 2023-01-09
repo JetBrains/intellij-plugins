@@ -102,6 +102,11 @@ public class DroolsParserTest extends ParsingTestCase {
     doTest(CHECK_RESULT);
   }
 
+
+  public void testWindowDeclaration() {
+    doTest(CHECK_RESULT);
+  }
+
   @Override
   protected boolean checkAllPsiRoots() {
     return false;

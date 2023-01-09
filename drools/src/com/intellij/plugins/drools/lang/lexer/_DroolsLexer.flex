@@ -38,6 +38,7 @@ DIGIT = [:digit:]
 ESCAPE_SEQUENCE=\\[^\r\n]
 
 JAVA_IDENTIFIER=("$" | "_")? {LETTER} ({DIGIT} | "_" | {LETTER})*
+STRING_IDENTIFIER=  ({DIGIT}| {LETTER})*
 
 HEX_DIGIT = [0-9A-Fa-f]
 INT_DIGIT = [0-9]
@@ -52,7 +53,6 @@ NUM_FLOAT = ( (({DIGIT}* "." {DIGIT}+) | ({DIGIT}+ "." {DIGIT}*)) {FLOAT_EXPONEN
 
 CHARACTER_LITERAL="'"([^\\\'\r\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
 STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
-ESCAPE_SEQUENCE=\\[^\r\n]
 
 %%
 <YYINITIAL> "when" {{ yybegin(LHS_STATE);  return WHEN;}}
@@ -123,6 +123,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 "matches"                     {  return      MATCHES; }
 "soundslike"                  {  return      SOUNDSLIKE; }
 "isA"                         {  return      IS_A; }
+"window"                      {  return      WINDOW; }
 
 "this"                        {  return      THIS; }
 
@@ -194,5 +195,6 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 {CHARACTER_LITERAL}           {  return     CHARACTER_LITERAL; }
 {NUM_INT} | {NUM_HEX}         {  return     INT_TOKEN ; }
 {NUM_FLOAT}                   {  return     FLOAT_TOKEN ; }
+{STRING_IDENTIFIER}           {  return     STRING_IDENTIFIER ; }
 }
 [^] {  yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }

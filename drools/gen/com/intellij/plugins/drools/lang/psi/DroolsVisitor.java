@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi;
 
@@ -471,6 +473,10 @@ public class DroolsVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitStringSequence(@NotNull DroolsStringSequence o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitSuperSuffix(@NotNull DroolsSuperSuffix o) {
     visitPsiCompositeElement(o);
   }
@@ -536,6 +542,10 @@ public class DroolsVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitWindowId(@NotNull DroolsWindowId o) {
+    visitWindowReference(o);
+  }
+
   public void visitFunction(@NotNull DroolsFunction o) {
     visitPsiCompositeElement(o);
   }
@@ -565,6 +575,10 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitVariable(@NotNull DroolsVariable o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitWindowReference(@NotNull DroolsWindowReference o) {
     visitPsiCompositeElement(o);
   }
 

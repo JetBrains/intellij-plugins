@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.parser;
 
@@ -427,6 +429,9 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   //     | decimalOrChunkAttrName ( decimal | chunk )
   public static boolean attribute(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute")) return false;
+    if (!nextTokenIs(b, "<attribute>", ACTIVATION_GROUP, AGENDA_GROUP,
+      AUTO_FOCUS, CALENDARS, DATE_EFFECTIVE, DATE_EXPIRES, DIALECT, DURATION,
+      ENABLED, LOCK_ON_ACTIVE, NO_LOOP, REFRACT, RULEFLOW_GROUP, SALIENCE, TIMER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ATTRIBUTE, "<attribute>");
     r = attribute_0(b, l + 1);
@@ -548,11 +553,12 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   // "no-loop" | "auto-focus" | "lock-on-active"| "refract"
   static boolean booleanAttrName(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "booleanAttrName")) return false;
+    if (!nextTokenIs(b, "", AUTO_FOCUS, LOCK_ON_ACTIVE, NO_LOOP, REFRACT)) return false;
     boolean r;
     r = consumeToken(b, NO_LOOP);
     if (!r) r = consumeToken(b, AUTO_FOCUS);
     if (!r) r = consumeToken(b, LOCK_ON_ACTIVE);
-    if (!r) r = consumeToken(b, "refract");
+    if (!r) r = consumeToken(b, REFRACT);
     return r;
   }
 
@@ -1469,15 +1475,17 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // "window" identifier
+  // "window" windowId
   public static boolean fromWindow(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fromWindow")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FROM_WINDOW, "<from window>");
-    r = consumeToken(b, "window");
-    r = r && identifier(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    if (!nextTokenIs(b, WINDOW)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FROM_WINDOW, null);
+    r = consumeToken(b, WINDOW);
+    p = r; // pin = 1
+    r = r && windowId(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1853,7 +1861,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, lhs_1(b, l + 1));
     r = p && lhsExpression(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, lhs_recover_parser_);
+    exit_section_(b, l, m, r, p, DroolsParser::lhs_recover);
     return r || p;
   }
 
@@ -2395,7 +2403,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, LHS_UNARY, "<lhs unary>");
     r = lhsUnary_0(b, l + 1);
     r = r && lhsUnary_1(b, l + 1);
-    exit_section_(b, l, m, r, false, unary_recover_parser_);
+    exit_section_(b, l, m, r, false, DroolsParser::unary_recover);
     return r;
   }
 
@@ -2473,7 +2481,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, IMPORT);
     if (!r) r = consumeToken(b, LOCK_ON_ACTIVE);
     if (!r) r = consumeToken(b, NO_LOOP);
-    if (!r) r = consumeToken(b, "refract");
+    if (!r) r = consumeToken(b, REFRACT);
     if (!r) r = consumeToken(b, RULE);
     if (!r) r = consumeToken(b, RULEFLOW_GROUP);
     if (!r) r = consumeToken(b, SALIENCE);
@@ -2823,7 +2831,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     r = r && nameId(b, l + 1);
     p = r; // pin = 2
     r = r && parameter_2(b, l + 1);
-    exit_section_(b, l, m, r, p, parameter_recover_parser_);
+    exit_section_(b, l, m, r, p, DroolsParser::parameter_recover);
     return r || p;
   }
 
@@ -2952,7 +2960,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // "over" filterDef
+  // "over" (filterDef | windowDef)
   public static boolean patternFilter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "patternFilter")) return false;
     if (!nextTokenIs(b, OVER)) return false;
@@ -2960,9 +2968,18 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, PATTERN_FILTER, null);
     r = consumeToken(b, OVER);
     p = r; // pin = 1
-    r = r && filterDef(b, l + 1);
+    r = r && patternFilter_1(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // filterDef | windowDef
+  private static boolean patternFilter_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "patternFilter_1")) return false;
+    boolean r;
+    r = filterDef(b, l + 1);
+    if (!r) r = windowDef(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */
@@ -3112,7 +3129,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, QUERY_EXPRESSION, "<query expression>");
     r = lhsExpression(b, l + 1);
-    exit_section_(b, l, m, r, false, queryExpression_recover_parser_);
+    exit_section_(b, l, m, r, false, DroolsParser::queryExpression_recover);
     return r;
   }
 
@@ -3147,7 +3164,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, IMPORT);
     if (!r) r = consumeToken(b, LOCK_ON_ACTIVE);
     if (!r) r = consumeToken(b, NO_LOOP);
-    if (!r) r = consumeToken(b, "refract");
+    if (!r) r = consumeToken(b, REFRACT);
     if (!r) r = consumeToken(b, RULE);
     if (!r) r = consumeToken(b, RULEFLOW_GROUP);
     if (!r) r = consumeToken(b, SALIENCE);
@@ -3281,7 +3298,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, rhs_1(b, l + 1));
     r = p && rhs_2(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, rhs_recover_parser_);
+    exit_section_(b, l, m, r, p, DroolsParser::rhs_recover);
     return r || p;
   }
 
@@ -3396,7 +3413,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, LOCK_ON_ACTIVE);
     if (!r) r = consumeToken(b, NO_LOOP);
     if (!r) r = consumeToken(b, QUERY);
-    if (!r) r = consumeToken(b, "refract");
+    if (!r) r = consumeToken(b, REFRACT);
     if (!r) r = consumeToken(b, RULE);
     if (!r) r = consumeToken(b, RULEFLOW_GROUP);
     if (!r) r = consumeToken(b, SALIENCE);
@@ -3416,6 +3433,9 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   // ("attributes" ":"?)? attribute ( ","? attribute )*
   public static boolean ruleAttributes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ruleAttributes")) return false;
+    if (!nextTokenIs(b, "<rule attributes>", ACTIVATION_GROUP, AGENDA_GROUP,
+      ATTRIBUTES, AUTO_FOCUS, CALENDARS, DATE_EFFECTIVE, DATE_EXPIRES, DIALECT,
+      DURATION, ENABLED, LOCK_ON_ACTIVE, NO_LOOP, REFRACT, RULEFLOW_GROUP, SALIENCE, TIMER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, RULE_ATTRIBUTES, "<rule attributes>");
     r = ruleAttributes_0(b, l + 1);
@@ -3744,7 +3764,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = ruleAttribute(b, l + 1);
     if (!r) r = functionStatement(b, l + 1);
     if (!r) r = queryStatement(b, l + 1);
-    exit_section_(b, l, m, r, false, top_level_recover_parser_);
+    exit_section_(b, l, m, r, false, DroolsParser::top_level_recover);
     return r;
   }
 
@@ -3788,6 +3808,18 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, STRING_TOKEN);
     if (!r) r = consumeToken(b, CHARACTER_LITERAL);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // STRING_IDENTIFIER
+  public static boolean stringSequence(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "stringSequence")) return false;
+    if (!nextTokenIs(b, STRING_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, STRING_IDENTIFIER);
+    exit_section_(b, m, STRING_SEQUENCE, r);
     return r;
   }
 
@@ -3846,7 +3878,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   //                                 'calendars' | 'date-effective' | 'date-expires' | 'declare' |
   //                                 'dialect' | 'duration' | 'enabled' |
   //                                 'function' | 'global' | 'import' | 'lock-on-active' |
-  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer')
+  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window')
   static boolean top_level_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover")) return false;
     boolean r;
@@ -3860,7 +3892,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   //                                 'calendars' | 'date-effective' | 'date-expires' | 'declare' |
   //                                 'dialect' | 'duration' | 'enabled' |
   //                                 'function' | 'global' | 'import' | 'lock-on-active' |
-  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer'
+  //                                 'no-loop' | 'query' | 'refract' | 'rule' | 'ruleflow-group' | 'salience' | 'timer' | 'window'
   private static boolean top_level_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover_0")) return false;
     boolean r;
@@ -3881,11 +3913,12 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, LOCK_ON_ACTIVE);
     if (!r) r = consumeToken(b, NO_LOOP);
     if (!r) r = consumeToken(b, QUERY);
-    if (!r) r = consumeToken(b, "refract");
+    if (!r) r = consumeToken(b, REFRACT);
     if (!r) r = consumeToken(b, RULE);
     if (!r) r = consumeToken(b, RULEFLOW_GROUP);
     if (!r) r = consumeToken(b, SALIENCE);
     if (!r) r = consumeToken(b, TIMER);
+    if (!r) r = consumeToken(b, WINDOW);
     return r;
   }
 
@@ -4189,9 +4222,10 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   // "window" simpleName annotation* lhsPatternBind
   public static boolean windowDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "windowDeclaration")) return false;
+    if (!nextTokenIs(b, WINDOW)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, WINDOW_DECLARATION, "<window declaration>");
-    r = consumeToken(b, "window");
+    Marker m = enter_section_(b, l, _NONE_, WINDOW_DECLARATION, null);
+    r = consumeToken(b, WINDOW);
     r = r && simpleName(b, l + 1);
     p = r; // pin = 2
     r = r && report_error_(b, windowDeclaration_2(b, l + 1));
@@ -4209,6 +4243,69 @@ public class DroolsParser implements PsiParser, LightPsiParser {
       if (!empty_element_parsed_guard_(b, "windowDeclaration_2", c)) break;
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // "window" ':' (windowLength | windowTime)
+  static boolean windowDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "windowDef")) return false;
+    if (!nextTokenIs(b, WINDOW)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeTokens(b, 1, WINDOW, COLON);
+    p = r; // pin = 1
+    r = r && windowDef_2(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // windowLength | windowTime
+  private static boolean windowDef_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "windowDef_2")) return false;
+    boolean r;
+    r = windowLength(b, l + 1);
+    if (!r) r = windowTime(b, l + 1);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // JAVA_IDENTIFIER
+  public static boolean windowId(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "windowId")) return false;
+    if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, JAVA_IDENTIFIER);
+    exit_section_(b, m, WINDOW_ID, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // "length" "(" numberLiteral ")"
+  static boolean windowLength(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "windowLength")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, "length");
+    r = r && consumeToken(b, LPAREN);
+    r = r && numberLiteral(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // "time" "(" stringSequence ")"
+  static boolean windowTime(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "windowTime")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, "time");
+    r = r && consumeToken(b, LPAREN);
+    r = r && stringSequence(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -4803,34 +4900,4 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  static final Parser lhs_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return lhs_recover(b, l + 1);
-    }
-  };
-  static final Parser parameter_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return parameter_recover(b, l + 1);
-    }
-  };
-  static final Parser queryExpression_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return queryExpression_recover(b, l + 1);
-    }
-  };
-  static final Parser rhs_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return rhs_recover(b, l + 1);
-    }
-  };
-  static final Parser top_level_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return top_level_recover(b, l + 1);
-    }
-  };
-  static final Parser unary_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return unary_recover(b, l + 1);
-    }
-  };
 }

@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.lexer;
 
@@ -123,6 +125,7 @@ public interface DroolsTokenTypes {
   IElementType SQUARE_ARGUMENTS = new DroolsElementType("SQUARE_ARGUMENTS");
   IElementType STRING_ID = new DroolsElementType("STRING_ID");
   IElementType STRING_LITERAL = new DroolsElementType("STRING_LITERAL");
+  IElementType STRING_SEQUENCE = new DroolsElementType("STRING_SEQUENCE");
   IElementType SUPER_SUFFIX = new DroolsElementType("SUPER_SUFFIX");
   IElementType SUPER_TYPE = new DroolsElementType("SUPER_TYPE");
   IElementType TRAITABLE = new DroolsElementType("TRAITABLE");
@@ -139,6 +142,7 @@ public interface DroolsTokenTypes {
   IElementType VARIABLE_INITIALIZER = new DroolsElementType("VARIABLE_INITIALIZER");
   IElementType VAR_TYPE = new DroolsElementType("VAR_TYPE");
   IElementType WINDOW_DECLARATION = new DroolsElementType("WINDOW_DECLARATION");
+  IElementType WINDOW_ID = new DroolsElementType("WINDOW_ID");
 
   IElementType ACCUMULATE = DroolsElementFactory.getTokenType("accumulate");
   IElementType ACTION = DroolsElementFactory.getTokenType("action");
@@ -243,6 +247,7 @@ public interface DroolsTokenTypes {
   IElementType QUEST = DroolsElementFactory.getTokenType("?");
   IElementType RBRACE = DroolsElementFactory.getTokenType("}");
   IElementType RBRACKET = DroolsElementFactory.getTokenType("]");
+  IElementType REFRACT = DroolsElementFactory.getTokenType("refract");
   IElementType RESULT = DroolsElementFactory.getTokenType("result");
   IElementType RETRACT = DroolsElementFactory.getTokenType("retract");
   IElementType REVERSE = DroolsElementFactory.getTokenType("reverse");
@@ -253,6 +258,7 @@ public interface DroolsTokenTypes {
   IElementType SEMICOLON = DroolsElementFactory.getTokenType(";");
   IElementType SHORT = DroolsElementFactory.getTokenType("short");
   IElementType SOUNDSLIKE = DroolsElementFactory.getTokenType("soundslike");
+  IElementType STRING_IDENTIFIER = DroolsElementFactory.getTokenType("STRING_IDENTIFIER");
   IElementType STRING_TOKEN = DroolsElementFactory.getTokenType("STRING_TOKEN");
   IElementType TEMPLATE = DroolsElementFactory.getTokenType("template");
   IElementType THEN = DroolsElementFactory.getTokenType("then");
@@ -262,6 +268,7 @@ public interface DroolsTokenTypes {
   IElementType UPDATE = DroolsElementFactory.getTokenType("update");
   IElementType VOID = DroolsElementFactory.getTokenType("void");
   IElementType WHEN = DroolsElementFactory.getTokenType("when");
+  IElementType WINDOW = DroolsElementFactory.getTokenType("window");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -605,6 +612,9 @@ public interface DroolsTokenTypes {
       else if (type == STRING_LITERAL) {
         return new DroolsStringLiteralImpl(node);
       }
+      else if (type == STRING_SEQUENCE) {
+        return new DroolsStringSequenceImpl(node);
+      }
       else if (type == SUPER_SUFFIX) {
         return new DroolsSuperSuffixImpl(node);
       }
@@ -652,6 +662,9 @@ public interface DroolsTokenTypes {
       }
       else if (type == WINDOW_DECLARATION) {
         return new DroolsWindowDeclarationImpl(node);
+      }
+      else if (type == WINDOW_ID) {
+        return new DroolsWindowIdImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

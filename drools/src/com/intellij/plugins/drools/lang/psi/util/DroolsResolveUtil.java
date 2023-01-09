@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util;
 
 import com.intellij.openapi.project.Project;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public final class DroolsResolveUtil {
-  public static DroolsDeclarationsProcessor[] myDeclarationsProcessors = new DroolsDeclarationsProcessor[]{
+  public static final DroolsDeclarationsProcessor[] myDeclarationsProcessors = new DroolsDeclarationsProcessor[]{
     DroolsImportedPackagesProcessor.getInstance(),
     DroolsImportedClassesProcessor.getInstance(),
     DroolsLhsBindVariablesProcessor.getInstance(),

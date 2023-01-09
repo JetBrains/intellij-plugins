@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
@@ -18,7 +18,7 @@ public interface DroolsTokenTypeSets {
   TokenSet BLOCK_START_TOKENS = TokenSet.create(FUNCTION);
 
   TokenSet COMMENTS = TokenSet.create(SINGLE_LINE_COMMENT, SINGLE_LINE_COMMENT_DEPR, MULTI_LINE_COMMENT);
-  TokenSet KEYWORDS = TokenSet.create(RULE, IMPORT, PACKAGE, ENTRY_POINT, EXTENDS, WHEN, THEN, TEMPLATE, QUERY, DECLARE, FUNCTION, GLOBAL, END);
+  TokenSet KEYWORDS = TokenSet.create(RULE, IMPORT, PACKAGE, ENTRY_POINT, EXTENDS, WHEN, THEN, TEMPLATE, QUERY, DECLARE, FUNCTION, GLOBAL, END, WINDOW);
   TokenSet PRIMITIVE_TYPES = TokenSet.create(VOID, BOOLEAN, BYTE, CHAR,SHORT, INT,LONG, FLOAT, DOUBLE);
 
   TokenSet KEYWORD_ATTRS =

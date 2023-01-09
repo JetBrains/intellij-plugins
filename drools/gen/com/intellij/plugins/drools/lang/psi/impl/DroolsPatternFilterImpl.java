@@ -1,3 +1,5 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+
 // This is a generated file. Not intended for manual editing.
 package com.intellij.plugins.drools.lang.psi.impl;
 
@@ -20,6 +22,7 @@ public class DroolsPatternFilterImpl extends DroolsPsiCompositeElementImpl imple
     visitor.visitPatternFilter(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DroolsVisitor) accept((DroolsVisitor)visitor);
     else super.accept(visitor);
@@ -29,6 +32,18 @@ public class DroolsPatternFilterImpl extends DroolsPsiCompositeElementImpl imple
   @Nullable
   public DroolsFilterDef getFilterDef() {
     return findChildByClass(DroolsFilterDef.class);
+  }
+
+  @Override
+  @Nullable
+  public DroolsNumberLiteral getNumberLiteral() {
+    return findChildByClass(DroolsNumberLiteral.class);
+  }
+
+  @Override
+  @Nullable
+  public DroolsStringSequence getStringSequence() {
+    return findChildByClass(DroolsStringSequence.class);
   }
 
 }
