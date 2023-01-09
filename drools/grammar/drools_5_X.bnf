@@ -88,6 +88,7 @@
       COLON=":"
       COMMA=","
       DOT="."
+      NULL_DOT="!."
       QUEST="?"
 
       OP_PLUS="+"
@@ -365,7 +366,7 @@ typeArguments ::= "<" typeArgument ("," typeArgument)* ">"
 
 typeArgument ::= "?" (( "extends" | "super" ) type )? | type
 
-qualifiedIdentifier ::= identifier ("." identifier)*
+qualifiedIdentifier ::= identifier (("."|"!.") identifier)*
 
 chunk ::= "(" CHUNK_BLOCK ")"
 
@@ -439,8 +440,9 @@ primaryExpr ::= parExpr |
         inlineMapExpr |
         inlineListExpr |
         "this" |
-        identifier identifierSuffix? ( "." identifier identifierSuffix? )*
+        qualified
         {mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsPrimaryExprVarImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsPrimaryExprVar"}
+private qualified ::= identifier identifierSuffix? ( ("."|"!.") identifier identifierSuffix? )*
 
 private inlineListExpr ::= "[" expressionList? "]"
 

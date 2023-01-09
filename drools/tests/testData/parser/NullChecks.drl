@@ -1,0 +1,10 @@
+package foo;
+
+rule 'some_rule' when
+    $obj : MyObject(
+        foo > 10,
+        $baz : bar.buz!.baz == "Hello"
+    )
+then
+    System.out.println($baz + " World");
+end

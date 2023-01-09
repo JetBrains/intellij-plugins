@@ -3076,7 +3076,67 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier ("." identifier)*
+  // identifier identifierSuffix? ( ("."|"!.") identifier identifierSuffix? )*
+  static boolean qualified(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified")) return false;
+    if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = identifier(b, l + 1);
+    r = r && qualified_1(b, l + 1);
+    r = r && qualified_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // identifierSuffix?
+  private static boolean qualified_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified_1")) return false;
+    identifierSuffix(b, l + 1);
+    return true;
+  }
+
+  // ( ("."|"!.") identifier identifierSuffix? )*
+  private static boolean qualified_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified_2")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!qualified_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "qualified_2", c)) break;
+    }
+    return true;
+  }
+
+  // ("."|"!.") identifier identifierSuffix?
+  private static boolean qualified_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qualified_2_0_0(b, l + 1);
+    r = r && identifier(b, l + 1);
+    r = r && qualified_2_0_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // "."|"!."
+  private static boolean qualified_2_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified_2_0_0")) return false;
+    boolean r;
+    r = consumeToken(b, DOT);
+    if (!r) r = consumeToken(b, NULL_DOT);
+    return r;
+  }
+
+  // identifierSuffix?
+  private static boolean qualified_2_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified_2_0_2")) return false;
+    identifierSuffix(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // identifier (("."|"!.") identifier)*
   public static boolean qualifiedIdentifier(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qualifiedIdentifier")) return false;
     if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
@@ -3088,7 +3148,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ("." identifier)*
+  // (("."|"!.") identifier)*
   private static boolean qualifiedIdentifier_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qualifiedIdentifier_1")) return false;
     while (true) {
@@ -3099,14 +3159,23 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // "." identifier
+  // ("."|"!.") identifier
   private static boolean qualifiedIdentifier_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "qualifiedIdentifier_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, DOT);
+    r = qualifiedIdentifier_1_0_0(b, l + 1);
     r = r && identifier(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // "."|"!."
+  private static boolean qualifiedIdentifier_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualifiedIdentifier_1_0_0")) return false;
+    boolean r;
+    r = consumeToken(b, DOT);
+    if (!r) r = consumeToken(b, NULL_DOT);
     return r;
   }
 
@@ -4743,7 +4812,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   //         inlineMapExpr |
   //         inlineListExpr |
   //         "this" |
-  //         identifier identifierSuffix? ( "." identifier identifierSuffix? )*
+  //         qualified
   public static boolean primaryExpr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primaryExpr")) return false;
     boolean r;
@@ -4757,7 +4826,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = inlineMapExpr(b, l + 1);
     if (!r) r = inlineListExpr(b, l + 1);
     if (!r) r = consumeTokenSmart(b, THIS);
-    if (!r) r = primaryExpr_9(b, l + 1);
+    if (!r) r = qualified(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -4849,55 +4918,6 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     r = consumeTokensSmart(b, 0, LBRACKET, RBRACKET);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // identifier identifierSuffix? ( "." identifier identifierSuffix? )*
-  private static boolean primaryExpr_9(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primaryExpr_9")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = identifier(b, l + 1);
-    r = r && primaryExpr_9_1(b, l + 1);
-    r = r && primaryExpr_9_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // identifierSuffix?
-  private static boolean primaryExpr_9_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primaryExpr_9_1")) return false;
-    identifierSuffix(b, l + 1);
-    return true;
-  }
-
-  // ( "." identifier identifierSuffix? )*
-  private static boolean primaryExpr_9_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primaryExpr_9_2")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!primaryExpr_9_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "primaryExpr_9_2", c)) break;
-    }
-    return true;
-  }
-
-  // "." identifier identifierSuffix?
-  private static boolean primaryExpr_9_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primaryExpr_9_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, DOT);
-    r = r && identifier(b, l + 1);
-    r = r && primaryExpr_9_2_0_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // identifierSuffix?
-  private static boolean primaryExpr_9_2_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primaryExpr_9_2_0_2")) return false;
-    identifierSuffix(b, l + 1);
-    return true;
   }
 
 }

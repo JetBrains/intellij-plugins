@@ -207,6 +207,7 @@ public interface DroolsTokenTypes {
   IElementType NOT = DroolsElementFactory.getTokenType("not");
   IElementType NO_LOOP = DroolsElementFactory.getTokenType("no-loop");
   IElementType NULL = DroolsElementFactory.getTokenType("null");
+  IElementType NULL_DOT = DroolsElementFactory.getTokenType("!.");
   IElementType OP_ASSIGN = DroolsElementFactory.getTokenType("=");
   IElementType OP_AT = DroolsElementFactory.getTokenType("@");
   IElementType OP_BIT_AND = DroolsElementFactory.getTokenType("&");

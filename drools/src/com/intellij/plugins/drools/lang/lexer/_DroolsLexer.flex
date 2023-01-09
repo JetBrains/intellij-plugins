@@ -154,6 +154,7 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 "/="                          {  return       OP_DIV_ASSIGN; }
 "&="                          {  return       OP_BIT_AND_ASSIGN; }
 "|="                          {  return       OP_BIT_OR_ASSIGN; }
+"!."                          {  return       NULL_DOT; }
 "^="                          {  return       OP_BIT_XOR_ASSIGN; }
 "%="                          {  return       OP_REMAINDER_ASSIGN; }
 "<<="                         {  return       OP_SL_ASSIGN; }
