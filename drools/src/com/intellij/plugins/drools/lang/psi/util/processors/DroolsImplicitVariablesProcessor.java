@@ -1,8 +1,7 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.plugins.drools.DroolsConstants;
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightClass;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightVariable;
@@ -13,20 +12,20 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.intellij.plugins.drools.DroolsConstants.*;
 
 public final class DroolsImplicitVariablesProcessor implements DroolsDeclarationsProcessor {
   private static DroolsImplicitVariablesProcessor myInstance;
 
-  private static final Map<String, String> vars = new HashMap<>();
+  private static final Map<String, List<String>> vars = new HashMap<>();
 
   static {
-    vars.put("kcontext", DroolsConstants.KIE_CONTEXT_CLASS);
-    vars.put("drools", DroolsConstants.KNOWLEDGE_HELPER_CLASS);
+    vars.put("kcontext", Collections.singletonList(KIE_CONTEXT_CLASS));
+    vars.put("drools", Arrays.asList(KNOWLEDGE_HELPER_CLASS, KNOWLEDGE_HELPER_8_X));
   }
+
   private DroolsImplicitVariablesProcessor() {
   }
 
@@ -45,13 +44,16 @@ public final class DroolsImplicitVariablesProcessor implements DroolsDeclaration
 
     Set<DroolsLightVariable> implicitVars = CachedValuesManager.getCachedValue(droolsFile, () -> {
       Set<DroolsLightVariable> lightVariables = new HashSet<>();
-      for (Map.Entry<String, String> entry : vars.entrySet()) {
-        final String className = entry.getValue();
-        final Project project = droolsFile.getProject();
-        PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project));
-        if (aClass != null) {
-          final String varName = entry.getKey();
-          lightVariables.add(new DroolsLightVariable(varName, JavaPsiFacade.getInstance(project).getElementFactory().createType(new DroolsLightClass(aClass)), droolsFile));
+      final Project project = droolsFile.getProject();
+      for (Map.Entry<String, List<String>> entry : vars.entrySet()) {
+        for (String className : entry.getValue()) {
+          PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project));
+          if (aClass != null) {
+            final String varName = entry.getKey();
+            lightVariables.add(new DroolsLightVariable(varName, JavaPsiFacade.getInstance(project).getElementFactory()
+              .createType(new DroolsLightClass(aClass)), droolsFile));
+            break;
+          }
         }
       }
       return CachedValueProvider.Result.createSingleDependency(lightVariables, droolsFile);
@@ -64,7 +66,7 @@ public final class DroolsImplicitVariablesProcessor implements DroolsDeclaration
         final PsiClass psiClass = ((PsiClassType)lightVariable.getType()).resolve();
 
         if (psiClass != null) {
-          if (!psiClass.processDeclarations(processor,state,lastParent, place)) return false;
+          if (!psiClass.processDeclarations(processor, state, lastParent, place)) return false;
         }
       }
     }
