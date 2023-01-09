@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JavaScriptHighlightingLexer
 import com.intellij.lexer.FlexAdapter
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.Lexer
+import com.intellij.lexer.TokenIterator
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
@@ -13,6 +14,7 @@ import com.intellij.psi.xml.XmlTokenType
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.Angular2HtmlLanguage
 import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport
+import org.angular2.lang.html.lexer.Angular2HtmlLexer
 import org.angular2.lang.html.lexer.Angular2HtmlLexer.Angular2HtmlMergingLexer
 import org.angular2.lang.html.lexer._Angular2HtmlLexer
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
@@ -24,12 +26,21 @@ class Angular2HtmlHighlightingLexer(tokenizeExpansionForms: Boolean,
   : HtmlHighlightingLexer(
   Angular2HtmlHighlightingMergingLexer(FlexAdapter(_Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig))),
   true, styleFileType) {
-  override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
-    super.start(buffer, startOffset, endOffset, (delegate as Angular2HtmlMergingLexer).initExpansionFormNestingLevel(initialState))
+
+  override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int, tokenIterator: TokenIterator?) {
+    (delegate as Angular2HtmlMergingLexer).reset()
+    super.start(buffer, startOffset, endOffset, initialState, tokenIterator)
   }
 
   override fun getState(): Int {
-    return super.getState() or (delegate as Angular2HtmlMergingLexer).expansionFormNestingLevelState
+    return super.getState() or (if ((delegate as Angular2HtmlMergingLexer).isWithinExpansionForm) Angular2HtmlLexer.IS_WITHIN_EXPANSION_FORM_STATE else 0)
+  }
+
+  override fun isRestartableState(state: Int): Boolean {
+    return super.isRestartableState(state)
+           && (state and Angular2HtmlLexer.IS_WITHIN_EXPANSION_FORM_STATE) == 0
+           && state != _Angular2HtmlLexer.EXPANSION_FORM_CONTENT
+           && state != _Angular2HtmlLexer.EXPANSION_FORM_CASE_END
   }
 
   override fun isHtmlTagState(state: Int): Boolean {
@@ -73,7 +84,7 @@ class Angular2HtmlHighlightingLexer(tokenizeExpansionForms: Boolean,
     return tokenType
   }
 
-  private class Angular2HtmlHighlightingMergingLexer constructor(original: FlexAdapter) : Angular2HtmlMergingLexer(original) {
+  private class Angular2HtmlHighlightingMergingLexer(original: FlexAdapter) : Angular2HtmlMergingLexer(original) {
     override fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {
       val result = super.merge(type, originalLexer)
       if (result === XmlTokenType.XML_CHAR_ENTITY_REF) {
