@@ -61,14 +61,4 @@ object VueExprParsing {
 
     }
   }
-
-  interface VueExprParser {
-    fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeNameParser.VueAttributeInfo?)
-
-    fun parseInterpolation(root: IElementType) {
-      parseEmbeddedExpression(root, null)
-    }
-
-    fun parseJS(root: IElementType)
-  }
 }

@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_REFERENCE_E
 
 class VueJSParser(builder: PsiBuilder)
   : ES6Parser<VueJSParser.VueJSExpressionParser, ES6StatementParser<*>, ES6FunctionParser<*>,
-  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder), VueExprParsing.VueExprParser {
+  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder), VueExprParser {
 
   init {
     myExpressionParser = VueJSExpressionParser(this)
