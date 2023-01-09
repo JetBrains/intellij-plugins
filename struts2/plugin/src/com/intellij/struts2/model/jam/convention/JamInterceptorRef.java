@@ -21,16 +21,19 @@ import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElementRef;
 import com.intellij.psi.PsiMember;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * {@code org.apache.struts2.convention.annotation.InterceptorRef(s)}.
  *
  * @author Yann C&eacute;bron
  */
-public class JamInterceptorRef extends JamCommonModelElement<PsiMember> implements JamElement {
+public final class JamInterceptorRef extends JamCommonModelElement<PsiMember> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.InterceptorRef";
 
@@ -47,11 +50,10 @@ public class JamInterceptorRef extends JamCommonModelElement<PsiMember> implemen
       .addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamInterceptorRef> META_CLASS =
-    new JamClassMeta<>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
-
+    new JamClassMeta<>(JamInterceptorRef.class, JamInterceptorRef::new).addAnnotation(INTERCEPTOR_REF_META);
 
   private static final JamAnnotationAttributeMeta.Collection<JamInterceptorRef> INTERCEPTOR_REFS_VALUE_ATTRIBUTE =
-    JamAttributeMeta.annoCollection(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME, INTERCEPTOR_REF_META, JamInterceptorRef.class)
+    JamAttributeMeta.annoCollection(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME, INTERCEPTOR_REF_META, psiAnnotation -> new JamInterceptorRef(psiAnnotation))
       .addPomTargetProducer((named, pomTargetConsumer) -> {
         final PomTarget target = named.getPomTarget();
         if (target != null) pomTargetConsumer.consume(target);
@@ -61,9 +63,13 @@ public class JamInterceptorRef extends JamCommonModelElement<PsiMember> implemen
     new JamAnnotationMeta(ANNOTATION_NAME_LIST).addAttribute(INTERCEPTOR_REFS_VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamInterceptorRef> META_CLASS_LIST =
-    new JamClassMeta<>(JamInterceptorRef.class).addAnnotation(INTERCEPTOR_REFS_META);
+    new JamClassMeta<>(JamInterceptorRef.class, JamInterceptorRef::new).addAnnotation(INTERCEPTOR_REFS_META);
 
-  public JamInterceptorRef(PsiElementRef<?> ref) {
+  private JamInterceptorRef(PsiAnnotation psiAnnotation) {
+    super(PsiElementRef.real(Objects.requireNonNull(PsiTreeUtil.getParentOfType(psiAnnotation, PsiMember.class))));
+  }
+
+  private JamInterceptorRef(PsiElementRef<?> ref) {
     super(ref);
   }
 

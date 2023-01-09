@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
-public class JamDefaultInterceptorRef extends JamCommonModelElement<PsiPackage> implements JamElement {
+public final class JamDefaultInterceptorRef extends JamCommonModelElement<PsiPackage> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.DefaultInterceptorRef";
 
@@ -49,9 +49,9 @@ public class JamDefaultInterceptorRef extends JamCommonModelElement<PsiPackage> 
           .addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamPackageMeta<JamDefaultInterceptorRef> META_PACKAGE =
-    new JamPackageMeta<>(JamDefaultInterceptorRef.class).addAnnotation(INTERCEPTOR_REF_META);
+    new JamPackageMeta<>(JamDefaultInterceptorRef.class, JamDefaultInterceptorRef::new).addAnnotation(INTERCEPTOR_REF_META);
 
-  public JamDefaultInterceptorRef(PsiElementRef<?> ref) {
+  private JamDefaultInterceptorRef(PsiElementRef<?> ref) {
     super(ref);
   }
 

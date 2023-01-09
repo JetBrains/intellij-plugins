@@ -41,7 +41,7 @@ import java.util.Objects;
  *
  * @author Yann C&eacute;bron
  */
-public class JamParentPackage extends JamCommonModelElement<PsiModifierListOwner> implements JamElement {
+public final class JamParentPackage extends JamCommonModelElement<PsiModifierListOwner> implements JamElement {
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.ParentPackage";
 
@@ -95,13 +95,13 @@ public class JamParentPackage extends JamCommonModelElement<PsiModifierListOwner
     new JamAnnotationMeta(ANNOTATION_NAME).addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamParentPackage> META_CLASS =
-    new JamClassMeta<>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
+    new JamClassMeta<>(JamParentPackage.class, JamParentPackage::new).addAnnotation(PARENT_PACKAGE_META);
 
   public static final JamPackageMeta<JamParentPackage> META_PACKAGE =
-    new JamPackageMeta<>(JamParentPackage.class)
+    new JamPackageMeta<>(JamParentPackage.class, JamParentPackage::new)
       .addAnnotation(PARENT_PACKAGE_META);
 
-  public JamParentPackage(PsiElementRef<?> ref) {
+  private JamParentPackage(PsiElementRef<?> ref) {
     super(ref);
   }
 

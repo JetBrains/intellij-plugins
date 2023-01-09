@@ -139,10 +139,10 @@ public class JamResultPath extends JamCommonModelElement<PsiModifierListOwner> i
           .addAttribute(PROPERTY_ATTRIBUTE);
 
   public static final JamClassMeta<JamResultPath> META_CLASS =
-    new JamClassMeta<>(JamResultPath.class).addAnnotation(RESULT_PATH_META);
+    new JamClassMeta<>(JamResultPath.class, JamResultPath::new).addAnnotation(RESULT_PATH_META);
 
   public static final JamPackageMeta<JamResultPath> META_PACKAGE =
-    new JamPackageMeta<>(JamResultPath.class)
+    new JamPackageMeta<>(JamResultPath.class, JamResultPath::new)
           .addAnnotation(RESULT_PATH_META);
 
   public JamResultPath(PsiElementRef<?> ref) {
