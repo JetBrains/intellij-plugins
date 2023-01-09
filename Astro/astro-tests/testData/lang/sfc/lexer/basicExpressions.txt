@@ -1,0 +1,8 @@
+XML_COMMENT_CHARACTERS ('')
+ASTRO:FRONTMATTER_SEPARATOR ('---')
+ASTRO:FRONTMATTER_SCRIPT ('\nconst visible = true;\n')
+ASTRO:FRONTMATTER_SEPARATOR ('---')
+XML_WHITE_SPACE ('\n')
+ASTRO:EXPRESSION ('{visible && <p>Show me!</p>}')
+XML_WHITE_SPACE ('\n\n')
+ASTRO:EXPRESSION ('{visible ? <p>Show me!</p> : <p>Else show me!</p>}')

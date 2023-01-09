@@ -7,6 +7,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import com.intellij.util.containers.Stack;
 
 import static com.intellij.util.ArrayUtil.*;
 
@@ -26,17 +28,29 @@ public class _AstroLexer implements FlexLexer {
 
   /** lexical states */
   public static final int YYINITIAL = 0;
-  public static final int FRONTMATTER_OPENED = 2;
-  public static final int FRONTMATTER_CLOSED = 4;
-  public static final int EXPRESSION = 6;
-  public static final int FRONTMATTER_OPEN = 8;
-  public static final int FRONTMATTER_CLOSE = 10;
-  public static final int READ_STRING = 12;
-  public static final int READ_COMMENT_OR_REGEXP = 14;
-  public static final int READ_MULTILINE_COMMENT = 16;
-  public static final int FINISH_READ = 18;
-  public static final int START_TAG_NAME = 20;
-  public static final int END_TAG_NAME = 22;
+  public static final int FRONTMATTER_OPEN = 2;
+  public static final int FRONTMATTER_OPENED = 4;
+  public static final int FRONTMATTER_CLOSE = 6;
+  public static final int HTML_INITIAL = 8;
+  public static final int DOC_TYPE = 10;
+  public static final int COMMENT = 12;
+  public static final int START_TAG_NAME = 14;
+  public static final int END_TAG_NAME = 16;
+  public static final int BEFORE_TAG_ATTRIBUTES = 18;
+  public static final int TAG_ATTRIBUTES = 20;
+  public static final int ATTRIBUTE_VALUE_START = 22;
+  public static final int ATTRIBUTE_VALUE_DQ = 24;
+  public static final int ATTRIBUTE_VALUE_SQ = 26;
+  public static final int PROCESSING_INSTRUCTION = 28;
+  public static final int TAG_CHARACTERS = 30;
+  public static final int C_COMMENT_START = 32;
+  public static final int C_COMMENT_END = 34;
+  public static final int TAG_ATTRIBUTES_POST_SHORTHAND = 36;
+  public static final int READ_STRING = 38;
+  public static final int READ_COMMENT_OR_REGEXP = 40;
+  public static final int READ_MULTILINE_COMMENT = 42;
+  public static final int READ_TAG_ATTR_EXPRESSION = 44;
+  public static final int FINISH_READ = 46;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -46,30 +60,128 @@ public class _AstroLexer implements FlexLexer {
    */
   private static final int ZZ_LEXSTATE[] = { 
      0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7,  7, 
-     8,  8,  9,  9,  3,  3,  3, 3
+     7,  7,  8,  8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 
+    15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22
   };
 
   /** 
    * Translates characters to character classes
-   * Chosen bits are [8, 6, 7]
-   * Total runtime size is 1040 bytes
+   * Chosen bits are [11, 6, 4]
+   * Total runtime size is 14112 bytes
    */
   public static int ZZ_CMAP(int ch) {
-    return ZZ_CMAP_A[ZZ_CMAP_Y[ZZ_CMAP_Z[ch>>13]|((ch>>7)&0x3f)]|(ch&0x7f)];
+    return ZZ_CMAP_A[(ZZ_CMAP_Y[(ZZ_CMAP_Z[ch>>10]<<6)|((ch>>4)&0x3f)]<<4)|(ch&0xf)];
   }
 
-  /* The ZZ_CMAP_Z table has 136 entries */
+  /* The ZZ_CMAP_Z table has 1088 entries */
   static final char ZZ_CMAP_Z[] = zzUnpackCMap(
-    "\1\0\207\100");
+    "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\2\11\1\12\1\13\6\14\1\15\23\14\1\16"+
+    "\1\14\1\17\1\20\12\14\1\21\10\11\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1"+
+    "\32\1\33\1\34\1\35\2\11\1\14\1\36\3\11\1\37\10\11\1\40\1\41\5\14\1\42\1\43"+
+    "\11\11\1\44\2\11\1\45\5\11\1\46\4\11\1\47\1\50\4\11\51\14\1\51\3\14\1\52\1"+
+    "\53\4\14\1\54\12\11\1\55\u0381\11");
 
-  /* The ZZ_CMAP_Y table has 128 entries */
+  /* The ZZ_CMAP_Y table has 2944 entries */
   static final char ZZ_CMAP_Y[] = zzUnpackCMap(
-    "\1\0\177\200");
+    "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\1\1\11\1\12\1\13\1\14\1\13\1\14\34"+
+    "\13\1\15\1\16\1\17\10\1\1\20\1\21\1\13\1\22\4\13\1\23\10\13\1\24\12\13\1\25"+
+    "\1\13\1\26\1\25\1\13\1\27\4\1\1\13\1\30\1\31\2\1\2\13\1\30\1\1\1\32\1\25\5"+
+    "\13\1\33\1\34\1\35\1\1\1\36\1\13\1\1\1\37\5\13\1\40\1\41\1\42\1\13\1\30\1"+
+    "\43\1\13\1\44\1\45\1\1\1\13\1\46\4\1\1\13\1\47\4\1\1\50\2\13\1\51\1\1\1\52"+
+    "\1\16\1\25\1\53\1\54\1\55\1\56\1\57\1\60\2\16\1\61\1\54\1\55\1\62\1\1\1\63"+
+    "\1\1\1\64\1\65\1\22\1\55\1\66\1\1\1\67\1\16\1\70\1\71\1\54\1\55\1\66\1\1\1"+
+    "\60\1\16\1\41\1\72\1\73\1\74\1\75\1\1\1\67\2\1\1\76\1\36\1\55\1\51\1\1\1\77"+
+    "\1\16\1\1\1\100\1\36\1\55\1\101\1\1\1\57\1\16\1\102\1\76\1\36\1\13\1\103\1"+
+    "\57\1\104\1\16\1\42\1\105\1\106\1\13\1\107\1\110\3\1\1\25\2\13\1\111\1\110"+
+    "\3\1\1\112\1\113\1\114\1\115\1\116\1\117\2\1\1\67\3\1\1\120\1\13\1\121\1\1"+
+    "\1\122\7\1\2\13\1\30\1\123\1\1\1\124\1\125\1\126\1\127\1\1\2\13\1\130\2\13"+
+    "\1\131\24\13\1\132\1\133\2\13\1\132\2\13\1\134\1\135\1\14\3\13\1\135\3\13"+
+    "\1\30\2\1\1\13\1\1\5\13\1\136\1\25\45\13\1\137\1\13\1\25\1\30\4\13\1\30\1"+
+    "\140\1\141\1\16\1\13\1\16\1\13\1\16\1\141\1\67\3\13\1\142\1\1\1\143\4\1\5"+
+    "\13\1\27\1\144\1\13\1\145\4\13\1\40\1\13\1\146\3\1\1\13\1\147\1\150\2\13\1"+
+    "\151\1\13\1\75\3\1\1\13\1\110\3\13\1\150\4\1\1\152\5\1\1\105\2\13\1\142\1"+
+    "\153\3\1\1\154\1\13\1\155\1\42\2\13\1\40\1\1\2\13\1\142\1\1\1\37\1\42\1\13"+
+    "\1\147\1\46\5\1\1\156\1\157\14\13\4\1\21\13\1\136\2\13\1\136\1\160\1\13\1"+
+    "\147\3\13\1\161\1\162\1\163\1\121\1\162\2\1\1\164\4\1\1\165\1\1\1\121\6\1"+
+    "\1\166\1\167\1\170\1\171\1\172\3\1\1\173\147\1\2\13\1\146\2\13\1\146\10\13"+
+    "\1\174\1\175\2\13\1\130\3\13\1\176\1\1\1\13\1\110\4\177\4\1\1\123\35\1\1\200"+
+    "\2\1\1\201\1\25\4\13\1\202\1\25\4\13\1\131\1\105\1\13\1\147\1\25\4\13\1\146"+
+    "\1\1\1\13\1\30\3\1\1\13\40\1\133\13\1\40\4\1\135\13\1\40\2\1\10\13\1\121\4"+
+    "\1\2\13\1\147\20\13\1\121\1\13\1\203\1\1\2\13\1\146\1\123\1\13\1\147\4\13"+
+    "\1\40\2\1\1\204\1\205\5\13\1\206\1\13\1\146\1\27\3\1\1\204\1\207\1\13\1\31"+
+    "\1\1\3\13\1\142\1\205\2\13\1\142\3\1\1\210\1\42\1\13\1\40\1\13\1\110\1\1\1"+
+    "\13\1\121\1\50\2\13\1\31\1\123\1\1\1\211\1\212\2\13\1\46\1\1\1\213\1\1\1\13"+
+    "\1\214\3\13\1\215\1\216\1\217\1\30\1\64\1\220\1\221\1\177\2\13\1\131\1\40"+
+    "\7\13\1\31\1\1\72\13\1\142\1\13\1\222\2\13\1\151\20\1\26\13\1\147\6\13\1\75"+
+    "\2\1\1\110\1\223\1\55\1\224\1\225\6\13\1\16\1\1\1\154\25\13\1\147\1\1\4\13"+
+    "\1\205\2\13\1\27\2\1\1\151\7\1\1\211\7\13\1\121\2\1\1\25\1\30\1\25\1\30\1"+
+    "\226\4\13\1\146\1\227\1\230\2\1\1\231\1\13\1\14\1\232\2\147\2\1\7\13\1\30"+
+    "\30\1\1\13\1\121\3\13\1\67\2\1\2\13\1\1\1\13\1\233\2\13\1\40\1\13\1\147\2"+
+    "\13\1\234\3\1\11\13\1\147\1\1\2\13\1\234\1\13\1\151\2\13\1\27\3\13\1\142\11"+
+    "\1\23\13\1\110\1\13\1\40\1\27\11\1\1\235\2\13\1\236\1\13\1\40\1\13\1\110\1"+
+    "\13\1\146\4\1\1\13\1\237\1\13\1\40\1\13\1\75\4\1\3\13\1\240\4\1\1\67\1\241"+
+    "\1\13\1\142\2\1\1\13\1\121\1\13\1\121\2\1\1\120\1\13\1\150\1\1\3\13\1\40\1"+
+    "\13\1\40\1\13\1\31\1\13\1\16\6\1\4\13\1\46\3\1\3\13\1\31\3\13\1\31\60\1\1"+
+    "\154\2\13\1\27\4\1\1\154\2\13\2\1\1\13\1\46\1\1\1\154\1\13\1\110\2\1\2\13"+
+    "\1\242\1\154\2\13\1\31\1\243\1\244\2\1\1\13\1\22\1\151\5\1\1\245\1\246\1\46"+
+    "\2\13\1\146\2\1\1\71\1\54\1\55\1\66\1\1\1\247\1\16\11\1\3\13\1\150\1\250\3"+
+    "\1\3\13\1\1\1\251\13\1\2\13\1\146\2\1\1\252\2\1\3\13\1\1\1\253\3\1\2\13\1"+
+    "\30\5\1\1\13\1\75\30\1\4\13\1\1\1\123\34\1\3\13\1\46\20\1\1\55\1\13\1\146"+
+    "\1\1\1\67\2\1\1\205\1\13\67\1\71\13\1\75\16\1\14\13\1\142\53\1\2\13\1\146"+
+    "\75\1\44\13\1\110\33\1\43\13\1\46\1\13\1\146\7\1\1\13\1\147\1\1\3\13\1\1\1"+
+    "\142\1\1\1\154\1\254\1\13\67\1\4\13\1\150\1\67\3\1\1\154\4\1\1\67\1\1\76\13"+
+    "\1\121\1\1\57\13\1\31\20\1\1\16\77\1\6\13\1\30\1\121\1\46\1\75\66\1\5\13\1"+
+    "\211\3\13\1\141\1\255\1\256\1\257\3\13\1\260\1\261\1\13\1\262\1\263\1\36\24"+
+    "\13\1\264\1\13\1\36\1\131\1\13\1\131\1\13\1\211\1\13\1\211\1\146\1\13\1\146"+
+    "\1\13\1\55\1\13\1\55\1\13\1\213\3\1\14\13\1\150\3\1\4\13\1\142\113\1\1\257"+
+    "\1\13\1\265\1\266\1\267\1\270\1\271\1\272\1\273\1\151\1\274\1\151\24\1\55"+
+    "\13\1\110\2\1\103\13\1\150\15\13\1\147\150\13\1\16\25\1\41\13\1\147\36\1");
 
-  /* The ZZ_CMAP_A table has 256 entries */
+  /* The ZZ_CMAP_A table has 3024 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\42\0\1\2\4\0\1\3\2\0\1\11\2\0\1\1\1\0\1\10\14\0\1\4\4\0\32\5\5\0\1\7\32\5"+
-    "\1\6\1\0\1\6\202\0");
+    "\11\0\2\43\1\0\2\43\22\0\1\43\1\7\1\4\1\40\2\0\1\26\1\5\2\25\1\47\2\0\1\27"+
+    "\1\25\1\33\12\2\1\0\1\37\1\6\1\44\1\36\1\35\1\0\1\42\1\23\1\12\1\10\1\16\1"+
+    "\42\1\31\1\17\1\24\2\31\1\21\1\20\1\31\1\11\1\15\3\31\1\13\1\22\2\31\1\41"+
+    "\1\14\1\31\1\45\1\0\1\46\2\0\1\32\1\42\1\23\1\12\1\10\1\16\1\42\1\31\1\17"+
+    "\1\24\2\31\1\21\1\20\1\31\1\11\1\15\3\31\1\13\1\22\2\31\1\41\1\14\1\31\1\34"+
+    "\1\25\1\30\7\0\1\3\24\0\1\1\12\0\1\1\4\0\1\1\5\0\27\1\1\0\12\1\4\0\14\1\16"+
+    "\0\5\1\7\0\1\1\1\0\1\1\1\0\5\1\1\0\2\1\2\0\4\1\1\0\1\1\6\0\1\1\1\0\3\1\1\0"+
+    "\1\1\1\0\4\1\1\0\23\1\1\0\13\1\10\0\6\1\1\0\26\1\2\0\1\1\6\0\10\1\10\0\13"+
+    "\1\5\0\3\1\33\0\6\1\1\0\1\1\17\0\2\1\7\0\2\1\12\0\3\1\2\0\2\1\1\0\16\1\15"+
+    "\0\11\1\13\0\1\1\30\0\6\1\4\0\2\1\4\0\1\1\5\0\6\1\4\0\1\1\11\0\1\1\3\0\1\1"+
+    "\7\0\11\1\7\0\5\1\1\0\10\1\6\0\26\1\3\0\1\1\2\0\1\1\7\0\11\1\4\0\10\1\2\0"+
+    "\2\1\2\0\26\1\1\0\7\1\1\0\1\1\3\0\4\1\3\0\1\1\20\0\1\1\15\0\2\1\1\0\1\1\5"+
+    "\0\6\1\4\0\2\1\1\0\2\1\1\0\2\1\1\0\2\1\17\0\4\1\1\0\1\1\3\0\3\1\20\0\11\1"+
+    "\1\0\2\1\1\0\2\1\1\0\5\1\3\0\1\1\2\0\1\1\30\0\1\1\13\0\10\1\2\0\1\1\3\0\1"+
+    "\1\1\0\6\1\3\0\3\1\1\0\4\1\3\0\2\1\1\0\1\1\1\0\2\1\3\0\2\1\3\0\3\1\3\0\14"+
+    "\1\13\0\10\1\1\0\2\1\10\0\3\1\5\0\1\1\4\0\10\1\1\0\6\1\1\0\5\1\3\0\1\1\3\0"+
+    "\2\1\15\0\13\1\2\0\1\1\6\0\3\1\10\0\1\1\5\0\22\1\3\0\10\1\1\0\11\1\1\0\1\1"+
+    "\2\0\7\1\11\0\1\1\1\0\2\1\15\0\2\1\1\0\1\1\2\0\2\1\1\0\1\1\2\0\1\1\6\0\4\1"+
+    "\1\0\7\1\1\0\3\1\1\0\1\1\1\0\1\1\2\0\2\1\1\0\4\1\1\0\2\1\11\0\1\1\2\0\5\1"+
+    "\1\0\1\1\25\0\14\1\1\0\24\1\13\0\5\1\22\0\7\1\4\0\4\1\3\0\1\1\3\0\2\1\7\0"+
+    "\3\1\4\0\15\1\14\0\1\1\1\0\6\1\1\0\1\1\5\0\1\1\2\0\13\1\1\0\15\1\1\0\4\1\2"+
+    "\0\7\1\1\0\1\1\1\0\4\1\2\0\1\1\1\0\4\1\2\0\7\1\1\0\1\1\1\0\4\1\2\0\16\1\2"+
+    "\0\6\1\2\0\15\1\2\0\1\1\1\0\10\1\7\0\15\1\1\0\6\1\23\0\1\1\4\0\1\1\3\0\5\1"+
+    "\2\0\22\1\1\0\1\1\5\0\17\1\1\0\16\1\2\0\5\1\13\0\14\1\13\0\1\1\15\0\7\1\7"+
+    "\0\16\1\15\0\2\1\11\0\4\1\1\0\4\1\3\0\2\1\11\0\10\1\1\0\1\1\1\0\1\1\1\0\1"+
+    "\1\1\0\6\1\1\0\7\1\1\0\1\1\3\0\3\1\1\0\7\1\3\0\4\1\2\0\6\1\14\0\2\3\7\0\1"+
+    "\1\15\0\1\1\2\0\1\1\4\0\1\1\2\0\12\1\1\0\1\1\3\0\5\1\6\0\1\1\1\0\1\1\1\0\1"+
+    "\1\1\0\4\1\1\0\13\1\2\0\4\1\5\0\5\1\4\0\1\1\4\0\2\1\13\0\5\1\6\0\4\1\3\0\2"+
+    "\1\14\0\10\1\7\0\10\1\1\0\7\1\6\0\2\1\12\0\5\1\5\0\2\1\3\0\7\1\6\0\3\1\12"+
+    "\0\2\1\13\0\11\1\2\0\27\1\2\0\7\1\1\0\3\1\1\0\4\1\1\0\4\1\2\0\6\1\3\0\1\1"+
+    "\1\0\1\1\2\0\5\1\1\0\12\1\12\0\5\1\1\0\3\1\1\0\10\1\4\0\7\1\3\0\1\1\3\0\2"+
+    "\1\1\0\1\1\3\0\2\1\2\0\5\1\2\0\1\1\1\0\1\1\30\0\3\1\3\0\6\1\2\0\6\1\2\0\6"+
+    "\1\11\0\7\1\4\0\5\1\3\0\5\1\5\0\1\1\1\0\10\1\1\0\5\1\1\0\1\1\1\0\2\1\1\0\2"+
+    "\1\1\0\12\1\6\0\12\1\2\0\6\1\2\0\6\1\2\0\6\1\2\0\3\1\3\0\14\1\1\0\16\1\1\0"+
+    "\2\1\1\0\2\1\1\0\10\1\6\0\4\1\4\0\16\1\2\0\1\1\1\0\14\1\1\0\2\1\3\0\1\1\2"+
+    "\0\4\1\1\0\2\1\12\0\10\1\6\0\6\1\1\0\3\1\1\0\12\1\3\0\1\1\12\0\4\1\25\0\1"+
+    "\1\1\0\1\1\3\0\7\1\1\0\1\1\1\0\4\1\1\0\17\1\1\0\2\1\14\0\3\1\7\0\4\1\11\0"+
+    "\2\1\1\0\1\1\20\0\4\1\10\0\1\1\13\0\10\1\5\0\3\1\2\0\1\1\2\0\2\1\2\0\4\1\1"+
+    "\0\14\1\1\0\1\1\1\0\7\1\1\0\21\1\1\0\4\1\2\0\10\1\1\0\7\1\1\0\14\1\1\0\4\1"+
+    "\1\0\5\1\1\0\1\1\3\0\14\1\2\0\10\1\1\0\2\1\1\0\1\1\2\0\1\1\1\0\12\1\1\0\4"+
+    "\1\1\0\1\1\1\0\1\1\6\0\1\1\4\0\1\1\1\0\1\1\1\0\1\1\1\0\3\1\1\0\2\1\1\0\1\1"+
+    "\2\0\1\1\1\0\1\1\1\0\1\1\1\0\1\1\1\0\1\1\1\0\2\1\1\0\1\1\2\0\4\1\1\0\7\1\1"+
+    "\0\4\1\1\0\4\1\1\0\1\1\1\0\12\1\1\0\5\1\1\0\3\1\1\0\5\1\1\0\5\1");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -77,13 +189,22 @@ public class _AstroLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\12\0\2\1\1\2\1\1\1\3\1\4\1\1\2\5"+
-    "\2\6\2\7\1\10\1\11\1\12\1\13\1\14\1\15"+
-    "\1\1\1\16\1\0\1\17\3\0\1\20\1\21\1\22"+
-    "\1\23\1\24";
+    "\27\0\1\1\1\2\2\1\1\3\1\4\3\5\1\1"+
+    "\1\6\1\1\1\7\3\10\1\11\1\12\1\13\2\11"+
+    "\1\14\1\15\1\16\1\17\1\20\4\17\1\21\2\22"+
+    "\1\17\1\23\1\24\2\25\1\26\1\27\2\26\1\30"+
+    "\2\31\1\32\1\33\1\34\2\35\1\36\1\37\1\40"+
+    "\1\41\2\42\1\43\1\44\1\17\1\45\5\46\1\47"+
+    "\1\50\1\51\1\52\1\53\1\54\2\55\1\56\1\57"+
+    "\3\60\1\61\1\62\1\63\1\64\1\65\2\66\5\0"+
+    "\1\67\1\0\1\70\3\0\1\71\5\0\1\72\1\35"+
+    "\1\0\1\22\1\0\1\73\1\74\1\75\1\76\1\77"+
+    "\1\100\2\0\1\101\5\0\1\102\1\0\1\103\1\0"+
+    "\1\104\3\0\1\105\1\50\1\106\2\0\1\107\3\0"+
+    "\1\110\2\0\1\111";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[41];
+    int [] result = new int[165];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -108,15 +229,30 @@ public class _AstroLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\12\0\24\0\36\0\50\0\62\0\74\0\106"+
-    "\0\120\0\132\0\144\0\156\0\144\0\170\0\144\0\144"+
-    "\0\202\0\24\0\144\0\144\0\214\0\144\0\226\0\144"+
-    "\0\144\0\144\0\144\0\144\0\144\0\240\0\144\0\252"+
-    "\0\144\0\264\0\276\0\310\0\144\0\144\0\144\0\144"+
-    "\0\144";
+    "\0\0\0\50\0\120\0\170\0\240\0\310\0\360\0\u0118"+
+    "\0\u0140\0\u0168\0\u0190\0\u01b8\0\u01e0\0\u0208\0\u0230\0\u0258"+
+    "\0\u0280\0\u02a8\0\u02d0\0\u02f8\0\u0320\0\u0348\0\u0370\0\u0398"+
+    "\0\u03c0\0\u03e8\0\u0410\0\u03c0\0\u03c0\0\u03c0\0\u0438\0\u0460"+
+    "\0\u0488\0\u03c0\0\u04b0\0\u03c0\0\u03c0\0\u0438\0\u04d8\0\u0500"+
+    "\0\u0528\0\u03c0\0\u0550\0\u0578\0\u03c0\0\u03c0\0\u03c0\0\u03c0"+
+    "\0\u0438\0\u05a0\0\u05c8\0\u05f0\0\u0618\0\u03c0\0\u0640\0\u0668"+
+    "\0\u0690\0\u03c0\0\u03c0\0\u06b8\0\u06e0\0\u0708\0\u03c0\0\u0438"+
+    "\0\u03c0\0\u0730\0\u0758\0\u0780\0\u03c0\0\u07a8\0\u03c0\0\u07d0"+
+    "\0\u07f8\0\u03c0\0\u03c0\0\u0820\0\u03c0\0\u03c0\0\u0438\0\u03c0"+
+    "\0\u0848\0\u0870\0\u03c0\0\u03c0\0\u0898\0\u0438\0\u08c0\0\u08e8"+
+    "\0\u03c0\0\u03c0\0\u03c0\0\u03c0\0\u03c0\0\u03c0\0\u03c0\0\u0438"+
+    "\0\u03c0\0\u03c0\0\u0910\0\u0938\0\u0960\0\u03c0\0\u03c0\0\u03c0"+
+    "\0\u03c0\0\u03c0\0\u03c0\0\u0438\0\u0988\0\u09b0\0\u09d8\0\u0a00"+
+    "\0\u0a28\0\u03c0\0\u0a50\0\u03c0\0\u0a78\0\u0aa0\0\u05a0\0\u03c0"+
+    "\0\u05c8\0\u0ac8\0\u0af0\0\u0b18\0\u0b40\0\u03c0\0\u0b68\0\u0b90"+
+    "\0\u0898\0\u0bb8\0\u03c0\0\u03c0\0\u03c0\0\u03c0\0\u03c0\0\u03c0"+
+    "\0\u0be0\0\u0c08\0\u03c0\0\u0c30\0\u0c58\0\u0c80\0\u0ca8\0\u0cd0"+
+    "\0\u03c0\0\u0cf8\0\u03c0\0\u0d20\0\u03c0\0\u0d48\0\u0d70\0\u0d98"+
+    "\0\u03c0\0\u0dc0\0\u03c0\0\u0de8\0\u0e10\0\u03c0\0\u0e38\0\u0e60"+
+    "\0\u0e88\0\u03c0\0\u0eb0\0\u0ed8\0\u03c0";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[41];
+    int [] result = new int[165];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -139,16 +275,74 @@ public class _AstroLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\13\1\14\2\15\1\16\1\13\1\17\1\15\1\20"+
-    "\2\13\1\21\2\15\3\13\1\15\1\20\1\13\12\22"+
-    "\12\23\1\24\1\25\10\24\1\26\1\27\10\26\2\23"+
-    "\1\30\1\31\3\23\1\32\2\23\10\33\1\34\1\35"+
-    "\11\13\1\36\12\37\13\0\1\40\15\0\1\41\5\0"+
-    "\1\42\11\0\1\43\11\0\1\44\20\0\1\45\2\0"+
-    "\1\46\11\0\1\47\11\0\1\50\11\0\1\51\10\0";
+    "\4\30\2\31\1\32\20\30\1\33\1\34\1\30\1\31"+
+    "\1\35\1\34\13\30\3\36\1\37\23\36\1\40\13\36"+
+    "\1\37\4\36\4\41\2\42\21\41\1\43\2\41\1\42"+
+    "\1\44\14\41\3\45\1\46\23\45\1\47\13\45\1\46"+
+    "\4\45\3\50\1\51\2\52\1\53\17\50\1\54\1\50"+
+    "\1\55\1\50\1\52\1\56\1\57\6\50\1\51\4\50"+
+    "\3\60\1\61\1\62\1\63\7\60\1\64\1\60\1\65"+
+    "\16\60\1\66\4\60\1\61\4\60\6\67\1\70\20\67"+
+    "\1\71\6\67\1\72\6\67\1\73\2\67\3\74\1\75"+
+    "\27\74\1\76\2\74\1\77\4\74\1\100\4\74\3\101"+
+    "\1\102\27\101\1\76\2\101\1\77\4\101\1\102\4\101"+
+    "\3\103\1\104\27\103\1\76\1\105\1\103\1\77\4\103"+
+    "\1\106\1\107\3\103\3\110\1\111\1\112\1\113\24\110"+
+    "\1\114\1\110\1\115\1\110\1\77\4\110\1\61\4\110"+
+    "\3\116\1\117\1\120\36\116\1\117\7\116\1\117\1\116"+
+    "\1\120\35\116\1\117\4\116\35\121\1\122\1\123\11\121"+
+    "\3\60\1\61\37\60\1\61\4\60\1\124\1\125\1\124"+
+    "\1\126\4\124\15\125\2\124\1\127\1\124\1\125\7\124"+
+    "\2\125\1\126\2\124\1\130\2\124\1\125\1\124\1\126"+
+    "\4\124\15\125\2\124\1\127\1\124\1\125\7\124\2\125"+
+    "\1\126\2\124\1\131\1\124\3\132\1\102\27\132\1\133"+
+    "\2\132\1\133\4\132\1\102\1\133\3\132\3\60\1\61"+
+    "\1\134\1\135\24\60\1\136\10\60\1\61\4\60\3\137"+
+    "\1\140\27\137\1\141\7\137\1\140\3\137\1\142\47\143"+
+    "\1\144\4\145\2\146\22\145\1\147\1\145\1\150\1\151"+
+    "\1\152\13\145\3\153\1\154\37\153\1\154\4\153\4\30"+
+    "\3\0\20\30\2\0\1\30\3\0\13\30\60\0\15\34"+
+    "\4\0\1\34\7\0\2\34\34\0\1\155\23\0\1\61"+
+    "\37\0\1\61\33\0\1\156\20\0\4\41\2\0\21\41"+
+    "\1\0\2\41\2\0\14\41\27\0\1\157\47\0\1\160"+
+    "\20\0\3\50\4\0\17\50\1\0\1\50\1\0\1\50"+
+    "\3\0\6\50\1\0\4\50\3\0\1\51\37\0\1\51"+
+    "\13\0\1\161\15\162\4\0\1\162\1\0\1\163\1\0"+
+    "\1\164\1\162\2\0\2\162\15\0\15\165\4\0\1\165"+
+    "\6\0\1\166\2\165\5\0\4\167\1\170\43\167\5\171"+
+    "\1\170\42\171\22\0\1\172\40\0\1\173\34\0\6\67"+
+    "\1\0\20\67\1\0\6\67\1\0\6\67\1\0\2\67"+
+    "\7\0\1\174\67\0\1\175\20\0\33\74\1\0\2\74"+
+    "\1\0\4\74\1\0\7\74\1\75\27\74\1\0\2\74"+
+    "\1\0\4\74\1\61\4\74\36\0\1\176\14\0\1\102"+
+    "\37\0\1\102\4\0\33\103\2\0\1\103\1\0\4\103"+
+    "\2\0\6\103\1\104\27\103\2\0\1\103\1\0\4\103"+
+    "\1\106\1\0\3\103\3\0\1\106\37\0\1\106\4\0"+
+    "\33\110\1\177\2\110\1\0\4\110\1\0\7\110\1\111"+
+    "\27\110\1\177\2\110\1\0\4\110\1\61\4\110\32\114"+
+    "\1\0\15\114\35\121\1\200\1\0\47\121\1\123\11\121"+
+    "\1\0\3\201\3\0\20\201\2\0\1\201\7\0\3\201"+
+    "\33\0\1\202\56\0\1\203\11\0\47\143\34\0\1\204"+
+    "\14\0\4\145\2\0\22\145\1\0\1\145\3\0\13\145"+
+    "\27\0\1\205\47\0\1\206\47\0\1\207\47\0\1\210"+
+    "\30\0\1\211\16\0\1\212\30\0\15\213\4\0\1\213"+
+    "\4\0\1\213\2\0\2\213\7\0\1\165\5\0\15\165"+
+    "\4\0\1\165\5\0\1\214\1\0\2\165\46\0\1\215"+
+    "\31\0\1\216\44\0\1\217\56\0\1\220\15\0\1\221"+
+    "\11\0\1\222\26\0\1\223\11\0\33\110\1\177\2\110"+
+    "\1\0\11\110\36\121\1\0\11\121\36\0\1\223\22\0"+
+    "\1\224\65\0\1\225\46\0\1\226\23\0\1\227\5\0"+
+    "\1\227\1\0\1\227\3\0\1\227\4\0\1\227\16\0"+
+    "\1\227\26\0\1\230\47\0\1\231\55\0\1\232\56\0"+
+    "\1\233\23\0\1\234\75\0\1\235\11\0\1\227\5\0"+
+    "\1\227\1\0\1\227\3\0\1\227\4\0\1\227\13\0"+
+    "\1\236\2\0\1\227\31\0\1\237\52\0\1\222\6\0"+
+    "\1\223\24\0\1\240\36\0\1\241\57\0\1\242\51\0"+
+    "\1\243\35\0\1\241\34\0\1\236\25\0\1\244\50\0"+
+    "\1\245\31\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[210];
+    int [] result = new int[3840];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -186,12 +380,18 @@ public class _AstroLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\12\0\1\11\1\1\1\11\1\1\2\11\2\1\2\11"+
-    "\1\1\1\11\1\1\6\11\1\1\1\11\1\0\1\11"+
-    "\3\0\5\11";
+    "\27\0\1\1\1\11\2\1\3\11\3\1\1\11\1\1"+
+    "\2\11\4\1\1\11\2\1\4\11\5\1\1\11\3\1"+
+    "\2\11\3\1\1\11\1\1\1\11\3\1\1\11\1\1"+
+    "\1\11\2\1\2\11\1\1\2\11\1\1\1\11\2\1"+
+    "\2\11\4\1\7\11\1\1\2\11\3\1\6\11\1\1"+
+    "\5\0\1\11\1\0\1\11\3\0\1\11\5\0\1\11"+
+    "\1\1\1\0\1\1\1\0\6\11\2\0\1\11\5\0"+
+    "\1\11\1\0\1\11\1\0\1\11\3\0\1\11\1\1"+
+    "\1\11\2\0\1\11\3\0\1\11\2\0\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[41];
+    int [] result = new int[165];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -247,9 +447,6 @@ public class _AstroLexer implements FlexLexer {
   private boolean zzEOFDone;
 
   /* user code: */
-    private IElementType readReturnTokenType;
-    private int readReturnState;
-    private char[] readUntilBoundary;
 
     public _AstroLexer() {
       this((java.io.Reader)null);
@@ -271,15 +468,40 @@ public class _AstroLexer implements FlexLexer {
       return true;
     }
 
+    private boolean nextIgnoringWhiteSpaceIs(@NotNull String text) {
+      for (int i = zzCurrentPos + 1; i < zzEndRead; i++) {
+        char cur = zzBuffer.charAt(i);
+        if (Character.isWhitespace(cur))
+          continue;
+        return inBuffer(text, i - zzCurrentPos);
+      }
+      return false;
+    }
+
+    private boolean nextNonWhitespaceCharIs(char ch) {
+      for (int i = zzCurrentPos + 1; i < zzEndRead; i++) {
+        char cur = zzBuffer.charAt(i);
+        if (Character.isWhitespace(cur))
+          continue;
+        return cur == ch;
+      }
+      return false;
+    }
 
     private void readUntil(boolean finishAtBoundary, char... chars) {
       if (zzMarkedPos == zzEndRead) return;
       char ch;
       do {
         ch = zzBuffer.charAt(zzMarkedPos++);
-      } while (zzMarkedPos < zzEndRead
-               && !contains(chars, ch)
-               && !(finishAtBoundary && contains(readUntilBoundary, ch)));
+        if (ch == '\\' && zzMarkedPos < zzEndRead) {
+          zzMarkedPos++;
+          continue;
+        }
+        if (finishAtBoundary && contains(readUntilBoundary, ch)) {
+          zzMarkedPos--;
+          return;
+        }
+      } while (zzMarkedPos < zzEndRead && !contains(chars, ch));
     }
 
     private boolean contains(char[] chars, char ch) {
@@ -287,6 +509,41 @@ public class _AstroLexer implements FlexLexer {
         if (chars[i] == ch) return true;
       }
       return false;
+    }
+
+
+    private IElementType readReturnTokenType;
+    private int readReturnState;
+    private IElementType readExprReturnTokenType;
+    private int readExprReturnState;
+    private char[] readUntilBoundary;
+
+    private static int KIND_EXPRESSION = 0;
+    private static int KIND_ATTRIBUTE_EXPRESSION = 1;
+    private static int KIND_TEMPLATE_LITERAL = 2;
+
+    private Stack<Integer> expressionStack = new Stack<>();
+
+    private void readTagAttributeExpression(@NotNull IElementType returnTokenType, int nextState) {
+      expressionStack.push(KIND_ATTRIBUTE_EXPRESSION);
+      readExprReturnState = nextState;
+      readExprReturnTokenType = returnTokenType;
+      yybegin(READ_TAG_ATTR_EXPRESSION);
+    }
+
+    private void readString(@Nullable IElementType returnTokenType, int nextState) {
+      yybegin(READ_STRING);
+      readReturnState = nextState;
+      readUntilBoundary = EMPTY_CHAR_ARRAY;
+      readReturnTokenType = returnTokenType;
+      yypushback(1);
+    }
+
+    private void readCommentOrRegExp(@Nullable IElementType returnTokenType, int nextState, char... regExpBoundary) {
+      yybegin(READ_COMMENT_OR_REGEXP);
+      readReturnState = nextState;
+      readUntilBoundary = regExpBoundary;
+      readReturnTokenType = returnTokenType;
     }
 
 
@@ -533,26 +790,58 @@ public class _AstroLexer implements FlexLexer {
         zzAtEOF = true;
         switch (zzLexicalState) {
             case YYINITIAL: {
-              yybegin(FRONTMATTER_CLOSED);
-        return XmlTokenType.XML_DATA_CHARACTERS;
+              yybegin(HTML_INITIAL);
+        zzMarkedPos = 0;
             }  // fall though
-            case 42: break;
+            case 166: break;
             case FRONTMATTER_OPENED: {
-              yybegin(FRONTMATTER_CLOSED);
-        return XmlTokenType.XML_DATA_CHARACTERS;
+              yybegin(HTML_INITIAL);
+        return AstroTokenTypes.FRONTMATTER_SCRIPT;
             }  // fall though
-            case 43: break;
+            case 167: break;
+            case HTML_INITIAL: {
+              if (!expressionStack.isEmpty()) {
+          expressionStack.clear();
+          return AstroTokenTypes.EXPRESSION;
+        }
+        return yylength() > 0 ? XmlTokenType.XML_DATA_CHARACTERS : null;
+            }  // fall though
+            case 168: break;
+            case COMMENT: {
+              yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) {
+          expressionStack.clear();
+          return AstroTokenTypes.EXPRESSION;
+        }
+        return XmlTokenType.XML_COMMENT_CHARACTERS;
+            }  // fall though
+            case 169: break;
+            case ATTRIBUTE_VALUE_START: {
+              yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) {
+          expressionStack.clear();
+          return AstroTokenTypes.EXPRESSION;
+        }
+        return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
+            }  // fall though
+            case 170: break;
             case READ_MULTILINE_COMMENT: {
               yybegin(FINISH_READ);
             }  // fall though
-            case 44: break;
+            case 171: break;
+            case READ_TAG_ATTR_EXPRESSION: {
+              yybegin(readExprReturnState);
+        expressionStack.clear();
+        return readExprReturnTokenType;
+            }  // fall though
+            case 172: break;
             case FINISH_READ: {
               yybegin(readReturnState);
         if (readReturnTokenType != null) {
           return readReturnTokenType;
         }
             }  // fall though
-            case 45: break;
+            case 173: break;
             default:
         return null;
         }
@@ -560,96 +849,383 @@ public class _AstroLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { 
+            { // Just consume
             } 
             // fall through
-          case 21: break;
+          case 74: break;
           case 2: 
-            { if (yystate() == YYINITIAL) {
-            readReturnTokenType = XmlTokenType.XML_DATA_CHARACTERS;
-            readReturnState = FRONTMATTER_CLOSED;
-          } else {
-            readReturnTokenType = null;
-            readReturnState = FRONTMATTER_OPENED;
-          }
-          yypushback(1);
-          yybegin(READ_STRING);
+            { readString(XmlTokenType.XML_DATA_CHARACTERS, HTML_INITIAL);
             } 
             // fall through
-          case 22: break;
+          case 75: break;
           case 3: 
-            { yybegin(FRONTMATTER_CLOSED);
-        yypushback(1);
-        return XmlTokenType.XML_DATA_CHARACTERS;
+            { yybegin(HTML_INITIAL);
+        zzMarkedPos = 0;
             } 
             // fall through
-          case 23: break;
+          case 76: break;
           case 4: 
-            { if (yystate() == YYINITIAL) {
-          readReturnTokenType = XmlTokenType.XML_DATA_CHARACTERS;
-          readReturnState = FRONTMATTER_CLOSED;
-        } else {
-          readReturnTokenType = null;
-          readReturnState = FRONTMATTER_OPENED;
-        }
-        readUntilBoundary = EMPTY_CHAR_ARRAY;
-        yybegin(READ_COMMENT_OR_REGEXP);
+            { readCommentOrRegExp(XmlTokenType.XML_DATA_CHARACTERS, HTML_INITIAL);
             } 
             // fall through
-          case 24: break;
+          case 77: break;
           case 5: 
-            { return XmlTokenType.XML_BAD_CHARACTER;
-            } 
-            // fall through
-          case 25: break;
-          case 6: 
             { yypushback(1);
         yybegin(YYINITIAL);
             } 
             // fall through
-          case 26: break;
+          case 78: break;
+          case 6: 
+            { readString(null, FRONTMATTER_OPENED);
+            } 
+            // fall through
+          case 79: break;
           case 7: 
+            { readCommentOrRegExp(null, FRONTMATTER_OPENED);
+            } 
+            // fall through
+          case 80: break;
+          case 8: 
             { yypushback(1);
         yybegin(FRONTMATTER_OPENED);
             } 
             // fall through
-          case 27: break;
-          case 8: 
+          case 81: break;
+          case 9: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_DATA_CHARACTERS;
+            } 
+            // fall through
+          case 82: break;
+          case 10: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_REAL_WHITE_SPACE;
+            } 
+            // fall through
+          case 83: break;
+          case 11: 
+            { if (!expressionStack.isEmpty()) {
+          readString(null, HTML_INITIAL);
+        } else {
+          return XmlTokenType.XML_DATA_CHARACTERS;
+        }
+            } 
+            // fall through
+          case 84: break;
+          case 12: 
+            { if (expressionStack.isEmpty()) {
+          return XmlTokenType.XML_DATA_CHARACTERS;
+        }
+        while (!expressionStack.isEmpty() && expressionStack.pop() != KIND_EXPRESSION) {
+        }
+        if (expressionStack.isEmpty()) {
+          return AstroTokenTypes.EXPRESSION;
+        }
+            } 
+            // fall through
+          case 85: break;
+          case 13: 
+            { if (!expressionStack.isEmpty()) {
+          readCommentOrRegExp(null, HTML_INITIAL, '{', '}', '\'', '"', '`');
+        } else {
+          return XmlTokenType.XML_DATA_CHARACTERS;
+        }
+            } 
+            // fall through
+          case 86: break;
+          case 14: 
+            { expressionStack.push(KIND_EXPRESSION);
+            } 
+            // fall through
+          case 87: break;
+          case 15: 
+            { return XmlTokenType.XML_BAD_CHARACTER;
+            } 
+            // fall through
+          case 88: break;
+          case 16: 
+            { return XmlTokenType.XML_WHITE_SPACE;
+            } 
+            // fall through
+          case 89: break;
+          case 17: 
+            { yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_DOCTYPE_END;
+            } 
+            // fall through
+          case 90: break;
+          case 18: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_COMMENT_CHARACTERS;
+            } 
+            // fall through
+          case 91: break;
+          case 19: 
+            { // according to HTML spec (http://www.w3.org/html/wg/drafts/html/master/syntax.html#comments)
+    // comments should start with <!-- and end with -->. The comment <!--> is not valid, but should terminate
+    // comment token. Please note that it's not true for XML (http://www.w3.org/TR/REC-xml/#sec-comments)
+    int loc = getTokenStart();
+    char prev = zzBuffer.charAt(loc - 1);
+    char prevPrev = zzBuffer.charAt(loc - 2);
+    if (prev == '-' && prevPrev == '-') {
+      yybegin(HTML_INITIAL);
+      if (!expressionStack.isEmpty()) continue;
+      return XmlTokenType.XML_BAD_CHARACTER;
+    }
+    if (!expressionStack.isEmpty()) continue;
+    return XmlTokenType.XML_COMMENT_CHARACTERS;
+            } 
+            // fall through
+          case 92: break;
+          case 20: 
+            { yybegin(C_COMMENT_START);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_CONDITIONAL_COMMENT_START;
+            } 
+            // fall through
+          case 93: break;
+          case 21: 
+            { yybegin(BEFORE_TAG_ATTRIBUTES);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_NAME;
+            } 
+            // fall through
+          case 94: break;
+          case 22: 
+            { yybegin(HTML_INITIAL);
+        yypushback(1);
+            } 
+            // fall through
+          case 95: break;
+          case 23: 
+            { yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_TAG_END;
+            } 
+            // fall through
+          case 96: break;
+          case 24: 
+            { yybegin(TAG_ATTRIBUTES);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_WHITE_SPACE;
+            } 
+            // fall through
+          case 97: break;
+          case 25: 
+            { if (!expressionStack.isEmpty()) continue;
+        if (inBuffer("{", 1)) {
+          // If attribute name contains '{' everything up to it is ignored.
+          return XmlTokenType.XML_COMMENT_CHARACTERS;
+        }
+        return XmlTokenType.XML_NAME;
+            } 
+            // fall through
+          case 98: break;
+          case 26: 
+            { readTagAttributeExpression(
+           nextIgnoringWhiteSpaceIs("...") ? AstroTokenTypes.SPREAD_ATTRIBUTE : AstroTokenTypes.SHORTHAND_ATTRIBUTE,
+           TAG_ATTRIBUTES_POST_SHORTHAND
+        );
+            } 
+            // fall through
+          case 99: break;
+          case 27: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_WHITE_SPACE;
+            } 
+            // fall through
+          case 100: break;
+          case 28: 
+            { yybegin(ATTRIBUTE_VALUE_START);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_EQ;
+            } 
+            // fall through
+          case 101: break;
+          case 29: 
+            { yybegin(TAG_ATTRIBUTES);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
+            } 
+            // fall through
+          case 102: break;
+          case 30: 
+            { yybegin(ATTRIBUTE_VALUE_DQ);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
+            } 
+            // fall through
+          case 103: break;
+          case 31: 
+            { yybegin(ATTRIBUTE_VALUE_SQ);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
+            } 
+            // fall through
+          case 104: break;
+          case 32: 
+            { if (inBuffer("`", 1)) {
+          zzMarkedPos++;
+        }
+        yybegin(TAG_ATTRIBUTES);
+        if (!expressionStack.isEmpty()) continue;
+        return AstroTokenTypes.TEMPLATE_LITERAL_ATTRIBUTE;
+            } 
+            // fall through
+          case 105: break;
+          case 33: 
+            { readTagAttributeExpression(AstroTokenTypes.EXPRESSION_ATTRIBUTE, TAG_ATTRIBUTES);
+            } 
+            // fall through
+          case 106: break;
+          case 34: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
+            } 
+            // fall through
+          case 107: break;
+          case 35: 
+            { yybegin(TAG_ATTRIBUTES);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER;
+            } 
+            // fall through
+          case 108: break;
+          case 36: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_PI_TARGET;
+            } 
+            // fall through
+          case 109: break;
+          case 37: 
+            { yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_PI_END;
+            } 
+            // fall through
+          case 110: break;
+          case 38: 
+            { yybegin(COMMENT);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_COMMENT_CHARACTERS;
+            } 
+            // fall through
+          case 111: break;
+          case 39: 
+            { yybegin(COMMENT);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_CONDITIONAL_COMMENT_END;
+            } 
+            // fall through
+          case 112: break;
+          case 40: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_BAD_CHARACTER;
+            } 
+            // fall through
+          case 113: break;
+          case 41: 
+            { yypushback(1);
+        yybegin(TAG_ATTRIBUTES);
+            } 
+            // fall through
+          case 114: break;
+          case 42: 
             { readUntil(false, '"', '\r', '\n');
         yybegin(FINISH_READ);
             } 
             // fall through
-          case 28: break;
-          case 9: 
+          case 115: break;
+          case 43: 
             { readUntil(false, '\'', '\r', '\n');
         yybegin(FINISH_READ);
             } 
             // fall through
-          case 29: break;
-          case 10: 
+          case 116: break;
+          case 44: 
             { readUntil(false, '`');
         yybegin(FINISH_READ);
             } 
             // fall through
-          case 30: break;
-          case 11: 
-            { readUntil(true, '/', '\r', '\n');
+          case 117: break;
+          case 45: 
+            { zzMarkedPos--;
+        readUntil(true, '/', '\r', '\n');
         yybegin(FINISH_READ);
             } 
             // fall through
-          case 31: break;
-          case 12: 
+          case 118: break;
+          case 46: 
             { readUntil(false, '\r', '\n');
         yybegin(FINISH_READ);
             } 
             // fall through
-          case 32: break;
-          case 13: 
+          case 119: break;
+          case 47: 
             { yybegin(READ_MULTILINE_COMMENT);
             } 
             // fall through
-          case 33: break;
-          case 14: 
+          case 120: break;
+          case 48: 
+            { // consume
+            } 
+            // fall through
+          case 121: break;
+          case 49: 
+            { if (expressionStack.peek() != KIND_TEMPLATE_LITERAL) {
+          readString(null, READ_TAG_ATTR_EXPRESSION);
+        }
+            } 
+            // fall through
+          case 122: break;
+          case 50: 
+            { var topExpression = expressionStack.peek();
+        if (topExpression == KIND_EXPRESSION || topExpression == KIND_ATTRIBUTE_EXPRESSION) {
+          expressionStack.pop();
+          if (expressionStack.isEmpty() || topExpression == KIND_ATTRIBUTE_EXPRESSION) {
+            yybegin(readExprReturnState);
+            if (expressionStack.isEmpty()) {
+              if (readExprReturnTokenType == AstroTokenTypes.EXPRESSION_ATTRIBUTE
+                  || !nextNonWhitespaceCharIs('=')) {
+                return readExprReturnTokenType;
+              } else {
+                return XmlTokenType.XML_NAME;
+              }
+            }
+          }
+        }
+            } 
+            // fall through
+          case 123: break;
+          case 51: 
+            { if (expressionStack.peek() == KIND_TEMPLATE_LITERAL) {
+          expressionStack.pop();
+        } else {
+          expressionStack.push(KIND_TEMPLATE_LITERAL);
+        }
+            } 
+            // fall through
+          case 124: break;
+          case 52: 
+            { if (expressionStack.peek() != KIND_TEMPLATE_LITERAL) {
+          readCommentOrRegExp(null, READ_TAG_ATTR_EXPRESSION, '}');
+        }
+            } 
+            // fall through
+          case 125: break;
+          case 53: 
+            { if (expressionStack.peek() == KIND_TEMPLATE_LITERAL) {
+          if (inBuffer("${", -1)) {
+            expressionStack.push(KIND_EXPRESSION);
+          }
+        } else {
+          expressionStack.push(KIND_EXPRESSION);
+        }
+            } 
+            // fall through
+          case 126: break;
+          case 54: 
             { yypushback(1);
         yybegin(readReturnState);
         if (readReturnTokenType != null) {
@@ -657,45 +1233,131 @@ public class _AstroLexer implements FlexLexer {
         }
             } 
             // fall through
-          case 34: break;
-          case 15: 
-            { yybegin(FRONTMATTER_CLOSED);
-        yypushback(2);
-        return XmlTokenType.XML_DATA_CHARACTERS;
+          case 127: break;
+          case 55: 
+            { yybegin(START_TAG_NAME);
+        yypushback(1);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_START_TAG_START;
             } 
             // fall through
-          case 35: break;
-          case 16: 
-            { yybegin(FINISH_READ);//comment
+          case 128: break;
+          case 56: 
+            { yybegin(PROCESSING_INSTRUCTION);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_PI_START;
             } 
             // fall through
-          case 36: break;
-          case 17: 
+          case 129: break;
+          case 57: 
+            { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
+            } 
+            // fall through
+          case 130: break;
+          case 58: 
+            { yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_EMPTY_ELEMENT_END;
+            } 
+            // fall through
+          case 131: break;
+          case 59: 
+            { yybegin(COMMENT);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_CONDITIONAL_COMMENT_START_END;
+            } 
+            // fall through
+          case 132: break;
+          case 60: 
+            { yybegin(FINISH_READ);
+            } 
+            // fall through
+          case 133: break;
+          case 61: 
             { yypushback(3);
         yybegin(FRONTMATTER_OPEN);
         return XmlTokenType.XML_COMMENT_CHARACTERS;
             } 
             // fall through
-          case 37: break;
-          case 18: 
-            { yypushback(3);
-        yybegin(FRONTMATTER_CLOSE);
-        return XmlTokenType.XML_DATA_CHARACTERS;
-            } 
-            // fall through
-          case 38: break;
-          case 19: 
+          case 134: break;
+          case 62: 
             { yybegin(FRONTMATTER_OPENED);
           return AstroTokenTypes.FRONTMATTER_SEPARATOR;
             } 
             // fall through
-          case 39: break;
-          case 20: 
-            { yybegin(FRONTMATTER_CLOSED);
+          case 135: break;
+          case 63: 
+            { yypushback(3);
+        yybegin(FRONTMATTER_CLOSE);
+        return AstroTokenTypes.FRONTMATTER_SCRIPT;
+            } 
+            // fall through
+          case 136: break;
+          case 64: 
+            { yybegin(HTML_INITIAL);
           return AstroTokenTypes.FRONTMATTER_SEPARATOR;
             } 
             // fall through
-          case 40: break;
+          case 137: break;
+          case 65: 
+            { yybegin(END_TAG_NAME);
+        yypushback(1);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_END_TAG_START;
+            } 
+            // fall through
+          case 138: break;
+          case 66: 
+            { yybegin(C_COMMENT_END);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START;
+            } 
+            // fall through
+          case 139: break;
+          case 67: 
+            { yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_COMMENT_END;
+            } 
+            // fall through
+          case 140: break;
+          case 68: 
+            { yybegin(COMMENT);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_COMMENT_START;
+            } 
+            // fall through
+          case 141: break;
+          case 69: 
+            { return XmlTokenType.XML_NAME;
+            } 
+            // fall through
+          case 142: break;
+          case 70: 
+            { yybegin(HTML_INITIAL);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_BAD_CHARACTER;
+            } 
+            // fall through
+          case 143: break;
+          case 71: 
+            { if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_CHAR_ENTITY_REF;
+            } 
+            // fall through
+          case 144: break;
+          case 72: 
+            { return XmlTokenType.XML_DOCTYPE_PUBLIC;
+            } 
+            // fall through
+          case 145: break;
+          case 73: 
+            { yybegin(DOC_TYPE);
+        if (!expressionStack.isEmpty()) continue;
+        return XmlTokenType.XML_DOCTYPE_START;
+            } 
+            // fall through
+          case 146: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

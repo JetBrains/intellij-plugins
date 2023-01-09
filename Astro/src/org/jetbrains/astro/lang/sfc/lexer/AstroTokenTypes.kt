@@ -10,12 +10,21 @@ interface AstroTokenTypes : XmlTokenType {
     val FRONTMATTER_SEPARATOR = AstroTokenType("ASTRO:FRONTMATTER_SEPARATOR")
 
     @JvmField
-    val INTERPOLATION_START = AstroTokenType("ASTRO:INTERPOLATION_START")
+    val FRONTMATTER_SCRIPT = AstroTokenType("ASTRO:FRONTMATTER_SCRIPT")
 
     @JvmField
-    val INTERPOLATION_END = AstroTokenType("ASTRO:INTERPOLATION_END")
+    val SHORTHAND_ATTRIBUTE = AstroTokenType("ASTRO:SHORTHAND_ATTRIBUTE")
 
     @JvmField
-    val INTERPOLATION_EXPR = AstroTokenType("ASTRO:INTERPOLATION_EXPR")
+    val SPREAD_ATTRIBUTE = AstroTokenType("ASTRO:SPREAD_ATTRIBUTE")
+
+    @JvmField
+    val EXPRESSION_ATTRIBUTE = AstroTokenType("ASTRO:EXPRESSION_ATTRIBUTE")
+
+    @JvmField
+    val TEMPLATE_LITERAL_ATTRIBUTE = AstroTokenType("ASTRO:TEMPLATE_LITERAL_ATTRIBUTE")
+
+    @JvmField
+    val EXPRESSION = AstroTokenType("ASTRO:EXPRESSION")
   }
 }
