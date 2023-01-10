@@ -25,7 +25,7 @@ public class DroolsReferenceResolveAnnotator implements Annotator {
 
       ResolveResult[] resolveResults = ((PsiPolyVariantReference)node).multiResolve(false);
       if (resolveResults.length == 0) {
-        holder.newAnnotation(HighlightSeverity.WARNING, AnalysisBundle.message("error.cannot.resolve")).create();
+        holder.newAnnotation(HighlightSeverity.ERROR, AnalysisBundle.message("error.cannot.resolve")).create();
       }
     }
   }
