@@ -3,9 +3,10 @@ package com.intellij.plugins.drools.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Computable;
-import com.intellij.plugins.drools.lang.psi.*;
+import com.intellij.plugins.drools.lang.psi.DroolsEnumConstant;
+import com.intellij.plugins.drools.lang.psi.DroolsFieldName;
+import com.intellij.plugins.drools.lang.psi.DroolsPsiClass;
 import com.intellij.plugins.drools.lang.psi.util.DroolsElementsFactory;
-import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.light.JavaIdentifier;
 import com.intellij.psi.javadoc.PsiDocComment;
@@ -15,13 +16,11 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl implements DroolsPsiField, DroolsField {
+public   class DroolsEnumConstantImpl extends DroolsPsiFieldImpl implements DroolsEnumConstant {
 
   private Computable<PsiType> myType;
 
-  public DroolsPsiFieldImpl(@NotNull ASTNode node) {
+  public DroolsEnumConstantImpl(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -33,8 +32,8 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
 
   @Override
   public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
-
   }
+
   @NotNull
   @Override
   public PsiIdentifier getNameIdentifier() {
@@ -61,18 +60,9 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   @NotNull
   @Override
   public PsiType getType() {
-    final DroolsFieldType droolsFieldType = getFieldType();
-    if (droolsFieldType != null) {
-      DroolsType type = droolsFieldType.getType();
-      if (type != null) {
-        final PsiType psiType = DroolsResolveUtil.resolveType(type);
-        if (psiType != null) return psiType;
-      }
-      DroolsPrimitiveType primitiveType = droolsFieldType.getPrimitiveType();
-      if (primitiveType != null) {
-        final PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(primitiveType.getProject());
-        return elementFactory.createTypeFromText(primitiveType.getText(), primitiveType);
-      }
+    final DroolsPsiClass psiClass = PsiTreeUtil.getParentOfType(this, DroolsPsiClass.class);
+    if (psiClass != null) {
+      // todo
     }
     return PsiType.getJavaLangObject(getManager(), getResolveScope());
   }
@@ -125,29 +115,5 @@ public abstract class DroolsPsiFieldImpl extends DroolsPsiCompositeElementImpl i
   @Override
   public boolean hasModifierProperty(@PsiModifier.ModifierConstant @NonNls @NotNull String name) {
     return false;
-  }
-
-  @Override
-  @NotNull
-  public List<DroolsAnnotation> getAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsAnnotation.class);
-  }
-
-  @Override
-  @Nullable
-  public DroolsConditionalExpr getConditionalExpr() {
-    return findChildByClass(DroolsConditionalExpr.class);
-  }
-
-  @Override
-  @NotNull
-  public DroolsFieldName getFieldName() {
-    return findNotNullChildByClass(DroolsFieldName.class);
-  }
-
-  @Override
-  @Nullable
-  public DroolsFieldType getFieldType() {
-    return findChildByClass(DroolsFieldType.class);
   }
 }

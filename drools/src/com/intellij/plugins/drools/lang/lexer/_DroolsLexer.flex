@@ -116,6 +116,7 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 "unit"                        {  return      UNIT; }
 "modify"                      {  return      MODIFY; }
 "update"                      {  return      UPDATE; }
+"enum"                        {  return      ENUM; }
 "retract"                     {  return      RETRACT; }
 "insert"                      {  return      INSERT; }
 "insertLogical"               {  return      INSERT_LOGICAL; }

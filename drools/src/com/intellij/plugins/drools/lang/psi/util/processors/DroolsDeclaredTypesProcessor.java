@@ -1,7 +1,8 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.plugins.drools.lang.psi.util.processors;
 
 import com.intellij.plugins.drools.lang.psi.DroolsDeclareStatement;
+import com.intellij.plugins.drools.lang.psi.DroolsEnumDeclaration;
 import com.intellij.plugins.drools.lang.psi.DroolsFile;
 import com.intellij.plugins.drools.lang.psi.DroolsTypeDeclaration;
 import com.intellij.plugins.drools.lang.psi.util.DroolsLightClass;
@@ -30,10 +31,24 @@ public final class DroolsDeclaredTypesProcessor implements DroolsDeclarationsPro
                                 @NotNull PsiElement place, @NotNull DroolsFile droolsFile) {
     DroolsDeclareStatement[] declarations = droolsFile.getDeclarations();
     for (DroolsDeclareStatement declaration : declarations) {
-      DroolsTypeDeclaration typeDeclaration = declaration.getTypeDeclaration();
-      if (typeDeclaration != null  && !processor.execute(new DroolsLightClass(typeDeclaration), state)) {
-        return false;
-      }
+      if (!processTypeDeclaration(processor, state, declaration)) return false;
+      if (!processEnumDeclaration(processor, state, declaration)) return false;
+    }
+    return true;
+  }
+
+  private static boolean processTypeDeclaration(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, DroolsDeclareStatement declaration) {
+    DroolsTypeDeclaration typeDeclaration = declaration.getTypeDeclaration();
+    if (typeDeclaration != null  && !processor.execute(new DroolsLightClass(typeDeclaration), state)) {
+      return false;
+    }
+    return true;
+  }
+
+  private static boolean processEnumDeclaration(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, DroolsDeclareStatement declaration) {
+    DroolsEnumDeclaration enumDeclaration = declaration.getEnumDeclaration();
+    if (enumDeclaration != null  && !processor.execute(new DroolsLightClass(enumDeclaration), state)) {
+      return false;
     }
     return true;
   }

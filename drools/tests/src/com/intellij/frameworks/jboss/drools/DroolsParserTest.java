@@ -115,6 +115,10 @@ public class DroolsParserTest extends ParsingTestCase {
     doTest(CHECK_RESULT);
   }
 
+  public void testEnumDeclarations() {
+    doTest(CHECK_RESULT);
+  }
+
   @Override
   protected boolean checkAllPsiRoots() {
     return false;

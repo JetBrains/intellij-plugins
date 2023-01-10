@@ -77,6 +77,7 @@
       BREAK="break"
       DO="do"
       WINDOW="window"
+      ENUM="enum"
 
       LBRACE="{"
       RBRACE="}"
@@ -184,7 +185,9 @@ entryPointName ::=stringId
 windowDeclaration ::= "window" simpleName annotation* lhsPatternBind  {pin=2}
 simpleName ::=identifier
 
-enumDeclaration ::= "enum" qualifiedName annotation* enumerative+ field*   {pin=2}
+enumDeclaration ::= "enum" typeName annotation* enumeratives?  field*
+{pin=2  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsEnumPsiClassImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsPsiClass"}
+private enumeratives ::= enumerative ("," enumerative)* ";"
 
 typeDeclaration ::= "type"? traitable? typeName ("extends" superType)? annotation* field*
 {pin=3  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsPsiClassImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsPsiClass"}
@@ -195,7 +198,9 @@ typeName ::= qualifiedName
 superType ::= qualifiedName
 qualifiedName ::= qualifiedIdentifier
 
-enumerative ::= identifier ( "(" exprList ")" )?
+enumerative ::= fieldName ( "(" exprList ")" )?
+{pin=1  mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsEnumConstantImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsEnumConstant"}
+
 private exprList ::= () expression ("," expression)* {pin(".*")=1}
 
 field ::= fieldName ":" fieldType ("=" conditionalExpr)? annotation* ";"?

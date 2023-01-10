@@ -12,7 +12,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.*;
 import com.intellij.plugins.drools.lang.psi.*;
 
-public class DroolsEnumerativeImpl extends DroolsPsiCompositeElementImpl implements DroolsEnumerative {
+public class DroolsEnumerativeImpl extends DroolsEnumConstantImpl implements DroolsEnumerative {
 
   public DroolsEnumerativeImpl(@NotNull ASTNode node) {
     super(node);
@@ -36,8 +36,8 @@ public class DroolsEnumerativeImpl extends DroolsPsiCompositeElementImpl impleme
 
   @Override
   @NotNull
-  public DroolsIdentifier getIdentifier() {
-    return findNotNullChildByClass(DroolsIdentifier.class);
+  public DroolsFieldName getFieldName() {
+    return findNotNullChildByClass(DroolsFieldName.class);
   }
 
 }

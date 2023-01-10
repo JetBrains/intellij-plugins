@@ -1,0 +1,19 @@
+package foo
+import com.example.demo.Candle
+
+unit MyUnit
+
+dialect "mveal"
+
+declare enum DaysOfWeek
+   SUN("Sunday"),MON("Monday"),TUE("Tuesday"),WED("Wednesday"),THU("Thursday"),FRI("Friday"),SAT("Saturday");
+
+   fullName : String
+end
+
+rule "Using a declared Enum"
+when
+   $p : Candle( dayOff == DaysOfWeek.MON )
+then
+
+end

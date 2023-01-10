@@ -1051,13 +1051,14 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // "enum" qualifiedName annotation* enumerative+ field*
+  // "enum" typeName annotation* enumeratives?  field*
   public static boolean enumDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDeclaration")) return false;
+    if (!nextTokenIs(b, ENUM)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, ENUM_DECLARATION, "<enum declaration>");
-    r = consumeToken(b, "enum");
-    r = r && qualifiedName(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, ENUM_DECLARATION, null);
+    r = consumeToken(b, ENUM);
+    r = r && typeName(b, l + 1);
     p = r; // pin = 2
     r = r && report_error_(b, enumDeclaration_2(b, l + 1));
     r = p && report_error_(b, enumDeclaration_3(b, l + 1)) && r;
@@ -1077,19 +1078,11 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // enumerative+
+  // enumeratives?
   private static boolean enumDeclaration_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDeclaration_3")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = enumerative(b, l + 1);
-    while (r) {
-      int c = current_position_(b);
-      if (!enumerative(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "enumDeclaration_3", c)) break;
-    }
-    exit_section_(b, m, null, r);
-    return r;
+    enumeratives(b, l + 1);
+    return true;
   }
 
   // field*
@@ -1104,16 +1097,17 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier ( "(" exprList ")" )?
+  // fieldName ( "(" exprList ")" )?
   public static boolean enumerative(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumerative")) return false;
     if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = identifier(b, l + 1);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, ENUMERATIVE, null);
+    r = fieldName(b, l + 1);
+    p = r; // pin = 1
     r = r && enumerative_1(b, l + 1);
-    exit_section_(b, m, ENUMERATIVE, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // ( "(" exprList ")" )?
@@ -1131,6 +1125,42 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, LPAREN);
     r = r && exprList(b, l + 1);
     r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // enumerative ("," enumerative)* ";"
+  static boolean enumeratives(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumeratives")) return false;
+    if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = enumerative(b, l + 1);
+    r = r && enumeratives_1(b, l + 1);
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ("," enumerative)*
+  private static boolean enumeratives_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumeratives_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!enumeratives_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "enumeratives_1", c)) break;
+    }
+    return true;
+  }
+
+  // "," enumerative
+  private static boolean enumeratives_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumeratives_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && enumerative(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

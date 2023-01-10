@@ -1,0 +1,169 @@
+Drools File
+  PACKAGE_STATEMENT
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    NAMESPACE
+      PsiElement(JAVA_IDENTIFIER)('foo')
+  PsiWhiteSpace('\n')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PsiWhiteSpace(' ')
+    IMPORT_QUALIFIER
+      QUALIFIED_IDENTIFIER
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('com')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('example')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('demo')
+        PsiElement(.)('.')
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('Candle')
+  PsiWhiteSpace('\n\n')
+  UNIT_STATEMENT
+    PsiElement(unit)('unit')
+    PsiWhiteSpace(' ')
+    UNIT_NAME
+      STRING_ID
+        IDENTIFIER
+          PsiElement(JAVA_IDENTIFIER)('MyUnit')
+  PsiWhiteSpace('\n\n')
+  ATTRIBUTE
+    PsiElement(dialect)('dialect')
+    PsiWhiteSpace(' ')
+    STRING_LITERAL
+      PsiElement(STRING_TOKEN)('"mveal"')
+  PsiWhiteSpace('\n\n')
+  DECLARE_STATEMENT
+    PsiElement(declare)('declare')
+    PsiWhiteSpace(' ')
+    ENUM_DECLARATION
+      PsiElement(enum)('enum')
+      PsiWhiteSpace(' ')
+      TYPE_NAME
+        QUALIFIED_NAME
+          QUALIFIED_IDENTIFIER
+            IDENTIFIER
+              PsiElement(JAVA_IDENTIFIER)('DaysOfWeek')
+      PsiWhiteSpace('\n   ')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('SUN')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Sunday"')
+        PsiElement())(')')
+      PsiElement(,)(',')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('MON')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Monday"')
+        PsiElement())(')')
+      PsiElement(,)(',')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('TUE')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Tuesday"')
+        PsiElement())(')')
+      PsiElement(,)(',')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('WED')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Wednesday"')
+        PsiElement())(')')
+      PsiElement(,)(',')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('THU')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Thursday"')
+        PsiElement())(')')
+      PsiElement(,)(',')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('FRI')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Friday"')
+        PsiElement())(')')
+      PsiElement(,)(',')
+      ENUMERATIVE
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('SAT')
+        PsiElement(()('(')
+        STRING_LITERAL
+          PsiElement(STRING_TOKEN)('"Saturday"')
+        PsiElement())(')')
+      PsiElement(;)(';')
+      PsiWhiteSpace('\n\n   ')
+      FIELD
+        FIELD_NAME
+          PsiElement(JAVA_IDENTIFIER)('fullName')
+        PsiWhiteSpace(' ')
+        PsiElement(:)(':')
+        PsiWhiteSpace(' ')
+        FIELD_TYPE
+          TYPE
+            QUALIFIED_IDENTIFIER
+              IDENTIFIER
+                PsiElement(JAVA_IDENTIFIER)('String')
+    PsiWhiteSpace('\n')
+    PsiElement(end)('end')
+  PsiWhiteSpace('\n\n')
+  RULE_STATEMENT
+    PsiElement(rule)('rule')
+    PsiWhiteSpace(' ')
+    RULE_NAME
+      STRING_ID
+        PsiElement(STRING_TOKEN)('"Using a declared Enum"')
+    PsiWhiteSpace('\n')
+    LHS
+      PsiElement(when)('when')
+      PsiWhiteSpace('\n   ')
+      LHS_EXPRESSION
+        LHS_OR
+          LHS_AND
+            LHS_UNARY
+              LHS_PATTERN_BIND
+                NAME_ID
+                  PsiElement(JAVA_IDENTIFIER)('$p')
+                PsiWhiteSpace(' ')
+                PsiElement(:)(':')
+                PsiWhiteSpace(' ')
+                LHS_PATTERN
+                  LHS_PATTERN_TYPE
+                    QUALIFIED_IDENTIFIER
+                      IDENTIFIER
+                        PsiElement(JAVA_IDENTIFIER)('Candle')
+                  PsiElement(()('(')
+                  PsiWhiteSpace(' ')
+                  CONSTRAINT
+                    EQUALITY_EXPR
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('dayOff')
+                      PsiWhiteSpace(' ')
+                      PsiElement(EQ)('==')
+                      PsiWhiteSpace(' ')
+                      PRIMARY_EXPR
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('DaysOfWeek')
+                        PsiElement(.)('.')
+                        IDENTIFIER
+                          PsiElement(JAVA_IDENTIFIER)('MON')
+                  PsiWhiteSpace(' ')
+                  PsiElement())(')')
+    PsiWhiteSpace('\n')
+    RHS
+      PsiElement(then)('then')
+    PsiWhiteSpace('\n\n')
+    PsiElement(end)('end')

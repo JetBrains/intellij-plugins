@@ -141,11 +141,11 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitEnumDeclaration(@NotNull DroolsEnumDeclaration o) {
-    visitPsiCompositeElement(o);
+    visitPsiClass(o);
   }
 
   public void visitEnumerative(@NotNull DroolsEnumerative o) {
-    visitPsiCompositeElement(o);
+    visitEnumConstant(o);
   }
 
   public void visitEqualityExpr(@NotNull DroolsEqualityExpr o) {
@@ -552,6 +552,10 @@ public class DroolsVisitor extends PsiElementVisitor {
 
   public void visitWindowId(@NotNull DroolsWindowId o) {
     visitWindowReference(o);
+  }
+
+  public void visitEnumConstant(@NotNull DroolsEnumConstant o) {
+    visitPsiCompositeElement(o);
   }
 
   public void visitFunction(@NotNull DroolsFunction o) {

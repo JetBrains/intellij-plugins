@@ -405,18 +405,24 @@ public final class DroolsResolveUtil {
     for (PsiClass psiClass : psiClasses) {
       if (psiClass == null) continue;
       if (isStatic) {
-        for (PsiField field : psiClass.getAllFields()) {
-          final PsiModifierList modifierList = field.getModifierList();
-          if (modifierList != null
-              && modifierList.hasModifierProperty(PsiModifier.PUBLIC)
-              && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+        if (psiClass.isEnum()) {
+          for (PsiField field : psiClass.getAllFields()) {
             if (!processor.process(field)) return false;
           }
-        }
-        for (PsiMethod method : psiClass.getAllMethods()) {
-          final PsiModifierList modifierList = method.getModifierList();
-          if (modifierList.hasModifierProperty(PsiModifier.PUBLIC) && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
-            if (!processor.process(method)) return false;
+        } else {
+          for (PsiField field : psiClass.getAllFields()) {
+            final PsiModifierList modifierList = field.getModifierList();
+            if (modifierList != null
+                && modifierList.hasModifierProperty(PsiModifier.PUBLIC)
+                && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+              if (!processor.process(field)) return false;
+            }
+          }
+          for (PsiMethod method : psiClass.getAllMethods()) {
+            final PsiModifierList modifierList = method.getModifierList();
+            if (modifierList.hasModifierProperty(PsiModifier.PUBLIC) && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+              if (!processor.process(method)) return false;
+            }
           }
         }
       }

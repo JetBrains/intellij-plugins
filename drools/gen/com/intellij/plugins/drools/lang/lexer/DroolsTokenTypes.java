@@ -176,6 +176,7 @@ public interface DroolsTokenTypes {
   IElementType ENABLED = DroolsElementFactory.getTokenType("enabled");
   IElementType END = DroolsElementFactory.getTokenType("end");
   IElementType ENTRY_POINT = DroolsElementFactory.getTokenType("entry-point");
+  IElementType ENUM = DroolsElementFactory.getTokenType("enum");
   IElementType EQ = DroolsElementFactory.getTokenType("EQ");
   IElementType EVAL = DroolsElementFactory.getTokenType("eval");
   IElementType EXISTS = DroolsElementFactory.getTokenType("exists");
