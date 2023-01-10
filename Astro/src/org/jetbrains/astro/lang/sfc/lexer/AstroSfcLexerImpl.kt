@@ -6,14 +6,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType.*
-import org.jetbrains.astro.lang.sfc.lexer.AstroTokenTypes.Companion.EXPRESSION
-import org.jetbrains.astro.lang.sfc.lexer.AstroTokenTypes.Companion.FRONTMATTER_SCRIPT
+import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes.Companion.EXPRESSION
+import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes.Companion.FRONTMATTER_SCRIPT
 
-class AstroLexerImpl(override val project: Project?)
-  : HtmlLexer(AstroMergingLexer(FlexAdapter(_AstroLexer())), true), AstroLexer {
+class AstroSfcLexerImpl(override val project: Project?)
+  : HtmlLexer(AstroMergingLexer(FlexAdapter(_AstroSfcLexer())), true), AstroSfcLexer {
 
   override fun isHtmlTagState(state: Int): Boolean {
-    return state == _AstroLexer.START_TAG_NAME || state == _AstroLexer.END_TAG_NAME
+    return state == _AstroSfcLexer.START_TAG_NAME || state == _AstroSfcLexer.END_TAG_NAME
   }
 
   override fun createAttributeEmbedmentTokenSet(): TokenSet {
@@ -25,9 +25,9 @@ class AstroLexerImpl(override val project: Project?)
   }
 
   companion object {
-    internal val ATTRIBUTE_TOKENS = TokenSet.create(AstroTokenTypes.EXPRESSION_ATTRIBUTE,
-                                                    AstroTokenTypes.SHORTHAND_ATTRIBUTE,
-                                                    AstroTokenTypes.TEMPLATE_LITERAL_ATTRIBUTE)
+    internal val ATTRIBUTE_TOKENS = TokenSet.create(AstroSfcTokenTypes.EXPRESSION_ATTRIBUTE,
+                                                    AstroSfcTokenTypes.SHORTHAND_ATTRIBUTE,
+                                                    AstroSfcTokenTypes.TEMPLATE_LITERAL_ATTRIBUTE)
     internal val TAG_TOKENS = TokenSet.create(FRONTMATTER_SCRIPT, EXPRESSION)
   }
 

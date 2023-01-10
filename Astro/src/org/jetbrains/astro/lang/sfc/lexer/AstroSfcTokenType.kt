@@ -5,4 +5,4 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.astro.lang.sfc.AstroSfcLanguage
 
-class AstroTokenType(@NonNls debugName: String) : IElementType(debugName, AstroSfcLanguage.INSTANCE)
+class AstroSfcTokenType(@NonNls debugName: String) : IElementType(debugName, AstroSfcLanguage.INSTANCE)

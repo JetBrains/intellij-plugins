@@ -26,6 +26,7 @@
 
     <fileType name="Astro" extensions="astro" language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroSfcFileType"
               fieldName="INSTANCE"/>
+    <lang.parserDefinition language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.parser.AstroSfcParserDefinition"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>

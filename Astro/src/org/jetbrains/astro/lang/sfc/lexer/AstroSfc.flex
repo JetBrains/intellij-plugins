@@ -1,9 +1,7 @@
 package org.jetbrains.astro.lang.sfc.lexer;
 
-import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.util.containers.Stack;
@@ -16,7 +14,7 @@ import static com.intellij.util.ArrayUtil.*;
 
 %{
 
-    public _AstroLexer() {
+    public _AstroSfcLexer() {
       this((java.io.Reader)null);
     }
 
@@ -116,7 +114,7 @@ import static com.intellij.util.ArrayUtil.*;
 
 %}
 
-%class _AstroLexer
+%class _AstroSfcLexer
 %public
 %implements FlexLexer
 %function advance
@@ -192,10 +190,10 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <FRONTMATTER_OPENED> {
   "---" {
-        yypushback(3);
-        yybegin(FRONTMATTER_CLOSE);
-        return AstroTokenTypes.FRONTMATTER_SCRIPT;
-      }
+          yypushback(3);
+          yybegin(FRONTMATTER_CLOSE);
+          return AstroSfcTokenTypes.FRONTMATTER_SCRIPT;
+        }
   ['\"`] {
         readString(null, FRONTMATTER_OPENED);
       }
@@ -206,16 +204,16 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
         // Just consume
       }
   <<EOF>> {
-        yybegin(HTML_INITIAL);
-        return AstroTokenTypes.FRONTMATTER_SCRIPT;
-      }
+          yybegin(HTML_INITIAL);
+          return AstroSfcTokenTypes.FRONTMATTER_SCRIPT;
+        }
 }
 
 <FRONTMATTER_OPEN> {
   "---" {
-          yybegin(FRONTMATTER_OPENED);
-          return AstroTokenTypes.FRONTMATTER_SEPARATOR;
-        }
+            yybegin(FRONTMATTER_OPENED);
+            return AstroSfcTokenTypes.FRONTMATTER_SEPARATOR;
+          }
   [^] {
         yypushback(1);
         yybegin(YYINITIAL);
@@ -224,9 +222,9 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <FRONTMATTER_CLOSE> {
   "---" {
-          yybegin(HTML_INITIAL);
-          return AstroTokenTypes.FRONTMATTER_SEPARATOR;
-        }
+            yybegin(HTML_INITIAL);
+            return AstroSfcTokenTypes.FRONTMATTER_SEPARATOR;
+          }
   [^] {
         yypushback(1);
         yybegin(FRONTMATTER_OPENED);
@@ -253,15 +251,15 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
         }
       }
   "}" {
-        if (expressionStack.isEmpty()) {
-          return XmlTokenType.XML_DATA_CHARACTERS;
+          if (expressionStack.isEmpty()) {
+            return XmlTokenType.XML_DATA_CHARACTERS;
+          }
+          while (!expressionStack.isEmpty() && expressionStack.pop() != KIND_EXPRESSION) {
+          }
+          if (expressionStack.isEmpty()) {
+            return AstroSfcTokenTypes.EXPRESSION;
+          }
         }
-        while (!expressionStack.isEmpty() && expressionStack.pop() != KIND_EXPRESSION) {
-        }
-        if (expressionStack.isEmpty()) {
-          return AstroTokenTypes.EXPRESSION;
-        }
-      }
   "<?" {
         yybegin(PROCESSING_INSTRUCTION);
         if (!expressionStack.isEmpty()) continue;
@@ -308,12 +306,12 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
       }
 
   <<EOF>> {
-        if (!expressionStack.isEmpty()) {
-          expressionStack.clear();
-          return AstroTokenTypes.EXPRESSION;
+          if (!expressionStack.isEmpty()) {
+            expressionStack.clear();
+            return AstroSfcTokenTypes.EXPRESSION;
+          }
+          return yylength() > 0 ? XmlTokenType.XML_DATA_CHARACTERS : null;
         }
-        return yylength() > 0 ? XmlTokenType.XML_DATA_CHARACTERS : null;
-      }
 }
 
 <START_TAG_NAME, END_TAG_NAME> {
@@ -333,11 +331,11 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
 
 <TAG_ATTRIBUTES> {
   "{" {
-        readTagAttributeExpression(
-           nextIgnoringWhiteSpaceIs("...") ? AstroTokenTypes.SPREAD_ATTRIBUTE : AstroTokenTypes.SHORTHAND_ATTRIBUTE,
-           TAG_ATTRIBUTES_POST_SHORTHAND
-        );
-      }
+          readTagAttributeExpression(
+             nextIgnoringWhiteSpaceIs("...") ? AstroSfcTokenTypes.SPREAD_ATTRIBUTE : AstroSfcTokenTypes.SHORTHAND_ATTRIBUTE,
+             TAG_ATTRIBUTES_POST_SHORTHAND
+          );
+        }
   "=" {
         yybegin(ATTRIBUTE_VALUE_START);
         if (!expressionStack.isEmpty()) continue;
@@ -392,29 +390,29 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
         return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER;
       }
   "`"[^`]* {
-        if (inBuffer("`", 1)) {
-          zzMarkedPos++;
+          if (inBuffer("`", 1)) {
+            zzMarkedPos++;
+          }
+          yybegin(TAG_ATTRIBUTES);
+          if (!expressionStack.isEmpty()) continue;
+          return AstroSfcTokenTypes.TEMPLATE_LITERAL_ATTRIBUTE;
         }
-        yybegin(TAG_ATTRIBUTES);
-        if (!expressionStack.isEmpty()) continue;
-        return AstroTokenTypes.TEMPLATE_LITERAL_ATTRIBUTE;
-      }
   "{" {
-        readTagAttributeExpression(AstroTokenTypes.EXPRESSION_ATTRIBUTE, TAG_ATTRIBUTES);
-      }
+          readTagAttributeExpression(AstroSfcTokenTypes.EXPRESSION_ATTRIBUTE, TAG_ATTRIBUTES);
+        }
   [^ \n\r\t\f'\">`{]([^ \n\r\t\f\>]|(\/[^\>]))* {
         yybegin(TAG_ATTRIBUTES);
         if (!expressionStack.isEmpty()) continue;
         return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
       }
   <<EOF>> {
-        yybegin(HTML_INITIAL);
-        if (!expressionStack.isEmpty()) {
-          expressionStack.clear();
-          return AstroTokenTypes.EXPRESSION;
+          yybegin(HTML_INITIAL);
+          if (!expressionStack.isEmpty()) {
+            expressionStack.clear();
+            return AstroSfcTokenTypes.EXPRESSION;
+          }
+          return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
         }
-        return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
-      }
 }
 
 <START_TAG_NAME, END_TAG_NAME, BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES> {
@@ -502,13 +500,13 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
         return XmlTokenType.XML_COMMENT_CHARACTERS;
       }
   <<EOF>> {
-        yybegin(HTML_INITIAL);
-        if (!expressionStack.isEmpty()) {
-          expressionStack.clear();
-          return AstroTokenTypes.EXPRESSION;
+          yybegin(HTML_INITIAL);
+          if (!expressionStack.isEmpty()) {
+            expressionStack.clear();
+            return AstroSfcTokenTypes.EXPRESSION;
+          }
+          return XmlTokenType.XML_COMMENT_CHARACTERS;
         }
-        return XmlTokenType.XML_COMMENT_CHARACTERS;
-      }
 }
 
 <C_COMMENT_START> {
@@ -601,22 +599,22 @@ CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|
         }
       }
   "}" {
-        var topExpression = expressionStack.peek();
-        if (topExpression == KIND_EXPRESSION || topExpression == KIND_ATTRIBUTE_EXPRESSION) {
-          expressionStack.pop();
-          if (expressionStack.isEmpty() || topExpression == KIND_ATTRIBUTE_EXPRESSION) {
-            yybegin(readExprReturnState);
-            if (expressionStack.isEmpty()) {
-              if (readExprReturnTokenType == AstroTokenTypes.EXPRESSION_ATTRIBUTE
-                  || !nextNonWhitespaceCharIs('=')) {
-                return readExprReturnTokenType;
-              } else {
-                return XmlTokenType.XML_NAME;
+          var topExpression = expressionStack.peek();
+          if (topExpression == KIND_EXPRESSION || topExpression == KIND_ATTRIBUTE_EXPRESSION) {
+            expressionStack.pop();
+            if (expressionStack.isEmpty() || topExpression == KIND_ATTRIBUTE_EXPRESSION) {
+              yybegin(readExprReturnState);
+              if (expressionStack.isEmpty()) {
+                if (readExprReturnTokenType == AstroSfcTokenTypes.EXPRESSION_ATTRIBUTE
+                    || !nextNonWhitespaceCharIs('=')) {
+                  return readExprReturnTokenType;
+                } else {
+                  return XmlTokenType.XML_NAME;
+                }
               }
             }
           }
         }
-      }
   [^`/\"'{}]+ {
         // consume
       }
