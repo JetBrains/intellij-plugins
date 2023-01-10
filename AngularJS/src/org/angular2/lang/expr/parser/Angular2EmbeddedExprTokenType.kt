@@ -2,6 +2,7 @@
 package org.angular2.lang.expr.parser
 
 import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
+import com.intellij.javascript.web.html.XmlASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lexer.Lexer
@@ -9,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.expr.lexer.Angular2Lexer
-import org.angular2.lang.html.XmlASTWrapperPsiElement
 import org.jetbrains.annotations.NonNls
 import java.util.*
 

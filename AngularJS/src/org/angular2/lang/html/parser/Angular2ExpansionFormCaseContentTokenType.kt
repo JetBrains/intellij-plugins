@@ -2,12 +2,12 @@
 package org.angular2.lang.html.parser
 
 import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
+import com.intellij.javascript.web.html.XmlASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 import org.angular2.lang.html.Angular2HtmlLanguage
-import org.angular2.lang.html.XmlASTWrapperPsiElement
 import org.angular2.lang.html.lexer.Angular2HtmlLexer
 
 internal class Angular2ExpansionFormCaseContentTokenType private constructor()

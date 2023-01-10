@@ -4,6 +4,7 @@ package org.angular2.lang.html.parser
 import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
 import com.intellij.ide.highlighter.custom.AbstractCustomLexer
 import com.intellij.ide.highlighter.custom.tokens.TokenParser
+import com.intellij.javascript.web.html.XmlASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JSStubElementTypes
@@ -16,7 +17,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.ContainerUtil
 import org.angular2.lang.expr.Angular2Language
-import org.angular2.lang.html.XmlASTWrapperPsiElement
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import java.util.function.Supplier
 
