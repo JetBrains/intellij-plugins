@@ -10,7 +10,7 @@ public class HbEmmetGenerator extends XmlZenCodingGeneratorImpl {
   @Nullable
   @Override
   public Configurable createConfigurable() {
-    return null;
+    return super.createConfigurable();
   }
 
   @Override

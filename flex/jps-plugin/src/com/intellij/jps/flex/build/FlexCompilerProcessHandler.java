@@ -39,7 +39,8 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
     }
 
     @Override
-    public void startNotified(@NotNull final ProcessEvent event) {
+    public void startNotified(@NotNull ProcessEvent event) {
+      ProcessListener.super.startNotified(event);
     }
 
     @Override
@@ -48,7 +49,8 @@ public class FlexCompilerProcessHandler extends BaseOSProcessHandler {
     }
 
     @Override
-    public void processWillTerminate(@NotNull final ProcessEvent event, final boolean willBeDestroyed) {
+    public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
+      ProcessListener.super.processWillTerminate(event, willBeDestroyed);
     }
 
     @Override

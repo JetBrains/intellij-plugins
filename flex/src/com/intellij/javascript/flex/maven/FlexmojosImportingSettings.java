@@ -48,6 +48,7 @@ public class FlexmojosImportingSettings implements AdditionalMavenImportingSetti
 
     @Override
     public void disposeUIResources() {
+      UnnamedConfigurable.super.disposeUIResources();
     }
   }
 }

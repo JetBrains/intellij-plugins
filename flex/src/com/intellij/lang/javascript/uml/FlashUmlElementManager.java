@@ -166,7 +166,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
 
   @Override
   public boolean canCollapse(Object element) {
-    return false;
+    return super.canCollapse(element);
   }
 
   @Override

@@ -168,7 +168,7 @@ public class YeomanProjectGenerator extends DirectoryProjectGeneratorBase<Yeoman
   @NotNull
   @Override
   public ValidationResult validate(@NotNull String baseDirPath) {
-    return ValidationResult.OK;
+    return super.validate(baseDirPath);
   }
 
   public YeomanProjectGeneratorPanel createPanel() {

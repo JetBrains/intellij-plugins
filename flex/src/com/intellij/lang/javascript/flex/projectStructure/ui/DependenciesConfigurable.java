@@ -329,7 +329,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public boolean canEdit() {
-      return false;
+      return super.canEdit();
     }
 
     @Override

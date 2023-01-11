@@ -147,7 +147,9 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   }
 
   @Override
-  public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) { }
+  public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) {
+    CompilationStatusListener.super.fileGenerated(outputRoot, relativePath);
+  }
 
   @Override
   public boolean shouldHotSwap(@NotNull ProjectTaskContext context) {

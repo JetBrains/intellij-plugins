@@ -35,12 +35,12 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
   @Override
   @NotNull
   public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.WARNING;
+    return super.getDefaultLevel();
   }
 
   @Override
   public boolean isEnabledByDefault() {
-    return true;
+    return super.isEnabledByDefault();
   }
 
 

@@ -63,7 +63,7 @@ public class PbFileElementType extends IStubFileElementType<PbFileStub> {
   }
 
   @Override
-  public void indexStub(@NotNull final PsiFileStub stub, @NotNull final IndexSink sink) {}
+  public void indexStub(@NotNull PsiFileStub stub, @NotNull IndexSink sink) { super.indexStub(stub, sink); }
 
   private static class PbStubBuilder extends DefaultStubBuilder {
     @NotNull

@@ -34,13 +34,13 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
   @Nullable
   @Override
   public @Nls String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-    return null;
+    return super.getQuickNavigateInfo(element, originalElement);
   }
 
   @Nullable
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    return null;
+    return super.getUrlFor(element, originalElement);
   }
 
   @Nullable
@@ -69,8 +69,7 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
 
   @Nullable
   @Override
-  public PsiElement getDocumentationElementForLink(
-      PsiManager psiManager, String link, PsiElement context) {
-    return null;
+  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+    return super.getDocumentationElementForLink(psiManager, link, context);
   }
 }

@@ -92,12 +92,12 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
   @NotNull
   @Override
   protected CfmlReferenceExpression parseReference(String newText) {
-    return CfmlPsiUtil.createReferenceExpression(newText, getProject());
+    return super.parseReference(newText);
   }
 
   @Override
   protected PsiElement getSeparator() {
-    return findChildByType(CfscriptTokenTypes.POINT);
+    return super.getSeparator();
   }
 
   @NotNull

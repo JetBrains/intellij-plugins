@@ -148,6 +148,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   @Override
   protected void refreshElements(PsiElement @NotNull [] elements) {
+    super.refreshElements(elements);
   }
 
   @Override

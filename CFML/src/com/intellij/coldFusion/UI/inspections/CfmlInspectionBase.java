@@ -37,7 +37,7 @@ public abstract class CfmlInspectionBase extends LocalInspectionTool {
   @Override
   @NotNull
   public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.WARNING;
+    return super.getDefaultLevel();
   }
 
   @Override

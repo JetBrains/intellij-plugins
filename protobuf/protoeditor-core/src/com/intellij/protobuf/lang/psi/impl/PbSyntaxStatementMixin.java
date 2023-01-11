@@ -42,6 +42,6 @@ abstract class PbSyntaxStatementMixin extends PbStatementBase implements PbSynta
   @Nullable
   @Override
   public PbStatementOwner getStatementOwner() {
-    return PbPsiImplUtil.getStatementOwner(this);
+    return super.getStatementOwner();
   }
 }

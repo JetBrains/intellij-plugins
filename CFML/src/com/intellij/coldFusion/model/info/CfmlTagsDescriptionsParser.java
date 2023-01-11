@@ -50,6 +50,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
 
   @Override
   public void endDocument() throws SAXException {
+    super.endDocument();
   }
 
   private final Pattern myPattern = Pattern.compile("\\s{2,}");

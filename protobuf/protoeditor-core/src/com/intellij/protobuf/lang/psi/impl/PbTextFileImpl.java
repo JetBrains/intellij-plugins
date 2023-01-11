@@ -45,7 +45,7 @@ public class PbTextFileImpl extends PsiFileBase implements PbTextFile {
 
   @Override
   public PbTextRootMessage getRootMessage() {
-    return this;
+    return PbTextFile.super.getRootMessage();
   }
 
   @Override

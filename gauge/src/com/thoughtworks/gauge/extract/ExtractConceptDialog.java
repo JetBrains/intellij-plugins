@@ -135,8 +135,8 @@ final class ExtractConceptDialog extends JDialog {
     return new TextFieldWithAutoCompletionListProvider<>(dirNames) {
       @Nullable
       @Override
-      protected Icon getIcon(@NotNull String o) {
-        return null;
+      protected Icon getIcon(@NotNull String item) {
+        return super.getIcon(item);
       }
 
       @NotNull
@@ -147,14 +147,14 @@ final class ExtractConceptDialog extends JDialog {
 
       @Nullable
       @Override
-      protected String getTailText(@NotNull String o) {
-        return null;
+      protected String getTailText(@NotNull String item) {
+        return super.getTailText(item);
       }
 
       @Nullable
       @Override
-      protected String getTypeText(@NotNull String o) {
-        return null;
+      protected String getTypeText(@NotNull String item) {
+        return super.getTypeText(item);
       }
 
       @Override

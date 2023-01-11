@@ -177,7 +177,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
     @Override
     public boolean canNavigateToSource() {
-      return false;
+      return super.canNavigateToSource();
     }
 
     @Override

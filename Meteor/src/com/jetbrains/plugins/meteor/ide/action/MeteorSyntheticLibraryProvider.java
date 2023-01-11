@@ -99,7 +99,7 @@ public class MeteorSyntheticLibraryProvider extends AdditionalLibraryRootsProvid
     @NotNull
     @Override
     public Set<VirtualFile> getExcludedRoots() {
-      return Collections.emptySet();
+      return super.getExcludedRoots();
     }
 
     @Override

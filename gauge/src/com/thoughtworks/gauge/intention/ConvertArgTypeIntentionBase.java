@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 abstract class ConvertArgTypeIntentionBase extends PsiElementBaseIntentionAction implements IntentionAction {
   @Override
   public boolean startInWriteAction() {
-    return true;
+    return super.startInWriteAction();
   }
 
   @Override

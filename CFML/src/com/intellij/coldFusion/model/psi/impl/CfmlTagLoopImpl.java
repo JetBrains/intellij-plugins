@@ -59,8 +59,7 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-      PsiElement element = findChildByType(CfmlElementTypes.ATTRIBUTE_VALUE);
-      return element != null ? element : this;
+      return super.getNavigationElement();
     }
 
     @Override

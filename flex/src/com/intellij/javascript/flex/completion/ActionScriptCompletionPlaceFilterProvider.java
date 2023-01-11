@@ -33,7 +33,7 @@ public class ActionScriptCompletionPlaceFilterProvider implements JSCompletionPl
 
     @Override
     public boolean isPartialResult(@NotNull JSPsiElementBase element) {
-      return false;
+      return super.isPartialResult(element);
     }
   };
 

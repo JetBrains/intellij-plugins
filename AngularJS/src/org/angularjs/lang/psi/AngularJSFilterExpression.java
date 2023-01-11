@@ -55,7 +55,7 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
 
   @Override
   public boolean isElvis() {
-    return false;
+    return JSCallExpression.super.isElvis();
   }
 
   @Override
