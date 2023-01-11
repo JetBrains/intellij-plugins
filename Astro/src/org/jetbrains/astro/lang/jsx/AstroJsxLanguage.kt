@@ -7,12 +7,13 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.dialects.JSLanguageFeature
 
-class AstroJsxLanguage private constructor() : JSLanguageDialect("AstroJsx", AstroJsxDialect()), DependentLanguage {
+class AstroJsxLanguage private constructor() : JSLanguageDialect("Astro JSX", AstroJsxDialect()), DependentLanguage {
   override fun isAtLeast(other: JSLanguageDialect): Boolean {
-    return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT.isAtLeast(other)
+    return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT_JSX.isAtLeast(other)
   }
 
   private class AstroJsxDialect : DialectOptionHolder("ASTRO_JSX", true) {
+
     override fun defineFeatures(): Set<JSLanguageFeature> {
       return setOf(
         JSLanguageFeature.E4X,

@@ -10,7 +10,7 @@ import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcLexerImpl
 import kotlin.properties.Delegates
 
-class AstroSfcLexerTest : LexerTestCase() {
+open class AstroSfcLexerTest : LexerTestCase() {
   private var fixture: IdeaProjectTestFixture by Delegates.notNull()
 
   override fun setUp() {
@@ -121,7 +121,7 @@ class AstroSfcLexerTest : LexerTestCase() {
     |------
   """)
 
-  fun testFrontmatterOnly1() = doTest("""
+  open fun testFrontmatterOnly1() = doTest("""
     |---
   """)
 
@@ -342,6 +342,26 @@ class AstroSfcLexerTest : LexerTestCase() {
   fun testTemplateLiteralAttributeUnterminated() = doTest("""
     |------
     |<a foo=`12\>
+  """)
+
+  fun testCharEntity() = doTest("""
+    |------
+    |{12 &lt; <span>&rarr;</span>}
+  """)
+
+  fun testComplexBroken() = doTest("""
+    |------
+    |<li class="link-card">
+	  | <a title=`112 \` ${'$'}{12 + "12"}`
+	  |   <h2>
+	  | 		{12 + 34}
+	  | 		<span>&rarr;</span>
+	  | 	</h2>
+	  | 	<p>
+	  | 		{  <a foo={1223 + `121321${'$'}{``}`}> + 12 }
+	  | 	</p>
+	  | </a>
+    |</li>
   """)
 
   override fun createLexer(): Lexer = AstroSfcLexerImpl(fixture.project)

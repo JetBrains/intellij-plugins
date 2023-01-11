@@ -4,7 +4,6 @@ package org.jetbrains.astro.lang.sfc.parser
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes
 
@@ -28,10 +27,7 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   override fun parseCustomTagContent(xmlText: PsiBuilder.Marker?): PsiBuilder.Marker? {
     var result = xmlText
     when (token()) {
-      AstroSfcTokenTypes.EXPRESSION -> {
-        result = terminateText(result)
-        advance()
-      }
+
     }
     return result
   }
@@ -44,12 +40,6 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
   override fun parseAttribute() {
     when(token()) {
-      AstroSfcTokenTypes.SPREAD_ATTRIBUTE,
-      AstroSfcTokenTypes.SHORTHAND_ATTRIBUTE -> {
-        val att = mark()
-        advance()
-        att.done(XmlElementType.XML_ATTRIBUTE)
-      }
       else -> {
         super.parseAttribute()
       }
@@ -58,12 +48,6 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
   override fun parseAttributeValue() {
     when(token()) {
-      AstroSfcTokenTypes.EXPRESSION,
-      AstroSfcTokenTypes.TEMPLATE_LITERAL_ATTRIBUTE -> {
-        val attValue = mark()
-        advance()
-        attValue.done(XmlElementType.XML_ATTRIBUTE_VALUE)
-      }
       else -> {
         super.parseAttributeValue()
       }
@@ -71,6 +55,6 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   }
 
   companion object {
-    private val CUSTOM_CONTENT = TokenSet.create(AstroSfcTokenTypes.EXPRESSION)
+    private val CUSTOM_CONTENT = TokenSet.create()
   }
 }

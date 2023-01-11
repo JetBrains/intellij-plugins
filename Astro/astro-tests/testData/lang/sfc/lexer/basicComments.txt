@@ -1,4 +1,3 @@
-XML_COMMENT_CHARACTERS ('')
 ASTRO:FRONTMATTER_SEPARATOR ('---')
 ASTRO:FRONTMATTER_SCRIPT ('\nimport MyComponent from "./MyComponent.astro";\nconst Element = 'div'\nconst Component = MyComponent;\n')
 ASTRO:FRONTMATTER_SEPARATOR ('---')
