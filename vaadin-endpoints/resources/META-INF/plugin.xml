@@ -1,0 +1,30 @@
+<idea-plugin package="com.intellij.vaadin.endpoints">
+  <id>org.strangeway.vaadin</id>
+
+  <name>Vaadin Endpoints</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+    <p>Provides navigation to <a href="https://vaadin.com/flow">Vaadin Flow</a> @Route views in Search Everywhere and Endpoints tool window.</p>
+    <ul>
+      <li>Use <b>Navigate - URL Mapping</b> to search for @Route classes.</li>
+      <li>Go to <b>View - Tool windows - Endpoints</b> to see all Vaadin @Route classes in a project.</li>
+    </ul>
+  ]]></description>
+
+  <dependencies>
+    <plugin id="com.intellij.java"/>
+    <plugin id="com.intellij.properties"/>
+    <plugin id="com.intellij.modules.microservices"/>
+    <plugin id="com.intellij.microservices.jvm"/>
+    <plugin id="com.intellij.modules.ultimate"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <psi.referenceContributor language="UAST" implementation="com.intellij.vaadin.endpoints.VaadinReferenceContributor"/>
+    <microservices.endpointsProvider implementation="com.intellij.vaadin.endpoints.VaadinEndpointsProvider"/>
+    <microservices.urlResolverFactory implementation="com.intellij.vaadin.endpoints.VaadinUrlResolverFactory"/>
+
+    <dependencySupport kind="java" coordinate="com.vaadin:flow-server" displayName="Vaadin Flow"/>
+  </extensions>
+</idea-plugin>
