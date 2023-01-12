@@ -6,12 +6,10 @@ import com.intellij.lang.Language
 import com.intellij.lang.javascript.types.JSExpressionElementType
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.ILazyParseableElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.impl.*
-import org.jetbrains.vuejs.lang.html.VueLanguage
 
 object VueJSElementTypes {
   val FILTER_ARGUMENTS_LIST: IElementType = VueJSExpressionElementType(

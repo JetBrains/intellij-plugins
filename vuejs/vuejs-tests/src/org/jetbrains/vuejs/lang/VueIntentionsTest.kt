@@ -17,15 +17,12 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.inspections.ES6ShorthandObjectPropertyInspection
-import com.intellij.lang.javascript.psi.JSDestructuringProperty
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.SyntaxTraverser
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.moveToOffsetBySignature
 import junit.framework.TestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
-import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsParameter
 
 class VueIntentionsTest : BasePlatformTestCase() {
 

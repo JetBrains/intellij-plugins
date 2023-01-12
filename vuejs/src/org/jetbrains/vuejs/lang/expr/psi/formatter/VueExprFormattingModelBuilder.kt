@@ -12,7 +12,6 @@ import com.intellij.psi.formatter.WrappingUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.webcore.formatter.SpacingStrategy
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
 class VueExprFormattingModelBuilder : JavascriptFormattingModelBuilder() {

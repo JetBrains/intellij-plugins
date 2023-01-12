@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.controlflow.BaseJSControlFlowTest
 import com.intellij.lang.javascript.psi.JSExecutionScope
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
-import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.psi.xml.XmlFile
 import org.jetbrains.vuejs.codeInsight.controlflow.VueControlFlowBuilder
 
