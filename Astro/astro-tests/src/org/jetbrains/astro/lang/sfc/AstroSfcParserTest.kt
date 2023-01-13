@@ -36,7 +36,10 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
+import com.intellij.psi.stubs.StubElementTypeHolderEP
 import com.intellij.util.ObjectUtils
+import org.jetbrains.astro.lang.jsx.psi.AstroJsxExpressionElementType
+import org.jetbrains.astro.lang.jsx.psi.AstroJsxStubElementTypes
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcEmbeddedContentSupport
 import org.jetbrains.astro.lang.sfc.parser.AstroSfcParserDefinition
 
@@ -55,6 +58,36 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
   fun testBasicExpressionWithTags() {
     doTestAstro("""
       { 12 + <a>foo</a> + 32 }
+    """)
+  }
+
+  fun testNestedExpressionsWithTags() {
+    doTestAstro("""
+      { 12 + <a>foo{12 + <b>bar</> + 12}bar</a> + 32 }
+    """)
+  }
+
+  fun testNestedExpressionEmptyTag() {
+    doTestAstro("""
+      foo<a><b>12</b>{23 + <c/> + 12} </a>foo
+    """)
+  }
+
+  fun testNestedExpressionEmptyTagRandomBraces() {
+    doTestAstro("""
+      foo}<a><b>12</b>}{23 + <c/> + 12} </a>}
+    """)
+  }
+
+  fun testBroken1() {
+    doTestAstro("""
+      <a><b>12</b>{23 +<c/></a>
+    """)
+  }
+
+  fun testBroken2() {
+    doTestAstro("""
+      { 12 + <a>foo{12 + <b>bar</> + 12 bar</a> + 32 }
     """)
   }
 
@@ -84,6 +117,15 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
 
     HtmlEmbeddedContentSupport.register(application, testRootDisposable, AstroSfcEmbeddedContentSupport::class.java,
                                         CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java)
+
+    registerExtensionPoint(StubElementTypeHolderEP.EP_NAME, StubElementTypeHolderEP::class.java)
+    registerExtension(StubElementTypeHolderEP.EP_NAME,
+                      StubElementTypeHolderEP().also {
+                        it.holderClass = AstroJsxExpressionElementType::class.java.simpleName
+                        it.externalIdPrefix = "ASTRO_JSX:"
+                      })
+    // Force create class
+    AstroJsxStubElementTypes.STUB_VERSION
   }
 
   override fun checkResult(targetDataName: String, file: PsiFile) {

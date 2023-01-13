@@ -218,14 +218,17 @@ import static com.intellij.util.ArrayUtil.*;
         return;
       }
       var tagKind = expressionStack.popInt();
-      if (tagKind == KIND_START_TAG) {
+      if (tagKind == KIND_START_TAG && !isEmpty) {
         expressionStack.push(KIND_HTML_CONTENT);
         yybegin(HTML_INITIAL);
-      } else if (tagKind == KIND_END_TAG) {
+      } else if (tagKind == KIND_END_TAG || (tagKind == KIND_START_TAG && isEmpty)) {
         if (expressionStack.isEmpty()) {
           yybegin(HTML_INITIAL);
         } else {
-          while (!expressionStack.isEmpty() && expressionStack.popInt() != KIND_HTML_CONTENT) {};
+          if (!isEmpty) {
+            while (!expressionStack.isEmpty() && expressionStack.popInt() != KIND_HTML_CONTENT) {
+            }
+          }
           if (expressionStack.isEmpty()) {
             yybegin(HTML_INITIAL);
           } else {
@@ -333,7 +336,10 @@ PUBLIC= (P|p)(U|u)(B|b)(L|l)(I|i)(C|c)
 
 CONDITIONAL_COMMENT_CONDITION=({ALPHA})({ALPHA}|{WHITE_SPACE_CHARS}|{DIGIT}|"."|"("|")"|"|"|"!"|"&")*
 
-CHAR_ENTITY="&"([a-zA-Z][a-zA-Z0-9]*)";" | "&#"{DIGIT}+";" | "&#"(x|X)({DIGIT}|[a-fA-F])+";"
+CHAR_ENTITY= "&lt;" | "&gt;" |"&apos;" |"&quot;" | "&nbsp;" |"&amp;"
+             | "&#"{DIGIT}+";" | "&#"(x|X)({DIGIT}|[a-fA-F])+";"
+// For HTML it is the same thing, but because of XML support we need to distinguish
+ENTITY_REF="&"([a-zA-Z][a-zA-Z0-9]*)";"
 
 //JSX
 IDENTIFIER_START=[:jletter:]|\\u{HEX_DIGIT}{4}|\\u\{{HEX_DIGIT}+\}
@@ -454,15 +460,10 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         yybegin(EXPRESSION_INITIAL);
         return JSTokenTypes.XML_LBRACE;
       }
-  {WHITE_SPACE_CHARS} {
-        return XmlTokenType.XML_REAL_WHITE_SPACE;
-      }
-  {CHAR_ENTITY} {
-        return XmlTokenType.XML_CHAR_ENTITY_REF;
-      }
-  [^] {
-        return XmlTokenType.XML_DATA_CHARACTERS;
-      }
+  {WHITE_SPACE_CHARS}   { return XmlTokenType.XML_REAL_WHITE_SPACE; }
+  {CHAR_ENTITY}         { return XmlTokenType.XML_CHAR_ENTITY_REF; }
+  {ENTITY_REF}          { return XmlTokenType.XML_ENTITY_REF_TOKEN; }
+  [^]                   { return XmlTokenType.XML_DATA_CHARACTERS; }
 }
 
 <HTML_INITIAL, EXPRESSION_INITIAL, DIV_OR_GT> {
@@ -662,31 +663,31 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 }
 
 <START_TAG_NAME, END_TAG_NAME, BEFORE_TAG_ATTRIBUTES, TAG_ATTRIBUTES> {
-  "<"  { processClosedTag(false); yypushback(1); }
-  "/>" { processClosedTag(true); return XmlTokenType.XML_EMPTY_ELEMENT_END; }
-  ">" { processClosedTag(false); return XmlTokenType.XML_TAG_END; }
-  [^] { yybegin(HTML_INITIAL); expressionStack.popInt(); yypushback(1); }
+  "<"         { processClosedTag(false); yypushback(1); }
+  "/>"        { processClosedTag(true); return XmlTokenType.XML_EMPTY_ELEMENT_END; }
+  ">"         { processClosedTag(false); return XmlTokenType.XML_TAG_END; }
+  [^]         { yybegin(HTML_INITIAL); expressionStack.popInt(); yypushback(1); }
 }
 
 <PROCESSING_INSTRUCTION> {
-  "?"? ">" { yybegin(HTML_INITIAL);return XmlTokenType.XML_PI_END; }
+  "?"? ">"               { yybegin(HTML_INITIAL);return XmlTokenType.XML_PI_END; }
   ([^\?\>] | (\?[^\>]))+ { return XmlTokenType.XML_PI_TARGET; }
 }
 
 <DOC_TYPE> {
-  {HTML} { return XmlTokenType.XML_NAME; }
-  {PUBLIC} { return XmlTokenType.XML_DOCTYPE_PUBLIC; }
-  {DTD_REF} { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
-  ">" { yybegin(HTML_INITIAL);return XmlTokenType.XML_DOCTYPE_END; }
+  {HTML}      { return XmlTokenType.XML_NAME; }
+  {PUBLIC}    { return XmlTokenType.XML_DOCTYPE_PUBLIC; }
+  {DTD_REF}   { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
+  ">"         { yybegin(HTML_INITIAL);return XmlTokenType.XML_DOCTYPE_END; }
 }
 
 <COMMENT> {
-  "["     { yybegin(C_COMMENT_START); return XmlTokenType.XML_CONDITIONAL_COMMENT_START; }
-  "<!["   { yybegin(C_COMMENT_END); return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START; }
-  "-->" | "<!-->" { backToInitial(); return XmlTokenType.XML_COMMENT_END; }
-  "<!--"   { return XmlTokenType.XML_BAD_CHARACTER; }
-  "<!--->" | "--!>" { backToInitial(); return XmlTokenType.XML_BAD_CHARACTER; }
-  ">" {
+  "["                { yybegin(C_COMMENT_START); return XmlTokenType.XML_CONDITIONAL_COMMENT_START; }
+  "<!["              { yybegin(C_COMMENT_END); return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START; }
+  "-->" | "<!-->"    { backToInitial(); return XmlTokenType.XML_COMMENT_END; }
+  "<!--"             { return XmlTokenType.XML_BAD_CHARACTER; }
+  "<!--->" | "--!>"  { backToInitial(); return XmlTokenType.XML_BAD_CHARACTER; }
+  ">"                {
     // according to HTML spec (http://www.w3.org/html/wg/drafts/html/master/syntax.html#comments)
     // comments should start with <!-- and end with -->. The comment <!--> is not valid, but should terminate
     // comment token. Please note that it's not true for XML (http://www.w3.org/TR/REC-xml/#sec-comments)
@@ -699,38 +700,38 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
     }
     return XmlTokenType.XML_COMMENT_CHARACTERS;
   }
-  [^] { return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  [^]                { return XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <C_COMMENT_START> {
-  "]>" { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_START_END; }
-  [^] { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  "]>"     { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_START_END; }
+  [^]      { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <C_COMMENT_END> {
-  "]" { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END; }
-  [^] { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  "]"      { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END; }
+  [^]      { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <C_COMMENT_START,C_COMMENT_END> {
-  {CONDITIONAL_COMMENT_CONDITION} {
-        return XmlTokenType.XML_COMMENT_CHARACTERS;
-      }
-  "-->" { backToInitial(); return XmlTokenType.XML_COMMENT_END; }
+  {CONDITIONAL_COMMENT_CONDITION} { return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  "-->"                           { backToInitial(); return XmlTokenType.XML_COMMENT_END; }
 }
 
 <ATTRIBUTE_VALUE_DQ> {
-  {CHAR_ENTITY} { return XmlTokenType.XML_CHAR_ENTITY_REF; }
-  {WHITE_SPACE_CHARS} { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
-  "\"" { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
-  [^\"] { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
+  {CHAR_ENTITY}         { return XmlTokenType.XML_CHAR_ENTITY_REF; }
+  {ENTITY_REF}          { return XmlTokenType.XML_ENTITY_REF_TOKEN; }
+  {WHITE_SPACE_CHARS}   { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
+  "\""                  { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
+  [^\"]                 { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
 }
 
 <ATTRIBUTE_VALUE_SQ> {
-  {CHAR_ENTITY} { return XmlTokenType.XML_CHAR_ENTITY_REF; }
-  {WHITE_SPACE_CHARS} { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
-  "'" { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
-  [^'] { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
+  {CHAR_ENTITY}         { return XmlTokenType.XML_CHAR_ENTITY_REF; }
+  {ENTITY_REF}          { return XmlTokenType.XML_ENTITY_REF_TOKEN; }
+  {WHITE_SPACE_CHARS}   { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
+  "'"                   { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
+  [^']                  { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
 }
 
 <COMMENT_OR_REGEXP> {

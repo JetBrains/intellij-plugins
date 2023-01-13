@@ -9,8 +9,21 @@ HtmlFile:test.astro
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('script')
       XmlToken:XML_TAG_END('>')
-      XmlText
-        XmlToken:XML_DATA_CHARACTERS('\n    document.write("<script>alert('foo')</script\>")\n')
+      JSEmbeddedContent
+        PsiWhiteSpace('\n    ')
+        JSExpressionStatement
+          JSCallExpression
+            JSReferenceExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('document')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('write')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"<script>alert('foo')</script\>"')
+              PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace('\n')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('script')
       XmlToken:XML_TAG_END('>')

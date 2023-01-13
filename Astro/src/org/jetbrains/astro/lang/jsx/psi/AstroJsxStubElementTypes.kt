@@ -12,7 +12,7 @@ interface AstroJsxStubElementTypes {
     val EXTERNAL_ID_PREFIX = "ASTRO_JSX:"
 
     @JvmField
-    val EMBEDDED_EXPRESSION = AstroJsxEmbeddedContentElementType()
+    val EXPRESSION = AstroJsxExpressionElementType()
 
   }
 }

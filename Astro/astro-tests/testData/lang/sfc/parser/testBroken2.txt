@@ -1,0 +1,56 @@
+HtmlFile:test.astro
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    JSEmbeddedContent:ASTRO_JSX:EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          PsiWhiteSpace(' ')
+          HtmlTag:a
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('a')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('foo')
+            JSEmbeddedContent:ASTRO_JSX:EXPRESSION
+              PsiElement(JS:XML_LBRACE)('{')
+              JSBinaryExpression
+                JSBinaryExpression
+                  JSLiteralExpression
+                    PsiElement(JS:NUMERIC_LITERAL)('12')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  HtmlTag:b
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('b')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      XmlToken:XML_DATA_CHARACTERS('bar')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_TAG_END('>')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiErrorElement:Missing expression closing brace
+                <empty list>
+              PsiWhiteSpace(' ')
+              PsiElement(JS:IDENTIFIER)('bar')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('a')
+            XmlToken:XML_TAG_END('>')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('32')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:XML_RBRACE)('}')

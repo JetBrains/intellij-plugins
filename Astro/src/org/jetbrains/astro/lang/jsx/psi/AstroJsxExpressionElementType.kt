@@ -12,8 +12,12 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import org.jetbrains.astro.lang.jsx.psi.AstroJsxStubElementTypes.Companion.EXTERNAL_ID_PREFIX
 
-class AstroJsxEmbeddedContentElementType :
-  JSStubElementType<JSEmbeddedContentStub, JSEmbeddedContent>("$EXTERNAL_ID_PREFIX:EMBEDDED_EXPRESSION") {
+class AstroJsxExpressionElementType :
+  JSStubElementType<JSEmbeddedContentStub, JSEmbeddedContent>("${EXTERNAL_ID_PREFIX}EXPRESSION") {
+
+  override fun getExternalId(): String {
+    return "${EXTERNAL_ID_PREFIX}EXPRESSION"
+  }
 
   override fun createStub(psi: JSEmbeddedContent, parentStub: StubElement<out PsiElement>?): JSEmbeddedContentStub {
     return JSEmbeddedContentStubImpl(psi, parentStub, this)

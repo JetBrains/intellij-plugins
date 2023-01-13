@@ -349,6 +349,14 @@ open class AstroSfcLexerTest : LexerTestCase() {
     |{12 &lt; <span>&rarr;</span>}
   """)
 
+  fun testNestedExpressionEmptyTag() = doTest("""
+    |foo<a><b>12</b>{23 + <c/> + 12} </a>foo
+  """)
+
+  fun testNestedExpressionEmptyTagRandomBraces() = doTest("""
+    |foo}<a><b>12</b>}{23 + <c/> + 12} </a>}
+  """)
+
   fun testComplexBroken() = doTest("""
     |------
     |<li class="link-card">
