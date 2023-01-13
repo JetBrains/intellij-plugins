@@ -71,9 +71,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
       row("") {
         checkBox(PrettierBundle.message("on.code.reformat.label"))
-          .bindSelected(
-            { prettierConfiguration.isRunOnReformat },
-            { prettierConfiguration.isRunOnReformat = it })
+          .bindSelected(prettierConfiguration::isRunOnReformat, prettierConfiguration::setRunOnReformat)
 
         val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
         shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
@@ -81,9 +79,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
       row("") {
         runOnSaveCheckBox = checkBox(PrettierBundle.message("on.save.label"))
-          .bindSelected(
-            { prettierConfiguration.isRunOnSave },
-            { prettierConfiguration.isRunOnSave = it })
+          .bindSelected(prettierConfiguration::isRunOnSave, prettierConfiguration::setRunOnSave)
           .component
 
         val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
