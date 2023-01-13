@@ -33,6 +33,8 @@
                                    implementationClass="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcHighlighterFactory"/>
     <colorSettingsPage implementation="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcColorsAndFontsPage"/>
 
+    <!-- Astro Jsx -->
+    <stubElementTypeHolder class="org.jetbrains.astro.lang.jsx.psi.AstroJsxStubElementTypes" externalIdPrefix="ASTRO_JSX:"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>

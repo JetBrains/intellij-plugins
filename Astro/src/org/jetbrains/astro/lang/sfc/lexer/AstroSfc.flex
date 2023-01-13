@@ -497,14 +497,12 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         return XmlTokenType.XML_START_TAG_START;
       }
 
-  \<\/[>a-zA-Z] {
+  \<\/ {
         if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
-          yypushback(yylength() - 1);
           return JSTokenTypes.LT;
         }
         expressionStack.push(KIND_END_TAG);
         yybegin(END_TAG_NAME);
-        yypushback(1);
         return XmlTokenType.XML_END_TAG_START;
       }
 }
@@ -595,6 +593,10 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         yybegin(BEFORE_TAG_ATTRIBUTES);
         return XmlTokenType.XML_NAME;
       }
+  {WHITE_SPACE_CHARS} {
+        yybegin(BEFORE_TAG_ATTRIBUTES);
+        return XmlTokenType.XML_WHITE_SPACE;
+      }
 }
 
 <BEFORE_TAG_ATTRIBUTES>
@@ -665,6 +667,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
   ">" { processClosedTag(false); return XmlTokenType.XML_TAG_END; }
   [^] { yybegin(HTML_INITIAL); expressionStack.popInt(); yypushback(1); }
 }
+
 <PROCESSING_INSTRUCTION> {
   "?"? ">" { yybegin(HTML_INITIAL);return XmlTokenType.XML_PI_END; }
   ([^\?\>] | (\?[^\>]))+ { return XmlTokenType.XML_PI_TARGET; }
@@ -717,11 +720,15 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 }
 
 <ATTRIBUTE_VALUE_DQ> {
+  {CHAR_ENTITY} { return XmlTokenType.XML_CHAR_ENTITY_REF; }
+  {WHITE_SPACE_CHARS} { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
   "\"" { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
   [^\"] { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
 }
 
 <ATTRIBUTE_VALUE_SQ> {
+  {CHAR_ENTITY} { return XmlTokenType.XML_CHAR_ENTITY_REF; }
+  {WHITE_SPACE_CHARS} { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
   "'" { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER; }
   [^'] { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN; }
 }

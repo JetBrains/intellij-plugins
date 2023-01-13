@@ -34,6 +34,10 @@ class AstroSfcLexerImpl(override val project: Project?)
     return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), TAG_TOKENS)
   }
 
+  override fun getStateForRestartDuringEmbedmentScan(): Int {
+    return _AstroSfcLexer.HTML_INITIAL
+  }
+
   companion object {
     internal val TAG_TOKENS = TokenSet.create(FRONTMATTER_SCRIPT)
 
@@ -41,7 +45,7 @@ class AstroSfcLexerImpl(override val project: Project?)
 
   }
 
-  open class AstroFlexAdapter: FlexAdapter(_AstroSfcLexer()) {
+  open class AstroFlexAdapter : FlexAdapter(_AstroSfcLexer()) {
 
     private val flex get() = (super.getFlex() as _AstroSfcLexer)
 
@@ -49,6 +53,7 @@ class AstroSfcLexerImpl(override val project: Project?)
       flex.expressionStack.clear()
       super.start(buffer, startOffset, endOffset, initialState and HAS_NON_RESTARTABLE_STATE.inv())
     }
+
     override fun getState(): Int {
       return super.getState() + if (flex.isRestartable) 0 else HAS_NON_RESTARTABLE_STATE
     }
@@ -64,7 +69,7 @@ class AstroSfcLexerImpl(override val project: Project?)
 
     private class AstroFlexAdapterPosition(private val offset: Int,
                                            private val state: Int,
-                                           val expressionStack: IntArrayList): LexerPosition {
+                                           val expressionStack: IntArrayList) : LexerPosition {
       override fun getOffset(): Int = offset
 
       override fun getState(): Int = state
