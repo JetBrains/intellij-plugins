@@ -29,6 +29,7 @@ class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         XmlTokenType.XML_START_TAG_START -> {
           xmlText = terminateText(xmlText)
           parseTag()
+          flushOpenTags()
         }
         XmlTokenType.XML_PI_START -> {
           xmlText = terminateText(xmlText)
