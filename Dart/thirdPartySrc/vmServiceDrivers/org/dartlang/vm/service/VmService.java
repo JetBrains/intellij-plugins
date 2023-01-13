@@ -580,14 +580,25 @@ public class VmService extends VmServiceBase {
   /**
    * The [setExceptionPauseMode] RPC is used to control if an isolate pauses when an exception is
    * thrown.
-   * @param mode An [ExceptionPauseMode] indicates how the isolate pauses when an exception is
-   * thrown.
+   *
+   * @param mode An [ExceptionPauseMode] indicates how the isolate pauses when an exception is thrown.
+   * @deprecated Use {@link #setIsolatePauseMode(String, ExceptionPauseMode, SuccessConsumer)}
    */
   public void setExceptionPauseMode(String isolateId, ExceptionPauseMode mode, SuccessConsumer consumer) {
     final JsonObject params = new JsonObject();
     params.addProperty("isolateId", isolateId);
     params.addProperty("mode", mode.name());
     request("setExceptionPauseMode", params, consumer);
+  }
+
+  /**
+   * The [setIsolatePauseMode] RPC is used to control if or when an isolate will pause due to a change in execution state.
+   */
+  public void setIsolatePauseMode(String isolateId, ExceptionPauseMode exceptionPauseMode, SuccessConsumer consumer) {
+    final JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("exceptionPauseMode", exceptionPauseMode.name());
+    request("setIsolatePauseMode", params, consumer);
   }
 
   /**
