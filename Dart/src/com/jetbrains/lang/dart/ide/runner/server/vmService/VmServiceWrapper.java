@@ -193,17 +193,24 @@ public class VmServiceWrapper implements Disposable {
 
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (newIsolate) {
-      addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                         myDebugProcess.getBreakOnExceptionMode(),
-                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
-                                                           @Override
-                                                           public void received(Success response) {
-                                                             setInitialBreakpointsAndResume(isolateRef);
-                                                           }
-                                                         }));
+      setIsolatePauseMode(isolateRef.getId(), myDebugProcess.getBreakOnExceptionMode(), new VmServiceConsumers.SuccessConsumerWrapper() {
+        @Override
+        public void received(Success response) {
+          setInitialBreakpointsAndResume(isolateRef);
+        }
+      });
     }
     else {
       checkInitialResume(isolateRef);
+    }
+  }
+
+  private void setIsolatePauseMode(String isolateId, ExceptionPauseMode mode, SuccessConsumer consumer) {
+    if (supportsSetIsolatePauseMode()) {
+      addRequest(() -> myVmService.setIsolatePauseMode(isolateId, mode, consumer));
+    }
+    else {
+      addRequest(() -> myVmService.setExceptionPauseMode(isolateId, mode, consumer));
     }
   }
 
@@ -360,7 +367,7 @@ public class VmServiceWrapper implements Disposable {
 
   public void setExceptionPauseMode(@NotNull ExceptionPauseMode mode) {
     for (final IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
-      addRequest(() -> myVmService.setExceptionPauseMode(isolateInfo.getIsolateId(), mode, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+      addRequest(() -> setIsolatePauseMode(isolateInfo.getIsolateId(), mode, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
     }
   }
 
@@ -594,7 +601,14 @@ public class VmServiceWrapper implements Disposable {
    * Return whether the "invoke" call is supported by this connection.
    */
   private boolean supportsInvoke() {
-    final Version version = myVmService.getRuntimeVersion();
-    return version.getMajor() >= 3 && version.getMinor() >= 11;
+    Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() > 3 ||
+           version.getMajor() == 3 && version.getMinor() >= 11;
+  }
+
+  private boolean supportsSetIsolatePauseMode() {
+    Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() > 3 ||
+           version.getMajor() == 3 && version.getMinor() >= 53;
   }
 }
