@@ -261,7 +261,7 @@ public final class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, Osmorc
   }
 
   @Override
-  public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+  public void getSupportedDependencyTypes(Collection<? super String> result, SupportedRequestType type) {
     result.add("bundle");
   }
 }

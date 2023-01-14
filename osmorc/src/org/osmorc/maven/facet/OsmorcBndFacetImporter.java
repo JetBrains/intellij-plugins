@@ -50,7 +50,7 @@ public class OsmorcBndFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFac
   }
 
   @Override
-  public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+  public void getSupportedDependencyTypes(Collection<? super String> result, SupportedRequestType type) {
     result.add("bundle");
   }
 

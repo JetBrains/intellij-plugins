@@ -71,17 +71,17 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   @Override
-  public void getSupportedPackagings(Collection<String> result) {
+  public void getSupportedPackagings(Collection<? super String> result) {
     Collections.addAll(result, SUPPORTED_PACKAGINGS);
   }
 
   @Override
-  public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+  public void getSupportedDependencyTypes(Collection<? super String> result, SupportedRequestType type) {
     result.addAll(type == SupportedRequestType.FOR_COMPLETION ? DEPENDENCY_TYPES_FOR_COMPLETION : DEPENDENCY_TYPES_FOR_IMPORT);
   }
 
   @Override
-  public void getSupportedDependencyScopes(Collection<String> result) {
+  public void getSupportedDependencyScopes(Collection<? super String> result) {
     Collections.addAll(result, "merged", "internal", "external", "caching", "rsl");
   }
 
