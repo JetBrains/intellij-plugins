@@ -1,43 +1,42 @@
-HtmlFile:test.astro
-  PsiElement(HTML_DOCUMENT)
-    PsiElement(XML_PROLOG)
-      <empty list>
-    XmlToken:XML_DATA_CHARACTERS('foo')
-    XmlTag:a
+JSFile:test.astro
+  PsiElement(XML_PROLOG)
+    <empty list>
+  XmlToken:XML_DATA_CHARACTERS('foo')
+  XmlTag:a
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('a')
+    XmlToken:XML_TAG_END('>')
+    XmlTag:b
       XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('a')
+      XmlToken:XML_NAME('b')
       XmlToken:XML_TAG_END('>')
-      XmlTag:b
-        XmlToken:XML_START_TAG_START('<')
-        XmlToken:XML_NAME('b')
-        XmlToken:XML_TAG_END('>')
-        XmlText
-          XmlToken:XML_DATA_CHARACTERS('12')
-        XmlToken:XML_END_TAG_START('</')
-        XmlToken:XML_NAME('b')
-        XmlToken:XML_TAG_END('>')
-      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-        PsiElement(JS:XML_LBRACE)('{')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('12')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('b')
+      XmlToken:XML_TAG_END('>')
+    JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
+      JSBinaryExpression
         JSBinaryExpression
-          JSBinaryExpression
-            JSLiteralExpression
-              PsiElement(JS:NUMERIC_LITERAL)('23')
-            PsiWhiteSpace(' ')
-            PsiElement(JS:PLUS)('+')
-            PsiWhiteSpace(' ')
-            XmlTag:c
-              XmlToken:XML_START_TAG_START('<')
-              XmlToken:XML_NAME('c')
-              XmlToken:XML_EMPTY_ELEMENT_END('/>')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('23')
           PsiWhiteSpace(' ')
           PsiElement(JS:PLUS)('+')
           PsiWhiteSpace(' ')
-          JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('12')
-        PsiElement(JS:XML_RBRACE)('}')
-      XmlText
+          XmlTag:c
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('c')
+            XmlToken:XML_EMPTY_ELEMENT_END('/>')
         PsiWhiteSpace(' ')
-      XmlToken:XML_END_TAG_START('</')
-      XmlToken:XML_NAME('a')
-      XmlToken:XML_TAG_END('>')
-    XmlToken:XML_DATA_CHARACTERS('foo')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+      PsiElement(JS:XML_RBRACE)('}')
+    XmlText
+      PsiWhiteSpace(' ')
+    XmlToken:XML_END_TAG_START('</')
+    XmlToken:XML_NAME('a')
+    XmlToken:XML_TAG_END('>')
+  XmlToken:XML_DATA_CHARACTERS('foo')

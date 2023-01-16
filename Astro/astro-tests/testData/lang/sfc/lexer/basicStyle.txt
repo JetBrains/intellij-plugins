@@ -1,5 +1,7 @@
 ASTRO:FRONTMATTER_SEPARATOR ('---')
-ASTRO:FRONTMATTER_SCRIPT ('\n// Your component script here!\n')
+WHITE_SPACE ('\n')
+JS:END_OF_LINE_COMMENT ('// Your component script here!')
+WHITE_SPACE ('\n')
 ASTRO:FRONTMATTER_SEPARATOR ('---')
 XML_WHITE_SPACE ('\n')
 XML_START_TAG_START ('<')

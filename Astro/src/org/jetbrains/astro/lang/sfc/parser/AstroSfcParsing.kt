@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptExpressionParser
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptParser
+import com.intellij.lang.javascript.parsing.JSParsingContextUtil
 import com.intellij.lang.javascript.parsing.JSXmlParser
 import com.intellij.lang.javascript.types.JSEmbeddedContentElementType
 import com.intellij.openapi.util.text.StringUtil
@@ -16,15 +17,90 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.Stack
 import com.intellij.xml.psi.XmlPsiBundle
-import org.jetbrains.astro.lang.jsx.AstroJsxLanguage
+import org.jetbrains.astro.AstroBundle
+import org.jetbrains.astro.lang.sfc.AstroSfcLanguage
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes
 
 class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   private val tsxParser = AstroJsxParser()
 
+  private val tsParser = TypeScriptParser(builder)
+
   override fun isXmlTagStart(currentToken: IElementType?): Boolean =
     currentToken === XmlTokenType.XML_START_TAG_START
+
+  override fun parseDocument() {
+    builder.enforceCommentTokens(JSTokenTypes.COMMENTS)
+    while (token() === XmlTokenType.XML_COMMENT_CHARACTERS)
+      advance()
+
+    if (token() === AstroSfcTokenTypes.FRONTMATTER_SEPARATOR) {
+      parseFrontmatter()
+    }
+
+    while (token() === XmlTokenType.XML_COMMENT_START) {
+      parseComment()
+    }
+
+    parseProlog()
+
+    var error: PsiBuilder.Marker? = null
+    while (!eof()) {
+      val tt = token()
+      if (tt === XmlTokenType.XML_START_TAG_START) {
+        error = flushError(error)
+        parseTag()
+      }
+      else if (tt === XmlTokenType.XML_COMMENT_START) {
+        error = flushError(error)
+        parseComment()
+      }
+      else if (tt === XmlTokenType.XML_PI_START) {
+        error = flushError(error)
+        parseProcessingInstruction()
+      }
+      else if (tt === XmlTokenType.XML_CHAR_ENTITY_REF || tt === XmlTokenType.XML_ENTITY_REF_TOKEN) {
+        parseReference()
+      }
+      else if (tt === XmlTokenType.XML_REAL_WHITE_SPACE || tt === XmlTokenType.XML_DATA_CHARACTERS) {
+        error = flushError(error)
+        advance()
+      }
+      else if (tt === XmlTokenType.XML_END_TAG_START) {
+        val tagEndError = builder.mark()
+        advance()
+        if (token() === XmlTokenType.XML_NAME) {
+          advance()
+          if (token() === XmlTokenType.XML_TAG_END) {
+            advance()
+          }
+        }
+        tagEndError.error(XmlPsiBundle.message("xml.parsing.closing.tag.matches.nothing"))
+      }
+      else if (hasCustomTopLevelContent()) {
+        error = parseCustomTopLevelContent(error)
+      }
+      else {
+        if (error == null) error = mark()
+        advance()
+      }
+    }
+    flushOpenTags()
+    error?.error(XmlPsiBundle.message("xml.parsing.top.level.element.is.not.completed"))
+  }
+
+  private fun parseFrontmatter() {
+    advance()
+    // parse frontmatter
+    builder.putUserData(JSParsingContextUtil.ASYNC_METHOD_KEY, true)
+    while (builder.tokenType.let { it != null && it != AstroSfcTokenTypes.FRONTMATTER_SEPARATOR }) {
+      tsParser.statementParser.parseSourceElement()
+    }
+    if (token() === AstroSfcTokenTypes.FRONTMATTER_SEPARATOR) {
+      advance()
+    }
+  }
 
   override fun parseTag(names: Stack<String>): Boolean {
     parseTag()
@@ -70,18 +146,6 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       result = peekTagName()
     }
     return result
-  }
-
-  override fun parseProlog() {
-    builder.setDebugMode(true)
-    builder.enforceCommentTokens(JSTokenTypes.COMMENTS)
-    while (token().let {
-        it === XmlTokenType.XML_COMMENT_CHARACTERS
-        || it === AstroSfcTokenTypes.FRONTMATTER_SEPARATOR
-        || it === AstroSfcTokenTypes.FRONTMATTER_SCRIPT
-      })
-      advance()
-    super.parseProlog()
   }
 
   override fun hasCustomTagContent(): Boolean {
@@ -205,7 +269,7 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     closeTag()
   }
 
-  inner class AstroJsxParser : TypeScriptParser(AstroJsxLanguage.INSTANCE, builder) {
+  inner class AstroJsxParser : TypeScriptParser(AstroSfcLanguage.INSTANCE, builder) {
     init {
       myXmlParser = this@AstroSfcParsing
       myExpressionParser = AstroTypeScriptExpressionParser(this)
@@ -241,14 +305,15 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       supportNestedTemplateLiterals = enabled
       try {
         action()
-      } finally {
+      }
+      finally {
         supportNestedTemplateLiterals = prev
       }
     }
 
     override fun parsePrimaryExpression(): Boolean {
       if (!supportNestedTemplateLiterals && builder.tokenType === JSTokenTypes.BACKQUOTE) {
-        builder.error("Astro does not support nested template literals in this context.")
+        builder.error(AstroBundle.message("astro.parsing.error.nested.template.literals.not.supported"))
         return false
       }
       return super.parsePrimaryExpression()

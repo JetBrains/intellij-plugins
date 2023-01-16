@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 
-object AstroFrontmatterScriptTokenType: HtmlCustomEmbeddedContentTokenType(
+object AstroFrontmatterScriptTokenType : HtmlCustomEmbeddedContentTokenType(
   "ASTRO:FRONTMATTER_SCRIPT", JavaScriptSupportLoader.TYPESCRIPT, true) {
 
   override fun parse(builder: PsiBuilder) {

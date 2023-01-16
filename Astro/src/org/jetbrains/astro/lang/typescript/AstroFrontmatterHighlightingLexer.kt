@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.highlighting.JSHighlighter
 import com.intellij.lexer.MergeFunction
 import com.intellij.lexer.MergingLexerAdapterBase
-import org.jetbrains.astro.lang.typescript.AstroFrontmatterHighlighterToken
 
 class AstroFrontmatterHighlightingLexer : MergingLexerAdapterBase(
   JSHighlighter(JavaScriptSupportLoader.TYPESCRIPT.optionHolder).highlightingLexer) {

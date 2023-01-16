@@ -1,54 +1,53 @@
-HtmlFile:test.astro
-  PsiElement(HTML_DOCUMENT)
-    PsiElement(XML_PROLOG)
-      <empty list>
-    XmlTag:a
-      XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('a')
-      PsiWhiteSpace(' ')
-      PsiElement(XML_ATTRIBUTE)
-        XmlToken:XML_NAME('foo')
-        XmlToken:XML_EQ('=')
-        ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSBinaryExpression
-              JSStringTemplateExpression
-                PsiElement(JS:BACKQUOTE)('`')
-                PsiElement(JS:STRING_TEMPLATE_PART)('template')
-                PsiElement(JS:DOLLAR)('$')
-                PsiElement(JS:LBRACE)('{')
+JSFile:test.astro
+  PsiElement(XML_PROLOG)
+    <empty list>
+  XmlTag:a
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('a')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      XmlToken:XML_NAME('foo')
+      XmlToken:XML_EQ('=')
+      ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSBinaryExpression
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:STRING_TEMPLATE_PART)('template')
+              PsiElement(JS:DOLLAR)('$')
+              PsiElement(JS:LBRACE)('{')
+              JSBinaryExpression
                 JSBinaryExpression
-                  JSBinaryExpression
-                    JSReferenceExpression
-                      PsiElement(JS:IDENTIFIER)('expression')
-                    PsiWhiteSpace(' ')
-                    PsiElement(JS:PLUS)('+')
-                    PsiWhiteSpace(' ')
-                    JSStringTemplateExpression
-                      PsiElement(JS:BACKQUOTE)('`')
-                      PsiElement(JS:STRING_TEMPLATE_PART)('template}')
-                      PsiElement(JS:BACKQUOTE)('`')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('expression')
                   PsiWhiteSpace(' ')
                   PsiElement(JS:PLUS)('+')
                   PsiWhiteSpace(' ')
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('expression')
+                  JSStringTemplateExpression
+                    PsiElement(JS:BACKQUOTE)('`')
+                    PsiElement(JS:STRING_TEMPLATE_PART)('template}')
+                    PsiElement(JS:BACKQUOTE)('`')
                 PsiWhiteSpace(' ')
-                PsiElement(JS:RBRACE)('}')
-                PsiElement(JS:STRING_TEMPLATE_PART)(' template}')
-                PsiElement(JS:BACKQUOTE)('`')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('expression')
               PsiWhiteSpace(' ')
-              PsiElement(JS:PLUS)('+')
-              PsiWhiteSpace(' ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('attr_expression')
-            PsiElement(JS:XML_RBRACE)('}')
-      PsiWhiteSpace(' ')
-      PsiElement(XML_ATTRIBUTE)
-        XmlToken:XML_NAME('attr}')
-      XmlToken:XML_TAG_END('>')
-      XmlText
-        XmlToken:XML_DATA_CHARACTERS('}')
-      PsiErrorElement:Element a is not closed
-        <empty list>
+              PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:STRING_TEMPLATE_PART)(' template}')
+              PsiElement(JS:BACKQUOTE)('`')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:PLUS)('+')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('attr_expression')
+          PsiElement(JS:XML_RBRACE)('}')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      XmlToken:XML_NAME('attr}')
+    XmlToken:XML_TAG_END('>')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS('}')
+    PsiErrorElement:Element a is not closed
+      <empty list>

@@ -1,8 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.sfc.lexer
 
+import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JSTokenTypes.STRING_TEMPLATE_PART
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.*
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
@@ -15,11 +17,17 @@ import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes.Companion.FRONTMATT
 class AstroSfcLexerImpl(override val project: Project?)
   : HtmlLexer(AstroMergingLexer(AstroFlexAdapter()), true), AstroSfcLexer {
 
+  private var frontmatterScriptLexer: Lexer? = null
+
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     if (initialState and HAS_NON_RESTARTABLE_STATE != 0) {
       thisLogger().error(IllegalStateException("Do not reset Astro Lexer to a non-restartable state"))
     }
     super.start(buffer, startOffset, endOffset, initialState)
+  }
+
+  override fun getState(): Int {
+    return super.getState() or (if (frontmatterScriptLexer != null) HAS_NON_RESTARTABLE_STATE else 0)
   }
 
   override fun isRestartableState(state: Int): Boolean {
@@ -37,6 +45,37 @@ class AstroSfcLexerImpl(override val project: Project?)
 
   override fun getStateForRestartDuringEmbedmentScan(): Int {
     return _AstroSfcLexer.HTML_INITIAL
+  }
+
+  override fun advance() {
+    frontmatterScriptLexer?.let {
+      it.advance()
+      if (it.tokenType == null) {
+        frontmatterScriptLexer = null
+      }
+    }
+
+    if (frontmatterScriptLexer == null) {
+      super.advance()
+      if (myDelegate.tokenType === FRONTMATTER_SCRIPT) {
+        frontmatterScriptLexer = JSFlexAdapter(JavaScriptSupportLoader.TYPESCRIPT.optionHolder)
+          .also {
+            it.start(myDelegate.bufferSequence, myDelegate.tokenStart, myDelegate.tokenEnd)
+          }
+      }
+    }
+  }
+
+  override fun getTokenType(): IElementType? {
+    return frontmatterScriptLexer?.tokenType ?: super.getTokenType()
+  }
+
+  override fun getTokenStart(): Int {
+    return frontmatterScriptLexer?.tokenStart ?: super.getTokenStart()
+  }
+
+  override fun getTokenEnd(): Int {
+    return frontmatterScriptLexer?.tokenEnd ?: super.getTokenEnd()
   }
 
   companion object {

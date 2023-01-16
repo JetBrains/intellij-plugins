@@ -1,28 +1,27 @@
-HtmlFile:test.astro
-  PsiElement(HTML_DOCUMENT)
-    PsiElement(XML_PROLOG)
+JSFile:test.astro
+  PsiElement(XML_PROLOG)
+    <empty list>
+  XmlTag:a
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('a')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+        PsiElement(JS:XML_LBRACE)('{')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
+        PsiElement(JS:XML_RBRACE)('}')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+        PsiElement(JS:XML_LBRACE)('{')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"}"')
+        PsiErrorElement:} expected
+          <empty list>
+        PsiElement(JS:IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:IDENTIFIER)('fooBar')
+        PsiElement(JS:GT)('>')
+    PsiErrorElement:Tag start is not closed
       <empty list>
-    XmlTag:a
-      XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('a')
-      PsiWhiteSpace(' ')
-      PsiElement(XML_ATTRIBUTE)
-        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-          PsiElement(JS:XML_LBRACE)('{')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('foo')
-          PsiElement(JS:XML_RBRACE)('}')
-      PsiWhiteSpace(' ')
-      PsiElement(XML_ATTRIBUTE)
-        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-          PsiElement(JS:XML_LBRACE)('{')
-          JSLiteralExpression
-            PsiElement(JS:STRING_LITERAL)('"}"')
-          PsiErrorElement:} expected
-            <empty list>
-          PsiElement(JS:IDENTIFIER)('a')
-          PsiWhiteSpace(' ')
-          PsiElement(JS:IDENTIFIER)('fooBar')
-          PsiElement(JS:GT)('>')
-      PsiErrorElement:Tag start is not closed
-        <empty list>

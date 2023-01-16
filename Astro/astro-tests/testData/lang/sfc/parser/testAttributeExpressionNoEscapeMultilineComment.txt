@@ -1,19 +1,18 @@
-HtmlFile:test.astro
-  PsiElement(HTML_DOCUMENT)
-    PsiElement(XML_PROLOG)
+JSFile:test.astro
+  PsiElement(XML_PROLOG)
+    <empty list>
+  XmlTag:a
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('a')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      XmlToken:XML_NAME('foo')
+      XmlToken:XML_EQ('=')
+      ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          PsiComment(JS:C_STYLE_COMMENT)('/*><}**\*/')
+          PsiElement(JS:XML_RBRACE)('}')
+    XmlToken:XML_TAG_END('>')
+    PsiErrorElement:Element a is not closed
       <empty list>
-    XmlTag:a
-      XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('a')
-      PsiWhiteSpace(' ')
-      PsiElement(XML_ATTRIBUTE)
-        XmlToken:XML_NAME('foo')
-        XmlToken:XML_EQ('=')
-        ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            PsiComment(JS:C_STYLE_COMMENT)('/*><}**\*/')
-            PsiElement(JS:XML_RBRACE)('}')
-      XmlToken:XML_TAG_END('>')
-      PsiErrorElement:Element a is not closed
-        <empty list>

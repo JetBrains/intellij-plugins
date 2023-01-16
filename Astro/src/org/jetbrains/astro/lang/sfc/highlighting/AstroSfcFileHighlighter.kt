@@ -13,12 +13,16 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.map2Array
+import org.jetbrains.astro.lang.sfc.AstroSfcLanguage
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes
 import org.jetbrains.astro.lang.typescript.AstroFrontmatterHighlighterToken
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-internal class AstroSfcFileHighlighter : HtmlFileHighlighter() {
+internal class AstroSfcFileHighlighter : JSHighlighter(AstroSfcLanguage.INSTANCE.optionHolder) {
+
+  private val htmlHighlighter = HtmlFileHighlighter()
+
   override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
     val actualTokenType = (tokenType as? AstroFrontmatterHighlighterToken)?.original
                           ?: tokenType
@@ -26,7 +30,7 @@ internal class AstroSfcFileHighlighter : HtmlFileHighlighter() {
     if (result != null) {
       return result
     }
-    result = super.getTokenHighlights(actualTokenType)
+    result = htmlHighlighter.getTokenHighlights(actualTokenType)
     if (tokenType is AstroFrontmatterHighlighterToken) {
       result = ArrayUtil.insert(result, 1, AstroSfcHighlighterColors.ASTRO_FRONTMATTER)
     }

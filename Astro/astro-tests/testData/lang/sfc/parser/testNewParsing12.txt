@@ -1,29 +1,28 @@
-HtmlFile:test.astro
-  PsiElement(HTML_DOCUMENT)
-    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-    PsiWhiteSpace('\n')
-    PsiElement(XML_PROLOG)
-      <empty list>
+JSFile:test.astro
+  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+  PsiWhiteSpace('\n')
+  PsiElement(XML_PROLOG)
+    <empty list>
+  XmlTag:a
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('a')
+    XmlToken:XML_TAG_END('>')
+    XmlTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('ajsdg')
+      PsiErrorElement:Tag start is not closed
+        <empty list>
     XmlTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
-      XmlTag:a
-        XmlToken:XML_START_TAG_START('<')
-        XmlToken:XML_NAME('a')
-        PsiWhiteSpace(' ')
-        PsiElement(XML_ATTRIBUTE)
-          XmlToken:XML_NAME('ajsdg')
-        PsiErrorElement:Tag start is not closed
-          <empty list>
-      XmlTag:a
-        XmlToken:XML_START_TAG_START('<')
-        XmlToken:XML_NAME('a')
-        XmlToken:XML_TAG_END('>')
-        XmlToken:XML_END_TAG_START('</')
-        XmlToken:XML_NAME('a')
-        XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
+    XmlToken:XML_END_TAG_START('</')
+    XmlToken:XML_NAME('a')
+    XmlToken:XML_TAG_END('>')

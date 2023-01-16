@@ -47,8 +47,6 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.psi.stubs.StubElementTypeHolderEP
 import com.intellij.util.ObjectUtils
-import org.jetbrains.astro.lang.jsx.psi.AstroJsxExpressionElementType
-import org.jetbrains.astro.lang.jsx.psi.AstroJsxStubElementTypes
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcEmbeddedContentSupport
 import org.jetbrains.astro.lang.sfc.parser.AstroSfcParserDefinition
 
@@ -64,6 +62,59 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
 
   override fun testContent1() {
     // disable
+  }
+
+  fun testBasic1() {
+    doTestAstro("""
+      ---
+      const a = 12 - 2
+      ---
+      <div> { a } </div
+    """)
+  }
+
+  fun testBasic2() {
+    doTestAstro("""
+      Some comment < 12
+      ---
+      const a = new Text<Foo>("12")
+      ---
+      Result is: { a }
+    """)
+  }
+
+  fun testBasicComments() {
+    doTestAstro("""
+      ---
+      import MyComponent from "./MyComponent.astro";
+      const Element = 'div'
+      const Component = MyComponent;
+      ---
+      <Element>Hello!</Element> <!-- renders as <div>Hello!</div> -->
+      <Component /> <!-- renders as <MyComponent /> -->
+    """)
+  }
+
+  fun testBasicExpressions() {
+    doTestAstro("""
+      ---
+      const visible = true;
+      ---
+      {visible && <p>Show me!</p>}
+      
+      {visible ? <p>Show me!</p> : <p>Else show me!</p>}
+    """)
+  }
+
+  fun testBasicAttributeExpressions() {
+    doTestAstro("""
+      ---
+      const name = "Astro";
+      ---
+      <h1 class={name}>Attribute expressions are supported</h1>
+      
+      <MyComponent templateLiteralNameAttribute={`MyNameIs${name}`} />
+    """)
   }
 
   fun testBasicExpression() {
@@ -358,15 +409,9 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
                                         CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java)
 
     registerExtensionPoint(StubElementTypeHolderEP.EP_NAME, StubElementTypeHolderEP::class.java)
-    registerExtension(StubElementTypeHolderEP.EP_NAME,
-                      StubElementTypeHolderEP().also {
-                        it.holderClass = AstroJsxExpressionElementType::class.java.simpleName
-                        it.externalIdPrefix = "ASTRO_JSX:"
-                      })
 
     project.registerService(InjectedLanguageManager::class.java, MockInjectedLanguageManager())
-    // Force create class
-    AstroJsxStubElementTypes.STUB_VERSION
+
   }
 
   override fun checkResult(targetDataName: String, file: PsiFile) {
