@@ -13,6 +13,7 @@ import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
+import org.jetbrains.jps.builders.impl.OutputTracker;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.FSOperations;
 import org.jetbrains.jps.incremental.ProjectBuildException;
@@ -47,32 +48,38 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
   }
 
   @Override
-  public void build(@NotNull final FlexResourceBuildTarget target,
-                    @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
-                    @NotNull final BuildOutputConsumer outputConsumer,
-                    @NotNull final CompileContext context) throws ProjectBuildException, IOException {
+  public ExitCode buildTarget(@NotNull final FlexResourceBuildTarget target,
+                              @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
+                              @NotNull final BuildOutputConsumer outputConsumer,
+                              @NotNull final CompileContext context) throws ProjectBuildException, IOException {
 
     final JpsJavaCompilerConfiguration configuration =
       JpsJavaExtensionService.getInstance().getCompilerConfiguration(target.getModule().getProject());
     final JpsCompilerExcludes excludes = configuration.getCompilerExcludes();
 
+    final OutputTracker out = OutputTracker.create(outputConsumer);
+
     try {
-      holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexResourceBuildTarget>() {
+      holder.processDirtyFiles(new FileProcessor<>() {
         @Override
         public boolean apply(final FlexResourceBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
-          if (excludes.isExcluded(file)) return true;
+          if (excludes.isExcluded(file)) {
+            return true;
+          }
 
           final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(root.getRootFile(), file));
 
           if (target.isTests()) {
             if (!FlexCommonUtils.isSourceFile(file.getName())) {
               final String outputRootUrl = JpsJavaExtensionService.getInstance().getOutputUrl(target.getModule(), target.isTests());
-              if (outputRootUrl == null) return true;
+              if (outputRootUrl == null) {
+                return true;
+              }
 
               final String targetPath = JpsPathUtil.urlToPath(outputRootUrl) + '/' + relativePath;
 
               context.processMessage(new ProgressMessage("Copying " + file.getPath()));
-              copyResource(context, file, Collections.singleton(targetPath), outputConsumer);
+              copyResource(context, file, Collections.singleton(targetPath), out);
             }
           }
           else {
@@ -80,13 +87,13 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
 
             for (JpsFlexBuildConfiguration bc : target.getModule().getProperties().getBuildConfigurations()) {
               if (bc.isSkipCompile() || !FlexCommonUtils.canHaveResourceFiles(bc.getNature()) ||
-                  bc.getCompilerOptions().getResourceFilesMode() == JpsFlexCompilerOptions.ResourceFilesMode.None) {
+                bc.getCompilerOptions().getResourceFilesMode() == JpsFlexCompilerOptions.ResourceFilesMode.None) {
                 continue;
               }
 
               final JpsFlexCompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
               if (mode == JpsFlexCompilerOptions.ResourceFilesMode.All && !FlexCommonUtils.isSourceFile(file.getName()) ||
-                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && configuration.isResourceFile(file, root.getRootFile())) {
+                mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && configuration.isResourceFile(file, root.getRootFile())) {
                 final String outputFolder = PathUtilRt.getParentPath(bc.getActualOutputFilePath());
                 targetPaths.add(outputFolder + "/" + relativePath);
               }
@@ -94,7 +101,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
 
             if (!targetPaths.isEmpty()) {
               context.processMessage(new ProgressMessage("Copying " + file.getPath()));
-              copyResource(context, file, targetPaths, outputConsumer);
+              copyResource(context, file, targetPaths, out);
             }
           }
 
@@ -105,6 +112,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
     catch (Exception e) {
       throw new ProjectBuildException(e.getMessage(), e);
     }
+    return out.isOutputGenerated()? ExitCode.OK : ExitCode.NOTHING_DONE;
   }
 
   private static void copyResource(final CompileContext context,
