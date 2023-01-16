@@ -17,42 +17,40 @@ JSFile:XmlDef2.js2
           XmlToken:XML_TAG_NAME('zzz')
           XmlToken:XML_TAG_END('>')
           PsiWhiteSpace(' ')
-          JSEmbeddedContent:JS:XML_JS_SCRIPT
-            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-              PsiElement(JS:XML_LBRACE)('{')
-              PsiErrorElement:Expression expected
-                <empty list>
-              PsiElement(JS:XML_RBRACE)('}')
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:XML_LBRACE)('{')
+            PsiErrorElement:Expression expected
+              <empty list>
+            PsiElement(JS:XML_RBRACE)('}')
           PsiWhiteSpace(' ')
           PsiErrorElement:XML element expected
             PsiElement(BAD_CHARACTER)('&')
           XmlText
             XmlToken:XML_DATA_CHARACTERS('t')
           PsiWhiteSpace(' ')
-          JSEmbeddedContent:JS:XML_JS_SCRIPT
-            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-              PsiElement(JS:XML_LBRACE)('{')
-              PsiWhiteSpace(' ')
-              JSAssignmentExpression
-                JSDefinitionExpression
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('a')
-                PsiElement(JS:EQ)('=')
-                PsiWhiteSpace(' ')
-                JSLiteralExpression
-                  PsiElement(JS:NUMERIC_LITERAL)('1')
-              PsiErrorElement:} expected
-                <empty list>
-              PsiElement(JS:SEMICOLON)(';')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:IDENTIFIER)('b')
-              PsiWhiteSpace(' ')
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:XML_LBRACE)('{')
+            PsiWhiteSpace(' ')
+            JSAssignmentExpression
+              JSDefinitionExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('a')
               PsiElement(JS:EQ)('=')
               PsiWhiteSpace(' ')
-              PsiElement(JS:NUMERIC_LITERAL)('2')
-              PsiElement(JS:SEMICOLON)(';')
-              PsiWhiteSpace(' ')
-              PsiElement(JS:XML_RBRACE)('}')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiErrorElement:} expected
+              <empty list>
+            PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiElement(JS:SEMICOLON)(';')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:XML_RBRACE)('}')
           XmlToken:XML_END_TAG_START('</')
           XmlToken:XML_TAG_NAME('zzz')
           XmlToken:XML_TAG_END('>')

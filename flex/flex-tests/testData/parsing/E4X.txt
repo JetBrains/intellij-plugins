@@ -341,12 +341,11 @@ JSFile:E4X.js2
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_TAG_NAME('age')
           XmlToken:XML_TAG_END('>')
-          JSEmbeddedContent:JS:XML_JS_SCRIPT
-            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-              PsiElement(JS:XML_LBRACE)('{')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('num')
-              PsiElement(JS:XML_RBRACE)('}')
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:XML_LBRACE)('{')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('num')
+            PsiElement(JS:XML_RBRACE)('}')
           XmlToken:XML_END_TAG_START('</')
           XmlToken:XML_TAG_NAME('age')
           XmlToken:XML_TAG_END('>')
@@ -644,26 +643,23 @@ JSFile:E4X.js2
       PsiWhiteSpace(' ')
       XmlTag:
         XmlToken:XML_START_TAG_START('<')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('x')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('x')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_TAG_END('>')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('item')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('item')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_END_TAG_START('</')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('x')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('x')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_TAG_END('>')
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
@@ -802,40 +798,35 @@ JSFile:E4X.js2
       PsiWhiteSpace(' ')
       XmlTag:
         XmlToken:XML_START_TAG_START('<')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('tagname')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('tagname')
+          PsiElement(JS:XML_RBRACE)('}')
         PsiWhiteSpace(' ')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('attributename')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('attributename')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_EQ('=')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('attributevalue')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('attributevalue')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_TAG_END('>')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('content')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('content')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_END_TAG_START('</')
-        JSEmbeddedContent:JS:XML_JS_SCRIPT
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('tagname')
-            PsiElement(JS:XML_RBRACE)('}')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('tagname')
+          PsiElement(JS:XML_RBRACE)('}')
         XmlToken:XML_TAG_END('>')
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n')
@@ -895,36 +886,34 @@ JSFile:E4X.js2
             XmlToken:XML_NAME('id')
             XmlToken:XML_EQ('=')
             PsiElement(XML_ATTRIBUTE_VALUE)
-              JSEmbeddedContent:JS:XML_JS_SCRIPT
-                JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-                  PsiElement(JS:XML_LBRACE)('{')
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('i')
-                  PsiElement(JS:XML_RBRACE)('}')
+              JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+                PsiElement(JS:XML_LBRACE)('{')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('i')
+                PsiElement(JS:XML_RBRACE)('}')
           XmlToken:XML_TAG_END('>')
           PsiWhiteSpace('\n')
           XmlTag:name
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_TAG_NAME('name')
             XmlToken:XML_TAG_END('>')
-            JSEmbeddedContent:JS:XML_JS_SCRIPT
-              JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-                PsiElement(JS:XML_LBRACE)('{')
-                JSCallExpression
-                  JSReferenceExpression
-                    JSIndexedPropertyAccessExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('names')
-                      PsiElement(JS:LBRACKET)('[')
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('i')
-                      PsiElement(JS:RBRACKET)(']')
-                    PsiElement(JS:DOT)('.')
-                    PsiElement(JS:IDENTIFIER)('toUpperCase')
-                  JSArgumentList
-                    PsiElement(JS:LPAR)('(')
-                    PsiElement(JS:RPAR)(')')
-                PsiElement(JS:XML_RBRACE)('}')
+            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+              PsiElement(JS:XML_LBRACE)('{')
+              JSCallExpression
+                JSReferenceExpression
+                  JSIndexedPropertyAccessExpression
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('names')
+                    PsiElement(JS:LBRACKET)('[')
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('i')
+                    PsiElement(JS:RBRACKET)(']')
+                  PsiElement(JS:DOT)('.')
+                  PsiElement(JS:IDENTIFIER)('toUpperCase')
+                JSArgumentList
+                  PsiElement(JS:LPAR)('(')
+                  PsiElement(JS:RPAR)(')')
+              PsiElement(JS:XML_RBRACE)('}')
             XmlToken:XML_END_TAG_START('</')
             XmlToken:XML_TAG_NAME('name')
             XmlToken:XML_TAG_END('>')
@@ -933,17 +922,16 @@ JSFile:E4X.js2
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_TAG_NAME('age')
             XmlToken:XML_TAG_END('>')
-            JSEmbeddedContent:JS:XML_JS_SCRIPT
-              JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-                PsiElement(JS:XML_LBRACE)('{')
-                JSIndexedPropertyAccessExpression
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('ages')
-                  PsiElement(JS:LBRACKET)('[')
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('i')
-                  PsiElement(JS:RBRACKET)(']')
-                PsiElement(JS:XML_RBRACE)('}')
+            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+              PsiElement(JS:XML_LBRACE)('{')
+              JSIndexedPropertyAccessExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('ages')
+                PsiElement(JS:LBRACKET)('[')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('i')
+                PsiElement(JS:RBRACKET)(']')
+              PsiElement(JS:XML_RBRACE)('}')
             XmlToken:XML_END_TAG_START('</')
             XmlToken:XML_TAG_NAME('age')
             XmlToken:XML_TAG_END('>')
