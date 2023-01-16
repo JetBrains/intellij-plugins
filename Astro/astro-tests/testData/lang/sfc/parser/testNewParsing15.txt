@@ -17,11 +17,11 @@ HtmlFile:test.astro
         XmlToken:XML_DOCTYPE_END('>')
     XmlToken:XML_DATA_CHARACTERS(']>')
     PsiWhiteSpace(' ')
-    HtmlTag:a
+    XmlTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
-      HtmlTag:a
+      XmlTag:a
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('a')
         PsiWhiteSpace(' ')
@@ -30,7 +30,7 @@ HtmlFile:test.astro
           PsiWhiteSpace(' ')
           XmlToken:XML_EQ('=')
           PsiWhiteSpace(' ')
-          PsiElement(XML_ATTRIBUTE_VALUE)
+          ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')

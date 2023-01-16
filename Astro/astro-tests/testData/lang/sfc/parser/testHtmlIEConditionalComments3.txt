@@ -12,14 +12,14 @@ HtmlFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    HtmlTag:link
+    XmlTag:link
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('link')
       PsiWhiteSpace(' ')
       PsiElement(XML_ATTRIBUTE)
         XmlToken:XML_NAME('href')
         XmlToken:XML_EQ('=')
-        PsiElement(XML_ATTRIBUTE_VALUE)
+        ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('non-ie.css')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -27,7 +27,7 @@ HtmlFile:test.astro
       PsiElement(XML_ATTRIBUTE)
         XmlToken:XML_NAME('rel')
         XmlToken:XML_EQ('=')
-        PsiElement(XML_ATTRIBUTE_VALUE)
+        ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
           XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('stylesheet')
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')

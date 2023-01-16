@@ -5,29 +5,29 @@ HtmlFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    HtmlTag:div
+    XmlTag:div
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      HtmlTag:p
+      XmlTag:p
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('p')
         XmlToken:XML_TAG_END('>')
-        HtmlTag:br
+        XmlTag:br
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('br')
           XmlToken:XML_EMPTY_ELEMENT_END('/>')
-      HtmlTag:div
+      XmlTag:div
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('div')
         XmlToken:XML_TAG_END('>')
-        HtmlTag:span
+        XmlTag:span
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('span')
           XmlToken:XML_TAG_END('>')
-          HtmlTag:p
+          XmlTag:p
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('p')
             XmlToken:XML_TAG_END('>')
@@ -42,11 +42,11 @@ HtmlFile:test.astro
         XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      HtmlTag:P
+      XmlTag:P
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('P')
         XmlToken:XML_TAG_END('>')
-      HtmlTag:table
+      XmlTag:table
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('table')
         XmlToken:XML_TAG_END('>')

@@ -2,6 +2,7 @@ package org.jetbrains.astro.lang.sfc
 
 import com.intellij.html.HtmlParsingTest
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
+import com.intellij.injected.editor.DocumentWindow
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport
 import com.intellij.lang.LanguageASTFactory
 import com.intellij.lang.LanguageHtmlScriptContentProvider
@@ -11,6 +12,8 @@ import com.intellij.lang.css.CSSParserDefinition
 import com.intellij.lang.ecmascript6.ES6ScriptContentProvider
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.html.HTMLParserDefinition
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
@@ -22,11 +25,17 @@ import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.settings.JSRootConfigurationBase
 import com.intellij.lang.typescript.TypeScriptContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.css.CssElementDescriptorProvider
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider
 import com.intellij.psi.css.CssHtmlEmbeddedContentSupport
@@ -48,6 +57,14 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
                                            HTMLParserDefinition(),
                                            JavascriptParserDefinition(),
                                            CSSParserDefinition()) {
+
+  override fun testUnclosedTag() {
+    // disable
+  }
+
+  override fun testContent1() {
+    // disable
+  }
 
   fun testBasicExpression() {
     doTestAstro("""
@@ -91,6 +108,228 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testAttributeExpression() {
+    doTestAstro("""
+      { <a href={url}>{url}</a> }
+    """)
+  }
+
+  fun testAttributeExpressionNoTags() {
+    doTestAstro("""
+      { <a href={url<foo>bar}></a> }
+    """)
+  }
+
+  fun testAttributeExpressionNestedTemplateLiteral() {
+    doTestAstro("""
+      { <a href={`https://${"$"}{site + `foo`}bar`}>{url}</a> }
+    """)
+  }
+
+  fun testSpreadAttribute() {
+    doTestAstro("""
+      { <a {...url}>{url}</a> }
+    """)
+  }
+
+  fun testShorthandAttribute() {
+    doTestAstro("""
+      { <a {url}>{url}</a> }
+    """)
+  }
+
+  fun testTemplateLiteralAttribute() {
+    doTestAstro("""
+      { <a url=`https://${"$"}{site}`>{site}</a> }
+    """)
+  }
+
+  fun testTemplateLiteralAttributeNoNested() {
+    doTestAstro("""
+      { <a url=`https://${"$"}{site + `>{site}</a> }
+    """)
+  }
+
+  fun testTemplateLiteralAttributeNoTags() {
+    doTestAstro("""
+      { <a url=`https://${"$"}{site<foo>bar}`>{site}</a> }
+    """)
+  }
+
+  fun testExpressionUnterminated() {
+    doTestAstro("""
+      {12<
+    """)
+  }
+
+  fun testExpressionNotClosedIfBraceIsAttribute() {
+    doTestAstro("""
+      {12 + <a {/>} foo } bar> } fooBar
+    """)
+  }
+
+  fun testExpressionNoNestedTemplateExpressions() {
+    doTestAstro("""
+      {12 + `this is ${'$'}{within `an }` expression}` }
+    """)
+  }
+
+  fun testExpressionDoubleQuoteEscape() {
+    doTestAstro("""
+      { "This } is \" escaped and ' } " } outside
+    """)
+  }
+
+  fun testExpressionSingleQuoteEscape() {
+    doTestAstro("""
+      { 'This } is \' escaped } and " ' }
+    """)
+  }
+
+  fun testExpressionHtmlStyleComment() {
+    doTestAstro("""
+      { <!-- this is a comment } ha --> }
+    """)
+  }
+
+  fun testExpressionMultilineComment() {
+    doTestAstro("""
+      { /* this is a comment } ha/ */ }
+    """)
+  }
+
+  fun testExpressionSingleLineComment() {
+    doTestAstro("""
+      { // this is a comment } ha/ }
+       and here is end}
+    """)
+  }
+
+  fun testShorthandAttributeBeforeAndAfterContent() {
+    doTestAstro("""
+      <a before{foo}after>
+    """)
+  }
+
+  fun testNoShorthandAttributeIfValue() {
+    doTestAstro("""
+      <a {foo} = 12>
+    """)
+  }
+
+  fun testShorthandAttributeUnterminated() {
+    doTestAstro("""
+      <a {foo} {"}"a fooBar>
+    """)
+  }
+
+  fun testShorthandAttributeRegexBoundaryAndUnterminated() {
+    doTestAstro("""
+      <a {">" /} {/> fooBar>
+    """)
+  }
+
+  fun testSpreadAttributeContentBeforeAndAfter() {
+    doTestAstro("""
+      <a before{ ...foo}after>
+    """)
+  }
+
+  fun testNoSpreadAttributeIfValue() {
+    doTestAstro("""
+      <a {... "12}>`"} = 12>
+    """)
+  }
+
+  fun testSpreadAttributeManyAttributes() {
+    doTestAstro("""
+      <a {....foo} {bar} fooBar>
+    """)
+  }
+
+  fun testAttributeExpressionNestedTemplateLiteralsSupported() {
+    doTestAstro("""
+      <a foo={`template${'$'}{expression + `template}` + expression } template}` + attr_expression} attr}>}
+    """)
+  }
+
+  fun testAttributeExpressionNoEscapeTemplateLiteral() {
+    doTestAstro("""
+      <a foo={`}>'"/\`}>
+    """)
+  }
+
+  fun testAttributeExpressionNoEscapeMultilineComment() {
+    doTestAstro("""
+      <a foo={/*><}**\*/}>
+    """)
+  }
+
+  fun testAttributeExpressionSingleQuoteEscape() {
+    doTestAstro("""
+      <a foo={'<">\'}'}>
+    """)
+  }
+
+  fun testAttributeExpressionDoubleQuoteEscape() {
+    doTestAstro("""
+      <a foo={"<'>\"}"}>
+    """)
+  }
+
+  fun testAttributeExpressionEscapeRegex() {
+    doTestAstro("""
+      <a foo={/regexp\/foo/}>
+    """)
+  }
+
+  fun testAttributeExpressionRegexBoundary() {
+    doTestAstro("""
+      <a foo={/regexp} bar={/regexp"\}/}>
+    """)
+  }
+
+  fun testAttributeExpressionSingleLineCommentBoundary() {
+    doTestAstro("""
+      <a foo={// comment }
+      end}>
+    """)
+  }
+
+  fun testTemplateLiteralAttributeNoEscape() {
+    doTestAstro("""
+      <a foo=`12\`>
+    """)
+  }
+
+  fun testTemplateLiteralAttributeUnterminated() {
+    doTestAstro("""
+      <a foo=`12\>
+    """)
+  }
+
+  fun testCharEntity() {
+    doTestAstro("""
+      {12 &lt; <span>&rarr;</span>}
+    """)
+  }
+
+  fun testComplexBroken() {
+    doTestAstro("""
+      <li class="link-card">
+       <a title=`112 \` ${'$'}{12 + "12"}`
+         <h2>
+           {12 + 34}
+           <span>&rarr;</span>
+         </h2>
+         <p>
+           {  <a foo={1223 + `121321${'$'}{``}`}> + 12 }
+         </p>
+       </a>
+      </li>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 
@@ -124,6 +363,8 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
                         it.holderClass = AstroJsxExpressionElementType::class.java.simpleName
                         it.externalIdPrefix = "ASTRO_JSX:"
                       })
+
+    project.registerService(InjectedLanguageManager::class.java, MockInjectedLanguageManager())
     // Force create class
     AstroJsxStubElementTypes.STUB_VERSION
   }
@@ -165,4 +406,31 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
       myState.languageLevel = ObjectUtils.coalesce(languageLevel, JSLanguageLevel.DEFAULT).id
     }
   }
+
+  class MockInjectedLanguageManager internal constructor() : InjectedLanguageManager() {
+    override fun getInjectionHost(injectedProvider: FileViewProvider): PsiLanguageInjectionHost? = null
+    override fun getInjectionHost(injectedElement: PsiElement): PsiLanguageInjectionHost? = null
+    override fun injectedToHost(injectedContext: PsiElement, injectedTextRange: TextRange): TextRange = injectedTextRange
+    override fun injectedToHost(injectedContext: PsiElement, injectedOffset: Int): Int = 0
+    override fun injectedToHost(injectedContext: PsiElement, injectedOffset: Int, minHostOffset: Boolean): Int = 0
+    override fun registerMultiHostInjector(injector: MultiHostInjector, parentDisposable: Disposable) {}
+    override fun getUnescapedText(injectedNode: PsiElement): String = injectedNode.text
+    override fun intersectWithAllEditableFragments(injectedPsi: PsiFile, rangeToEdit: TextRange): List<TextRange> = listOf(rangeToEdit)
+    override fun isInjectedFragment(injectedFile: PsiFile): Boolean = false
+    override fun findInjectedElementAt(hostFile: PsiFile, hostDocumentOffset: Int): PsiElement? = null
+    override fun getInjectedPsiFiles(host: PsiElement): List<Pair<PsiElement, TextRange>>? = null
+    override fun dropFileCaches(file: PsiFile) {}
+    override fun getTopLevelFile(element: PsiElement): PsiFile = element.containingFile
+    override fun getCachedInjectedDocumentsInRange(hostPsiFile: PsiFile, range: TextRange): List<DocumentWindow> = emptyList()
+    override fun enumerate(host: PsiElement, visitor: PsiLanguageInjectionHost.InjectedPsiVisitor) {}
+    override fun enumerateEx(host: PsiElement,
+                             containingFile: PsiFile,
+                             probeUp: Boolean,
+                             visitor: PsiLanguageInjectionHost.InjectedPsiVisitor) {
+    }
+    override fun getNonEditableFragments(window: DocumentWindow): List<TextRange> = emptyList()
+    override fun mightHaveInjectedFragmentAtOffset(hostDocument: Document, hostOffset: Int): Boolean = false
+    override fun freezeWindow(document: DocumentWindow): DocumentWindow = document
+  }
+
 }

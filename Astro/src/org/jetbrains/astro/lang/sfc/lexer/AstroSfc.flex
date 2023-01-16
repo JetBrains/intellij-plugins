@@ -118,6 +118,23 @@ import static com.intellij.util.ArrayUtil.*;
       return expressionStack.isEmpty();
     }
 
+    private boolean shouldCreateJSXmlComment() {
+      var elements = expressionStack.elements();
+      for (int i = expressionStack.size() - 1; i >= 0; i--) {
+        var element = elements[i];
+        if (element == KIND_SPREAD_OR_SHORTHAND_ATTRIBUTE_EXPRESSION
+            || element == KIND_ATTRIBUTE_EXPRESSION
+            || element == KIND_TEMPLATE_LITERAL_ATTRIBUTE
+            || element == KIND_EXPRESSION) {
+          return true;
+        }
+        if (element == KIND_HTML_CONTENT) {
+          return false;
+        }
+      }
+      return false;
+    }
+
     private boolean isWithinAttributeExpression() {
       var elements = expressionStack.elements();
       for (int i = expressionStack.size() - 1; i >= 0; i--) {
@@ -485,7 +502,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
       }
   "<!--" {
         yybegin(COMMENT);
-        return XmlTokenType.XML_COMMENT_START;
+        return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_START;
       }
   \<[>a-zA-Z] {
         if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
@@ -619,7 +636,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
   [^{ \n\r\t\f/=<>]+ {
         if (inBuffer("{", 1)) {
           // If attribute name contains '{' everything up to it is ignored.
-          return XmlTokenType.XML_COMMENT_CHARACTERS;
+          return JSTokenTypes.XML_STYLE_COMMENT_START;
         }
         return XmlTokenType.XML_NAME;
       }
@@ -682,9 +699,9 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 }
 
 <COMMENT> {
-  "["                { yybegin(C_COMMENT_START); return XmlTokenType.XML_CONDITIONAL_COMMENT_START; }
-  "<!["              { yybegin(C_COMMENT_END); return XmlTokenType.XML_CONDITIONAL_COMMENT_END_START; }
-  "-->" | "<!-->"    { backToInitial(); return XmlTokenType.XML_COMMENT_END; }
+  "["                { yybegin(C_COMMENT_START); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_CONDITIONAL_COMMENT_START; }
+  "<!["              { yybegin(C_COMMENT_END); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_CONDITIONAL_COMMENT_END_START; }
+  "-->" | "<!-->"    { backToInitial(); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_END; }
   "<!--"             { return XmlTokenType.XML_BAD_CHARACTER; }
   "<!--->" | "--!>"  { backToInitial(); return XmlTokenType.XML_BAD_CHARACTER; }
   ">"                {
@@ -698,24 +715,24 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
       backToInitial();
       return XmlTokenType.XML_BAD_CHARACTER;
     }
-    return XmlTokenType.XML_COMMENT_CHARACTERS;
+    return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_CHARACTERS;
   }
-  [^]                { return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  [^]                { return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <C_COMMENT_START> {
-  "]>"     { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_START_END; }
-  [^]      { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  "]>"     { yybegin(COMMENT); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_CONDITIONAL_COMMENT_START_END; }
+  [^]      { yybegin(COMMENT); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <C_COMMENT_END> {
-  "]"      { yybegin(COMMENT); return XmlTokenType.XML_CONDITIONAL_COMMENT_END; }
-  [^]      { yybegin(COMMENT); return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  "]"      { yybegin(COMMENT); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_CONDITIONAL_COMMENT_END; }
+  [^]      { yybegin(COMMENT); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <C_COMMENT_START,C_COMMENT_END> {
-  {CONDITIONAL_COMMENT_CONDITION} { return XmlTokenType.XML_COMMENT_CHARACTERS; }
-  "-->"                           { backToInitial(); return XmlTokenType.XML_COMMENT_END; }
+  {CONDITIONAL_COMMENT_CONDITION} { return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_CHARACTERS; }
+  "-->"                           { backToInitial(); return shouldCreateJSXmlComment() ? JSTokenTypes.XML_STYLE_COMMENT : XmlTokenType.XML_COMMENT_END; }
 }
 
 <ATTRIBUTE_VALUE_DQ> {
@@ -775,7 +792,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         } else {
           readUntil(false, '\'', '\r', '\n');
         }
-        var result = finishReadString(JSTokenTypes.SINGLE_QUOTE_STRING_LITERAL);
+        var result = finishReadString(JSTokenTypes.STRING_LITERAL);
         if (result != null) return result;
       }
   "\"" {

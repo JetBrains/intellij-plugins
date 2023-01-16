@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.sfc.lexer
 
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JSTokenTypes.STRING_TEMPLATE_PART
 import com.intellij.lexer.*
 import com.intellij.openapi.diagnostic.thisLogger
@@ -106,7 +107,7 @@ class AstroSfcLexerImpl(override val project: Project?)
 
       private val TOKENS_TO_MERGE = TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
                                                     XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS,
-                                                    STRING_TEMPLATE_PART, XML_BAD_CHARACTER)
+                                                    STRING_TEMPLATE_PART, XML_BAD_CHARACTER, JSTokenTypes.XML_STYLE_COMMENT)
 
     }
   }

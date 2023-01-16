@@ -21,13 +21,13 @@ HtmlFile:test.astro
         XmlToken:XML_DOCTYPE_END('>')
     XmlToken:XML_DATA_CHARACTERS(']>')
     PsiWhiteSpace(' ')
-    HtmlTag:a
+    XmlTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace(' ')
-      HtmlTag:b
+      XmlTag:b
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('b')
         XmlToken:XML_EMPTY_ELEMENT_END('/>')

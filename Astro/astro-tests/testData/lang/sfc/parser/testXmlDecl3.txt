@@ -9,7 +9,7 @@ HtmlFile:test.astro
         XmlToken:XML_PI_TARGET('xml version="1.0" encoding='cp1251' ')
         XmlToken:XML_PI_END('>')
       PsiWhiteSpace(' ')
-    HtmlTag:foo
+    XmlTag:foo
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('foo')
       XmlToken:XML_TAG_END('>')

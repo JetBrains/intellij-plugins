@@ -9,30 +9,30 @@ HtmlFile:test.astro
         XmlToken:XML_PI_TARGET('xml version="1.0" encoding="UTF-8" standalone="yes"')
         XmlToken:XML_PI_END('?>')
       PsiWhiteSpace('\n')
-    HtmlTag:Root
+    XmlTag:Root
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('Root')
       XmlToken:XML_TAG_END('>')
-      HtmlTag:page
+      XmlTag:page
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('page')
         XmlToken:XML_TAG_END('>')
-        HtmlTag:content
+        XmlTag:content
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('content')
           XmlToken:XML_TAG_END('>')
-          HtmlTag:locatieblok
+          XmlTag:locatieblok
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('locatieblok')
             XmlToken:XML_TAG_END('>')
-            HtmlTag:locatie
+            XmlTag:locatie
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('locatie')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Locatie')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -44,14 +44,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:straat
+            XmlTag:straat
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('straat')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Straat')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -63,14 +63,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:postcode
+            XmlTag:postcode
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('postcode')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Postcode')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -82,14 +82,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:plaats
+            XmlTag:plaats
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('plaats')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Plaats')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -101,14 +101,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('  ')
-            HtmlTag:telomschrijving
+            XmlTag:telomschrijving
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('telomschrijving')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Telefoon omschrijving')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -120,14 +120,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:telefoon
+            XmlTag:telefoon
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('telefoon')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Telefoon')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -139,14 +139,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('  ')
-            HtmlTag:internet
+            XmlTag:internet
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('internet')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Internet')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -159,18 +159,18 @@ HtmlFile:test.astro
             XmlToken:XML_END_TAG_START('</')
             XmlToken:XML_NAME('locatieblok')
             XmlToken:XML_TAG_END('>')
-          HtmlTag:naamblok
+          XmlTag:naamblok
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('naamblok')
             XmlToken:XML_TAG_END('>')
-            HtmlTag:aanhefnaam
+            XmlTag:aanhefnaam
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('aanhefnaam')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Aanhef Naam Achternaam')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -186,14 +186,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:functie
+            XmlTag:functie
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('functie')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Functie')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -205,14 +205,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:mobielomschr
+            XmlTag:mobielomschr
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('mobielomschr')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Mobiel omschrijving')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -224,14 +224,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('\t')
-            HtmlTag:mobiel
+            XmlTag:mobiel
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('mobiel')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Mobiel')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -243,14 +243,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            HtmlTag:emailomschr
+            XmlTag:emailomschr
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('emailomschr')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Email omschrijving')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -262,14 +262,14 @@ HtmlFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('\t')
-            HtmlTag:email
+            XmlTag:email
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('email')
               PsiWhiteSpace(' ')
               PsiElement(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('label')
                 XmlToken:XML_EQ('=')
-                PsiElement(XML_ATTRIBUTE_VALUE)
+                ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
                   XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
                   XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('Email')
                   XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')

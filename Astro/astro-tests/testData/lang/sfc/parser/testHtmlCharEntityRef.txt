@@ -8,14 +8,14 @@ HtmlFile:test.astro
     XmlToken:XML_CHAR_ENTITY_REF('&#xAAff;')
     XmlToken:XML_CHAR_ENTITY_REF('&#XaaFF;')
     XmlToken:XML_DATA_CHARACTERS('&#x&#X')
-    HtmlTag:tag
+    XmlTag:tag
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('tag')
       PsiWhiteSpace(' ')
       PsiElement(XML_ATTRIBUTE)
         XmlToken:XML_NAME('attr')
         XmlToken:XML_EQ('=')
-        PsiElement(XML_ATTRIBUTE_VALUE)
+        ASTWrapperPsiElement(JS:XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
           XmlToken:XML_CHAR_ENTITY_REF('&#xAAff;')
           XmlToken:XML_CHAR_ENTITY_REF('&#XaaFF;')

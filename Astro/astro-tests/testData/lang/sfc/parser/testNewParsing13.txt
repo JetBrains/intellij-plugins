@@ -5,15 +5,15 @@ HtmlFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    HtmlTag:a
+    XmlTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
-      HtmlTag:b
+      XmlTag:b
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('b')
         XmlToken:XML_TAG_END('>')
-        HtmlTag:c
+        XmlTag:c
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('c')
           XmlToken:XML_TAG_END('>')
