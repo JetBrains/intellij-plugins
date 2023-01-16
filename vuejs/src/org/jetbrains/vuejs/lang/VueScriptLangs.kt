@@ -59,7 +59,7 @@ object VueScriptLangs {
   }
 
   fun getLatestKnownLang(element: PsiElement): LangMode {
-    return (element.containingFile as? VueFile)?.let { it.langMode } ?: return LangMode.DEFAULT
+    return (element.containingFile as? VueFile)?.langMode ?: return LangMode.DEFAULT
   }
 
 }
