@@ -2,11 +2,8 @@
 package org.jetbrains.astro.lang.sfc.parser
 
 import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
-import com.intellij.lang.ASTNode
-import com.intellij.lang.ParserDefinition
-import com.intellij.lang.PsiBuilder
-import com.intellij.lang.PsiParser
-import com.intellij.lang.javascript.JavascriptParserDefinition
+import com.intellij.lang.*
+import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lang.xml.XMLParserDefinition
@@ -32,7 +29,23 @@ open class AstroSfcParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
-    throw IllegalStateException()
+    return AstroSfcParsing(builder).tsxParser
+  }
+
+  override fun createLexerForLazyParse(project: Project, language: Language, chameleon: ASTNode): Lexer? {
+    if (language == AstroSfcLanguage.INSTANCE) {
+      var search: ASTNode? = chameleon
+      while (search != null && search.elementType != JSStubElementTypes.EMBEDDED_EXPRESSION) {
+        search = search.treeParent
+      }
+      if (search != null) {
+        return AstroSfcLexerImpl(project, true)
+      } else {
+        return JSFlexAdapter(DialectOptionHolder.TS)
+      }
+    } else {
+      return super.createLexerForLazyParse(project, language, chameleon)
+    }
   }
 
   override fun getFileNodeType(): IFileElementType {

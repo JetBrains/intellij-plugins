@@ -23,9 +23,7 @@ import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes
 
 class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
-  private val tsxParser = AstroJsxParser()
-
-  private val tsParser = TypeScriptParser(builder)
+  val tsxParser = AstroJsxParser()
 
   override fun isXmlTagStart(currentToken: IElementType?): Boolean =
     currentToken === XmlTokenType.XML_START_TAG_START
@@ -95,7 +93,7 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     // parse frontmatter
     builder.putUserData(JSParsingContextUtil.ASYNC_METHOD_KEY, true)
     while (builder.tokenType.let { it != null && it != AstroSfcTokenTypes.FRONTMATTER_SEPARATOR }) {
-      tsParser.statementParser.parseSourceElement()
+      tsxParser.statementParser.parseSourceElement()
     }
     if (token() === AstroSfcTokenTypes.FRONTMATTER_SEPARATOR) {
       advance()
@@ -269,14 +267,14 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     closeTag()
   }
 
-  inner class AstroJsxParser : TypeScriptParser(AstroSfcLanguage.INSTANCE, builder) {
+  inner class AstroJsxParser internal constructor() : TypeScriptParser(AstroSfcLanguage.INSTANCE, builder) {
     init {
       myXmlParser = this@AstroSfcParsing
       myExpressionParser = AstroTypeScriptExpressionParser(this)
     }
   }
 
-  class AstroTypeScriptExpressionParser(parser: TypeScriptParser) : TypeScriptExpressionParser(parser) {
+  private class AstroTypeScriptExpressionParser(parser: TypeScriptParser) : TypeScriptExpressionParser(parser) {
 
     private var supportNestedTemplateLiterals: Boolean = true
 

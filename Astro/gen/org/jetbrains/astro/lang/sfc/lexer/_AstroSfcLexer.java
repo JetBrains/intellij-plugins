@@ -1618,6 +1618,7 @@ public class _AstroSfcLexer implements FlexLexer {
             } else if (current == KIND_EXPRESSION
                       || current == KIND_EXPRESSION_PARENTHESIS
                       || current == KIND_NON_EXPRESSION_PARENTHESIS
+                      || current == KIND_NESTED_BRACES
                       || current == KIND_TEMPLATE_LITERAL_EXPRESSION) {
               yybegin(EXPRESSION_INITIAL);
             } else {

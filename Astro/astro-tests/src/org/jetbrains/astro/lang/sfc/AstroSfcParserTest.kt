@@ -380,6 +380,17 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testBlockStatementParsing() {
+    doTestAstro("""
+      ---
+      {
+        const a = 12
+      }
+      ---
+      <div>{ (() => { return <a></a> })() }</div>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 

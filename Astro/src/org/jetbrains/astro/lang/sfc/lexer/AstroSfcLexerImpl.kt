@@ -14,7 +14,7 @@ import com.intellij.psi.xml.XmlTokenType.*
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes.Companion.FRONTMATTER_SCRIPT
 
-class AstroSfcLexerImpl(override val project: Project?)
+class AstroSfcLexerImpl(override val project: Project?, private val lexJsFragment: Boolean = false)
   : HtmlLexer(AstroMergingLexer(AstroFlexAdapter(false, false)), true), AstroSfcLexer {
 
   private var frontmatterScriptLexer: Lexer? = null
@@ -24,7 +24,8 @@ class AstroSfcLexerImpl(override val project: Project?)
       thisLogger().error(IllegalStateException("Do not reset Astro Lexer to a non-restartable state"))
     }
     frontmatterScriptLexer = null
-    super.start(buffer, startOffset, endOffset, initialState)
+    super.start(buffer, startOffset, endOffset,
+                if (initialState == 0 && lexJsFragment) _AstroSfcLexer.EXPRESSION_INITIAL else initialState)
   }
 
   override fun getState(): Int {
