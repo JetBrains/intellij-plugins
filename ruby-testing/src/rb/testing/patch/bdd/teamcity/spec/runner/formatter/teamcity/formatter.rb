@@ -241,7 +241,6 @@ module Spec
 
           # example service data
           example_data = get_data_from_storage(example)
-          additional_flowid_suffix = example_data.additional_flowid_suffix
           running_example_full_name = example_data.full_name
 
           # Failure message:
@@ -286,7 +285,7 @@ module Spec
           #  #(full_failure_description += "\n\n    " + backtrace) if backtrace
           #end
 
-          debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}\n\n, additional flowid suffix=[#{additional_flowid_suffix}]")
+          debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}]")
 
           # Expectation failures will be shown as failures and other exceptions as Errors
           if failure.expectation_not_met?
@@ -354,10 +353,9 @@ module Spec
 
           # example service data
           example_data = get_data_from_storage(example)
-          additional_flowid_suffix = example_data.additional_flowid_suffix
           running_example_full_name = example_data.full_name
 
-          debug_log("Example pending... [#{@groups_stack.last}].[#{running_example_full_name}] - #{message}, additional flowid suffix=[#{additional_flowid_suffix}]")
+          debug_log("Example pending... [#{@groups_stack.last}].[#{running_example_full_name}] - #{message}")
           log(@message_factory.create_test_ignored(running_example_full_name, "Pending: #{message}"))
 
           close_test_block(example)
@@ -494,7 +492,7 @@ module Spec
 
           debug_log("Output capturing started.")
 
-          put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, "", started_at_ms, *std_files))
+          put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, started_at_ms, *std_files))
         end
 
         # Repairs SDOUT, STDERR from saved data
@@ -534,10 +532,9 @@ module Spec
               get_current_time_in_ms
           duration = finished_at_ms - example_data.start_time_in_ms
 
-          additional_flowid_suffix = example_data.additional_flowid_suffix
           running_example_full_name = example_data.full_name
 
-          debug_log("Example finishing... full example name = [#{running_example_full_name}], duration = #{duration} ms, additional flowid suffix=[#{additional_flowid_suffix}]")
+          debug_log("Example finishing... full example name = [#{running_example_full_name}], duration = #{duration} ms")
           diagnostic_info = (rspec_2? ? "rspec2 [#{::RSpec::Core::Version::STRING}]" : "rspec1") + ", f/s=(#{finished_at_ms}, #{example_data.start_time_in_ms}), duration=#{duration}, time.now=#{Time.now.to_s}" + (rspec_2? ? ", raw[:started_at]=#{example.execution_result[:started_at].to_s}, raw[:finished_at]=#{example.execution_result[:finished_at].to_s}, raw[:run_time]=#{example.execution_result[:run_time].to_s}" : "")
 
           log(@message_factory.create_test_finished(running_example_full_name, duration, ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info))
@@ -561,17 +558,16 @@ module Spec
 
         def stop_capture_output_and_log_it(example)
           example_data = get_data_from_storage(example)
-          additional_flowid_suffix = example_data.additional_flowid_suffix
           running_example_full_name = example_data.full_name
 
           stdout_string, stderr_string = capture_output_end_external(*example_data.get_std_files)
           debug_log("Example capturing was stopped.")
 
-          debug_log("My stdOut: [#{stdout_string}] additional flow id=[#{additional_flowid_suffix}]")
+          debug_log("My stdOut: [#{stdout_string}]")
           if stdout_string && !stdout_string.empty?
             log(@message_factory.create_test_output_message(running_example_full_name, true, stdout_string))
           end
-          debug_log("My stdErr: [#{stderr_string}] additional flow id=[#{additional_flowid_suffix}]")
+          debug_log("My stdErr: [#{stderr_string}]")
           if stderr_string && !stderr_string.empty?
             log(@message_factory.create_test_output_message(running_example_full_name, false, stderr_string))
           end
@@ -641,21 +637,16 @@ module Spec
 
         ######################################################
         ######################################################
-        #TODO remove flowid
         class RunningExampleData
           attr_reader :full_name # full task name, example name in build log
-                                 #          TODO: Remove!
-          attr_reader :additional_flowid_suffix # to support concurrently running examples
           attr_reader :start_time_in_ms # start time of example
           attr_reader :stdout_file_old # before capture
           attr_reader :stderr_file_old # before capture
           attr_reader :stdout_file_new #current capturing storage
           attr_reader :stderr_file_new # current capturing storage
 
-          def initialize(full_name, additional_flowid_suffix, start_time_in_ms, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
+          def initialize(full_name, start_time_in_ms, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
             @full_name = full_name
-#          TODO: Remove!
-            @additional_flowid_suffix = additional_flowid_suffix
             @start_time_in_ms = start_time_in_ms
             @stdout_file_old = stdout_file_old
             @stderr_file_old = stderr_file_old
