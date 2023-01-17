@@ -6,9 +6,6 @@ import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Irina.Chernushina on 3/8/2016.
- */
 public class UiView {
   private final @NotNull String myName;
   private final @Nullable String myTemplateUrl;

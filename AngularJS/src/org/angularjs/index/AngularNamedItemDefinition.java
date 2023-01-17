@@ -3,9 +3,6 @@ package org.angularjs.index;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Irina.Chernushina on 2/11/2016.
- */
 public class AngularNamedItemDefinition {
   private final @Nullable String myName;
   private final long myStartOffset;

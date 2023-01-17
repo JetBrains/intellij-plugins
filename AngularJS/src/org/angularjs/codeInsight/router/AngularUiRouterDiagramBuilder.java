@@ -30,9 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Irina.Chernushina on 3/8/2016.
- */
 public class AngularUiRouterDiagramBuilder {
   private final List<UiRouterState> myStates;
   private final Map<VirtualFile, Template> myTemplatesMap;

@@ -14,9 +14,6 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularUiRouterViewsIndex;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Irina.Chernushina on 2/11/2016.
- */
 public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {

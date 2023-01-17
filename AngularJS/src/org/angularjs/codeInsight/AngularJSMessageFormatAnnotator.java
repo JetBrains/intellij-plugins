@@ -18,9 +18,6 @@ import java.util.*;
 
 import static org.angularjs.AngularJSBundle.message;
 
-/**
- * @author Irina.Chernushina on 12/3/2015.
- */
 public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor implements Annotator {
   private AnnotationHolder myHolder;
 

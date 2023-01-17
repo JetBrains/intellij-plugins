@@ -43,9 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Irina.Chernushina on 3/22/2016.
- */
 public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
   public static final String ANGULAR = "angular";
 

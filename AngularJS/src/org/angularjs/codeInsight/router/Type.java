@@ -5,9 +5,6 @@ import com.intellij.diagram.DiagramCategory;
 import com.intellij.icons.AllIcons;
 import org.angularjs.AngularJSBundle;
 
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
 public enum Type {
   state(Categories.STATE),
   view(Categories.VIEW),

@@ -15,9 +15,6 @@ import org.junit.Assert;
 
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 2/12/2016.
- */
 public class AngularUiRouterTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {

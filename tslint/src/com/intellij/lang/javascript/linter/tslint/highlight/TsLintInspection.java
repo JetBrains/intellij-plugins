@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 6/3/2015.
- */
 public final class TsLintInspection extends JSLinterInspection {
 
   public boolean useSeverityFromConfigFile = true;

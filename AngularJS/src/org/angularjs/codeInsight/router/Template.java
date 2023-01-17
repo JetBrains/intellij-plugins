@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-/**
- * @author Irina.Chernushina on 3/8/2016.
- */
 public class Template {
   private final @NotNull String myPath;
   private final SmartPsiElementPointer<PsiElement> myPointer;

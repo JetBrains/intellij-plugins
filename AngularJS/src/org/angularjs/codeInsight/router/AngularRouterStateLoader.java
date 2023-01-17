@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 6/29/2016.
- */
 public class AngularRouterStateLoader {
   private final @NotNull Project myProject;
 

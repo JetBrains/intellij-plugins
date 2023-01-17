@@ -16,9 +16,6 @@ import java.util.Set;
 
 import static org.angularjs.AngularJSBundle.message;
 
-/**
- * @author Irina.Chernushina on 11/30/2015.
- */
 public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSParser> {
   @NonNls public static final String OFFSET_OPTION = "offset";
   private boolean myInsideSelectExpression = false;

@@ -24,9 +24,6 @@ import java.util.List;
 
 import static org.angularjs.AngularJSBundle.message;
 
-/**
- * @author Irina.Chernushina on 12/7/2015.
- */
 public final class AngularMessageFormatCompletion {
   public static final Comparator<AngularJSPluralCategories> PLURAL_CATEGORIES_COMPARATOR =
     Comparator.comparingInt(AngularJSPluralCategories::getCompletionOrder);

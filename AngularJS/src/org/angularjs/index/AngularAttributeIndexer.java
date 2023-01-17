@@ -14,9 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Irina.Chernushina on 3/17/2016.
- */
 public class AngularAttributeIndexer implements DataIndexer<String, AngularNamedItemDefinition, FileContent> {
   private final String myDirectiveName;
 
