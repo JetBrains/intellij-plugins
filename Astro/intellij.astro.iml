@@ -26,5 +26,6 @@
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
     <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
   </component>
 </module>

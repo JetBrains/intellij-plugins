@@ -23,8 +23,7 @@ internal class AstroSfcFileHighlighter : JSHighlighter(AstroSfcLanguage.INSTANCE
   private val htmlHighlighter = HtmlFileHighlighter()
 
   override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
-    val actualTokenType = (tokenType as? AstroFrontmatterHighlighterToken)?.original
-                          ?: tokenType
+    val actualTokenType = AstroFrontmatterHighlighterToken.unwrap(tokenType)
     var result = keys[actualTokenType]
     if (result != null) {
       return result

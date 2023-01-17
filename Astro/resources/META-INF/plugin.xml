@@ -31,6 +31,7 @@
     <lang.syntaxHighlighterFactory language="Astro SFC"
                                    implementationClass="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcHighlighterFactory"/>
     <colorSettingsPage implementation="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcColorsAndFontsPage"/>
+    <lang.braceMatcher language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroSfcBraceMatcher"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
