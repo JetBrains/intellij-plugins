@@ -43,7 +43,7 @@ module Spec
         include ::Rake::TeamCity::Utils::UrlFormatter
 
         RUNNER_ISNT_COMPATIBLE_MESSAGE = "TeamCity Rake Runner Plugin isn't compatible with this RSpec version.\n\n"
-        RUNNER_RSPEC_FAILED = "Failed to run RSpec.."
+        RUNNER_RSPEC_FAILED = 'Failed to run RSpec..'
 
         TEAMCITY_FORMATTER_INTERNAL_ERRORS =[]
         @@reporter_closed = false
@@ -56,11 +56,11 @@ module Spec
           msg
         end
 
-        def self.closed?()
+        def self.closed?
           @@reporter_closed
         end
 
-        def self.close()
+        def self.close
           @@reporter_closed = true
         end
 
@@ -96,15 +96,13 @@ module Spec
 
           # check out output stream is a Drb stream, in such case all commands should be send there
           redirect_output_via_drb = !output_stream.nil? && (defined? DRb::DRbObject) && output_stream.kind_of?(DRb::DRbObject)
-          if redirect_output_via_drb
-            @@original_stdout = output_stream
-          end
+          @@original_stdout = output_stream if redirect_output_via_drb
 
           ###############################################
 
           # Setups Test runner's MessageFactory
           set_message_factory(::Rake::TeamCity::MessageFactory)
-          log_test_reporter_attached()
+          log_test_reporter_attached
         end
 
         def start(example_count)
@@ -123,7 +121,7 @@ module Spec
           # Saves STDOUT, STDERR because bugs in RSpec/formatter can break it
           @sout, @serr = copy_stdout_stderr
 
-          debug_log("Starting..")
+          debug_log('Starting..')
         end
 
         # For RSpec < 1.1
@@ -146,7 +144,7 @@ module Spec
 
           desc = if rspec_2? && !ex_group_finished_event_supported?
                    # temporary work around for rspec 2.0 < 2.0.0.beta22
-                   example_group.ancestors.reverse.inject("") { |name, group| name + " " + group.description.strip }
+                   example_group.ancestors.reverse.inject('') { |name, group| "#{name} #{group.description.strip}" }
                  else
                    # rspec 1.x && >= 2.0.0.beta22
                    example_group.description
@@ -178,9 +176,8 @@ module Spec
         # TODO: events branch
         def example_started(example)
           # Due to rspec 2.1.0 regression
-          if rspec_2? || rspec_1_2_0?
-            return
-          end
+          return if rspec_2? || rspec_1_2_0?
+
           # Rspec < 2.1.0
           report_example_started(example)
         end
@@ -229,7 +226,7 @@ module Spec
           if get_data_from_storage(example).nil?
             #TODO: #638 - See http://rspec.lighthouseapp.com/projects/5645-rspec/tickets/638
             desc = example_description(example)
-            if desc == "after(:all)" || desc == "before(:all)"
+            if desc == 'after(:all)' || desc == 'before(:all)'
               @setup_failed = true
               example_started(example)
             end
@@ -265,7 +262,7 @@ module Spec
 
           message = if failure.exception.nil?
                       # for unknown failure
-                      "[Without Exception]";
+                      '[Without Exception]';
                     elsif (failure.expectation_not_met? || failure.pending_fixed?)
                       # for expectation error (Spec::Expectations::ExpectationNotMetError)
                       # and
@@ -297,7 +294,8 @@ module Spec
         end
 
         def calc_backtrace(exception, example)
-          return "" if exception.nil?
+          return '' if exception.nil?
+
           if rspec_2? && respond_to?(:format_backtrace) && self.class.instance_method(:format_backtrace).arity == 2
             format_backtrace(exception.backtrace, example).join("\n")
           else
@@ -374,15 +372,15 @@ module Spec
 #  4 args - rspec < 2.0
 #  0 args - rspec >= 2.0
         def dump_summary(duration = @duration,
-            example_count = @example_count,
-            failure_count = failed_examples().length,
-            pending_count = pending_examples().length)
+                         example_count = @example_count,
+                         failure_count = failed_examples.length,
+                         pending_count = pending_examples.length)
 
           # Repairs stdout and stderr just in case
           repair_process_output
 
           if dry_run?
-            totals = "This was a dry-run"
+            totals = 'This was a dry-run'
           else
             totals = "#{example_count} example#{'s' unless example_count == 1}, #{failure_count} failure#{'s' unless failure_count == 1}, #{example_count - failure_count - pending_count} passed"
             totals << ", #{pending_count} pending" if pending_count > 0
@@ -414,11 +412,11 @@ module Spec
           end
 
           # finishing
-          @@RUNNING_EXAMPLES_STORAGE.clear()
+          @@RUNNING_EXAMPLES_STORAGE.clear
 
-          debug_log("Summary finished.")
+          debug_log('Summary finished.')
         end
-        
+
         # Report the used seed
         def seed(number)
           log("Randomized with seed #{number}")
@@ -440,35 +438,29 @@ module Spec
           if @ex_group_finished_event_supported.nil?
             methods = self.class.superclass.instance_methods
             # Holy shit!!! ----> in ruby 1.8.x "instance_methods" returns collection of string and in 1.9.x collection of symbols!
-            @ex_group_finished_event_supported = methods.include?("example_group_finished") || methods.include?(:example_group_finished)
+            @ex_group_finished_event_supported = methods.include?('example_group_finished') || methods.include?(:example_group_finished)
           end
           @ex_group_finished_event_supported
         end
 
         def gather_unfinished_examples_name
-          if @@RUNNING_EXAMPLES_STORAGE.empty?
-            return ""
-          end
+          return '' if @@RUNNING_EXAMPLES_STORAGE.empty?
 
           msg = "Following examples weren't finished:"
           count = 1
-          @@RUNNING_EXAMPLES_STORAGE.each { |key, value|
+          @@RUNNING_EXAMPLES_STORAGE.each do |key, value|
             msg << "\n  #{count}. Example : '#{value.full_name}'"
             sout_str, serr_str = get_redirected_stdout_stderr_from_files(value.stdout_file_new, value.stderr_file_new)
-            unless sout_str.empty?
-              msg << "\n[Example Output]:\n#{sout_str}"
-            end
-            unless serr_str.empty?
-              msg << "\n[Example Error Output]:\n#{serr_str}"
-            end
+            msg << "\n[Example Output]:\n#{sout_str}" unless sout_str.empty?
+            msg << "\n[Example Error Output]:\n#{serr_str}" unless serr_str.empty?
 
             count += 1
-          }
+          end
           msg
         end
 
         def example_description(example)
-          example.description || "<noname>"
+          example.description || '<noname>'
         end
 
         # Due to rspec 2.1.0 regression we had to report fake started event in pass/finish/fail/pendings events
@@ -486,38 +478,38 @@ module Spec
 
           # Start capturing...
           std_files = capture_output_start_external
-          started_at_ms = rspec_2? ?
-              get_time_in_ms(example.execution_result[:started_at]) :
-              get_current_time_in_ms
+          started_at_ms = if rspec_2?
+                            get_time_in_ms(example.execution_result[:started_at])
+                          else
+                            get_current_time_in_ms
+                          end
 
-          debug_log("Output capturing started.")
+          debug_log('Output capturing started.')
 
           put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, started_at_ms, *std_files))
         end
 
         # Repairs SDOUT, STDERR from saved data
         def repair_process_output
-          if !@sout.nil? && !@serr.nil?
-            @sout.flush
-            @serr.flush
-            reopen_stdout_stderr(@sout, @serr)
-          end
+          return unless !@sout.nil? && !@serr.nil?
+
+          @sout.flush
+          @serr.flush
+          reopen_stdout_stderr(@sout, @serr)
         end
 
         def dry_run?
-          (@options && (@options.dry_run)) ? true : false
+          @options&.dry_run ? true : false
         end
 
         # Refactored initialize method. Is used for support rspec API < 1.1 and >= 1.1.
         # spec_location_info : "$PATH:$LINE_NUM"
         def my_add_example_group(group_desc, example_group = nil)
           # If "group finished" API isn't available, let's close the previous block
-          if !rspec_2? || !ex_group_finished_event_supported?
-            close_example_group
-          end
+          close_example_group if !rspec_2? || !ex_group_finished_event_supported?
 
           # New block starts.
-          @groups_stack << "#{group_desc}"
+          @groups_stack << group_desc
 
           description = @groups_stack.last
           debug_log("Adding example group(behaviour)...: [#{description}]...")
@@ -527,9 +519,11 @@ module Spec
 
         def close_test_block(example)
           example_data = remove_data_from_storage(example)
-          finished_at_ms = rspec_2? ?
-              get_time_in_ms(example.execution_result[:finished_at]) :
-              get_current_time_in_ms
+          finished_at_ms = if rspec_2?
+                             get_time_in_ms(example.execution_result[:finished_at])
+                           else
+                             get_current_time_in_ms
+                           end
           duration = finished_at_ms - example_data.start_time_in_ms
 
           running_example_full_name = example_data.full_name
@@ -560,8 +554,8 @@ module Spec
           example_data = get_data_from_storage(example)
           running_example_full_name = example_data.full_name
 
-          stdout_string, stderr_string = capture_output_end_external(*example_data.get_std_files)
-          debug_log("Example capturing was stopped.")
+          stdout_string, stderr_string = capture_output_end_external(*example_data.std_files)
+          debug_log('Example capturing was stopped.')
 
           debug_log("My stdOut: [#{stdout_string}]")
           if stdout_string && !stdout_string.empty?
@@ -590,12 +584,12 @@ module Spec
         # We doesn't support concurrent example groups executing
         def assert_example_group_valid(group_description)
           current_group_description = @groups_stack.last
-          if group_description != current_group_description
-            msg = "Example group(behaviour) [#{group_description}] doesn't correspond to current running example group [#{ current_group_description}]!"
-            debug_log(msg)
+          return unless group_description != current_group_description
 
-            raise ::Rake::TeamCity::InnerException, msg, caller
-          end
+          msg = "Example group(behaviour) [#{group_description}] doesn't correspond to current running example group [#{current_group_description}]!"
+          debug_log(msg)
+
+          raise ::Rake::TeamCity::InnerException, msg, caller
         end
 
         ######################################################
@@ -607,7 +601,7 @@ module Spec
 
           excep_data = [msg, caller]
           if raise_now
-            @@RUNNING_EXAMPLES_STORAGE.clear()
+            @@RUNNING_EXAMPLES_STORAGE.clear
             raise ::Rake::TeamCity::InnerException, *excep_data
           end
           TEAMCITY_FORMATTER_INTERNAL_ERRORS << excep_data
@@ -631,19 +625,14 @@ module Spec
 
         def rspec_1_2_0?
           ::Spec::VERSION::MAJOR == 1 &&
-              ::Spec::VERSION::MINOR == 2 &&
-              ::Spec::VERSION::TINY == 0
+            ::Spec::VERSION::MINOR == 2 &&
+            ::Spec::VERSION::TINY == 0
         end
 
         ######################################################
         ######################################################
         class RunningExampleData
-          attr_reader :full_name # full task name, example name in build log
-          attr_reader :start_time_in_ms # start time of example
-          attr_reader :stdout_file_old # before capture
-          attr_reader :stderr_file_old # before capture
-          attr_reader :stdout_file_new #current capturing storage
-          attr_reader :stderr_file_new # current capturing storage
+          attr_reader :full_name, :start_time_in_ms, :stdout_file_old, :stderr_file_old, :stdout_file_new, :stderr_file_new
 
           def initialize(full_name, start_time_in_ms, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
             @full_name = full_name
@@ -654,8 +643,8 @@ module Spec
             @stderr_file_new = stderr_file_new
           end
 
-          def get_std_files
-            return @stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new
+          def std_files
+            [@stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new]
           end
         end
       end
@@ -663,27 +652,26 @@ module Spec
   end
 end
 end
+
 def tc_rspec_do_close
-  if ::Spec::Runner::Formatter::TeamcityFormatter.closed?
-    return
-  end
+  return if ::Spec::Runner::Formatter::TeamcityFormatter.closed?
 
   ::Spec::Runner::Formatter::TeamcityFormatter.close
 
-  SPEC_FORMATTER_LOG.log_msg("spec formatter.rb: Finished")
+  SPEC_FORMATTER_LOG.log_msg('spec formatter.rb: Finished')
   SPEC_FORMATTER_LOG.close
 
-  unless  Spec::Runner::Formatter::TeamcityFormatter::TEAMCITY_FORMATTER_INTERNAL_ERRORS.empty?
-    several_exc = Spec::Runner::Formatter::TeamcityFormatter::TEAMCITY_FORMATTER_INTERNAL_ERRORS.length > 1
-    excep_data = Spec::Runner::Formatter::TeamcityFormatter::TEAMCITY_FORMATTER_INTERNAL_ERRORS[0]
+  return if Spec::Runner::Formatter::TeamcityFormatter::TEAMCITY_FORMATTER_INTERNAL_ERRORS.empty?
 
-    common_msg = (several_exc ? "Several exceptions have occured. First exception:\n" : "") + excep_data[0] + "\n"
-    common_backtrace = excep_data[1]
+  several_exc = Spec::Runner::Formatter::TeamcityFormatter::TEAMCITY_FORMATTER_INTERNAL_ERRORS.length > 1
+  excep_data = Spec::Runner::Formatter::TeamcityFormatter::TEAMCITY_FORMATTER_INTERNAL_ERRORS[0]
 
-    raise ::Rake::TeamCity::InnerException, common_msg, common_backtrace
-  end
+  common_msg = "#{several_exc ? "Several exceptions have occured. First exception:\n" : ''}#{excep_data[0]}\n"
+  common_backtrace = excep_data[1]
+
+  raise ::Rake::TeamCity::InnerException, common_msg, common_backtrace
 end
 
 at_exit do
-  tc_rspec_do_close()
+  tc_rspec_do_close
 end
