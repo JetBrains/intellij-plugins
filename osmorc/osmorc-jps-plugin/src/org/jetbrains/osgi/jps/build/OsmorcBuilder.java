@@ -29,18 +29,14 @@ public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuil
   }
 
   @Override
-  public ExitCode buildTarget(@NotNull OsmorcBuildTarget target,
-                              @NotNull DirtyFilesHolder<BuildRootDescriptor, OsmorcBuildTarget> holder,
-                              @NotNull BuildOutputConsumer outputConsumer,
-                              @NotNull CompileContext context) throws IOException {
-    if ( target.getExtension().isAlwaysRebuildBundleJar() ||
-         JavaBuilderUtil.isForcedRecompilationAllJavaModules(context) ||
-         holder.hasDirtyFiles() ||
-         holder.hasRemovedFiles()) {
-
+  public void build(@NotNull OsmorcBuildTarget target,
+                    @NotNull DirtyFilesHolder<BuildRootDescriptor, OsmorcBuildTarget> holder,
+                    @NotNull BuildOutputConsumer outputConsumer,
+                    @NotNull CompileContext context) throws IOException {
+    if (target.getExtension().isAlwaysRebuildBundleJar() ||
+        JavaBuilderUtil.isForcedRecompilationAllJavaModules(context) ||
+        holder.hasDirtyFiles() || holder.hasRemovedFiles()) {
       new OsgiBuildSession().build(target, context);
-      return ExitCode.OK;
     }
-    return ExitCode.NOTHING_DONE;
   }
 }

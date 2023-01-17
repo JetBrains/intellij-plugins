@@ -80,13 +80,13 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   }
 
   @Override
-  public ExitCode buildTarget(@NotNull final FlexBuildTarget buildTarget,
-                              @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexBuildTarget> holder,
-                              @NotNull final BuildOutputConsumer outputConsumer,
-                              @NotNull final CompileContext context) throws ProjectBuildException, IOException {
+  public void build(@NotNull final FlexBuildTarget buildTarget,
+                    @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexBuildTarget> holder,
+                    @NotNull final BuildOutputConsumer outputConsumer,
+                    @NotNull final CompileContext context) throws ProjectBuildException, IOException {
     final Collection<String> dirtyFilePaths = new ArrayList<>();
 
-    holder.processDirtyFiles(new FileProcessor<>() {
+    holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexBuildTarget>() {
       @Override
       public boolean apply(final FlexBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
         assert target == buildTarget;
@@ -125,18 +125,14 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
         }
 
         if (outputFilesExist) {
-          return ExitCode.NOTHING_DONE;
+          return;
         }
       }
       else if (mainBC.getNature().isApp() && isOnlyWrapperFilesDirty(mainBC, dirtyFilePaths)) {
         LOG.debug("only wrapper files dirty");
         FlexBuilderUtils.performPostCompileActions(context, mainBC, dirtyFilePaths, outputConsumer);
-        return ExitCode.OK;
+        return;
       }
-    }
-
-    if (bcsToCompile.isEmpty()) {
-      return ExitCode.NOTHING_DONE;
     }
 
     for (JpsFlexBuildConfiguration bc : bcsToCompile) {
@@ -163,10 +159,9 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
           context.processMessage(
             new CompilerMessage(FlexBuilderUtils.getCompilerName(bc), BuildMessage.Kind.INFO,
                                 FlexCommonBundle.message("compilation.cancelled")));
-          return ExitCode.OK;
+          return;
       }
     }
-    return ExitCode.OK;
   }
 
   /**
