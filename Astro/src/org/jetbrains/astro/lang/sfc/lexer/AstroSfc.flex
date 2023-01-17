@@ -19,10 +19,20 @@ import static com.intellij.util.ArrayUtil.*;
 
 %unicode
 
-%{
+%ctorarg boolean highlightMode
+%ctorarg boolean jsDocTypesMode
 
-    public _AstroSfcLexer() {
-      this((java.io.Reader)null);
+%init{
+  isHighlightModeOn = highlightMode;
+  isJsDocTypesModeOn = jsDocTypesMode;
+%init}
+
+%{
+    private final boolean isHighlightModeOn;
+    private final boolean isJsDocTypesModeOn;
+
+    public _AstroSfcLexer(boolean highlightMode, boolean jsDocTypesMode) {
+      this((java.io.Reader)null, highlightMode, jsDocTypesMode);
     }
 
     private boolean inBuffer(@Nullable String text, int offset) {
@@ -612,15 +622,15 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         return XmlTokenType.XML_NAME;
       }
   {WHITE_SPACE_CHARS} {
+        yypushback(yylength());
         yybegin(BEFORE_TAG_ATTRIBUTES);
-        return XmlTokenType.XML_WHITE_SPACE;
       }
 }
 
 <BEFORE_TAG_ATTRIBUTES>
   {WHITE_SPACE_CHARS} {
         yybegin(TAG_ATTRIBUTES);
-        return XmlTokenType.XML_WHITE_SPACE;
+        return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE;
       }
 
 <TAG_ATTRIBUTES> {
@@ -641,13 +651,13 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         return XmlTokenType.XML_NAME;
       }
   {WHITE_SPACE_CHARS} {
-        return XmlTokenType.XML_WHITE_SPACE;
+        return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE;
       }
 }
 
 <TAG_ATTRIBUTES_POST_SHORTHAND> {
   [/=>] { yypushback(1); yybegin(TAG_ATTRIBUTES); }
-  {WHITE_SPACE_CHARS} { yybegin(TAG_ATTRIBUTES); return XmlTokenType.XML_WHITE_SPACE; }
+  {WHITE_SPACE_CHARS} { yybegin(TAG_ATTRIBUTES); return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE; }
   // This stuff is actually concatenated with the shorthand attribute contents,
   // but I think it's better to just show bad character here
   [^] {
@@ -687,11 +697,13 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 }
 
 <PROCESSING_INSTRUCTION> {
+  {WHITE_SPACE_CHARS}    { return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE;}
   "?"? ">"               { yybegin(HTML_INITIAL);return XmlTokenType.XML_PI_END; }
   ([^\?\>] | (\?[^\>]))+ { return XmlTokenType.XML_PI_TARGET; }
 }
 
 <DOC_TYPE> {
+  {WHITE_SPACE_CHARS} { return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE; }
   {HTML}      { return XmlTokenType.XML_NAME; }
   {PUBLIC}    { return XmlTokenType.XML_DOCTYPE_PUBLIC; }
   {DTD_REF}   { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
@@ -792,7 +804,8 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         } else {
           readUntil(false, '\'', '\r', '\n');
         }
-        var result = finishReadString(JSTokenTypes.STRING_LITERAL);
+        var result = finishReadString(
+          isHighlightModeOn ? JSTokenTypes.SINGLE_QUOTE_STRING_LITERAL : JSTokenTypes.STRING_LITERAL);
         if (result != null) return result;
       }
   "\"" {
@@ -1017,7 +1030,13 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
       }
 
 <EXPRESSION_INITIAL,DIV_OR_GT,AFTER_DOT,AFTER_ELVIS> {
-    {PRIVATE_IDENTIFIER} { yybegin(DIV_OR_GT); return JSTokenTypes.PRIVATE_IDENTIFIER; }
+    {PRIVATE_IDENTIFIER} {
+        if (isJsDocTypesModeOn) {
+          yypushback(yylength()-1); return JSTokenTypes.SHARP; // SHARP delimited reference for JSDoc
+        } else {
+          yybegin(DIV_OR_GT); return JSTokenTypes.PRIVATE_IDENTIFIER;
+        }
+      }
     {IDENTIFIER}         { yybegin(DIV_OR_GT); return JSTokenTypes.IDENTIFIER; }
 }
 

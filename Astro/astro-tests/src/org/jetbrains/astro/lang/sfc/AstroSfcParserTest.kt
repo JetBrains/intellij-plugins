@@ -47,7 +47,6 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.psi.stubs.StubElementTypeHolderEP
 import com.intellij.util.ObjectUtils
-import org.jetbrains.astro.lang.sfc.lexer.AstroSfcEmbeddedContentSupport
 import org.jetbrains.astro.lang.sfc.parser.AstroSfcParserDefinition
 
 class AstroSfcParserTest : HtmlParsingTest("", "astro",
@@ -405,7 +404,7 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
 
     project.registerService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
 
-    HtmlEmbeddedContentSupport.register(application, testRootDisposable, AstroSfcEmbeddedContentSupport::class.java,
+    HtmlEmbeddedContentSupport.register(application, testRootDisposable,
                                         CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java)
 
     registerExtensionPoint(StubElementTypeHolderEP.EP_NAME, StubElementTypeHolderEP::class.java)

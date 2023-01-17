@@ -28,7 +28,6 @@
     <fileType name="Astro" extensions="astro" language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroSfcFileType"
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.parser.AstroSfcParserDefinition"/>
-    <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.sfc.lexer.AstroSfcEmbeddedContentSupport"/>
     <lang.syntaxHighlighterFactory language="Astro SFC"
                                    implementationClass="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcHighlighterFactory"/>
     <colorSettingsPage implementation="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcColorsAndFontsPage"/>

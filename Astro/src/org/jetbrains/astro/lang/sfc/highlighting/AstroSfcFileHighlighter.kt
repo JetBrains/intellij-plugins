@@ -15,7 +15,6 @@ import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.map2Array
 import org.jetbrains.astro.lang.sfc.AstroSfcLanguage
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes
-import org.jetbrains.astro.lang.typescript.AstroFrontmatterHighlighterToken
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 

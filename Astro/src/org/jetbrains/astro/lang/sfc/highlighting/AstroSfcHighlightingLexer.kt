@@ -1,6 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.astro.lang.sfc.highlighting
 
+import com.intellij.lang.javascript.JSFlexAdapter
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lexer.FlexAdapter
 import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.Lexer
@@ -11,16 +13,24 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcLexerImpl
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcLexerImpl.Companion.HAS_NON_RESTARTABLE_STATE
+import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes
 import org.jetbrains.astro.lang.sfc.lexer._AstroSfcLexer
 
 class AstroSfcHighlightingLexer(styleFileType: FileType?)
-  : HtmlHighlightingLexer(AstroSfcHighlightingMergingLexer(AstroSfcLexerImpl.AstroFlexAdapter()), true, styleFileType) {
+  : HtmlHighlightingLexer(AstroSfcHighlightingMergingLexer(AstroSfcLexerImpl.AstroFlexAdapter(true, false)), true, styleFileType) {
+
+  private var frontmatterScriptLexer: Lexer? = null
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     if (initialState and HAS_NON_RESTARTABLE_STATE != 0) {
       thisLogger().error(IllegalStateException("Do not reset Astro Lexer to a non-restartable state"))
     }
+    frontmatterScriptLexer = null
     super.start(buffer, startOffset, endOffset, initialState)
+  }
+
+  override fun getState(): Int {
+    return super.getState() or (if (frontmatterScriptLexer != null) HAS_NON_RESTARTABLE_STATE else 0)
   }
 
   override fun isRestartableState(state: Int): Boolean {
@@ -36,42 +46,38 @@ class AstroSfcHighlightingLexer(styleFileType: FileType?)
     return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), AstroSfcLexerImpl.TAG_TOKENS)
   }
 
-  override fun getTokenType(): IElementType? {
-    val tokenType = super.getTokenType()
-    /* val state = state
-     // we need to convert attribute names according to their function
-     if (tokenType === XmlTokenType.XML_NAME && state and BASE_STATE_MASK == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
-       val info = Angular2AttributeNameParser.parse(tokenText)
-       if (info.type != Angular2AttributeType.REGULAR
-           && Angular2HtmlEmbeddedContentSupport.Holder.NG_EL_ATTRIBUTES.contains(info.type)) {
-         return info.type.elementType
-       }
-     }
-     else if (tokenType != null && Angular2HtmlMergingLexer.isLexerWithinExpansionForm(state)) {
-       if (tokenType === XmlTokenType.TAG_WHITE_SPACE
-           || tokenType === XmlTokenType.XML_REAL_WHITE_SPACE
-           || tokenType === JSTokenTypes.IDENTIFIER
-           || tokenType === XmlTokenType.XML_DATA_CHARACTERS) {
-         return EXPANSION_FORM_CONTENT
-       }
-       else if (tokenType === XmlTokenType.XML_COMMA) {
-         return EXPANSION_FORM_COMMA
-       }
-     }
-     else if ((tokenType === XmlTokenType.TAG_WHITE_SPACE && Angular2HtmlMergingLexer.isLexerWithinInterpolation(state))
-              || (tokenType === XmlTokenType.XML_WHITE_SPACE && embeddedLexer is JavaScriptHighlightingLexer)) {
-       return EXPRESSION_WHITE_SPACE
-     }
-     else if (tokenType === XmlTokenType.TAG_WHITE_SPACE
-              && (Angular2HtmlMergingLexer.getBaseLexerState(state) == 0
-                  || Angular2HtmlMergingLexer.isLexerWithinUnterminatedInterpolation(state))) {
-       return XmlTokenType.XML_REAL_WHITE_SPACE
-     }
-     else if (tokenType === JSTokenTypes.STRING_LITERAL_PART) {
-       return JSTokenTypes.STRING_LITERAL
-     }*/
-    return tokenType
+  override fun advance() {
+    frontmatterScriptLexer?.let {
+      it.advance()
+      if (it.tokenType == null) {
+        frontmatterScriptLexer = null
+      }
+    }
+
+    if (frontmatterScriptLexer == null) {
+      super.advance()
+      if (myDelegate.tokenType === AstroSfcTokenTypes.FRONTMATTER_SCRIPT) {
+        frontmatterScriptLexer = JSFlexAdapter(JavaScriptSupportLoader.TYPESCRIPT.optionHolder, true, false)
+          .also {
+            it.start(myDelegate.bufferSequence, myDelegate.tokenStart, myDelegate.tokenEnd)
+          }
+      }
+    }
   }
+
+  override fun getTokenType(): IElementType? {
+    return frontmatterScriptLexer?.tokenType?.let { AstroFrontmatterHighlighterToken[it] }
+           ?: super.getTokenType()
+  }
+
+  override fun getTokenStart(): Int {
+    return frontmatterScriptLexer?.tokenStart ?: super.getTokenStart()
+  }
+
+  override fun getTokenEnd(): Int {
+    return frontmatterScriptLexer?.tokenEnd ?: super.getTokenEnd()
+  }
+
 
   private class AstroSfcHighlightingMergingLexer(original: FlexAdapter) : AstroSfcLexerImpl.AstroMergingLexer(original) {
     override fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {

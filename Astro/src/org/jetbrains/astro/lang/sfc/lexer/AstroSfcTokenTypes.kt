@@ -2,7 +2,6 @@
 package org.jetbrains.astro.lang.sfc.lexer
 
 import com.intellij.psi.xml.XmlTokenType
-import org.jetbrains.astro.lang.typescript.AstroFrontmatterScriptTokenType
 
 interface AstroSfcTokenTypes : XmlTokenType {
   companion object {
@@ -11,7 +10,7 @@ interface AstroSfcTokenTypes : XmlTokenType {
     val FRONTMATTER_SEPARATOR = AstroSfcTokenType("ASTRO:FRONTMATTER_SEPARATOR")
 
     @JvmField
-    val FRONTMATTER_SCRIPT = AstroFrontmatterScriptTokenType
+    val FRONTMATTER_SCRIPT = AstroSfcTokenType("ASTRO:FRONTMATTER_SCRIPT")
 
   }
 }

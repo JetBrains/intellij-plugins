@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes.Companion.FRONTMATTER_SCRIPT
 
 class AstroSfcLexerImpl(override val project: Project?)
-  : HtmlLexer(AstroMergingLexer(AstroFlexAdapter()), true), AstroSfcLexer {
+  : HtmlLexer(AstroMergingLexer(AstroFlexAdapter(false, false)), true), AstroSfcLexer {
 
   private var frontmatterScriptLexer: Lexer? = null
 
@@ -23,6 +23,7 @@ class AstroSfcLexerImpl(override val project: Project?)
     if (initialState and HAS_NON_RESTARTABLE_STATE != 0) {
       thisLogger().error(IllegalStateException("Do not reset Astro Lexer to a non-restartable state"))
     }
+    frontmatterScriptLexer = null
     super.start(buffer, startOffset, endOffset, initialState)
   }
 
@@ -85,7 +86,8 @@ class AstroSfcLexerImpl(override val project: Project?)
 
   }
 
-  open class AstroFlexAdapter : FlexAdapter(_AstroSfcLexer()) {
+  open class AstroFlexAdapter(highlightMode: Boolean, jsDocTypesMode: Boolean)
+    : FlexAdapter(_AstroSfcLexer(highlightMode, jsDocTypesMode)) {
 
     private val flex get() = (super.getFlex() as _AstroSfcLexer)
 

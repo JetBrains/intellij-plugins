@@ -1,6 +1,6 @@
 XML_START_TAG_START ('<')
 XML_TAG_NAME ('button')
-XML_WHITE_SPACE (' ')
+TAG_WHITE_SPACE (' ')
 XML_NAME ('data-confetti-button')
 XML_TAG_END ('>')
 XML_DATA_CHARACTERS ('Celebrate!')
