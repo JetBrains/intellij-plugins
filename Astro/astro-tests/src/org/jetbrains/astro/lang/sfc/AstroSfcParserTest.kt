@@ -391,6 +391,14 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testAutoClosingTags() {
+    doTestAstro("""  
+      <main>
+        <p>Foo
+        {<p>Bar
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 

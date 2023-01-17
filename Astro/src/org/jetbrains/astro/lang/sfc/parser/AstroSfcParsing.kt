@@ -119,6 +119,13 @@ class AstroSfcParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     return tagLevel() == 0 || peekTagName() != EXPRESSION_MARKER
   }
 
+  override fun childTerminatesParent(childName: String?, parentName: String?, tagLevel: Int): Boolean? {
+    return if (parentName == EXPRESSION_MARKER)
+      false
+    else
+      super.childTerminatesParent(childName, parentName, tagLevel)
+  }
+
   override fun parseOpenTagName(): String {
     val result: String
     if (token() === XmlTokenType.XML_NAME) {
