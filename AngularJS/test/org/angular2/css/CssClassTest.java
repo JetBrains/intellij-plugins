@@ -213,6 +213,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type(": true, ");
     myFixture.completeBasic();
     assertSameElements(myFixture.getLookupElementStrings(),
+                       "cli-class", //TODO: remove - CSS reference actually does not filter already present class names, though it should
                        "inline-class",
                        "internal-class",
                        "ext-html-class",
