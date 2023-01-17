@@ -372,6 +372,36 @@ open class AstroSfcLexerTest : LexerTestCase() {
     |</li>
   """)
 
+  fun testAutoClosing() = doTest("""
+    |{
+    | <p>Foo
+    | <p>Bar
+    | </>
+    | + 12
+    |}
+  """)
+
+  fun testAutoClosingNested() = doTest("""
+    |{
+    | <p>Foo
+    | {
+    |   <p>FooBar
+    |   <p>Bar
+    |   </>
+    |   + 12
+    | }
+    | <p>Foo2
+    | </>
+    | +12
+    |}
+  """)
+
+  fun testEmptyTags() = doTest("""
+    |{
+    | <img> + 12
+    |}
+  """)
+
   override fun createLexer(): Lexer = AstroSfcLexerImpl(fixture.project)
 
   override fun getDirPath() = "lang/sfc/lexer"

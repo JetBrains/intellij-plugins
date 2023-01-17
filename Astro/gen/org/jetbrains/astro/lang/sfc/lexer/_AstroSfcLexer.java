@@ -2,6 +2,7 @@
 
 package org.jetbrains.astro.lang.sfc.lexer;
 
+import com.intellij.lang.html.HtmlParsing;
 import com.intellij.lang.javascript.JSLexerUtil;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lexer.FlexLexer;
@@ -9,6 +10,9 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.Stack;
+import com.intellij.util.text.CharSequenceSubSequence;
+import com.intellij.xml.util.HtmlUtil;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1476,9 +1480,10 @@ public class _AstroSfcLexer implements FlexLexer {
     private static final int KIND_END_TAG = 10;
 
     public IntArrayList expressionStack = new IntArrayList(15);
+    public Stack<String> elementNameStack = new Stack<>();
 
     public boolean isRestartable() {
-      return expressionStack.isEmpty();
+      return expressionStack.isEmpty() && elementNameStack.isEmpty();
     }
 
     private boolean shouldCreateJSXmlComment() {
@@ -1598,8 +1603,13 @@ public class _AstroSfcLexer implements FlexLexer {
         return;
       }
       var tagKind = expressionStack.popInt();
+      var tagName = elementNameStack.pop();
+      if (HtmlUtil.isSingleHtmlTagL(tagName))
+        isEmpty = true;
       if (tagKind == KIND_START_TAG && !isEmpty) {
+        closeTagsOnTagOpen(tagName);
         expressionStack.push(KIND_HTML_CONTENT);
+        elementNameStack.push(tagName);
         yybegin(HTML_INITIAL);
       } else if (tagKind == KIND_END_TAG || (tagKind == KIND_START_TAG && isEmpty)) {
         if (expressionStack.isEmpty()) {
@@ -1629,6 +1639,28 @@ public class _AstroSfcLexer implements FlexLexer {
       } else {
         throw new IllegalStateException("Wrong kind on stack: " + tagKind);
       }
+    }
+
+    private void closeTagsOnTagOpen(String tagName) {
+      while (childTerminatesParentInStack(tagName)) {
+        expressionStack.popInt();
+        elementNameStack.pop();
+      }
+    }
+
+    private boolean childTerminatesParentInStack(String childName) {
+      int tagDepth = 0;
+      while (tagDepth < expressionStack.size() && expressionStack.peekInt(tagDepth) == KIND_HTML_CONTENT)
+        tagDepth++;
+      var stackSize = elementNameStack.size();
+      for (int i = 0; i < tagDepth && i < stackSize; i++) {
+        String parentName = elementNameStack.get(stackSize - 1 - i);
+        Boolean result = HtmlParsing.childTerminatesParent(childName, parentName);
+        if (result != null) {
+          return result;
+        }
+      }
+      return false;
     }
 
     private boolean canBeGenericArgumentList() throws IOException {
@@ -2032,8 +2064,9 @@ public class _AstroSfcLexer implements FlexLexer {
             // fall through
           case 243: break;
           case 18: 
-            { yybegin(BEFORE_TAG_ATTRIBUTES);
-        return XmlTokenType.XML_NAME;
+            { elementNameStack.push(yytext().toString());
+          yybegin(BEFORE_TAG_ATTRIBUTES);
+          return XmlTokenType.XML_NAME;
             } 
             // fall through
           case 244: break;

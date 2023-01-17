@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType.*
+import com.intellij.util.containers.Stack
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.jetbrains.astro.lang.sfc.lexer.AstroSfcTokenTypes.Companion.FRONTMATTER_SCRIPT
 
@@ -94,6 +95,7 @@ class AstroSfcLexerImpl(override val project: Project?, private val lexJsFragmen
 
     override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
       flex.expressionStack.clear()
+      flex.elementNameStack.clear()
       super.start(buffer, startOffset, endOffset, initialState and HAS_NON_RESTARTABLE_STATE.inv())
     }
 
@@ -102,17 +104,19 @@ class AstroSfcLexerImpl(override val project: Project?, private val lexJsFragmen
     }
 
     override fun getCurrentPosition(): LexerPosition {
-      return AstroFlexAdapterPosition(tokenStart, state, flex.expressionStack.clone())
+      return AstroFlexAdapterPosition(tokenStart, state, flex.expressionStack.clone(), Stack(flex.elementNameStack))
     }
 
     override fun restore(position: LexerPosition) {
       flex.expressionStack = (position as AstroFlexAdapterPosition).expressionStack.clone()
+      flex.elementNameStack = Stack(position.elementNameStack)
       super.start(bufferSequence, position.offset, bufferEnd, position.state and HAS_NON_RESTARTABLE_STATE.inv())
     }
 
     private class AstroFlexAdapterPosition(private val offset: Int,
                                            private val state: Int,
-                                           val expressionStack: IntArrayList) : LexerPosition {
+                                           val expressionStack: IntArrayList,
+                                           val elementNameStack: Stack<String>) : LexerPosition {
       override fun getOffset(): Int = offset
 
       override fun getState(): Int = state

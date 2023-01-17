@@ -391,11 +391,47 @@ class AstroSfcParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
-  fun testAutoClosingTags() {
+  fun testAutoClosingOverExpression() {
     doTestAstro("""  
       <main>
         <p>Foo
         {<p>Bar
+    """)
+  }
+
+  fun testAutoClosing() {
+    doTestAstro("""
+      {
+       <p>Foo
+       <p>Bar
+       </>
+       + 12
+      }
+    """)
+  }
+
+  fun testAutoClosingNested() {
+    doTestAstro("""
+      {
+       <p>Foo
+       {
+         <p>FooBar
+         <p>Bar
+         </>
+         + 12
+       }
+       <p>Foo2
+       </>
+       +12
+      }
+    """)
+  }
+
+  fun testEmptyTags() {
+    doTestAstro("""
+      {
+       <img> + 12
+      }
     """)
   }
 

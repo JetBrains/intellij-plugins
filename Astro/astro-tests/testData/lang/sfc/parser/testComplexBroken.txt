@@ -127,18 +127,18 @@ JSFile:test.astro
             PsiWhiteSpace(' ')
             XmlToken:XML_DATA_CHARACTERS('}')
             PsiWhiteSpace('\n   ')
-          PsiErrorElement:Element a is not closed
-            <empty list>
-      XmlToken:XML_END_TAG_START('</')
-      XmlToken:XML_NAME('p')
-      XmlToken:XML_TAG_END('>')
-    PsiWhiteSpace('\n ')
-    PsiErrorElement:Closing tag matches nothing
-      XmlToken:XML_END_TAG_START('</')
-      XmlToken:XML_NAME('a')
-      XmlToken:XML_TAG_END('>')
-    XmlText
-      PsiWhiteSpace('\n')
+          PsiErrorElement:Closing tag matches nothing
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('p')
+            XmlToken:XML_TAG_END('>')
+          PsiWhiteSpace('\n ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('a')
+          XmlToken:XML_TAG_END('>')
+        PsiErrorElement:} expected
+          <empty list>
+      XmlText
+        PsiWhiteSpace('\n')
     XmlToken:XML_END_TAG_START('</')
     XmlToken:XML_NAME('li')
     XmlToken:XML_TAG_END('>')
