@@ -90,8 +90,6 @@
 
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
 
-    <fileTypeStatisticProvider implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeStatisticProvider"/>
-
     <annotator language="yaml" implementationClass="com.intellij.aws.cloudformation.CloudFormationYamlAnnotator"/>
     <iconProvider implementation="com.intellij.aws.cloudformation.CloudFormationIconProvider"/>
     <colorSettingsPage implementation="com.intellij.aws.cloudformation.CloudFormationColorSettingsPage"/>
