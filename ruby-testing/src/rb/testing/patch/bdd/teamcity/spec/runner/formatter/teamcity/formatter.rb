@@ -36,6 +36,50 @@ else
 module Spec
   module Runner
     module Formatter
+
+      class RunningExampleData
+        attr_reader :id, :full_name, :start_time_in_ms, :stdout_file_old, :stderr_file_old, :stdout_file_new, :stderr_file_new
+
+        def initialize(id, full_name, start_time_in_ms, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
+          @id = id.to_s
+          @full_name = full_name.to_s
+          @start_time_in_ms = start_time_in_ms
+          @stdout_file_old = stdout_file_old
+          @stderr_file_old = stderr_file_old
+          @stdout_file_new = stdout_file_new
+          @stderr_file_new = stderr_file_new
+        end
+
+        def std_files
+          [@stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new]
+        end
+
+        def to_s
+          "RunningExampleData{#{@id}, #{@full_name}, #{@start_time_in_ms}, #{@stdout_file_old}, #{@stderr_file_old}, #{@stdout_file_new}, #{@stderr_file_new}}"
+        end
+
+        def inspect
+          to_s
+        end
+      end
+
+      class ExampleGroupData
+        attr_reader :id, :full_name
+
+        def initialize(id, full_name)
+          @id = id.to_s
+          @full_name = full_name.to_s
+        end
+
+        def to_s
+          "ExampleGroupData{#{@id}, #{@full_name}}"
+        end
+
+        def inspect
+          to_s
+        end
+      end
+
       class TeamcityFormatter < (RSPEC_VERSION_2 ? RSpec::Core::Formatters::BaseFormatter : Spec::Runner::Formatter::BaseFormatter)
         include ::Rake::TeamCity::StdCaptureHelper
         include ::Rake::TeamCity::RunnerUtils
@@ -45,6 +89,7 @@ module Spec
         RUNNER_ISNT_COMPATIBLE_MESSAGE = "TeamCity Rake Runner Plugin isn't compatible with this RSpec version.\n\n"
         RUNNER_RSPEC_FAILED = 'Failed to run RSpec..'
 
+        ROOT_GROUP_DATA = Spec::Runner::Formatter::ExampleGroupData.new('0', '[root]')
         TEAMCITY_FORMATTER_INTERNAL_ERRORS =[]
         @@reporter_closed = false
 
@@ -225,7 +270,7 @@ module Spec
 
           if get_data_from_storage(example).nil?
             #TODO: #638 - See http://rspec.lighthouseapp.com/projects/5645-rspec/tickets/638
-            desc = example_description(example)
+            desc = example_description(example).to_s
             if desc == 'after(:all)' || desc == 'before(:all)'
               @setup_failed = true
               example_started(example)
@@ -238,7 +283,6 @@ module Spec
 
           # example service data
           example_data = get_data_from_storage(example)
-          running_example_full_name = example_data.full_name
 
           # Failure message:
           if rspec_2?
@@ -282,13 +326,13 @@ module Spec
           #  #(full_failure_description += "\n\n    " + backtrace) if backtrace
           #end
 
-          debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}]")
+          debug_log("Example failing... [#{example_data}], Message:\n#{message} \n\nBackrace:\n#{backtrace}]")
 
           # Expectation failures will be shown as failures and other exceptions as Errors
           if failure.expectation_not_met?
-            log(@message_factory.create_test_failed(running_example_full_name, message, backtrace))
+            log(@message_factory.create_test_failed(example_data.full_name, message, backtrace, example_data.id))
           else
-            log(@message_factory.create_test_error(running_example_full_name, message, backtrace))
+            log(@message_factory.create_test_error(example_data.full_name, message, backtrace, example_data.id))
           end
           close_test_block(example)
         end
@@ -351,10 +395,10 @@ module Spec
 
           # example service data
           example_data = get_data_from_storage(example)
-          running_example_full_name = example_data.full_name
+          parent_group_data = peek_groups_stack
 
-          debug_log("Example pending... [#{@groups_stack.last}].[#{running_example_full_name}] - #{message}")
-          log(@message_factory.create_test_ignored(running_example_full_name, "Pending: #{message}"))
+          debug_log("Example pending... [#{parent_group_data}].[#{example_data}] - #{message}")
+          log(@message_factory.create_test_ignored(example_data.full_name, "Pending: #{message}", nil, example_data.id))
 
           close_test_block(example)
         end
@@ -463,18 +507,35 @@ module Spec
           example.description || '<noname>'
         end
 
+        def peek_groups_stack
+          @groups_stack.last || ROOT_GROUP_DATA
+        end
+
+        def pop_groups_stack
+          @groups_stack.pop || ROOT_GROUP_DATA
+        end
+
+        def push_groups_stack(group)
+          @groups_stack.push(group)
+          group
+        end
+
         # Due to rspec 2.1.0 regression we had to report fake started event in pass/finish/fail/pendings events
         # and ignore it in example_started event
         def report_example_started(example)
-          my_running_example_desc = example_description(example)
+          my_running_example_desc = example_description(example).to_s
           debug_log("example started [#{my_running_example_desc}]  #{example}")
 
-          current_group_description = @groups_stack.last
-          my_running_example_full_name = "#{current_group_description} #{my_running_example_desc}"
+          parent_group_data = peek_groups_stack
+          my_running_example_full_name = "#{parent_group_data.full_name} #{my_running_example_desc}"
 
           # Send open event
           debug_log("Example starting.. - full name = [#{my_running_example_full_name}], desc = [#{my_running_example_desc}]")
-          log(@message_factory.create_test_started(my_running_example_full_name, location_from_link(*extract_source_location_from_example(example))))
+          example_id = !example.nil? && example.respond_to?(:id) ? example.id : my_running_example_full_name
+          log(@message_factory.create_test_started(my_running_example_desc,
+                                                   location_from_link(*extract_source_location_from_example(example)),
+                                                   parent_group_data.id,
+                                                   example_id))
 
           # Start capturing...
           std_files = capture_output_start_external
@@ -486,7 +547,7 @@ module Spec
 
           debug_log('Output capturing started.')
 
-          put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, started_at_ms, *std_files))
+          put_data_to_storage(example, Spec::Runner::Formatter::RunningExampleData.new(example_id, my_running_example_full_name, started_at_ms, *std_files))
         end
 
         # Repairs SDOUT, STDERR from saved data
@@ -509,12 +570,15 @@ module Spec
           close_example_group if !rspec_2? || !ex_group_finished_event_supported?
 
           # New block starts.
-          @groups_stack << group_desc
+          parent_group_data = peek_groups_stack
+          started_group_id = !example_group.nil? && example_group.respond_to?(:id) ? example_group.id : group_desc
+          started_group_data = push_groups_stack(Spec::Runner::Formatter::ExampleGroupData.new(started_group_id, group_desc))
 
-          description = @groups_stack.last
-          debug_log("Adding example group(behaviour)...: [#{description}]...")
-          log(@message_factory.create_suite_started(description,
-                                                    location_from_link(*extract_source_location_from_group(example_group))))
+          debug_log("Adding example group(behaviour)...: [#{started_group_data}]...")
+          log(@message_factory.create_suite_started(started_group_data.full_name,
+                                                    location_from_link(*extract_source_location_from_group(example_group)),
+                                                    parent_group_data.id,
+                                                    started_group_data.id))
         end
 
         def close_test_block(example)
@@ -526,23 +590,23 @@ module Spec
                            end
           duration = finished_at_ms - example_data.start_time_in_ms
 
-          running_example_full_name = example_data.full_name
-
-          debug_log("Example finishing... full example name = [#{running_example_full_name}], duration = #{duration} ms")
+          debug_log("Example finishing... [#{example_data}], duration = #{duration} ms")
           diagnostic_info = (rspec_2? ? "rspec2 [#{::RSpec::Core::Version::STRING}]" : "rspec1") + ", f/s=(#{finished_at_ms}, #{example_data.start_time_in_ms}), duration=#{duration}, time.now=#{Time.now.to_s}" + (rspec_2? ? ", raw[:started_at]=#{example.execution_result[:started_at].to_s}, raw[:finished_at]=#{example.execution_result[:finished_at].to_s}, raw[:run_time]=#{example.execution_result[:run_time].to_s}" : "")
 
-          log(@message_factory.create_test_finished(running_example_full_name, duration, ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info))
+          log(@message_factory.create_test_finished(example_data.full_name,
+                                                    duration,
+                                                    ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info,
+                                                    example_data.id))
         end
 
         def close_example_group
-          # do nothing if it no groups were added before (e.g. 1.x api)
-          return if @groups_stack.empty?
-
           # get and remove
-          current_group_description = @groups_stack.pop
+          finished_group_data = pop_groups_stack
+          # do nothing if no groups were added before (e.g. 1.x api)
+          return if finished_group_data == ROOT_GROUP_DATA
 
-          debug_log("Closing example group(behaviour): [#{current_group_description}].")
-          log(@message_factory.create_suite_finished(current_group_description))
+          debug_log("Closing example group(behaviour): [#{finished_group_data}].")
+          log(@message_factory.create_suite_finished(finished_group_data.full_name, finished_group_data.id))
         end
 
         def debug_log(string)
@@ -552,18 +616,17 @@ module Spec
 
         def stop_capture_output_and_log_it(example)
           example_data = get_data_from_storage(example)
-          running_example_full_name = example_data.full_name
 
           stdout_string, stderr_string = capture_output_end_external(*example_data.std_files)
           debug_log('Example capturing was stopped.')
 
           debug_log("My stdOut: [#{stdout_string}]")
           if stdout_string && !stdout_string.empty?
-            log(@message_factory.create_test_output_message(running_example_full_name, true, stdout_string))
+            log(@message_factory.create_test_output_message(example_data.full_name, true, stdout_string, example_data.id))
           end
           debug_log("My stdErr: [#{stderr_string}]")
           if stderr_string && !stderr_string.empty?
-            log(@message_factory.create_test_output_message(running_example_full_name, false, stderr_string))
+            log(@message_factory.create_test_output_message(example_data.full_name, false, stderr_string, example_data.id))
           end
         end
 
@@ -583,10 +646,10 @@ module Spec
 
         # We doesn't support concurrent example groups executing
         def assert_example_group_valid(group_description)
-          current_group_description = @groups_stack.last
-          return unless group_description != current_group_description
+          parent_group_data = peek_groups_stack
+          return if group_description == parent_group_data.full_name
 
-          msg = "Example group(behaviour) [#{group_description}] doesn't correspond to current running example group [#{current_group_description}]!"
+          msg = "Example group(behaviour) [#{group_description}] doesn't correspond to current running example group [#{parent_group_data}]!"
           debug_log(msg)
 
           raise ::Rake::TeamCity::InnerException, msg, caller
@@ -627,25 +690,6 @@ module Spec
           ::Spec::VERSION::MAJOR == 1 &&
             ::Spec::VERSION::MINOR == 2 &&
             ::Spec::VERSION::TINY == 0
-        end
-
-        ######################################################
-        ######################################################
-        class RunningExampleData
-          attr_reader :full_name, :start_time_in_ms, :stdout_file_old, :stderr_file_old, :stdout_file_new, :stderr_file_new
-
-          def initialize(full_name, start_time_in_ms, stdout_file_old, stderr_file_old, stdout_file_new, stderr_file_new)
-            @full_name = full_name
-            @start_time_in_ms = start_time_in_ms
-            @stdout_file_old = stdout_file_old
-            @stderr_file_old = stderr_file_old
-            @stdout_file_new = stdout_file_new
-            @stderr_file_new = stderr_file_new
-          end
-
-          def std_files
-            [@stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new]
-          end
         end
       end
     end

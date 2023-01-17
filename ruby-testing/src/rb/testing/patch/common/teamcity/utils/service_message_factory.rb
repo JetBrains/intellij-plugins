@@ -90,10 +90,11 @@ module Rake
                        :nodeId => node_id
       end
 
-      def self.create_test_output_message(test_name, is_std_out, out_text)
+      def self.create_test_output_message(test_name, is_std_out, out_text, node_id = nil)
         create_message :message_name => "testStd#{is_std_out ? "Out" : "Err"}",
                        :name => test_name,
-                       :out => out_text
+                       :out => out_text,
+                       :nodeId => node_id
       end
 
       def self.create_test_failed(test_name, message, stacktrace, node_id = nil)
