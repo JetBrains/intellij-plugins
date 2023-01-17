@@ -9,6 +9,7 @@ import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptSupportLoader.ECMA_SCRIPT_6
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
@@ -38,7 +39,7 @@ class MdxJSParserDefinition : ECMA6ParserDefinition() {
 class MdxJSLanguageParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>,
   ES6StatementParser<*>,
   ES6FunctionParser<*>,
-  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(com.intellij.lang.javascript.JavaScriptSupportLoader.JSX_HARMONY, builder) {
+  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(ECMA_SCRIPT_6, builder) {
   init {
     myStatementParser = object : ES6StatementParser<MdxJSLanguageParser>(this) {
       override fun parseSourceElement() {
