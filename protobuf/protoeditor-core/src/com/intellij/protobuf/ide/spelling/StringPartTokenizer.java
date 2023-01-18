@@ -29,7 +29,7 @@ public class StringPartTokenizer extends Tokenizer<ProtoStringPart> {
   public static final StringPartTokenizer INSTANCE = new StringPartTokenizer();
 
   @Override
-  public void tokenize(@NotNull ProtoStringPart element, TokenConsumer consumer) {
+  public void tokenize(@NotNull ProtoStringPart element, @NotNull TokenConsumer consumer) {
     String parsed = element.getParsedString().toString();
     consumer.consumeToken(
         element, parsed, false, 0, TextRange.allOf(parsed), PlainTextSplitter.getInstance());

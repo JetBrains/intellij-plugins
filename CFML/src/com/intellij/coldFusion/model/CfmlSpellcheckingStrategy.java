@@ -45,7 +45,7 @@ public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
     if (element instanceof CfmlStringLiteralExpression) {
       return new Tokenizer() {
         @Override
-        public void tokenize(@NotNull final PsiElement element, TokenConsumer consumer) {
+        public void tokenize(@NotNull final PsiElement element, @NotNull TokenConsumer consumer) {
           consumer.consumeToken(element, new TextSplitter() {
             @Override
             public void split(@Nullable String text, @NotNull TextRange range, Consumer<TextRange> consumer) {
