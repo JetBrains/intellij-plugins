@@ -8,9 +8,6 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
-/**
- * @author Nadya Zabrodina
- */
 public class CfmlStorageStateTest extends CodeInsightFixtureTestCase {
   public void test10_5Compatibility() throws Throwable {
     String xml = """

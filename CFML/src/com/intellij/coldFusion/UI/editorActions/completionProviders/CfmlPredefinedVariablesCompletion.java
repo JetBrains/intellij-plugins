@@ -30,9 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-/**
- * @author Nadya Zabrodina
- */
 public class CfmlPredefinedVariablesCompletion extends CompletionProvider<CompletionParameters> {
   @Override
   protected void addCompletions(@NotNull CompletionParameters parameters,

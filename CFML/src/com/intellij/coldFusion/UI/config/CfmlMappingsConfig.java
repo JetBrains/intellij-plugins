@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author Nadya Zabrodina
- */
 @Tag("mapps")
 public class CfmlMappingsConfig implements Cloneable {
   @NotNull
