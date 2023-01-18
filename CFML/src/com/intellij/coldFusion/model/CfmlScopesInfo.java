@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public final class CfmlScopesInfo {
   private static final String[] ourTypeNames = {
     "application",

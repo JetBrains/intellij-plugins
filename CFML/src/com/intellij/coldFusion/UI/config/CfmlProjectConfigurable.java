@@ -22,9 +22,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
   private final Project myProject;

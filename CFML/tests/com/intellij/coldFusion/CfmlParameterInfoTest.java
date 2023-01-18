@@ -8,9 +8,6 @@ import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoCon
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
 import com.intellij.testFramework.utils.parameterInfo.MockUpdateParameterInfoContext;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlParameterInfoTest extends CfmlCodeInsightFixtureTestCase {
 
   public void testScriptFunction() {

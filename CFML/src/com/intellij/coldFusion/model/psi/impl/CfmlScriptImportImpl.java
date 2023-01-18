@@ -22,9 +22,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlScriptImportImpl extends CfmlCompositeElement implements CfmlImport {
   public CfmlScriptImportImpl(@NotNull ASTNode node) {
     super(node);

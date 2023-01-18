@@ -21,9 +21,6 @@ import com.intellij.psi.stubs.NamedStubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentStubImpl extends NamedStubBase<CfmlComponent> implements CfmlComponentStub {
   private final boolean myIsInterface;
   private final String mySuperClass;

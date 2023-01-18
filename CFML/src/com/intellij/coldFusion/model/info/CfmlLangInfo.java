@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlLangInfo {
   private final Project myProject;
   private Reference<CfmlLangDictionary> myCFDictionary;

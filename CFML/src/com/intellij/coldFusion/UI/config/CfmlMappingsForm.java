@@ -34,9 +34,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlMappingsForm {
   private JPanel myContentPanel;
   private JPanel myTablePanel;

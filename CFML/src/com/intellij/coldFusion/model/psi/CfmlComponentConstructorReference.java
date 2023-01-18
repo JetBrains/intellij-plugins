@@ -15,9 +15,6 @@
  */
 package com.intellij.coldFusion.model.psi;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentConstructorReference {
 }/*extends CfmlCompositeElement implements CfmlReference {
   CfmlComponentConstructorCall myParent;

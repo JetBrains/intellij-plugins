@@ -18,9 +18,6 @@ package com.intellij.coldFusion.model.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public interface CfmlImport extends PsiElement {
   boolean isImported(String componentName);
 

@@ -11,9 +11,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public abstract class CfmlStubElementType<S extends StubElement<?>, T extends CfmlPsiElement> extends IStubElementType<S, T> {
   public CfmlStubElementType(@NotNull @NonNls final String debugName, @Nullable final Language language) {
     super(debugName, CfmlLanguage.INSTANCE);

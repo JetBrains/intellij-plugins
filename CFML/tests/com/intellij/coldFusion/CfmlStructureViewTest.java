@@ -32,9 +32,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.Assert;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
   public void testScriptAndTagFunctions() {
     myFixture.configureByFile(getTestName(true) + ".test.cfc");

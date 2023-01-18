@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlResolveResult extends PsiElementResolveResult {
   public CfmlResolveResult(@NotNull PsiElement element) {
     super(element);

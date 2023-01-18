@@ -15,9 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlRenameTest extends CfmlCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {

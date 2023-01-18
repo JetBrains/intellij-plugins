@@ -39,9 +39,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 // TODO: correctly deal with intersecting mappings (or show error?)
 public class CfmlComponentReference extends CfmlCompositeElement implements CfmlReference, PlatformIcons {
   private PsiElement myParent = null;

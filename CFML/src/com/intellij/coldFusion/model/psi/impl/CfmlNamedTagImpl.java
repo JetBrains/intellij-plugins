@@ -9,9 +9,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlNamedTagImpl extends CfmlTagImpl implements PsiNameIdentifierOwner {
   public CfmlNamedTagImpl(ASTNode astNode) {
     super(astNode);

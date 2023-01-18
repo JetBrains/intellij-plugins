@@ -22,9 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
   public CfmlImportImpl(ASTNode astNode) {
     super(astNode);

@@ -17,9 +17,6 @@ package com.intellij.coldFusion.model.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public interface CfmlProperty extends CfmlPsiElement, CfmlVariable {
   CfmlProperty[] EMPTY_ARRAY = new CfmlProperty[0];
 

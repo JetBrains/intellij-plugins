@@ -18,9 +18,6 @@ package com.intellij.coldFusion.model.info;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlFunctionDescription {
   private final String myName;
   private final String myReturnType;

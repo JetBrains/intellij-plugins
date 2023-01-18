@@ -9,9 +9,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlSuperComponentReference extends CfmlCompositeElement implements CfmlReference {
   public CfmlSuperComponentReference(@NotNull ASTNode node) {
     super(node);

@@ -16,9 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
   public CfmlFileElementType(@NonNls final String debugName, final Language language) {
     super(debugName, language);

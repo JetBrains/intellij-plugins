@@ -27,9 +27,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProperty {
   public CfmlPropertyImpl(@NotNull ASTNode node) {
     super(node);

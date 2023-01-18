@@ -30,9 +30,6 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
 
   @Override

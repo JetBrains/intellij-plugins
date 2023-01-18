@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentType extends CfmlType {
   private final String myComponentQualifiedPath;
   private final Project myProject;

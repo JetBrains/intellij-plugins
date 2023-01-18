@@ -18,9 +18,6 @@ package com.intellij.coldFusion;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlUsagesHighlighterTest extends CfmlCodeInsightFixtureTestCase {
 
   private RangeHighlighter[] getUsages() {

@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlNewExpression extends CfmlCompositeElement implements CfmlTypedElement, CfmlExpression {
   public CfmlNewExpression(@NotNull ASTNode node) {
     super(node);

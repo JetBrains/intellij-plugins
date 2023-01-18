@@ -25,9 +25,6 @@ import icons.CFMLIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlCreateFileAction extends CreateFileFromTemplateAction implements DumbAware {
 
   @NonNls private static final String DEFAULT_HTML_TEMPLATE_PROPERTY = "DefaultCfmlFileTemplate";

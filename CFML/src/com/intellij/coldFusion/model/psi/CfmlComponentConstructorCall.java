@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author vnikolaenko
- */
 public class CfmlComponentConstructorCall extends CfmlFunctionCallExpression implements CfmlFunctionCall {
   public CfmlComponentConstructorCall(@NotNull ASTNode node) {
     super(node);

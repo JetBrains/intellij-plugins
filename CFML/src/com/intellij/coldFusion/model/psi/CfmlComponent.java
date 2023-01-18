@@ -18,9 +18,6 @@ package com.intellij.coldFusion.model.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- */
 public interface CfmlComponent extends CfmlPsiElement, CfmlNamedElement {
   CfmlComponent[] EMPTY_ARRAY = new CfmlComponent[0];
 
