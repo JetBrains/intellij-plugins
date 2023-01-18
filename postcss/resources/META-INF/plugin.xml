@@ -46,7 +46,8 @@
               implementationClass="org.intellij.plugins.postcss.PostCssFileType"/>
     <lang.parserDefinition language="PostCSS" implementationClass="org.intellij.plugins.postcss.parser.PostCssParserDefinition"/>
     <lang.ast.factory language="PostCSS" implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory"/>
-    <lang.commenter language="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssCommenter"/>
+    <multiLangCommenter implementation="org.intellij.plugins.postcss.PostCssCommentProvider"/>
+    <codeStyleSettingsProvider implementation="org.intellij.plugins.postcss.settings.PostCssStyleSettingsProvider"/>
     <internalFileTemplate name="PostCSS File"/>
     <lang.syntaxHighlighter language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighter"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
