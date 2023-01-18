@@ -1,28 +1,29 @@
-JSFile:test.astro
-  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-  PsiWhiteSpace('\n')
-  PsiElement(XML_PROLOG)
-    <empty list>
-  XmlTag:script
-    XmlToken:XML_START_TAG_START('<')
-    XmlToken:XML_NAME('script')
-    XmlToken:XML_TAG_END('>')
-    JSEmbeddedContent
-      PsiWhiteSpace('\n    ')
-      JSExpressionStatement
-        JSCallExpression
-          JSReferenceExpression
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent
+        PsiWhiteSpace('\n    ')
+        JSExpressionStatement
+          JSCallExpression
             JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('document')
-            PsiElement(JS:DOT)('.')
-            PsiElement(JS:IDENTIFIER)('write')
-          JSArgumentList
-            PsiElement(JS:LPAR)('(')
-            JSLiteralExpression
-              PsiElement(JS:STRING_LITERAL)('"<script>alert('foo')</script\>"')
-            PsiElement(JS:RPAR)(')')
-      PsiWhiteSpace('\n')
-    XmlToken:XML_END_TAG_START('</')
-    XmlToken:XML_NAME('script')
-    XmlToken:XML_TAG_END('>')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('document')
+              PsiElement(JS:DOT)('.')
+              PsiElement(JS:IDENTIFIER)('write')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"<script>alert('foo')</script\>"')
+              PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')

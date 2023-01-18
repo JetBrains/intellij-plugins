@@ -8,17 +8,20 @@ import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.parsing.JavaScriptParser
-import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lang.xml.XMLParserDefinition
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
+import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedElementType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
+import org.jetbrains.astro.lang.AstroFileElementType
+import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl
 
@@ -54,7 +57,11 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun getFileNodeType(): IFileElementType {
-    return FILE
+    return AstroFileElementType.INSTANCE
+  }
+
+  override fun createFile(viewProvider: FileViewProvider): PsiFile {
+    return AstroFileImpl(viewProvider)
   }
 
   override fun getWhitespaceTokens(): TokenSet {
@@ -84,10 +91,6 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
       }
       else -> super.createElement(node)
     }
-  }
-
-  companion object {
-    val FILE: IFileElementType = JSFileElementType.create(AstroLanguage.INSTANCE)
   }
 
 }

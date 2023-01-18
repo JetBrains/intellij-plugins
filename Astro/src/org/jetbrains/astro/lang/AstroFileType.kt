@@ -6,14 +6,14 @@ import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.AstroIcons
 import javax.swing.Icon
 
-class AstroFileType : LanguageFileType(AstroLanguage.INSTANCE) {
+class AstroFileType private constructor(): LanguageFileType(AstroLanguage.INSTANCE) {
 
   override fun getName(): String {
     return "Astro"
   }
 
   override fun getDescription(): String {
-    return AstroBundle.message("astro.language.name")
+    return AstroBundle.message("astro.file.type.description")
   }
 
   override fun getDefaultExtension(): String {

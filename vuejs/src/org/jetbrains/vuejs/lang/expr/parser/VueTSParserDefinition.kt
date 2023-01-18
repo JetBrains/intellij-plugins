@@ -45,7 +45,7 @@ class VueTSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun createFile(viewProvider: FileViewProvider): JSFile {
-    val file = super.createFile(viewProvider)
+    val file = super.createFile(viewProvider) as JSFile
     VueExprParsing.postProcessFile(file)
     return file
   }

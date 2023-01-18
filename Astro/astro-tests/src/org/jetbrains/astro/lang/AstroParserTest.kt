@@ -49,6 +49,7 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.psi.stubs.StubElementTypeHolderEP
 import com.intellij.util.ObjectUtils
+import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.parser.AstroParserDefinition
 
 class AstroParserTest : HtmlParsingTest("", "astro",
@@ -488,7 +489,7 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     }
   }
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/Astro/astro-tests/testData/lang/parser"
+  override fun getTestDataPath(): String = getAstroTestDataPath() + "/lang/parser"
 
   private fun doTestAstro(text: String) {
     doTest(text.trimIndent(), "test.astro")

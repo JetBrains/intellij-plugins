@@ -1,26 +1,27 @@
-JSFile:test.astro
-  PsiElement(XML_PROLOG)
-    <empty list>
-  XmlTag:main
-    XmlToken:XML_START_TAG_START('<')
-    XmlToken:XML_NAME('main')
-    XmlToken:XML_TAG_END('>')
-    XmlText
-      PsiWhiteSpace('\n  ')
-    XmlTag:p
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlTag:main
       XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('p')
+      XmlToken:XML_NAME('main')
       XmlToken:XML_TAG_END('>')
       XmlText
-        XmlToken:XML_DATA_CHARACTERS('Foo')
         PsiWhiteSpace('\n  ')
-      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-        PsiElement(JS:XML_LBRACE)('{')
-        XmlTag:p
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('p')
-          XmlToken:XML_TAG_END('>')
-          XmlText
-            XmlToken:XML_DATA_CHARACTERS('Bar')
-        PsiErrorElement:} expected
-          <empty list>
+      XmlTag:p
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('p')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          XmlToken:XML_DATA_CHARACTERS('Foo')
+          PsiWhiteSpace('\n  ')
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          XmlTag:p
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('p')
+            XmlToken:XML_TAG_END('>')
+            XmlText
+              XmlToken:XML_DATA_CHARACTERS('Bar')
+          PsiErrorElement:} expected
+            <empty list>

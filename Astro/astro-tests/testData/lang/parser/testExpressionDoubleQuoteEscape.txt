@@ -1,12 +1,13 @@
-JSFile:test.astro
-  PsiElement(XML_PROLOG)
-    <empty list>
-  JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-    PsiElement(JS:XML_LBRACE)('{')
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"This } is \" escaped and ' } "')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:XML_RBRACE)('}')
     PsiWhiteSpace(' ')
-    JSLiteralExpression
-      PsiElement(JS:STRING_LITERAL)('"This } is \" escaped and ' } "')
-    PsiWhiteSpace(' ')
-    PsiElement(JS:XML_RBRACE)('}')
-  PsiWhiteSpace(' ')
-  XmlToken:XML_DATA_CHARACTERS('outside')
+    XmlToken:XML_DATA_CHARACTERS('outside')

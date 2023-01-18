@@ -1,9 +1,10 @@
-JSFile:test.astro
-  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-  PsiWhiteSpace('\n')
-  PsiElement(XML_PROLOG)
-    PsiElement(XML_PROCESSING_INSTRUCTION)
-      XmlToken:XML_PI_START('<?')
-      XmlToken:XML_PI_TARGET('This is="PI"')
-      XmlToken:XML_PI_END('?>')
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      PsiElement(XML_PROCESSING_INSTRUCTION)
+        XmlToken:XML_PI_START('<?')
+        XmlToken:XML_PI_TARGET('This is="PI"')
+        XmlToken:XML_PI_END('?>')

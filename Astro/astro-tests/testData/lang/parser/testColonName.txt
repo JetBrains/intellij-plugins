@@ -1,7 +1,8 @@
-JSFile:test.astro
-  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
-  PsiWhiteSpace('\n')
-  PsiElement(XML_PROLOG)
-    <empty list>
-  XmlToken:XML_DATA_CHARACTERS('<:foo/>')
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    XmlToken:XML_DATA_CHARACTERS('<:foo/>')

@@ -30,6 +30,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   override fun parseDocument() {
     builder.enforceCommentTokens(JSTokenTypes.COMMENTS)
+    val embeddedContent = builder.mark()
     while (token() === XmlTokenType.XML_COMMENT_CHARACTERS)
       advance()
 
@@ -86,6 +87,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     }
     flushOpenTags()
     error?.error(XmlPsiBundle.message("xml.parsing.top.level.element.is.not.completed"))
+    embeddedContent.done(AstroStubElementTypes.ROOT_CONTENT)
   }
 
   private fun parseFrontmatter() {

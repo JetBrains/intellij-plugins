@@ -1,11 +1,12 @@
-JSFile:test.astro
-  PsiElement(XML_PROLOG)
-    <empty list>
-  JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-    PsiElement(JS:XML_LBRACE)('{')
-    JSBinaryExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('12')
-      PsiElement(JS:LT)('<')
-      PsiErrorElement:Expression expected
-        <empty list>
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(JS:LT)('<')
+        PsiErrorElement:Expression expected
+          <empty list>

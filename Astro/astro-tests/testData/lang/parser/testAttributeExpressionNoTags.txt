@@ -1,33 +1,34 @@
-JSFile:test.astro
-  PsiElement(XML_PROLOG)
-    <empty list>
-  JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-    PsiElement(JS:XML_LBRACE)('{')
-    PsiWhiteSpace(' ')
-    XmlTag:a
-      XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('a')
+AstroFile:test.astro
+  AstroRootContent:ASTRO:ROOT_CONTENT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+      PsiElement(JS:XML_LBRACE)('{')
       PsiWhiteSpace(' ')
-      PsiElement(XML_ATTRIBUTE)
-        XmlToken:XML_NAME('href')
-        XmlToken:XML_EQ('=')
-        PsiElement(XML_ATTRIBUTE_VALUE)
-          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-            PsiElement(JS:XML_LBRACE)('{')
-            JSBinaryExpression
+      XmlTag:a
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('a')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('href')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+              PsiElement(JS:XML_LBRACE)('{')
               JSBinaryExpression
+                JSBinaryExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('url')
+                  PsiElement(JS:LT)('<')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('foo')
+                PsiElement(JS:GT)('>')
                 JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('url')
-                PsiElement(JS:LT)('<')
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('foo')
-              PsiElement(JS:GT)('>')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('bar')
-            PsiElement(JS:XML_RBRACE)('}')
-      XmlToken:XML_TAG_END('>')
-      XmlToken:XML_END_TAG_START('</')
-      XmlToken:XML_NAME('a')
-      XmlToken:XML_TAG_END('>')
-    PsiWhiteSpace(' ')
-    PsiElement(JS:XML_RBRACE)('}')
+                  PsiElement(JS:IDENTIFIER)('bar')
+              PsiElement(JS:XML_RBRACE)('}')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('a')
+        XmlToken:XML_TAG_END('>')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:XML_RBRACE)('}')
