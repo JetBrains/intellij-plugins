@@ -1,15 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
-import com.intellij.lang.javascript.psi.ecma6.impl.jsdoc.JSDocPropertySignatureImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
@@ -20,7 +19,6 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.types.VueCompleteRecordType
@@ -166,12 +164,12 @@ private fun buildSlotsType(instance: VueInstanceOwner, originalType: JSType?): J
   val slotsType = slots.asSequence().filter {
     it.pattern == null
   }.map {
-    PropertySignatureImpl(it.name, slotType, true,true, it.source)
+    PropertySignatureImpl(it.name, slotType, true, true, it.source)
   }
     .toList()
     .let { JSRecordTypeImpl(typeSource, it) }
   return if (originalType == null)
-     slotsType
+    slotsType
   else
     JSCompositeTypeFactory.createIntersectionType(listOf(originalType, slotsType), typeSource)
 }

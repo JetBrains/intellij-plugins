@@ -407,60 +407,6 @@ private fun findDefaultCommonJSExport(element: PsiElement): PsiElement? {
     .firstOrNull()
 }
 
-private val resolveSymbolCache = ConcurrentHashMap<String, Key<CachedValue<*>>>()
-
-private fun <T> computeKey(moduleName: String, symbolName: String, symbolClass: Class<T>): Key<CachedValue<T>> {
-  @Suppress("UNCHECKED_CAST")
-  val key: Key<CachedValue<T>> = resolveSymbolCache.computeIfAbsent("$moduleName/$symbolName/${symbolClass.simpleName}") {
-    Key.create(it)
-  } as Key<CachedValue<T>>
-  return key
-}
-
-fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName: String, symbolName: String, symbolClass: Class<T>): T? {
-  val key = computeKey(moduleName, symbolName, symbolClass)
-  val file = scope?.containingFile ?: return null
-
-  return CachedValuesManager.getCachedValue(file, key) {
-    val modules = JSFileReferencesUtil.resolveModuleReference(file, moduleName)
-    val resolvedSymbols = modules
-      .filterIsInstance<JSElement>()
-      .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
-    val suitableSymbol = resolvedSymbols
-      .filter { it.element?.isValid == true }
-      .mapNotNull { tryCast(it.element, symbolClass) }
-      .minByOrNull { TypeScriptPsiUtil.isFromAugmentationModule(it) }
-
-    CachedValueProvider.Result.create(suitableSymbol, PsiModificationTracker.MODIFICATION_COUNT)
-  }
-}
-
-fun resolveMergedInterfaceJSTypeFromNodeModule(scope: PsiElement?, moduleName: String, symbolName: String): JSRecordType {
-  val key = computeKey(moduleName, symbolName, JSRecordType::class.java)
-  val file = scope?.containingFile ?: return JSTypeCastUtil.NO_RECORD_TYPE
-
-  return CachedValuesManager.getCachedValue(file, key) {
-    val modules = JSFileReferencesUtil.resolveModuleReference(file, moduleName)
-    val resolvedSymbols = modules
-      .filterIsInstance<JSElement>()
-      .let { ES6PsiUtil.resolveSymbolInModules(symbolName, file, it) }
-    val interfaces = resolvedSymbols
-      .filter { it.element?.isValid == true }
-      .mapNotNull { tryCast(it.element, TypeScriptInterface::class.java) }
-
-    var typeSource: JSTypeSource? = null
-    val typeMembers = mutableListOf<JSRecordType.TypeMember>()
-    for (tsInterface in interfaces) {
-      val singleRecord = tsInterface.jsType.asRecordType()
-      typeSource = singleRecord.source
-      typeMembers.addAll(singleRecord.typeMembers)
-    }
-
-    val jsRecordType = JSRecordTypeImpl(typeSource ?: JSTypeSourceFactory.createTypeSource(null, false), typeMembers)
-    CachedValueProvider.Result.create(jsRecordType, PsiModificationTracker.MODIFICATION_COUNT)
-  }
-}
-
 fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, containingFile: PsiFile): List<VueComponent> {
   val result = mutableListOf<VueComponent>()
   val normalizedTagName = fromAsset(tagName)
