@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author ksafonov
- */
 class FlexSourcesRootDetector extends RootDetector {
 
   private final boolean myDetectMxml;

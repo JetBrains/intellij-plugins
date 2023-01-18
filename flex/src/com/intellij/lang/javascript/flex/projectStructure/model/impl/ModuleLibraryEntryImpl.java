@@ -4,9 +4,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDepend
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ksafonov
- */
 class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry, StatefulDependencyEntry {
 
   private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();

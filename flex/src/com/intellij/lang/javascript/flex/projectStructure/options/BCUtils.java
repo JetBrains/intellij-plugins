@@ -35,9 +35,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author ksafonov
- */
 public final class BCUtils {
 
   private static final LinkageType[] FLEX_LIB_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.External};

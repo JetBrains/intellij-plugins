@@ -4,9 +4,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDepend
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableSharedLibraryEntry;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ksafonov
- */
 class SharedLibraryEntryImpl implements ModifiableSharedLibraryEntry, StatefulDependencyEntry {
 
   private final DependencyTypeImpl myDependencyType = new DependencyTypeImpl();

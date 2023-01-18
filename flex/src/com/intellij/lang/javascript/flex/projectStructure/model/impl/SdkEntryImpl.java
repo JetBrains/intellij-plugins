@@ -11,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author ksafonov
- */
 final class SdkEntryImpl implements SdkEntry {
 
   @NotNull

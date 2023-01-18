@@ -21,9 +21,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author ksafonov
- */
 abstract class EditableTreeTable<T> extends TreeTable {
 
   private static final Object HEIGHT_TEST_MARKER = new Object();

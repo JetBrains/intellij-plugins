@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author ksafonov
- */
 public final class ChooseBuildConfigurationDialog extends DialogWrapper {
   private final Map<Module, List<FlexBCConfigurable>> myTreeItems;
   private Tree myTree;
