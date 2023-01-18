@@ -10,9 +10,6 @@ import com.intellij.xml.util.UserColorLookup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexColorReference extends BasicAttributeValueReference {
 
   public FlexColorReference(final PsiElement element, TextRange range) {

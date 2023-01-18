@@ -36,9 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexMxmlColorAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {

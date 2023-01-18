@@ -37,9 +37,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public final class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyleIndexInfo>> {
   public static final ID<String, Set<FlexStyleIndexInfo>> INDEX_ID = ID.create("js.style.index");
 

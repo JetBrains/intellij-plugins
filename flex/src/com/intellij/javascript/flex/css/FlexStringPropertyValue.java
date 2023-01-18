@@ -4,9 +4,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.util.table.CssPropertyValueImpl;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexStringPropertyValue extends CssPropertyValueImpl {
   public FlexStringPropertyValue() {
     super(Type.OR);

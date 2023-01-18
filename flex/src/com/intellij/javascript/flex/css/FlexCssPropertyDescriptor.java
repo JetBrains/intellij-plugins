@@ -48,9 +48,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   @NotNull private final String myInherit;
   private final boolean myShorthand;

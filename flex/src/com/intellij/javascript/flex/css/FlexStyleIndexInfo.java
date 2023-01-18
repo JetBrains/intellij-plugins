@@ -8,9 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-/**
- * @author Eugene.Kudelevsky
- */
 public class FlexStyleIndexInfo {
   private final String myClassOrFileName;
   private final String myAttributeName;
