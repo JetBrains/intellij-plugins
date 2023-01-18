@@ -36,21 +36,21 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
+  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl referenceExpression,
                                                                                                        boolean ignorePerformanceLimits) {
     return new ActionScriptReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
 
   @NotNull
   @Override
-  protected ExpectedTypeEvaluator newExpectedTypeEvaluator(PsiElement parent,
+  protected ExpectedTypeEvaluator newExpectedTypeEvaluator(@NotNull PsiElement parent,
                                                            @NotNull JSExpectedTypeKind expectedTypeKind) {
     return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
   }
 
   @Override
   @Nullable
-  public JSLookupPriority getSpecificCompletionVariantPriority(final PsiElement element) {
+  public JSLookupPriority getSpecificCompletionVariantPriority(final @NotNull PsiElement element) {
     if (element instanceof JSQualifiedNamedElement) {
       final String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
       if (qName != null && "avmplus".equals(StringUtil.getPackageName(qName))) {
