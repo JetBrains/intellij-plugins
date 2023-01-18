@@ -1,0 +1,64 @@
+JSFile:test.astro
+  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+  PsiWhiteSpace('\n')
+  JSVarStatement
+    JSAttributeList
+      <empty list>
+    PsiElement(JS:CONST_KEYWORD)('const')
+    PsiWhiteSpace(' ')
+    TypeScriptVariable
+      PsiElement(JS:IDENTIFIER)('name')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:EQ)('=')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"Astro"')
+    PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+  PsiWhiteSpace('\n')
+  PsiElement(XML_PROLOG)
+    <empty list>
+  XmlTag:h1
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('h1')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      XmlToken:XML_NAME('class')
+      XmlToken:XML_EQ('=')
+      PsiElement(XML_ATTRIBUTE_VALUE)
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('name')
+          PsiElement(JS:XML_RBRACE)('}')
+    XmlToken:XML_TAG_END('>')
+    XmlText
+      XmlToken:XML_DATA_CHARACTERS('Attribute')
+      PsiWhiteSpace(' ')
+      XmlToken:XML_DATA_CHARACTERS('expressions')
+      PsiWhiteSpace(' ')
+      XmlToken:XML_DATA_CHARACTERS('are')
+      PsiWhiteSpace(' ')
+      XmlToken:XML_DATA_CHARACTERS('supported')
+    XmlToken:XML_END_TAG_START('</')
+    XmlToken:XML_NAME('h1')
+    XmlToken:XML_TAG_END('>')
+  PsiWhiteSpace('\n\n')
+  XmlTag:MyComponent
+    XmlToken:XML_START_TAG_START('<')
+    XmlToken:XML_NAME('MyComponent')
+    PsiWhiteSpace(' ')
+    PsiElement(XML_ATTRIBUTE)
+      XmlToken:XML_NAME('templateLiteralNameAttribute')
+      XmlToken:XML_EQ('=')
+      PsiElement(XML_ATTRIBUTE_VALUE)
+        JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+          PsiElement(JS:XML_LBRACE)('{')
+          JSStringTemplateExpression
+            PsiElement(JS:BACKQUOTE)('`')
+            PsiElement(JS:STRING_TEMPLATE_PART)('MyNameIstestBasicAttributeExpressions')
+            PsiElement(JS:BACKQUOTE)('`')
+          PsiElement(JS:XML_RBRACE)('}')
+    PsiWhiteSpace(' ')
+    XmlToken:XML_EMPTY_ELEMENT_END('/>')

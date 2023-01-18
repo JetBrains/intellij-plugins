@@ -13,7 +13,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.indexing.FileBasedIndexImpl
 import com.intellij.webSymbols.context.WebSymbolsContext
 import org.jetbrains.astro.AstroFramework
-import org.jetbrains.astro.lang.sfc.AstroSfcFileType
+import org.jetbrains.astro.lang.AstroFileType
 
 private const val KIND_ASTRO_PROJECT = "astro-project"
 private const val CONTEXT_ASTRO = "astro"
@@ -34,7 +34,7 @@ fun hasAstroFiles(project: Project): Boolean =
   CachedValuesManager.getManager(project).getCachedValue(project) {
     CachedValueProvider.Result.create(
       FileBasedIndexImpl.disableUpToDateCheckIn<Boolean, Exception> {
-        FileTypeIndex.containsFileOfType(AstroSfcFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+        FileTypeIndex.containsFileOfType(AstroFileType.INSTANCE, GlobalSearchScope.projectScope(project))
       },
       VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
       DumbService.getInstance(project)

@@ -1,0 +1,43 @@
+JSFile:test.astro
+  PsiElement(XML_PROLOG)
+    <empty list>
+  JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+    PsiElement(JS:XML_LBRACE)('{')
+    PsiWhiteSpace(' ')
+    XmlTag:a
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('a')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('url')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:STRING_TEMPLATE_PART)('https://')
+              PsiElement(JS:DOLLAR)('$')
+              PsiElement(JS:LBRACE)('{')
+              JSBinaryExpression
+                JSBinaryExpression
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('site')
+                  PsiElement(JS:LT)('<')
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('foo')
+                PsiElement(JS:GT)('>')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('bar')
+              PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:BACKQUOTE)('`')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+        PsiElement(JS:XML_LBRACE)('{')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('site')
+        PsiElement(JS:XML_RBRACE)('}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('a')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:XML_RBRACE)('}')

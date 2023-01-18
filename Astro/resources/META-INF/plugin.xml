@@ -24,14 +24,14 @@
     <internalFileTemplate name="Astro Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.astro.AstroCreateFromTemplateHandler"/>
 
-    <!-- Astro SFC -->
-    <fileType name="Astro" extensions="astro" language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroSfcFileType"
+    <!-- Astro -->
+    <fileType name="Astro" extensions="astro" language="Astro" implementationClass="org.jetbrains.astro.lang.AstroFileType"
               fieldName="INSTANCE"/>
-    <lang.parserDefinition language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.parser.AstroSfcParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="Astro SFC"
-                                   implementationClass="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcHighlighterFactory"/>
-    <colorSettingsPage implementation="org.jetbrains.astro.lang.sfc.highlighting.AstroSfcColorsAndFontsPage"/>
-    <lang.braceMatcher language="Astro SFC" implementationClass="org.jetbrains.astro.lang.sfc.AstroSfcBraceMatcher"/>
+    <lang.parserDefinition language="Astro" implementationClass="org.jetbrains.astro.lang.parser.AstroParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Astro"
+                                   implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
+    <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
+    <lang.braceMatcher language="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
@@ -39,7 +39,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
-    <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.sfc.AstroIndexedFileTypeProvider"/>
+    <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.AstroIndexedFileTypeProvider"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
