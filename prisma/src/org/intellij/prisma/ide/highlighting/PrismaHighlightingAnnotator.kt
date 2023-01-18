@@ -1,5 +1,6 @@
 package org.intellij.prisma.ide.highlighting
 
+import com.intellij.codeInspection.util.InspectionMessage
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
@@ -62,7 +63,7 @@ class PrismaHighlightingAnnotator : Annotator {
       .create()
   }
 
-  private fun newAnnotationBuilder(holder: AnnotationHolder, tag: String) =
+  private fun newAnnotationBuilder(holder: AnnotationHolder, @InspectionMessage tag: String) =
     if (ApplicationManager.getApplication().isUnitTestMode)
       holder.newAnnotation(HighlightSeverity.INFORMATION, tag)
     else
