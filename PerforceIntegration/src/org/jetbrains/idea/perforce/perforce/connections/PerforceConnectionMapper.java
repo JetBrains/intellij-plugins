@@ -6,9 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-/**
- * @author irengrig
- */
 public interface PerforceConnectionMapper {
   @Nullable
   P4Connection getConnection(@NotNull final VirtualFile file);

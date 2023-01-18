@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * @author irengrig
- */
 public class PerforceMultipleConnections implements PerforceConnectionMapper {
   @Nullable private final String myP4ConfigValue;
 

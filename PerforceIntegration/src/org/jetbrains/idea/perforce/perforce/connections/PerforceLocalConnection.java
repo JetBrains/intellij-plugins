@@ -10,9 +10,6 @@ import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParameters
 
 import java.io.File;
 
-/**
- * @author irengrig
- */
 public class PerforceLocalConnection extends AbstractP4Connection {
   // also singleton but not equal to those SingletonConnection
   private final ConnectionId myConnectionId;

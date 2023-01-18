@@ -31,9 +31,6 @@ import java.io.File;
 import java.util.List;
 import java.util.*;
 
-/**
- * @author irengrig
- */
 public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
   private PerforceMultipleConnections myMultipleConnections;
   private P4RootsInformation myChecker;

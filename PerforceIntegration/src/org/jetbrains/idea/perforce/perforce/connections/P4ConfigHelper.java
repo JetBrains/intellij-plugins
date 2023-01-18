@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author irengrig
- */
 public class P4ConfigHelper {
   @NonNls public static final String P4_CONFIG = "P4CONFIG";
   @NonNls public static final String P4_IGNORE = "P4IGNORE";

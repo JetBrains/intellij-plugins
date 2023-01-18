@@ -12,9 +12,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4ParametersConnection;
 
 import java.util.*;
 
-/**
-* @author irengrig
-*/
 public final class PerforceInfoAndClient {
   private final static Logger LOG = Logger.getInstance(PerforceInfoAndClient.class);
 

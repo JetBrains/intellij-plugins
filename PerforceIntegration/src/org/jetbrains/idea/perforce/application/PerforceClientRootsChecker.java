@@ -17,9 +17,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import java.io.File;
 import java.util.*;
 
-/**
- * @author irengrig
- */
 public class PerforceClientRootsChecker implements P4RootsInformation {
   private static final Logger LOG = Logger.getInstance(PerforceClientRootsChecker.class);
   private final Map<P4Connection, WrongRoots> myMap = new HashMap<>();

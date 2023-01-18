@@ -10,9 +10,6 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 
-/**
- * @author irengrig
- */
 public class PerforceP4ConfigVirtualFileListener implements VirtualFileListener {
   private final PerforceConnectionManagerI myConnectionManager;
   private final Project myProject;

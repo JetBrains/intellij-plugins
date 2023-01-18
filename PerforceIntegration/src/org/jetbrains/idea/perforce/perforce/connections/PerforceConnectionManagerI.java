@@ -8,9 +8,6 @@ import org.jetbrains.idea.perforce.perforce.P4File;
 import java.io.File;
 import java.util.Map;
 
-/**
- * @author irengrig
- */
 public interface PerforceConnectionManagerI {
   @Nullable
   PerforceMultipleConnections getMultipleConnectionObject();

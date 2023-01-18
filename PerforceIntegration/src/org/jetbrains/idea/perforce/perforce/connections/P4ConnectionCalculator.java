@@ -25,9 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author irengrig
- */
 public class P4ConnectionCalculator {
   private final Project myProject;
   private static final Logger LOG = Logger.getInstance(P4ConnectionCalculator.class);

@@ -9,9 +9,6 @@ import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-/**
- * @author irengrig
- */
 public class PerforceOfflineNotification extends GenericNotifierImpl<Object, Object> {
 
   public PerforceOfflineNotification(final Project project) {

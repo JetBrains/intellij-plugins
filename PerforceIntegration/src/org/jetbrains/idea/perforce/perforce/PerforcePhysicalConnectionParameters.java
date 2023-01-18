@@ -3,9 +3,6 @@ package org.jetbrains.idea.perforce.perforce;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author irengrig
- */
 public class PerforcePhysicalConnectionParameters implements PerforcePhysicalConnectionParametersI {
   private final String myPathToExecute;
   private final String myPathToIgnore;

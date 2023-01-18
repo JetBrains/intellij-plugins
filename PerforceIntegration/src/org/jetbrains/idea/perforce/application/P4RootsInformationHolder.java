@@ -8,9 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author irengrig
- */
 public class P4RootsInformationHolder implements P4RootsInformation {
   private final MultiMap<P4Connection, VcsException> myExceptions;
   private final Map<P4Connection, PerforceClientRootsChecker.WrongRoots> myWrongRootsMap;

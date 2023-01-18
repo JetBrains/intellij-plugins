@@ -7,9 +7,6 @@ import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author irengrig
- */
 public class PerforceIsOfflinePanel implements PerforcePanel {
   @Override
   public void updateFrom(PerforceSettings settings) {
