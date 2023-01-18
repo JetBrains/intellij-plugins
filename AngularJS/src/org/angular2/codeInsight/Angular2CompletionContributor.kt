@@ -135,7 +135,7 @@ class Angular2CompletionContributor : CompletionContributor() {
               && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null).tailAndType)) {
             localNames.add(name)
             result.consume(JSCompletionUtil.withJSLookupPriority(
-              JSLookupUtilImpl.createLookupElement(element, name, ref.qualifier == null)
+              JSLookupUtilImpl.createLookupElement(element, name)
                 .withInsertHandler(JSLookupElementInsertHandler(false, null)),
               calcPriority(element)
             ))
