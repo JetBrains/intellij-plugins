@@ -12,9 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author Fedor.Korotkov
- */
 public final class DartClassResolveCache {
   private final ConcurrentMap<DartClass, DartClassResolveResult> myMap = CollectionFactory.createConcurrentWeakMap();
 

@@ -15,9 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author Fedor.Korotkov
- */
 public abstract class DartNamedElementImpl extends DartPsiCompositeElementImpl implements DartNamedElement {
   public DartNamedElementImpl(@NotNull ASTNode node) {
     super(node);

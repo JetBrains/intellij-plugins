@@ -8,9 +8,6 @@ import com.jetbrains.lang.dart.ide.surroundWith.statement.*;
 import com.jetbrains.lang.dart.util.DartRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Fedor.Korotkov
- */
 public class DartStatementsSurroundDescriptor implements SurroundDescriptor {
   @Override
   public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {

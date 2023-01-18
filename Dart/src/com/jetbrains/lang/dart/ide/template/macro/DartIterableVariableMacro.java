@@ -3,9 +3,6 @@ package com.jetbrains.lang.dart.ide.template.macro;
 import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Fedor.Korotkov
- */
 public class DartIterableVariableMacro extends DartFilterByClassMacro {
   @Override
   public String getName() {
