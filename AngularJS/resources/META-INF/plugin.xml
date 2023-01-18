@@ -3,30 +3,23 @@
   <name>Angular and AngularJS</name>
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
-    <p>Support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a> projects.</p>
-    <h2>Getting started</h2>
-    <ul>
-      <li>Open your Angular or AngularJS project.</li>
-      <li>Make sure that you have AngularJS or Angular library files in your project (for example, in the node_modules folder) - this is
-        required for the IDE to enable Angular support for this project.
-      </li>
-      <li>Now, you will get Angular-specific code completion, navigation, and many other features.</li>
-    </ul>
+    <p>Provides support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a>
+      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a></p>
     <h2>Features</h2>
     <ul>
-      <li>Code completion for Angular or AngularJS APIs in JavaScript or TypeScript files</li>
-      <li>Completion for components, built-in and custom directives, and methods in templates</li>
-      <li>Navigation from the component, custom directives and event handlers to their definition</li>
-      <li>Collection of code snippets for Angular and AngularJS</li>
-      <li>Create new projects from the IDE Welcome screen using Angular CLI or built-in template for AngularJS</li>
-      <li>Generate new app elements using Angular CLI</li>
-      <li>For AngularJS apps that use ui-router, see state diagram</li>
+      <li>Code completion for Angular or AngularJS APIs in JavaScript or TypeScript files
+      <li>Code completion for components, built-in and custom directives, and methods in templates
+      <li>Navigation from the component, custom directives, and event handlers to their definition
+      <li>Collection of code snippets for Angular and AngularJS
+      <li>Option in the Welcome screen to create new Angular projects
+      <li>Generation of new app elements using Angular CLI
     </ul>
-    <p>Here you can find more information on using <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and <a
-      href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a> in the IDE.</p>
-    <p>Please report any issues on the <a href="https://youtrack.jetbrains.com/issues/WEB">tracker</a>.</p>
-    <p></p>
-    <p>Originally developed by John Lindquist.</p>
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out these sections: <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and
+      <a href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a>.
+    <h2>Notes</h2>
+    <p>This plugin is bundled in WebStorm and some other IntelliJ-based IDEs.
     ]]></description>
   <vendor>JetBrains</vendor>
 
