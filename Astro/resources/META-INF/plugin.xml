@@ -4,7 +4,6 @@
   <id>org.jetbrains.plugins.astro</id>
   <description><![CDATA[
     Support for <a href="https://astro.build/">Astro</a> projects.
-
     ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
@@ -34,6 +33,7 @@
     <lang.braceMatcher language="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
 
     <stubElementTypeHolder class="org.jetbrains.astro.lang.parser.AstroStubElementTypes" externalIdPrefix="ASTRO:"/>
+    <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroImplicitUsageProvider"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
@@ -42,6 +42,7 @@
 
   <extensions defaultExtensionNs="JavaScript">
     <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.AstroIndexedFileTypeProvider"/>
+    <dialectSpecificHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
