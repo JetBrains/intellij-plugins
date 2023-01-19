@@ -32,8 +32,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-
-public class YeomanGeneratorCellRenderer extends DefaultTableCellRenderer {
+public final class YeomanGeneratorCellRenderer extends DefaultTableCellRenderer {
   private final YeomanGeneratorInfo myInfo;
 
   private JPanel myPanel;
