@@ -232,6 +232,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <template>
         <script type="text/x-template" id="foo">
           <div v-if="class {}"></div>
+          <script>class {}</script>
         </script>
       </template>
     """)

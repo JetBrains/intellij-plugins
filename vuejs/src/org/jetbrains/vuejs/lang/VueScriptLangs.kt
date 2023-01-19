@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.highlighting.VueTSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.parser.*
+import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
 import org.jetbrains.vuejs.lang.html.parser.VueFile
 
@@ -80,6 +81,8 @@ enum class LangMode(val exprLang: JSLanguageDialect, scriptElementType: IElement
   val canonicalAttrValue: String get() = if (this == HAS_TS) "ts" else "js"
 
   val scriptEmbedmentInfo = VueTagEmbeddedContentProvider.VueScriptEmbedmentInfo(scriptElementType)
+
+  val astMarkerToken = VueLangModeMarkerElementType(this)
 
   companion object {
     val DEFAULT = NO_TS

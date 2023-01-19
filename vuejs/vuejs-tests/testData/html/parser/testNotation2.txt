@@ -42,3 +42,4 @@ HtmlFile:test.vue
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('"x3"')
         XmlToken:XML_DOCTYPE_END('>')
     XmlToken:XML_DATA_CHARACTERS(']>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

@@ -23,7 +23,8 @@ object VueElementTypes {
     override fun parseContents(chameleon: LighterLazyParseableNode): FlyweightCapableTreeStructure<LighterASTNode> {
       val file = chameleon.containingFile ?: error(chameleon)
 
-      val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon)
+      val lexer = VueParserDefinition.createLexer(file.project, null, file.getUserData(VueScriptLangs.LANG_MODE))
+      val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon, lexer, language, chameleon.text)
       builder.putUserData(VueScriptLangs.LANG_MODE, file.getUserData(VueScriptLangs.LANG_MODE))
       VueParser().parseWithoutBuildingTree(VueFileElementType.INSTANCE, builder)
       return builder.lightTree
@@ -32,7 +33,8 @@ object VueElementTypes {
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {
       val file = psi.containingFile ?: error(chameleon)
 
-      val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon)
+      val lexer = VueParserDefinition.createLexer(file.project, null, file.getUserData(VueScriptLangs.LANG_MODE))
+      val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon, lexer, language, chameleon.chars)
       builder.putUserData(VueScriptLangs.LANG_MODE, file.getUserData(VueScriptLangs.LANG_MODE))
       val node = VueParser().parse(VueFileElementType.INSTANCE, builder)
       return node.firstChildNode

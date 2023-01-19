@@ -53,3 +53,4 @@ HtmlFile:test.vue
         PsiWhiteSpace(' ')
         XmlToken:XML_DOCTYPE_END('>')
     XmlToken:XML_DATA_CHARACTERS(']>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

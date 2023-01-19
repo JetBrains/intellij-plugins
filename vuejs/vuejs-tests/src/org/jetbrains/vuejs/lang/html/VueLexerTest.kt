@@ -44,6 +44,8 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
+  fun testEmptyFile() = doTestWithoutInterpolations("")
+
   fun testScriptBlank() = doTestWithoutInterpolations("""
     |<script>
     |</script>

@@ -7,3 +7,4 @@ HtmlFile:test.vue
         XmlToken:XML_NAME('html')
         XmlToken:XML_DOCTYPE_END('>')
       PsiWhiteSpace('\n')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

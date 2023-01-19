@@ -50,3 +50,4 @@ HtmlFile:test.vue
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
       PsiWhiteSpace(' ')
       XmlToken:XML_EMPTY_ELEMENT_END('/>')
+  PsiElement(VUE_LANG_MODE_HAS_TS)('')

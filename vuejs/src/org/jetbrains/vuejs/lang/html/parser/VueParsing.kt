@@ -13,6 +13,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttr
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
+import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
@@ -38,6 +39,17 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
   override fun hasCustomTopLevelContent(): Boolean {
     return token() === INTERPOLATION_START
+  }
+
+  override fun shouldContinueMainLoop(): Boolean {
+    return super.shouldContinueMainLoop() && token() !is VueLangModeMarkerElementType
+  }
+
+  override fun parseDocument() {
+    super.parseDocument()
+    if (token() is VueLangModeMarkerElementType) {
+      advance()
+    }
   }
 
   override fun parseCustomTagContent(xmlText: PsiBuilder.Marker?): PsiBuilder.Marker? {

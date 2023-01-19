@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.lang.html.lexer.VueLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 
 class VueFileElementType : IStubFileElementType<VueFileStub>("vue", VueLanguage.INSTANCE) {
   companion object {
@@ -71,10 +71,7 @@ class VueFileElementType : IStubFileElementType<VueFileStub>("vue", VueLanguage.
       val project = psi.project
       val lexer = VueParserDefinition.createLexer(project, delimiters)
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
-      lexer as VueLexer
-      if (lexer.lexedLangMode == LangMode.PENDING) {
-        lexer.lexedLangMode = LangMode.NO_TS
-      }
+      lexer as VueParsingLexer
       builder.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueParsing
       psi.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueElementTypes
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)

@@ -688,8 +688,7 @@ export default {
 .example {
     color: red;
 }
-</style>
-"""
+</style>"""
     )
   }
 

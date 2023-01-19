@@ -597,3 +597,4 @@ HtmlFile:AttrValueInjection.vue
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
     PsiWhiteSpace('\n')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

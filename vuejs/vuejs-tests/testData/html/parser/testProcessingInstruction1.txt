@@ -5,3 +5,4 @@ HtmlFile:test.vue
         XmlToken:XML_PI_START('<?')
         XmlToken:XML_PI_TARGET('This is="PI"')
         XmlToken:XML_PI_END('?>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')
