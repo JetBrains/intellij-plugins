@@ -1,6 +1,6 @@
 <template>
-    <li v-for="{name}<caret> in items">
-      {{ name[0] }} {{ name[1] }}
+    <li v-for="{name: [first, second]}<caret> in items">
+      {{ first }} {{ second }}
     </li>
 </template>
 
