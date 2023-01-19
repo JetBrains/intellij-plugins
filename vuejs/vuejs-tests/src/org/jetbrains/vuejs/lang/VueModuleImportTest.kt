@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
-import com.intellij.lang.typescript.intentions.TypeScriptAddImportStatementFix
+import com.intellij.lang.javascript.modules.JSImportTestUtil
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.util.Consumer
 
@@ -44,7 +44,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportVueFileToTs() {
-    doTestActionWithCopyDirectory(TypeScriptAddImportStatementFix.getActionName(), "ts", null, null)
+    doTestActionWithCopyDirectory(JSImportTestUtil.getActionName(), "ts", null, null)
   }
 
   fun testAutoImportFromVueWithJs() {

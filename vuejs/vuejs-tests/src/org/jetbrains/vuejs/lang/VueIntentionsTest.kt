@@ -129,8 +129,8 @@ class VueIntentionsTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("test.ts")
     for (signature in listOf("NoScript<caret>Component", "Script<caret>SetupComponent")) {
       myFixture.moveToOffsetBySignature(signature)
-      val intention = myFixture.findSingleIntention("Add import statement")
-      WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(project, myFixture.editor, myFixture.file) }
+      val intention = myFixture.findSingleIntention("Insert 'import")
+      myFixture.launchAction(intention)
     }
     myFixture.checkResultByFile("${getTestName(true)}/test.after.ts")
   }
