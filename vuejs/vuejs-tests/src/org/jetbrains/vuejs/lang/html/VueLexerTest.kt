@@ -17,6 +17,12 @@ open class VueLexerTest : LexerTestCase() {
 
   protected var interpolationConfig: Pair<String, String>? = null
 
+  override fun createLexer(): Lexer = VueLexerImpl(JSLanguageLevel.ES6, fixture.project, interpolationConfig)
+
+  override fun getDirPath() = "html/lexer"
+
+  override fun getPathToTestDataFile(extension: String?): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
+
   override fun setUp() {
     super.setUp()
 
@@ -440,12 +446,6 @@ open class VueLexerTest : LexerTestCase() {
   fun testTextarea() {
     doTest("<textarea>with { some } {{wierd}} <stuff> in it</textarea>")
   }
-
-  override fun createLexer(): Lexer = VueLexerImpl(JSLanguageLevel.ES6, fixture.project, interpolationConfig)
-
-  override fun getDirPath() = "html/lexer"
-
-  override fun getPathToTestDataFile(extension: String?): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
 
   override fun doTest(@NonNls text: String) {
     doTest(text, false)
