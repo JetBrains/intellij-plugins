@@ -9,7 +9,7 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
+import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import kotlin.properties.Delegates.notNull
 
 open class VueLexerTest : LexerTestCase() {
@@ -17,7 +17,7 @@ open class VueLexerTest : LexerTestCase() {
 
   protected var interpolationConfig: Pair<String, String>? = null
 
-  override fun createLexer(): Lexer = VueLexerImpl(JSLanguageLevel.ES6, fixture.project, interpolationConfig)
+  override fun createLexer(): Lexer = VueParserDefinition.createLexer(fixture.project, interpolationConfig)
 
   override fun getDirPath() = "html/lexer"
 
