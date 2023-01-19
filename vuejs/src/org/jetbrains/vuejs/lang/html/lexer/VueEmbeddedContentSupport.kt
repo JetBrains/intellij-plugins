@@ -100,6 +100,36 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     namesEqual(attributeName, LANG_ATTRIBUTE_NAME)
     || (namesEqual(attributeName, TYPE_ATTRIBUTE_NAME) && namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME))
 
+  override fun handleToken(tokenType: IElementType, range: TextRange) {
+    if (tokenType == XmlTokenType.XML_EMPTY_ELEMENT_END || tokenType == XmlTokenType.XML_TAG_END) {
+      handleLangMode()
+    }
+
+    super.handleToken(tokenType, range)
+  }
+
+  private fun handleLangMode() {
+    val lexer = lexer as VueLexer
+    // we only consider the first occurence in a file because we need to have script content tokens settled
+    if (lexer.lexedLangMode != LangMode.PENDING) return
+
+    val tagName = tagName ?: return
+    val attributeName = attributeName?.trim()?.toString()
+    val attributeValue = attributeValue?.trim()?.toString()
+
+    if (isBoundLang(tagName, attributeName, attributeValue)) {
+      lexer.lexedLangMode = LangMode.fromAttrValue(attributeValue)
+    }
+  }
+
+  private fun isBoundLang(tagName: CharSequence, attributeName: String?, attributeValue: String?): Boolean {
+    // let's not mix JS & TS in one file
+    // attributeValue can be null if the whole attribute is missing, or "lang" if the attribute value is missing
+    return (attributeName == null || namesEqual(attributeName, LANG_ATTRIBUTE_NAME)) &&
+           namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) &&
+           LangMode.knownAttrValues.contains(attributeValue)
+  }
+
   override fun createEmbedmentInfo(): HtmlEmbedmentInfo? {
     val tagName = tagName ?: return null
     val attributeName = attributeName?.trim()?.toString()
@@ -107,8 +137,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     return when {
       namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> styleLanguage(attributeValue)?.let { getStyleTagEmbedmentInfo(it) }
                                                       ?: HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
-      (attributeName == null || namesEqual(attributeName, LANG_ATTRIBUTE_NAME))
-      && namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME) -> getScriptLangTagInfo(attributeValue)
+      isBoundLang(tagName, attributeName, attributeValue) -> getBoundScriptLangTagInfo()
       namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME)
       || namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME) -> getClassicScriptOrTemplateTagInfo(tagName, attributeValue)
       else -> null
@@ -124,33 +153,16 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     }
 
 
-  private fun getScriptLangTagInfo(lang: String?): HtmlEmbedmentInfo {
-    // lang can be null if the whole attribute is missing, or "lang" if the attribute value is missing
-    if (!LangMode.knownAttrValues.contains(lang)) {
-      // it's neither JS nor TS, can be either something custom, or unfinished typing
-      // let's parse the script in a classic, local way, and template expressions will default to JS
-      return findEmbedmentInfo(lang)
-    }
-
-    // otherwise, let's not mix JS & TS in one file
+  private fun getBoundScriptLangTagInfo(): HtmlEmbedmentInfo {
     if (lexer is VueLexerImpl) {
       // we're lexing for parsing
-      val langMode = saveLangModeIfFirst(lang)
+      val langMode = (lexer as VueLexer).lexedLangMode
       return langMode.scriptEmbedmentInfo
     }
     else {
       // we're lexing for syntax highlighting
       return findEmbedmentInfo(langMode.canonicalAttrValue)
     }
-  }
-
-  private fun saveLangModeIfFirst(lang: String?): LangMode {
-    val lexer = lexer as VueLexer
-    if (lexer.lexedLangMode == LangMode.PENDING) {
-      // It's the first eligible script, let's store the lang and use it everywhere
-      lexer.lexedLangMode = LangMode.fromAttrValue(lang)
-    }
-    return lexer.lexedLangMode
   }
 
   class VueScriptEmbedmentInfo(private val elementType: IElementType) : HtmlEmbedmentInfo {

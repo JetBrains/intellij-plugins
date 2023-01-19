@@ -199,6 +199,16 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """)
   }
 
+  fun testScriptTsNoContent() {
+    // classes have a different element type between JS & TS contexts
+    doTestVue("""
+      <template>
+        <div v-if="class {}"></div>
+      </template>
+      <script lang="ts" />
+    """)
+  }
+
   fun testFirstEverScriptInTemplate() {
     // classes have a different element type between JS & TS contexts
     doTestVue("""
