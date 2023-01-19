@@ -20,7 +20,7 @@ import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
-  private val langMode: LangMode get() = builder.getUserData(VueScriptLangs.LANG_MODE)!!
+  private val langMode: LangMode get() = builder.getUserData(VueScriptLangs.LANG_MODE) ?: LangMode.DEFAULT
 
   override fun isSingleTag(tagName: String, originalTagName: String): Boolean {
     // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
