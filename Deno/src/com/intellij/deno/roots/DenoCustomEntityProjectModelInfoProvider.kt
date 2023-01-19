@@ -11,7 +11,7 @@ class DenoCustomEntityProjectModelInfoProvider : CustomEntityProjectModelInfoPro
 
   override fun getLibraryRoots(entities: Sequence<DenoEntity>,
                                entityStorage: EntityStorage): Sequence<CustomEntityProjectModelInfoProvider.LibraryRoots<DenoEntity>> {
-    if (!useWorkspaceModel()) return emptySequence()
+    if (!useWorkspaceModel() || useWorkspaceFileIndexContributor()) return emptySequence()
     return entities.mapNotNull {
       if (it.denoTypes == null && it.depsFile == null) return@mapNotNull null
 

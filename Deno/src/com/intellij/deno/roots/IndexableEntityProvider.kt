@@ -28,13 +28,13 @@ class DenoIndexableEntityProvider : IndexableEntityProvider.Existing<DenoEntity>
   override fun getReplacedEntityIteratorBuilders(oldEntity: DenoEntity,
                                                  newEntity: DenoEntity,
                                                  project: Project): Collection<IndexableEntityProvider.IndexableIteratorBuilder> {
-    if (!useWorkspaceModel()) return emptyList()
+    if (!useWorkspaceModel() || useWorkspaceFileIndexContributor()) return emptyList()
     return listOf(Dependency(newEntity.denoTypes?.virtualFile, newEntity.depsFile?.virtualFile))
   }
 
   override fun getAddedEntityIteratorBuilders(entity: DenoEntity,
                                               project: Project): Collection<IndexableEntityProvider.IndexableIteratorBuilder> {
-    if (!useWorkspaceModel()) return emptyList()
+    if (!useWorkspaceModel() || useWorkspaceFileIndexContributor()) return emptyList()
     return listOf(Dependency(entity.denoTypes?.virtualFile, entity.depsFile?.virtualFile))
   }
 
