@@ -1,0 +1,34 @@
+{
+ class: "VueSourceComponent",
+ components: {
+  DefineEmitsObjectLiteral: <recursive value of class VueSourceComponent>,
+ },
+ emits: [
+  {
+   class: "VueScriptSetupTypedEvent",
+   name: "add",
+   eventJSType: "(ctx: number) => void",
+   params: [
+    {
+     name: "ctx",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "add", ctx: number) => void",
+  },
+  {
+   class: "VueScriptSetupTypedEvent",
+   name: "change",
+   eventJSType: "(ctx: string) => void",
+   params: [
+    {
+     name: "ctx",
+     type: "string",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "change", ctx: string) => void",
+  },
+ ],
+}

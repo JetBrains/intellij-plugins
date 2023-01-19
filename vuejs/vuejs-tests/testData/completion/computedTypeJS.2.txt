@@ -5,7 +5,7 @@ $data#null
 $delete#null
 $destroy#void
 $el#Element
-$emit#this
+$emit#(event: string, ...args: any[]) => void
 $forceUpdate#void
 $isServer#boolean
 $listeners#null

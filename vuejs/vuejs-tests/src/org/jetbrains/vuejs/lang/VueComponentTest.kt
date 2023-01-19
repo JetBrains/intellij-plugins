@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.TypeScriptTestUtil
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
@@ -92,6 +93,10 @@ class VueComponentTest : BasePlatformTestCase() {
   fun testBothScriptsJS() = doTest()
 
   fun testDefineEmits() = doTest()
+
+  fun testDefineEmitsObjectLiteral() = doTest()
+
+  fun testDefineEmitsExplicitType() = doTest()
 
   fun testDefineComponentWithEmits() = doTest()
 
@@ -189,6 +194,7 @@ class VueComponentTest : BasePlatformTestCase() {
         is VueModelDirectiveProperties -> builder.printVueModelDirectiveProperties(level, value)
         is VueTemplate<*> -> builder.printVueTemplate(level, value)
         is JSType -> builder.printJSType(level, value)
+        is JSParameterTypeDecorator -> builder.printParameter(level, value)
         else -> super.printValueImpl(builder, level, value)
       }
 
@@ -205,6 +211,12 @@ class VueComponentTest : BasePlatformTestCase() {
 
     private fun StringBuilder.printJSType(level: Int, type: JSType): StringBuilder =
       this.printValue(level, type.substitute().getTypeText(JSType.TypeTextFormat.PRESENTABLE))
+
+    private fun StringBuilder.printParameter(topLevel: Int, param: JSParameterTypeDecorator): StringBuilder =
+      printObject(topLevel) { level ->
+        printProperty(level, "name", param.name)
+        printProperty(level, "type", param.inferredType?.substitute()?.getTypeText(JSType.TypeTextFormat.PRESENTABLE))
+      }
 
     private fun StringBuilder.printVueSourceElement(topLevel: Int, sourceElement: VueSourceElement): StringBuilder =
       printObject(topLevel) { level ->
@@ -264,6 +276,9 @@ class VueComponentTest : BasePlatformTestCase() {
         }
         if (sourceElement is VueEmitCall) {
           printProperty(level, "eventJSType", sourceElement.eventJSType)
+          printProperty(level, "params", sourceElement.params)
+          printProperty(level, "hasStrictSignature", sourceElement.hasStrictSignature)
+          printProperty(level, "callSignature", sourceElement.callSignature)
         }
       }
   }

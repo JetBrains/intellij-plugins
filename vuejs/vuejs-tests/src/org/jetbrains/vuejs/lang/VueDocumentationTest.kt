@@ -148,6 +148,11 @@ class VueDocumentationTest : BasePlatformTestCase() {
     defaultTest()
   }
 
+  fun testEmitEvents() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    defaultTest()
+  }
+
   private fun defaultTest() {
     myFixture.configureByFile("${getTestName(false)}.vue")
     myFixture.checkDocumentationAtCaret()

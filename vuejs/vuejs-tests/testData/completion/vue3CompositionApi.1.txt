@@ -5,7 +5,7 @@
 !$attrs#null#100
 !$data#null#100
 !$el#any#100
-!$emit#null#100
+!$emit#(event: string, ...args: any[]) => void#100
 !$forceUpdate#T#100
 !$nextTick#Promise<void>#100
 !$options#null#100

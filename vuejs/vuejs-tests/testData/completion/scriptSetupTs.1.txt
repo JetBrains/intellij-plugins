@@ -1,6 +1,7 @@
 Foo#null
 SelectProps#null
 count#number
+emit#null
 foo#string | undefined
 foos#null
 inc#() => void
@@ -13,7 +14,7 @@ $#ComponentInternalInstance
 $attrs#null
 $data#null
 $el#any
-$emit#null
+$emit#((event: "add", id: number) => void) & ((event: "remove", force: boolean) => void)
 $forceUpdate#void
 $nextTick#Promise<void>
 $options#null

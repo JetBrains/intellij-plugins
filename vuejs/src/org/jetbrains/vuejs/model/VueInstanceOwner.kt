@@ -142,6 +142,8 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   replaceStandardProperty(INSTANCE_OPTIONS_PROP, buildOptionsType(instance, result[INSTANCE_OPTIONS_PROP]?.jsType), source, result)
   replaceStandardProperty(INSTANCE_SLOTS_PROP, buildSlotsType(instance, result[INSTANCE_SLOTS_PROP]?.jsType), source, result)
 
+  replaceStandardProperty(INSTANCE_EMIT_METHOD, buildEmitType(instance), source, result)
+
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
   // Interestingly it doesn't apply to computed, methods and props.
@@ -195,6 +197,39 @@ private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?):
   }, VueModelVisitor.Proximity.LOCAL)
   return JSCompositeTypeFactory.createIntersectionType(
     result, originalType?.source ?: JSTypeSourceFactory.createTypeSource(instance.source!!, false))
+}
+
+private fun buildEmitType(instance: VueInstanceOwner): JSType {
+  val source =
+    JSTypeSourceFactory.createTypeSource(instance.source!!, true).copyWithNewLanguage(JSTypeSource.SourceLanguage.TS)
+  val emitCalls = instance.asSafely<VueContainer>()?.emits ?: emptyList()
+  val hasUniqueSignatures = emitCalls.any { it.params.isNotEmpty() || it.hasStrictSignature }
+
+  val eventTypes = if (emitCalls.isNotEmpty()) {
+    if (!hasUniqueSignatures) {
+      val combinedEventsType = JSCompositeTypeFactory.createUnionType(
+        source,
+        emitCalls.map {
+          JSStringLiteralTypeImpl(it.name, false, source)
+        }
+      )
+      val parameters = listOf(createEmitEventParam(combinedEventsType), createEmitRestParam(source))
+      listOf(TypeScriptJSFunctionTypeImpl(source, emptyList(), parameters, null, null))
+    }
+    else {
+      emitCalls.map { it.callSignature }
+    }
+  }
+  else {
+    emptyList()
+  }
+
+  return if (eventTypes.isEmpty()) {
+    createDefaultEmitCallSignature(source)
+  }
+  else {
+    JSCompositeTypeFactory.createIntersectionType(eventTypes, source)
+  }
 }
 
 private fun replaceStandardProperty(propName: String, properties: List<JSRecordType.PropertySignature>,

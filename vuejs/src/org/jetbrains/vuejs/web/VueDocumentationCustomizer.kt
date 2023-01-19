@@ -25,6 +25,14 @@ class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
           )
         }
     }
+    else if (symbol.namespace == WebSymbol.NAMESPACE_JS
+             && symbol.kind == WebSymbol.KIND_JS_EVENTS
+             && (symbol.origin.framework == VueFramework.ID
+                 || symbol.psiContext.let { it != null && isVueContext(it) })) {
+      symbol.renderJsTypeForDocs(Strings.escapeXmlEntities(symbol.name))?.let {
+        return documentation.withDefinition(it)
+      }
+    }
     else {
       if (symbol.namespace == WebSymbol.NAMESPACE_HTML
           && symbol.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS) {

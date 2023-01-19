@@ -5,7 +5,7 @@
 !$delete#null#100
 !$destroy#null#100
 !$el#null#100
-!$emit#null#100
+!$emit#(event: string, ...args: any[]) => void#100
 !$event#null#100
 !$forceUpdate#null#100
 !$isServer#null#100

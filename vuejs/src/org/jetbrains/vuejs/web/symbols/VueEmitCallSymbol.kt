@@ -10,9 +10,8 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolOrigin
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueContainer
-import org.jetbrains.vuejs.model.VueEmitCall
+import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import org.jetbrains.vuejs.model.*
 
 class VueEmitCallSymbol(emitCall: VueEmitCall,
                         owner: VueComponent,
@@ -30,6 +29,9 @@ class VueEmitCallSymbol(emitCall: VueEmitCall,
 
   override val priority: WebSymbol.Priority
     get() = WebSymbol.Priority.HIGHEST
+
+  override val attributeValue: WebSymbolHtmlAttributeValue =
+    WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.EXPRESSION, WebSymbolHtmlAttributeValue.Type.OF_MATCH)
 
   override fun presentation(): TargetPresentation {
     return presentation

@@ -16,6 +16,11 @@ const props = defineProps({
   foo: String
 })
 
+const emit = defineEmits<{
+  (event: 'add', id: number): void,
+  (event: 'remove', force: boolean): void
+}>();
+
 // WEB-54758
 interface SelectProps {
   value: string,

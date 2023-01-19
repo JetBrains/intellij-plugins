@@ -244,7 +244,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
             ?.inferredType
             ?.asSafely<JSStringLiteralTypeImpl>()
             ?.let {
-              VueScriptSetupLiteralBasedEvent(es6Unquote(it.valueAsString), it.sourceElement)
+              VueScriptSetupTypedEvent(es6Unquote(it.valueAsString), it.sourceElement, callSignature.functionType)
             }
         }
       ?: emptyList()
@@ -284,5 +284,17 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
   private class VueScriptSetupLiteralBasedEvent(override val name: String,
                                                 override val source: PsiElement?) : VueEmitCall
+
+  private class VueScriptSetupTypedEvent(
+    override val name: String,
+    override val source: PsiElement?,
+    private val eventSignature: JSFunctionType,
+  ) : VueEmitCall {
+    override val params: List<JSParameterTypeDecorator>
+      get() = eventSignature.parameters.drop(1)
+
+    override val hasStrictSignature: Boolean
+      get() = true
+  }
 
 }

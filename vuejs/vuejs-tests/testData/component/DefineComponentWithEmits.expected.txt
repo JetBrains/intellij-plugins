@@ -5,6 +5,10 @@
   {
    class: "VueSourceEmitDefinition",
    name: "test-event",
+   eventJSType: "(...args: any[]) => void",
+   params: [],
+   hasStrictSignature: false,
+   callSignature: "(event: "test-event", ...args: any[]) => void",
   },
  ],
 }

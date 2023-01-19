@@ -12,7 +12,7 @@ $#ComponentInternalInstance
 $attrs#null
 $data#null
 $el#any
-$emit#null
+$emit#(event: string, ...args: any[]) => void
 $forceUpdate#void
 $nextTick#Promise<void>
 $options#null

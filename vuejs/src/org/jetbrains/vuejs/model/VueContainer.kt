@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
@@ -52,7 +53,21 @@ interface VueSlot : VueNamedSymbol {
 
 @JvmDefaultWithCompatibility
 interface VueEmitCall : VueNamedSymbol {
-  val eventJSType: JSType? get() = null
+  /**
+   * A type of event handler.
+   */
+  val eventJSType: JSType? get() = handlerSignature
+
+  /**
+   * Event parameters not including event type itself, e.g.
+   * for `{(event: 'add', item: string): void}` contains only `item: string`.
+   */
+  val params: List<JSParameterTypeDecorator> get() = emptyList()
+
+  /**
+   * Is needed to distinguish between `['add']` and `{(event: 'add'): void}`.
+   */
+  val hasStrictSignature: Boolean get() = false
 }
 
 /**
