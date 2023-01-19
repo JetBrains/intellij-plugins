@@ -4,6 +4,7 @@ package org.jetbrains.astro.lang.parser
 import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType
 import com.intellij.lang.*
 import com.intellij.lang.javascript.DialectOptionHolder
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JavascriptParserDefinition
@@ -15,7 +16,9 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
+import com.intellij.psi.impl.source.tree.CompositeElement
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedElementType
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlElementType
@@ -24,6 +27,7 @@ import org.jetbrains.astro.lang.AstroFileElementType
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl
+import org.jetbrains.astro.lang.psi.AstroHtmlLiteralExpressionImpl
 
 open class AstroParserDefinition : JavascriptParserDefinition() {
   override fun createLexer(project: Project): Lexer {
@@ -90,6 +94,15 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
         HtmlEmbeddedContentImpl(node)
       }
       else -> super.createElement(node)
+    }
+  }
+
+  override fun createComposite(type: IElementType): CompositeElement? {
+    return when (type) {
+      JSElementTypes.JSX_XML_LITERAL_EXPRESSION -> {
+        AstroHtmlLiteralExpressionImpl(type)
+      }
+      else -> super.createComposite(type)
     }
   }
 

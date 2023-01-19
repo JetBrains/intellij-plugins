@@ -2,11 +2,11 @@ AstroFile:test.astro
   AstroRootContent:ASTRO:ROOT_CONTENT
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:a
+    AstroTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
-      XmlTag:b
+      AstroTag:b
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('b')
         XmlToken:XML_TAG_END('>')
@@ -22,7 +22,7 @@ AstroFile:test.astro
             PsiElement(JS:NUMERIC_LITERAL)('23')
           PsiWhiteSpace(' ')
           PsiElement(JS:PLUS)('+')
-          XmlTag:c
+          AstroTag:c
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('c')
             XmlToken:XML_EMPTY_ELEMENT_END('/>')

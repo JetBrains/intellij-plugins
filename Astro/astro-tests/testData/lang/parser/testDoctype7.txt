@@ -17,7 +17,7 @@ AstroFile:test.astro
         PsiWhiteSpace(' ')
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN(''dtds/ejb-jar_2_0.dtd'')
         XmlToken:XML_DOCTYPE_END('>')
-    XmlTag:test
+    AstroTag:test
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('test')
       XmlToken:XML_TAG_END('>')

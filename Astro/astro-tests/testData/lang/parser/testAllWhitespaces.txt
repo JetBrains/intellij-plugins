@@ -9,23 +9,23 @@ AstroFile:test.astro
         XmlToken:XML_PI_TARGET('xml version="1.0" encoding="UTF-8" standalone="yes"')
         XmlToken:XML_PI_END('?>')
       PsiWhiteSpace('\n')
-    XmlTag:Root
+    AstroTag:Root
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('Root')
       XmlToken:XML_TAG_END('>')
-      XmlTag:page
+      AstroTag:page
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('page')
         XmlToken:XML_TAG_END('>')
-        XmlTag:content
+        AstroTag:content
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('content')
           XmlToken:XML_TAG_END('>')
-          XmlTag:locatieblok
+          AstroTag:locatieblok
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('locatieblok')
             XmlToken:XML_TAG_END('>')
-            XmlTag:locatie
+            AstroTag:locatie
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('locatie')
               PsiWhiteSpace(' ')
@@ -44,7 +44,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:straat
+            AstroTag:straat
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('straat')
               PsiWhiteSpace(' ')
@@ -63,7 +63,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:postcode
+            AstroTag:postcode
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('postcode')
               PsiWhiteSpace(' ')
@@ -82,7 +82,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:plaats
+            AstroTag:plaats
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('plaats')
               PsiWhiteSpace(' ')
@@ -101,7 +101,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('  ')
-            XmlTag:telomschrijving
+            AstroTag:telomschrijving
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('telomschrijving')
               PsiWhiteSpace(' ')
@@ -120,7 +120,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:telefoon
+            AstroTag:telefoon
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('telefoon')
               PsiWhiteSpace(' ')
@@ -139,7 +139,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('  ')
-            XmlTag:internet
+            AstroTag:internet
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('internet')
               PsiWhiteSpace(' ')
@@ -159,11 +159,11 @@ AstroFile:test.astro
             XmlToken:XML_END_TAG_START('</')
             XmlToken:XML_NAME('locatieblok')
             XmlToken:XML_TAG_END('>')
-          XmlTag:naamblok
+          AstroTag:naamblok
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('naamblok')
             XmlToken:XML_TAG_END('>')
-            XmlTag:aanhefnaam
+            AstroTag:aanhefnaam
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('aanhefnaam')
               PsiWhiteSpace(' ')
@@ -186,7 +186,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:functie
+            AstroTag:functie
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('functie')
               PsiWhiteSpace(' ')
@@ -205,7 +205,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:mobielomschr
+            AstroTag:mobielomschr
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('mobielomschr')
               PsiWhiteSpace(' ')
@@ -224,7 +224,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('\t')
-            XmlTag:mobiel
+            AstroTag:mobiel
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('mobiel')
               PsiWhiteSpace(' ')
@@ -243,7 +243,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace(' ')
-            XmlTag:emailomschr
+            AstroTag:emailomschr
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('emailomschr')
               PsiWhiteSpace(' ')
@@ -262,7 +262,7 @@ AstroFile:test.astro
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('\t')
-            XmlTag:email
+            AstroTag:email
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('email')
               PsiWhiteSpace(' ')

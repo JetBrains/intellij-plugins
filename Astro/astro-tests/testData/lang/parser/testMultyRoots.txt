@@ -5,7 +5,7 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:a
+    AstroTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       PsiWhiteSpace(' ')
@@ -17,7 +17,7 @@ AstroFile:test.astro
           XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
       XmlToken:XML_EMPTY_ELEMENT_END('/>')
     PsiWhiteSpace(' ')
-    XmlTag:b
+    AstroTag:b
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('b')
       XmlToken:XML_EMPTY_ELEMENT_END('/>')

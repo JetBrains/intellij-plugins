@@ -45,7 +45,7 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:Element
+    AstroTag:Element
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('Element')
       XmlToken:XML_TAG_END('>')
@@ -61,7 +61,7 @@ AstroFile:test.astro
         XmlToken:XML_COMMENT_CHARACTERS(' renders as <div>Hello!</div> ')
         XmlToken:XML_COMMENT_END('-->')
     PsiWhiteSpace('\n')
-    XmlTag:Component
+    AstroTag:Component
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('Component')
       PsiWhiteSpace(' ')

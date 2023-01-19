@@ -6,7 +6,7 @@ AstroFile:test.astro
       PsiElement(JS:XML_LBRACE)('{')
       PsiWhiteSpace('\n ')
       JSBinaryExpression
-        XmlTag:img
+        AstroTag:img
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('img')
           XmlToken:XML_TAG_END('>')

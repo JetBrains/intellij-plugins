@@ -10,7 +10,7 @@ AstroFile:test.astro
         PsiWhiteSpace(' ')
         PsiElement(JS:LT)('&lt;')
         PsiWhiteSpace(' ')
-        XmlTag:span
+        AstroTag:span
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('span')
           XmlToken:XML_TAG_END('>')

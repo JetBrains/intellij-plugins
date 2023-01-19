@@ -38,6 +38,12 @@
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
 
+    <completion.contributor language="Astro"
+                            implementationClass="com.intellij.html.webSymbols.WebSymbolsHtmlCompletionContributor"
+                            order="before jsx-attr, before tsx-attr"
+    />
+    <html.compatibleLanguage language="Astro"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

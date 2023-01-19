@@ -2,11 +2,12 @@
 package org.jetbrains.astro.lang
 
 import com.intellij.extapi.psi.PsiFileBase
+import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
 
 class AstroFileImpl(provider: FileViewProvider)
-  : PsiFileBase(provider, AstroLanguage.INSTANCE) {
+  : PsiFileBase(provider, AstroLanguage.INSTANCE), HtmlCompatibleFile {
   override fun getFileType(): FileType =
     AstroFileType.INSTANCE
 

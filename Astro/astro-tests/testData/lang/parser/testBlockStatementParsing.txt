@@ -24,7 +24,7 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:div
+    AstroTag:div
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')
@@ -49,7 +49,7 @@ AstroFile:test.astro
                 JSReturnStatement
                   PsiElement(JS:RETURN_KEYWORD)('return')
                   PsiWhiteSpace(' ')
-                  XmlTag:a
+                  AstroTag:a
                     XmlToken:XML_START_TAG_START('<')
                     XmlToken:XML_NAME('a')
                     XmlToken:XML_TAG_END('>')

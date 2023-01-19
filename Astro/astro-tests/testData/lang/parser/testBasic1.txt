@@ -25,7 +25,7 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:div
+    AstroTag:div
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('div')
       XmlToken:XML_TAG_END('>')

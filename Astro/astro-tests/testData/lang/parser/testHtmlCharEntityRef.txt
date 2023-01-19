@@ -8,7 +8,7 @@ AstroFile:test.astro
     XmlToken:XML_CHAR_ENTITY_REF('&#xAAff;')
     XmlToken:XML_CHAR_ENTITY_REF('&#XaaFF;')
     XmlToken:XML_DATA_CHARACTERS('&#x&#X')
-    XmlTag:tag
+    AstroTag:tag
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('tag')
       PsiWhiteSpace(' ')

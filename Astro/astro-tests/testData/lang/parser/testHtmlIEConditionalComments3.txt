@@ -12,7 +12,7 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:link
+    AstroTag:link
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('link')
       PsiWhiteSpace(' ')

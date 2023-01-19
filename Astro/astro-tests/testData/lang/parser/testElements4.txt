@@ -5,7 +5,7 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:project
+    AstroTag:project
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('project')
       PsiWhiteSpace(' ')
@@ -24,7 +24,7 @@ AstroFile:test.astro
           XmlToken:XML_COMMENT_CHARACTERS(' set global properties for this build ')
           XmlToken:XML_COMMENT_END('-->')
         PsiWhiteSpace('\n')
-      XmlTag:property
+      AstroTag:property
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('property')
         PsiWhiteSpace(' ')

@@ -5,11 +5,11 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:head
+    AstroTag:head
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('head')
       XmlToken:XML_TAG_END('>')
-      XmlTag:title
+      AstroTag:title
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('title')
         XmlToken:XML_TAG_END('>')
@@ -26,13 +26,13 @@ AstroFile:test.astro
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('title')
         XmlToken:XML_TAG_END('>')
-    XmlTag:body
+    AstroTag:body
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('body')
       XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      XmlTag:script
+      AstroTag:script
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('script')
         PsiWhiteSpace(' ')
@@ -51,7 +51,7 @@ AstroFile:test.astro
         XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      XmlTag:style
+      AstroTag:style
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('style')
         PsiWhiteSpace(' ')
@@ -96,7 +96,7 @@ AstroFile:test.astro
         XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      XmlTag:textarea
+      AstroTag:textarea
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('textarea')
         XmlToken:XML_TAG_END('>')

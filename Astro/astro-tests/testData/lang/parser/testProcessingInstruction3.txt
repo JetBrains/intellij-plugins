@@ -25,7 +25,7 @@ AstroFile:test.astro
         PsiWhiteSpace(' ')
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('"document.dtd"')
         XmlToken:XML_DOCTYPE_END('>')
-    XmlTag:api
+    AstroTag:api
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('api')
       XmlToken:XML_TAG_END('>')

@@ -5,7 +5,7 @@ AstroFile:test.astro
     JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
       PsiElement(JS:XML_LBRACE)('{')
       PsiWhiteSpace(' ')
-      XmlTag:a
+      AstroTag:a
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('a')
         PsiWhiteSpace(' ')

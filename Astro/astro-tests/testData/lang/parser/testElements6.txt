@@ -18,7 +18,7 @@ AstroFile:test.astro
         XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('"file:../myproject/targets.xml"')
         XmlToken:XML_DOCTYPE_END('>')
     XmlToken:XML_DATA_CHARACTERS(']>')
-    XmlTag:project
+    AstroTag:project
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('project')
       XmlToken:XML_TAG_END('>')

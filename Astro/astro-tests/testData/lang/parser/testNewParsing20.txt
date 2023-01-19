@@ -16,7 +16,7 @@ AstroFile:test.astro
         XmlToken:XML_BAD_CHARACTER(']')
         XmlToken:XML_DOCTYPE_END('>')
       PsiWhiteSpace('\n')
-    XmlTag:root
+    AstroTag:root
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('root')
       XmlToken:XML_TAG_END('>')

@@ -17,11 +17,11 @@ AstroFile:test.astro
         XmlToken:XML_DOCTYPE_END('>')
     XmlToken:XML_DATA_CHARACTERS(']>')
     PsiWhiteSpace(' ')
-    XmlTag:a
+    AstroTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       XmlToken:XML_TAG_END('>')
-      XmlTag:a
+      AstroTag:a
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('a')
         PsiWhiteSpace(' ')

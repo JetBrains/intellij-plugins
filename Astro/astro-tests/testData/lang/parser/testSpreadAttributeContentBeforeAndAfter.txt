@@ -2,7 +2,7 @@ AstroFile:test.astro
   AstroRootContent:ASTRO:ROOT_CONTENT
     PsiElement(XML_PROLOG)
       <empty list>
-    XmlTag:a
+    AstroTag:a
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('a')
       PsiWhiteSpace(' ')

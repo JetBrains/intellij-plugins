@@ -237,7 +237,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   override fun getHtmlAttributeElementType(): IElementType {
-    return JSElementTypes.XML_ATTRIBUTE
+    return AstroStubElementTypes.HTML_ATTRIBUTE
   }
 
   override fun getHtmlAttributeValueElementType(): IElementType {

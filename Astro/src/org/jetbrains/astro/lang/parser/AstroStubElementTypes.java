@@ -7,4 +7,5 @@ public interface AstroStubElementTypes {
   String EXTERNAL_ID_PREFIX = "ASTRO:";
 
   AstroRootContentType ROOT_CONTENT = new AstroRootContentType();
+  AstroHtmlAttributeElementType HTML_ATTRIBUTE = new AstroHtmlAttributeElementType();
 }

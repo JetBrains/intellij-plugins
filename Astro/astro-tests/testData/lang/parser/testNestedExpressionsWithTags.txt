@@ -12,7 +12,7 @@ AstroFile:test.astro
           PsiWhiteSpace(' ')
           PsiElement(JS:PLUS)('+')
           PsiWhiteSpace(' ')
-          XmlTag:a
+          AstroTag:a
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('a')
             XmlToken:XML_TAG_END('>')
@@ -27,7 +27,7 @@ AstroFile:test.astro
                   PsiWhiteSpace(' ')
                   PsiElement(JS:PLUS)('+')
                   PsiWhiteSpace(' ')
-                  XmlTag:b
+                  AstroTag:b
                     XmlToken:XML_START_TAG_START('<')
                     XmlToken:XML_NAME('b')
                     XmlToken:XML_TAG_END('>')

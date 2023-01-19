@@ -28,7 +28,7 @@ AstroFile:test.astro
         PsiWhiteSpace(' ')
         PsiElement(JS:ANDAND)('&&')
         PsiWhiteSpace(' ')
-        XmlTag:p
+        AstroTag:p
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('p')
           XmlToken:XML_TAG_END('>')
@@ -49,7 +49,7 @@ AstroFile:test.astro
         PsiWhiteSpace(' ')
         PsiElement(JS:QUEST)('?')
         PsiWhiteSpace(' ')
-        XmlTag:p
+        AstroTag:p
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('p')
           XmlToken:XML_TAG_END('>')
@@ -63,7 +63,7 @@ AstroFile:test.astro
         PsiWhiteSpace(' ')
         PsiElement(JS:COLON)(':')
         PsiWhiteSpace(' ')
-        XmlTag:p
+        AstroTag:p
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('p')
           XmlToken:XML_TAG_END('>')

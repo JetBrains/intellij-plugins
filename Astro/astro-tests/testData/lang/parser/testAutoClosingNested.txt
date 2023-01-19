@@ -6,7 +6,7 @@ AstroFile:test.astro
       PsiElement(JS:XML_LBRACE)('{')
       PsiWhiteSpace('\n ')
       JSBinaryExpression
-        XmlTag:p
+        AstroTag:p
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('p')
           XmlToken:XML_TAG_END('>')
@@ -17,14 +17,14 @@ AstroFile:test.astro
             PsiElement(JS:XML_LBRACE)('{')
             PsiWhiteSpace('\n   ')
             JSBinaryExpression
-              XmlTag:p
+              AstroTag:p
                 XmlToken:XML_START_TAG_START('<')
                 XmlToken:XML_NAME('p')
                 XmlToken:XML_TAG_END('>')
                 XmlText
                   XmlToken:XML_DATA_CHARACTERS('FooBar')
                   PsiWhiteSpace('\n   ')
-              XmlTag:p
+              AstroTag:p
                 XmlToken:XML_START_TAG_START('<')
                 XmlToken:XML_NAME('p')
                 XmlToken:XML_TAG_END('>')
@@ -42,7 +42,7 @@ AstroFile:test.astro
             PsiElement(JS:XML_RBRACE)('}')
           XmlText
             PsiWhiteSpace('\n ')
-        XmlTag:p
+        AstroTag:p
           XmlToken:XML_START_TAG_START('<')
           XmlToken:XML_NAME('p')
           XmlToken:XML_TAG_END('>')
