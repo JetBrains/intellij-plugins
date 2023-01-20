@@ -157,6 +157,13 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureFileAndCheckHighlighting("ScriptSetupAwaitTwoScripts.vue") // WEB-52317
   }
 
+  fun testTSErrorsInsideTemplate() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    copyDirectory()
+    myFixture.configureFileAndCheckHighlighting("TSErrorsInsideTemplate.vue")
+  }
+
   @TypeScriptVersion(TypeScriptVersions.TS26)
   @Test
   fun testFileRename() {
