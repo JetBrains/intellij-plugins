@@ -5,11 +5,33 @@ import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.xml.XmlDocument
+import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlTag
 
 class AstroFileImpl(provider: FileViewProvider)
-  : PsiFileBase(provider, AstroLanguage.INSTANCE), HtmlCompatibleFile {
+  : PsiFileBase(provider, AstroLanguage.INSTANCE), HtmlCompatibleFile, XmlFile {
   override fun getFileType(): FileType =
     AstroFileType.INSTANCE
+
+  override fun processElements(processor: PsiElementProcessor<*>, place: PsiElement): Boolean =
+    document?.processElements(processor, place) == true
+
+  override fun getFileResolveScope(): GlobalSearchScope =
+    ProjectScope.getAllScope(project)
+
+  override fun ignoreReferencedElementAccessibility(): Boolean =
+    false
+
+  override fun getDocument(): XmlDocument? =
+    firstChild as? XmlDocument
+
+  override fun getRootTag(): XmlTag? =
+    document?.rootTag
 
   override fun toString(): String {
     return "AstroFile:$name"

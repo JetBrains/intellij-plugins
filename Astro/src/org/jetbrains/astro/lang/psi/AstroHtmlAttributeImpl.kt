@@ -2,28 +2,29 @@
 package org.jetbrains.astro.lang.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.javascript.psi.e4x.impl.JSXmlAttributeImpl
-import com.intellij.lang.javascript.psi.stubs.impl.JSXmlAttributeStubImpl
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.e4x.impl.JSXmlAttributeImpl.isExpressionValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.XmlElementFactoryImpl
 import com.intellij.psi.impl.source.xml.XmlAttributeDelegate
+import com.intellij.psi.impl.source.xml.XmlStubBasedAttributeBase
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.astro.lang.stub.AstroHtmlAttributeStubImpl
 
-class AstroHtmlAttributeImpl : JSXmlAttributeImpl {
+class AstroHtmlAttributeImpl : XmlStubBasedAttributeBase<AstroHtmlAttributeStubImpl>, JSElement {
 
-  constructor(stub: AstroHtmlAttributeStubImpl, nodeType: IStubElementType<JSXmlAttributeStubImpl, XmlAttribute>)
+  constructor(stub: AstroHtmlAttributeStubImpl, nodeType: IStubElementType<out AstroHtmlAttributeStubImpl, out XmlAttribute>)
     : super(stub, nodeType)
 
   constructor(node: ASTNode) : super(node)
 
   override fun createDelegate(): XmlAttributeDelegate {
-    return JSXmlAttributeImplDelegate()
+    return AstroHtmlAttributeImplDelegate()
   }
 
-  private inner class JSXmlAttributeImplDelegate : XmlStubBasedAttributeBaseDelegate() {
+  private inner class AstroHtmlAttributeImplDelegate : XmlStubBasedAttributeBaseDelegate() {
     override fun createAttribute(name: String, valueText: String, quoteStyle: Char?): XmlAttribute {
       return Companion.createAttribute(this@AstroHtmlAttributeImpl, name, valueText, quoteStyle)
     }
@@ -40,8 +41,8 @@ class AstroHtmlAttributeImpl : JSXmlAttributeImpl {
       val root = file.firstChild
       assert(root is AstroRootContent) { "Failed to parse as tag $text" }
       val tag = (root as AstroRootContent).firstChild
-      assert(tag is AstroHtmlLiteralExpressionImpl) { "Failed to parse as tag $text" }
-      return (tag as AstroHtmlLiteralExpressionImpl).getAttribute(qname) as AstroHtmlAttributeImpl
+      assert(tag is AstroHtmlTag) { "Failed to parse as tag $text" }
+      return (tag as AstroHtmlTag).getAttribute(qname) as AstroHtmlAttributeImpl
     }
   }
 

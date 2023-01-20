@@ -27,7 +27,7 @@ import org.jetbrains.astro.lang.AstroFileElementType
 import org.jetbrains.astro.lang.AstroFileImpl
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl
-import org.jetbrains.astro.lang.psi.AstroHtmlLiteralExpressionImpl
+import org.jetbrains.astro.lang.psi.AstroHtmlTag
 
 open class AstroParserDefinition : JavascriptParserDefinition() {
   override fun createLexer(project: Project): Lexer {
@@ -100,7 +100,7 @@ open class AstroParserDefinition : JavascriptParserDefinition() {
   override fun createComposite(type: IElementType): CompositeElement? {
     return when (type) {
       JSElementTypes.JSX_XML_LITERAL_EXPRESSION -> {
-        AstroHtmlLiteralExpressionImpl(type)
+        AstroHtmlTag(type)
       }
       else -> super.createComposite(type)
     }

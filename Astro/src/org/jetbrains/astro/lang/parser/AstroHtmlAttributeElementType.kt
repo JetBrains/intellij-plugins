@@ -3,39 +3,48 @@ package org.jetbrains.astro.lang.parser
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.psi.e4x.impl.JSXmlAttributeImpl
-import com.intellij.lang.javascript.types.JSXmlAttributeElementType
-import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
+import com.intellij.lang.javascript.types.PsiGenerator
+import com.intellij.psi.stubs.*
+import com.intellij.psi.xml.IXmlAttributeElementType
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.psi.AstroHtmlAttributeImpl
 import org.jetbrains.astro.lang.stub.AstroHtmlAttributeStubImpl
 
-class AstroHtmlAttributeElementType : JSXmlAttributeElementType() {
-
-  override fun getLanguage(): Language = AstroLanguage.INSTANCE
+class AstroHtmlAttributeElementType : IStubElementType<AstroHtmlAttributeStubImpl, AstroHtmlAttributeImpl>
+                                      ("XML_ATTRIBUTE", AstroLanguage.INSTANCE),
+                                      PsiGenerator<XmlAttribute>, IXmlAttributeElementType {
 
   override fun construct(node: ASTNode): XmlAttribute {
     return AstroHtmlAttributeImpl(node)
   }
 
-  override fun createPsi(stub: XmlAttributeStub<JSXmlAttributeImpl>): XmlAttribute {
-    return (stub as AstroHtmlAttributeStubImpl).createPsi()
+  override fun shouldCreateStub(node: ASTNode): Boolean {
+    return false
   }
 
-  override fun createStub(psi: XmlAttribute, parentStub: StubElement<*>): XmlAttributeStub<JSXmlAttributeImpl> {
-    return AstroHtmlAttributeStubImpl(psi as JSXmlAttributeImpl, parentStub, this)
+  override fun indexStub(stub: AstroHtmlAttributeStubImpl, sink: IndexSink) {
+  }
+
+  override fun createPsi(stub: AstroHtmlAttributeStubImpl): AstroHtmlAttributeImpl {
+    return AstroHtmlAttributeImpl(stub, this)
+  }
+
+  override fun createStub(psi: AstroHtmlAttributeImpl, parentStub: StubElement<*>?): AstroHtmlAttributeStubImpl {
+    return AstroHtmlAttributeStubImpl(psi, parentStub, this)
   }
 
   override fun getExternalId(): String {
     return "ASTRO:HTML_ATTRIBUTE"
   }
 
-  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): XmlAttributeStub<JSXmlAttributeImpl> {
-    return AstroHtmlAttributeStubImpl(dataStream, parentStub, this)
+  override fun serialize(stub: AstroHtmlAttributeStubImpl, dataStream: StubOutputStream) {
+    stub.serialize(dataStream)
   }
 
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): AstroHtmlAttributeStubImpl {
+    return AstroHtmlAttributeStubImpl(parentStub, dataStream, this)
+  }
 
 }
+

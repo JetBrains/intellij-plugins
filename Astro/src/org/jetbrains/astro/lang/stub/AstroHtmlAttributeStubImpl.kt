@@ -1,27 +1,34 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.astro.lang.stub
 
-import com.intellij.lang.javascript.psi.e4x.impl.JSXmlAttributeImpl
-import com.intellij.lang.javascript.psi.stubs.impl.JSXmlAttributeStubImpl
-import com.intellij.psi.stubs.IStubElementType
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.astro.lang.parser.AstroStubElementTypes
+import com.intellij.psi.impl.source.xml.stub.XmlAttributeStub
+import com.intellij.psi.stubs.*
+import com.intellij.util.io.StringRef
 import org.jetbrains.astro.lang.psi.AstroHtmlAttributeImpl
+import java.io.IOException
 
-class AstroHtmlAttributeStubImpl : JSXmlAttributeStubImpl {
+class AstroHtmlAttributeStubImpl : StubBase<AstroHtmlAttributeImpl>, XmlAttributeStub<AstroHtmlAttributeImpl> {
+  val name: String
+  val value: String?
 
-  constructor(psi: JSXmlAttributeImpl, parent: StubElement<*>, elementType: IStubElementType<*, *>)
-    : super(psi, parent, elementType)
-
-  constructor(dataStream: StubInputStream, parentStub: StubElement<*>, elementType: IStubElementType<*, *>)
-    : super(dataStream, parentStub, elementType)
-
-
-  override fun createPsi(): JSXmlAttributeImpl {
-    @Suppress("UNCHECKED_CAST")
-    return AstroHtmlAttributeImpl(this, AstroStubElementTypes.HTML_ATTRIBUTE as IStubElementType<JSXmlAttributeStubImpl, XmlAttribute>)
+  constructor(parent: StubElement<*>?,
+              dataStream: StubInputStream,
+              elementType: IStubElementType<*, *>) : super(parent, elementType) {
+    name = (StringRef.toString(dataStream.readName())) ?: ""
+    value = StringRef.toString(dataStream.readName())
   }
 
+  constructor(psi: AstroHtmlAttributeImpl,
+              parent: StubElement<*>?,
+              elementType: IStubElementType<*, *>) : super(parent, elementType) {
+    name = psi.name
+    value = psi.value
+  }
+
+  @Throws(IOException::class)
+  fun serialize(stream: StubOutputStream) {
+    stream.writeName(name)
+    stream.writeName(value)
+  }
 }
+
