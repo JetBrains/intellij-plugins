@@ -22,7 +22,6 @@ import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
-import org.jetbrains.vuejs.lang.html.VueFileType
 
 /**
  * @see VueComponentTest
@@ -569,6 +568,10 @@ const props = {seeMe: {}}
   fun testSourceScopedSlots() {
     myFixture.enableInspections(VueInspectionsProvider())
     doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), "Catalogue.vue")
+  }
+
+  fun testCustomEvents() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
 }
