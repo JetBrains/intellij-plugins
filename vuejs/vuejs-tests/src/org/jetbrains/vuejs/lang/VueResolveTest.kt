@@ -2067,6 +2067,17 @@ export default class UsageComponent extends Vue {
                           myFixture.resolveReference("cl<caret>icked(").containingFile.name)
   }
 
+  fun testScriptSetupCustomEmitInObjectLiteral() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile("${getTestName(true)}.vue")
+    sequenceOf(
+      "@<caret>add" to 105,
+      "@ch<caret>ange" to 114,
+      "v-on:re<caret>move" to 161
+    ).forEach { (signature, offset) ->
+      myFixture.checkGotoDeclaration(signature, offset)
+    }
+  }
 }
 
 fun globalMixinText(): String {

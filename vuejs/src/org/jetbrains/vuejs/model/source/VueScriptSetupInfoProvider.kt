@@ -223,31 +223,42 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         }
     }
 
-    private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> =
-      call.stubSafeCallArguments
-        .getOrNull(0)
-        .asSafely<JSArrayLiteralExpression>()
-        ?.stubSafeElements
-        ?.mapNotNull { literal ->
+    private fun analyzeDefineEmits(call: JSCallExpression): List<VueEmitCall> {
+      val arg = call.stubSafeCallArguments.getOrNull(0)
+
+      if (arg is JSArrayLiteralExpression) {
+        return arg.stubSafeElements.mapNotNull { literal ->
           (literal as? JSLiteralExpression)
             ?.significantValue
             ?.let { VueScriptSetupLiteralBasedEvent(es6Unquote(it), literal) }
         }
-      ?: JSResolveUtil
-        .getElementJSType(call)
-        ?.asRecordType()
-        ?.callSignatures
-        ?.mapNotNull { callSignature ->
-          callSignature
-            .functionType
-            .parameters.getOrNull(0)
-            ?.inferredType
-            ?.asSafely<JSStringLiteralTypeImpl>()
-            ?.let {
-              VueScriptSetupTypedEvent(es6Unquote(it.valueAsString), it.sourceElement, callSignature.functionType)
-            }
-        }
-      ?: emptyList()
+      }
+
+      val eventSources =
+        arg.asSafely<JSObjectLiteralExpression>()
+          ?.let { JSResolveUtil.getElementJSType(it) }
+          ?.asRecordType()
+          ?.properties
+          ?.associate { it.memberName to it.memberSource.singleElement }
+        ?: emptyMap()
+
+      return JSResolveUtil
+               .getElementJSType(call)
+               ?.asRecordType()
+               ?.callSignatures
+               ?.mapNotNull { callSignature ->
+                 callSignature
+                   .functionType
+                   .parameters.getOrNull(0)
+                   ?.inferredType
+                   ?.asSafely<JSStringLiteralTypeImpl>()
+                   ?.let {
+                     val name = es6Unquote(it.valueAsString)
+                     val source = eventSources[name] ?: it.sourceElement
+                     VueScriptSetupTypedEvent(name, source, callSignature.functionType)
+                   }
+               } ?: emptyList()
+    }
 
     private fun JSCallExpression.getInnerDefineProps(): JSCallExpression? =
       stubSafeCallArguments
