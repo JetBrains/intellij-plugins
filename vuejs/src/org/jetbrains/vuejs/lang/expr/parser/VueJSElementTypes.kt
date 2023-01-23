@@ -50,7 +50,7 @@ object VueJSElementTypes {
   private class VueJSEmbeddedExpressionContentElementType(@NonNls debugName: String,
                                                           language: Language,
                                                           classConstructor: (VueJSElementType) -> ASTNode)
-    : VueJSElementType(debugName, language, classConstructor), JEEmbeddedBlockElementType
+    : VueJSElementType(debugName, language, classConstructor) //, JEEmbeddedBlockElementType
 
   private class VueJSExpressionElementType(@NonNls debugName: String,
                                            classConstructor: (VueJSElementType) -> ASTNode)

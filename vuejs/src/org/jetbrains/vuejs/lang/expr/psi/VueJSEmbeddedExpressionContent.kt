@@ -4,7 +4,9 @@ package org.jetbrains.vuejs.lang.expr.psi
 import com.intellij.javascript.web.js.WebSymbolsExpressionWithExpectedTypeHolder
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSSourceElement
+import com.intellij.lang.javascript.psi.types.JSExportScope
 import com.intellij.lang.typescript.compiler.TypeScriptServiceErrorCustomizer
 
 interface VueJSEmbeddedExpressionContent : JSSourceElement, JSEmbeddedContent, WebSymbolsExpressionWithExpectedTypeHolder,
+                                           JSExportScope,
                                            TypeScriptServiceErrorCustomizer
