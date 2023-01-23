@@ -18,12 +18,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class DenoLspSupportProvider : LspServerSupportProvider {
-  override fun getServerDescriptor(project: Project, virtualFile: VirtualFile) =
+  override fun getServerDescriptor(project: Project, virtualFile: VirtualFile): LspServerDescriptor? =
     if (DenoSettings.getService(project).isUseDeno()) {
       getDenoDescriptor(project)
     }
     else {
-      LspServerDescriptor.emptyDescriptor()
+      null
     }
 }
 

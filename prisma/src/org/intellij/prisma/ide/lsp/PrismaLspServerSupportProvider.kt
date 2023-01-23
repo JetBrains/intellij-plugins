@@ -11,18 +11,18 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 
 class PrismaLspServerSupportProvider : LspServerSupportProvider {
-  override fun getServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor {
+  override fun getServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? {
     val node = NodeJsInterpreterManager.getInstance(project).interpreter
     if (node !is NodeJsLocalInterpreter && node !is WslNodeInterpreter) {
-      return LspServerDescriptor.emptyDescriptor()
+      return null
     }
     val fileIndex = ProjectFileIndex.getInstance(project)
-    val contentRoot = fileIndex.getContentRootForFile(file) ?: return LspServerDescriptor.emptyDescriptor()
+    val contentRoot = fileIndex.getContentRootForFile(file) ?: return null
     for (packageJson in PackageJsonFileManager.getInstance(project).validPackageJsonFiles) {
       if (contentRoot == fileIndex.getContentRootForFile(packageJson!!)) {
         return PrismaLspServerDescriptor(project, contentRoot)
       }
     }
-    return LspServerDescriptor.emptyDescriptor()
+    return null
   }
 }
