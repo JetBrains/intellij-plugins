@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.linter.JSLinterInspection;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +53,7 @@ public final class TsLintInspection extends JSLinterInspection {
   @NotNull
   @Override
   protected List<String> getSettingsPath() {
-    return ContainerUtil.newArrayList(
+    return List.of(
       JavaScriptBundle.message("typescript.compiler.configurable.name"),
       getDisplayName()
     );
