@@ -29,7 +29,7 @@ class AngularCliFileReferenceHelper : FileReferenceHelper() {
            ?: emptyList()
   }
 
-  override fun getRoots(module: Module, file: VirtualFile): Collection<PsiFileSystemItem> {
-    return getContexts(module.project, file)
+  override fun getRoots(module: Module, hostFile: VirtualFile): Collection<PsiFileSystemItem> {
+    return getContexts(module.project, hostFile)
   }
 }

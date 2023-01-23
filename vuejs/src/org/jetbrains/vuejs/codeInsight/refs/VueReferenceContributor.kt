@@ -56,7 +56,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
               ?.let { arrayOf(it) }
             ?: emptyArray()
 
-          val referenceSet = VueStylesheetFileReferenceSet(element, referenceData.first,
+          val referenceSet = StylesheetFileReferenceSet(element, referenceData.first,
                                                            referenceData.second, *suitableFileTypes)
           @Suppress("UNCHECKED_CAST")
           return referenceSet.allReferences as Array<PsiReference>
@@ -92,27 +92,5 @@ class VueReferenceContributor : PsiReferenceContributor() {
 
     private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
       XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))
-
-    private class VueStylesheetFileReferenceSet(element: PsiElement, referenceText: String,
-                                                textRange: TextRange, vararg suitableFileTypes: FileType)
-      : StylesheetFileReferenceSet(element, referenceText, textRange, false, false, *suitableFileTypes) {
-
-      override fun computeDefaultContexts(): MutableCollection<PsiFileSystemItem> {
-        val result = super.computeDefaultContexts()
-        if (pathString[0] !in listOf('.', '/', '\\')) {
-          val psiManager = PsiManager.getInstance(this.element.project)
-          PsiUtilCore.getVirtualFile(this.element)?.let { root ->
-            JSProjectUtil.processDirectoriesUpToContentRoot(this.element.project, root) { dir ->
-              dir.findChild(NODE_MODULES)
-                ?.takeIf { it.isDirectory }
-                ?.let { psiManager.findDirectory(it) }
-                ?.let { result.add(it) }
-              true
-            }
-          }
-        }
-        return result
-      }
-    }
   }
 }
