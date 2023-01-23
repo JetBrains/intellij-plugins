@@ -41,6 +41,9 @@ class AstroFrontmatterScope(val file: AstroFileImpl)
   private class AstroLocalComponent(override val name: String,
                                     override val source: PsiElement) : PsiSourcedWebSymbol {
 
+    override val priority: WebSymbol.Priority
+      get() = WebSymbol.Priority.HIGH
+
     override val origin: WebSymbolOrigin
       get() = AstroLocalSymbolOrigin
 
