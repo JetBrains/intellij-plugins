@@ -136,6 +136,7 @@ internal class PbJavaImplementationSearcher : PbCodeImplementationSearcher {
   private fun hasServiceSuperclass(psiClass: PsiClass, converters: Collection<PbGeneratedCodeConverter>): Boolean {
     return converters
       .map(PbGeneratedCodeConverter::generatedFileNameHint)
+      .distinct()
       .any { InheritanceUtil.isInheritor(psiClass, it) }
   }
 }
