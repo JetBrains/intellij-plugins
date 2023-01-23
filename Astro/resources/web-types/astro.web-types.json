@@ -9,7 +9,7 @@
   "framework-config": {
     "enable-when": {
       "file-extensions": [
-        ".astro"
+        "astro"
       ]
     }
   },
@@ -21,7 +21,7 @@
           "astro"
         ],
         "file-extensions": [
-          ".astro"
+          "astro"
         ]
       }
     }

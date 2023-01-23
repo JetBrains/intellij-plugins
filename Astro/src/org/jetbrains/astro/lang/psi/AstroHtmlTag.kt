@@ -15,6 +15,7 @@ import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.impl.source.xml.XmlTagDelegate
 import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.astro.lang.AstroLanguage
@@ -56,9 +57,9 @@ class AstroHtmlTag(type: IElementType) : XmlTagImpl(type), HtmlTag, JSLiteralExp
         .createFileFromText("foo.astro", language, text, false, true)
       val root = file.firstChild
       assert(root is AstroRootContent) { "Failed to parse as tag $text" }
-      val tag = (root as AstroRootContent).firstChild
-      assert(tag is AstroHtmlTag) { "Failed to parse as tag $text" }
-      return tag as AstroHtmlTag
+      val tag = (root as AstroRootContent).childrenOfType<AstroHtmlTag>().firstOrNull()
+      assert(tag != null) { "Failed to parse as tag $text" }
+      return tag!!
     }
 
     override fun deleteChildInternalSuper(child: ASTNode) {

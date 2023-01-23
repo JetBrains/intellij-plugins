@@ -35,20 +35,22 @@
     <stubElementTypeHolder class="org.jetbrains.astro.lang.parser.AstroStubElementTypes" externalIdPrefix="ASTRO:"/>
     <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroImplicitUsageProvider"/>
 
+    <html.compatibleLanguage language="Astro"/>
+    <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before web-symbols-react"
+                      id="astro"/>
+    <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>
+
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
-
-    <completion.contributor language="Astro"
-                            implementationClass="com.intellij.html.webSymbols.WebSymbolsHtmlCompletionContributor"
-                            order="before jsx-attr, before tsx-attr"
-    />
-    <html.compatibleLanguage language="Astro"/>
+    <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
 
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
     <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.AstroIndexedFileTypeProvider"/>
     <dialectSpecificHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
+    <inheritedLanguagesConfigurableProvider language="Astro"
+                                            implementationClass="org.jetbrains.astro.lang.AstroLanguageConfigurableProvider"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
