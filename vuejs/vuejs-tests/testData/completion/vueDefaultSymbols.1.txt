@@ -29,7 +29,9 @@
 !this#null#6
 !async#null#5
 !delete#null#5
+!export#null#5
 !false#null#5
+!import#null#5
 !new#null#5
 !null#null#5
 !true#null#5

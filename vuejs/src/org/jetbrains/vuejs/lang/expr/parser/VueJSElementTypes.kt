@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.types.JEEmbeddedBlockElementType
 import com.intellij.lang.javascript.types.JSExpressionElementType
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
@@ -33,18 +34,23 @@ object VueJSElementTypes {
   val SCRIPT_SETUP_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SCRIPT_SETUP_EXPRESSION", ::VueJSScriptSetupExpressionImpl)
 
-  val EMBEDDED_EXPR_CONTENT_JS: IElementType = VueJSElementType(
+  val EMBEDDED_EXPR_CONTENT_JS: IElementType = VueJSEmbeddedExpressionContentElementType(
     "VUE:EMBEDDED_EXPR_CONTENT_JS", VueJSLanguage.INSTANCE, ::VueJSEmbeddedExpressionContentImpl)
 
-  val EMBEDDED_EXPR_CONTENT_TS: IElementType = VueJSElementType(
+  val EMBEDDED_EXPR_CONTENT_TS: IElementType = VueJSEmbeddedExpressionContentElementType(
     "VUE:EMBEDDED_EXPR_CONTENT_TS", VueTSLanguage.INSTANCE, ::VueJSEmbeddedExpressionContentImpl)
 
-  private open class VueJSElementType(@NonNls debugName: String,
-                                      language: Language,
-                                      private val myClassConstructor: (VueJSElementType) -> ASTNode)
+  private abstract class VueJSElementType(@NonNls debugName: String,
+                                          language: Language,
+                                          private val myClassConstructor: (VueJSElementType) -> ASTNode)
     : IElementType(debugName, language), ICompositeElementType {
     final override fun createCompositeNode(): ASTNode = myClassConstructor(this)
   }
+
+  private class VueJSEmbeddedExpressionContentElementType(@NonNls debugName: String,
+                                                          language: Language,
+                                                          classConstructor: (VueJSElementType) -> ASTNode)
+    : VueJSElementType(debugName, language, classConstructor), JEEmbeddedBlockElementType
 
   private class VueJSExpressionElementType(@NonNls debugName: String,
                                            classConstructor: (VueJSElementType) -> ASTNode)
