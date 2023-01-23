@@ -4,10 +4,9 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluatorComplexityTracker;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -19,7 +18,7 @@ public class ComponentsTest extends BasePlatformTestCase {
 
   public void testEditableFieldInspections() {
     myFixture.enableInspections(JSUndeclaredVariableInspection.class,
-                                JSUnresolvedVariableInspection.class,
+                                JSUnresolvedReferenceInspection.class,
                                 JSUnusedGlobalSymbolsInspection.class,
                                 JSUnusedLocalSymbolsInspection.class,
                                 HtmlUnknownAttributeInspection.class,
@@ -31,7 +30,7 @@ public class ComponentsTest extends BasePlatformTestCase {
 
   public void testHeroDetailInspections() {
     myFixture.enableInspections(JSUndeclaredVariableInspection.class,
-                                JSUnresolvedVariableInspection.class,
+                                JSUnresolvedReferenceInspection.class,
                                 JSUnusedGlobalSymbolsInspection.class,
                                 JSUnusedLocalSymbolsInspection.class,
                                 HtmlUnknownAttributeInspection.class,

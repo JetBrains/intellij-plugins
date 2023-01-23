@@ -5,7 +5,7 @@ import com.intellij.flex.FlexTestOptions;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSIntentionTestCase;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
-    myFixture.enableInspections(new JSUnresolvedVariableInspection());
+    myFixture.enableInspections(new JSUnresolvedReferenceInspection());
   }
 
   @NotNull

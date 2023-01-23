@@ -42,8 +42,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       ThisExpressionReferencesGlobalObjectJSInspection.class,
       JSUnusedGlobalSymbolsInspection.class,
       JSUnusedLocalSymbolsInspection.class,
-      JSUnresolvedVariableInspection.class,
-      JSUnresolvedFunctionInspection.class,
+      JSUnresolvedReferenceInspection.class,
       JSValidateTypesInspection.class,
 
       HtmlUnknownAttributeInspection.class,

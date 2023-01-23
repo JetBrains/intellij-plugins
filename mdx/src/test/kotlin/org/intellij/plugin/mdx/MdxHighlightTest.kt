@@ -1,7 +1,7 @@
 package org.intellij.plugin.mdx
 
 import com.intellij.lang.javascript.inspections.JSXUnresolvedComponentInspection
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
@@ -16,7 +16,7 @@ class MdxHighlightTest : MdxTestBase() {
           JSXUnresolvedComponentInspection(),
           TypeScriptUnresolvedVariableInspection(),
           TypeScriptUnresolvedFunctionInspection(),
-          JSUnresolvedVariableInspection()
+          JSUnresolvedReferenceInspection()
         )
 
         myFixture.configureByText(

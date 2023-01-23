@@ -6,7 +6,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSIntentionTestCase;
 import com.intellij.lang.javascript.flex.ActionScriptAutoImportOptionsProvider;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(new JSUnresolvedVariableInspection());
+    myFixture.enableInspections(new JSUnresolvedReferenceInspection());
   }
 
   public void testImportClass() {
