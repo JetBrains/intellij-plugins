@@ -10,14 +10,13 @@ import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lsp.LanguageServerConnector
 import com.intellij.lsp.LspServerDescriptorBase
-import com.intellij.lsp.SocketModeDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.prisma.PrismaBundle
 import java.io.File
 
 class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptorBase(project, root) {
-  override fun createStdioServerStartingCommandLine(): GeneralCommandLine {
+  override fun createCommandLine(): GeneralCommandLine {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
     if (interpreter !is NodeJsLocalInterpreter && interpreter !is WslNodeInterpreter) {
       throw ExecutionException(PrismaBundle.message("prisma.interpreter.not.configured"))
@@ -41,12 +40,10 @@ class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServer
   }
 
   override fun createServerConnector(): LanguageServerConnector {
-    val startingCommandLine = createStdioServerStartingCommandLine()
+    val startingCommandLine = createCommandLine()
     LOG.debug("$this: starting server process using: $startingCommandLine")
     return PrismaServerConnector(this, OSProcessHandler(startingCommandLine))
   }
-
-  override fun getSocketModeDescriptor(): SocketModeDescriptor? = null
 
   override fun useGenericCompletion(): Boolean = false
 

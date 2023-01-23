@@ -7,7 +7,6 @@ import com.intellij.deno.DenoSettings
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerSupportProvider
-import com.intellij.lsp.SocketModeDescriptor
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.Service
@@ -36,7 +35,7 @@ class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescrip
 
   override fun getProject(): Project = myProject
 
-  override fun createStdioServerStartingCommandLine(): GeneralCommandLine {
+  override fun createCommandLine(): GeneralCommandLine {
     return DenoSettings.getService(project).getDenoPath().ifEmpty { null }?.let {
       GeneralCommandLine(it, "lsp")
     }.also { DenoTypings.getInstance(project).reloadAsync() } ?: throw RuntimeException("deno is not installed")
@@ -68,8 +67,6 @@ class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescrip
     jsonObject.remove(name)
     jsonObject.add(name, JsonPrimitive(FileUtil.toSystemDependentName("$basePath/$text")))
   }
-
-  override fun getSocketModeDescriptor(): SocketModeDescriptor? = null
 
   override fun useGenericCompletion() = false
 
