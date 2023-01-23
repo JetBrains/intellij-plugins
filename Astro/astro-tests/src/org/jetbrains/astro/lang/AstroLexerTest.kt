@@ -192,6 +192,10 @@ open class AstroLexerTest : LexerTestCase() {
     |Foo Bar <a --- > Foo
   """)
 
+  fun testNoFrontmatter9() = doTest("""
+    |<
+  """)
+
   fun testExpressionUnterminated() = doTest("""
     |------
     |{12<

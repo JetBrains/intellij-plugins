@@ -1936,8 +1936,7 @@ public class _AstroLexer implements FlexLexer {
         zzAtEOF = true;
         switch (zzLexicalState) {
             case YYINITIAL: {
-              yybegin(HTML_INITIAL);
-        zzMarkedPos = 0;
+              reset(zzBuffer, 0, zzEndRead, HTML_INITIAL);
             }  // fall though
             case 685: break;
             case FRONTMATTER_OPENED: {

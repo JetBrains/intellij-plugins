@@ -463,8 +463,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         // Just consume
       }
   <<EOF>> {
-        yybegin(HTML_INITIAL);
-        zzMarkedPos = 0;
+        reset(zzBuffer, 0, zzEndRead, HTML_INITIAL);
       }
 }
 
