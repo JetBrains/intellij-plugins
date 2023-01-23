@@ -90,7 +90,9 @@ public class ActionScriptMultiModuleTextFieldCompletionTest extends JavaCompleti
   protected void tearDown() throws Exception {
     try {
       for (Editor editor : myEditorsToRelease) {
-        EditorFactory.getInstance().releaseEditor(editor);
+        if (!editor.isDisposed()) {
+          EditorFactory.getInstance().releaseEditor(editor);
+        }
       }
       myEditorsToRelease = null;
     }
