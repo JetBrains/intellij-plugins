@@ -50,7 +50,7 @@ import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.hasSrcReference
 import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictDefineComponentOrVueExtendCall
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictComponentDefiningCall
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 import kotlin.contracts.ExperimentalContracts
@@ -224,12 +224,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (parent is JSExportAssignment ||
           parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression) ||
           parent is JSArgumentList && parent.parent?.asSafely<JSCallExpression>()
-            ?.let { isDefineComponentOrVueExtendCall(it.node) } == true) {
+            ?.let { isComponentDefiningCall(it.node) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
           val element = createImplicitElement(VueComponentsIndex.JS_KEY, getComponentNameFromDescriptor(obj), property)
           if (parent is JSArgumentList && parent.parent?.asSafely<JSCallExpression>()
-              ?.let { isStrictDefineComponentOrVueExtendCall(it) } == false) {
+              ?.let { isStrictComponentDefiningCall(it) } == false) {
             out.setAddUnderlyingElementToSymbolIndex(true)
           }
           out.addImplicitElement(element)
@@ -264,7 +264,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return isCompositionApiAppObjectCall(node)
            || VueStaticMethod.matchesAny(methodExpression)
            || isScriptSetupMacroCall(node)
-           || isDefineComponentOrVueExtendCall(node)
+           || isComponentDefiningCall(node)
   }
 
   override fun shouldCreateStubForArrayLiteral(node: ASTNode): Boolean =
@@ -283,7 +283,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       recordVueFunctionName(this, outData, callExpression, referenceName)
       return
     }
-    if (isDefineComponentOrVueExtendCall(callExpression.node)) {
+    if (isComponentDefiningCall(callExpression.node)) {
       recordVueFunctionName(this, outData, callExpression, referenceName)
     }
 
@@ -515,7 +515,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       !hasQualifier && referenceName in SCRIPT_SETUP_MACROS && isDescendantOfStubbedScriptTag(callNode)
     }
 
-  private fun isDefineComponentOrVueExtendCall(callNode: ASTNode): Boolean =
+  private fun isComponentDefiningCall(callNode: ASTNode): Boolean =
     checkCallExpression(callNode) { referenceName, hasQualifier ->
       (!hasQualifier && referenceName == DEFINE_COMPONENT_FUN)
       || (hasQualifier && referenceName == EXTEND_FUN)

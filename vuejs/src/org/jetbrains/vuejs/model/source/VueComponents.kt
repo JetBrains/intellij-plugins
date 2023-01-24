@@ -114,7 +114,7 @@ class VueComponents {
         // Vue.extend({...})
         // defineComponent({...})
         is JSCallExpression ->
-          if (isDefineComponentOrVueExtendCall(resolved)) {
+          if (isComponentDefiningCall(resolved)) {
             resolved.stubSafeCallArguments
               .getOrNull(0)
               ?.let { it as? JSObjectLiteralExpression }
@@ -159,12 +159,12 @@ class VueComponents {
     }
 
     @StubSafe
-    fun isDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
+    fun isComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       VueFrameworkHandler.getFunctionNameFromVueIndex(callExpression).let {
         it == DEFINE_COMPONENT_FUN || it == EXTEND_FUN
       }
 
-    fun isStrictDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
+    fun isStrictComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       callExpression.methodExpression?.let {
         JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_COMPONENT_FUN) ||
         JSSymbolUtil.isAccurateReferenceExpressionName(it, VUE_NAMESPACE, EXTEND_FUN)
