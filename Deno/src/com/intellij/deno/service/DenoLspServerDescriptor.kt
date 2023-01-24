@@ -7,7 +7,6 @@ import com.intellij.deno.DenoSettings
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerSupportProvider
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
@@ -26,14 +25,13 @@ class DenoLspSupportProvider : LspServerSupportProvider {
     }
 }
 
-fun getDenoDescriptor(project: Project): DenoLspServerDescriptor {
-  return project.getService(DenoLspServerDescriptor::class.java)
+fun getDenoDescriptor(project: Project): DenoLspServerDescriptor? {
+  return project.guessProjectDir()?.let { project.getService(DenoLspServerDescriptor::class.java) }
 }
 
+// TODO don't register DenoLspServerDescriptor as a @Service, don't use guessProjectDir().
 @Service
-class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescriptor(), Disposable {
-
-  override fun getProject(): Project = myProject
+class DenoLspServerDescriptor(project: Project) : LspServerDescriptor(project, project.guessProjectDir()!!) {
 
   override fun createCommandLine(): GeneralCommandLine {
     return DenoSettings.getService(project).getDenoPath().ifEmpty { null }?.let {
@@ -50,8 +48,6 @@ class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescrip
 
     return result
   }
-
-  override fun getRoot(): VirtualFile = project.guessProjectDir()!!
 
   private fun expandRelativePath(jsonElement: JsonElement, name: String) {
     val basePath = project.basePath
@@ -73,5 +69,4 @@ class DenoLspServerDescriptor(private val myProject: Project) : LspServerDescrip
   override fun useGenericHighlighting() = false
 
   override fun useGenericNavigation() = false
-  override fun dispose() {}
 }
