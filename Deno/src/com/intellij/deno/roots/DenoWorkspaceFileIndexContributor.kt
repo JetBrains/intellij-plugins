@@ -17,11 +17,11 @@ class DenoWorkspaceFileIndexContributor : WorkspaceFileIndexContributor<DenoEnti
   override fun registerFileSets(entity: DenoEntity, registrar: WorkspaceFileSetRegistrar, storage: EntityStorage) {
     if (!useWorkspaceModel() || !useWorkspaceFileIndexContributor()) return
     if (entity.denoTypes == null && entity.depsFile == null) return
-    val allRoots = listOfNotNull(entity.denoTypes?.virtualFile, entity.depsFile?.virtualFile)
-    val predicate = excludeCondition.transformToCondition(allRoots)
-    allRoots.forEach { file ->
-      registrar.registerFileSet(file, WorkspaceFileKind.EXTERNAL_SOURCE, entity, DenoFileSetData())
-      registrar.registerExclusionCondition(file, { predicate.value(it) }, entity)
+    val allRootUrls = listOfNotNull(entity.denoTypes, entity.depsFile)
+    val predicate = excludeCondition.transformToCondition(allRootUrls.mapNotNull { it.virtualFile })
+    allRootUrls.forEach { url ->
+      registrar.registerFileSet(url, WorkspaceFileKind.EXTERNAL_SOURCE, entity, DenoFileSetData())
+      registrar.registerExclusionCondition(url, { predicate.value(it) }, entity)
     }
   }
 }
