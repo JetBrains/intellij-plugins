@@ -13,7 +13,6 @@ import com.intellij.lsp.LspServerDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.prisma.PrismaBundle
-import java.io.File
 
 class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptor(project, root) {
   override fun createCommandLine(): GeneralCommandLine {
@@ -30,7 +29,6 @@ class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServer
     return GeneralCommandLine().apply {
       withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE)
       withCharset(Charsets.UTF_8)
-      workDirectory = File(root.path)
       addParameter(lsp.path)
       addParameter("--stdio")
 
