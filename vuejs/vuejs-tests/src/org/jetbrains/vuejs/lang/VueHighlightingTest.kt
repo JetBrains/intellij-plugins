@@ -22,10 +22,12 @@ import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
+import org.jetbrains.vuejs.libraries.nuxt.NuxtHighlightingTest
 
 /**
  * @see VueComponentTest
  * @see VueControlFlowTest
+ * @see NuxtHighlightingTest
  */
 class VueHighlightingTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
