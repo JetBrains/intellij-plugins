@@ -2,10 +2,10 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
@@ -74,7 +74,7 @@ public class CordovaBasedExecutor {
   }
 
   private String @NotNull [] getServeCommands(String extraArgs) {
-    return appendParsedArguments(ContainerUtil.newArrayList(myPath, "serve"), extraArgs);
+    return appendParsedArguments(Arrays.asList(myPath, "serve"), extraArgs);
   }
 
   public String @NotNull [] getEmulateCommand(@NotNull String platform,

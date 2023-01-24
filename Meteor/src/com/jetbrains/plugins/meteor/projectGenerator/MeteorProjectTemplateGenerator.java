@@ -183,7 +183,7 @@ public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorPro
     indicator.setText(MeteorBundle.message("prepare.project.directory"));
     File[] array = new File(tempProject.toURI()).listFiles();
     if (array != null && array.length != 0) {
-      File from = ContainerUtil.getFirstItem(ContainerUtil.newArrayList(array));
+      File from = array[0];
       assert from != null;
 
       FileUtil.copyDir(from, new File(baseDir.getPath()));

@@ -237,7 +237,7 @@ public class KarmaExecutionSession {
     }
     QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
     qunit.forEachTest(test -> {
-      allTestsPatterns.add(ContainerUtil.newArrayList(JSTestNamePattern.literalPattern(test.getModuleStructure().getName()),
+      allTestsPatterns.add(List.of(JSTestNamePattern.literalPattern(test.getModuleStructure().getName()),
                                                       JSTestNamePattern.literalPattern(test.getName())));
     });
     if (!allTestsPatterns.isEmpty()) {

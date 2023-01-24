@@ -177,10 +177,10 @@ public final class Reveal {
     }
 
     try {
-      List<String> args = ContainerUtil.newArrayList(ExecUtil.getOsascriptPath(),
-                                                     inspectionScript.toString(),
-                                                     bundleID);
-      ContainerUtil.addIfNotNull(args, deviceName);
+      List<String> args = List.of(ExecUtil.getOsascriptPath(), inspectionScript.toString(), bundleID);
+      if (deviceName != null) {
+        args = ContainerUtil.append(args, deviceName);
+      }
 
       CapturingProcessHandler handler = new CapturingProcessHandler(new GeneralCommandLine(args));
       handler.addProcessListener(new ProcessAdapter() {

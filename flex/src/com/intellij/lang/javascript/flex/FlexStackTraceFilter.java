@@ -23,7 +23,6 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -170,7 +169,7 @@ public class FlexStackTraceFilter implements Filter {
       }
       else {
         final PsiManager psiManager = PsiManager.getInstance(project);
-        final Collection<PsiFile> psiFiles = new ArrayList<>(validFiles.size());
+        final List<PsiFile> psiFiles = new ArrayList<>(validFiles.size());
         for (final VirtualFile file : validFiles) {
           final PsiFile psiFile = psiManager.findFile(file);
           if (psiFile != null) {
@@ -182,7 +181,7 @@ public class FlexStackTraceFilter implements Filter {
         list.setCellRenderer(new DefaultPsiElementCellRenderer());
 
         JBPopup popup = JBPopupFactory.getInstance()
-          .createPopupChooserBuilder(ContainerUtil.newArrayList(PsiUtilCore.toPsiFileArray(psiFiles)))
+          .createPopupChooserBuilder(psiFiles)
           .setItemChosenCallback((selectedElement) -> {
             final VirtualFile file = selectedElement.getVirtualFile();
             if (file != null) {

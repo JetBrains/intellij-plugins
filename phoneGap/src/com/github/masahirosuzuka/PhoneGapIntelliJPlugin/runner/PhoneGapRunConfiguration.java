@@ -259,8 +259,8 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
       checkExistsSdkWithWarning(PhoneGapAndroidTargets.getAndroidName(), PhoneGapBundle.message("cannot.detect.android.sdk.in.path"));
     }
     if (myPlatform.equals(PLATFORM_IOS)) {
-      checkExistsSdkWithWarning(ContainerUtil.newArrayList(PhoneGapIosTargets.getIosSimName(),
-                                                           PhoneGapIosTargets.getIosDeployName()),
+      checkExistsSdkWithWarning(List.of(PhoneGapIosTargets.getIosSimName(),
+                                        PhoneGapIosTargets.getIosDeployName()),
                                 PhoneGapBundle.message("cannot.detect.ios.sim.and.ios.deploy.in.path"));
     }
   }

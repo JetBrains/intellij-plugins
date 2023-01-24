@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.psi.stubs.JSVariableStub
 import com.intellij.lexer.Lexer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
-import com.intellij.util.containers.ContainerUtil
 import org.angular2.lang.expr.Angular2Language
 import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import java.util.function.Supplier
@@ -25,8 +24,7 @@ class Angular2HtmlVarAttrTokenType(debugName: String,
                                    private val myPrefixTokenParserConstructor: Supplier<out TokenParser>)
   : HtmlCustomEmbeddedContentTokenType(debugName, Angular2Language.INSTANCE) {
   override fun createLexer(): Lexer {
-    return AbstractCustomLexer(ContainerUtil.newArrayList(
-      myPrefixTokenParserConstructor.get(), VarIdentTokenParser()))
+    return AbstractCustomLexer(listOf(myPrefixTokenParserConstructor.get(), VarIdentTokenParser()))
   }
 
   override fun parse(builder: PsiBuilder) {
