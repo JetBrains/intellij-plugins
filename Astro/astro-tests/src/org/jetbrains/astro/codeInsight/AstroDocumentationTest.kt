@@ -11,6 +11,14 @@ class AstroDocumentationTest : AstroCodeInsightTestCase() {
 
   fun testHtmlAttribute() = doTest()
 
+  fun testHtmlTagLookup() = doLookupTest {
+    it.lookupString in listOf("div", "table")
+  }
+
+  fun testHtmlAttributeLookup() = doLookupTest {
+    it.lookupString in listOf("src", "title")
+  }
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/documentation"
