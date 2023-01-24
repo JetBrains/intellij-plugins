@@ -121,6 +121,12 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     return tagLevel() == 0 || peekTagName() != EXPRESSION_MARKER
   }
 
+  override fun isTagNameFurtherInStack(endName: String, tagNames: Stack<String>): Boolean {
+    // Do not cross expression boundary when closing tags.
+    return super.isTagNameFurtherInStack(
+      endName, Stack(tagNames.subList(tagNames.indexOfLast { it == EXPRESSION_MARKER }.coerceAtLeast(0), tagNames.size)))
+  }
+
   override fun childTerminatesParent(childName: String?, parentName: String?, tagLevel: Int): Boolean? {
     return if (parentName == EXPRESSION_MARKER)
       false
