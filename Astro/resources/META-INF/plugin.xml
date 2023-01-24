@@ -39,6 +39,8 @@
     <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before web-symbols-react"
                       id="astro"/>
     <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>
+    <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
+                                id="html"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>

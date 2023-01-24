@@ -2,6 +2,7 @@
 package org.jetbrains.astro
 
 import org.jetbrains.astro.codeInsight.AstroCompletionTest
+import org.jetbrains.astro.codeInsight.AstroDocumentationTest
 import org.jetbrains.astro.codeInsight.AstroHighlightingTest
 import org.jetbrains.astro.lang.AstroHighlightingLexerTest
 import org.jetbrains.astro.lang.AstroLexerTest
@@ -16,5 +17,6 @@ import org.junit.runners.Suite
   AstroParserTest::class,
   AstroCompletionTest::class,
   AstroHighlightingTest::class,
+  AstroDocumentationTest::class,
 )
 class AstroTestSuite
