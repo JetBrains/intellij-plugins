@@ -12,7 +12,8 @@ import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.AstroIcons
-import org.jetbrains.astro.codeInsight.astroRoot
+import org.jetbrains.astro.codeInsight.astroContentRoot
+import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.lang.AstroFileImpl
 import javax.swing.Icon
 
@@ -27,14 +28,16 @@ class AstroFrontmatterScope(val file: AstroFileImpl)
   }
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
-    JSStubBasedPsiTreeUtil.processDeclarationsInScope(file.astroRoot()!!, { element, _ ->
-      val resolved = element as? JSPsiNamedElementBase
-      val name = resolved?.name
-      if (name?.getOrNull(0)?.isUpperCase() != true) return@processDeclarationsInScope true
-      if (resolved !is JSClass)
-        consumer(AstroLocalComponent(name, resolved))
-      true
-    }, false)
+    file.astroContentRoot()?.frontmatterScript()?.let {
+      JSStubBasedPsiTreeUtil.processDeclarationsInScope(it, { element, _ ->
+        val resolved = element as? JSPsiNamedElementBase
+        val name = resolved?.name
+        if (name?.getOrNull(0)?.isUpperCase() != true) return@processDeclarationsInScope true
+        if (resolved !is JSClass)
+          consumer(AstroLocalComponent(name, resolved))
+        true
+      }, false)
+    }
     cacheDependencies.add(file)
   }
 

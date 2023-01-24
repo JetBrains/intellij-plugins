@@ -1,34 +1,35 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     XmlToken:XML_COMMENT_CHARACTERS('Some comment < 12\n')
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')
-    JSVarStatement
-      JSAttributeList
-        <empty list>
-      PsiElement(JS:CONST_KEYWORD)('const')
-      PsiWhiteSpace(' ')
-      TypeScriptVariable
-        PsiElement(JS:IDENTIFIER)('a')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
         PsiWhiteSpace(' ')
-        PsiElement(JS:EQ)('=')
-        PsiWhiteSpace(' ')
-        TypeScriptNewExpression
-          PsiElement(JS:NEW_KEYWORD)('new')
+        TypeScriptVariable
+          PsiElement(JS:IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('Text')
-          TypeScriptTypeArgumentList
-            PsiElement(JS:LT)('<')
-            TypeScriptSingleType
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('Foo')
-            PsiElement(JS:GT)('>')
-          JSArgumentList
-            PsiElement(JS:LPAR)('(')
-            JSLiteralExpression
-              PsiElement(JS:STRING_LITERAL)('"12"')
-            PsiElement(JS:RPAR)(')')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          TypeScriptNewExpression
+            PsiElement(JS:NEW_KEYWORD)('new')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Text')
+            TypeScriptTypeArgumentList
+              PsiElement(JS:LT)('<')
+              TypeScriptSingleType
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('Foo')
+              PsiElement(JS:GT)('>')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:STRING_LITERAL)('"12"')
+              PsiElement(JS:RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')

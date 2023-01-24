@@ -39,8 +39,8 @@ class AstroHtmlAttributeImpl : XmlStubBasedAttributeBase<AstroHtmlAttributeStubI
       val text = "<a $qname=$quotedValue/>"
       val file = PsiFileFactory.getInstance(context.project).createFileFromText("foo.astro", context.language, text, false, false)
       val root = file.firstChild
-      assert(root is AstroRootContent) { "Failed to parse as tag $text" }
-      val tag = (root as AstroRootContent).firstChild
+      assert(root is AstroContentRoot) { "Failed to parse as tag $text" }
+      val tag = (root as AstroContentRoot).firstChild
       assert(tag is AstroHtmlTag) { "Failed to parse as tag $text" }
       return (tag as AstroHtmlTag).getAttribute(qname) as AstroHtmlAttributeImpl
     }

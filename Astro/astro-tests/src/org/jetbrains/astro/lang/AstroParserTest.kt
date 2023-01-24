@@ -28,7 +28,6 @@ import com.intellij.lang.javascript.settings.JSRootConfigurationBase
 import com.intellij.lang.typescript.TypeScriptContentProvider
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project
@@ -50,6 +49,7 @@ import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.psi.stubs.StubElementTypeHolderEP
 import com.intellij.util.ObjectUtils
 import org.jetbrains.astro.getAstroTestDataPath
+import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.parser.AstroParserDefinition
 
 class AstroParserTest : HtmlParsingTest("", "astro",
@@ -438,10 +438,18 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testMalformedExpression() {
+    doTestAstro("""
+      <foo>
+        { 12 <p></> }
+      </foo>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroLanguage.INSTANCE, AstroParserDefinition())
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, AstroFrontmatterLanguage.INSTANCE, TypeScriptParserDefinition())
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
                        listOf(CssEmbeddedTokenTypesProvider()))

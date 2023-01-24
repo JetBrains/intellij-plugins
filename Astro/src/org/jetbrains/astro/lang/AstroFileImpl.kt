@@ -12,6 +12,7 @@ import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.astro.codeInsight.astroContentRoot
 
 class AstroFileImpl(provider: FileViewProvider)
   : PsiFileBase(provider, AstroLanguage.INSTANCE), HtmlCompatibleFile, XmlFile {
@@ -28,7 +29,7 @@ class AstroFileImpl(provider: FileViewProvider)
     false
 
   override fun getDocument(): XmlDocument? =
-    firstChild as? XmlDocument
+    astroContentRoot()
 
   override fun getRootTag(): XmlTag? =
     document?.rootTag

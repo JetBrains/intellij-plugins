@@ -1,25 +1,26 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')
-    JSVarStatement
-      JSAttributeList
-        <empty list>
-      PsiElement(JS:CONST_KEYWORD)('const')
-      PsiWhiteSpace(' ')
-      TypeScriptVariable
-        PsiElement(JS:IDENTIFIER)('a')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
         PsiWhiteSpace(' ')
-        PsiElement(JS:EQ)('=')
-        PsiWhiteSpace(' ')
-        JSBinaryExpression
-          JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('12')
+        TypeScriptVariable
+          PsiElement(JS:IDENTIFIER)('a')
           PsiWhiteSpace(' ')
-          PsiElement(JS:MINUS)('-')
+          PsiElement(JS:EQ)('=')
           PsiWhiteSpace(' ')
-          JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('2')
+          JSBinaryExpression
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:MINUS)('-')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
     PsiWhiteSpace('\n')
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')

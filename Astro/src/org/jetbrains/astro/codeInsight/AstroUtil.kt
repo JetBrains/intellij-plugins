@@ -6,20 +6,28 @@ import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.childrenOfType
 import com.intellij.util.asSafely
-import org.jetbrains.astro.lang.psi.AstroRootContent
+import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
+import org.jetbrains.astro.lang.psi.AstroContentRoot
 
 const val ASTRO_PKG = "astro"
 const val ASTRO_GLOBAL_INTERFACE = "AstroGlobal"
 const val ASTRO_IMPLICIT_OBJECT = "Astro"
 
-fun PsiElement.astroRoot(): AstroRootContent? =
-  containingFile?.astroRoot()
+fun PsiElement.astroContentRoot(): AstroContentRoot? =
+  containingFile?.astroContentRoot()
 
-fun PsiFile.astroRoot(): AstroRootContent? =
-  this.firstChild as? AstroRootContent
+fun PsiElement.frontmatterScript(): AstroFrontmatterScript? =
+  containingFile?.astroContentRoot()?.frontmatterScript()
 
-fun AstroRootContent.propsInterface(): TypeScriptInterface? =
+fun PsiFile.astroContentRoot(): AstroContentRoot? =
+  this.childrenOfType<AstroContentRoot>().firstOrNull()
+
+fun AstroContentRoot.frontmatterScript(): AstroFrontmatterScript? =
+  children.firstNotNullOfOrNull { it as? AstroFrontmatterScript }
+
+fun AstroFrontmatterScript.propsInterface(): TypeScriptInterface? =
   children.firstNotNullOfOrNull { child -> child.asSafely<TypeScriptInterface>()?.takeIf { it.name == "Props" } }
 
 

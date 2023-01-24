@@ -1,56 +1,60 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     PsiElement(XML_PROLOG)
       <empty list>
     JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
       PsiElement(JS:XML_LBRACE)('{')
       PsiWhiteSpace(' ')
       JSBinaryExpression
-        JSBinaryExpression
-          JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('12')
-          PsiWhiteSpace(' ')
-          PsiElement(JS:PLUS)('+')
-          PsiWhiteSpace(' ')
-          AstroTag:a
-            XmlToken:XML_START_TAG_START('<')
-            XmlToken:XML_NAME('a')
-            XmlToken:XML_TAG_END('>')
-            XmlText
-              XmlToken:XML_DATA_CHARACTERS('foo')
-            JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
-              PsiElement(JS:XML_LBRACE)('{')
-              JSBinaryExpression
-                JSBinaryExpression
-                  JSLiteralExpression
-                    PsiElement(JS:NUMERIC_LITERAL)('12')
-                  PsiWhiteSpace(' ')
-                  PsiElement(JS:PLUS)('+')
-                  PsiWhiteSpace(' ')
-                  AstroTag:b
-                    XmlToken:XML_START_TAG_START('<')
-                    XmlToken:XML_NAME('b')
-                    XmlToken:XML_TAG_END('>')
-                    XmlText
-                      XmlToken:XML_DATA_CHARACTERS('bar')
-                    XmlToken:XML_END_TAG_START('</')
-                    XmlToken:XML_TAG_END('>')
-                PsiWhiteSpace(' ')
-                PsiElement(JS:PLUS)('+')
-                PsiWhiteSpace(' ')
-                JSLiteralExpression
-                  PsiElement(JS:NUMERIC_LITERAL)('12')
-              PsiErrorElement:} expected
-                <empty list>
-              PsiWhiteSpace(' ')
-              PsiElement(JS:IDENTIFIER)('bar')
-            XmlToken:XML_END_TAG_START('</')
-            XmlToken:XML_NAME('a')
-            XmlToken:XML_TAG_END('>')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
         PsiWhiteSpace(' ')
         PsiElement(JS:PLUS)('+')
         PsiWhiteSpace(' ')
-        JSLiteralExpression
-          PsiElement(JS:NUMERIC_LITERAL)('32')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:XML_RBRACE)('}')
+        AstroTag:a
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('a')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('foo')
+          JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
+            PsiElement(JS:XML_LBRACE)('{')
+            JSBinaryExpression
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('12')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                AstroTag:b
+                  XmlToken:XML_START_TAG_START('<')
+                  XmlToken:XML_NAME('b')
+                  XmlToken:XML_TAG_END('>')
+                  XmlText
+                    XmlToken:XML_DATA_CHARACTERS('bar')
+                  XmlToken:XML_END_TAG_START('</')
+                  XmlToken:XML_TAG_END('>')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiErrorElement:} expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('bar')
+            PsiErrorElement:Closing tag matches nothing
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('a')
+              XmlToken:XML_TAG_END('>')
+            PsiWhiteSpace(' ')
+            JSPrefixExpression
+              PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('32')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:XML_RBRACE)('}')
+          PsiErrorElement:Element a is not closed
+            <empty list>

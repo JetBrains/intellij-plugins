@@ -56,8 +56,8 @@ class AstroHtmlTag(type: IElementType) : XmlTagImpl(type), HtmlTag, JSLiteralExp
       val file = PsiFileFactory.getInstance(project)
         .createFileFromText("foo.astro", language, text, false, true)
       val root = file.firstChild
-      assert(root is AstroRootContent) { "Failed to parse as tag $text" }
-      val tag = (root as AstroRootContent).childrenOfType<AstroHtmlTag>().firstOrNull()
+      assert(root is AstroContentRoot) { "Failed to parse as tag $text" }
+      val tag = (root as AstroContentRoot).childrenOfType<AstroHtmlTag>().firstOrNull()
       assert(tag != null) { "Failed to parse as tag $text" }
       return tag!!
     }

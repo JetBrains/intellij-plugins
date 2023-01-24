@@ -2,11 +2,9 @@
 package org.jetbrains.astro.lang.parser
 
 import com.intellij.lang.PsiBuilder
+import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.html.HtmlParsing
-import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptExpressionParser
 import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptParser
 import com.intellij.lang.javascript.parsing.JSParsingContextUtil
@@ -24,6 +22,8 @@ import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   val tsxParser = AstroJsxParser()
+
+  private val typeScriptParser = TypeScriptParser(builder)
 
   override fun isXmlTagStart(currentToken: IElementType?): Boolean =
     currentToken === XmlTokenType.XML_START_TAG_START
@@ -44,7 +44,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
     parseProlog()
 
-    var error: PsiBuilder.Marker? = null
+    var error: Marker? = null
     while (!eof()) {
       val tt = token()
       if (tt === XmlTokenType.XML_START_TAG_START) {
@@ -87,16 +87,22 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     }
     flushOpenTags()
     error?.error(XmlPsiBundle.message("xml.parsing.top.level.element.is.not.completed"))
-    embeddedContent.done(AstroStubElementTypes.ROOT_CONTENT)
+    embeddedContent.done(AstroStubElementTypes.CONTENT_ROOT)
   }
 
   private fun parseFrontmatter() {
     advance()
+    if (token() === AstroTokenTypes.FRONTMATTER_SEPARATOR) {
+      advance()
+      return
+    }
+    val frontmatterScript = builder.mark()
     // parse frontmatter
     builder.putUserData(JSParsingContextUtil.ASYNC_METHOD_KEY, true)
     while (builder.tokenType.let { it != null && it != AstroTokenTypes.FRONTMATTER_SEPARATOR }) {
-      tsxParser.statementParser.parseSourceElement()
+      typeScriptParser.statementParser.parseSourceElement()
     }
+    frontmatterScript.done(AstroStubElementTypes.FRONTMATTER_SCRIPT)
     if (token() === AstroTokenTypes.FRONTMATTER_SEPARATOR) {
       advance()
     }
@@ -165,7 +171,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     return token() === JSTokenTypes.XML_LBRACE
   }
 
-  override fun parseCustomTagContent(xmlText: PsiBuilder.Marker?): PsiBuilder.Marker? {
+  override fun parseCustomTagContent(xmlText: Marker?): Marker? {
     var result = xmlText
     when (token()) {
       JSTokenTypes.XML_LBRACE -> {
@@ -180,7 +186,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     return hasCustomTagContent()
   }
 
-  override fun parseCustomTopLevelContent(error: PsiBuilder.Marker?): PsiBuilder.Marker? {
+  override fun parseCustomTopLevelContent(error: Marker?): Marker? {
     val result = flushError(error)
     terminateText(parseCustomTagContent(null))
     return result
@@ -289,19 +295,35 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     }
   }
 
-  private class AstroTypeScriptExpressionParser(parser: TypeScriptParser) : TypeScriptExpressionParser(parser) {
+  private inner class AstroTypeScriptExpressionParser(parser: TypeScriptParser) : TypeScriptExpressionParser(parser) {
 
     private var supportNestedTemplateLiterals: Boolean = true
+    private var topLevelTemplateLiteralParse: Boolean = false
 
     fun parseExpression(supportsNestedTemplateLiterals: Boolean) {
       withNestedTemplateLiteralsSupport(supportsNestedTemplateLiterals) {
         checkMatches(builder, JSTokenTypes.XML_LBRACE, "javascript.parser.message.expected.lbrace")
-        parseArgument()
+        if (builder.tokenType === JSTokenTypes.XML_RBRACE) {
+          builder.error(AstroBundle.message("astro.parser.message.empty.expression"))
+        }
+        else if (!parseArgument()) {
+          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
+        }
         if (!checkMatches(builder, JSTokenTypes.XML_RBRACE, "javascript.parser.message.expected.rbrace")) {
-          while (builder.hasJSToken()) {
-            val tokenType = builder.tokenType
+          while (builder.tokenType !== JSTokenTypes.XML_RBRACE && !builder.eof()) {
+            if (builder.tokenType === JSTokenTypes.XML_END_TAG_START) {
+              val footer = builder.mark()
+              builder.advanceLexer()
+              parseEndTagName()
+              if (token() === XmlTokenType.XML_TAG_END) builder.advanceLexer()
+              footer.error(XmlPsiBundle.message("xml.parsing.closing.tag.matches.nothing"))
+            }
+            else if (!parseArgument()) {
+              builder.advanceLexer()
+            }
+          }
+          if (builder.tokenType === JSTokenTypes.XML_RBRACE) {
             builder.advanceLexer()
-            if (tokenType === JSTokenTypes.XML_RBRACE) break
           }
         }
       }
@@ -325,11 +347,29 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     }
 
     override fun parsePrimaryExpression(): Boolean {
-      if (!supportNestedTemplateLiterals && builder.tokenType === JSTokenTypes.BACKQUOTE) {
+      if (builder.tokenType === JSTokenTypes.BACKQUOTE && topLevelTemplateLiteralParse) {
         builder.error(AstroBundle.message("astro.parsing.error.nested.template.literals.not.supported"))
         return false
       }
       return super.parsePrimaryExpression()
+    }
+
+    override fun parseStringTemplate(): Boolean {
+      if (!supportNestedTemplateLiterals) {
+        if (topLevelTemplateLiteralParse) {
+          builder.error(AstroBundle.message("astro.parsing.error.nested.template.literals.not.supported"))
+          builder.advanceLexer()
+          return true
+        }
+        else {
+          topLevelTemplateLiteralParse = true
+        }
+      }
+      return super.parseStringTemplate().also {
+        if (!supportNestedTemplateLiterals) {
+          topLevelTemplateLiteralParse = false
+        }
+      }
     }
   }
 

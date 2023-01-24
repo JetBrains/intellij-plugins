@@ -10,13 +10,14 @@ import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
 import org.jetbrains.astro.codeInsight.ASTRO_GLOBAL_INTERFACE
 import org.jetbrains.astro.codeInsight.ASTRO_PKG
+import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.propsInterface
-import org.jetbrains.astro.lang.psi.AstroRootContent
+import org.jetbrains.astro.lang.psi.AstroContentRoot
 
 class AstroGlobalType(source: JSTypeSource,
-                      private val rootContent: AstroRootContent) : JSSimpleTypeBaseImpl(source), JSCodeBasedType {
+                      private val rootContent: AstroContentRoot) : JSSimpleTypeBaseImpl(source), JSCodeBasedType {
 
-  constructor(rootContent: AstroRootContent) : this(JSTypeSource(rootContent, JSTypeSource.SourceLanguage.TS, true), rootContent)
+  constructor(rootContent: AstroContentRoot) : this(JSTypeSource(rootContent, JSTypeSource.SourceLanguage.TS, true), rootContent)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType =
     AstroGlobalType(source, rootContent)
@@ -39,7 +40,7 @@ class AstroGlobalType(source: JSTypeSource,
                                                                    TypeScriptInterface::class.java)
                       ?: return JSAnyType.get(source)
     val astroType = astroGlobal.jsType
-    val propsType = rootContent.propsInterface()?.jsType ?: JSAnyType.get(source)
+    val propsType = rootContent.frontmatterScript()?.propsInterface()?.jsType ?: JSAnyType.get(source)
     return JSGenericTypeImpl(source, astroType, propsType)
   }
 

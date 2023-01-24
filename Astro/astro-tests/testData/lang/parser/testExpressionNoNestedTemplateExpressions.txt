@@ -1,5 +1,5 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     PsiElement(XML_PROLOG)
       <empty list>
     JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
@@ -9,21 +9,40 @@ AstroFile:test.astro
           PsiElement(JS:NUMERIC_LITERAL)('12')
         PsiWhiteSpace(' ')
         PsiElement(JS:PLUS)('+')
-        PsiErrorElement:Astro does not support nested template literals in this context.
-          <empty list>
-      PsiWhiteSpace(' ')
-      PsiElement(JS:BACKQUOTE)('`')
-      PsiElement(JS:STRING_TEMPLATE_PART)('this is ')
-      PsiElement(JS:DOLLAR)('$')
-      PsiElement(JS:LBRACE)('{')
-      PsiElement(JS:IDENTIFIER)('within')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:BACKQUOTE)('`')
-      PsiElement(JS:IDENTIFIER)('an')
-      PsiWhiteSpace(' ')
-      PsiElement(JS:XML_RBRACE)('}')
-    XmlToken:XML_DATA_CHARACTERS('`')
-    PsiWhiteSpace(' ')
-    XmlToken:XML_DATA_CHARACTERS('expression}`')
-    PsiWhiteSpace(' ')
-    XmlToken:XML_DATA_CHARACTERS('}')
+        PsiWhiteSpace(' ')
+        JSStringTemplateExpression
+          PsiElement(JS:BACKQUOTE)('`')
+          PsiElement(JS:STRING_TEMPLATE_PART)('this is ')
+          PsiElement(JS:DOLLAR)('$')
+          PsiElement(JS:LBRACE)('{')
+          ES6TaggedTemplateExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('within')
+            PsiErrorElement:Astro does not support nested template literals in this context.
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(JS:BACKQUOTE)('`')
+          PsiErrorElement:} expected
+            <empty list>
+          PsiElement(JS:IDENTIFIER)('an')
+          PsiErrorElement:Missing `
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(JS:XML_RBRACE)('}')
+          PsiErrorElement:Missing `
+            <empty list>
+          XmlToken:XML_DATA_CHARACTERS('`')
+          PsiErrorElement:Missing `
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Missing `
+            <empty list>
+          XmlToken:XML_DATA_CHARACTERS('expression}`')
+          PsiErrorElement:Missing `
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Missing `
+            <empty list>
+          XmlToken:XML_DATA_CHARACTERS('}')
+          PsiErrorElement:Missing `
+            <empty list>

@@ -9,17 +9,16 @@ import com.intellij.lang.javascript.types.JEEmbeddedBlockElementType
 import com.intellij.lang.javascript.types.PsiGenerator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
-import org.jetbrains.astro.lang.AstroLanguage
-import org.jetbrains.astro.lang.psi.AstroRootContent
+import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
+import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 
-class AstroRootContentType
-  : IStubElementType<JSEmbeddedContentStub, AstroRootContent>
-    ("${AstroStubElementTypes.EXTERNAL_ID_PREFIX}ROOT_CONTENT", AstroLanguage.INSTANCE),
-    EmbeddingElementType, JEEmbeddedBlockElementType, PsiGenerator<AstroRootContent> {
-  override fun createPsi(stub: JSEmbeddedContentStub): AstroRootContent =
-    AstroRootContent(stub, this)
+class AstroFrontmatterScriptType : IStubElementType<JSEmbeddedContentStub, AstroFrontmatterScript>
+                                   ("${AstroStubElementTypes.EXTERNAL_ID_PREFIX}FRONTMATTER_SCRIPT", AstroFrontmatterLanguage.INSTANCE),
+                                   EmbeddingElementType, JEEmbeddedBlockElementType, PsiGenerator<AstroFrontmatterScript> {
+  override fun createPsi(stub: JSEmbeddedContentStub): AstroFrontmatterScript =
+    AstroFrontmatterScript(stub, this)
 
-  override fun createStub(psi: AstroRootContent, parentStub: StubElement<out PsiElement>?): JSEmbeddedContentStub =
+  override fun createStub(psi: AstroFrontmatterScript, parentStub: StubElement<out PsiElement>?): JSEmbeddedContentStub =
     JSEmbeddedContentStubImpl(psi, parentStub, this)
 
   override fun getExternalId(): String =
@@ -36,7 +35,7 @@ class AstroRootContentType
     stub.serialize(dataStream)
   }
 
-  override fun construct(node: ASTNode): AstroRootContent =
-    AstroRootContent(node)
+  override fun construct(node: ASTNode): AstroFrontmatterScript =
+    AstroFrontmatterScript(node)
 
 }

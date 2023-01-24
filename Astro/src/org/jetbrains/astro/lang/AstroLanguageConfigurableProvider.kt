@@ -4,10 +4,12 @@ package org.jetbrains.astro.lang
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSInheritedLanguagesConfigurableProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import org.jetbrains.astro.codeInsight.astroRoot
+import com.intellij.psi.util.childrenOfType
+import org.jetbrains.astro.codeInsight.astroContentRoot
 
 class AstroLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvider() {
 
@@ -16,11 +18,8 @@ class AstroLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvid
   }
 
   override fun createJSContentFromText(project: Project, text: String, dialect: JSLanguageDialect?): JSElement {
-    val astroFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.astro", language, "---$text", false, true)
-    val root = (astroFile as AstroFileImpl).astroRoot()!!
-    // Delete `---` - the JS code assumes that the `getFirstChild` return `JSExpression`
-    root.deleteChildInternal(root.firstChild.node)
-    return root
+    val astroFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.astro", language, "{$text}", false, true)
+    return (astroFile as AstroFileImpl).astroContentRoot()!!.childrenOfType<JSEmbeddedContent>().first()
   }
 
 

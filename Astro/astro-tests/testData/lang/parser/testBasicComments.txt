@@ -1,45 +1,46 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')
-    ES6ImportDeclaration
-      PsiElement(JS:IMPORT_KEYWORD)('import')
-      PsiWhiteSpace(' ')
-      ES6ImportedBinding
-        PsiElement(JS:IDENTIFIER)('MyComponent')
-      PsiWhiteSpace(' ')
-      ES6FromClause
-        PsiElement(JS:FROM_KEYWORD)('from')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      ES6ImportDeclaration
+        PsiElement(JS:IMPORT_KEYWORD)('import')
         PsiWhiteSpace(' ')
-        PsiElement(JS:STRING_LITERAL)('"./MyComponent.astro"')
-      PsiElement(JS:SEMICOLON)(';')
-    PsiWhiteSpace('\n')
-    JSVarStatement
-      JSAttributeList
-        <empty list>
-      PsiElement(JS:CONST_KEYWORD)('const')
-      PsiWhiteSpace(' ')
-      TypeScriptVariable
-        PsiElement(JS:IDENTIFIER)('Element')
-        PsiWhiteSpace(' ')
-        PsiElement(JS:EQ)('=')
-        PsiWhiteSpace(' ')
-        JSLiteralExpression
-          PsiElement(JS:STRING_LITERAL)(''div'')
-    PsiWhiteSpace('\n')
-    JSVarStatement
-      JSAttributeList
-        <empty list>
-      PsiElement(JS:CONST_KEYWORD)('const')
-      PsiWhiteSpace(' ')
-      TypeScriptVariable
-        PsiElement(JS:IDENTIFIER)('Component')
-        PsiWhiteSpace(' ')
-        PsiElement(JS:EQ)('=')
-        PsiWhiteSpace(' ')
-        JSReferenceExpression
+        ES6ImportedBinding
           PsiElement(JS:IDENTIFIER)('MyComponent')
-      PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace(' ')
+        ES6FromClause
+          PsiElement(JS:FROM_KEYWORD)('from')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:STRING_LITERAL)('"./MyComponent.astro"')
+        PsiElement(JS:SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
+        PsiWhiteSpace(' ')
+        TypeScriptVariable
+          PsiElement(JS:IDENTIFIER)('Element')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''div'')
+      PsiWhiteSpace('\n')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
+        PsiWhiteSpace(' ')
+        TypeScriptVariable
+          PsiElement(JS:IDENTIFIER)('Component')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('MyComponent')
+        PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n')
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')

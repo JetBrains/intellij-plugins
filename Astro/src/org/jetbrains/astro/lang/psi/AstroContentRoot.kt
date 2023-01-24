@@ -25,7 +25,7 @@ import com.intellij.xml.impl.XmlNsDescriptorUtil
 import org.jetbrains.astro.lang.AstroLanguage
 import java.util.concurrent.ConcurrentHashMap
 
-class AstroRootContent : JSEmbeddedContentImpl, XmlDocument {
+class AstroContentRoot : JSEmbeddedContentImpl, XmlDocument {
   constructor(node: ASTNode) : super(node)
 
   constructor(stub: JSEmbeddedContentStub, type: IStubElementType<*, *>) : super(stub, type)
@@ -97,7 +97,7 @@ class AstroRootContent : JSEmbeddedContentImpl, XmlDocument {
   override fun clone(): PsiElement {
     val cacheStrict = HashMap<String, CachedValue<XmlNSDescriptor?>>(defaultDescriptorsCacheStrict)
     val cacheNotStrict = HashMap<String, CachedValue<XmlNSDescriptor?>>(defaultDescriptorsCacheNotStrict)
-    val copy = super.clone() as AstroRootContent
+    val copy = super.clone() as AstroContentRoot
     updateSelfDependentDtdDescriptors(copy, cacheStrict, cacheNotStrict)
     return copy
   }
@@ -105,12 +105,12 @@ class AstroRootContent : JSEmbeddedContentImpl, XmlDocument {
   override fun copy(): PsiElement {
     val cacheStrict = HashMap<String, CachedValue<XmlNSDescriptor?>>(defaultDescriptorsCacheStrict)
     val cacheNotStrict = HashMap<String, CachedValue<XmlNSDescriptor?>>(defaultDescriptorsCacheNotStrict)
-    val copy = super.copy() as AstroRootContent
+    val copy = super.copy() as AstroContentRoot
     updateSelfDependentDtdDescriptors(copy, cacheStrict, cacheNotStrict)
     return copy
   }
 
-  private fun updateSelfDependentDtdDescriptors(copy: AstroRootContent,
+  private fun updateSelfDependentDtdDescriptors(copy: AstroContentRoot,
                                                 cacheStrict: HashMap<String, CachedValue<XmlNSDescriptor?>>,
                                                 cacheNotStrict: HashMap<String, CachedValue<XmlNSDescriptor?>>) {
     copy.defaultDescriptorsCacheNotStrict.clear()

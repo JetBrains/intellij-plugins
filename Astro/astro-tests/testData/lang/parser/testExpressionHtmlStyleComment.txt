@@ -1,9 +1,11 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     PsiElement(XML_PROLOG)
       <empty list>
     JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
       PsiElement(JS:XML_LBRACE)('{')
+      PsiErrorElement:Empty expression not allowed
+        <empty list>
       PsiWhiteSpace(' ')
       PsiComment(JS:XML_STYLE_COMMENT)('<!-- this is a comment } ha -->')
       PsiWhiteSpace(' ')

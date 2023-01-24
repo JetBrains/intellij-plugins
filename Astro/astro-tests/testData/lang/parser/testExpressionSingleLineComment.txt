@@ -1,5 +1,5 @@
 AstroFile:test.astro
-  AstroRootContent:ASTRO:ROOT_CONTENT
+  AstroContentRoot:ASTRO:CONTENT_ROOT
     PsiElement(XML_PROLOG)
       <empty list>
     JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
@@ -12,9 +12,12 @@ AstroFile:test.astro
       PsiErrorElement:} expected
         <empty list>
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('here')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('here')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IS_KEYWORD)('is')
+      JSReferenceExpression
+        PsiElement(JS:IS_KEYWORD)('is')
       PsiWhiteSpace(' ')
-      PsiElement(JS:IDENTIFIER)('end')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('end')
       PsiElement(JS:XML_RBRACE)('}')

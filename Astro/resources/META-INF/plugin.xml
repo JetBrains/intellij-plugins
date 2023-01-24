@@ -27,6 +27,9 @@
     <fileType name="Astro" extensions="astro" language="Astro" implementationClass="org.jetbrains.astro.lang.AstroFileType"
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="Astro" implementationClass="org.jetbrains.astro.lang.parser.AstroParserDefinition"/>
+
+    <lang.parserDefinition language="AstroFrontmatter" implementationClass="com.intellij.lang.javascript.dialects.TypeScriptParserDefinition"/>
+
     <lang.syntaxHighlighterFactory language="Astro"
                                    implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
     <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
@@ -51,8 +54,12 @@
   <extensions defaultExtensionNs="JavaScript">
     <indexedFileTypeProvider implementation="org.jetbrains.astro.lang.AstroIndexedFileTypeProvider"/>
     <dialectSpecificHandlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
+    <dialectSpecificHandlersFactory language="AstroFrontmatter" implementationClass="org.jetbrains.astro.codeInsight.AstroSpecificHandlersFactory"/>
+    <handlersFactory language="Astro" implementationClass="org.jetbrains.astro.codeInsight.AstroHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Astro"
                                             implementationClass="org.jetbrains.astro.lang.AstroLanguageConfigurableProvider"/>
+    <inheritedLanguagesConfigurableProvider language="AstroFrontmatter"
+                                            implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterConfigurableProvider"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.astro.CreateAstroComponentAction" id="CreateAstroComponent">
