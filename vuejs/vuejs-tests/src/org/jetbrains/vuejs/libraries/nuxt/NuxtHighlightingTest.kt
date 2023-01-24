@@ -48,4 +48,11 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting(true, false, true)
   }
 
+  fun testDefineNuxtComponentWorksLikeDefineComponent() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    myFixture.checkHighlighting()
+  }
+
 }

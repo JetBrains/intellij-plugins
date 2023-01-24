@@ -161,12 +161,13 @@ class VueComponents {
     @StubSafe
     fun isComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       VueFrameworkHandler.getFunctionNameFromVueIndex(callExpression).let {
-        it == DEFINE_COMPONENT_FUN || it == EXTEND_FUN
+        it == DEFINE_COMPONENT_FUN || it == DEFINE_NUXT_COMPONENT_FUN || it == EXTEND_FUN
       }
 
     fun isStrictComponentDefiningCall(callExpression: JSCallExpression): Boolean =
       callExpression.methodExpression?.let {
         JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_COMPONENT_FUN) ||
+        JSSymbolUtil.isAccurateReferenceExpressionName(it, DEFINE_NUXT_COMPONENT_FUN) ||
         JSSymbolUtil.isAccurateReferenceExpressionName(it, VUE_NAMESPACE, EXTEND_FUN)
       } ?: false
   }
