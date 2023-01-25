@@ -1984,6 +1984,14 @@ export default {
     myFixture.checkResultByFile(getTestName(true) + ".after.vue")
   }
 
+  fun testScriptKeywordsJS() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
+  fun testScriptKeywordsTS() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
   fun testComponentEmitsDefinitions() {
     doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, renderTypeText = false,
                  locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>",
