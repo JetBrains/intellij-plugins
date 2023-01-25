@@ -491,7 +491,7 @@ public final class CompilerConfigGenerator {
 
   private void addSourcePaths(final Element rootElement) {
     final String localeValue = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.locale")).first;
-    final List<String> locales = StringUtil.split(localeValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    Collection<String> locales = new HashSet<>(StringUtil.split(localeValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
     // when adding source paths we respect locales set both in UI and in Additional compiler options
     locales.addAll(FlexCommonUtils.getOptionValues(myProjectLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
     locales.addAll(FlexCommonUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
