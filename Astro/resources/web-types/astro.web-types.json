@@ -27,5 +27,201 @@
     }
   },
   "contributions": {
+    "html": {
+      "elements": [
+        {
+          "name": "style",
+          "extension": true,
+          "attributes": [
+            {
+              "name": "Astro Style Directive",
+              "pattern": {
+                "items": "/html/astro-style-directives"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Script or Style",
+          "extension": true,
+          "pattern": "style|script",
+          "attributes": [
+            {
+              "name": "Astro Script or Style Directive",
+              "pattern": {
+                "items": "/html/astro-script-style-directives"
+              }
+            }
+          ]
+        }
+      ],
+      "attributes": [
+        {
+          "name": "Astro Common Directive",
+          "pattern": {
+            "items": "/html/astro-common-directives"
+          },
+          "value": {
+            "type": "of-match"
+          }
+        },
+        {
+          "name": "Astro Client Directive",
+          "description": "Client directives control how [UI Framework components](/en/core-concepts/framework-components/) are hydrated on the page.\n\nBy default, a UI Framework component is not hydrated in the client. If no `client:*` directive is provided, its HTML is rendered onto the page without JavaScript.\n",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#client-directives",
+          "pattern": {
+            "items": "/html/astro-client-directives",
+            "template": [
+              "client:",
+              "#...",
+              "#item"
+            ]
+          }
+        }
+      ],
+      "astro-common-directives": [
+        {
+          "name": "class:list",
+          "description": "`class:list={...}` takes an array of class values and converts them into a class string. This is inspired by @lukeed's popular [clsx](https://github.com/lukeed/clsx) helper library, but built directly into Astro itself.\n\n`class:list` takes an array of several different possible value kinds:\n- `string`: Added to the element `class`\n- `Object`: All truthy keys are added to the element `class`\n- `Array`: flattened\n- `Set`: flattened\n\n```astro\n<!-- This -->\n<span class:list={[ 'hello goodbye', { hello: true, world: true }, new Set([ 'hello', 'friend' ]) ]} />\n<!-- Becomes -->\n<span class=\"hello goodbye world friend\"></span>\n```\n\nDuplicate values are removed automatically.",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#classlist",
+          "type": "Array<string|Record<string,boolean>|Set<string>|Array<any>>",
+          "attribute-value": {
+            "kind": "expression",
+            "required": true
+          }
+        },
+        {
+          "name": "set:html",
+          "description": "`set:html={string}` injects an HTML string into an element, similar to setting `el.innerHTML`.\n\n**The value is not automatically escaped by Astro!** Be sure that you trust the value, or that you have escaped it manually before passing it to the template. Forgetting to do this will open you up to [Cross Site Scripting (XSS) attacks.](https://owasp.org/www-community/attacks/xss/)\n\n```astro\n---\nconst rawHTMLString = \"Hello <strong>World</strong>\"\n---\n<h1>{rawHTMLString}</h1>\n  <!-- Output: <h1>Hello &lt;strong&gt;World&lt;/strong&gt;</h1> -->\n<h1 set:html={rawHTMLString} />\n  <!-- Output: <h1>Hello <strong>World</strong></h1> -->\n```\n\nYou can also use `set:html` on a `<Fragment>` to avoid adding an unnecessary wrapper element. This can be especially useful when fetching HTML from a CMS.\n\n```astro\n---\nconst cmsContent = await fetchHTMLFromMyCMS();\n---\n<Fragment set:html={cmsContent}>\n```\n\n`set:html={Promise<string>}` injects an HTML string into an element that is wrapped in a Promise.\n\nThis can be used to inject HTML stored externally, such as in a database.\n\n```astro\n---\nimport api from '../db/api.js';\n---\n<article set:html={api.getArticle(Astro.props.id)}></article>\n```\n\n`set:html={Promise<Response>}` injects a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) into an element.\n\nThis is most helpful when using `fetch()`. For example, fetching old posts from a previous static-site generator.\n\n```astro\n<article set:html={fetch('http://example/old-posts/making-soup.html')}></article>\n```",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#sethtml",
+          "type": "string | Promise<string> | Promise<Response>",
+          "attribute-value": {
+            "kind": "expression",
+            "required": true
+          }
+        },
+        {
+          "name": "set:text",
+          "description": "`set:text={string}` injects a text string into an element, similar to setting `el.innerText`. Unlike `set:html`, the `string` value that is passed is automatically escaped by Astro.\n\nThis is equivalent to just passing a variable into a template expression directly (ex: `<div>{someText}</div>`) and therefore this directive is not commonly used.",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#settext",
+          "type": "string",
+          "attribute-value": {
+            "kind": "expression",
+            "required": true
+          }
+        },
+        {
+          "name": "is:raw",
+          "priority": "low",
+          "description": "`is:raw` instructs the Astro compiler to treat any children of that element as text. This means that all special Astro templating syntax will be ignored inside of this component.\n\nFor example, if you had a custom Katex component that converted some text to HTML, you could have users do this:\n\n```astro\n---\nimport Katex from '../components/Katex.astro';\n---\n<Katex is:raw>Some conflicting {syntax} here</Katex>\n```",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#israw",
+          "attribute-value": {
+            "kind": "no-value"
+          }
+        }
+      ],
+      "astro-client-directives": [
+        {
+          "name": "idle",
+          "description": "Load and hydrate the component JavaScript once the page is done with its initial load and the `requestIdleCallback` event has fired. If you are in a browser that doesn't support [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback), then the document [`load`](https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event) event is used.\n\n```astro\n<ShowHideButton client:idle />\n```",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#clientidle",
+          "description-sections": {
+            "Priority": "Medium",
+            "Useful for": "Lower-priority UI elements that don't need to be immediately interactive."
+          },
+          "attribute-value": {
+            "kind": "no-value"
+          }
+        },
+        {
+          "name": "visible",
+          "description": "Load and hydrate the component JavaScript once the component has entered the user's viewport. This uses an `IntersectionObserver` internally to keep track of visibility.\n\n```astro\n<HeavyImageCarousel client:visible />\n```",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#clientvisible",
+          "description-sections": {
+            "Priority": "Low",
+            "Useful for": "Low-priority UI elements that are either far down the page (\"below the fold\") or so resource-intensive to load that you would prefer not to load them at all if the user never saw the element."
+          },
+          "attribute-value": {
+            "kind": "no-value"
+          }
+        },
+        {
+          "name": "media",
+          "description": "`client:media={string}` loads and hydrates the component JavaScript once a certain CSS media query is met.\n\n```astro\n<SidebarToggle client:media=\"(max-width: 50em)\" />\n```\n\n##Note\nIf the component is already hidden and shown by a media query in your CSS, then it can be easier to just use `client:visible` and not pass that same media query into the directive.",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#clientmedia",
+          "description-sections": {
+            "Priority": "Low",
+            "Useful for": "Sidebar toggles, or other elements that might only be visible on certain screen sizes."
+          },
+          "attribute-value": {
+            "kind": "plain"
+          }
+        },
+        {
+          "name": "only",
+          "description": "`client:only={string}` **skips** HTML server-rendering, and renders only on the client. It acts similar to `client:load` in that it loads, renders and hydrates the component immediately on page load.\n\n**You must pass the component's correct framework as a value!** Because Astro doesn't run the component during your build / on the server, Astro doesn't know what framework your component uses unless you tell it explicitly.\n\n```astro\n<SomeReactComponent client:only=\"react\" />\n<SomePreactComponent client:only=\"preact\" />\n<SomeSvelteComponent client:only=\"svelte\" />\n<SomeVueComponent client:only=\"vue\" />\n<SomeSolidComponent client:only=\"solid-js\" />\n```\n",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#clientmedia",
+          "description-sections": {
+            "Priority": "Low",
+            "Useful for": "Sidebar toggles, or other elements that might only be visible on certain screen sizes."
+          },
+          "attribute-value": {
+            "kind": "plain",
+            "type": "enum"
+          },
+          "values": [
+            {
+              "name": "react"
+            },
+            {
+              "name": "preact"
+            },
+            {
+              "name": "svelte"
+            },
+            {
+              "name": "vue"
+            },
+            {
+              "name": "solid-js"
+            }
+          ]
+        }
+      ],
+      "astro-style-directives": [
+        {
+          "name": "is:global",
+          "description": "By default, Astro automatically scopes `<style>` CSS rules to the component. You can opt-out of this behavior with the `is:global` directive.\n\n`is:global` makes the contents of a `<style>` tag apply globally on the page when the component is included. This disables Astro's CSS scoping system. This is equivalent to wrapping all of the selectors within a `<style>` tag with `:global()`.\n\nYou can combine `<style>` and `<style is:global>` together in the same component, to create some global style rules while still scoping most of your component CSS.\n\n```astro\n<style is:global>\n  body a { color: red; }\n</style>\n```",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#isglobal",
+          "description-sections": {
+            "Related": "[Global styling & CSS](/en/guides/styling/#global-styles)"
+          },
+          "attribute-value": {
+            "kind": "no-value"
+          }
+        }
+      ],
+      "astro-script-style-directives": [
+        {
+          "name": "is:inline",
+          "description": "By default, Astro will process, optimize, and bundle any `<script>` and `<style>` tags that it sees on the page. You can opt-out of this behavior with the `is:inline` directive.\n\n`is:inline` tells Astro to leave the `<script>` or `<style>` tag as-is in the final output HTML. The contents will not be processed, optimized, or bundled. This limits some Astro features, like importing an npm package or using a compile-to-CSS language like Sass.\n\nThe `is:inline` directive means that `<style>` and `<script>` tags:\n\n- Will not be bundled into an external file. This means that [attributes like `defer`](https://javascript.info/script-async-defer) which control the loading of an external file will have no effect.\n- Will not be deduplicated—the element will appear as many times as it is rendered.\n- Will not have its `import`/`@import`/`url()` references resolved relative to the `.astro` file.\n- Will be rendered in the final output HTML exactly where it is authored.\n- Styles will be global and not scoped to the component.\n\n```astro\n<style is:inline>\n  /* inline: relative & npm package imports are not supported. */\n  @import '/assets/some-public-styles.css';\n  span { color: green; }\n</style>\n\n<script is:inline>\n  /* inline: relative & npm package imports are not supported. */\n  console.log('I am inlined right here in the final output HTML.');\n</script>\n```\n\n##Caution\nThe `is:inline` directive is implied whenever any attribute other than `src` is used on a `<script>` or `<style>` tag.",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#isinline",
+          "description-sections": {
+            "Related": "[Client-side scripts](/en/core-concepts/astro-components/#client-side-scripts)"
+          },
+          "attribute-value": {
+            "kind": "no-value"
+          }
+        },
+        {
+          "name": "define:vars",
+          "description": "`define:vars={...}` can pass server-side variables from your component frontmatter into the client `<script>` or `<style>` tags. Any JSON-serializable front matter variable is supported, including `props` passed to your component through `Astro.props`. Values are serialized with [`JSON.stringify()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify).\n\n```astro\n---\nconst foregroundColor = \"rgb(221 243 228)\";\nconst backgroundColor = \"rgb(24 121 78)\";\nconst message = \"Astro is awesome!\";\n---\n<style define:vars={{ textColor: foregroundColor, backgroundColor }}>\n  h1 {\n    background-color: var(--backgroundColor);\n    color: var(--textColor);\n  }\n</style>\n\n<script define:vars={{ message }}>\n  alert(message);\n</script>\n```\n\n##Caution\nUsing `define:vars` on a `<script>` or `<style>` tag implies the [`is:inline` directive](#isinline), which means your scripts or styles won't be bundled and will be inlined directly into the HTML. \n\nThis is because when Astro bundles a script, it includes and runs the script once even if you include the component containing the script multiple times on one page. `define:vars` requires a script to rerun with each set of values, so Astro creates an inline script instead.\n\nFor scripts, try [passing variables to scripts manually](/en/guides/client-side-scripts/#pass-frontmatter-variables-to-scripts) instead.\n",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#definevars",
+          "attribute-value": {
+            "kind": "expression"
+          }
+        }
+      ]
+    }
   }
 }

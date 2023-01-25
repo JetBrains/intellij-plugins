@@ -11,6 +11,11 @@ sizes#null#50
 srcset#null#50
 usemap#null#50
 width#null#50
+class:list#null#10
+client:#null#10
+set:html#null#10
+set:text#null#10
+is:raw#null#1
 about#null#0
 accesskey#null#0
 align#null#0

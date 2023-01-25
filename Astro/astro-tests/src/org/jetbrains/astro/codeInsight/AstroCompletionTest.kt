@@ -13,6 +13,12 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   fun testHtmlAttributes() = doLookupTest()
   fun testCharEntities() = doLookupTest()
 
+  fun testScriptTagAttributes() =
+    doLookupTest{!it.endsWith("#0")}
+
+  fun testStyleTagAttributes() =
+    doLookupTest{ !it.endsWith("#0") }
+
   fun testImportedComponent() =
     doLookupTest(additionalFiles = listOf("component.astro"))
 
