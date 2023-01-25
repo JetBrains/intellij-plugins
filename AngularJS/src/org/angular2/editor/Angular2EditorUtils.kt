@@ -9,6 +9,7 @@ import org.angular2.Angular2InjectionUtils.getElementAtCaretFromContext
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.entities.Angular2Directive
+import org.angular2.lang.html.Angular2HtmlLanguage
 
 object Angular2EditorUtils {
 
@@ -18,6 +19,8 @@ object Angular2EditorUtils {
     if (element != null && element.node.elementType === XML_NAME) {
       element = element.parent
     }
+    if (element?.language?.isKindOf(Angular2HtmlLanguage.INSTANCE) != true)
+      return emptyList()
     if (element is XmlAttribute) {
       val descriptor = element.descriptor as? Angular2AttributeDescriptor
       if (descriptor != null) {
