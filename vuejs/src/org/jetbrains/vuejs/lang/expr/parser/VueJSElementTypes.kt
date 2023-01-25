@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.types.JEEmbeddedBlockElementType
 import com.intellij.lang.javascript.types.JSExpressionElementType
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
@@ -50,7 +49,7 @@ object VueJSElementTypes {
   private class VueJSEmbeddedExpressionContentElementType(@NonNls debugName: String,
                                                           language: Language,
                                                           classConstructor: (VueJSElementType) -> ASTNode)
-    : VueJSElementType(debugName, language, classConstructor) //, JEEmbeddedBlockElementType
+    : VueJSElementType(debugName, language, classConstructor) // todo implement JSEmbeddedBlockElementType
 
   private class VueJSExpressionElementType(@NonNls debugName: String,
                                            classConstructor: (VueJSElementType) -> ASTNode)

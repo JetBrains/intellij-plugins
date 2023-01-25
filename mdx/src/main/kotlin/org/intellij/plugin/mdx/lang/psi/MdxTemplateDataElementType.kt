@@ -1,6 +1,6 @@
 package org.intellij.plugin.mdx.lang.psi
 
-import com.intellij.lang.javascript.types.JEEmbeddedBlockElementType
+import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.templateLanguages.TemplateDataElementType
@@ -13,7 +13,7 @@ import org.intellij.plugins.markdown.lang.MarkdownElementType
 import kotlin.math.min
 
 object MdxTemplateDataElementType : MdxTemplateDataElementTypeBase(),
-                                    JEEmbeddedBlockElementType {
+                                    JSEmbeddedBlockElementType {
 
   override fun isModule(): Boolean = true
 

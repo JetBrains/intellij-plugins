@@ -5,7 +5,7 @@ import com.intellij.embedding.EmbeddingElementType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.stubs.JSEmbeddedContentStub
 import com.intellij.lang.javascript.psi.stubs.impl.JSEmbeddedContentStubImpl
-import com.intellij.lang.javascript.types.JEEmbeddedBlockElementType
+import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType
 import com.intellij.lang.javascript.types.PsiGenerator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
@@ -14,7 +14,7 @@ import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 
 class AstroFrontmatterScriptType : IStubElementType<JSEmbeddedContentStub, AstroFrontmatterScript>
                                    ("${AstroStubElementTypes.EXTERNAL_ID_PREFIX}FRONTMATTER_SCRIPT", AstroFrontmatterLanguage.INSTANCE),
-                                   EmbeddingElementType, JEEmbeddedBlockElementType, PsiGenerator<AstroFrontmatterScript> {
+                                   EmbeddingElementType, JSEmbeddedBlockElementType, PsiGenerator<AstroFrontmatterScript> {
   override fun createPsi(stub: JSEmbeddedContentStub): AstroFrontmatterScript =
     AstroFrontmatterScript(stub, this)
 

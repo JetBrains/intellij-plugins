@@ -5,7 +5,7 @@ import com.intellij.embedding.EmbeddingElementType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.stubs.JSEmbeddedContentStub
 import com.intellij.lang.javascript.psi.stubs.impl.JSEmbeddedContentStubImpl
-import com.intellij.lang.javascript.types.JEEmbeddedBlockElementType
+import com.intellij.lang.javascript.types.JSEmbeddedBlockElementType
 import com.intellij.lang.javascript.types.PsiGenerator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
@@ -15,7 +15,7 @@ import org.jetbrains.astro.lang.psi.AstroContentRoot
 class AstroContentRootType
   : IStubElementType<JSEmbeddedContentStub, AstroContentRoot>
     ("${AstroStubElementTypes.EXTERNAL_ID_PREFIX}CONTENT_ROOT", AstroLanguage.INSTANCE),
-    EmbeddingElementType, JEEmbeddedBlockElementType, PsiGenerator<AstroContentRoot> {
+    EmbeddingElementType, JSEmbeddedBlockElementType, PsiGenerator<AstroContentRoot> {
   override fun createPsi(stub: JSEmbeddedContentStub): AstroContentRoot =
     AstroContentRoot(stub, this)
 
