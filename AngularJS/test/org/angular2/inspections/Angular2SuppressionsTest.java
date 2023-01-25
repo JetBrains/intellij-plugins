@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
+import com.intellij.lang.javascript.inspections.JSOctalIntegerInspection;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -18,9 +19,10 @@ public class Angular2SuppressionsTest extends Angular2CodeInsightFixtureTestCase
 
   public void testTemplateSuppressions() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.enableInspections(new JSOctalIntegerInspection());
     myFixture.configureByFiles("template.html", "template.after.html", "package.json");
 
-    for (String location : asList("test1", "bar1", "pipe1")) {
+    for (String location : asList("test1", "007", "pipe1")) {
       try {
         AngularTestUtil.moveToOffsetBySignature(location.charAt(0) + "<caret>" + location.substring(1), myFixture);
         myFixture.launchAction(myFixture.findSingleIntention("Suppress for expression"));

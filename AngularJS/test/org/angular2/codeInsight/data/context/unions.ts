@@ -110,7 +110,7 @@ export type OneListing = VehicleListing | DroidListing;
   selector: 'app-listings',
   template: `
     <a *ngFor="let listing of listings">
-      <h4>{{ listing.title }} ({{ listing.listingType }}) £{{ listing.price | number }}</h4>
+      <h4>{{ listing.title }} ({{ listing.listingType }}) £{{ listing.price | <error descr="Unresolved pipe number">number</error> }}</h4>
       <p [ngSwitch]="listing.listingType">
         <span *ngSwitchCase="ListingType.DROID">
           <span [style.background-color]="listing.product.color">{{ listing.product.droidType }}</span> -

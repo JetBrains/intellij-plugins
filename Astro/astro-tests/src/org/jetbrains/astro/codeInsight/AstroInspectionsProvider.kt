@@ -8,8 +8,7 @@ import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
 import com.intellij.lang.javascript.inspections.*
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
@@ -39,7 +38,6 @@ class AstroInspectionsProvider : InspectionToolProvider {
       JSIncompatibleTypesComparisonInspection::class.java,
       ThisExpressionReferencesGlobalObjectJSInspection::class.java,
       TypeScriptValidateTypesInspection::class.java,
-      TypeScriptUnresolvedVariableInspection::class.java,
-      TypeScriptUnresolvedFunctionInspection::class.java
+      TypeScriptUnresolvedReferenceInspection::class.java,
     )
 }

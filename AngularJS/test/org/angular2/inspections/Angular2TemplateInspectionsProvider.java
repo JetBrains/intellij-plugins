@@ -9,9 +9,11 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlWrongAttributeValueInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection;
-import com.intellij.lang.javascript.inspections.*;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.xml.util.CheckEmptyTagInspection;
@@ -34,8 +36,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularUndefinedTagInspection.class,
       AngularAmbiguousComponentTagInspection.class,
 
-      TypeScriptUnresolvedVariableInspection.class,
-      TypeScriptUnresolvedFunctionInspection.class,
+      TypeScriptUnresolvedReferenceInspection.class,
       TypeScriptValidateTypesInspection.class,
       TypeScriptValidateJSTypesInspection.class,
 

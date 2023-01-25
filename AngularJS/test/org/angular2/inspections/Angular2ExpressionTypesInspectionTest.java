@@ -4,8 +4,7 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -27,8 +26,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
                                 JSValidateTypesInspection.class,
                                 TypeScriptValidateTypesInspection.class,
                                 TypeScriptValidateJSTypesInspection.class,
-                                TypeScriptUnresolvedVariableInspection.class,
-                                TypeScriptUnresolvedFunctionInspection.class);
+                                TypeScriptUnresolvedReferenceInspection.class);
   }
 
   public void testSimpleTypes() {

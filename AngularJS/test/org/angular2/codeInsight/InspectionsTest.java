@@ -6,8 +6,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.*;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2DecoratorInspectionsTest;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -75,8 +74,7 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testPipeAndArgResolution() {
-    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class,
-                                TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
     myFixture.configureByFiles("pipeAndArgResolution.html", "lowercase_pipe.ts", "package.json");
     myFixture.checkHighlighting();
   }

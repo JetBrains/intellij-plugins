@@ -1,10 +1,9 @@
 package org.intellij.plugin.mdx
 
-import com.intellij.lang.javascript.inspections.JSXUnresolvedComponentInspection
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
+import com.intellij.lang.javascript.inspections.JSXUnresolvedComponentInspection
 import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import org.junit.Test
 
@@ -14,8 +13,7 @@ class MdxHighlightTest : MdxTestBase() {
           TypeScriptCheckImportInspection(),
           TypeScriptValidateTypesInspection(),
           JSXUnresolvedComponentInspection(),
-          TypeScriptUnresolvedVariableInspection(),
-          TypeScriptUnresolvedFunctionInspection(),
+          TypeScriptUnresolvedReferenceInspection(),
           JSUnresolvedReferenceInspection()
         )
 

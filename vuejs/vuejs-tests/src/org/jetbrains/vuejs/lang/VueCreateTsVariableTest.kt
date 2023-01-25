@@ -15,14 +15,15 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class VueCreateTsVariableTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(JSUnresolvedReferenceInspection(), TypeScriptUnresolvedVariableInspection())
+    myFixture.enableInspections(JSUnresolvedReferenceInspection(),
+                                TypeScriptUnresolvedReferenceInspection())
   }
 
   override fun getTestDataPath(): String = getVueTestDataPath() + "/intentions/createVariable"

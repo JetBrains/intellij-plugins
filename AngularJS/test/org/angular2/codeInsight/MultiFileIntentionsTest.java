@@ -2,8 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +46,7 @@ public class MultiFileIntentionsTest extends Angular2MultiFileFixtureTestCase {
 
   private void doMultiFileTest(String intentionHint) {
     doTest((rootDir, rootAfter) -> {
-      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class, TypeScriptUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class);
       myFixture.configureFromTempProjectFile("template.html");
       myFixture.setCaresAboutInjection(false);
       AngularTestUtil.moveToOffsetBySignature("f<caret>oo", myFixture);

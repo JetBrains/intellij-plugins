@@ -6,7 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.codeInsight.InspectionsTest;
 import org.angularjs.AngularTestUtil;
@@ -118,7 +118,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     myFixture.enableInspections(AngularUndefinedTagInspection.class);
     myFixture.enableInspections(AngularUndefinedBindingInspection.class);
-    doTest(TypeScriptUnresolvedFunctionInspection.class,
+    doTest(TypeScriptUnresolvedReferenceInspection.class,
            "standalone-declarables.html", "standalone-declarables.ts", "component.ts");
   }
 
@@ -127,7 +127,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     myFixture.enableInspections(AngularUndefinedTagInspection.class);
     myFixture.enableInspections(AngularUndefinedBindingInspection.class);
-    doTest(TypeScriptUnresolvedFunctionInspection.class,
+    doTest(TypeScriptUnresolvedReferenceInspection.class,
            "standalone-declarables-in-classic.html", "standalone-declarables-in-classic.ts", "component.ts");
   }
 

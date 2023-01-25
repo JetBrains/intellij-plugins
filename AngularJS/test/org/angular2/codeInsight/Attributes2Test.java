@@ -17,7 +17,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
@@ -645,7 +645,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
 
 
   public void testExportAs() {
-    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class,
+    myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class,
                                 TypeScriptValidateTypesInspection.class);
     myFixture.configureByFiles("exportAs.ts", "package.json");
     myFixture.checkHighlighting(true, false, true);
