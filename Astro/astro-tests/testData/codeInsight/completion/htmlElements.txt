@@ -1,3 +1,4 @@
+Astro.self#null#10
 a#null#1
 abbr#null#1
 acronym#null#1

@@ -25,14 +25,14 @@ class AstroDocumentationTest : AstroCodeInsightTestCase() {
   }
 
   private fun doTest() {
-    myFixture.configureByFile("${getTestName(true)}.astro")
+    configure()
     myFixture.checkDocumentationAtCaret()
   }
 
   private fun doLookupTest(
     lookupFilter: (item: LookupElement) -> Boolean = { true }
   ) {
-    myFixture.configureByFile("${getTestName(true)}.astro")
+    configure()
     myFixture.checkLookupElementDocumentationAtCaret(renderPriority = true, renderTypeText = true, lookupFilter = lookupFilter)
   }
   //endregion

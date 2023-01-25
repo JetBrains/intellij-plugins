@@ -48,6 +48,12 @@
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>
     <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
+    <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroWebSymbolsQueryResultsCustomizer$Provider"/>
+
+    <localInspection language="Astro" groupKey="astro.inspection.group.name" shortName="AstroMissingComponentImportInspection"
+                     enabledByDefault="true" level="ERROR"
+                     implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
+                     key="astro.inspection.display.name.missing.component.import" bundle="messages.AstroBundle"/>
 
   </extensions>
 

@@ -4,6 +4,7 @@ package org.jetbrains.astro
 import org.jetbrains.astro.codeInsight.AstroCompletionTest
 import org.jetbrains.astro.codeInsight.AstroDocumentationTest
 import org.jetbrains.astro.codeInsight.AstroHighlightingTest
+import org.jetbrains.astro.codeInsight.AstroInspectionsTest
 import org.jetbrains.astro.lang.AstroHighlightingLexerTest
 import org.jetbrains.astro.lang.AstroLexerTest
 import org.jetbrains.astro.lang.AstroParserTest
@@ -18,5 +19,6 @@ import org.junit.runners.Suite
   AstroCompletionTest::class,
   AstroHighlightingTest::class,
   AstroDocumentationTest::class,
+  AstroInspectionsTest::class,
 )
 class AstroTestSuite

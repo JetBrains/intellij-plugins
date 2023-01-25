@@ -92,10 +92,6 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   private fun parseFrontmatter() {
     advance()
-    if (token() === AstroTokenTypes.FRONTMATTER_SEPARATOR) {
-      advance()
-      return
-    }
     val frontmatterScript = builder.mark()
     // parse frontmatter
     builder.putUserData(JSParsingContextUtil.ASYNC_METHOD_KEY, true)
@@ -304,7 +300,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       withNestedTemplateLiteralsSupport(supportsNestedTemplateLiterals) {
         checkMatches(builder, JSTokenTypes.XML_LBRACE, "javascript.parser.message.expected.lbrace")
         if (builder.tokenType === JSTokenTypes.XML_RBRACE) {
-          builder.error(AstroBundle.message("astro.parser.message.empty.expression"))
+          builder.error(AstroBundle.message("astro.parsing.error.empty.expression"))
         }
         else if (!parseArgument()) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))

@@ -1,9 +1,8 @@
 package org.jetbrains.astro.codeInsight
 
-import com.intellij.psi.PsiFile
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
-class AstroHighlightingTest: AstroCodeInsightTestCase() {
+class AstroHighlightingTest : AstroCodeInsightTestCase() {
 
   fun testCharEntityResolution() = doTest()
 
@@ -16,16 +15,10 @@ class AstroHighlightingTest: AstroCodeInsightTestCase() {
     myFixture.enableInspections(AstroInspectionsProvider())
   }
 
-  private fun doTest(extension: String = "astro",
-                     vararg additionalFiles: String) {
-    configureTestProject(extension, *additionalFiles)
+  private fun doTest(additionalFiles: List<String> = emptyList()) {
+    configure(additionalFiles = additionalFiles)
     myFixture.checkHighlighting()
   }
 
-  private fun configureTestProject(extension: String = "astro",
-                                   vararg additionalFiles: String): PsiFile {
-    myFixture.configureByFiles(*additionalFiles)
-    return myFixture.configureByFile(getTestName(true) + "." + extension)
-  }
   //endregion
 }

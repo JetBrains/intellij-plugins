@@ -8,15 +8,24 @@ import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.lang.AstroFileImpl
+import org.jetbrains.astro.webSymbols.scope.AstroAvailableComponentsScope
 import org.jetbrains.astro.webSymbols.scope.AstroFrontmatterScope
 
-class AstroQueryConfigurator: WebSymbolsQueryConfigurator {
+class AstroQueryConfigurator : WebSymbolsQueryConfigurator {
+
+  companion object {
+
+    const val PROP_ASTRO_PROXIMITY = "x-astro-proximity"
+
+  }
+
   override fun getScope(project: Project,
                         element: PsiElement?,
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> =
     if (context.framework == AstroFramework.ID
         && element?.containingFile is AstroFileImpl) {
-      listOf(AstroFrontmatterScope(element.containingFile as AstroFileImpl))
-    } else emptyList()
+      listOf(AstroFrontmatterScope(element.containingFile as AstroFileImpl), AstroAvailableComponentsScope(project))
+    }
+    else emptyList()
 }

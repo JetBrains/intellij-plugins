@@ -6,7 +6,6 @@ import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import org.jetbrains.astro.AstroCodeInsightTestCase
 import org.jetbrains.astro.AstroTestModule
-import org.jetbrains.astro.configureAstroDependencies
 
 class AstroCompletionTest : AstroCodeInsightTestCase() {
 
@@ -16,6 +15,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
 
   fun testImportedComponent() =
     doLookupTest(additionalFiles = listOf("component.astro"))
+
+  fun testImportComponent() =
+    doTypingTest("Compo\n", additionalFiles = listOf("component.astro"))
 
   fun testImportExternalSymbolFrontmatter() =
     doTypingTest("olo\n", additionalFiles = listOf("colors.ts"))
@@ -37,13 +39,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   private fun doTypingTest(textToType: String,
                            additionalFiles: List<String> = emptyList(),
                            vararg modules: AstroTestModule) {
-    if (modules.isNotEmpty()) {
-      myFixture.configureAstroDependencies(*modules)
-    }
-    if (additionalFiles.isNotEmpty()) {
-      myFixture.configureByFiles(*additionalFiles.toTypedArray())
-    }
-    myFixture.configureByFiles(getTestName(true) + ".astro")
+    configure(additionalFiles = additionalFiles, modules = modules)
     myFixture.completeBasic()
     myFixture.type(textToType)
     myFixture.checkResultByFile(getTestName(true) + "_after.astro")
@@ -64,24 +60,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
                            lookupFilter: (item: LookupElement) -> Boolean = { true },
                            filter: (item: String) -> Boolean = { true }) {
     if (!noConfigure) {
-      if (dir) {
-        myFixture.copyDirectoryToProject(getTestName(true), ".")
-      }
-      else if (additionalFiles.isNotEmpty()) {
-        myFixture.configureByFiles(*additionalFiles.toTypedArray())
-      }
-      if (modules.isNotEmpty()) {
-        myFixture.configureAstroDependencies(*modules)
-      }
-      if (fileContents != null) {
-        myFixture.configureByText(getTestName(true) + ".astro", fileContents)
-      }
-      else if (dir) {
-        myFixture.configureFromTempProjectFile(getTestName(true) + ".astro")
-      }
-      else {
-        myFixture.configureByFile(getTestName(true) + ".astro")
-      }
+      configure(fileContents, dir, additionalFiles, *modules)
     }
     if (locations.isEmpty()) {
       myFixture.completeBasic()

@@ -5,13 +5,15 @@ import com.intellij.lang.ecmascript6.actions.ES6AddImportExecutor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
-import org.jetbrains.astro.codeInsight.frontmatterScript
+import org.jetbrains.astro.editor.AstroComponentSourceEdit
+import org.jetbrains.astro.lang.AstroFileImpl
 
 class AstroAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
     if (place !is JSReferenceExpression) return null
     ApplicationManager.getApplication().assertReadAccessAllowed()
-    return place.frontmatterScript()
+    return AstroComponentSourceEdit(place.containingFile as? AstroFileImpl ?: return null)
+      .getOrCreateFrontmatterScript()
   }
 
 }
