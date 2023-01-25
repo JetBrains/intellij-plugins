@@ -21,7 +21,6 @@ import com.goide.psi.*;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.protobuf.lang.psi.PbFile;
@@ -33,7 +32,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -42,15 +40,9 @@ import java.util.Optional;
 
 /** Handles goto declaration from golang generated code to .proto files. */
 public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
-  @Nullable
-  @Override
-  public String getActionText(@NotNull DataContext dataContext) {
-    return null;
-  }
 
-  @Nullable
   @Override
-  public PsiElement[] getGotoDeclarationTargets(
+  public PsiElement @Nullable [] getGotoDeclarationTargets(
       @Nullable PsiElement sourceElement, int offset, Editor editor) {
     return Optional.ofNullable(sourceElement)
         .filter(e -> e.getLanguage().is(GoLanguage.INSTANCE))
