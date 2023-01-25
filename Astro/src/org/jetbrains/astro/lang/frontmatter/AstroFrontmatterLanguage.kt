@@ -6,7 +6,8 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 
 class AstroFrontmatterLanguage private constructor() : JSLanguageDialect("AstroFrontmatter",
-                                                                         JavaScriptSupportLoader.TYPESCRIPT.optionHolder),
+                                                                         JavaScriptSupportLoader.TYPESCRIPT.optionHolder,
+                                                                         JavaScriptSupportLoader.TYPESCRIPT),
                                                        DependentLanguage {
   override fun isAtLeast(other: JSLanguageDialect): Boolean {
     return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT.isAtLeast(other)

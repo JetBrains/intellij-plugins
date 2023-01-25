@@ -38,4 +38,5 @@ class AstroFrontmatterScriptType : IStubElementType<JSEmbeddedContentStub, Astro
   override fun construct(node: ASTNode): AstroFrontmatterScript =
     AstroFrontmatterScript(node)
 
+  override fun isModule() = true
 }

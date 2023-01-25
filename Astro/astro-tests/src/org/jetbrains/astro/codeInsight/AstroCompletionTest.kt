@@ -21,6 +21,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   fun testImportExternalSymbolExpression() =
     doTypingTest("olo\n", additionalFiles = listOf("colors.ts"))
 
+  fun testFrontmatterKeywords() =
+    doLookupTest(additionalFiles = listOf("component.astro"))
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/completion"
