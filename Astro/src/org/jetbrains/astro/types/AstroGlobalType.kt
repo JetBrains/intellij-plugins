@@ -7,41 +7,42 @@ import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.psi.PsiFile
 import com.intellij.util.ProcessingContext
 import org.jetbrains.astro.codeInsight.ASTRO_GLOBAL_INTERFACE
 import org.jetbrains.astro.codeInsight.ASTRO_PKG
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.codeInsight.propsInterface
-import org.jetbrains.astro.lang.psi.AstroContentRoot
 
 class AstroGlobalType(source: JSTypeSource,
-                      private val rootContent: AstroContentRoot) : JSSimpleTypeBaseImpl(source), JSCodeBasedType {
+                      private val file: PsiFile)
+  : JSSimpleTypeBaseImpl(source), JSCodeBasedType {
 
-  constructor(rootContent: AstroContentRoot) : this(JSTypeSource(rootContent, JSTypeSource.SourceLanguage.TS, true), rootContent)
+  constructor(file: PsiFile) : this(JSTypeSource(file.frontmatterScript() ?: file, JSTypeSource.SourceLanguage.TS, true), file)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType =
-    AstroGlobalType(source, rootContent)
+    AstroGlobalType(source, file)
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
-    type is AstroGlobalType && type.rootContent == rootContent
+    type is AstroGlobalType && type.file == file
 
-  override fun hashCodeImpl(): Int = rootContent.hashCode()
+  override fun hashCodeImpl(): Int = file.hashCode()
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {
-      builder.append(ASTRO_GLOBAL_INTERFACE).append("(").append(rootContent.containingFile.name).append(")")
+      builder.append(ASTRO_GLOBAL_INTERFACE).append("(").append(file.containingFile.name).append(")")
       return
     }
     substitute().buildTypeText(format, builder)
   }
 
   override fun substituteImpl(context: JSTypeSubstitutionContext): JSType {
-    val astroGlobal = WebJSResolveUtil.resolveSymbolFromNodeModule(rootContent, ASTRO_PKG, ASTRO_GLOBAL_INTERFACE,
+    val astroGlobal = WebJSResolveUtil.resolveSymbolFromNodeModule(file, ASTRO_PKG, ASTRO_GLOBAL_INTERFACE,
                                                                    TypeScriptInterface::class.java)
                       ?: return JSAnyType.get(source)
     val astroType = astroGlobal.jsType
-    val propsType = rootContent.frontmatterScript()?.propsInterface()?.jsType ?: JSAnyType.get(source)
-    return JSGenericTypeImpl(source, astroType, propsType)
+    val propsType = file.frontmatterScript()?.propsInterface()?.jsType ?: JSAnyType.get(source)
+    return JSGenericTypeImpl(source, astroType, propsType).asRecordType()
   }
 
 }

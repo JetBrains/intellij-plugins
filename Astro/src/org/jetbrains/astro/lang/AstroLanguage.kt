@@ -5,11 +5,11 @@ import com.intellij.lang.DependentLanguage
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 
-class AstroLanguage private constructor() : JSLanguageDialect("Astro", JavaScriptSupportLoader.TYPESCRIPT_JSX.optionHolder),
-                                            DependentLanguage {
-  override fun isAtLeast(other: JSLanguageDialect): Boolean {
-    return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT_JSX.isAtLeast(other)
-  }
+class AstroLanguage private constructor()
+  : JSLanguageDialect("Astro",
+                      JavaScriptSupportLoader.TYPESCRIPT_JSX.optionHolder,
+                      JavaScriptSupportLoader.TYPESCRIPT_JSX),
+    DependentLanguage {
 
   companion object {
     @JvmField

@@ -5,6 +5,8 @@ import com.intellij.webSymbols.checkListByFile
 import com.intellij.webSymbols.moveToOffsetBySignature
 import com.intellij.webSymbols.renderLookupItems
 import org.jetbrains.astro.AstroCodeInsightTestCase
+import org.jetbrains.astro.AstroTestModule
+import org.jetbrains.astro.configureAstroDependencies
 
 class AstroCompletionTest : AstroCodeInsightTestCase() {
 
@@ -24,13 +26,20 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   fun testFrontmatterKeywords() =
     doLookupTest(additionalFiles = listOf("component.astro"))
 
+  fun testPropsInterface() =
+    doLookupTest(AstroTestModule.ASTRO_1_9_0)
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/completion"
   }
 
   private fun doTypingTest(textToType: String,
-                           additionalFiles: List<String>) {
+                           additionalFiles: List<String> = emptyList(),
+                           vararg modules: AstroTestModule) {
+    if (modules.isNotEmpty()) {
+      myFixture.configureAstroDependencies(*modules)
+    }
     if (additionalFiles.isNotEmpty()) {
       myFixture.configureByFiles(*additionalFiles.toTypedArray())
     }
@@ -40,7 +49,8 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
     myFixture.checkResultByFile(getTestName(true) + "_after.astro")
   }
 
-  private fun doLookupTest(fileContents: String? = null,
+  private fun doLookupTest(vararg modules: AstroTestModule,
+                           fileContents: String? = null,
                            dir: Boolean = false,
                            noConfigure: Boolean = false,
                            locations: List<String> = emptyList(),
@@ -59,6 +69,9 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
       }
       else if (additionalFiles.isNotEmpty()) {
         myFixture.configureByFiles(*additionalFiles.toTypedArray())
+      }
+      if (modules.isNotEmpty()) {
+        myFixture.configureAstroDependencies(*modules)
       }
       if (fileContents != null) {
         myFixture.configureByText(getTestName(true) + ".astro", fileContents)
