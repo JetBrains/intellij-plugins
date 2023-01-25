@@ -15,8 +15,8 @@ import org.jetbrains.astro.AstroFramework
 import org.jetbrains.astro.webSymbols.AstroProximity
 import org.jetbrains.astro.webSymbols.AstroQueryConfigurator
 
-class AstroComponent(file: PsiFile) : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file,
-                                                                                                   Unit) {
+class AstroComponent(file: PsiFile)
+  : PsiSourcedWebSymbol, WebSymbolsScopeWithCache<PsiFile, Unit>(AstroFramework.ID, file.project, file, Unit) {
 
   override val source: PsiElement
     get() = dataHolder
@@ -37,6 +37,7 @@ class AstroComponent(file: PsiFile) : PsiSourcedWebSymbol, WebSymbolsScopeWithCa
     get() = mapOf(Pair(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY, AstroProximity.OUT_OF_SCOPE))
 
   override fun initialize(consumer: (WebSymbol) -> Unit, cacheDependencies: MutableSet<Any>) {
+    consumer(AstroComponentWildcardAttribute)
     cacheDependencies.add(dataHolder)
   }
 
