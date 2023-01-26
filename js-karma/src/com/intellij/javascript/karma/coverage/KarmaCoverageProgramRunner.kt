@@ -32,7 +32,7 @@ import java.io.File
 import java.io.IOException
 
 class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
-  override fun getRunnerId(): String = COVERAGE_RUNNER_ID
+  override fun getRunnerId(): String = KarmaCoverageProgramRunner::class.java.simpleName
 
   override fun canRun(executorId: String, profile: RunProfile): Boolean =
     CoverageExecutor.EXECUTOR_ID == executorId && profile is KarmaRunConfiguration
@@ -48,16 +48,14 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
         server.onBrowsersReady { ExecutionUtil.restartIfActive(descriptor) }
       }
       else {
-        listenForCoverageFile(environment, server, NodeTargetRun.getTargetRun(executionResult.processHandler))
+        Handler.listenForCoverageFile(environment, server, NodeTargetRun.getTargetRun(executionResult.processHandler))
       }
       return@then descriptor
     }
   }
 
-  companion object {
-    private val COVERAGE_RUNNER_ID = KarmaCoverageProgramRunner::class.java.simpleName
-
-    private fun listenForCoverageFile(env: ExecutionEnvironment, server: KarmaServer, targetRun: NodeTargetRun) {
+  private object Handler { // not a companion object to load less bytecode simultaneously with KarmaCoverageProgramRunner
+    fun listenForCoverageFile(env: ExecutionEnvironment, server: KarmaServer, targetRun: NodeTargetRun) {
       val runConfiguration = env.runProfile as RunConfigurationBase<*>
       val coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration)
       CoverageHelper.resetCoverageSuit(runConfiguration)
