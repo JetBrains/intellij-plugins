@@ -1,0 +1,2 @@
+!in#null#5
+!instanceof#null#5

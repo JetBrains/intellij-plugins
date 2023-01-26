@@ -1992,6 +1992,22 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2)
   }
 
+  fun testExpressionOperationKeywordsJS() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
+  fun testExpressionOperationKeywordsTS() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
+  fun testExpressionOperationKeywordsNestedJS() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
+  fun testExpressionOperationKeywordsNestedTS() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
   fun testComponentEmitsDefinitions() {
     doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, renderTypeText = false,
                  locations = listOf("define-emits @<caret>", "define-component @<caret>", "export-component @<caret>",

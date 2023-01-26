@@ -3,11 +3,8 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.lang.ecmascript6.psi.ES6Property
-import com.intellij.lang.javascript.completion.JSCompletionContributor
-import com.intellij.lang.javascript.completion.JSCompletionUtil
-import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.completion.*
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
-import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -85,18 +82,22 @@ class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
              && ref.qualifier is JSThisExpression?
              && ref.parent !is ES6Property) {
       val patchedResult = result.withRelevanceSorter(JSCompletionContributor.createOwnSorter(parameters))
-      VueTemplateScopesResolver.resolve(ref, Processor { resolveResult ->
-        val element = resolveResult.element as? JSPsiNamedElementBase
-        if (element != null) {
-          patchedResult.addElement(JSCompletionUtil.withJSLookupPriority(
-            JSLookupUtilImpl.createLookupElement(element, StringUtil.notNullize(element.name)),
-            if (element.name?.startsWith("$") == true)
-              LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
-            else
-              LOCAL_SCOPE_MAX_PRIORITY))
-        }
-        true
-      })
+
+      if (!JSReferenceCompletionProvider.skipReferenceCompletionByContext(parameters.position)) {
+        VueTemplateScopesResolver.resolve(ref, Processor { resolveResult ->
+          val element = resolveResult.element as? JSPsiNamedElementBase
+          if (element != null) {
+            patchedResult.addElement(JSCompletionUtil.withJSLookupPriority(
+              JSLookupUtilImpl.createLookupElement(element, StringUtil.notNullize(element.name)),
+              if (element.name?.startsWith("$") == true)
+                LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
+              else
+                LOCAL_SCOPE_MAX_PRIORITY))
+          }
+          true
+        })
+      }
+
       if (ref.qualifier is JSThisExpression) {
         patchedResult.stopHere()
       }
