@@ -12,10 +12,10 @@
 </template>
 
 <script lang='js'>
-import {Vue} from 'vue'
+import {defineComponent} from 'vue'
 import About from '@/views/About.vue';
 
-export default Vue.extend(<weak_warning descr="Argument type {components: {About}, methods: {insert(): void}} is not assignable to parameter type Node">{</weak_warning>
+export default defineComponent({
   components: { About },
   methods: {
     insert () {
