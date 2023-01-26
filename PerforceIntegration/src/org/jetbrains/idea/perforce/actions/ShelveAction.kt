@@ -29,8 +29,8 @@ class ShelveAction : AbstractCommitChangesAction() {
       presentation.isEnabledAndVisible = false
     }
     else {
-      val connections = getConnections(project, changes.filterNot { it is ShelvedChange.IdeaChange }).keySet()
-      presentation.isEnabledAndVisible = connections.isNotEmpty() && connections.all { supportsShelve(project, it) }
+      val connections = Handler.getConnections(project, changes.filterNot { it is ShelvedChange.IdeaChange }).keySet()
+      presentation.isEnabledAndVisible = connections.isNotEmpty() && connections.all { Handler.supportsShelve(project, it) }
     }
   }
 
@@ -38,7 +38,7 @@ class ShelveAction : AbstractCommitChangesAction() {
     return P4ShelveCommitExecutor(project)
   }
 
-  companion object {
+  object Handler { // not a companion object to load less bytecode simultaneously with ShelveAction
     @VisibleForTesting
     @JvmStatic
     fun shelveChanges(project: Project, commitMessage: String?, changes: Collection<Change>) {
@@ -121,7 +121,7 @@ class ShelveAction : AbstractCommitChangesAction() {
 
   private class P4ShelveCommitSession(private val project: Project) : CommitSession {
     override fun execute(changes: Collection<Change>, commitMessage: String?) {
-      shelveChanges(project, commitMessage, changes)
+      Handler.shelveChanges(project, commitMessage, changes)
     }
   }
 }
