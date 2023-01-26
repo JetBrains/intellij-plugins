@@ -502,14 +502,7 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
 
   public void testIdea124868() {
     CodeStyleSettings settings = getCommonJSSettings().getRootSettings();
-    boolean tagsEnabled = settings.FORMATTER_TAGS_ENABLED;
-    settings.FORMATTER_TAGS_ENABLED = true;
-    try {
-      doTestFromFile("mxml");
-    }
-    finally {
-      settings.FORMATTER_TAGS_ENABLED = tagsEnabled;
-    }
+    doTestFromFile("mxml");
   }
 
   public void testImportStatement2() {
