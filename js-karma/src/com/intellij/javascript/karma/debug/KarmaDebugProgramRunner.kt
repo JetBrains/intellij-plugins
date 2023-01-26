@@ -72,9 +72,9 @@ class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
           consoleView.karmaServer.onPortBound { ExecutionUtil.restartIfActive(it) }
         })
       }
-      val debuggableWebBrowser = getChromeInfo(environment.project)
+      val debuggableWebBrowser = Handler.getChromeInfo(environment.project)
       return@thenAsync debuggableWebBrowser.debugEngine.prepareDebugger(environment.project, debuggableWebBrowser.webBrowser).then {
-        createDescriptor(environment, executionResult, consoleView, debuggableWebBrowser)
+        Handler.createDescriptor(environment, executionResult, consoleView, debuggableWebBrowser)
       }
     }
   }
@@ -94,19 +94,19 @@ class KarmaDebugProgramRunner : AsyncProgramRunner<RunnerSettings>() {
     }
   }
 
-  companion object {
+  private object Handler { // not a companion object to load less bytecode simultaneously with KarmaDebugProgramRunner
     @Throws(ExecutionException::class)
-    private fun getChromeInfo(project: Project): DebuggableWebBrowser {
+    fun getChromeInfo(project: Project): DebuggableWebBrowser {
       val browser = WebBrowserManager.getInstance().getFirstBrowserOrNull(BrowserFamily.CHROME) ?: throw ChromeRequiredException(project)
       return DebuggableWebBrowser.create(browser) ?: throw ExecutionException(
         KarmaBundle.message("debug.cannot_find_chrome.dialog.message"))
     }
 
     @Throws(ExecutionException::class)
-    private fun createDescriptor(environment: ExecutionEnvironment,
-                                 executionResult: ExecutionResult,
-                                 consoleView: KarmaConsoleView,
-                                 debuggableWebBrowser: DebuggableWebBrowser): RunContentDescriptor {
+    fun createDescriptor(environment: ExecutionEnvironment,
+                         executionResult: ExecutionResult,
+                         consoleView: KarmaConsoleView,
+                         debuggableWebBrowser: DebuggableWebBrowser): RunContentDescriptor {
       val karmaServer = consoleView.karmaServer
       val url = newFromEncoded(karmaServer.formatUrl("/"))
       val fileFinder = getDebuggableFileFinder(karmaServer)
