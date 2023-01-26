@@ -18,6 +18,7 @@ package com.intellij.lang.ognl.psi;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.intellij.lang.annotations.Language;
 
 import java.math.BigDecimal;
@@ -38,25 +39,25 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
 
   public void testStringLiteralSingleQuotes() {
     final OgnlLiteralExpression expression = parse("'stringValue'");
-    assertEquals(PsiType.CHAR, expression.getType());
+    assertEquals(PsiTypes.charType(), expression.getType());
     assertEquals("stringValue", expression.getConstantValue());
   }
 
   public void testNullLiteral() {
     final OgnlLiteralExpression expression = parse("null");
-    assertEquals(PsiType.NULL, expression.getType());
+    assertEquals(PsiTypes.nullType(), expression.getType());
     assertEquals(null, expression.getConstantValue());
   }
 
   public void testBooleanLiteral() {
     final OgnlLiteralExpression expression = parse("true");
-    assertEquals(PsiType.BOOLEAN, expression.getType());
+    assertEquals(PsiTypes.booleanType(), expression.getType());
     assertEquals(true, expression.getConstantValue());
   }
 
   public void testIntegerLiteral() {
     final OgnlLiteralExpression expression = parse("123");
-    assertEquals(PsiType.INT, expression.getType());
+    assertEquals(PsiTypes.intType(), expression.getType());
     assertEquals(123, expression.getConstantValue());
   }
 
@@ -98,7 +99,7 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
                                           prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                           suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String doubleExpression) {
     final OgnlLiteralExpression expression = parse(doubleExpression);
-    assertEquals(PsiType.DOUBLE, expression.getType());
+    assertEquals(PsiTypes.doubleType(), expression.getType());
     assertEquals(Double.parseDouble(doubleExpression), expression.getConstantValue());
   }
 

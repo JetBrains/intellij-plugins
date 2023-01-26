@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.annotations.Language;
 
@@ -35,7 +35,7 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
     final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getElementsList());
     assertNotNull(firstExpression);
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, firstExpression);
-    assertEquals(PsiType.INT, firstExpression.getType());
+    assertEquals(PsiTypes.intType(), firstExpression.getType());
   }
 
   public void testSimpleStringLiteralSequence() {
@@ -45,7 +45,7 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
     final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getElementsList());
     assertNotNull(firstExpression);
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, firstExpression);
-    assertEquals(PsiType.CHAR, firstExpression.getType());
+    assertEquals(PsiTypes.charType(), firstExpression.getType());
   }
 
   public void testNestedSimpleIntegerLiteralSequence() {

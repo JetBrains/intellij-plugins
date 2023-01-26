@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -29,19 +29,19 @@ public class ConditionalExpressionPsiTest extends PsiTestCase {
 
   public void testSimple() {
     final OgnlConditionalExpression expression = parse("true ? 0 : 1");
-    assertEquals(PsiType.INT, expression.getType());
+    assertEquals(PsiTypes.intType(), expression.getType());
 
     final OgnlExpression condition = expression.getCondition();
     assertEquals("true", condition.getText());
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, condition);
-    assertEquals(PsiType.BOOLEAN, condition.getType());
+    assertEquals(PsiTypes.booleanType(), condition.getType());
 
     final OgnlExpression thenExpression = expression.getThen();
     assertNotNull(thenExpression);
     assertEquals("0", thenExpression.getText());
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, thenExpression);
     final OgnlLiteralExpression thenLiteral = assertInstanceOf(thenExpression, OgnlLiteralExpression.class);
-    assertEquals(PsiType.INT, thenLiteral.getType());
+    assertEquals(PsiTypes.intType(), thenLiteral.getType());
     assertEquals(0, thenLiteral.getConstantValue());
 
     final OgnlExpression elseExpression = expression.getElse();
@@ -49,7 +49,7 @@ public class ConditionalExpressionPsiTest extends PsiTestCase {
     assertEquals("1", elseExpression.getText());
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, elseExpression);
     final OgnlLiteralExpression elseLiteral = assertInstanceOf(elseExpression, OgnlLiteralExpression.class);
-    assertEquals(PsiType.INT, elseLiteral.getType());
+    assertEquals(PsiTypes.intType(), elseLiteral.getType());
     assertEquals(1, elseLiteral.getConstantValue());
   }
 

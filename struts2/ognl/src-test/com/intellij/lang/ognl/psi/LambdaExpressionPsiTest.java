@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -30,7 +30,7 @@ public class LambdaExpressionPsiTest extends PsiTestCase {
 
     final OgnlExpression expression = lambdaExpression.getExpression();
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, expression);
-    assertEquals(PsiType.INT, expression.getType());
+    assertEquals(PsiTypes.intType(), expression.getType());
   }
 
   public void testLanguageGuideSample() {

@@ -7,10 +7,7 @@ import com.intellij.plugins.drools.lang.psi.DroolsQuery;
 import com.intellij.plugins.drools.lang.psi.DroolsQueryStatement;
 import com.intellij.plugins.drools.lang.psi.DroolsStringId;
 import com.intellij.plugins.drools.lang.psi.util.DroolsElementsFactory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
-import com.intellij.psi.PsiTarget;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.light.JavaIdentifier;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -51,7 +48,7 @@ public abstract class DroolsQueryImpl extends DroolsFakePsiMethod  implements Dr
 
   @Override
   public PsiType getReturnType() {
-    return PsiType.NULL;
+    return PsiTypes.nullType();
   }
 
   @Override

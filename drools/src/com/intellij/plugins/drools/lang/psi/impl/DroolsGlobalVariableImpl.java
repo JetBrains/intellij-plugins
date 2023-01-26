@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.plugins.drools.lang.psi.*;
 import com.intellij.plugins.drools.lang.psi.util.DroolsResolveUtil;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class DroolsGlobalVariableImpl extends DroolsAbstractVariableImpl implements  DroolsGlobalStatement {
@@ -24,6 +25,6 @@ public abstract class DroolsGlobalVariableImpl extends DroolsAbstractVariableImp
     final DroolsVarType varType = getVarType();
       final PsiType psiType = DroolsResolveUtil.resolveType(varType.getType());
       if (psiType != null) return psiType;
-    return PsiType.NULL;
+    return PsiTypes.nullType();
   }
 }

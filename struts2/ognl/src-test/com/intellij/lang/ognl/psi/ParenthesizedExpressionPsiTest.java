@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -36,8 +36,8 @@ public class ParenthesizedExpressionPsiTest extends PsiTestCase {
     final OgnlExpression expression = parenthesizedExpression.getExpression();
     assertNotNull(expression);
     assertElementType(OgnlTypes.BINARY_EXPRESSION, expression);
-    assertEquals(PsiType.INT, expression.getType());
-    assertEquals(PsiType.INT, parenthesizedExpression.getType());
+    assertEquals(PsiTypes.intType(), expression.getType());
+    assertEquals(PsiTypes.intType(), parenthesizedExpression.getType());
 
     final OgnlBinaryExpression binaryExpression = (OgnlBinaryExpression)expression;
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, binaryExpression.getLeft());
@@ -64,7 +64,7 @@ public class ParenthesizedExpressionPsiTest extends PsiTestCase {
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, nestedBinaryExpression.getLeft());
     assertEquals(OgnlTypes.MULTIPLY, nestedBinaryExpression.getOperator());
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, nestedBinaryExpression.getRight());
-    assertEquals(PsiType.INT, nestedBinaryExpression.getType());
+    assertEquals(PsiTypes.intType(), nestedBinaryExpression.getType());
   }
 
   public void testNestedParenthesesWithMethodCall() {

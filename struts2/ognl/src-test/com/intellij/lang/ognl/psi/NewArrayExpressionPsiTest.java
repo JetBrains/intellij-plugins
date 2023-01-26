@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -32,7 +32,7 @@ public class NewArrayExpressionPsiTest extends PsiTestCase {
 
     final OgnlExpression constructorExpression = newExpression.getConstructorExpression();
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, constructorExpression);
-    assertEquals(PsiType.INT, constructorExpression.getType());
+    assertEquals(PsiTypes.intType(), constructorExpression.getType());
   }
 
   public void testIntArrayWithSequence() {

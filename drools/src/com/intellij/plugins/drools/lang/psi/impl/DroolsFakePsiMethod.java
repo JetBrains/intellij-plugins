@@ -40,7 +40,7 @@ public abstract class DroolsFakePsiMethod extends DroolsPsiCompositeElementImpl 
         parameter = new DroolsLightParameter(droolsParameter, paramName, type, this);
       }
       else {
-        parameter = new DroolsLightParameter(droolsParameter, paramName, PsiType.NULL, this);
+        parameter = new DroolsLightParameter(droolsParameter, paramName, PsiTypes.nullType(), this);
       }
     }
     else {

@@ -26,7 +26,7 @@ public abstract class DroolsFunctionImpl extends DroolsFakePsiMethod implements 
         final PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(primitiveType.getProject());
         return elementFactory.createTypeFromText(primitiveType.getText(), primitiveType);
       }
-      return PsiType.NULL;
+      return (PsiPrimitiveType)PsiTypes.nullType();
     }
   );
 

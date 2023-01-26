@@ -18,6 +18,7 @@ package com.intellij.lang.ognl.psi;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.lang.annotations.Language;
 
@@ -29,25 +30,25 @@ import org.intellij.lang.annotations.Language;
 public class UnaryExpressionPsiTest extends PsiTestCase {
 
   public void testMinusInteger() {
-    assertConstantUnaryExpression("-3", OgnlTypes.MINUS, PsiType.INT, 3);
+    assertConstantUnaryExpression("-3", OgnlTypes.MINUS, PsiTypes.intType(), 3);
   }
 
   public void testPlusInteger() {
-    assertConstantUnaryExpression("+3", OgnlTypes.PLUS, PsiType.INT, 3);
+    assertConstantUnaryExpression("+3", OgnlTypes.PLUS, PsiTypes.intType(), 3);
   }
 
   public void testNegate() {
-    assertConstantUnaryExpression("!true", OgnlTypes.NEGATE, PsiType.BOOLEAN, true);
+    assertConstantUnaryExpression("!true", OgnlTypes.NEGATE, PsiTypes.booleanType(), true);
   }
 
 
   // not  ====================
   public void testNotKeyword() {
-    assertConstantUnaryExpression("not true", OgnlTypes.NOT_KEYWORD, PsiType.BOOLEAN, true);
+    assertConstantUnaryExpression("not true", OgnlTypes.NOT_KEYWORD, PsiTypes.booleanType(), true);
   }
 
   public void testBitwiseNot() {
-    assertConstantUnaryExpression("~true", OgnlTypes.NOT, PsiType.BOOLEAN, true);
+    assertConstantUnaryExpression("~true", OgnlTypes.NOT, PsiTypes.booleanType(), true);
   }
 
 

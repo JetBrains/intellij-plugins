@@ -1,10 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
-import com.intellij.psi.CommonClassNames;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiPrimitiveType;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,12 +77,12 @@ public abstract class CfmlExpressionTypeCalculator {
   public static final CfmlExpressionTypeCalculator BOOLEAN_CALCULATOR = new CfmlExpressionTypeCalculator() {
     @Override
     public PsiType calculateBinary(@NotNull CfmlExpression leftOperand, @NotNull CfmlExpression rightOperand) {
-      return PsiType.BOOLEAN;
+      return PsiTypes.booleanType();
     }
 
     @Override
     public PsiType calculateUnary(@NotNull CfmlExpression operand) {
-      return PsiType.BOOLEAN;
+      return PsiTypes.booleanType();
     }
   };
 }

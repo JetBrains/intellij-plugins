@@ -32,7 +32,7 @@ public abstract class DroolsPrimaryExprVarImpl extends DroolsPsiCompositeElement
       return resolveType(identifiers.get(0));
     }
 
-    return PsiType.NULL;
+    return PsiTypes.nullType();
   }
 
   private static PsiType resolveType(@NotNull DroolsIdentifier identifier) {
@@ -56,6 +56,6 @@ public abstract class DroolsPrimaryExprVarImpl extends DroolsPsiCompositeElement
         if (propertyType != null) return propertyType;
       }
     }
-    return PsiType.NULL;
+    return PsiTypes.nullType();
   }
 }

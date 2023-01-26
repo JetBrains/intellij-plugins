@@ -19,10 +19,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.lang.ognl.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.CommonClassNames;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -99,17 +96,17 @@ final class OgnlPsiUtil {
       return PsiType.getJavaLangString(expression.getManager(), expression.getResolveScope());
     }
     if (type == OgnlTypes.CHARACTER_LITERAL) {
-      return PsiType.CHAR;
+      return PsiTypes.charType();
     }
     if (type == OgnlTypes.INTEGER_LITERAL) {
-      return PsiType.INT;
+      return PsiTypes.intType();
     }
     if (type == OgnlTypes.BIG_INTEGER_LITERAL) {
       return JavaPsiFacade.getInstance(expression.getProject()).getElementFactory()
                           .createTypeByFQClassName("java.math.BigInteger", expression.getResolveScope());
     }
     if (type == OgnlTypes.DOUBLE_LITERAL) {
-      return PsiType.DOUBLE;
+      return PsiTypes.doubleType();
     }
     if (type == OgnlTypes.BIG_DECIMAL_LITERAL) {
       return JavaPsiFacade.getInstance(expression.getProject()).getElementFactory()
@@ -117,10 +114,10 @@ final class OgnlPsiUtil {
     }
     if (type == OgnlTypes.TRUE_KEYWORD ||
         type == OgnlTypes.FALSE_KEYWORD) {
-      return PsiType.BOOLEAN;
+      return PsiTypes.booleanType();
     }
     if (type == OgnlTypes.NULL_KEYWORD) {
-      return PsiType.NULL;
+      return PsiTypes.nullType();
     }
 
     throw new IllegalArgumentException("could not resolve type for literal " + type + " / " + expression.getText());

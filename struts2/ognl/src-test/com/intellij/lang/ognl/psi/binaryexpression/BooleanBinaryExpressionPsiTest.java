@@ -18,7 +18,7 @@ package com.intellij.lang.ognl.psi.binaryexpression;
 import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
 import com.intellij.lang.ognl.psi.OgnlExpression;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 
 /**
  * @author Yann C&eacute;bron
@@ -44,6 +44,6 @@ public class BooleanBinaryExpressionPsiTest extends BinaryExpressionPsiTestCase 
   public void testExpressionType() {
     final OgnlExpression expression = parseSingleExpression("true or false");
     final OgnlBinaryExpression binaryExpression = assertInstanceOf(expression, OgnlBinaryExpression.class);
-    assertEquals(PsiType.BOOLEAN, binaryExpression.getType());
+    assertEquals(PsiTypes.booleanType(), binaryExpression.getType());
   }
 }
