@@ -24,16 +24,15 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbSymbol;
+import com.intellij.protobuf.shared.gencode.ProtoFromSourceComments;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.shared.gencode.ProtoFromSourceComments;
-import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.protobuf.lang.psi.PbSymbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -292,7 +291,7 @@ public class PbGolangGotoDeclarationHandler implements GotoDeclarationHandler {
     if (resolvedFile == null || !resolvedFile.getName().endsWith(".pb.go")) {
       return null;
     }
-    PsiFile resolvedPsiFile = PsiManager.getInstance(goFile.getProject()).findFile(resolvedFile);
+    PsiFile resolvedPsiFile = goFile.getManager().findFile(resolvedFile);
     if (resolvedPsiFile == null) {
       return null;
     }

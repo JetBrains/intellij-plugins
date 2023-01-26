@@ -208,12 +208,13 @@ public final class FlexCommonUtils {
     return null;
   }
 
+  @NotNull
   public static List<String> getOptionValues(final String commandLine, final String... optionAndAliases) {
     if (StringUtil.isEmpty(commandLine)) {
       return Collections.emptyList();
     }
 
-    final List<String> result = new LinkedList<>();
+    final List<String> result = new ArrayList<>();
 
     for (CommandLineTokenizer tokenizer = new CommandLineTokenizer(commandLine); tokenizer.hasMoreTokens(); ) {
       final String token = tokenizer.nextToken();
