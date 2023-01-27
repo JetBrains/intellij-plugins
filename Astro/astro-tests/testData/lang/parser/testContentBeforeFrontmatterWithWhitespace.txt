@@ -1,0 +1,82 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiWhiteSpace('\n    ')
+    XmlToken:XML_COMMENT_CHARACTERS('foo - <\nbar')
+    PsiWhiteSpace('\n\n     ')
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      TypeScriptInterface
+        JSAttributeList
+          PsiElement(JS:EXPORT_KEYWORD)('export')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:INTERFACE_KEYWORD)('interface')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:IDENTIFIER)('Props')
+        PsiWhiteSpace(' ')
+        TypeScriptObjectType
+          PsiElement(JS:LBRACE)('{')
+          TypeScriptPropertySignature
+            PsiElement(JS:IDENTIFIER)('title')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            TypeScriptSingleType
+              JSReferenceExpression
+                PsiElement(JS:STRING_KEYWORD)('string')
+          PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n')
+          TypeScriptPropertySignature
+            PsiElement(JS:IDENTIFIER)('body')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            TypeScriptSingleType
+              JSReferenceExpression
+                PsiElement(JS:STRING_KEYWORD)('string')
+          PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace(' ')
+          TypeScriptPropertySignature
+            PsiElement(JS:IDENTIFIER)('href')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            TypeScriptSingleType
+              JSReferenceExpression
+                PsiElement(JS:STRING_KEYWORD)('string')
+          PsiElement(JS:SEMICOLON)(';')
+          PsiWhiteSpace('\n')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace('\n')
+      JSVarStatement
+        JSAttributeList
+          <empty list>
+        PsiElement(JS:CONST_KEYWORD)('const')
+        PsiWhiteSpace(' ')
+        JSDestructuringElement
+          JSDestructuringObject
+            PsiElement(JS:LBRACE)('{')
+            PsiWhiteSpace('\n  ')
+            JSDestructuringShorthandedProperty
+              TypeScriptVariable
+                PsiElement(JS:IDENTIFIER)('title')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSDestructuringShorthandedProperty
+              TypeScriptVariable
+                PsiElement(JS:IDENTIFIER)('href')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace('\n  ')
+            JSDestructuringShorthandedProperty
+              TypeScriptVariable
+                PsiElement(JS:IDENTIFIER)('body')
+            PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:EQ)('=')
+          PsiWhiteSpace('\n  ')
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Astro')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('props')
+        PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiElement(XML_PROLOG)
+      <empty list>

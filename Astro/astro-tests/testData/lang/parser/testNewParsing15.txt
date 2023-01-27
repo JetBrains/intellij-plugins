@@ -5,18 +5,12 @@ AstroFile:test.astro
       <empty list>
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<!DOCTYPE')
+      XmlToken:XML_COMMENT_CHARACTERS(' a [<!ELEMENT a (a)')
+      XmlToken:XML_COMMENT_END('>')
     PsiElement(XML_PROLOG)
-      PsiElement(XML_DOCTYPE)
-        XmlToken:XML_DOCTYPE_START('<!DOCTYPE')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_BAD_CHARACTER('a')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_BAD_CHARACTER('[<!ELEMENT')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_BAD_CHARACTER('a')
-        PsiWhiteSpace(' ')
-        XmlToken:XML_BAD_CHARACTER('(a)')
-        XmlToken:XML_DOCTYPE_END('>')
+      <empty list>
     XmlToken:XML_DATA_CHARACTERS(']>')
     PsiWhiteSpace(' ')
     AstroTag:a

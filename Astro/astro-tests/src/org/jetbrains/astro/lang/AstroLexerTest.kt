@@ -406,6 +406,41 @@ open class AstroLexerTest : LexerTestCase() {
     |}
   """)
 
+  fun testWhitespaceBeforeFrontmatter() = doTest("""
+    | ---
+  """)
+
+  fun testContentWithWhitespacesBeforeFrontmatter() = doTest("""
+    |  Some comment < 12
+    |---
+    |const a = new Text<Foo>("12")
+    |---
+  """)
+
+  fun testWhitespaceBeforeContent1() = doTest("""
+    | < a
+  """)
+
+  fun testWhitespaceBeforeContent2() = doTest("""
+    | <a> foo </a>
+  """)
+
+  fun testWhitespaceOnly() = doTest("""
+    |
+    |
+  """)
+
+  fun testDoctype() = doTest("""
+    |------
+    |<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    |<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  """.trimIndent())
+
+  fun testXmlPi() = doTest("""
+    |<?xml processing ?>
+    |<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  """.trimIndent())
+
   override fun createLexer(): Lexer = AstroLexerImpl(fixture.project)
 
   override fun getDirPath() = "lang/lexer"

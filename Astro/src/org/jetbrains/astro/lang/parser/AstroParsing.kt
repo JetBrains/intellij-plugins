@@ -31,7 +31,8 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   override fun parseDocument() {
     builder.enforceCommentTokens(JSTokenTypes.COMMENTS)
     val embeddedContent = builder.mark()
-    while (token() === XmlTokenType.XML_COMMENT_CHARACTERS)
+
+    while (token().let { it === XmlTokenType.XML_REAL_WHITE_SPACE || it === XmlTokenType.XML_COMMENT_CHARACTERS })
       advance()
 
     if (token() === AstroTokenTypes.FRONTMATTER_SEPARATOR) {

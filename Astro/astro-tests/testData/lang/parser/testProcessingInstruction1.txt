@@ -5,8 +5,9 @@ AstroFile:test.astro
       <empty list>
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')
+    PsiElement(XML_COMMENT)
+      XmlToken:XML_COMMENT_START('<?')
+      XmlToken:XML_COMMENT_CHARACTERS('This is="PI"')
+      XmlToken:XML_COMMENT_END('?>')
     PsiElement(XML_PROLOG)
-      PsiElement(XML_PROCESSING_INSTRUCTION)
-        XmlToken:XML_PI_START('<?')
-        XmlToken:XML_PI_TARGET('This is="PI"')
-        XmlToken:XML_PI_END('?>')
+      <empty list>

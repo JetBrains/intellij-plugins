@@ -1,6 +1,7 @@
 AstroFile:test.astro
   AstroContentRoot:ASTRO:CONTENT_ROOT
-    XmlToken:XML_COMMENT_CHARACTERS('Some comment < 12\n')
+    XmlToken:XML_COMMENT_CHARACTERS('Some comment < 12')
+    PsiWhiteSpace('\n')
     PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
     PsiWhiteSpace('\n')
     AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT

@@ -1,0 +1,51 @@
+foo - <
+bar
+---
+export interface Props {
+    title: string;
+    body: string;
+    href: string;
+}
+const {
+    title, href,
+    body
+} =
+    Astro.props;
+---
+<li class="">
+    <Card
+            title=`112  ${12 +
+            "12"}`>
+        <h2 title=`Foo bar ${12 + 12}`>
+            {12 +
+                foo.props
+                + (() => {
+                    return 12 && <a> </a>
+                })() + 34}
+            &nbsp; <span>&aacute;</span>
+        </h2>  {12 -
+            <p>sdfsdf</>
+    }</Card>
+</li>
+<style>
+    .link-card {
+        list-style: none;
+        display: flex;
+        padding: 0.15rem;
+        background-color: white;
+        background-image: var(--accent-gradient);
+        background-size: 400%;
+    }
+
+    .link-card >
+    a {
+        width: 100%;
+        text-decoration: none;
+        background-color: white;
+        opacity: 0.8;
+    }
+
+    .link-card:is(:hover, :focus-within) h2 {
+        color: rgb(var(--accent));
+    }
+</style>

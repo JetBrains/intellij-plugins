@@ -44,6 +44,7 @@
     <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>
     <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
                                 id="html"/>
+    <lang.formatter language="Astro" implementationClass="org.jetbrains.astro.lang.formatter.AstroFormattingModelBuilder"/>
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>

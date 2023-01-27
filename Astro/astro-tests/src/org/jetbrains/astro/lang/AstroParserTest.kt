@@ -446,6 +446,22 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testContentBeforeFrontmatterWithWhitespace() {
+    doTestAstro("""
+     
+          foo - <
+      bar
+      
+           ---export interface Props {title: string;
+      body: string; href: string;
+      }
+      const {
+        title, href,
+        body} =
+        Astro.props; ---
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 

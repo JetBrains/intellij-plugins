@@ -73,6 +73,15 @@ import static com.intellij.util.ArrayUtil.*;
       return false;
     }
 
+    private void resetToHtmlInitial() {
+      // skip whitespace chars, for which token has already been emitted
+      int i = 0;
+      for (i = 0; i < zzEndRead; i++) {
+        if (!Character.isWhitespace(zzBuffer.charAt(i))) break;
+      }
+      reset(zzBuffer, i, zzEndRead, HTML_INITIAL);
+    }
+
     private void readUntil(boolean finishAtBoundary, char... chars) {
       if (zzMarkedPos == zzEndRead) return;
       char ch;
@@ -446,12 +455,20 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 <YYINITIAL> {
   "---" {
         yypushback(3);
+        while (zzMarkedPos > 0 && Character.isWhitespace(zzBuffer.charAt(zzMarkedPos-1))) {
+          zzMarkedPos--;
+        }
+        if (zzMarkedPos == 0) {
+          // We've reached beginning of the file - whitespace token has already been emmitted, rollback
+          while(zzMarkedPos < zzEndRead && Character.isWhitespace(zzBuffer.charAt(zzMarkedPos))) {
+            zzMarkedPos++;
+          }
+        }
         yybegin(FRONTMATTER_OPEN);
         return XmlTokenType.XML_COMMENT_CHARACTERS;
       }
   [{}] | \<[a-zA-Z] {
-        yybegin(HTML_INITIAL);
-        zzMarkedPos = 0;
+        resetToHtmlInitial();
       }
   ['\"`] {
         readString(XmlTokenType.XML_DATA_CHARACTERS, HTML_INITIAL);
@@ -459,11 +476,31 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
   "/" {
         readCommentOrRegExp(XmlTokenType.XML_DATA_CHARACTERS, HTML_INITIAL);
       }
-  [^-{}<\"'`/]+|[-<] {
+  {WHITE_SPACE_CHARS} {
+        if (zzStartRead == 0) {
+          return XmlTokenType.XML_REAL_WHITE_SPACE;
+        }
+        // otherwise consume
+      }
+  [^-{}<\"'`/ \n\r\t\f\u2028\u2029\u0085][^-{}<\"'`/]*|[-<] {
         // Just consume
       }
   <<EOF>> {
-        reset(zzBuffer, 0, zzEndRead, HTML_INITIAL);
+        resetToHtmlInitial();
+      }
+}
+
+<FRONTMATTER_OPEN> {
+  {WHITE_SPACE_CHARS} {
+        return XmlTokenType.XML_WHITE_SPACE;
+      }
+  "---" {
+        yybegin(FRONTMATTER_OPENED);
+        return AstroTokenTypes.FRONTMATTER_SEPARATOR;
+      }
+  [^] {
+        yypushback(1);
+        yybegin(YYINITIAL);
       }
 }
 
@@ -486,17 +523,6 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
             yybegin(HTML_INITIAL);
             return AstroTokenTypes.FRONTMATTER_SCRIPT;
           }
-}
-
-<FRONTMATTER_OPEN> {
-  "---" {
-                yybegin(FRONTMATTER_OPENED);
-                return AstroTokenTypes.FRONTMATTER_SEPARATOR;
-              }
-  [^] {
-        yypushback(1);
-        yybegin(YYINITIAL);
-      }
 }
 
 <FRONTMATTER_CLOSE> {
@@ -530,7 +556,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
           return JSTokenTypes.LT;
         }
         yybegin(PROCESSING_INSTRUCTION);
-        return XmlTokenType.XML_PI_START;
+        return XmlTokenType.XML_COMMENT_START;
       }
   {DOCTYPE} {
         if (yystate() != HTML_INITIAL && isWithinAttributeExpression()) {
@@ -538,7 +564,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
           return JSTokenTypes.LT;
         }
         yybegin(DOC_TYPE);
-        return XmlTokenType.XML_DOCTYPE_START;
+        return XmlTokenType.XML_COMMENT_START;
       }
   "<!--" {
         yybegin(COMMENT);
@@ -728,17 +754,18 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 }
 
 <PROCESSING_INSTRUCTION> {
-  {WHITE_SPACE_CHARS}    { return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE;}
-  "?"? ">"               { yybegin(HTML_INITIAL);return XmlTokenType.XML_PI_END; }
-  ([^\?\>] | (\?[^\>]))+ { return XmlTokenType.XML_PI_TARGET; }
+  {WHITE_SPACE_CHARS}    { return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_COMMENT_CHARACTERS;}
+  "?"? ">"               { yybegin(HTML_INITIAL);return XmlTokenType.XML_COMMENT_END; }
+  ([^\?\>] | (\?[^\>]))+ { return XmlTokenType.XML_COMMENT_CHARACTERS; }
 }
 
 <DOC_TYPE> {
-  {WHITE_SPACE_CHARS} { return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_WHITE_SPACE; }
-  {HTML}      { return XmlTokenType.XML_NAME; }
-  {PUBLIC}    { return XmlTokenType.XML_DOCTYPE_PUBLIC; }
-  {DTD_REF}   { return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;}
-  ">"         { yybegin(HTML_INITIAL);return XmlTokenType.XML_DOCTYPE_END; }
+  {WHITE_SPACE_CHARS} { return isHighlightModeOn ? XmlTokenType.TAG_WHITE_SPACE : XmlTokenType.XML_COMMENT_CHARACTERS; }
+  {HTML}      { return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  {PUBLIC}    { return XmlTokenType.XML_COMMENT_CHARACTERS; }
+  {DTD_REF}   { return XmlTokenType.XML_COMMENT_CHARACTERS;}
+  ">"         { yybegin(HTML_INITIAL);return XmlTokenType.XML_COMMENT_END; }
+  [^]         { return XmlTokenType.XML_COMMENT_CHARACTERS;}
 }
 
 <COMMENT> {
