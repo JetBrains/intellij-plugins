@@ -4,6 +4,7 @@ import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
+import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
@@ -164,7 +165,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
-  fun testInjections() {
+  fun testInjectionsJS() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
       styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
@@ -172,6 +173,19 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
         it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
       }
       styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_ADDITIVE_OPERATORS = false
+      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      doTestFromFile("vue")
+    }
+  }
+
+  fun testInjectionsTS() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+        it.UNIFORM_INDENT = true
+        it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
+        it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
+      }
+      styleSettings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).SPACE_AROUND_ADDITIVE_OPERATORS = false
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
       doTestFromFile("vue")
     }

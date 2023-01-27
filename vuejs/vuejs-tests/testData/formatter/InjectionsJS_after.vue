@@ -1,3 +1,5 @@
+<script lang="js"/>
+
 <template>
   <div>
     {{ 12+124 }} a b b b b {{ 34+45 }}
