@@ -177,7 +177,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
-  fun testInjections2() {
+  fun testInjectionsWithDifferentSpacing() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
       styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
