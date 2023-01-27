@@ -3,7 +3,22 @@
   <name>Astro</name>
   <id>org.jetbrains.plugins.astro</id>
   <description><![CDATA[
-    Support for <a href="https://astro.build/">Astro</a> projects.
+    <p>Provides support for <a href="https://astro.build/">Astro</a>
+      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.
+    <h2>Features</h2>
+    <ul>
+      <li>Syntax & semantic highlighting
+      <li>Code completion (with auto-imports)
+      <li>Refactorings
+      <li>Navigation
+      <li>Intentions
+      <li>Code folding
+      <li>Emmet support
+      <li>Formatting
+    </ul>
+    <h2>Getting started</h2>
+    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
+      For WebStorm, you can check out <a href="https://www.jetbrains.com/help/webstorm/astro.html">Astro</a> section.
     ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
