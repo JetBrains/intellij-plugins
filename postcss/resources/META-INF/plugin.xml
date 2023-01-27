@@ -5,7 +5,7 @@
   <vendor>JetBrains</vendor>
   <description>
     <![CDATA[
-      <p>Brings support for <a href="http://postcss.org">PostCSS</a>:</p>
+      <p>Brings support for <a href="https://postcss.org">PostCSS</a>:</p>
       <ul>
           <li>The IDE now recognises .pcss files. You can also enable PostCSS support for your .css files in <em>Preferences | Languages & Frameworks | Stylesheets | Dialects</em>.</li>
           <li>Syntax highlighting for PostCSS syntax. You can additionally configure it in <em>Preferences | Editor | Colors & Fonts</em>.</li>

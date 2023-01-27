@@ -3,7 +3,7 @@
   <name>Gherkin</name>
   <category>Languages</category>
   <description><![CDATA[
-  Adds support for the <a href="https://cucumber.io/docs/gherkin/">Gherkin</a> language, which is used by the <a href="http://cukes.info/">Cucumber</a> testing tool.
+  Adds support for the <a href="https://cucumber.io/docs/gherkin/">Gherkin</a> language, which is used by the <a href="https://cukes.info/">Cucumber</a> testing tool.
 
 <ul><li>Provides coding assistance for step definitions</li></ul>
   ]]>

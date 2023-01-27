@@ -6,7 +6,7 @@
   <category>Version Controls</category>
   <description>
       <![CDATA[
-      Allows working with <a href="http://www.perforce.com/">Perforce version control system</a>.
+      Allows working with <a href="https://www.perforce.com/">Perforce version control system</a>.
       The following features are available:
         <ul>
         <li>Submit, merge, diff, shelf and more</li>

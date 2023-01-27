@@ -8,7 +8,7 @@
     <ul><li>Provides coding assistance, navigation and search for CFML files</li>
     <li>Helps to deploy applications to the ColdFusion server with a dedicated run/debug configuration</li></ul>
 
-Requires the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a> and configured path mapping between local folders with your application and corresponding directories on the server.
+Requires the <a href="https://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a> and configured path mapping between local folders with your application and corresponding directories on the server.
 To configure path mappings, open the <b>Settings / Preferences</b> dialog and select <b>Languages & Frameworks | ColdFusion</b>.
       ]]>
   </description>
