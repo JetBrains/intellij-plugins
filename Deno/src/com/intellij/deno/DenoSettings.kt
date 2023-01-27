@@ -3,8 +3,7 @@ package com.intellij.deno
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.roots.createDenoEntity
 import com.intellij.deno.roots.removeDenoEntity
-import com.intellij.deno.service.DenoLspSupportProvider
-import com.intellij.lsp.LspServerManager
+import com.intellij.deno.service.getDenoDescriptor
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
@@ -96,14 +95,14 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
   fun setUseDenoAndReload(useDeno: Boolean) {
     val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
     val oldRoots = libraryProvider.getRootsToWatch(project)
-    val denoLspSupportProvider = DenoLspSupportProvider()
     if (isUseDeno() != useDeno) {
-      LspServerManager.getInstance(project).unloadProvider(denoLspSupportProvider)
       setUseDeno(useDeno)
-      LspServerManager.getInstance(project).loadProvider(denoLspSupportProvider)
       if (useDeno) {
+        // TODO should LSP server be started explicitly right here?
         createDenoEntity(project)
-      } else {
+      }
+      else {
+        getDenoDescriptor(project)?.stopServer()
         removeDenoEntity(project)
       }
     }
