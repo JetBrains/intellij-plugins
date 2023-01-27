@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JSLexerUtil;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.openapi.util.ThrowableComputable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.containers.Stack;
@@ -83,11 +84,15 @@ import static com.intellij.util.ArrayUtil.*;
     }
 
     private void readUntil(boolean finishAtBoundary, char... chars) {
+      readUntil(finishAtBoundary, true, chars);
+    }
+
+    private void readUntil(boolean finishAtBoundary, boolean allowEscape, char... chars) {
       if (zzMarkedPos == zzEndRead) return;
       char ch;
       do {
         ch = zzBuffer.charAt(zzMarkedPos++);
-        if (ch == '\\' && zzMarkedPos < zzEndRead) {
+        if (allowEscape && ch == '\\' && zzMarkedPos < zzEndRead) {
           zzMarkedPos++;
           continue;
         }
@@ -132,6 +137,7 @@ import static com.intellij.util.ArrayUtil.*;
     private static final int KIND_HTML_CONTENT = 8;
     private static final int KIND_START_TAG = 9;
     private static final int KIND_END_TAG = 10;
+    private static final int KIND_IS_RAW = 11;
 
     public IntArrayList expressionStack = new IntArrayList(15);
     public Stack<String> elementNameStack = new Stack<>();
@@ -153,6 +159,14 @@ import static com.intellij.util.ArrayUtil.*;
         if (element == KIND_HTML_CONTENT) {
           return false;
         }
+      }
+      return false;
+    }
+
+    private boolean isRawContent() {
+      var elements = expressionStack.elements();
+      for (int i = expressionStack.size() - 1; i >= 0; i--) {
+        if (elements[i] == KIND_IS_RAW) return true;
       }
       return false;
     }
@@ -256,12 +270,20 @@ import static com.intellij.util.ArrayUtil.*;
         yybegin(HTML_INITIAL);
         return;
       }
+      var isRaw = false;
+      if (expressionStack.peekInt(0) == KIND_IS_RAW) {
+        isRaw = true;
+        expressionStack.popInt();
+      }
       var tagKind = expressionStack.popInt();
       var tagName = elementNameStack.pop();
       if (HtmlUtil.isSingleHtmlTagL(tagName))
         isEmpty = true;
       if (tagKind == KIND_START_TAG && !isEmpty) {
         closeTagsOnTagOpen(tagName);
+        if (isRaw) {
+          expressionStack.push(KIND_IS_RAW);
+        }
         expressionStack.push(KIND_HTML_CONTENT);
         elementNameStack.push(tagName);
         yybegin(HTML_INITIAL);
@@ -273,6 +295,8 @@ import static com.intellij.util.ArrayUtil.*;
             while (!expressionStack.isEmpty() && expressionStack.popInt() != KIND_HTML_CONTENT) {
             }
           }
+          if (!expressionStack.isEmpty() && expressionStack.peekInt(0) == KIND_IS_RAW)
+            expressionStack.popInt();
           if (expressionStack.isEmpty()) {
             yybegin(HTML_INITIAL);
           } else {
@@ -539,6 +563,9 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 // Actual HTML code
 <HTML_INITIAL> {
   "{" {
+        if (isRawContent()) {
+          return XmlTokenType.XML_DATA_CHARACTERS;
+        }
         expressionStack.push(KIND_EXPRESSION);
         yybegin(EXPRESSION_INITIAL);
         return JSTokenTypes.XML_LBRACE;
@@ -692,6 +719,11 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 
 <TAG_ATTRIBUTES> {
   "{" {
+        if (isRawContent()) {
+          readUntilBoundary = new char[]{' ', '\n', '\r', '\t', '\f', '/', '=', '<', '>'};
+          readUntil(true, false);
+          return XmlTokenType.XML_NAME;
+        }
         expressionStack.push(KIND_SPREAD_OR_SHORTHAND_ATTRIBUTE_EXPRESSION);
         yybegin(EXPRESSION_INITIAL);
         return JSTokenTypes.XML_LBRACE;
@@ -704,6 +736,9 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         if (inBuffer("{", 1)) {
           // If attribute name contains '{' everything up to it is ignored.
           return JSTokenTypes.XML_STYLE_COMMENT_START;
+        }
+        if (StringUtil.equals(yytext(), "is:raw")) {
+          expressionStack.push(KIND_IS_RAW);
         }
         return XmlTokenType.XML_NAME;
       }
@@ -727,11 +762,23 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
   "'" { yybegin(ATTRIBUTE_VALUE_SQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER; }
   "\"" { yybegin(ATTRIBUTE_VALUE_DQ); return XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER; }
   "`" {
-          expressionStack.push(KIND_TEMPLATE_LITERAL_ATTRIBUTE);
-          yybegin(STRING_TEMPLATE);
-          return JSTokenTypes.BACKQUOTE;
+        if (isRawContent()) {
+          readUntilBoundary = new char[] {' ', '\n', '\r', '\t', '\f', '>'};
+          readUntil(true, false);
+          yybegin(TAG_ATTRIBUTES);
+          return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
         }
+        expressionStack.push(KIND_TEMPLATE_LITERAL_ATTRIBUTE);
+        yybegin(STRING_TEMPLATE);
+        return JSTokenTypes.BACKQUOTE;
+      }
   "{" {
+        if (isRawContent()) {
+          readUntilBoundary = new char[] {' ', '\n', '\r', '\t', '\f', '>'};
+          readUntil(true, false);
+          yybegin(TAG_ATTRIBUTES);
+          return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN;
+        }
         expressionStack.push(KIND_ATTRIBUTE_EXPRESSION);
         yybegin(EXPRESSION_INITIAL);
         return JSTokenTypes.XML_LBRACE;

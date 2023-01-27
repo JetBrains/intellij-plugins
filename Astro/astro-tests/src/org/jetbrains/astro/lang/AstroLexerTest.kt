@@ -434,12 +434,24 @@ open class AstroLexerTest : LexerTestCase() {
     |------
     |<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     |<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  """.trimIndent())
+  """)
 
   fun testXmlPi() = doTest("""
     |<?xml processing ?>
     |<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  """.trimIndent())
+  """)
+
+  fun testIsRaw() = doTest("""
+    |<div>
+    | {bar}
+    | <div is:raw>
+    |  {foo}<a title={foo} {...bar}\=12 fooBar=`12 3` {34}>
+    |   {12}
+    |  </a>
+    | </div>
+    | {fooBar}
+    |</html>
+  """)
 
   override fun createLexer(): Lexer = AstroLexerImpl(fixture.project)
 

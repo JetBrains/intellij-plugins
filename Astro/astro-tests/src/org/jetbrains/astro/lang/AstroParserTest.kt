@@ -462,6 +462,22 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testIsRaw() {
+    doTestAstro("""
+      <div>
+       {bar}
+       <div is:raw>
+        {foo}<a title={foo} {...bar}\=12 fooBar=`12 3` {34}>
+         {12}
+        </a>
+       </div>
+       {
+          12 + <div is:raw>{12}</div> + 12
+       }
+      </div>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 
