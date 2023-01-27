@@ -23,22 +23,18 @@ class VueTSLanguage : JSLanguageDialect("VueTS", DialectOptionHolder.TS, JavaScr
 }
 
 class VueExprMetaLanguage private constructor() : MetaLanguage("VueExpr") {
-  internal object Holder {
-    private val myLanguages = setOf<JSLanguageDialect>(VueJSLanguage.INSTANCE, VueTSLanguage.INSTANCE)
-
-    val languages: Set<Language>
-      get() = myLanguages
-  }
 
   override fun matchesLanguage(language: Language): Boolean {
-    return Holder.languages.contains(language)
+    return languages.contains(language)
   }
 
   override fun getMatchingLanguages(): Collection<Language> {
-    return Holder.languages
+    return languages
   }
 
   companion object {
+    private val languages = setOf<JSLanguageDialect>(VueJSLanguage.INSTANCE, VueTSLanguage.INSTANCE)
+
     fun matches(language: Language?): Boolean {
       return language != null && Language.findInstance(VueExprMetaLanguage::class.java).matchesLanguage(language)
     }
