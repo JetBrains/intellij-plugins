@@ -21,7 +21,7 @@ class VueFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
     if (isTopmostVueExpression(element, parent)) {
-      val attribute = element.parentOfType<XmlAttribute>() ?: return null
+      val attribute = element.parentOfTypeInAttribute<XmlAttribute>() ?: return null
       val attributeInfo = VueAttributeNameParser.parse(attribute.name, attribute.parent)
 
       if (attributeInfo is VueAttributeNameParser.VueDirectiveInfo &&

@@ -33,7 +33,8 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.*
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
@@ -429,3 +430,8 @@ fun WebSymbol.extractComponentSymbol(): WebSymbol? =
     ?.takeIf { it.size == 2 && it[0].pattern != null }
     ?.get(1)
     ?.takeIf { it.kind == VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS }
+
+inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
+  val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this
+  return host.parentOfType<T>()
+}
