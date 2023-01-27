@@ -34,6 +34,7 @@ class AstroInspectionsProvider : InspectionToolProvider {
       JSUnresolvedReferenceInspection::class.java,
       JSUndeclaredVariableInspection::class.java,
       JSUnusedLocalSymbolsInspection::class.java,
+      ES6UnusedImportsInspection::class.java,
       JSValidateTypesInspection::class.java,
       JSIncompatibleTypesComparisonInspection::class.java,
       ThisExpressionReferencesGlobalObjectJSInspection::class.java,
