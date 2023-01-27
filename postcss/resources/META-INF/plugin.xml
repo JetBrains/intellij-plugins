@@ -57,7 +57,7 @@
                             order="before cssDumbCompletion"/>
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssCompletionContributor"/>
     <css.elementDescriptorProvider implementation="org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider"/>
-    <psi.referenceContributor implementation="org.intellij.plugins.postcss.references.PostCssReferenceContributor"/>
+    <psi.referenceContributor language="CSS" implementation="org.intellij.plugins.postcss.references.PostCssReferenceContributor"/>
     <lang.findUsagesProvider language="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssFindUsagesProvider"/>
     <referencesSearch implementation="org.intellij.plugins.postcss.usages.PostCssUsageSearcher"/>
     <idIndexer filetype="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssIdIndexer"/>
@@ -85,14 +85,15 @@
                      key="inspections.custom.media.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomMediaInspection"/>
-      <localInspection language="PostCSS" bundle="messages.PostCssBundle"
-                       key="inspections.unresolved.module.value.reference"
-                       groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
-                       implementationClass="org.intellij.plugins.postcss.inspections.PostCssUnresolvedModuleValueReferenceInspection"/>
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
+                     key="inspections.unresolved.module.value.reference"
+                     groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.intellij.plugins.postcss.inspections.PostCssUnresolvedModuleValueReferenceInspection"/>
 
   </extensions>
   <extensions defaultExtensionNs="com.intellij.css">
     <supportedFileTypesProvider implementation="org.intellij.plugins.postcss.index.PostCssSupportedFileTypesProvider" version="1"/>
-    <cssInspectionFilter language="PostCSS" implementationClass="org.intellij.plugins.postcss.inspections.suppress.PostCssInspectionFilter"/>
+    <cssInspectionFilter language="PostCSS"
+                         implementationClass="org.intellij.plugins.postcss.inspections.suppress.PostCssInspectionFilter"/>
   </extensions>
 </idea-plugin>
