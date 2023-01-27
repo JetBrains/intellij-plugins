@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
 
-class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
+class VueExprCompletionProvider : CompletionProvider<CompletionParameters>() {
 
   companion object {
     private val FILTERED_NON_CONTEXT_KEYWORDS = setOf("do", "class", "for", "function", "if", "import()", "switch", "throw",

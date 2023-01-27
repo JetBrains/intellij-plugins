@@ -25,7 +25,7 @@ class VueCompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
            VueRefValueCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
-           VueJSCompletionProvider())
+           VueExprCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(exprLanguage()),
            CssInBindingExpressionCompletionProvider())
     extend(CompletionType.BASIC,
@@ -35,15 +35,6 @@ class VueCompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC,
            psiElement(JSTokenTypes.IDENTIFIER).withParent(JSPatterns.jsReferenceExpression()),
            VueScriptScopeCompletionProvider())
-  }
-
-  // TODO merge with Angular
-  private fun <T : PsiElement> language(language: Language): PatternCondition<T> {
-    return object : PatternCondition<T>("language(" + language.id + ")") {
-      override fun accepts(t: T, context: ProcessingContext): Boolean {
-        return language.`is`(PsiUtilCore.findLanguageFromElement(t))
-      }
-    }
   }
 
   private fun <T : PsiElement> exprLanguage(): PatternCondition<T> {
