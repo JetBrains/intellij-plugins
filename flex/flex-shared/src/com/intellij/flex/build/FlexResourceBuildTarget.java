@@ -30,7 +30,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
-  FlexResourceBuildTarget(final FlexResourceBuildTargetType type, @NotNull JpsTypedModule<JpsFlexBuildConfigurationManager> module) {
+  FlexResourceBuildTarget(@NotNull FlexResourceBuildTargetType type, @NotNull JpsTypedModule<JpsFlexBuildConfigurationManager> module) {
     super(type, module);
   }
 
