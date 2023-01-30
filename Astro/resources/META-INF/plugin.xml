@@ -59,6 +59,9 @@
     <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
                                 id="html"/>
     <lang.formatter language="Astro" implementationClass="org.jetbrains.astro.lang.formatter.AstroFormattingModelBuilder"/>
+    <lang.refactoringSupport language="Astro" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="AstroFrontmatter" implementationClass="org.jetbrains.astro.refactoring.AstroRefactoringSupportProvider"/>
+
 
     <webSymbols.framework id="astro" implementation="org.jetbrains.astro.AstroFramework"/>
     <webSymbols.webTypes enableByDefault="true" source="web-types/astro.web-types.json"/>

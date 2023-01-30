@@ -1,6 +1,7 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.AstroCodeInsightTestCase
@@ -17,6 +18,27 @@ class AstroInspectionsTest : AstroCodeInsightTestCase() {
                                            "Insert 'import {Colors} from \"./colors\"'",
                                            additionalFiles = listOf("colors.ts")
   )
+
+  fun testUnresolvedVariableInExprNoFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                           JavaScriptBundle.message("javascript.create.variable.intention.name", "test"))
+
+  fun testUnresolvedVariableInExprWithFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                             JavaScriptBundle.message("javascript.create.variable.intention.name", "test"))
+
+  fun testUnresolvedVariableInFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                     JavaScriptBundle.message("javascript.create.variable.intention.name", "test"))
+
+  fun testUnresolvedFunctionCallInExprNoFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                               JavaScriptBundle.message("javascript.create.function.intention.name",
+                                                                                        "test"))
+
+  fun testUnresolvedFunctionCallInExprWithFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                                 JavaScriptBundle.message("javascript.create.function.intention.name",
+                                                                                          "test"))
+
+  fun testUnresolvedFunctionCallInFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
+                                                         JavaScriptBundle.message("javascript.create.function.intention.name",
+                                                                                  "test"))
 
   //region Test configuration and helper methods
 
