@@ -42,8 +42,7 @@
     <fileType name="Astro" extensions="astro" language="Astro" implementationClass="org.jetbrains.astro.lang.AstroFileType"
               fieldName="INSTANCE"/>
     <lang.parserDefinition language="Astro" implementationClass="org.jetbrains.astro.lang.parser.AstroParserDefinition"/>
-
-    <lang.parserDefinition language="AstroFrontmatter" implementationClass="com.intellij.lang.javascript.dialects.TypeScriptParserDefinition"/>
+    <lang.parserDefinition language="AstroFrontmatter" implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterParserDefinition"/>
 
     <lang.syntaxHighlighterFactory language="Astro"
                                    implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
