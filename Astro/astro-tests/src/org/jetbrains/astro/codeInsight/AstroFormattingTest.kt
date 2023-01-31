@@ -26,7 +26,7 @@ class AstroFormattingTest : AstroCodeInsightTestCase() {
           codeStyleManager.reformat(myFixture.file)
         }
       }, null, null)
-    myFixture.checkResultByFile(getTestName(true) + "_after.astro")
+    checkResult()
   }
   //endregion
 }

@@ -48,7 +48,7 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
     configure(additionalFiles = additionalFiles, modules = modules)
     myFixture.completeBasic()
     myFixture.type(textToType)
-    myFixture.checkResultByFile(getTestName(true) + "_after.astro")
+    checkResult()
   }
 
   private fun doLookupTest(vararg modules: AstroTestModule,

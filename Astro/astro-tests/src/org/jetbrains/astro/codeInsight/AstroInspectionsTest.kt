@@ -54,7 +54,7 @@ class AstroInspectionsTest : AstroCodeInsightTestCase() {
       return
     }
     myFixture.launchAction(myFixture.findSingleIntention(quickFixName))
-    myFixture.checkResultByFile(getTestName(true) + "_after.astro")
+    checkResult()
   }
 
   //endregion

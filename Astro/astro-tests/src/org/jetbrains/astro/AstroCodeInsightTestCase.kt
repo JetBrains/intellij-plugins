@@ -36,4 +36,8 @@ abstract class AstroCodeInsightTestCase : BasePlatformTestCase() {
     }
   }
 
+  protected fun checkResult() {
+    myFixture.checkResultByFile(getTestName(true) + "_after.astro")
+  }
+
 }
