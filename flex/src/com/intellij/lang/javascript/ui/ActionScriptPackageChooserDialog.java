@@ -5,6 +5,7 @@ import com.intellij.CommonBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeCoreBundle;
+import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -12,7 +13,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -48,7 +48,6 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
   private DefaultTreeModel myModel;
   private final Project myProject;
   private final @NlsContexts.DialogTitle String myTitle;
-  private final DirectoryIndex myIndex;
   private final GlobalSearchScope mySearchScope;
 
   public ActionScriptPackageChooserDialog(@NlsContexts.DialogTitle String title, Project project, GlobalSearchScope searchScope) {
@@ -57,7 +56,6 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     setTitle(title);
     myTitle = title;
     myProject = project;
-    myIndex = DirectoryIndex.getInstance(myProject);
     init();
   }
 
@@ -87,7 +85,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
             Object object = node.getUserObject();
             if (object instanceof VirtualFile) {
-              String name = myIndex.getPackageName((VirtualFile)object);
+              String name = PlatformPackageUtil.getPackageName((VirtualFile)object, myProject);
               setText(name.length() > 0 ? StringUtil.getShortName(name) : IdeCoreBundle.message("node.default"));
             }
           }
@@ -116,7 +114,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
       public void valueChanged(TreeSelectionEvent e) {
         VirtualFile selection = getTreeSelection();
         if (selection != null) {
-          @NlsSafe String name = myIndex.getPackageName(selection);
+          @NlsSafe String name = PlatformPackageUtil.getPackageName(selection, myProject);
           setTitle(myTitle + " - " + ("".equals(name) ? IdeBundle.message("node.default.package") : name));
         }
         else {
@@ -160,7 +158,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
   @Nullable
   public String getSelectedPackage() {
     VirtualFile file = getTreeSelection();
-    return file != null ? myIndex.getPackageName(file) : null;
+    return file != null ? PlatformPackageUtil.getPackageName(file, myProject) : null;
   }
 
   //public List<VirtualFile> getSelectedPackages() {
@@ -210,9 +208,9 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
 
   @NotNull
   private DefaultMutableTreeNode addPackage(VirtualFile aPackage) {
-    final String qualifiedPackageName = myIndex.getPackageName(aPackage);
+    final String qualifiedPackageName = PlatformPackageUtil.getPackageName(aPackage, myProject);
     final VirtualFile parentPackage = aPackage.getParent();
-    if (parentPackage == null || myIndex.getPackageName(parentPackage) == null) {
+    if (parentPackage == null || PlatformPackageUtil.getPackageName(parentPackage, myProject) == null) {
       final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)myModel.getRoot();
       if (qualifiedPackageName.length() == 0) {
         rootNode.setUserObject(aPackage);
@@ -244,7 +242,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
       final DefaultMutableTreeNode child = (DefaultMutableTreeNode)rootNode.getChildAt(i);
       final VirtualFile nodePackage = (VirtualFile)child.getUserObject();
       if (nodePackage != null) {
-        if (Objects.equals(myIndex.getPackageName(nodePackage), qualifiedName)) return child;
+        if (Objects.equals(PlatformPackageUtil.getPackageName(nodePackage, myProject), qualifiedName)) return child;
       }
     }
     return null;
@@ -260,7 +258,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)o;
         VirtualFile nodePackage = (VirtualFile)node.getUserObject();
         if (nodePackage != null) {
-          if (Objects.equals(myIndex.getPackageName(nodePackage), qualifiedPackageName)) return node;
+          if (Objects.equals(PlatformPackageUtil.getPackageName(nodePackage, myProject), qualifiedPackageName)) return node;
         }
       }
     }
@@ -291,7 +289,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
       @Override
       public void run() {
         try {
-          String newQualifiedName = myIndex.getPackageName(selectedPackage);
+          String newQualifiedName = PlatformPackageUtil.getPackageName(selectedPackage, myProject);
           if (!Comparing.strEqual(newQualifiedName, "")) newQualifiedName += ".";
           newQualifiedName += newPackageName;
           final VirtualFile dir = selectedPackage.createChildDirectory(this, newPackageName);
