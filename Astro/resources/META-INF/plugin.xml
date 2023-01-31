@@ -33,7 +33,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <dependencySupport kind="astro" coordinate="npm:astro" displayName="Astro"/>
+    <dependencySupport kind="javascript" coordinate="npm:astro" displayName="Astro"/>
 
     <internalFileTemplate name="Astro Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.astro.AstroCreateFromTemplateHandler"/>
