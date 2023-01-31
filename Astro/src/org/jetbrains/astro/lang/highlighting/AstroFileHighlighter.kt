@@ -14,6 +14,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.map2Array
 import org.jetbrains.astro.lang.AstroLanguage
+import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterHighlighterToken
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
