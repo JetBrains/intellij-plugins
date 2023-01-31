@@ -42,6 +42,10 @@ module Spec
           [@stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new]
         end
 
+        def placeholder_full_name?
+          @full_name =~ /.*example at .+:\d+/
+        end
+
         def to_s
           "RunningExampleData{#{@id}, #{@full_name}, #{@stdout_file_old}, #{@stderr_file_old}, #{@stdout_file_new}, #{@stderr_file_new}}"
         end
@@ -364,6 +368,14 @@ module Spec
 
         def close_test_block(example)
           example_data = remove_data_from_storage(example)
+
+          if ::Rake::TeamCity.is_in_idea_mode && example_data.placeholder_full_name?
+            new_full_name = example_description(example).to_s
+            if example_data.full_name != new_full_name
+             log(@message_factory.create_set_node_name(new_full_name, example_data.id))
+            end
+          end
+
           finished_at_ms = get_time_in_ms(example.execution_result.finished_at)
           started_at_ms = get_time_in_ms(example.execution_result.started_at)
           duration = finished_at_ms - started_at_ms
