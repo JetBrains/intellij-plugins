@@ -16,9 +16,6 @@
       <li>Emmet support
       <li>Formatting
     </ul>
-    <h2>Getting started</h2>
-    <p>For information on getting started, head over to the <a href="https://www.jetbrains.com/help/">documentation</a> for your IDE.
-      For WebStorm, you can check out <a href="https://www.jetbrains.com/help/webstorm/astro.html">Astro</a> section.
     ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
