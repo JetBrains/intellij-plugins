@@ -447,7 +447,7 @@ public final class DartResolveUtil {
 
   public static boolean processSuperClasses(PsiElementProcessor<? super DartClass> processor, DartClass @NotNull ... rootDartClasses) {
     final Set<DartClass> processedClasses = new HashSet<>();
-    LinkedList<DartClass> classes = new LinkedList<>(Arrays.asList(rootDartClasses));
+    ArrayDeque<DartClass> classes = new ArrayDeque<>(Arrays.asList(rootDartClasses));
     while (!classes.isEmpty()) {
       final DartClass dartClass = classes.pollFirst();
       if (dartClass == null || processedClasses.contains(dartClass)) {

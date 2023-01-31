@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.coldFusion.model.formatter;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -25,8 +25,8 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class CfmlBlock extends TemplateLanguageBlock {
@@ -98,7 +98,7 @@ public class CfmlBlock extends TemplateLanguageBlock {
       return defaultRange;
     }
 
-    LinkedList<PsiElement> elements = new LinkedList<>(Arrays.asList(commonHtmlParent.getChildren()));
+    ArrayDeque<PsiElement> elements = new ArrayDeque<>(Arrays.asList(commonHtmlParent.getChildren()));
     while (!elements.isEmpty()) {
       PsiElement e = elements.remove();
       if (!ArrayUtil.contains(e.getNode().getElementType(), WHITESPACE)) {
