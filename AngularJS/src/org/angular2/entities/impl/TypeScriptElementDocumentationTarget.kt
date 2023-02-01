@@ -1,12 +1,12 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.impl
 
-import com.intellij.lang.documentation.DocumentationResult
-import com.intellij.lang.documentation.DocumentationTarget
 import com.intellij.lang.typescript.documentation.TypeScriptDocumentationProvider
 import com.intellij.model.Pointer
 import com.intellij.navigation.TargetPresentation
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.platform.documentation.DocumentationResult
+import com.intellij.platform.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 

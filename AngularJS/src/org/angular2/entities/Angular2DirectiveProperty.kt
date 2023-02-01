@@ -1,14 +1,14 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
 import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
-import com.intellij.lang.documentation.DocumentationTarget
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
+import com.intellij.platform.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.WebSymbol

@@ -1,11 +1,10 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
 import com.intellij.find.usages.api.SearchTarget
 import com.intellij.find.usages.api.UsageHandler
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator.Companion.getHtmlNSDescriptor
-import com.intellij.lang.documentation.DocumentationTarget
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.navigation.NavigationItem
@@ -15,6 +14,7 @@ import com.intellij.navigation.TargetPresentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
+import com.intellij.platform.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
