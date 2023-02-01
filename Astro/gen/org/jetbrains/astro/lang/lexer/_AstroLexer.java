@@ -1632,7 +1632,12 @@ public class _AstroLexer implements FlexLexer {
         expressionStack.popInt();
       }
       var tagKind = expressionStack.popInt();
-      var tagName = elementNameStack.pop();
+      String tagName;
+      if (yystate() == START_TAG_NAME || yystate() == END_TAG_NAME) {
+        tagName = "";
+      } else {
+        tagName = elementNameStack.pop();
+      }
       if (HtmlUtil.isSingleHtmlTagL(tagName))
         isEmpty = true;
       if (tagKind == KIND_START_TAG && !isEmpty) {
@@ -2147,13 +2152,13 @@ public class _AstroLexer implements FlexLexer {
           case 250: break;
           case 26: 
             { if (inBuffer("{", 1)) {
-            // If attribute name contains '{' everything up to it is ignored.
-            return JSTokenTypes.XML_STYLE_COMMENT_START;
-          }
-          if (StringUtil.equals(yytext(), "is:raw")) {
-            expressionStack.push(KIND_IS_RAW);
-          }
-          return XmlTokenType.XML_NAME;
+          // If attribute name contains '{' everything up to it is ignored.
+          return JSTokenTypes.XML_STYLE_COMMENT_START;
+        }
+        if (StringUtil.equals(yytext(), "is:raw")) {
+          expressionStack.push(KIND_IS_RAW);
+        }
+        return XmlTokenType.XML_NAME;
             } 
             // fall through
           case 251: break;

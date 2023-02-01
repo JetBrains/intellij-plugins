@@ -276,7 +276,12 @@ import static com.intellij.util.ArrayUtil.*;
         expressionStack.popInt();
       }
       var tagKind = expressionStack.popInt();
-      var tagName = elementNameStack.pop();
+      String tagName;
+      if (yystate() == START_TAG_NAME || yystate() == END_TAG_NAME) {
+        tagName = "";
+      } else {
+        tagName = elementNameStack.pop();
+      }
       if (HtmlUtil.isSingleHtmlTagL(tagName))
         isEmpty = true;
       if (tagKind == KIND_START_TAG && !isEmpty) {

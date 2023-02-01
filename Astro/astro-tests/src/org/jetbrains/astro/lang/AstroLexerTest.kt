@@ -457,6 +457,11 @@ open class AstroLexerTest : LexerTestCase() {
     |<div title={}>{}</div>
   """.trimIndent())
 
+  fun testEmptyTag() = doTest("""
+    |------
+    |<>
+  """.trimIndent())
+
   override fun createLexer(): Lexer = AstroLexerImpl(fixture.project)
 
   override fun getDirPath() = "lang/lexer"
