@@ -25,9 +25,9 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.options.OptPane;
-import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -42,18 +42,18 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.jetbrains.lang.manifest.ManifestFileType;
 import org.jetbrains.osgi.project.BundleManifest;
 import org.jetbrains.osgi.project.BundleManifestCache;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.util.OsgiPsiUtil;
 
-import javax.swing.*;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
-import static com.intellij.codeInspection.options.OptPane.*;
+import static com.intellij.codeInspection.options.OptPane.checkbox;
+import static com.intellij.codeInspection.options.OptPane.pane;
 import static org.osmorc.i18n.OsmorcBundle.message;
 
 /**
@@ -187,17 +187,30 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
       myPackageToImport = packageToImport;
     }
 
-    @NotNull
     @Override
-    public String getName() {
+    public @NotNull String getName() {
       return message("PackageAccessibilityInspection.fix");
     }
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getPsiElement());
+      var manifestFile = getVerifiedManifestFile(descriptor.getPsiElement());
       if (manifestFile != null) {
         WriteCommandAction.writeCommandAction(project, manifestFile).run(() -> OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport));
+      }
+    }
+
+    @Override
+    public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+      var manifestFile = getManifestFile(previewDescriptor.getEndElement());
+      if (manifestFile != null) {
+        var existing = manifestFile.getHeader(Constants.IMPORT_PACKAGE);
+        var oldText = existing != null ? existing.getText() : "";
+        var newText = (existing != null ? existing.getText() + ",\n " : Constants.IMPORT_PACKAGE + ": ") + myPackageToImport;
+        return new IntentionPreviewInfo.CustomDiff(ManifestFileType.INSTANCE, oldText, newText);
+      }
+      else {
+        return IntentionPreviewInfo.EMPTY;
       }
     }
   }
