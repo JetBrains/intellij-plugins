@@ -31,6 +31,7 @@ focus#null#1
 focusin#null#1
 focusout#null#1
 formdata#null#1
+gotpointercapture#null#1
 input#null#1
 invalid#null#1
 keydown#null#1
@@ -39,6 +40,7 @@ load#null#1
 loadeddata#null#1
 loadedmetadata#null#1
 loadstart#null#1
+lostpointercapture#null#1
 mousedown#null#1
 mouseenter#null#1
 mouseleave#null#1
@@ -50,11 +52,21 @@ paste#null#1
 pause#null#1
 play#null#1
 playing#null#1
+pointercancel#null#1
+pointerdown#null#1
+pointerenter#null#1
+pointerleave#null#1
+pointermove#null#1
+pointerout#null#1
+pointerover#null#1
+pointerrawupdate#null#1
+pointerup#null#1
 progress#null#1
 ratechange#null#1
 reset#null#1
 resize#null#1
 scroll#null#1
+scrollend#null#1
 securitypolicyviolation#null#1
 seeked#null#1
 seeking#null#1

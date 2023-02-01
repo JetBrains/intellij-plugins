@@ -111,6 +111,7 @@ onfocus#null#0
 onfocusin#null#0
 onfocusout#null#0
 onformdata#null#0
+ongotpointercapture#null#0
 oninput#null#0
 oninvalid#null#0
 onkeydown#null#0
@@ -120,6 +121,7 @@ onload#null#0
 onloadeddata#null#0
 onloadedmetadata#null#0
 onloadstart#null#0
+onlostpointercapture#null#0
 onmousedown#null#0
 onmouseenter#null#0
 onmouseleave#null#0
@@ -131,11 +133,21 @@ onpaste#null#0
 onpause#null#0
 onplay#null#0
 onplaying#null#0
+onpointercancel#null#0
+onpointerdown#null#0
+onpointerenter#null#0
+onpointerleave#null#0
+onpointermove#null#0
+onpointerout#null#0
+onpointerover#null#0
+onpointerrawupdate#null#0
+onpointerup#null#0
 onprogress#null#0
 onratechange#null#0
 onreset#null#0
 onresize#null#0
 onscroll#null#0
+onscrollend#null#0
 onsecuritypolicyviolation#null#0
 onseeked#null#0
 onseeking#null#0

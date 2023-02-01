@@ -105,6 +105,7 @@ script#null#1
 section#null#1
 select#null#1
 simple#null#1
+slot#null#1
 small#null#1
 source#null#1
 span#null#1

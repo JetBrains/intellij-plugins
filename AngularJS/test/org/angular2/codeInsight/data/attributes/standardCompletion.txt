@@ -115,6 +115,8 @@
 (beforematch)%null#null#50
 (contextlost)%null#null#50
 (contextrestored)%null#null#50
+(pointerrawupdate)%null#null#50
+(scrollend)%null#null#50
 (pan)%null#HammerInput#50
 (pancancel)%null#HammerInput#50
 (pandown)%null#HammerInput#50
