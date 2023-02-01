@@ -33,25 +33,26 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
     return super.getExportScope(element).let { if (it is AstroFrontmatterScript) it.context as? JSElement else it }
   }
 
-  override fun findStatementAnchor(currentAnchor: JSSourceElement?, referenceExpression: PsiElement): PsiElement? {
+  override fun adjustStatementAnchor(currentAnchor: JSSourceElement?, referenceExpression: PsiElement): PsiElement? {
     val astroFile = referenceExpression.containingFile as? AstroFileImpl ?: return currentAnchor
     if (referenceExpression.parents(false).any { it is AstroFrontmatterScript })
       return currentAnchor
     astroFile.frontmatterScript()?.node?.treeNext?.psi?.let { return it }
 
+    if (!ApplicationManager.getApplication().isDispatchThread
+        && !ApplicationManager.getApplication().isWriteAccessAllowed)
+      return null
+
     var result: AstroFrontmatterScript? = null
-    ApplicationManager.getApplication().assertIsDispatchThread()
     ApplicationManager.getApplication().runWriteAction {
-      val commandProcessor = CommandProcessor.getInstance()
-      val runnable = Runnable {
+      CommandProcessor.getInstance().runUndoTransparentAction {
         result = AstroComponentSourceEdit(astroFile).getOrCreateFrontmatterScript()
       }
-      commandProcessor.runUndoTransparentAction(runnable)
     }
     return result
   }
 
-  override fun findFunctionAnchor(currentAnchor: PsiElement?, scope: PsiElement, originalAnchor: PsiElement): PsiElement? {
+  override fun adjustFunctionAnchor(currentAnchor: PsiElement?, scope: PsiElement, originalAnchor: PsiElement): PsiElement? {
     if (scope !is AstroContentRoot) {
       return currentAnchor
     }
