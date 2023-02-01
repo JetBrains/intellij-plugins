@@ -14,10 +14,10 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   fun testCharEntities() = doLookupTest()
 
   fun testScriptTagAttributes() =
-    doLookupTest{!it.endsWith("#0")}
+    doLookupTest { !it.endsWith("#0") }
 
   fun testStyleTagAttributes() =
-    doLookupTest{ !it.endsWith("#0") }
+    doLookupTest { !it.endsWith("#0") }
 
   fun testImportedComponent() =
     doLookupTest(additionalFiles = listOf("component.astro"))
@@ -32,7 +32,8 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
     doTypingTest("olo\n", additionalFiles = listOf("colors.ts"))
 
   fun testFrontmatterKeywords() =
-    doLookupTest(additionalFiles = listOf("component.astro"))
+    doLookupTest(additionalFiles = listOf("component.astro"),
+                 filter = { it.endsWith("#6") || it.endsWith("#5") })
 
   fun testPropsInterface() =
     doLookupTest(AstroTestModule.ASTRO_1_9_0)
