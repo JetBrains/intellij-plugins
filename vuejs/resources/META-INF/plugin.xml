@@ -369,8 +369,8 @@
     <importModulePathStrategy implementation="org.jetbrains.vuejs.lang.VueImportModulePathStrategy"/>
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
-    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueScriptCandidatesProvider$Companion"/>
-    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentImportCandidatesProvider$Companion"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueScriptCandidatesProviderFactory"/>
+    <importCandidatesFactory implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentImportCandidatesProviderFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="intellij.webpack">

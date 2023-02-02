@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.VueSourceComponent
 import java.util.function.Predicate
 
 class VueComponentImportCandidatesProvider(private val placeInfo: JSImportPlaceInfo) : JSImportCandidatesBase(placeInfo) {
@@ -30,11 +30,10 @@ class VueComponentImportCandidatesProvider(private val placeInfo: JSImportPlaceI
       }
     }
   }
+}
 
-  companion object : JSImportCandidatesProvider.CandidatesFactory {
+class VueComponentImportCandidatesProviderFactory : JSImportCandidatesProvider.CandidatesFactory {
+  override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? =
+    if (isVueContext(placeInfo.place)) VueComponentImportCandidatesProvider(placeInfo) else null
 
-    override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? =
-      if (isVueContext(placeInfo.place)) VueComponentImportCandidatesProvider(placeInfo) else null
-
-  }
 }

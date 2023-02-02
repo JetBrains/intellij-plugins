@@ -29,10 +29,10 @@ class VueScriptCandidatesProvider(placeInfo: JSImportPlaceInfo) : JSImportCandid
       processor.remove(ref)
     }
   }
+}
 
-  companion object : JSImportCandidatesProvider.CandidatesFactory {
-    override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? {
-      return if (placeInfo.file.fileType == VueFileType.INSTANCE) VueScriptCandidatesProvider(placeInfo) else null
-    }
+class VueScriptCandidatesProviderFactory : JSImportCandidatesProvider.CandidatesFactory {
+  override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? {
+    return if (placeInfo.file.fileType == VueFileType.INSTANCE) VueScriptCandidatesProvider(placeInfo) else null
   }
 }
