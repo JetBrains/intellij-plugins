@@ -9,12 +9,17 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lsp.LanguageServerConnector
+import com.intellij.lsp.LspServer
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.prisma.PrismaBundle
+import org.intellij.prisma.lang.PrismaFileType
 
 class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptor(project, root) {
+
+  override fun isSupportedFile(file: VirtualFile) = file.fileType == PrismaFileType
+
   override fun createCommandLine(): GeneralCommandLine {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
     if (interpreter !is NodeJsLocalInterpreter && interpreter !is WslNodeInterpreter) {
@@ -37,10 +42,10 @@ class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServer
     }
   }
 
-  override fun createServerConnector(): LanguageServerConnector {
+  override fun createServerConnector(lspServer: LspServer): LanguageServerConnector {
     val startingCommandLine = createCommandLine()
     LOG.debug("$this: starting server process using: $startingCommandLine")
-    return PrismaServerConnector(this, OSProcessHandler(startingCommandLine))
+    return PrismaServerConnector(lspServer, OSProcessHandler(startingCommandLine))
   }
 
   override fun useGenericCompletion(): Boolean = false

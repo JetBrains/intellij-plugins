@@ -10,11 +10,11 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.lsp.LanguageServerConnectorStdio
-import com.intellij.lsp.LspServerDescriptor
+import com.intellij.lsp.LspServer
 import java.io.IOException
 
-class PrismaServerConnector(serverDescriptor: LspServerDescriptor, processHandler: OSProcessHandler) :
-  LanguageServerConnectorStdio(serverDescriptor, processHandler) {
+class PrismaServerConnector(lspServer: LspServer, processHandler: OSProcessHandler) :
+  LanguageServerConnectorStdio(lspServer, processHandler) {
 
   override fun configureMessageJsonSerializer(gson: GsonBuilder) {
     // temp workaround for https://github.com/prisma/language-tools/issues/1086

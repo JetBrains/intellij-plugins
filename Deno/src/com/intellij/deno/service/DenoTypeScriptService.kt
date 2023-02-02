@@ -29,7 +29,6 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lsp.LspServer
-import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerManager
 import com.intellij.lsp.data.LspCompletionItem
 import com.intellij.lsp.data.LspDiagnostic
@@ -65,15 +64,8 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }
 
-  private fun getDescriptor(virtualFile: VirtualFile): LspServerDescriptor? {
-    return if (!LspServerManager.isFileAcceptable(virtualFile)) null else getDescriptor()
-  }
-
-  private fun getDescriptor(): LspServerDescriptor? {
-    return if (DenoSettings.getService(project).isUseDeno()) getDenoDescriptor(project) else null
-  }
-
-  private fun <T> withServer(action: LspServer.() -> T): T? = getDescriptor()?.server?.action()
+  private fun <T> withServer(action: LspServer.() -> T): T? =
+    LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)?.firstOrNull()?.action()
 
   override val name = "Deno LSP"
 
@@ -107,30 +99,30 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   }
 
   override fun updateAndGetCompletionItems(virtualFile: VirtualFile, parameters: CompletionParameters): Future<List<CompletionEntry>?>? {
-    val descriptor = getDescriptor(virtualFile) ?: return null
-    return completedFuture(descriptor.getCompletionItems(parameters).map(::DenoCompletionEntry))
+    return withServer { completedFuture(getCompletionItems(parameters).map(::DenoCompletionEntry)) }
   }
 
   override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
     if (element != null && (result is DenoAnnotationError)) {
       val virtualFile = file.virtualFile
-      val descriptor = getDescriptor(virtualFile) ?: return emptyList()
-      return descriptor.getCodeActions(file, result.diagnostic) { command, _ ->
-        if (command == "deno.cache") {
-          //or implement using deno command 
-          val commandLine = GeneralCommandLine(DenoSettings.getService(project).getDenoPath(), "cache", virtualFile.path)
-          try {
-            ExecUtil.execAndGetOutput(commandLine)
-            DaemonCodeAnalyzer.getInstance(project).restart()
-          }
-          catch (e: ExecutionException) {
-            //skip
-          }
+      return withServer {
+        getCodeActions(file, result.diagnostic) { command, _ ->
+          if (command == "deno.cache") {
+            //or implement using deno command
+            val commandLine = GeneralCommandLine(DenoSettings.getService(project).getDenoPath(), "cache", virtualFile.path)
+            try {
+              ExecUtil.execAndGetOutput(commandLine)
+              DaemonCodeAnalyzer.getInstance(project).restart()
+            }
+            catch (e: ExecutionException) {
+              //skip
+            }
 
-          return@getCodeActions true
+            return@getCodeActions true
+          }
+          return@getCodeActions false
         }
-        return@getCodeActions false
-      }
+      } ?: return emptyList()
     }
     return emptyList()
   }
@@ -139,18 +131,18 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
                                           items: List<CompletionEntry>,
                                           document: Document,
                                           positionInFileOffset: Int): Future<List<CompletionEntry>?>? {
-    val descriptor = getDescriptor(virtualFile) ?: return null
-    return completedFuture(items.map { DenoCompletionEntry(descriptor.getResolvedCompletionItem((it as DenoCompletionEntry).item)) })
+    return withServer { completedFuture(items.map { DenoCompletionEntry(getResolvedCompletionItem((it as DenoCompletionEntry).item)) }) }
   }
 
   override fun getNavigationFor(document: Document, sourceElement: PsiElement): Array<PsiElement> =
-    getDescriptor()?.getElementDefinitions(sourceElement)?.toTypedArray() ?: emptyArray()
+    withServer { getElementDefinitions(sourceElement).toTypedArray() } ?: emptyArray()
 
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
   fun quickInfo(element: PsiElement): String? {
-    val server = getDescriptor()?.server
-    val raw = server?.invokeSynchronously(HoverMethod.create(server, element)) ?: return null
+    val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)?.firstOrNull()
+                 ?: return null
+    val raw = server.invokeSynchronously(HoverMethod.create(server, element)) ?: return null
     LOG.info("Quick info for $element : $raw")
     return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
   }
@@ -159,15 +151,20 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     completedFuture(quickInfo(element))
 
   override fun restart(recreateToolWindow: Boolean) {
-    val descriptor = getDescriptor()
-    if (!project.isDisposed && descriptor != null) {
-      descriptor.restart()
+    val lspServerManager = LspServerManager.getInstance(project)
+    val lspServers = lspServerManager.getServersForProvider(DenoLspSupportProvider::class.java)
+    lspServers.forEach { lspServerManager.stopServer(it) }
+    if (!lspServers.isEmpty()) {
+      getDenoDescriptor(project)?.let {
+        lspServerManager.ensureServerStarted(DenoLspSupportProvider::class.java, it)
+      }
       TypeScriptMessageBus.get(project).changed()
     }
   }
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
-    val server = getDescriptor()?.server ?: return completedFuture(emptyList())
+    val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)?.firstOrNull()
+                 ?: return completedFuture(emptyList())
     val virtualFile = file.virtualFile
     val changedUnsaved = collectChangedUnsavedFiles()
     if (changedUnsaved.isNotEmpty()) {

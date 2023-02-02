@@ -5,10 +5,10 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.intellij.deno.DenoSettings
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerSupportProvider
 import com.intellij.openapi.components.PathMacroManager
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.io.FileUtil
@@ -16,22 +16,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class DenoLspSupportProvider : LspServerSupportProvider {
-  override fun getServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? =
-    if (DenoSettings.getService(project).isUseDeno()) {
-      getDenoDescriptor(project)
-    }
-    else {
-      null
-    }
+  override fun getServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? = getDenoDescriptor(project)
 }
 
 fun getDenoDescriptor(project: Project): DenoLspServerDescriptor? {
-  return project.guessProjectDir()?.let { project.getService(DenoLspServerDescriptor::class.java) }
+  if (DenoSettings.getService(project).isUseDeno()) {
+    // TODO don't use guessProjectDir()
+    val root = project.guessProjectDir()
+    if (root != null) {
+      return DenoLspServerDescriptor(project, root)
+    }
+  }
+  return null
 }
 
-// TODO don't register DenoLspServerDescriptor as a @Service, don't use guessProjectDir().
-@Service
-class DenoLspServerDescriptor(project: Project) : LspServerDescriptor(project, project.guessProjectDir()!!) {
+class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, *roots) {
+
+  override fun isSupportedFile(file: VirtualFile) = file.fileType == TypeScriptFileType.INSTANCE
 
   override fun createCommandLine(): GeneralCommandLine {
     return DenoSettings.getService(project).getDenoPath().ifEmpty { null }?.let {
