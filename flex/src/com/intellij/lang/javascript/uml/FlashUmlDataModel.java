@@ -392,16 +392,16 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
     if (!options.contains(FlashUmlDependenciesSettingsOption.SELF) && JSPsiImplUtils.isTheSameClass(from, to)) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_ONE) && relShip.getType() == FlashUmlRelationship.TYPE_ONE_TO_ONE) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_ONE) && relShip.getType() == FlashUmlRelationship.RelationshipType.ONE_TO_ONE) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_MANY) && relShip.getType() == FlashUmlRelationship.TYPE_ONE_TO_MANY) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_MANY) && relShip.getType() == FlashUmlRelationship.RelationshipType.ONE_TO_MANY) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.USAGES) && relShip.getType() == FlashUmlRelationship.TYPE_DEPENDENCY) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.USAGES) && relShip.getType() == FlashUmlRelationship.RelationshipType.DEPENDENCY) {
       return false;
     }
-    if (!options.contains(FlashUmlDependenciesSettingsOption.CREATE) && relShip.getType() == FlashUmlRelationship.TYPE_CREATE) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.CREATE) && relShip.getType() == FlashUmlRelationship.RelationshipType.CREATE) {
       return false;
     }
     return true;

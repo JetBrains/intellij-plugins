@@ -15,9 +15,11 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 public interface FlashUmlRelationship extends DiagramRelationshipInfo {
+  enum RelationshipType {
+    DEPENDENCY, CREATE, ONE_TO_ONE, ONE_TO_MANY
+  }
 
-  @NotNull
-  String getType();
+  @NotNull RelationshipType getType();
 
   @Nullable
   PsiElement getElement();
@@ -30,42 +32,37 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
 
   DiagramRelationshipInfo ANNOTATION = DiagramRelationships.ANNOTATION;
 
-  String TYPE_DEPENDENCY = "DEPENDENCY";
-  String TYPE_CREATE = "CREATE";
-  String TYPE_ONE_TO_ONE = "ONE_TO_ONE";
-  String TYPE_ONE_TO_MANY = "ONE_TO_MANY";
-
   final class Factory {
 
     public static FlashUmlRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
+      return new Impl(RelationshipType.DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
                       DiagramRelationshipInfo.ANGLE, null, element, label != null);
     }
 
     public static FlashUmlRelationship create(@NotNull PsiElement element) {
-      return new Impl(TYPE_CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getUpperCenterLabel().getText(), null, null, 1,
+      return new Impl(RelationshipType.CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getUpperCenterLabel().getText(), null, null, 1,
                       DiagramRelationshipInfo.ANGLE, null, element, false);
     }
 
     public static FlashUmlRelationship oneToOne(String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationshipInfo.ANGLE, DIAMOND, element,
+      return new Impl(RelationshipType.ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationshipInfo.ANGLE, DIAMOND, element,
                       true);
     }
 
     public static FlashUmlRelationship oneToMany(String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationshipInfo.ANGLE, DIAMOND, element,
+      return new Impl(RelationshipType.ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationshipInfo.ANGLE, DIAMOND, element,
                       true);
     }
 
     private static class Impl extends DiagramRelationshipInfoAdapter implements FlashUmlRelationship {
 
-      private final String myType;
+      private final RelationshipType myType;
       private final boolean myAllowMultipleLinks;
 
       @Nullable
       private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
-      Impl(@NotNull final String type,
+      Impl(@NotNull final RelationshipType type,
                   final DiagramLineType lineType,
                   @Nullable final String label,
                   @Nullable final String fromLabel,
@@ -75,7 +72,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
                   final Shape endArrow,
                   @Nullable PsiElement element,
                   boolean allowMultipleLinks) {
-        super(type, lineType, width, startArrow, endArrow, label, null, fromLabel, null, toLabel, null);
+        super(type.name(), lineType, width, startArrow, endArrow, label, null, fromLabel, null, toLabel, null);
         myType = type;
         myAllowMultipleLinks = allowMultipleLinks;
         myElementPointer =
@@ -88,9 +85,8 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
         return myElementPointer != null ? myElementPointer.getElement() : null;
       }
 
-      @NotNull
       @Override
-      public String getType() {
+      public @NotNull RelationshipType getType() {
         return myType;
       }
 
