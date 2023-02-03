@@ -22,7 +22,7 @@ class TypeScriptElementDocumentationTarget(@NlsSafe val name: String,
     }
   }
 
-  override fun presentation(): TargetPresentation {
+  override fun computePresentation(): TargetPresentation {
     return TargetPresentation.builder(name).presentation()
   }
 

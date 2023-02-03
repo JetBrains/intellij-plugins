@@ -180,7 +180,7 @@ class VueWebTypesMergedSymbol(override val name: String,
     @Nls val displayName: String,
   ) : WebSymbolDocumentationTarget {
 
-    override fun presentation(): TargetPresentation {
+    override fun computePresentation(): TargetPresentation {
       return TargetPresentation.builder(displayName)
         .icon(symbol.icon)
         .presentation()
