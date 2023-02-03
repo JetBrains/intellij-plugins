@@ -98,7 +98,9 @@ public final class CucumberJavaUtil {
 
   public static String getCucumberPendingExceptionFqn(@NotNull final PsiElement context) {
     final String version = CucumberConfigUtil.getCucumberCoreVersion(context);
-    if (version == null || version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) >= 0) {
+    if (version == null || version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_5_0) >= 0) {
+      return "io.cucumber.java.PendingException";
+    } else if (version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) >= 0) {
       return "cucumber.api.PendingException";
     }
     return "cucumber.runtime.PendingException";
