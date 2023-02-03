@@ -20,7 +20,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.fixtures.TestLookupElementPresentation
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation.renderReal
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.webSymbols.*
 import junit.framework.ComparisonFailure
@@ -712,7 +712,7 @@ export default {
       assertNotNull(myFixture.lookupElements)
       val item: LookupElement? = myFixture.lookupElements?.firstOrNull { "callMe" == it.lookupString }
       assertNotNull(item)
-      val presentation = TestLookupElementPresentation.renderReal(item!!)
+      val presentation = renderReal(item!!!!)
       assertEquals("number", presentation.typeText)
       assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
     }
