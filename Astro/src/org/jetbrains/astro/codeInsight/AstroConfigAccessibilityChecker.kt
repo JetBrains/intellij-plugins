@@ -2,13 +2,14 @@
 package org.jetbrains.astro.codeInsight
 
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.resolve.accessibility.TypeScriptConfigAccessibilityChecker
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 
 class AstroConfigAccessibilityChecker : TypeScriptConfigAccessibilityChecker() {
 
-  override fun checkImpl(place: PsiElement?, element: PsiElement): String? {
+  override fun checkImpl(place: PsiElement?, element: PsiElement): JSResolveResult.ProblemKind? {
     if (place.asSafely<JSReferenceExpression>()
         ?.takeIf { it.qualifier == null }
         ?.referenceName == ASTRO_IMPLICIT_OBJECT)

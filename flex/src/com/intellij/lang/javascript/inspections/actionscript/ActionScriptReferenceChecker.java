@@ -209,7 +209,7 @@ public final class ActionScriptReferenceChecker extends TypedJSReferenceChecker 
     for (ResolveResult r : resolveResults) {
       if (!r.isValidResult()) {
         if (r instanceof JSResolveResult &&
-            ((JSResolveResult)r).getResolveProblemKey() == JSResolveResult.QUALIFIED_NAME_IS_NOT_IMPORTED) {
+            ((JSResolveResult)r).getResolveProblemKind() == JSResolveResult.ProblemKind.QUALIFIED_NAME_IS_NOT_IMPORTED) {
           return true;
         }
         continue;

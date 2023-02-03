@@ -236,7 +236,7 @@ public class ActionScriptReferenceExpressionResolver
         constantName = sibling.getText();
       }
       else {
-        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, "javascript.unresolved.symbol.message")};
+        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};
       }
     }
     else {
@@ -256,7 +256,7 @@ public class ActionScriptReferenceExpressionResolver
         constantName = sibling.getText();
       }
       else {
-        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, "javascript.unresolved.symbol.message")};
+        return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};
       }
     }
 
@@ -267,6 +267,6 @@ public class ActionScriptReferenceExpressionResolver
       }
     }
 
-    return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, "javascript.unresolved.symbol.message")};
+    return new ResolveResult[]{new JSResolveResult(jsReferenceExpression, null, JSResolveResult.ProblemKind.UNRESOLVED_SYMBOL)};
   }
 }
