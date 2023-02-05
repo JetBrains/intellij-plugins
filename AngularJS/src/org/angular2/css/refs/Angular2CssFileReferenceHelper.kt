@@ -1,49 +1,88 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.css.refs
 
+import com.intellij.lang.javascript.frameworks.modules.langs.TildeFileSystemItemCompletion
+import com.intellij.lang.javascript.frameworks.modules.langs.getSyntheticResolveContext
+import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
+import com.intellij.lang.javascript.frameworks.modules.resolver.JSParsedPathElement
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
-import com.intellij.model.ModelBranch
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
-import com.intellij.util.SmartList
-import com.intellij.webpack.WebpackCssFileReferenceHelper
+import com.intellij.psi.css.CssSupportLoader
+import com.intellij.psi.css.StylesheetFile
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSetParameters
+import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.Processor
 import org.angular2.cli.config.AngularConfigProvider
+import org.angular2.cli.config.AngularProject
 
-class Angular2CssFileReferenceHelper : WebpackCssFileReferenceHelper() {
-  override fun getContexts(project: Project, file: VirtualFile): Collection<PsiFileSystemItem> {
-    val result = SmartList<PsiFileSystemItem>(AngularCliAwareCssFileReferenceResolver(project, file))
-    AngularConfigProvider.getAngularProject(project, file)
-      ?.stylePreprocessorIncludeDirs
-      ?.mapNotNullTo(result) { dir -> PsiManager.getInstance(project).findDirectory(dir) }
-    return result
+class Angular2CssFileReferenceHelper : FileReferenceHelper() {
+
+  override fun isMine(project: Project, hostFile: VirtualFile): Boolean {
+    val psiFile = getPsiFileSystemItem(project, hostFile)
+    return psiFile is StylesheetFile || CssSupportLoader.isInFileThatSupportsEmbeddedCss(psiFile)
   }
 
-  private class AngularCliAwareCssFileReferenceResolver(project: Project, contextFile: VirtualFile)
-    : WebpackTildeFileReferenceResolver(project, contextFile) {
+  override fun processContexts(parameters: FileReferenceSetParameters,
+                               hostFile: VirtualFile,
+                               bind: Boolean,
+                               processor: Processor<in PsiFileSystemItem>): Boolean {
+    val hasTilde = parameters.pathString.startsWith("~")
 
-    override fun obtainBranchCopy(branch: ModelBranch): AngularCliAwareCssFileReferenceResolver {
-      val fileCopy = branch.findFileCopy(virtualFile)
-      return AngularCliAwareCssFileReferenceResolver(project, fileCopy)
+    val element = parameters.element
+    val angularProject = angularProject(element)
+    if (angularProject == null) return true
+
+    hostFile.parent?.let {
+      processor.process(TildeFileSystemItemCompletion(element.project, it) { getOverrideContextFiles(angularProject, element) })
     }
 
-    override fun findRootDirectories(context: VirtualFile, project: Project): Collection<VirtualFile> {
-      val ngProject = AngularConfigProvider.getAngularProject(project, context)
-      if (ngProject != null) {
-        val tsConfig = TypeScriptConfigService.Provider.parseConfigFile(project, ngProject.tsConfigFile)
-        if (tsConfig != null) {
-          val baseUrl = tsConfig.baseUrl
-          if (baseUrl != null) {
-            return listOf(baseUrl)
-          }
-        }
-        val cssResolveDir = ngProject.cssResolveRootDir
-        if (cssResolveDir != null) {
-          return listOf(cssResolveDir)
-        }
-      }
-      return emptyList()
+    //webpack-specific case for angular
+    if (hasTilde) {
+      getOverrideTildeContexts(angularProject, parameters.pathString.substring(1), element).forEach(processor::process)
+      return false //stop(!) processing
+    }
+
+    getContexts(angularProject, element).forEach(processor::process)
+    return true
+  }
+
+  private fun getContexts(angularProject: AngularProject, element: PsiElement): Collection<PsiFileSystemItem> {
+    val psiManager = PsiManager.getInstance(element.project)
+    return angularProject.stylePreprocessorIncludeDirs.mapNotNull { psiManager.findDirectory(it) }
+  }
+}
+
+private fun getOverrideTildeContexts(angularProject: AngularProject, actualText: String, element: PsiElement): Collection<PsiFileSystemItem> {
+  val mappingContext = object : JSDefaultFileReferenceContext(actualText, element, null) {
+    override fun getDefaultRoots(project: Project, moduleName: String, contextFile: VirtualFile): Collection<VirtualFile> {
+      return getOverrideContextFiles(angularProject, element)
     }
   }
+
+  val elements = JSParsedPathElement.parseReferenceText(actualText, false)
+  val item = getSyntheticResolveContext(element, mappingContext, elements, actualText, true) ?: return emptyList()
+  return listOf(item)
+}
+
+private fun getOverrideContextFiles(angularProject: AngularProject, element: PsiElement): MutableSet<VirtualFile> {
+  val result = mutableSetOf<VirtualFile>()
+  val tsConfig = TypeScriptConfigService.Provider.parseConfigFile(element.project, angularProject.tsConfigFile)
+  val baseUrl = tsConfig?.baseUrl
+  if (baseUrl != null) {
+    result.add(baseUrl)
+  }
+  else {
+    angularProject.cssResolveRootDir?.let { result.add(it) }
+  }
+  return result
+}
+
+private fun angularProject(element: PsiElement): AngularProject? {
+  val file = PsiUtilCore.getVirtualFile(element) ?: return null
+  return AngularConfigProvider.getAngularProject(element.project, file)
 }

@@ -69,5 +69,4 @@ class VueLoaderTest  : BasePlatformTestCase() {
       }
     }
   }
-
 }

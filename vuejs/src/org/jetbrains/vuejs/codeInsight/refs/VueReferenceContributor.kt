@@ -1,18 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
-import com.intellij.lang.javascript.buildTools.bundler.WebBundlerCssReferenceContributor
-import com.intellij.lang.javascript.modules.NodeModuleUtil.NODE_MODULES
-import com.intellij.lang.javascript.psi.util.JSProjectUtil
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.paths.PathReferenceManager
-import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.XmlAttributeValuePattern
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
 import com.intellij.psi.css.resolve.CssReferenceProviderUtil.getFileReferenceData
 import com.intellij.psi.css.resolve.StylesheetFileReferenceSet
-import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
@@ -26,7 +20,6 @@ class VueReferenceContributor : PsiReferenceContributor() {
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     registrar.registerReferenceProvider(STYLE_PATTERN, STYLE_REF_PROVIDER)
-    registrar.registerReferenceProvider(STYLE_PATTERN, WebBundlerCssReferenceContributor.REFERENCE_PROVIDER)
 
     registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), BASIC_REF_PROVIDER)
     registrar.registerReferenceProvider(

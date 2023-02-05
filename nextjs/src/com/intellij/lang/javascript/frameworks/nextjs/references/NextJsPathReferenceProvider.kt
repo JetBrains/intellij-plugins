@@ -21,21 +21,20 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
                                 text: String?,
                                 references: MutableList<in PsiReference>,
                                 soft: Boolean): Boolean {
-    if (psiElement !is XmlAttributeValue || text == null || soft) return true
-    val parent = psiElement.parent?.parent ?: return true
-    if (parent !is XmlTag || !DialectDetector.isJSX(parent)) return true
-    references.addAll(0, jsReferences(text, psiElement, offset).toList())
+    if (psiElement !is XmlAttributeValue || text == null) return true
+    if (!DialectDetector.isJSX(psiElement) || !text.startsWith("/")) return true
+    references.addAll(0, jsReferences(text, psiElement, offset, soft).toList())
 
     return true
   }
 
   private fun jsReferences(text: String,
                            psiElement: PsiElement,
-                           offset: Int): Array<out PsiReference> {
-
+                           offset: Int,
+                           isSoft: Boolean): Array<out PsiReference> {
     val context = object : JSDefaultFileReferenceContext(text, psiElement, null) {
-      override fun getDefaultRoots(project: Project, moduleName: String, containingDirectory: VirtualFile): Collection<VirtualFile> {
-        val defaultContexts: Collection<VirtualFile> = super.getDefaultRoots(project, moduleName, containingDirectory)
+      override fun getDefaultRoots(project: Project, moduleName: String, contextFile: VirtualFile): Collection<VirtualFile> {
+        val defaultContexts: Collection<VirtualFile> = super.getDefaultRoots(project, moduleName, contextFile)
         val file: PsiFileSystemItem = myContext.containingFile?.originalFile ?: return defaultContexts
 
         val items = getFixedVirtualFiles(file, JSRouteUtil.ROUTES)
@@ -43,6 +42,8 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
 
         return items + defaultContexts.toSet()
       }
+
+      override fun isSoft(): Boolean = isSoft
     }
 
     return JSModuleFileReferenceSet(text, context, psiElement, offset).allReferences
@@ -53,7 +54,7 @@ class NextJsPathReferenceProvider : PathReferenceProviderBase() {
     val parent = element.parent?.parent ?: return null
     if (parent !is XmlTag || !DialectDetector.isJSX(parent)) return null
 
-    val jsReferences = jsReferences(path, element, 0)
+    val jsReferences = jsReferences(path, element, 0, true)
     if (jsReferences.isEmpty()) return null
     val resolve = jsReferences.last().resolve() ?: return null
     return object : PathReference(path, ResolveFunction(null)) {
