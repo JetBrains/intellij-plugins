@@ -8,6 +8,7 @@ import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsC
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.Strings;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
@@ -796,7 +797,7 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     }
 
     boolean hasPath() {
-      return getPath() != NONE;
+      return !Strings.areSameInstance(getPath(), NONE);
     }
   }
 
