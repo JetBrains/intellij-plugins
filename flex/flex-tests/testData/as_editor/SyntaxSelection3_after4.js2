@@ -11,5 +11,7 @@ public class TestClass {
      * doc
      */
     
-    public var foo:int;
+    public function otherMethod():void {
+        
+    }
 </selection>}
