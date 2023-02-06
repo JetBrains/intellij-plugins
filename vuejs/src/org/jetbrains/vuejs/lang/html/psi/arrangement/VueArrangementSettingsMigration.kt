@@ -6,11 +6,11 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectPostStartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.xml.arrangement.HtmlRearranger
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-private class VueArrangementSettingsMigration : ProjectPostStartupActivity {
+private class VueArrangementSettingsMigration : ProjectActivity {
   companion object {
       const val VUE_REARRANGER_SETTINGS_MIGRATION = "vue.rearranger.settings.migration"
     }

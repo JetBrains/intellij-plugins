@@ -3,7 +3,7 @@ package com.intellij.protobuf.ide.settings
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.ProjectPostStartupActivity
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -11,7 +11,7 @@ import com.intellij.util.io.outputStream
 import java.io.IOException
 import kotlin.io.path.exists
 
-internal class BundledProtoResourcesMigrationPostStartupActivity : ProjectPostStartupActivity {
+internal class BundledProtoResourcesMigrationPostStartupActivity : ProjectActivity {
   private val bundledProtoFiles = setOf(
     "google/protobuf/any.proto",
     "google/protobuf/api.proto",
