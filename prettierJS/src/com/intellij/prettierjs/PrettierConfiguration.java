@@ -2,6 +2,7 @@
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
@@ -94,10 +95,14 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @NotNull
   public NodePackage getPackage() {
     String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
-    if (value != null) {
+    if (value != null && !value.isBlank()) {
       return PKG_DESC.createPackage(value);
     }
     NodePackage pkg = PKG_DESC.findUnambiguousDependencyPackage(myProject);
+    if (pkg == null) {
+      pkg = NodePackage.findDefaultPackage(myProject, PrettierUtil.PACKAGE_NAME,
+                                           NodeJsInterpreterManager.getInstance(myProject).getInterpreter());
+    }
     if (pkg != null) {
       if (pkg.isValid(myProject)) {
         PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, pkg.getSystemDependentPath());
