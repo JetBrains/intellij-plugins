@@ -1,15 +1,15 @@
 public class TestClass {
-    public function someMethod():void {
+<selection>    public function someMethod():void {
         
     }
     
-<selection>    /**
+    /**
      * some
      * lines
 <caret>    * of
      * as
      * doc
      */
-</selection>    
+    
     public var foo:int;
-}
+</selection>}

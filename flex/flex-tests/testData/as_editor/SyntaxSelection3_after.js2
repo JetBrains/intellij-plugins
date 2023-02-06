@@ -3,14 +3,14 @@ public class TestClass {
         
     }
     
-<selection>    /**
+    /**
      * some
      * lines
-<caret>    * of
+<selection><caret>    </selection>* of
      * as
      * doc
      */
-</selection>    
+    
     public function otherMethod():void {
         
     }
