@@ -51,7 +51,7 @@ public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
         final ActionScriptUnusedImportsHelper.Results unusedImportsResults = ActionScriptUnusedImportsHelper.getUnusedImports(file);
         for (final JSReferenceExpression reference : unusedImportsResults.fqnsToReplaceWithShortName) {
           final TextRange range = InjectedLanguageManager.getInstance(project).injectedToHost(file, reference.getTextRange());
-          if (TextRange.create(templateRange).contains(range)) {
+          if (templateRange.getTextRange().contains(range)) {
             final String shortName = StringUtil.getShortName(reference.getReferencedName());
             final String resolved = JSImportHandlingUtil.resolveTypeName(shortName, reference);
 
