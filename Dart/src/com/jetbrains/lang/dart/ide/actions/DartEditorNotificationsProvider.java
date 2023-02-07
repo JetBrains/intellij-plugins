@@ -37,63 +37,62 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
-    return fileEditor -> {
-      if (!file.isInLocalFileSystem()) {
-        return null;
-      }
-
-      boolean isPubspecFile = PubspecYamlUtil.isPubspecFile(file);
-
-      if (isPubspecFile) {
-        final Module module = ModuleUtilCore.findModuleForFile(file, project);
-        if (module == null) return null;
-
-        // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
-        if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isPubspecDeclaringFlutter(file)) return null;
-
-        final DartSdk sdk = DartSdk.getDartSdk(project);
-        if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
-          return new PubActionsPanel(sdk);
-        }
-      }
-
-      if (isPubspecFile || FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
-        final DartSdk sdk = DartSdk.getDartSdk(project);
-
-        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-        if (psiFile == null) return null;
-
-        final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-        if (module == null) return null;
-
-        // no SDK
-        if (sdk == null) {
-          final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
-          if (DartSdkUtil.isDartSdkHome(sdkPath)) {
-            return createNotificationToEnableDartSupport(fileEditor, module);
-          }
-          else {
-            return createNoDartSdkPanel(fileEditor, project, DartBundle.message("dart.sdk.is.not.configured"));
-          }
-        }
-
-        // SDK not enabled for this module
-        if (!DartSdkLibUtil.isDartSdkEnabled(module)) {
-          return createNotificationToEnableDartSupport(fileEditor, module);
-        }
-
-        if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
-          String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
-          return createNoDartSdkPanel(fileEditor, project, message);
-        }
-      }
-
+    if (!file.isInLocalFileSystem()) {
       return null;
-    };
+    }
+
+    boolean isPubspecFile = PubspecYamlUtil.isPubspecFile(file);
+
+    if (isPubspecFile) {
+      final Module module = ModuleUtilCore.findModuleForFile(file, project);
+      if (module == null) return null;
+
+      // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
+      if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isPubspecDeclaringFlutter(file)) return null;
+
+      final DartSdk sdk = DartSdk.getDartSdk(project);
+      if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
+        return fileEditor -> new PubActionsPanel(fileEditor, sdk);
+      }
+    }
+
+    if (isPubspecFile || FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
+      final DartSdk sdk = DartSdk.getDartSdk(project);
+
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+      if (psiFile == null) return null;
+
+      final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+      if (module == null) return null;
+
+      // no SDK
+      if (sdk == null) {
+        final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
+        if (DartSdkUtil.isDartSdkHome(sdkPath)) {
+          return fileEditor -> createNotificationToEnableDartSupport(fileEditor, module);
+        }
+        else {
+          return fileEditor -> createNoDartSdkPanel(fileEditor, project, DartBundle.message("dart.sdk.is.not.configured"));
+        }
+      }
+
+      // SDK not enabled for this module
+      if (!DartSdkLibUtil.isDartSdkEnabled(module)) {
+        return fileEditor -> createNotificationToEnableDartSupport(fileEditor, module);
+      }
+
+      if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
+        String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
+        return fileEditor -> createNoDartSdkPanel(fileEditor, project, message);
+      }
+    }
+
+    return null;
   }
 
-  @NotNull
-  public EditorNotificationPanel createNoDartSdkPanel(@NotNull FileEditor fileEditor, @NotNull Project project, @NlsContexts.Label String message) {
+  public @NotNull EditorNotificationPanel createNoDartSdkPanel(@NotNull FileEditor fileEditor,
+                                                               @NotNull Project project,
+                                                               @NlsContexts.Label String message) {
     final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
 
     final EditorNotificationPanel panel =
@@ -103,8 +102,8 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
     return panel;
   }
 
-  @NotNull
-  private static EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull FileEditor fileEditor, @NotNull final Module module) {
+  private static @NotNull EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull FileEditor fileEditor,
+                                                                                        @NotNull Module module) {
     final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                            ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                            : DartBundle.message("dart.support.is.not.enabled.for.project");
@@ -116,8 +115,8 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
   }
 
   private static final class PubActionsPanel extends EditorNotificationPanel {
-    private PubActionsPanel(@NotNull DartSdk sdk) {
-      super(EditorColors.GUTTER_BACKGROUND, Status.Info);
+    private PubActionsPanel(@NotNull FileEditor fileEditor, @NotNull DartSdk sdk) {
+      super(fileEditor, null, EditorColors.GUTTER_BACKGROUND, Status.Info);
       createActionLabel(DartBundle.message("pub.get"), "Dart.pub.get");
       createActionLabel(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade");
 
@@ -133,7 +132,7 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
   private static class EnableDartSupportForModule implements Runnable {
     private final Module myModule;
 
-    EnableDartSupportForModule(@NotNull final Module module) {
+    EnableDartSupportForModule(@NotNull Module module) {
       this.myModule = module;
     }
 
@@ -177,9 +176,9 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
   }
 
   private static final class OpenWebPageRunnable implements Runnable {
-    @NotNull private final String myUrl;
+    private final @NotNull String myUrl;
 
-    private OpenWebPageRunnable(@NotNull final String url) {
+    private OpenWebPageRunnable(@NotNull String url) {
       myUrl = url;
     }
 
@@ -190,9 +189,9 @@ public class DartEditorNotificationsProvider implements EditorNotificationProvid
   }
 
   private static final class OpenDartSettingsRunnable implements Runnable {
-    @NotNull private final Project myProject;
+    private final @NotNull Project myProject;
 
-    private OpenDartSettingsRunnable(@NotNull final Project project) {
+    private OpenDartSettingsRunnable(@NotNull Project project) {
       myProject = project;
     }
 
