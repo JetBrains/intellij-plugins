@@ -60,9 +60,7 @@ public class BDDFrameworkType {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof BDDFrameworkType)) return false;
-
-    BDDFrameworkType type = (BDDFrameworkType)o;
+    if (!(o instanceof BDDFrameworkType type)) return false;
 
     if (myAdditionalInfo != null ? !myAdditionalInfo.equals(type.myAdditionalInfo) : type.myAdditionalInfo != null) return false;
     if (!myFileType.equals(type.myFileType)) return false;

@@ -40,8 +40,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
 
     if (!DialectDetector.isActionScript(element)) return false;
 
-    if (element instanceof JSClass) {
-      JSClass clazz = (JSClass)element;
+    if (element instanceof JSClass clazz) {
       final Module module = ModuleUtilCore.findModuleForPsiElement(clazz);
       if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
       if (FlashRunConfigurationProducer.isAcceptedMainClass(clazz, module)) return true;

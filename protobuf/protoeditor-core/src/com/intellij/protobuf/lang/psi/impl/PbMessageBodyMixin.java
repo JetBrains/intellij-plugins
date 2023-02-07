@@ -41,10 +41,9 @@ abstract class PbMessageBodyMixin extends PbElementBase implements PbMessageBody
   @Nullable
   public QualifiedName getExtensionOptionScope() {
     PsiElement parent = getParent();
-    if (!(parent instanceof PbMessageType)) {
+    if (!(parent instanceof PbMessageType message)) {
       return null;
     }
-    PbMessageType message = (PbMessageType) parent;
     QualifiedName name = message.getQualifiedName();
     return name != null ? name.removeLastComponent() : null;
   }

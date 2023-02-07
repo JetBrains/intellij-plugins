@@ -35,8 +35,7 @@ public class StrutsConventionImplicitUsageProvider implements ImplicitUsageProvi
       return isConventionActionClass((PsiClass)element);
     }
 
-    if (element instanceof PsiMethod) {
-      PsiMethod psiMethod = (PsiMethod)element;
+    if (element instanceof PsiMethod psiMethod) {
       if (!checkMethod(psiMethod)) {
         return false;
       }

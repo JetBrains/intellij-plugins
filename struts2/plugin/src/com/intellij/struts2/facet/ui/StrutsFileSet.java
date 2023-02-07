@@ -147,8 +147,7 @@ public class StrutsFileSet implements Disposable {
   }
 
   public boolean equals(final Object another) {
-    if (another instanceof StrutsFileSet) {
-      final StrutsFileSet obj = (StrutsFileSet) another;
+    if (another instanceof StrutsFileSet obj) {
       return Objects.equals(obj.getId(), id);
     }
 

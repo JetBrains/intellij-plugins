@@ -95,8 +95,7 @@ public class GherkinTypedHandler extends TypedHandlerDelegate {
    */
   @Nullable
   private static GherkinTableRow getPreviousRow(@NotNull final GherkinTableRow currentRow) {
-    if (currentRow.getParent() != null && currentRow.getParent() instanceof GherkinTable) {
-      final GherkinTable table = (GherkinTable)currentRow.getParent();
+    if (currentRow.getParent() != null && currentRow.getParent() instanceof GherkinTable table) {
       int i = table.getDataRows().indexOf(currentRow);
       if (i > 0) {
         return table.getDataRows().get(i - 1);

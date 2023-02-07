@@ -31,8 +31,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
       tag.processElements(new PsiElementProcessor<>() {
         @Override
         public boolean execute(@NotNull PsiElement element) {
-          if (element instanceof XmlTag) {
-            XmlTag tag = (XmlTag)element;
+          if (element instanceof XmlTag tag) {
             if (XmlBackedJSClassImpl.isComponentTag(tag)) {
               final XmlTag[] subtags = tag.getSubTags();
               if (subtags.length > 0) {

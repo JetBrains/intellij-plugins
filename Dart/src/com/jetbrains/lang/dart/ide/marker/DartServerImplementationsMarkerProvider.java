@@ -29,10 +29,9 @@ import java.util.Set;
 public final class DartServerImplementationsMarkerProvider implements LineMarkerProvider {
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(final @NotNull PsiElement element) {
-    if (!(element instanceof DartComponentName)) {
+    if (!(element instanceof DartComponentName name)) {
       return null;
     }
-    final DartComponentName name = (DartComponentName)element;
     return createMarker(name);
   }
 

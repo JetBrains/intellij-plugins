@@ -32,10 +32,9 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
   public boolean execute(@NotNull final ReferencesSearch.SearchParameters queryParameters,
                          @NotNull final Processor<? super PsiReference> consumer) {
     final PsiElement myElement = queryParameters.getElementToSearch();
-    if (!(myElement instanceof PsiMethod)) {
+    if (!(myElement instanceof PsiMethod method)) {
       return true;
     }
-    final PsiMethod method = (PsiMethod)myElement;
     Boolean isStepDefinition = ReadAction.compute(() -> CucumberJavaUtil.isStepDefinition(method));
     if (!isStepDefinition) {
       return true;

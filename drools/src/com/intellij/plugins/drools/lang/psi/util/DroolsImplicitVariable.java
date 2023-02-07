@@ -49,9 +49,7 @@ public class DroolsImplicitVariable extends LightVariableBuilder implements Item
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof DroolsImplicitVariable)) return false;
-
-    DroolsImplicitVariable variable = (DroolsImplicitVariable)o;
+    if (!(o instanceof DroolsImplicitVariable variable)) return false;
 
     if (!myName.equals(variable.myName)) return false;
     if (!myType.equals(variable.myType)) return false;

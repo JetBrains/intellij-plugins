@@ -70,9 +70,7 @@ public final class AngularJSProcessor {
     if (!(hostFile instanceof XmlFile)) {
       hostFile = original.getContainingFile();
     }
-    if (!(hostFile instanceof XmlFile)) return;
-
-    final XmlFile file = (XmlFile)hostFile;
+    if (!(hostFile instanceof XmlFile file)) return;
 
     final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, () -> {
       final Collection<JSPsiElementBase> result = new ArrayList<>();
@@ -167,8 +165,7 @@ public final class AngularJSProcessor {
 
   private static void contributeBindingProperties(@Nullable JSProperty bindingsProperty,
                                                   @NotNull Consumer<? super JSRecordType.PropertySignature> processor) {
-    if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression)) {
-      JSObjectLiteralExpression bindings = (JSObjectLiteralExpression)bindingsProperty.getValue();
+    if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression bindings)) {
       for (JSProperty binding : bindings.getProperties()) {
         if (binding.getName() != null) {
           processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true, false));

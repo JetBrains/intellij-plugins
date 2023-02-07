@@ -46,10 +46,9 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
 
   @Override
   protected void registerProblems(PsiElement element, ProblemsHolder holder) {
-    if (!(element instanceof CfmlReference)) {
+    if (!(element instanceof CfmlReference ref)) {
       return;
     }
-    final CfmlReference ref = (CfmlReference)element;
     if (CfmlUtil.isPredefinedFunction(ref.getText(), element.getProject())) {
       return;
     }
@@ -85,8 +84,7 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
 
     // block inspection on left part of assignment (as it can be definition)
     final PsiElement parent = ref.getParent();
-    if (parent instanceof CfmlAssignmentExpression) {
-      CfmlAssignmentExpression assignment = (CfmlAssignmentExpression)parent;
+    if (parent instanceof CfmlAssignmentExpression assignment) {
       CfmlVariable var = assignment.getAssignedVariable();
       if (var != null && assignment.getAssignedVariableElement() == ref) {
         return;

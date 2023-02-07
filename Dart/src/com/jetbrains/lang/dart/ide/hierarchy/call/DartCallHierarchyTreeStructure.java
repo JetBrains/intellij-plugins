@@ -54,8 +54,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
   @Override
   protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
     final List<DartCallHierarchyNodeDescriptor> descriptors = new ArrayList<>();
-    if (descriptor instanceof DartCallHierarchyNodeDescriptor) {
-      final DartCallHierarchyNodeDescriptor dartDescriptor = (DartCallHierarchyNodeDescriptor)descriptor;
+    if (descriptor instanceof DartCallHierarchyNodeDescriptor dartDescriptor) {
       PsiElement element = dartDescriptor.getPsiElement();
       if (element == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
@@ -92,8 +91,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
   protected GlobalSearchScope getScope() {
     if (HierarchyBrowserBaseEx.SCOPE_CLASS.equals(myScopeType)) {
       Object root = getRootElement();
-      if (root instanceof DartCallHierarchyNodeDescriptor) {
-        DartCallHierarchyNodeDescriptor rootElement = (DartCallHierarchyNodeDescriptor)root;
+      if (root instanceof DartCallHierarchyNodeDescriptor rootElement) {
         PsiElement element = rootElement.getPsiElement();
         DartFile file = PsiTreeUtil.getParentOfType(element, DartFile.class);
         if (file != null) {

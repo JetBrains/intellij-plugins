@@ -68,8 +68,7 @@ public class UnaryExpressionPsiTest extends PsiTestCase {
     assertNotNull(operand);
     assertEquals(operandType, operand.getType());
 
-    if (operand instanceof OgnlLiteralExpression) {
-      final OgnlLiteralExpression literalExpression = (OgnlLiteralExpression)operand;
+    if (operand instanceof OgnlLiteralExpression literalExpression) {
       assertEquals(operandConstantValue, literalExpression.getConstantValue());
     }
   }

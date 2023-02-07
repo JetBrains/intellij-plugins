@@ -97,8 +97,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     }
 
     final DomElement element = node.getIdentifyingElement();
-    if (element instanceof Action) {
-      final Action action = (Action)element;
+    if (element instanceof Action action) {
       final StrutsPackage strutsPackage = action.getStrutsPackage();
 
       final DocumentationBuilder builder = new DocumentationBuilder();
@@ -112,8 +111,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
       return builder.getText();
     }
 
-    if (element instanceof Result) {
-      final Result result = (Result)element;
+    if (element instanceof Result result) {
       final PathReference pathReference = result.getValue();
       final String displayPath = pathReference != null ? pathReference.getPath() : "???";
       final ResultType resultType = result.getEffectiveResultType();

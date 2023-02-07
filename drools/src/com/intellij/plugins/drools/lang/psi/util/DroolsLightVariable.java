@@ -64,8 +64,7 @@ public class DroolsLightVariable extends ImplicitVariableImpl {
   @Override
   public boolean isEquivalentTo(final PsiElement another) {
     if (another == this) return true;
-    if (another instanceof DroolsLightVariable) {
-      final DroolsLightVariable implicitVariable = (DroolsLightVariable)another;
+    if (another instanceof DroolsLightVariable implicitVariable) {
 
       final String name = implicitVariable.getName();
       return name.equals(getName()) &&
@@ -118,9 +117,8 @@ public class DroolsLightVariable extends ImplicitVariableImpl {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof DroolsLightVariable)) return false;
+    if (!(o instanceof DroolsLightVariable variable)) return false;
 
-    DroolsLightVariable variable = (DroolsLightVariable)o;
     return Objects.equals(getName(), variable.getName()) &&
            Objects.equals(myDeclaration, variable.myDeclaration);
   }

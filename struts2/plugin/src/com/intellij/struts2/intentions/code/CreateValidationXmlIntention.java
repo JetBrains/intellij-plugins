@@ -215,11 +215,10 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     }
 
     final PsiElement parent = psiElement.getParent();
-    if (!(parent instanceof PsiClass)) {
+    if (!(parent instanceof PsiClass clazz)) {
       return null;
     }
 
-    final PsiClass clazz = (PsiClass)parent;
     if (clazz.getNameIdentifier() != psiElement) {
       return null;
     }

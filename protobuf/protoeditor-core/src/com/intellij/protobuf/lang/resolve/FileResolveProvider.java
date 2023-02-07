@@ -61,10 +61,9 @@ public interface FileResolveProvider {
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof ChildEntry)) {
+      if (!(obj instanceof ChildEntry other)) {
         return false;
       }
-      ChildEntry other = (ChildEntry) obj;
       return Objects.equals(name, other.name) && Objects.equals(isDirectory, other.isDirectory);
     }
 

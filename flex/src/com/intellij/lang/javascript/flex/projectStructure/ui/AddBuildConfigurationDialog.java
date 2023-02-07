@@ -61,8 +61,7 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
       final AnAction arrow = new AnAction() {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-          if (e.getInputEvent() instanceof KeyEvent) {
-            KeyEvent keyEvent = (KeyEvent)e.getInputEvent();
+          if (e.getInputEvent() instanceof KeyEvent keyEvent) {
             final int code = keyEvent.getKeyCode();
             scrollBy(code == KeyEvent.VK_DOWN ? 1 : code == KeyEvent.VK_UP ? -1 : 0, (keyEvent.getModifiers() & Event.SHIFT_MASK) != 0);
           }

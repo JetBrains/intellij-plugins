@@ -81,8 +81,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
           super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
           setIcon(AllIcons.Nodes.Package);
 
-          if (value instanceof DefaultMutableTreeNode) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+          if (value instanceof DefaultMutableTreeNode node) {
             Object object = node.getUserObject();
             if (object instanceof VirtualFile) {
               String name = PlatformPackageUtil.getPackageName((VirtualFile)object, myProject);
@@ -254,8 +253,7 @@ public class ActionScriptPackageChooserDialog extends DialogWrapper {
     Enumeration<TreeNode> enumeration = root.depthFirstEnumeration();
     while (enumeration.hasMoreElements()) {
       TreeNode o = enumeration.nextElement();
-      if (o instanceof DefaultMutableTreeNode) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)o;
+      if (o instanceof DefaultMutableTreeNode node) {
         VirtualFile nodePackage = (VirtualFile)node.getUserObject();
         if (nodePackage != null) {
           if (Objects.equals(PlatformPackageUtil.getPackageName(nodePackage, myProject), qualifiedPackageName)) return node;

@@ -53,9 +53,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
                                           @NotNull final PsiElement root,
                                           @NotNull final Document document,
                                           final boolean quick) {
-    if (!(root instanceof DartFile)) return;
+    if (!(root instanceof DartFile dartFile)) return;
 
-    final DartFile dartFile = (DartFile)root;
     final TextRange fileHeaderRange = foldFileHeader(descriptors, dartFile, document); // 1. File header
     foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
     foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
@@ -324,9 +323,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiCompositeElement == null) return;
 
     final IDartBlock block;
-    if (psiCompositeElement instanceof DartFunctionBody) {
+    if (psiCompositeElement instanceof DartFunctionBody functionBody) {
       // Regular functions
-      final DartFunctionBody functionBody = (DartFunctionBody)psiCompositeElement;
       block = functionBody.getBlock();
     }
     else {
@@ -363,8 +361,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static void foldTypeArguments(@NotNull final List<FoldingDescriptor> descriptors,
                                         @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
-      if (psiElement instanceof DartTypeArguments) {
-        DartTypeArguments dartTypeArguments = (DartTypeArguments)psiElement;
+      if (psiElement instanceof DartTypeArguments dartTypeArguments) {
         if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class, DartTypeArguments.class) instanceof DartNewExpression) {
           descriptors.add(new FoldingDescriptor(dartTypeArguments, TextRange
             .create(dartTypeArguments.getTextRange().getStartOffset(), dartTypeArguments.getTextRange().getEndOffset())));
@@ -376,8 +373,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static void foldMultilineStrings(@NotNull final List<FoldingDescriptor> descriptors,
                                            @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement element : psiElements) {
-      if (element instanceof DartStringLiteralExpression) {
-        DartStringLiteralExpression dartString = (DartStringLiteralExpression)element;
+      if (element instanceof DartStringLiteralExpression dartString) {
         PsiElement child = dartString.getFirstChild();
         if (child == null) continue;
         IElementType type = child.getNode().getElementType();
@@ -391,14 +387,12 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static void foldConstructorInvocationExpressions(@NotNull final List<FoldingDescriptor> descriptors,
                                                            @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
-      if (psiElement instanceof DartNewExpression) {
+      if (psiElement instanceof DartNewExpression dartNewExpression) {
         // Fold invocation with "new"
-        DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
         foldNonEmptyDartArguments(descriptors, dartNewExpression.getArguments());
       }
-      else if (psiElement instanceof DartCallExpression) {
+      else if (psiElement instanceof DartCallExpression dartCallExpression) {
         // Fold invocation without "new" by assuming class names are capitalized
-        DartCallExpression dartCallExpression = (DartCallExpression)psiElement;
         DartExpression expression = dartCallExpression.getExpression();
         if (expression != null) {
           String methodName = expression.getText();
@@ -436,8 +430,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static void foldIfStatements(@NotNull final List<FoldingDescriptor> descriptors,
                                        @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
-      if (psiElement instanceof DartIfStatement) {
-        final DartIfStatement dartIfStatement = (DartIfStatement)psiElement;
+      if (psiElement instanceof DartIfStatement dartIfStatement) {
         final List<DartBlock> dartBlockList = dartIfStatement.getBlockList();
         for (DartBlock dartBlock : dartBlockList) {
           descriptors.add(new FoldingDescriptor(dartBlock, dartBlock.getTextRange()));

@@ -52,8 +52,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
   }
 
   public boolean equals(Object object) {
-    if (object instanceof DartComponentUsageGroup) {
-      final DartComponentUsageGroup other = (DartComponentUsageGroup)object;
+    if (object instanceof DartComponentUsageGroup other) {
       return ObjectUtilities.equals(other.myFile, myFile) && ObjectUtilities.equals(other.myText, myText);
     }
     return false;

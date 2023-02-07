@@ -223,8 +223,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
     fdbProcess = launchFdb(fdbLaunchCommand);
 
-    if (params instanceof FlashRunnerParameters) {
-      final FlashRunnerParameters appParams = (FlashRunnerParameters)params;
+    if (params instanceof FlashRunnerParameters appParams) {
 
       switch (bc.getTargetPlatform()) {
         case Web -> {
@@ -260,8 +259,7 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       }
     }
-    else if (params instanceof FlexUnitRunnerParameters) {
-      final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)params;
+    else if (params instanceof FlexUnitRunnerParameters flexUnitParams) {
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
         sendCommand(new LaunchBrowserCommand(bc.getActualOutputFilePath(), flexUnitParams.getLauncherParameters()));

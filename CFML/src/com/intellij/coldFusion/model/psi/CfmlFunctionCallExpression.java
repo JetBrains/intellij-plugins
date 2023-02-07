@@ -83,8 +83,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
         else if (("component".equals(secondParameterName) && argumentsList.length >= 2) ||
                  (argumentsList.length == 1)) {
           final PsiReference[] references = argumentsList[argumentsList.length == 1 ? 0 : 1].getReferences();
-          if (references.length != 0 && references[0] instanceof CfmlComponentReference) {
-            final CfmlComponentReference componentRef = ((CfmlComponentReference)references[0]);
+          if (references.length != 0 && references[0] instanceof CfmlComponentReference componentRef) {
             return new CfmlComponentType(componentRef.getText(), getContainingFile(), getProject());
           }
         }

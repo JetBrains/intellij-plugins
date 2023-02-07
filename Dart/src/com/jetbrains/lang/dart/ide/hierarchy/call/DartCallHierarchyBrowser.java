@@ -32,8 +32,7 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   @Nullable
   @Override
   protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
-    if (descriptor instanceof DartCallHierarchyNodeDescriptor) {
-      DartCallHierarchyNodeDescriptor pyDescriptor = (DartCallHierarchyNodeDescriptor)descriptor;
+    if (descriptor instanceof DartCallHierarchyNodeDescriptor pyDescriptor) {
       return pyDescriptor.getPsiElement();
     }
     return null;

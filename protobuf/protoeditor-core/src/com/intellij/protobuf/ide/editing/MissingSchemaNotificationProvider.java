@@ -79,10 +79,9 @@ public class MissingSchemaNotificationProvider implements EditorNotificationProv
     if (ignoredFiles.contains(virtualFile)) {
       return null;
     }
-    if (!(fileEditor instanceof TextEditor)) {
+    if (!(fileEditor instanceof TextEditor textEditor)) {
       return null;
     }
-    TextEditor textEditor = (TextEditor) fileEditor;
     Editor editor = textEditor.getEditor();
     PbTextLanguageSettings settings = PbTextLanguageSettings.getInstance(project);
     if (settings == null || !settings.isMissingSchemaWarningEnabled()) {
@@ -92,10 +91,9 @@ public class MissingSchemaNotificationProvider implements EditorNotificationProv
     Document document = editor.getDocument();
     PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
     PsiFile file = documentManager.getPsiFile(document);
-    if (!(file instanceof PbTextFile)) {
+    if (!(file instanceof PbTextFile textFile)) {
       return null;
     }
-    PbTextFile textFile = (PbTextFile) file;
 
     SchemaDirective existingDirective = SchemaDirective.find(textFile);
     if (existingDirective != null) {

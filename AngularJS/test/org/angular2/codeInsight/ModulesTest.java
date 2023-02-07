@@ -270,13 +270,12 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
       .append(": ")
       .append(entity.getClass().getSimpleName())
       .append('\n');
-    if (entity instanceof Angular2Module) {
+    if (entity instanceof Angular2Module module) {
       if (!printed.add(entity)) {
         withIndent(level + 1, result)
           .append("<printed above>\n");
         return;
       }
-      Angular2Module module = (Angular2Module)entity;
       level++;
       printEntityList(level, "imports", module.getImports(), result, printed);
       printEntityList(level, "declarations", module.getDeclarations(), result, printed);

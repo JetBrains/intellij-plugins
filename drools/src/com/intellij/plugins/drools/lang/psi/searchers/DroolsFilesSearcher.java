@@ -27,8 +27,7 @@ public class DroolsFilesSearcher extends QueryExecutorBase<PsiReference, Referen
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters parameters, @NotNull Processor<? super PsiReference> consumer) {
     final PsiElement search = parameters.getElementToSearch();
-    if (search instanceof DroolsLightClass) {
-      DroolsLightClass lightClass = (DroolsLightClass)search;
+    if (search instanceof DroolsLightClass lightClass) {
       String lightClassName = lightClass.getName();
       if (lightClassName != null) {
         parameters.getOptimizer()

@@ -105,11 +105,9 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     }
 
     final Converter converter = elementConverterPair.second;
-    if (!(converter instanceof ResolvingConverter)) {
+    if (!(converter instanceof ResolvingConverter resolvingConverter)) {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
-
-    final ResolvingConverter resolvingConverter = (ResolvingConverter) converter;
 
     // merge "normal" + additional variants
     final DomElement paramValueElement = elementConverterPair.first;
@@ -135,8 +133,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
                            myElement,
                            convertContext);
       for (final PsiReference customReference : references) {
-        if (customReference instanceof JavaClassReference) {
-          JavaClassReference javaClassReference = (JavaClassReference)customReference;
+        if (customReference instanceof JavaClassReference javaClassReference) {
           @NotNull List<String> names = javaClassReference.getSuperClasses();
           PsiElement context = javaClassReference.getCompletionContext();
           if (!names.isEmpty() && context instanceof PsiPackage) {

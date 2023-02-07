@@ -652,8 +652,7 @@ public final class DartResolveUtil {
     if (element instanceof DartComponentName) {
       return getDartClassResolveResult(parentElement, specialization);
     }
-    if (element instanceof DartClass) {
-      final DartClass dartClass = (DartClass)element;
+    if (element instanceof DartClass dartClass) {
       return DartClassResolveResult.create(dartClass, specialization);
     }
 
@@ -805,9 +804,8 @@ public final class DartResolveUtil {
         }
       }
     }
-    else if (UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(place, true) instanceof DartArgumentList) {
+    else if (UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(place, true) instanceof DartArgumentList prevSibling) {
       // seems foo(param1, param2<caret>)
-      final DartArgumentList prevSibling = (DartArgumentList)UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(place, true);
       assert prevSibling != null;
       // callExpression -> arguments -> argumentList
       parameterIndex = prevSibling.getExpressionList().size() + prevSibling.getNamedArgumentList().size();

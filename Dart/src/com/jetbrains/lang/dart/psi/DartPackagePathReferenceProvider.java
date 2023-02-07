@@ -30,8 +30,7 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     return new ElementFilter() {
       @Override
       public boolean isAcceptable(Object _element, PsiElement context) {
-        if (!(_element instanceof PsiElement)) return false;
-        final PsiElement element = (PsiElement)_element;
+        if (!(_element instanceof PsiElement element)) return false;
         final PsiElement parentElement = element.getParent();
         final PsiFile file = element.getContainingFile().getOriginalFile();
         final VirtualFile vFile = file.getVirtualFile();

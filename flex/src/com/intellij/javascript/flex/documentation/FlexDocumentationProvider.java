@@ -780,8 +780,7 @@ public final class FlexDocumentationProvider extends JSDocumentationProvider {
       if (clazz == null && link.contains(".")) {
         String qname = link.substring(0, link.lastIndexOf('.'));
         clazz = ActionScriptClassResolver.findClassByQName(qname, index, context != null ? ModuleUtilCore.findModuleForPsiElement(context) : null);
-        if (clazz instanceof JSClass) {
-          JSClass jsClass = (JSClass)clazz;
+        if (clazz instanceof JSClass jsClass) {
           String member = link.substring(link.lastIndexOf('.') + 1);
 
           if (member.endsWith("()")) {

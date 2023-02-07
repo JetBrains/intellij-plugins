@@ -279,8 +279,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     DependencyEntry[] entries = copy.getDependencies().getEntries();
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
     for (int i = 0; i < entries.length; i++) {
-      if (entries[i] instanceof ModuleLibraryEntryImpl) {
-        ModuleLibraryEntryImpl e = (ModuleLibraryEntryImpl)entries[i];
+      if (entries[i] instanceof ModuleLibraryEntryImpl e) {
         LibraryEx library = findLibrary(modifiableModel, e.getLibraryId());
         if (library != null) {
           LibraryEx libraryCopy = copyModuleLibrary(modifiableModel, library);
@@ -411,12 +410,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
 
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
-          if (dependencyEntry instanceof ModuleLibraryEntry) {
-            ModuleLibraryEntry moduleLibraryEntry = (ModuleLibraryEntry)dependencyEntry;
+          if (dependencyEntry instanceof ModuleLibraryEntry moduleLibraryEntry) {
             usedModulesLibrariesIds.add(moduleLibraryEntry.getLibraryId());
           }
-          if (dependencyEntry instanceof SharedLibraryEntry) {
-            SharedLibraryEntry sharedLibraryEntry = (SharedLibraryEntry)dependencyEntry;
+          if (dependencyEntry instanceof SharedLibraryEntry sharedLibraryEntry) {
             Library library =
               myProvider.findSourceLibraryForLiveName(sharedLibraryEntry.getLibraryName(), sharedLibraryEntry.getLibraryLevel());
             if (library != null) {
@@ -656,12 +653,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
       if (newEntry instanceof ModuleLibraryEntry) {
         existingEntry = existingModuleLibrariesEntries.get(((ModuleLibraryEntry)newEntry).getLibraryId());
       }
-      else if (newEntry instanceof SharedLibraryEntry) {
-        final SharedLibraryEntry e = (SharedLibraryEntry)newEntry;
+      else if (newEntry instanceof SharedLibraryEntry e) {
         existingEntry = existingSharedLibrariesEntries.get(Pair.create(e.getLibraryLevel(), e.getLibraryName()));
       }
-      else if (newEntry instanceof BuildConfigurationEntry) {
-        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)newEntry;
+      else if (newEntry instanceof BuildConfigurationEntry bcEntry) {
         existingEntry = existingBcEntries.get(Pair.create(bcEntry.getModuleName(), bcEntry.getBcName()));
       }
       else {
@@ -678,8 +673,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     ModifiableRootModel dependantModifiableModel = myProvider.getModuleModifiableModel(dependantEditor.myModule);
 
     for (DependencyEntry entry : entriesToRemove) {
-      if (entry instanceof ModuleLibraryEntry) {
-        ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
+      if (entry instanceof ModuleLibraryEntry libraryEntry) {
         Library dependencyLibrary = findLibrary(dependantModifiableModel, libraryEntry.getLibraryId());
         if (dependencyLibrary != null) {
           List<Editor> otherEditors = new ArrayList<>(myModule2Editors.get(dependantEditor.myModule));

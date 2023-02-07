@@ -46,11 +46,10 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
   @Nullable
   @Override
   public @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-    if (!(element instanceof PbCommentOwner)) {
+    if (!(element instanceof PbCommentOwner owner)) {
       return null;
     }
 
-    PbCommentOwner owner = (PbCommentOwner) element;
     List<PsiComment> comments = owner.getComments();
     if (comments.isEmpty()) {
       return null;

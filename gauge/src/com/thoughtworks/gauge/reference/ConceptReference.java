@@ -55,8 +55,7 @@ public final class ConceptReference extends PsiReferenceBase<ConceptStep> {
 
   @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
-    if (element instanceof PsiMethod) {
-      PsiMethod method = (PsiMethod)element;
+    if (element instanceof PsiMethod method) {
       return StepUtil.isMatch(method, this.myElement.getStepValue().getStepText(), moduleForPsiElement(element));
     }
     else {

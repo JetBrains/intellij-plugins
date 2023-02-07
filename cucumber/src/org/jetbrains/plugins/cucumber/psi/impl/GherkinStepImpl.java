@@ -174,10 +174,9 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @Nullable
   public String getSubstitutedName() {
     final GherkinStepsHolder holder = getStepHolder();
-    if (!(holder instanceof GherkinScenarioOutline)) {
+    if (!(holder instanceof GherkinScenarioOutline outline)) {
       return getName();
     }
-    final GherkinScenarioOutline outline = (GherkinScenarioOutline)holder;
     return CucumberUtil.substituteTableReferences(getName(), outline.getOutlineTableMap()).getSubstitution();
   }
 

@@ -82,8 +82,7 @@ public final class AngularMessageFormatCompletion {
         return true;
       }
     }
-    if (parent instanceof AngularJSMessageFormatExpression) {
-      final AngularJSMessageFormatExpression amfe = (AngularJSMessageFormatExpression)parent;
+    if (parent instanceof AngularJSMessageFormatExpression amfe) {
       if (originalPosition == amfe.getExtensionTypeElement()) {
         messageFormatExtensions(result);
         return true;

@@ -44,8 +44,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
       if (((PsiElement)element).getProject().isDisposed()) {
         return null;
       }
-      if (element instanceof JSQualifiedNamedElement) {
-        JSQualifiedNamedElement qualifiedNamedElement = (JSQualifiedNamedElement)element;
+      if (element instanceof JSQualifiedNamedElement qualifiedNamedElement) {
         String qName = qualifiedNamedElement.getQualifiedName();
         if (qName == null) return null;
         return combineWithModuleName(qualifiedNamedElement, fixVectorTypeName(qName));
@@ -56,8 +55,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
       else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
         return getQualifiedNameStatic(XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element));
       }
-      else if (element instanceof PsiDirectory) {
-        PsiDirectory directory = (PsiDirectory)element;
+      else if (element instanceof PsiDirectory directory) {
         return JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
       }
     }

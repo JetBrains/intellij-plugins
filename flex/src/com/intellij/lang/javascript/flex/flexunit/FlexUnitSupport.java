@@ -203,9 +203,7 @@ public final class FlexUnitSupport {
   }
 
   public boolean isTestMethod(JSFunction method) {
-    if (!(method.getParent() instanceof JSClass) || method.getParent() instanceof XmlBackedJSClassImpl) return false;
-
-    JSClass clazz = (JSClass)method.getParent();
+    if (!(method.getParent() instanceof JSClass clazz) || method.getParent() instanceof XmlBackedJSClassImpl) return false;
 
     // FlexUnit 1: flexunit.framework.TestCase.getTestMethodNames()
     // Flunit: net.digitalprimates.fluint.tests.defaultFilterFunction()

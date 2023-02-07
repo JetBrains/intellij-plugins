@@ -23,10 +23,9 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
 
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    if (!(element instanceof PsiLiteralExpression)) {
+    if (!(element instanceof PsiLiteralExpression literalExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }
-    PsiLiteralExpression literalExpression = (PsiLiteralExpression)element;
     Object value = literalExpression.getValue();
     if (!(value instanceof String)) {
       return PsiReference.EMPTY_ARRAY;

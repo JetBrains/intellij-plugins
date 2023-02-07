@@ -331,8 +331,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         continue;
       }
       PsiElement possibleFile = ref.resolve();
-      if (possibleFile instanceof PbFile) {
-        PbFile importedFile = (PbFile) possibleFile;
+      if (possibleFile instanceof PbFile importedFile) {
         if (imports.contains(importedFile)) {
           // TODO(volkman): do something with dependency cycle?
           continue;

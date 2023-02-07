@@ -110,10 +110,9 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;
 
-    if (!(addedStepDef instanceof PsiMethodCallExpression)) {
+    if (!(addedStepDef instanceof PsiMethodCallExpression stepDefCall)) {
       return false;
     }
-    PsiMethodCallExpression stepDefCall = (PsiMethodCallExpression)addedStepDef;
     if (stepDefCall.getArgumentList().getExpressions().length < 2) {
       return false;
     }
@@ -121,16 +120,14 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     final PsiExpression regexpElement = stepDefCall.getArgumentList().getExpressions()[0];
 
     final PsiExpression secondArgument = stepDefCall.getArgumentList().getExpressions()[1];
-    if (!(secondArgument instanceof PsiLambdaExpression)) {
+    if (!(secondArgument instanceof PsiLambdaExpression lambda)) {
       return false;
     }
-    PsiLambdaExpression lambda = (PsiLambdaExpression)secondArgument;
     final PsiParameterList blockVars = lambda.getParameterList();
     PsiElement lambdaBody = lambda.getBody();
-    if (!(lambdaBody instanceof PsiCodeBlock)) {
+    if (!(lambdaBody instanceof PsiCodeBlock body)) {
       return false;
     }
-    final PsiCodeBlock body = (PsiCodeBlock)lambdaBody;
 
     if (withTemplate) {
       runTemplateBuilderOnAddedStep(editor, addedStepDef, regexpElement, blockVars, body);

@@ -85,10 +85,9 @@ public abstract class SchemaComment {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof SchemaComment)) {
+    if (!(other instanceof SchemaComment otherComment)) {
       return false;
     }
-    SchemaComment otherComment = (SchemaComment) other;
     return Objects.equals(comment, otherComment.comment)
         && Objects.equals(keyRange, otherComment.keyRange)
         && Objects.equals(nameRange, otherComment.nameRange);

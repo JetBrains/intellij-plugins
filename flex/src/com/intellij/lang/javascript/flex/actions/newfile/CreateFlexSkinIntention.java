@@ -81,8 +81,7 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
     }
 
     final PsiElement element = ActionScriptClassResolver.findClassByQNameStatic(hostComponent, context);
-    if (element instanceof JSClass) {
-      final JSClass jsClass = (JSClass)element;
+    if (element instanceof JSClass jsClass) {
       final Collection<String> skinStates = getSkinStates(jsClass);
       if (!skinStates.isEmpty()) {
         builder.append("<s:states>\n");

@@ -111,8 +111,7 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       PsiElement element = descriptor.getPsiElement();
-      if (element instanceof XmlAttributeValue) {
-        final XmlAttributeValue value = (XmlAttributeValue)element;
+      if (element instanceof XmlAttributeValue value) {
         XmlTag tag = PsiTreeUtil.getParentOfType(value, XmlTag.class, false);
 
         final boolean inline = tag instanceof HtmlTag;

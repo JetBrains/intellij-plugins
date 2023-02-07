@@ -11,8 +11,7 @@ public class MeteorRootListener implements ModuleRootListener {
   @Override
   public void rootsChanged(@NotNull ModuleRootEvent event) {
     Object source = event.getSource();
-    if (source instanceof Project) {
-      Project project = (Project)source;
+    if (source instanceof Project project) {
       if (!project.isDisposed() && !project.isDefault() /* not really sure it's the root of the problem */) {
         MeteorLibraryUpdater.get(project).scheduleProjectUpdate();
       }

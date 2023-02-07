@@ -80,8 +80,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
       }
     }
 
-    if (o instanceof ResultType) {
-      final ResultType resultType = (ResultType) o;
+    if (o instanceof ResultType resultType) {
       final GenericAttributeValue<Boolean> resultTypeDefault = resultType.getDefault();
       if (DomUtil.hasXml(resultTypeDefault) &&
           resultTypeDefault.getValue() == Boolean.TRUE) {

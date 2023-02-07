@@ -30,12 +30,11 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
   @Override
   protected void createStepOrSteps(GherkinStep sourceStep, @NotNull final CucumberStepDefinitionCreationContext fileAndFrameworkType) {
     final PsiFile probableGherkinFile = sourceStep.getContainingFile();
-    if (!(probableGherkinFile instanceof GherkinFile)) {
+    if (!(probableGherkinFile instanceof GherkinFile gherkinFile)) {
       return;
     }
 
     final Set<String> createdStepDefPatterns = new HashSet<>();
-    final GherkinFile gherkinFile = (GherkinFile)probableGherkinFile;
     for (GherkinFeature feature : gherkinFile.getFeatures()) {
       for (GherkinStepsHolder stepsHolder : feature.getScenarios()) {
         for (GherkinStep step : stepsHolder.getSteps()) {

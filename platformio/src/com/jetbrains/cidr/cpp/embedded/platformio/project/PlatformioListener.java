@@ -62,8 +62,7 @@ public class PlatformioListener implements AsyncFileListener, StartupActivity {
   }
 
   private static boolean isPlatformioRename(VFileEvent event) {
-    if (event instanceof VFilePropertyChangeEvent) {
-      VFilePropertyChangeEvent changeEvent = (VFilePropertyChangeEvent)event;
+    if (event instanceof VFilePropertyChangeEvent changeEvent) {
       return changeEvent.isRename() &&
              PlatformioFileType.FILE_NAME.equals(PathUtilRt.getFileName(changeEvent.getNewPath()));
     }

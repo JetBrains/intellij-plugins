@@ -395,8 +395,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
                                       boolean leaf,
                                       int row,
                                       boolean hasFocus) {
-      if (! (value instanceof BaseNode)) return;
-      final BaseNode baseNode = (BaseNode) value;
+      if (! (value instanceof BaseNode baseNode)) return;
       final NodeType type = baseNode.getNodeType();
       final Object uo = baseNode.getUserObject();
 

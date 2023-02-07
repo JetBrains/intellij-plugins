@@ -109,7 +109,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
     for (UsageInfo usage : usages) {
       final PsiElement element = usage.getElement();
-      if (!(element instanceof JSReferenceExpression)) {
+      if (!(element instanceof JSReferenceExpression refExpr)) {
         continue;
       }
 
@@ -117,7 +117,6 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
         continue;
       }
 
-      JSReferenceExpression refExpr = (JSReferenceExpression)element;
       final PsiElement resolved = refExpr.resolve();
       if (!(resolved instanceof JSQualifiedNamedElement)) {
         continue;
@@ -152,8 +151,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   protected void retargetUsages(UsageInfo @NotNull [] usages, @NotNull Map<PsiElement, PsiElement> oldToNewMap) {
     super.retargetUsages(usages, oldToNewMap);
     for (UsageInfo usage : usages) {
-      if (usage instanceof JSRefactoringUtil.ConstructorUsageInfo) {
-        final JSRefactoringUtil.ConstructorUsageInfo constuctorUsage = (JSRefactoringUtil.ConstructorUsageInfo)usage;
+      if (usage instanceof JSRefactoringUtil.ConstructorUsageInfo constuctorUsage) {
         final JSReferenceExpression ref = constuctorUsage.getElement();
         JSClass subject = constuctorUsage.getSubject();
         if (ref != null && subject != null) {

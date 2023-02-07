@@ -190,9 +190,8 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
       // get step definition
       final GherkinStepsHolder holder = step.getStepHolder();
       // if step is in Scenario Outline
-      if (holder instanceof GherkinScenarioOutlineImpl) {
+      if (holder instanceof GherkinScenarioOutlineImpl outline) {
         // then get header cell
-        final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl)holder;
         final List<GherkinExamplesBlock> examplesBlocks = outline.getExamplesBlocks();
         if (examplesBlocks.isEmpty()) {
           return null;

@@ -28,8 +28,7 @@ public class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
       final PsiElement element = ref.getElement();
       final JSCallExpression call = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
       final JSExpression expression = call != null ? call.getMethodExpression() : null;
-      if (expression instanceof JSReferenceExpression) {
-        JSReferenceExpression callee = (JSReferenceExpression)expression;
+      if (expression instanceof JSReferenceExpression callee) {
         JSExpression qualifier = callee.getQualifier();
 
         if (qualifier != null && AngularJSIndexingHandler.INTERESTING_METHODS.contains(callee.getReferenceName())

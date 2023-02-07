@@ -49,8 +49,7 @@ public class PbTextAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
     // We always annotate strings.
-    if (element instanceof PbTextStringPart) {
-      PbTextStringPart part = (PbTextStringPart) element;
+    if (element instanceof PbTextStringPart part) {
       SharedAnnotations.annotateStringPart(part, holder, getInvalidEscapeAttributes(part));
       return;
     }

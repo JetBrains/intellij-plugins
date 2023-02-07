@@ -500,12 +500,11 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
       public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
                                                     boolean leaf, int row, boolean hasFocus) {
         final Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
-        if (!(userObject instanceof CompilerOptionInfo)) {
+        if (!(userObject instanceof CompilerOptionInfo info)) {
           // invisible root node
           return myLabel;
         }
 
-        final CompilerOptionInfo info = (CompilerOptionInfo)userObject;
         myLabel.setText(info.DISPLAY_NAME);
 
         final ValueSource valueSource = getValueAndSource(info).second;
@@ -532,13 +531,12 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
 
       @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-        if (!(value instanceof CompilerOptionInfo)) {
+        if (!(value instanceof CompilerOptionInfo info)) {
           // invisible root node or group node
           myLabel.setText("");
           return myLabel;
         }
 
-        final CompilerOptionInfo info = (CompilerOptionInfo)value;
         final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
 
         switch (info.TYPE) {

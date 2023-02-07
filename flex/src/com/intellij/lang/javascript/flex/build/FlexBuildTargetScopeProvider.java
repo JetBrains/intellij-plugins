@@ -131,8 +131,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
                                            final Module module,
                                            final FlexBuildConfiguration bc) throws ConfigurationException {
     for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
-      if (entry instanceof BuildConfigurationEntry) {
-        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+      if (entry instanceof BuildConfigurationEntry bcEntry) {
 
         final Module dependencyModule = bcEntry.findModule();
         final FlexBuildConfiguration dependencyBC = dependencyModule == null ? null : bcEntry.findBuildConfiguration();

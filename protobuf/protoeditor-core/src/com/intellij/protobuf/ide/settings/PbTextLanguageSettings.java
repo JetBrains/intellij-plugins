@@ -79,10 +79,9 @@ public class PbTextLanguageSettings
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof PbTextLanguageSettings)) {
+    if (!(obj instanceof PbTextLanguageSettings other)) {
       return false;
     }
-    PbTextLanguageSettings other = (PbTextLanguageSettings) obj;
     return Objects.equals(isMissingSchemaWarningEnabled(), other.isMissingSchemaWarningEnabled());
   }
 

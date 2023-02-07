@@ -228,8 +228,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   }
 
   private static void addStepKeywords(CompletionResultSet result, PsiFile file) {
-    if (!(file instanceof GherkinFile)) return;
-    final GherkinFile gherkinFile = (GherkinFile)file;
+    if (!(file instanceof GherkinFile gherkinFile)) return;
 
     addKeywordsToResult(gherkinFile.getStepKeywords(), result, false);
   }

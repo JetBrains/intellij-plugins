@@ -90,11 +90,9 @@ public final class JspActionAnnotator extends LineMarkerProviderDescriptor {
 
   private static void annotate(@NotNull final PsiElement element,
                                final @NotNull Collection<? super LineMarkerInfo<?>> lineMarkerInfos) {
-    if (!(element instanceof XmlTag)) {
+    if (!(element instanceof XmlTag xmlTag)) {
       return;
     }
-
-    final XmlTag xmlTag = (XmlTag) element;
 
     // any of our tags?
     final String tagName = xmlTag.getLocalName();

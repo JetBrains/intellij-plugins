@@ -47,11 +47,10 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
 
   @Override
   public PsiReference @NotNull [] getCustomReferences(XmlAttributeValue nameAttributeValue, DomElement paramsElement) {
-    if (!(paramsElement instanceof Result)) {
+    if (!(paramsElement instanceof Result result)) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    Result result = (Result)paramsElement;
     Action action = DomUtil.getParentOfType(result, Action.class, true);
     assert action != null;
 

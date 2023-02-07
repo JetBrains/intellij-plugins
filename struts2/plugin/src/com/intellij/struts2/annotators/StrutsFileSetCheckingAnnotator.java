@@ -62,7 +62,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-    if (!(psiElement instanceof XmlFile)) {
+    if (!(psiElement instanceof XmlFile xmlFile)) {
       return;
     }
 
@@ -80,7 +80,6 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       return;
     }
 
-    final XmlFile xmlFile = (XmlFile)psiElement;
     final Project project = psiElement.getProject();
 
     final StrutsManager strutsManager = StrutsManager.getInstance(project);

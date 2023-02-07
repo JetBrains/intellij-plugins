@@ -174,11 +174,9 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
 
-    if (!(_parentDescriptor instanceof ClassBackedElementDescriptor)) {
+    if (!(_parentDescriptor instanceof ClassBackedElementDescriptor parentDescriptor)) {
       return EMPTY_ARRAY;
     }
-
-    final ClassBackedElementDescriptor parentDescriptor = (ClassBackedElementDescriptor)_parentDescriptor;
 
     getAttributesDescriptors(_context);
     List<XmlElementDescriptor> resultList =
@@ -322,11 +320,9 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     // non-visual components in Flex 3 are allowed only under document root tag and under inline component root tag;
     //     in Flex 4 - only inside <fx:Declarations> or <fx:Definition>
     // mx.controls.RadioButtonGroup is a compiler-level exception
-    if (!(_childDescriptor instanceof ClassBackedElementDescriptor) || !(_parentDescriptor instanceof ClassBackedElementDescriptor)) {
+    if (!(_childDescriptor instanceof ClassBackedElementDescriptor childDescriptor) || !(_parentDescriptor instanceof ClassBackedElementDescriptor parentDescriptor)) {
       return false;
     }
-    final ClassBackedElementDescriptor childDescriptor = (ClassBackedElementDescriptor)_childDescriptor;
-    final ClassBackedElementDescriptor parentDescriptor = (ClassBackedElementDescriptor)_parentDescriptor;
 
     if (childDescriptor.predefined) {
       return false;
@@ -522,8 +518,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         collectMxmlAttributes(map, packageToInternalDescriptors, rootTag);
       }
 
-      if (element instanceof JSNamedElement) {
-        JSNamedElement jsClass = (JSNamedElement)element;
+      if (element instanceof JSNamedElement jsClass) {
 
         if (visited == null || !visited.contains(jsClass)) {
           if (!MxmlJSClass.XML_TAG_NAME.equals(jsClass.getName()) && !MxmlJSClass.XMLLIST_TAG_NAME.equals(jsClass.getName())) {
@@ -762,8 +757,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                            final Map<String, Map<String, AnnotationBackedDescriptor>> packageToInternalDescriptors,
                                            final PsiElement _clazz,
                                            @Nullable Set<JSClass> visited) {
-    if (_clazz instanceof JSClass) {
-      final JSClass clazz = (JSClass)_clazz;
+    if (_clazz instanceof JSClass clazz) {
 
       ClassBackedElementDescriptor parentDescriptor = context.getElementDescriptor(clazz.getName(), clazz.getQualifiedName());
       if (parentDescriptor == null) {
@@ -938,11 +932,10 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     final PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(arrayElementType, declaration);
-    if (!(clazz instanceof JSClass)) {
+    if (!(clazz instanceof JSClass jsClass)) {
       return EMPTY_ARRAY;
     }
 
-    final JSClass jsClass = (JSClass)clazz;
     final JSAttributeList attributeList = jsClass.getAttributeList();
     final boolean isFinalClass = attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
     final List<XmlElementDescriptor> result = new ArrayList<>();
@@ -1003,8 +996,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
       }
 
-      if (element instanceof JSClass) {
-        JSClass jsClass = (JSClass)element;
+      if (element instanceof JSClass jsClass) {
         do {
           AnnotationBackedDescriptor descriptor = getDefaultPropertyDescriptor(jsClass);
           if (descriptor == null) {
@@ -1091,8 +1083,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     final XmlElementDescriptor _descriptor = context.getDescriptor();
-    if (_descriptor instanceof ClassBackedElementDescriptor) {
-      final ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)_descriptor;
+    if (_descriptor instanceof ClassBackedElementDescriptor descriptor) {
 
       if (context.getParent() instanceof XmlDocument && JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
         return true;

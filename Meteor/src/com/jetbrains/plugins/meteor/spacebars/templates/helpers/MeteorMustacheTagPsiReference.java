@@ -85,10 +85,9 @@ public class MeteorMustacheTagPsiReference extends PsiPolyVariantReferenceBase<H
     PsiFile file = myElement.getContainingFile();
     if (file == null) return null;
     FileViewProvider provider = file.getViewProvider();
-    if (!(provider instanceof TemplateLanguageFileViewProvider)) {
+    if (!(provider instanceof TemplateLanguageFileViewProvider templateLanguageFileViewProvider)) {
       return null;
     }
-    TemplateLanguageFileViewProvider templateLanguageFileViewProvider = (TemplateLanguageFileViewProvider)provider;
     PsiElement elementAsHtml = templateLanguageFileViewProvider.findElementAt(myElement.getTextOffset(),
                                                                               templateLanguageFileViewProvider.getTemplateDataLanguage());
     if (elementAsHtml == null) return null;

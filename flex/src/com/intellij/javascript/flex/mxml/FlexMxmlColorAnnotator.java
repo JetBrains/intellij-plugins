@@ -39,18 +39,16 @@ import java.awt.*;
 public class FlexMxmlColorAnnotator implements Annotator {
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    if (!(element instanceof XmlAttribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
+    if (!(element instanceof XmlAttribute attribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
       return;
     }
     if (!LineMarkerSettings.getSettings().isEnabled(ColorLineMarkerProvider.INSTANCE)) {
       return;
     }
-    XmlAttribute attribute = (XmlAttribute)element;
     XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-    if (!(descriptor instanceof AnnotationBackedDescriptorImpl)) {
+    if (!(descriptor instanceof AnnotationBackedDescriptorImpl annotationBackedDescriptor)) {
       return;
     }
-    AnnotationBackedDescriptorImpl annotationBackedDescriptor = (AnnotationBackedDescriptorImpl)descriptor;
     String format = annotationBackedDescriptor.getFormat();
     if (!FlexCssPropertyDescriptor.COLOR_FORMAT.equals(format)) {
       return;

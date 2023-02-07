@@ -195,8 +195,7 @@ public final class DroolsResolveUtil {
 
   private static boolean processClassMembers(@NotNull CollectProcessor<PsiElement> processor, DroolsReference leftReference) {
     PsiElement resolve = leftReference.resolve();
-    if (resolve instanceof DroolsLhsPatternBind) {
-      final DroolsLhsPatternBind bind = (DroolsLhsPatternBind)resolve;
+    if (resolve instanceof DroolsLhsPatternBind bind) {
       return processClassMembers(processor, getPatternBindType(bind.getLhsPatternList()), false);
     }
     else if (resolve instanceof DroolsUnaryAssignExpr) {
@@ -629,8 +628,7 @@ public final class DroolsResolveUtil {
 
     @Override
     public boolean process(PsiElement psiElement) {
-      if (psiElement instanceof PsiMethod) {
-        final PsiMethod psiMethod = (PsiMethod)psiElement;
+      if (psiElement instanceof PsiMethod psiMethod) {
         if (myTextToResolve.equals(psiMethod.getName())) {
           getResults().add(psiMethod);
         }
@@ -643,8 +641,7 @@ public final class DroolsResolveUtil {
           }
         }
       }
-      else if (psiElement instanceof PsiField) {
-        final PsiField psiField = (PsiField)psiElement;
+      else if (psiElement instanceof PsiField psiField) {
         if (myTextToResolve.equals(psiField.getName())) {
           getResults().add(psiField);
         }

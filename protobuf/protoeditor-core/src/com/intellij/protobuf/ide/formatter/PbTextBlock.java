@@ -71,8 +71,7 @@ public class PbTextBlock extends AbstractBlock {
     PsiElement psi = myNode.getPsi();
     PsiElement parent = psi.getParent();
     // Block children except for the start and end tokens are indented.
-    if (parent instanceof ProtoBlockBody) {
-      ProtoBlockBody block = (ProtoBlockBody) parent;
+    if (parent instanceof ProtoBlockBody block) {
       if (psi.equals(block.getStart()) || psi.equals(block.getEnd())) {
         // The start and end tokens are not indented.
         return Indent.getNoneIndent();

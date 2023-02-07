@@ -193,8 +193,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                                                                         @NotNull NodePackage prettierPackage) {
       String packagePath;
       String packageJsonPath;
-      if (prettierPackage instanceof YarnPnpNodePackage) {
-        YarnPnpNodePackage pnpPkg = (YarnPnpNodePackage)prettierPackage;
+      if (prettierPackage instanceof YarnPnpNodePackage pnpPkg) {
         packagePath = pnpPkg.getName();
         packageJsonPath = pnpPkg.getPackageJsonPath(project);
         if (packageJsonPath == null) {

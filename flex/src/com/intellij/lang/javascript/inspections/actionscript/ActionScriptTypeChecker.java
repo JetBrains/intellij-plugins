@@ -150,8 +150,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   private static boolean isAddEventListenerMethod(final JSFunction method) {
     if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(method.getName())) {
       PsiElement methodParent = method.getParent();
-      if (methodParent instanceof JSClass) {
-        JSClass declaringClass = (JSClass)methodParent;
+      if (methodParent instanceof JSClass declaringClass) {
         if (ActionScriptResolveUtil
               .isAssignableType(FlexCommonTypeNames.FLASH_IEVENT_DISPATCHER_FQN, declaringClass.getQualifiedName(), method)
             || ActionScriptClassResolver.isParentClass(declaringClass, FlexCommonTypeNames.STARLING_EVENT_DISPATCHER_FQN, false)) {
@@ -209,8 +208,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
 
     if (adHocQualifierExpr instanceof JSReferenceExpression) {
       PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
-      if (resolve instanceof JSClass) {
-        JSClass clazz = (JSClass)resolve;
+      if (resolve instanceof JSClass clazz) {
         if (ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
             ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
           return clazz;

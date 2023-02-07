@@ -296,8 +296,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
     boolean b = jsClass == null || ClassBackedElementDescriptor.processAttributes(jsClass, itemsProcessor);
 
-    if (b && jsClass instanceof JSClass) {
-      final JSClass clazz = (JSClass)jsClass;
+    if (b && jsClass instanceof JSClass clazz) {
       final JSClass[] classes = clazz.getSuperClasses();
       if (classes.length > 0 && clazz.getName().equals(classes[0].getName()) && clazz != classes[0]) {
         b = ClassBackedElementDescriptor.processAttributes(classes[0], itemsProcessor);

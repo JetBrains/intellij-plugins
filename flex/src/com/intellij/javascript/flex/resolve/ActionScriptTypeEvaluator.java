@@ -82,8 +82,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
       resolveResult = ((JSOffsetBasedImplicitElement)resolveResult).getElementAtOffset();
     }
-    if (resolveResult instanceof XmlToken) {
-      final XmlToken xmlToken = (XmlToken)resolveResult;
+    if (resolveResult instanceof XmlToken xmlToken) {
       final XmlAttribute xmlAttribute = PsiTreeUtil.getParentOfType(xmlToken, XmlAttribute.class);
       final XmlTag xmlTag = PsiTreeUtil.getParentOfType(xmlToken, XmlTag.class);
       if (xmlToken.getTokenType() == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN &&

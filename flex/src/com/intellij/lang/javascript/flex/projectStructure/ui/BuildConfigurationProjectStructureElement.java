@@ -255,8 +255,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
           });
         }
       }
-      else if (dependencyEntry instanceof BuildConfigurationEntry) {
-        final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)dependencyEntry;
+      else if (dependencyEntry instanceof BuildConfigurationEntry bcEntry) {
         Module module = modulesConfigurator.getModule(bcEntry.getModuleName());
         if (module != null) {
           final ModifiableFlexBuildConfiguration bc =

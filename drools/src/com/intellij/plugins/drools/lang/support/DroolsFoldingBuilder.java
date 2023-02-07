@@ -20,8 +20,7 @@ public class DroolsFoldingBuilder implements FoldingBuilder, DumbAware {
   @Override
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull final ASTNode node, @NotNull final Document document) {
     final PsiElement element = node.getPsi();
-    if (element instanceof DroolsFile) {
-      final DroolsFile file = (DroolsFile)element;
+    if (element instanceof DroolsFile file) {
       List<FoldingDescriptor> descriptors = new ArrayList<>();
       for (DroolsRuleStatement rule : file.getRules()) {
         addRuleFoldingDescriptors(descriptors, rule);

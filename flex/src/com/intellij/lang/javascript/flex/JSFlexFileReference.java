@@ -37,11 +37,10 @@ public class JSFlexFileReference extends FileReference {
   // - relative paths are kept relative to what they were relative to before refactoring
   @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
-    if (!(element instanceof PsiFileSystemItem)) {
+    if (!(element instanceof PsiFileSystemItem fileSystemItem)) {
       throw new IncorrectOperationException("Cannot bind to element, should be instanceof PsiFileSystemItem: " + element);
     }
 
-    final PsiFileSystemItem fileSystemItem = (PsiFileSystemItem)element;
     final VirtualFile destVFile = fileSystemItem.getVirtualFile();
     if (destVFile == null) throw new IncorrectOperationException("Cannot bind to non-physical element:" + element);
 

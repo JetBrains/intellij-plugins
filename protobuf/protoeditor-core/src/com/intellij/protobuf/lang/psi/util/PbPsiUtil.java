@@ -189,8 +189,7 @@ public final class PbPsiUtil {
   }
 
   private static <T> Stream<T> streamRefToType(PsiReference ref, Class<T> type) {
-    if (ref instanceof PsiPolyVariantReference) {
-      PsiPolyVariantReference polyRef = (PsiPolyVariantReference) ref;
+    if (ref instanceof PsiPolyVariantReference polyRef) {
       return Arrays.stream(polyRef.multiResolve(false))
           .map(ResolveResult::getElement)
           .filter(type::isInstance)

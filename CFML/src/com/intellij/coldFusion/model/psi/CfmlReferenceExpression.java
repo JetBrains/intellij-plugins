@@ -166,8 +166,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     boolean ifContinue = true;
 
     final PsiElement parent = getParent();
-    if (parent instanceof CfmlAssignmentExpression) {
-      CfmlAssignmentExpression assignment = (CfmlAssignmentExpression)parent;
+    if (parent instanceof CfmlAssignmentExpression assignment) {
       CfmlVariable var = assignment.getAssignedVariable();
       if (var != null && assignment.getAssignedVariableElement() == this) {
         ifContinue = processor.execute(var, ResolveState.initial());
@@ -338,8 +337,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       }
       return ((CfmlVariable)element).getPsiType();
     }
-    if (element instanceof PsiMethod) {
-      PsiMethod method = (PsiMethod)element;
+    if (element instanceof PsiMethod method) {
       return method.getReturnType();
     }
     if (element instanceof CfmlFunction) {

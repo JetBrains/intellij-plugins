@@ -337,8 +337,7 @@ final class PubServerService extends NetService {
         }
       }
       else {
-        if (message instanceof HttpResponse) {
-          HttpResponse response = (HttpResponse)message;
+        if (message instanceof HttpResponse response) {
           HttpUtil.setKeepAlive(response, true);
           response.headers().add(clientInfo.extraHeaders);
         }

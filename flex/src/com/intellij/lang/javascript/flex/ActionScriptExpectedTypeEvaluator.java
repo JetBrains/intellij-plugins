@@ -20,12 +20,11 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
   @Override
   protected void findRestParameterExpectedType(JSParameterItem parameterItem) {
-    if (!(parameterItem instanceof JSParameter)) {
+    if (!(parameterItem instanceof JSParameter param)) {
       super.findRestParameterExpectedType(parameterItem);
       return;
     }
 
-    final JSParameter param = (JSParameter)parameterItem;
     final JSFunction fun = param.getDeclaringFunction();
     if (fun == null) {
       super.findRestParameterExpectedType(parameterItem);

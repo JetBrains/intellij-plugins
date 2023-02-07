@@ -26,9 +26,8 @@ final class CfmlRunner extends GenericProgramRunner {
   @Override
   protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
     final RunProfile runProfileRaw = env.getRunProfile();
-    if (runProfileRaw instanceof CfmlRunConfiguration) {
+    if (runProfileRaw instanceof CfmlRunConfiguration runProfile) {
       FileDocumentManager.getInstance().saveAllDocuments();
-      final CfmlRunConfiguration runProfile = (CfmlRunConfiguration)runProfileRaw;
 
       //check if CfmlRunConfiguration generated from default server http://localhost:8500/
       if (runProfile.isFromDefaultHost()) {

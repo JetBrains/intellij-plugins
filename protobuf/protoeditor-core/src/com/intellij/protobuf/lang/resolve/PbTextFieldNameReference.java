@@ -92,8 +92,7 @@ public class PbTextFieldNameReference extends PsiReferenceBase<PbTextFieldName> 
       return generatedField;
     }
 
-    if (symbol instanceof PbField) {
-      PbField field = (PbField) symbol;
+    if (symbol instanceof PbField field) {
       if (field.isExtension()) {
         return null;
       }

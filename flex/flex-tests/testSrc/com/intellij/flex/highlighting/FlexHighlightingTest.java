@@ -378,8 +378,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     VirtualFile libRoot = null;
 
     for (OrderEntry entry : ModuleRootManager.getInstance(myModule).getOrderEntries()) {
-      if (entry instanceof LibraryOrderEntry) {
-        final LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)entry;
+      if (entry instanceof LibraryOrderEntry libraryOrderEntry) {
         if ("lib".equals(libraryOrderEntry.getLibraryName())) {
           VirtualFile[] files = libraryOrderEntry.getRootFiles(OrderRootType.CLASSES);
           libRoot = files[0];

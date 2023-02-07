@@ -36,8 +36,7 @@ public class CucumberJavaStepDefClassInDefaultPackageInspection extends Abstract
         return;
       }
       PsiFile containingFile = aClass.getContainingFile();
-      if (containingFile instanceof PsiClassOwner) {
-        PsiClassOwner javaFile = (PsiClassOwner) containingFile;
+      if (containingFile instanceof PsiClassOwner javaFile) {
         final String packageName = javaFile.getPackageName();
         if (StringUtil.isEmpty(packageName)) {
           PsiElement elementToHighlight = aClass.getNameIdentifier();

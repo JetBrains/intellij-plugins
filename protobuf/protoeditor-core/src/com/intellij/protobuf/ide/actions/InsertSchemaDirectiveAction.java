@@ -61,10 +61,9 @@ public class InsertSchemaDirectiveAction extends AnAction {
       return;
     }
     PsiFile file = event.getData(CommonDataKeys.PSI_FILE);
-    if (!(file instanceof PbTextFile)) {
+    if (!(file instanceof PbTextFile textFile)) {
       return;
     }
-    PbTextFile textFile = (PbTextFile) file;
     if (!textFile.isWritable()) {
       return;
     }
@@ -80,11 +79,10 @@ public class InsertSchemaDirectiveAction extends AnAction {
   @Override
   public void update(AnActionEvent event) {
     PsiFile file = event.getData(CommonDataKeys.PSI_FILE);
-    if (!(file instanceof PbTextFile)) {
+    if (!(file instanceof PbTextFile textFile)) {
       event.getPresentation().setEnabledAndVisible(false);
       return;
     }
-    PbTextFile textFile = (PbTextFile) file;
     if (!textFile.isWritable()) {
       event.getPresentation().setEnabledAndVisible(false);
       return;

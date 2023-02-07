@@ -70,8 +70,7 @@ public class ActionScriptVariableInplaceIntroducer extends JSVariableInplaceIntr
     myMakeConstant.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if (e.getSource() instanceof NonFocusableCheckBox) {
-          NonFocusableCheckBox checkBox = (NonFocusableCheckBox)e.getSource();
+        if (e.getSource() instanceof NonFocusableCheckBox checkBox) {
           final Settings.IntroducedVarType newVarModifier = checkBox.isSelected() ?
                                                             Settings.IntroducedVarType.CONST : Settings.IntroducedVarType.VAR;
           JSIntroduceVariableHandler.setLastIntroduceType(myProject, newVarModifier);

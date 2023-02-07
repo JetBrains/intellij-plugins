@@ -81,11 +81,10 @@ public class DartClosingLabelManager implements @NotNull Disposable {
 
     Runnable runnable = () -> {
       for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors(file)) {
-        if (!(fileEditor instanceof TextEditor)) {
+        if (!(fileEditor instanceof TextEditor textEditor)) {
           continue;
         }
 
-        TextEditor textEditor = (TextEditor)fileEditor;
         Editor editor = textEditor.getEditor();
         InlayModel inlayModel = editor.getInlayModel();
 

@@ -38,10 +38,9 @@ public class StringPartTokenizer extends Tokenizer<ProtoStringPart> {
   @NotNull
   @Override
   public TextRange getHighlightingRange(PsiElement element, int offset, TextRange range) {
-    if (!(element instanceof ProtoStringPart)) {
+    if (!(element instanceof ProtoStringPart stringPart)) {
       return super.getHighlightingRange(element, offset, range);
     }
-    ProtoStringPart stringPart = (ProtoStringPart) element;
     ProtoString parsed = stringPart.getParsedString();
     // Modify the text range to account for escape sequences.
     // A TextRange's end offset is exclusive. To get the adjusted position, we need to first

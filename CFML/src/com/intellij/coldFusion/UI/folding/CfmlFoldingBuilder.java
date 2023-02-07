@@ -44,8 +44,7 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
   @Override
   public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     final PsiElement element = node.getPsi();
-    if (element instanceof CfmlFile) {
-      final CfmlFile file = (CfmlFile)element;
+    if (element instanceof CfmlFile file) {
       final PsiElement[] children = file.getChildren();
       Collection<FoldingDescriptor> result = new LinkedList<>();
       for (PsiElement child : children) {

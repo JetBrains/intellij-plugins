@@ -44,7 +44,7 @@ public class Struts2IconProvider extends IconProvider {
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
 
-    if (!(element instanceof PsiClass)) {
+    if (!(element instanceof PsiClass psiClass)) {
       return null;
     }
 
@@ -66,7 +66,6 @@ public class Struts2IconProvider extends IconProvider {
     }
 
     // handle suitable JAVA classes --> overlay icon
-    final PsiClass psiClass = (PsiClass)element;
     if (psiClass.isInterface() ||
         psiClass.isEnum() ||
         !psiClass.hasModifierProperty(PsiModifier.PUBLIC) ||

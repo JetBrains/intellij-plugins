@@ -94,8 +94,7 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
   @Override
   public Collection<? extends CssMediaFeatureDescriptor> findMediaFeatureDescriptors(@NotNull String name,
                                                                                      @Nullable PsiElement context) {
-    if (context instanceof CssMediaFeature) {
-      CssMediaFeature mediaFeature = (CssMediaFeature)context;
+    if (context instanceof CssMediaFeature mediaFeature) {
       PsiElement identifier = mediaFeature.getNameIdentifier();
       if (identifier == null) return Collections.emptyList();
       boolean isNotTheOnly = identifier.getNextSibling() != null || identifier.getPrevSibling() != null;

@@ -175,8 +175,7 @@ public class PbJavaGotoDeclarationHandler implements GotoDeclarationHandler {
               }
               else {
                 for (PbStatement statement : oneof.getStatements()) {
-                  if (statement instanceof PbField) {
-                    PbField oneofField = (PbField)statement;
+                  if (statement instanceof PbField oneofField) {
                     if (matcher.matchesOneofEnumValue(oneofField)) {
                       results.add(oneofField);
                     }

@@ -121,11 +121,10 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
   }
 
   private static boolean isFileAccepted(@NotNull final StrutsModel model, @NotNull final PsiFile file) {
-    if (!(file instanceof XmlFile)) {
+    if (!(file instanceof XmlFile xmlFile)) {
       return false;
     }
 
-    final XmlFile xmlFile = (XmlFile) file;
     final Set<XmlFile> files = model.getConfigFiles();
     return files.contains(xmlFile);
   }

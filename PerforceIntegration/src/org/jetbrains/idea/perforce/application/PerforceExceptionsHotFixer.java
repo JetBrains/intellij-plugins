@@ -127,8 +127,7 @@ public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
           }
           catch (ProcessCanceledException e) {
             for (Object child : childData) {
-              if (child instanceof VirtualFile) {
-                final VirtualFile vf = (VirtualFile)child;
+              if (child instanceof VirtualFile vf) {
                 failed.add(createErrorData(vf, PerforceBundle.message("hotfix.op.canceled")));
               }
             }
@@ -171,8 +170,7 @@ public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
 
       for (Object child : childData) {
-        if (child instanceof VirtualFile) {
-          final VirtualFile vf = (VirtualFile)child;
+        if (child instanceof VirtualFile vf) {
           if (indicator != null) {
             indicator.checkCanceled();
           }

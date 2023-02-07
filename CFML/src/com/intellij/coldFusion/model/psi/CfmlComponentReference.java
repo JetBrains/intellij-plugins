@@ -352,8 +352,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       }
     }
     containingFile = containingFile == null ? null : containingFile.getOriginalFile();
-    if (containingFile instanceof CfmlFile) {
-      CfmlFile cfmlContainingFile = (CfmlFile)containingFile;
+    if (containingFile instanceof CfmlFile cfmlContainingFile) {
       if (directoryName.isEmpty()) {
         PsiDirectory directory = cfmlContainingFile.getParent();
         if (directory != null) {
@@ -381,8 +380,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
 
       @Override
       public Object fun(final Object object) {
-        if (object instanceof VirtualFile) {
-          VirtualFile element = (VirtualFile)object;
+        if (object instanceof VirtualFile element) {
           String elementNameWithoutExtension = element.getNameWithoutExtension();
           String name = forceQualify ?
                         finalDirectoryName + (finalDirectoryName.isEmpty() ? "" : ".") + elementNameWithoutExtension :

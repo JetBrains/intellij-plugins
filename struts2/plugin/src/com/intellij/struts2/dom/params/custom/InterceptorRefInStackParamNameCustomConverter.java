@@ -52,13 +52,12 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
   @Override
   public PsiReference @NotNull [] getCustomReferences(final XmlAttributeValue nameAttributeValue,
                                                       final DomElement paramsElement) {
-    if (!(paramsElement instanceof InterceptorRef)) {
+    if (!(paramsElement instanceof InterceptorRef interceptorRef)) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    InterceptorRef interceptorRef = (InterceptorRef) paramsElement;
     final InterceptorOrStackBase value = interceptorRef.getName().getValue();
-    if (!(value instanceof InterceptorStack)) {
+    if (!(value instanceof InterceptorStack stack)) {
       return PsiReference.EMPTY_ARRAY;
     }
 
@@ -67,7 +66,6 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
     final int idx = hasDot ? text.indexOf('.') : text.length();
     final String refName = text.substring(0, idx);
 
-    final InterceptorStack stack = (InterceptorStack) value;
     final InterceptorRef resolvedInterceptorRef =
         ContainerUtil.find(stack.getInterceptorRefs(), ref -> Comparing.strEqual(refName, ref.getName().getStringValue()));
 

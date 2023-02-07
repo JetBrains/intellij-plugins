@@ -109,8 +109,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
       PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<>() {
         @Override
         public boolean execute(@NotNull final PsiElement element) {
-          if (element instanceof DartCallExpression) {
-            DartCallExpression expression = (DartCallExpression)element;
+          if (element instanceof DartCallExpression expression) {
             if (TestUtil.isTest(expression) || TestUtil.isGroup(expression)) {
               if (nodes.get(nodes.size() - 1).equals(getTestLabel(expression))) {
                 boolean matches = true;

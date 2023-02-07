@@ -32,8 +32,7 @@ public class GrCucumberStepDeclarationSearcher extends PomDeclarationSearcher {
         final PsiElement pparent = parent.getParent();  //(~literal)
         if (pparent != null) {
           final PsiElement ppparent = pparent.getParent(); //When(~literal)
-          if (ppparent instanceof GrMethodCall && GrCucumberUtil.isStepDefinition(ppparent)) {
-            final GrMethodCall methodCall = (GrMethodCall)ppparent;
+          if (ppparent instanceof GrMethodCall methodCall && GrCucumberUtil.isStepDefinition(ppparent)) {
             consumer.consume(GrStepDefinition.getStepDefinition(methodCall));
           }
         }

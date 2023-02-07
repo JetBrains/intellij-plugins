@@ -19,8 +19,7 @@ public class PostCssAddAmpersandToSelectorQuickFix implements LocalQuickFix {
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement startElement = descriptor.getStartElement();
-    if (startElement instanceof CssSelector) {
-      CssSelector selector = (CssSelector)startElement;
+    if (startElement instanceof CssSelector selector) {
       if (selector.getSimpleSelectors().length == 0) return;
       selector.addBefore(PostCssElementGenerator.createAmpersandSelector(project), selector.getSimpleSelectors()[0]);
     }

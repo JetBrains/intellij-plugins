@@ -33,9 +33,8 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   @Override
   public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
     final PsiFile file = psiElement.getContainingFile();
-    if (file instanceof GherkinFile) {
+    if (file instanceof GherkinFile gherkinFile) {
       final List<GherkinStep> steps = new ArrayList<>();
-      final GherkinFile gherkinFile = (GherkinFile)file;
       final GherkinFeature[] features = gherkinFile.getFeatures();
       for (GherkinFeature feature : features) {
         final GherkinStepsHolder[] stepHolders = feature.getScenarios();

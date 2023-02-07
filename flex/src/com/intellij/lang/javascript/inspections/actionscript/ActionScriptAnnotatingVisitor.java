@@ -409,9 +409,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       }
     }
 
-    if (parent instanceof JSClass && !node.isConstructor()) {
+    if (parent instanceof JSClass clazz && !node.isConstructor()) {
       final JSAttributeList attributeList = node.getAttributeList();
-      final JSClass clazz = (JSClass)parent;
 
       if (attributeList == null ||
           !attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) &&
@@ -751,8 +750,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
 
-    if (parent instanceof JSNamedElement) {
-      JSNamedElement namedElement = (JSNamedElement)parent;
+    if (parent instanceof JSNamedElement namedElement) {
       final ASTNode nameIdentifier = namedElement.findNameIdentifier();
 
       if (nameIdentifier != null && nameIdentifier.getPsi() == node) {
@@ -1227,8 +1225,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     PsiElement element =
       PsiTreeUtil.getParentOfType(node, JSExecutionScope.class, JSClass.class, JSObjectLiteralExpression.class);
 
-    if (element instanceof JSFunction) {
-      final JSFunction function = (JSFunction)element;
+    if (element instanceof JSFunction function) {
 
       final JSAttributeList attributeList = function.getAttributeList();
       if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.STATIC)) {

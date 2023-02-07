@@ -31,8 +31,7 @@ public class AngularModuleIndex extends AngularIndexBase {
       final JSExpression[] arguments = call.getArguments();
       if (arguments.length > 1 && arguments[0] instanceof JSLiteralExpression
           && ((JSLiteralExpression)arguments[0]).isQuotedLiteral()
-          && arguments[1] instanceof JSArrayLiteralExpression) {
-        final JSArrayLiteralExpression array = (JSArrayLiteralExpression)arguments[1];
+          && arguments[1] instanceof JSArrayLiteralExpression array) {
         final JSExpression[] children = array.getExpressions();
         final Set<String> dependencies = new HashSet<>();
         for (JSExpression child : children) {

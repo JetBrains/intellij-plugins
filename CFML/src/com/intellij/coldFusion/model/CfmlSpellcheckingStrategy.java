@@ -63,8 +63,7 @@ public class CfmlSpellcheckingStrategy extends SpellcheckingStrategy {
     }
     else if (element instanceof CfmlReferenceExpression) {
       final PsiElement parent = element.getParent();
-      if (parent instanceof CfmlAssignmentExpression) {
-        CfmlAssignmentExpression assignment = (CfmlAssignmentExpression)parent;
+      if (parent instanceof CfmlAssignmentExpression assignment) {
         CfmlVariable var = assignment.getAssignedVariable();
         if (var != null && assignment.getAssignedVariableElement() == element) {
           return TEXT_TOKENIZER;

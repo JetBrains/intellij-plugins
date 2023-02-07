@@ -66,13 +66,11 @@ public class ExportPackageParser extends BasePackageParser {
         return getPackageReferences(headerValuePart);
       }
     }
-    else if (parent instanceof Attribute) {
-      Attribute attribute = (Attribute)parent;
+    else if (parent instanceof Attribute attribute) {
       if (Constants.USES_DIRECTIVE.equals(attribute.getName())) {
         List<PsiReference> references = new SmartList<>();
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TOKEN_FILTER)) {
-          if (astNode instanceof ManifestToken) {
-            ManifestToken manifestToken = (ManifestToken)astNode;
+          if (astNode instanceof ManifestToken manifestToken) {
             ContainerUtil.addAll(references, getPackageReferences(manifestToken));
           }
         }

@@ -38,8 +38,7 @@ public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManage
   public boolean isInCategory(@Nullable Object nodeElement, @Nullable Object item,
                               @NotNull DiagramCategory category,
                               @Nullable DiagramBuilder builder) {
-    if (!(item instanceof PsiElement)) return false;
-    PsiElement element = (PsiElement)item;
+    if (!(item instanceof PsiElement element)) return false;
 
     if (JSUtils.getMemberContainingClass(element) == null) return false;
 

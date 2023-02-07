@@ -50,11 +50,10 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
     final XmlAttributeValue methodAttribute = (XmlAttributeValue) psiElement;
 
     final PsiElement parent = methodAttribute.getParent().getParent();
-    if (!(parent instanceof XmlTag)) {
+    if (!(parent instanceof XmlTag tag)) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    final XmlTag tag = (XmlTag) parent;
     final XmlAttribute action = tag.getAttribute("action");
     if (action == null) {
       return PsiReference.EMPTY_ARRAY;

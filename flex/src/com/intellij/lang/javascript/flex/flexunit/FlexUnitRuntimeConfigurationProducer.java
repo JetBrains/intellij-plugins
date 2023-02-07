@@ -128,8 +128,7 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
 
       forClass(clazz, params);
     }
-    else if (element instanceof JSFunction) {
-      final JSFunction method = (JSFunction)element;
+    else if (element instanceof JSFunction method) {
       final String methodName = method.getName();
       final JSClass clazz = (JSClass)element.getParent();
 

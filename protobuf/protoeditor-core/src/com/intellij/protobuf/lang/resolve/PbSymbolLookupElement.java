@@ -100,10 +100,9 @@ public class PbSymbolLookupElement extends LookupElement {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof PbSymbolLookupElement)) {
+    if (!(other instanceof PbSymbolLookupElement otherSymbol)) {
       return false;
     }
-    PbSymbolLookupElement otherSymbol = (PbSymbolLookupElement) other;
     return Objects.equals(name, otherSymbol.name) && Objects.equals(icon, otherSymbol.icon);
   }
 
@@ -136,8 +135,7 @@ public class PbSymbolLookupElement extends LookupElement {
   }
 
   private String getTypeTextForField(PbField field) {
-    if (field instanceof PbMapField) {
-      PbMapField mapField = (PbMapField) field;
+    if (field instanceof PbMapField mapField) {
       PbTypeName keyType = mapField.getKeyType();
       PbTypeName valueType = mapField.getValueType();
       if (keyType != null && valueType != null) {
