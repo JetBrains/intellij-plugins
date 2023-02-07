@@ -9,6 +9,8 @@ import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,18 +50,20 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @Override
-  protected void tearDown() throws Exception {
-    super.tearDown();
+  protected boolean runInDispatchThread() {
+    return false;
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    WriteAction.runAndWait(() -> FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable()));
   }
 
   private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) {
-    myFixture.configureByFile(BASE_PATH + fileName);
-    PsiElement originalElement = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
-    return provider.getDocumentationElementForLookupItem(getPsiManager(), originalElement.getText(), originalElement);
+    WriteAction.runAndWait(() -> myFixture.configureByFile(BASE_PATH + fileName));
+    return ReadAction.compute(() -> {
+      PsiElement originalElement = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
+      return provider.getDocumentationElementForLookupItem(getPsiManager(), originalElement.getText(), originalElement);
+    });
   }
 
   public void testJSDocs6() {
@@ -316,9 +320,8 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     final String[] files = {fullName + ".mxml"};
 
     VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
-    swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
-    FlexTestUtils.setupCustomSdk(getModule(), swc, null, asdoc);
+    WriteAction.runAndWait(() -> FlexTestUtils.setupCustomSdk(getModule(), JarFileSystem.getInstance().getJarRootForLocalFile(swc), null, asdoc));
 
     doTest(files, getTestName(false), false, Check.Url);
   }
@@ -407,11 +410,12 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   private void testWithLibrary(String swc, String sources, String docs, Runnable test) {
-    FlexTestUtils.addLibrary(getModule(), "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs);
+    WriteAction.runAndWait(() -> FlexTestUtils.addLibrary(getModule(), "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs));
     try {
       test.run();
-    } finally {
-      FlexTestUtils.removeLibrary(getModule(), "TestLib");
+    }
+    finally {
+      WriteAction.runAndWait(() -> FlexTestUtils.removeLibrary(getModule(), "TestLib"));
     }
   }
 
@@ -419,7 +423,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testGenericType() {
     setUpJdk();
     final String testName = getTestName(false);
-    FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName);
+    WriteAction.runAndWait(() -> FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName));
     doTest(new String[]{testName}, "as", testName);
   }
 
