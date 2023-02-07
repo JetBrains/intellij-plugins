@@ -1,7 +1,6 @@
 package org.jetbrains.idea.perforce.perforce.login;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
@@ -116,8 +115,7 @@ public final class PerforceLoginManager implements LoginSupport {
   }
 
   public boolean check(final P4Connection connection, boolean forceCheck) throws VcsConnectionProblem {
-    final Application application = ApplicationManager.getApplication();
-    assert !application.isDispatchThread() || application.isUnitTestMode();
+    ApplicationManager.getApplication().assertIsNonDispatchThread();
 
     if (!loginPingAllowed()) return false;
 
@@ -136,8 +134,7 @@ public final class PerforceLoginManager implements LoginSupport {
   }
 
   public boolean checkAndRepair(final P4Connection connection) {
-    final Application application = ApplicationManager.getApplication();
-    assert application.isDispatchThread() || application.isUnitTestMode();
+    ApplicationManager.getApplication().assertIsDispatchThread();
 
     if (!loginPingAllowed()) {
       return true;
