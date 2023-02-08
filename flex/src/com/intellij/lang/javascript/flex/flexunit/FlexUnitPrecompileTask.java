@@ -19,7 +19,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -56,11 +55,6 @@ public final class FlexUnitPrecompileTask implements CompileTask {
   public static String getPathToFlexUnitTempDirectory(final Project project) {
     final BuildManager buildManager = BuildManager.getInstance();
     final File projectSystemDir = buildManager.getProjectSystemDirectory(project);
-    if (projectSystemDir == null) {
-      Logger.getInstance(FlexUnitPrecompileTask.class.getName()).error(project);
-      return "";
-    }
-
     return FileUtil.toSystemIndependentName(projectSystemDir.getPath()) + "/tmp";
   }
 
