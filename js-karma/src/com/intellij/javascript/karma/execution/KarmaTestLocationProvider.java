@@ -1,3 +1,4 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Location;
@@ -18,11 +19,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 public class KarmaTestLocationProvider implements SMTestLocator {
@@ -35,23 +36,13 @@ public class KarmaTestLocationProvider implements SMTestLocator {
   @NotNull
   @Override
   public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-    final Location location;
-    if (PROTOCOL_ID__CONFIG_FILE.equals(protocol)) {
-      location = getConfigLocation(project, path);
-    }
-    else if (PROTOCOL_ID__TEST_SUITE.equals(protocol)) {
-      location = getTestLocation(project, path, true);
-    }
-    else if (PROTOCOL_ID__TEST.equals(protocol)) {
-      location = getTestLocation(project, path, false);
-    }
-    else {
-      location = null;
-    }
-    if (location != null) {
-      return Collections.singletonList(location);
-    }
-    return Collections.emptyList();
+    final Location<?> location = switch (protocol) {
+      case PROTOCOL_ID__CONFIG_FILE -> getConfigLocation(project, path);
+      case PROTOCOL_ID__TEST_SUITE -> getTestLocation(project, path, true);
+      case PROTOCOL_ID__TEST -> getTestLocation(project, path, false);
+      default -> null;
+    };
+    return ContainerUtil.createMaybeSingletonList(location);
   }
 
   @Nullable

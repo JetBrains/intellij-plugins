@@ -219,7 +219,6 @@ public final class DartServerCompletionContributor extends CompletionContributor
                                           int startOffsetInHostFile,
                                           @NotNull DartAnalysisServerService.CompletionInfo2 completionInfo2,
                                           @NotNull Set<CompletionSuggestion> addedCompletions) {
-    CompletionResultSet updatedResultSet = resultSet;
     List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
 
     // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
@@ -236,15 +235,15 @@ public final class DartServerCompletionContributor extends CompletionContributor
         insertHandler = new SuggestionDetailsInsertHandler2(project, file, startOffsetInHostFile, suggestion, libraryUriToImport);
       }
 
-      updatedResultSet.addElement(createLookupElementAskingExtensions(project, suggestion, libraryUriToDisplay, insertHandler));
+      resultSet.addElement(createLookupElementAskingExtensions(project, suggestion, libraryUriToDisplay, insertHandler));
     }
 
     // As the user types additional characters, restart the completion only if we don't already have the complete set of completions.
     if (completionInfo2.myIsIncomplete) {
-      updatedResultSet.restartCompletionOnAnyPrefixChange();
+      resultSet.restartCompletionOnAnyPrefixChange();
 
       String shortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CODE_COMPLETION);
-      updatedResultSet.addLookupAdvertisement(DartBundle.message("press.completion.shortcut.again.for.more.results", shortcut));
+      resultSet.addLookupAdvertisement(DartBundle.message("press.completion.shortcut.again.for.more.results", shortcut));
     }
   }
 
@@ -650,54 +649,22 @@ public final class DartServerCompletionContributor extends CompletionContributor
 
   private static Icon getBaseImage(Element element) {
     final String elementKind = element.getKind();
-    if (elementKind.equals(ElementKind.CLASS) || elementKind.equals(ElementKind.CLASS_TYPE_ALIAS)) {
-      if (element.isAbstract()) {
-        return AllIcons.Nodes.AbstractClass;
-      }
-      return AllIcons.Nodes.Class;
-    }
-    else if (elementKind.equals(ElementKind.ENUM)) {
-      return AllIcons.Nodes.Enum;
-    }
-    else if (elementKind.equals(ElementKind.MIXIN)) {
-      return AllIcons.Nodes.AbstractClass;
-    }
-    else if (elementKind.equals(ElementKind.ENUM_CONSTANT) || elementKind.equals(ElementKind.FIELD)) {
-      return AllIcons.Nodes.Field;
-    }
-    else if (elementKind.equals(ElementKind.COMPILATION_UNIT)) {
-      return PlatformIcons.FILE_ICON;
-    }
-    else if (elementKind.equals(ElementKind.CONSTRUCTOR)) {
-      return AllIcons.Nodes.ClassInitializer;
-    }
-    else if (elementKind.equals(ElementKind.GETTER)) {
-      return element.isTopLevelOrStatic() ? AllIcons.Nodes.PropertyReadStatic : AllIcons.Nodes.PropertyRead;
-    }
-    else if (elementKind.equals(ElementKind.SETTER)) {
-      return element.isTopLevelOrStatic() ? AllIcons.Nodes.PropertyWriteStatic : AllIcons.Nodes.PropertyWrite;
-    }
-    else if (elementKind.equals(ElementKind.METHOD)) {
-      if (element.isAbstract()) {
-        return AllIcons.Nodes.AbstractMethod;
-      }
-      return AllIcons.Nodes.Method;
-    }
-    else if (elementKind.equals(ElementKind.FUNCTION)) {
-      return AllIcons.Nodes.Lambda;
-    }
-    else if (elementKind.equals(ElementKind.FUNCTION_TYPE_ALIAS)) {
-      return AllIcons.Nodes.Annotationtype;
-    }
-    else if (elementKind.equals(ElementKind.TOP_LEVEL_VARIABLE)) {
-      return AllIcons.Nodes.Variable;
-    }
-    else if (elementKind.equals(ElementKind.EXTENSION)) {
-      return AllIcons.Nodes.Include;
-    }
-    else {
-      return null;
-    }
+    return switch (elementKind) {
+      case ElementKind.CLASS, ElementKind.CLASS_TYPE_ALIAS -> element.isAbstract() ? AllIcons.Nodes.AbstractClass : AllIcons.Nodes.Class;
+      case ElementKind.ENUM -> AllIcons.Nodes.Enum;
+      case ElementKind.MIXIN -> AllIcons.Nodes.AbstractClass;
+      case ElementKind.ENUM_CONSTANT, ElementKind.FIELD -> AllIcons.Nodes.Field;
+      case ElementKind.COMPILATION_UNIT -> PlatformIcons.FILE_ICON;
+      case ElementKind.CONSTRUCTOR -> AllIcons.Nodes.ClassInitializer;
+      case ElementKind.GETTER -> element.isTopLevelOrStatic() ? AllIcons.Nodes.PropertyReadStatic : AllIcons.Nodes.PropertyRead;
+      case ElementKind.SETTER -> element.isTopLevelOrStatic() ? AllIcons.Nodes.PropertyWriteStatic : AllIcons.Nodes.PropertyWrite;
+      case ElementKind.METHOD -> element.isAbstract() ? AllIcons.Nodes.AbstractMethod : AllIcons.Nodes.Method;
+      case ElementKind.FUNCTION -> AllIcons.Nodes.Lambda;
+      case ElementKind.FUNCTION_TYPE_ALIAS -> AllIcons.Nodes.Annotationtype;
+      case ElementKind.TOP_LEVEL_VARIABLE -> AllIcons.Nodes.Variable;
+      case ElementKind.EXTENSION -> AllIcons.Nodes.Include;
+      default -> null;
+    };
   }
 
   private static abstract class SuggestionDetailsInsertHandlerBase implements InsertHandler<LookupElement> {
