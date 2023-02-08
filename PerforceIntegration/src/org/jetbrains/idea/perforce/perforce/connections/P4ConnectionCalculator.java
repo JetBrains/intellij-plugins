@@ -42,7 +42,7 @@ public class P4ConnectionCalculator {
       new PerforcePhysicalConnectionParameters(settings.getPathToExec(), settings.getPathToIgnore(), myProject, settings.getServerTimeout(), settings.getCharsetName());
 
     final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
-                                                  ? Arrays.asList(vcsManager.getRootsUnderVcs(vcs))
+                                                  ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
                                                   : vcsManager.getDetailedVcsMappings(vcs);
 
     final String p4ConfigFileName =
