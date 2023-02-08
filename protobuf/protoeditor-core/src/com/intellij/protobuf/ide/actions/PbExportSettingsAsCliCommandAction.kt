@@ -36,11 +36,15 @@ class PbExportSettingsAsCliCommandAction : AnActionButton(
         .joinToString(prefix = argumentWithWhiteSpaces, separator = argumentWithWhiteSpaces, transform = ParametersListUtil::escape)
     }
 
-    fun retrieveUnescapedImportPaths(project: Project): Sequence<String> {
+    private fun retrieveImportUrls(project: Project): Sequence<String> {
       return PbProjectSettings.getInstance(project)
         .importPathEntries
         .asSequence()
         .mapNotNull(PbProjectSettings.ImportPathEntry::getLocation)
+    }
+
+    private fun retrieveUnescapedImportPaths(project: Project): Sequence<String> {
+      return retrieveImportUrls(project)
         .map(URLUtil::extractPath)
         .map(FileUtil::toSystemDependentName)
     }

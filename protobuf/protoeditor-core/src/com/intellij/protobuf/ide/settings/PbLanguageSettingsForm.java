@@ -254,7 +254,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
       new FileChooserDescriptor(
         false, // chooseFiles
         true, // chooseFolders
-        false, // chooseJars
+        true, // chooseJars
         false, // chooseJarsAsFiles
         true, // chooseJarContents
         false) // chooseMultiple

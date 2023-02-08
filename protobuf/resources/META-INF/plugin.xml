@@ -138,8 +138,6 @@
     <stubIndex implementation="com.intellij.protobuf.lang.stub.index.ShortNameIndex"/>
 
     <!-- Settings -->
-    <postStartupActivity implementation="com.intellij.protobuf.ide.settings.BundledProtoResourcesMigrationPostStartupActivity"
-                         id="PbSettingsMigrationActivity"/>
     <projectConfigurable instance="com.intellij.protobuf.ide.settings.PbLanguageSettingsConfigurable" groupId="language">
       <configurable instance="com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable"/>
     </projectConfigurable>
