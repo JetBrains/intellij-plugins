@@ -75,6 +75,9 @@
     <action id="Perforce.Toolbar.ShowMoreActions" class="org.jetbrains.idea.perforce.actions.PerforceQuickActionsToolbarPopup">
       <add-to-group group-id="SegmentedVcsActionsBarGroup" anchor="last"/>
     </action>
+    <action id="Perforce.Toolbar.PerforceToolbarWidgetAction" class="org.jetbrains.idea.perforce.actions.PerforceToolbarWidgetAction">
+      <add-to-group group-id="MainToolbarLeft"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
