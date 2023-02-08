@@ -169,7 +169,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
                                            ClassBackedElementDescriptor _parentDescriptor,
                                            AnnotationBackedDescriptorImpl originalDescriptor, JSNamedElement originatingElement) {
     if (originalDescriptor.myOriginatingElementType != OriginatingElementType.VarOrFunction) {
-      Logger.getInstance(AnnotationBackedDescriptorImpl.class.getName()).error(originalDescriptor.myOriginatingElementType);
+      Logger.getInstance(AnnotationBackedDescriptorImpl.class.getName()).error("Unexpected element type: " + originalDescriptor.myOriginatingElementType);
     }
     myOriginatingElementType = originalDescriptor.myOriginatingElementType;
 

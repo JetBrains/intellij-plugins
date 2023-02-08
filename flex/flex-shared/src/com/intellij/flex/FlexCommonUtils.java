@@ -620,7 +620,7 @@ public final class FlexCommonUtils {
       case Library:
         return ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
       default:
-        LOG.error(dependencyBCOutputType);
+        LOG.error("Unexpected output type: " + dependencyBCOutputType);
         return false;
     }
   }
