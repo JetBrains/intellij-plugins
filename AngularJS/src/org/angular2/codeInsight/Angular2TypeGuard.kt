@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
 import com.intellij.lang.javascript.psi.types.guard.operations.JSNarrowTypeByTypePredicateOperation
 import com.intellij.lang.javascript.psi.types.guard.operations.JSTypeOperation
 import com.intellij.psi.PsiElement
-import com.intellij.util.containers.ContainerUtil
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 
@@ -52,7 +51,7 @@ class Angular2TypeGuard(element: PsiElement) : TypeScriptTypeGuard(element) {
     val evaluateContext = JSEvaluateContext(expression.containingFile)
 
     val baseType = JSCodeBasedTypeFactory.getPsiBasedType(guard, evaluateContext)
-    val argumentTypes = ContainerUtil.immutableList(
+    val argumentTypes = listOf(
       JSAnyType.get(typeSource),
       JSResolveUtil.getExpressionJSType(expression)
     )

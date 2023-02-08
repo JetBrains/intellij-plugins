@@ -77,7 +77,7 @@ public abstract class StrutsConstantContributorBase implements StrutsConstantCon
   }
 
   protected static StrutsConstant addClassWithShortcutProperty(@NonNls final String propertyName,
-                                                               @NonNls final String baseClass,
+                                                               @NonNls @NotNull String baseClass,
                                                                final Pair<String, String>... shortcuts) {
     @NonNls final Map<String, String> shortCutToPsiClassMap = new HashMap<>();
     for (final Pair<String, String> shortcut : shortcuts) {

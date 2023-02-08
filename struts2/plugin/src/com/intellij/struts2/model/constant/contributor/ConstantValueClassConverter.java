@@ -45,7 +45,7 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
   private final Map<String, String> shortCutToPsiClassMap;
   private final boolean hasShortCuts;
 
-  ConstantValueClassConverter(@NonNls final String baseClass,
+  ConstantValueClassConverter(@NonNls @NotNull String baseClass,
                               final Map<String, String> shortCutToPsiClassMap) {
     this.shortCutToPsiClassMap = shortCutToPsiClassMap;
     this.hasShortCuts = !shortCutToPsiClassMap.isEmpty();
