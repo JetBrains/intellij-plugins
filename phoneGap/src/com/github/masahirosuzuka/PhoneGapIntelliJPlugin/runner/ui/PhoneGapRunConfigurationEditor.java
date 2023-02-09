@@ -59,13 +59,13 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private TextFieldWithHistoryWithBrowseButton myWorkDirField;
   private ComboBoxWithMoreOption myPlatformField;
   private ComboBox<String> myCommand;
-  private final Project myProject;
+  private final @NotNull Project myProject;
   private JBCheckBox myHasTarget;
   private PhoneGapTargetsPanel myTarget;
   private JBTextField myExtraArgsTextField;
   private EnvironmentVariablesTextFieldWithBrowseButton myEnvComponent;
 
-  public PhoneGapRunConfigurationEditor(Project project) {
+  public PhoneGapRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
   }
 
