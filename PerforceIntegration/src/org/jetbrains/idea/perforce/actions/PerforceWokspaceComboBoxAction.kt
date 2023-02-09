@@ -49,7 +49,7 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     }
     else {
       with (presentation) {
-        text = getText(connection, perforceSettings.ENABLED)
+        setText(getText(connection, perforceSettings.ENABLED), false)
         description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description")
       }
     }
