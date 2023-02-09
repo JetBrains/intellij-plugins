@@ -3,6 +3,7 @@ package com.intellij.deno.service
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.deno.DenoBundle
 import com.intellij.deno.DenoSettings
 import com.intellij.execution.ExecutionException
@@ -30,9 +31,6 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBu
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.LspServerManager
-import com.intellij.lsp.data.LspCompletionItem
-import com.intellij.lsp.data.LspDiagnostic
-import com.intellij.lsp.data.LspSeverity.*
 import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
@@ -43,6 +41,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.eclipse.lsp4j.CompletionItem
+import org.eclipse.lsp4j.Diagnostic
+import org.eclipse.lsp4j.DiagnosticSeverity
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.Future
@@ -199,13 +200,16 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun dispose() {}
 }
 
-class DenoCompletionEntry(internal val item: LspCompletionItem) : CompletionEntry {
+class DenoCompletionEntry(internal val item: CompletionItem) : CompletionEntry {
   override val name: String get() = item.label
 
-  override fun intoLookupElement() = item.intoLookupElement().withInsertHandler(JSInsertHandler.DEFAULT)
+  override fun intoLookupElement() =
+    LookupElementBuilder.create(item.label)
+      .withTypeText(item.detail, true)
+      .withInsertHandler(JSInsertHandler.DEFAULT)
 }
 
-class DenoAnnotationError(val diagnostic: LspDiagnostic, private val path: String?) : JSAnnotationError {
+class DenoAnnotationError(val diagnostic: Diagnostic, private val path: String?) : JSAnnotationError {
   override fun getLine() = diagnostic.range.start.line
 
   override fun getColumn() = diagnostic.range.start.character
@@ -215,8 +219,8 @@ class DenoAnnotationError(val diagnostic: LspDiagnostic, private val path: Strin
   override fun getDescription(): String = DenoBundle.message("deno.inspection.message.prefix", diagnostic.message)
 
   override fun getCategory() = when (diagnostic.severity) {
-    Error -> ERROR_CATEGORY
-    Warning -> WARNING_CATEGORY
-    Hint, Information -> INFO_CATEGORY
+    DiagnosticSeverity.Error -> ERROR_CATEGORY
+    DiagnosticSeverity.Warning -> WARNING_CATEGORY
+    else -> INFO_CATEGORY
   }
 }
