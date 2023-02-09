@@ -1,6 +1,6 @@
 package org.jetbrains.idea.perforce.actions
 
-import com.intellij.ide.ui.ToolbarSettings.Companion.getInstance
+import com.intellij.ide.ui.ToolbarSettings
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
@@ -8,6 +8,8 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.text.HtmlBuilder
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.JBUI
 import org.jetbrains.idea.perforce.PerforceBundle
@@ -24,18 +26,9 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
   override fun update(e: AnActionEvent) {
     val project = e.project
     val presentation = e.presentation
-    if (project == null || project.isDisposed || !project.isOpen) {
+    if (project == null || !ToolbarSettings.getInstance().isAvailable ||
+        !PerforceManager.getInstance(project).isActive) {
       presentation.isEnabledAndVisible = false
-      return
-    }
-
-    if (!getInstance().isAvailable) {
-      presentation.isEnabledAndVisible = false
-      return
-    }
-
-    if (!PerforceManager.getInstance(project).isActive) {
-      e.presentation.isEnabledAndVisible = false
       return
     }
 
@@ -45,17 +38,17 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       return
     }
 
+    presentation.isEnabledAndVisible = true
     val perforceSettings = PerforceSettings.getSettings(e.project)
     val connection = perforceSettings.getConnectionForFile(file)
     if (connection == null) {
       with (presentation) {
-        isEnabledAndVisible = true
         text = PerforceBundle.message("connection.no.valid.connections.short")
         description = PerforceBundle.message("connection.no.valid.connections")
       }
-    } else {
+    }
+    else {
       with (presentation) {
-        isEnabledAndVisible = true
         text = getText(connection, perforceSettings.ENABLED)
         description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description")
       }
@@ -69,7 +62,10 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       return workspace
 
     val color = ColorUtil.toHex(JBUI.CurrentTheme.Focus.errorColor(true))
-    return "<html>$workspace: <font color=$color>${PerforceBundle.message("connection.offlineStatus")}</font></html>"
+    val builder = HtmlBuilder().append(
+      HtmlChunk.html().addText("$workspace: ").child(HtmlChunk.font(color)
+                                                       .addText(PerforceBundle.message("connection.status.offline"))))
+    return builder.toString()
   }
 
   override fun createComboBoxButton(presentation: Presentation): ComboBoxButton {
@@ -81,6 +77,7 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    return
+    // Right now we need only to show current workspace and status.
+    // Not sure if multiple workspaces inside a project is a common thing
   }
 }

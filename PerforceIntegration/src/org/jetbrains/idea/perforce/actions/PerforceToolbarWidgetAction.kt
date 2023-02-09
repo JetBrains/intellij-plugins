@@ -1,6 +1,5 @@
 package org.jetbrains.idea.perforce.actions
 
-import com.intellij.ide.ui.laf.darcula.ui.ToolbarComboWidgetUI
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
@@ -20,9 +19,11 @@ import javax.swing.JComponent
 import javax.swing.ListCellRenderer
 
 class PerforceToolbarWidgetAction : ExpandableComboAction() {
-  private val isConnectedKey = Key.create<Boolean>("p4-isConnected")
-  private val workspaceKey = Key.create<@NlsSafe String>("p4-workspace")
-  private val statusKey = Key.create<Boolean>("p4-status")
+  companion object {
+    private val isConnectedKey = Key.create<Boolean>("P4_IS_CONNECTED")
+    private val workspaceKey = Key.create<@NlsSafe String>("P4_WORKSPACE")
+    private val statusKey = Key.create<Boolean>("P4_STATUS")
+  }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -31,15 +32,9 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
 
     val actionGroup = ActionManager.getInstance().getAction("VcsToolbarActions") as? ActionGroup ?: return null
     val popupFactory = JBPopupFactory.getInstance()
-    val widget = event.dataContext.getData(PlatformCoreDataKeys.CONTEXT_COMPONENT) as? ToolbarComboWidget?
+    val widget = event.getData(PlatformCoreDataKeys.CONTEXT_COMPONENT) as? ToolbarComboWidget?
     val step = createStep(popupFactory, widget, actionGroup, event.dataContext)
     return createPopup(project, popupFactory, widget, step)
-  }
-
-  override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
-    val comp = super.createCustomComponent(presentation, place)
-    (comp.ui as? ToolbarComboWidgetUI)?.setMaxWidth(Int.MAX_VALUE)
-    return comp
   }
 
   private fun createStep(popupFactory: JBPopupFactory, widget: ToolbarComboWidget?, actionGroup: ActionGroup, context: DataContext): ListPopupStep<Any> {
@@ -51,44 +46,44 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     val renderer = Function<ListCellRenderer<Any>, ListCellRenderer<out Any>> { base -> base }
     val popup = popupFactory.createListPopup(project, step, renderer)
     PopupImplUtil.setPopupToggleButton(popup, widget)
-    popup.setRequestFocus(false)
     return popup
   }
 
   override fun update(e: AnActionEvent) {
     val project = e.project
 
-    if (project == null) {
+    if (project == null || !PerforceManager.getInstance(project).isActive) {
       e.presentation.isEnabledAndVisible = false
       return
     }
 
-    if (!PerforceManager.getInstance(project).isActive) {
-      e.presentation.isEnabledAndVisible = false
-      return
-    }
+    val file = e.getData(PlatformCoreDataKeys.VIRTUAL_FILE)
+               ?: e.getData(PlatformCoreDataKeys.VIRTUAL_FILE_ARRAY)?.firstOrNull()
+               ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY)
 
-    val file = e.getData(PlatformCoreDataKeys.VIRTUAL_FILE) ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY)
     if (file == null) {
       e.presentation.isEnabledAndVisible = false
       return
     }
 
+    e.presentation.isEnabledAndVisible = true
     val perforceSettings = PerforceSettings.getSettings(project)
     val connection = perforceSettings.getConnectionForFile(file)
     if (connection == null) {
       with(e.presentation) {
         putClientProperty(isConnectedKey, false)
-        isEnabledAndVisible = true
+        putClientProperty(workspaceKey, "")
+        putClientProperty(statusKey, false)
         description = PerforceBundle.message("connection.no.valid.connections")
       }
-    } else {
+    }
+    else {
       val isOnline = perforceSettings.ENABLED
       with(e.presentation) {
         putClientProperty(isConnectedKey, true)
         putClientProperty(workspaceKey, connection.connectionKey.client)
         putClientProperty(statusKey, isOnline)
-        isEnabledAndVisible = true
+
         description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description")
       }
     }
@@ -100,12 +95,11 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     val isConnected = presentation.getClientProperty(isConnectedKey) ?: false
     val workspace = presentation.getClientProperty(workspaceKey)
     val isOnline = presentation.getClientProperty(statusKey) ?: false
-    val text = if (!isConnected)
-      PerforceBundle.message("connection.no.valid.connections.short")
-    else if (isOnline)
-      "$workspace"
-    else
-      "$workspace: ${PerforceBundle.message("connection.offlineStatus")}"
+    val text = when {
+      !isConnected -> PerforceBundle.message("connection.no.valid.connections.short")
+      isOnline -> "$workspace"
+      else -> "$workspace: ${PerforceBundle.message("connection.status.offline")}"
+    }
 
     widget.isExpandable = isConnected
     widget.text = text
