@@ -11,7 +11,7 @@ import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 val TARGET_INDEX_KEY = StubIndexKey.createIndexKey<String, MakefileTarget>("makefile.target.index")
 
-object MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
+class MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
   fun allTargets(project: Project): List<MakefileTarget> {
     val allTargets = mutableSetOf<String>()
     processAllKeys(project, CommonProcessors.CollectProcessor(allTargets))
