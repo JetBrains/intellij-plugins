@@ -2,8 +2,9 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
-import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspection;
+import com.intellij.codeInsight.daemon.impl.HighlightVisitorBasedInspection;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.GlobalInspectionTool;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -180,8 +181,9 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
    * Checks that the Platform doesn't add useless "Inspection 'Annotator' options" quick fix.
    */
   public void testNoQuickFixes() {
-    myFixture.enableInspections(new DefaultHighlightVisitorBasedInspection.AnnotatorBasedInspection());
-    assertNotNull(HighlightDisplayKey.find("Annotator"));
+    GlobalInspectionTool tool = new HighlightVisitorBasedInspection().setRunAnnotators(true);
+    myFixture.enableInspections(tool);
+    assertNotNull(HighlightDisplayKey.find(tool.getShortName()));
     myFixture.configureByText("foo.dart", "main(){ print(<caret>); }");
     assertEmpty(myFixture.getAvailableIntentions());
   }
