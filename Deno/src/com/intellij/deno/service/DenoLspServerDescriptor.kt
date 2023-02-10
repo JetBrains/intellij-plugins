@@ -8,6 +8,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.lang.javascript.TypeScriptFileType
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerSupportProvider
+import com.intellij.lsp.api.LspCompletionSupport
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -65,7 +66,7 @@ class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : Lsp
     jsonObject.add(name, JsonPrimitive(FileUtil.toSystemDependentName("$basePath/$text")))
   }
 
-  override fun useGenericCompletion() = false
+  override fun getLspCompletionSupport(): LspCompletionSupport? = null
 
   override fun useGenericHighlighting() = false
 
