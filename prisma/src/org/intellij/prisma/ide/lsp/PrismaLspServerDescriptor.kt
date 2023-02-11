@@ -10,8 +10,7 @@ import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.lsp.LanguageServerConnector
 import com.intellij.lsp.LspServer
-import com.intellij.lsp.LspServerDescriptor
-import com.intellij.lsp.api.LspCompletionSupport
+import com.intellij.lsp.api.LspServerDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.prisma.PrismaBundle
@@ -49,7 +48,6 @@ class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServer
     return PrismaServerConnector(lspServer, OSProcessHandler(startingCommandLine))
   }
 
-  override fun getLspCompletionSupport(): LspCompletionSupport? = null
-
-  override fun useGenericNavigation(): Boolean = false
+  override val lspCompletionSupport = null
+  override val useGenericNavigation = false
 }
