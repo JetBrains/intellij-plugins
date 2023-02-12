@@ -16,7 +16,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class DenoLspSupportProvider : LspServerSupportProvider {
-  override fun getServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? = getDenoDescriptor(project)
+  override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerSupportProvider.LspServerStarter) {
+    getDenoDescriptor(project)?.let { serverStarter.ensureServerStarted(it) }
+  }
 }
 
 fun getDenoDescriptor(project: Project): DenoLspServerDescriptor? {
