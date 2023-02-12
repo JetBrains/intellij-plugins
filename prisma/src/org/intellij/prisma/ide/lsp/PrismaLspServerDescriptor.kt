@@ -2,14 +2,11 @@ package org.intellij.prisma.ide.lsp
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.lsp.LanguageServerConnector
-import com.intellij.lsp.LspServer
 import com.intellij.lsp.api.LspServerDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -40,12 +37,6 @@ class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServer
       NodeCommandLineConfigurator.find(interpreter)
         .configure(this, NodeCommandLineConfigurator.defaultOptions(project))
     }
-  }
-
-  override fun createServerConnector(lspServer: LspServer): LanguageServerConnector {
-    val startingCommandLine = createCommandLine()
-    LOG.debug("$this: starting server process using: $startingCommandLine")
-    return PrismaServerConnector(lspServer, OSProcessHandler(startingCommandLine))
   }
 
   override val lspCompletionSupport = null
