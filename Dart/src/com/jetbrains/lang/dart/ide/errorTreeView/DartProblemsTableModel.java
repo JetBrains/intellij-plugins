@@ -65,7 +65,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows improving performance greatly.
   // Having it in hand we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
-  private final List<DartProblem> myItems = new ArrayList<>();
+  private final List<DartProblem> myItems;
 
   private RowSorter.SortKey mySortKey = new RowSorter.SortKey(1, SortOrder.ASCENDING);
 
@@ -81,22 +81,29 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
   DartProblemsTableModel(@NotNull Project project, @NotNull DartProblemsPresentationHelper presentationHelper) {
+    this(project, presentationHelper, new ArrayList<>());
+  }
+
+  private DartProblemsTableModel(@NotNull Project project,
+                                 @NotNull DartProblemsPresentationHelper presentationHelper,
+                                 @NotNull ArrayList<DartProblem> items) {
+    super(ColumnInfo.EMPTY_ARRAY, items, 0, SortOrder.ASCENDING);
     myProject = project;
     myPresentationHelper = presentationHelper;
+    myItems = items;
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
-    setItems(myItems);
     setSortable(true);
   }
 
   private @NotNull ColumnInfo<DartProblem, DartProblem> createDescriptionColumn() {
     return new ColumnInfo<>(DartBundle.message("dart.problems.view.column.name.description")) {
       @Override
-      public @Nullable Comparator<DartProblem> getComparator() {
+      public @NotNull Comparator<DartProblem> getComparator() {
         return myDescriptionComparator;
       }
 
       @Override
-      public @Nullable TableCellRenderer getRenderer(@NotNull DartProblem problem) {
+      public @NotNull TableCellRenderer getRenderer(@NotNull DartProblem problem) {
         return MESSAGE_RENDERER;
       }
 
@@ -110,12 +117,12 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private @NotNull ColumnInfo<DartProblem, String> createLocationColumn() {
     return new ColumnInfo<>(DartBundle.message("dart.problems.view.column.name.location")) {
       @Override
-      public @Nullable Comparator<DartProblem> getComparator() {
+      public @NotNull Comparator<DartProblem> getComparator() {
         return myLocationComparator;
       }
 
       @Override
-      public @Nullable TableCellRenderer getRenderer(DartProblem problem) {
+      public @NotNull TableCellRenderer getRenderer(DartProblem problem) {
         return LOCATION_RENDERER;
       }
 
@@ -416,7 +423,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       return 0;
     }
 
-    private int getSeverityIndex(@NotNull DartProblem problem) {
+    private static int getSeverityIndex(@NotNull DartProblem problem) {
       String severity = problem.getSeverity();
       if (AnalysisErrorSeverity.ERROR.equals(severity)) {
         return 0;
