@@ -99,17 +99,17 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
     final @InspectionMessage String message;
     final LocalQuickFix[] fixes;
 
-    Problem(ProblemHighlightType type, @InspectionMessage String message, LocalQuickFix... fixes) {
+    Problem(ProblemHighlightType type, @InspectionMessage String message, @NotNull LocalQuickFix @NotNull ... fixes) {
       this.type = type;
       this.message = message;
       this.fixes = fixes.length > 0 ? fixes : null;
     }
 
-    static Problem weak(@InspectionMessage String message, LocalQuickFix... fixes) {
+    static Problem weak(@InspectionMessage String message, @NotNull LocalQuickFix @NotNull ... fixes) {
       return new Problem(ProblemHighlightType.WEAK_WARNING, message, fixes);
     }
 
-    static Problem error(@InspectionMessage String message, LocalQuickFix... fixes) {
+    static Problem error(@InspectionMessage String message, @NotNull LocalQuickFix @NotNull ... fixes) {
       return new Problem(ProblemHighlightType.GENERIC_ERROR_OR_WARNING, message, fixes);
     }
   }
