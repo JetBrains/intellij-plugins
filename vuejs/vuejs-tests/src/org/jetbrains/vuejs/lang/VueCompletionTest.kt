@@ -2026,13 +2026,13 @@ export default {
       myFixture.completeBasic()
       myFixture.type("\n")
 
-      myFixture.moveToOffsetBySignature("key) in i<caret>")
-      myFixture.completeBasic()
-      myFixture.type("tems\n")
-
       myFixture.moveToOffsetBySignature(" {{ <caret> }}")
       myFixture.completeBasic()
       myFixture.type("getTe\n")
+
+      myFixture.moveToOffsetBySignature("key) in i<caret>")
+      myFixture.completeBasic()
+      myFixture.type("tems\n")
     }
 
     myFixture.configureFromTempProjectFile("HelloWorld.vue")
