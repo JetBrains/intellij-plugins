@@ -4,6 +4,7 @@ import com.goide.GoLanguage
 import com.goide.go.GoGotoSuperHandler
 import com.goide.go.GoGotoUtil
 import com.goide.go.GoInheritorsSearch
+import com.goide.psi.GoMethodDeclaration
 import com.goide.psi.GoTypeSpec
 import com.goide.stubs.index.GoTypesIndex
 import com.intellij.openapi.components.service
@@ -25,7 +26,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
                                                   converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     return when (pbElement) {
       is PbMessageDefinition -> findMessageImplementations(pbElement)
-      is PbServiceDefinition -> combineServiceWithInheritors(pbElement, converters)
+      is PbServiceDefinition -> findServiceImplementations(pbElement, converters)
       is PbServiceMethod -> findMethodImplementations(pbElement, converters)
       else -> emptySequence()
     }
@@ -35,8 +36,9 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
                                               converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
     return when {
       psiElement.language != GoLanguage.INSTANCE -> emptySequence()
-      psiElement is GoTypeSpec && hasSuperInterfaceWithGrpcSpecificMethod(psiElement) -> findServiceDeclaration(psiElement, converters)
-      psiElement is GoTypeSpec -> findMessageDeclaration(psiElement)
+      psiElement is GoMethodDeclaration -> findMethodDeclarations(psiElement, converters)
+      psiElement is GoTypeSpec && hasSuperInterfaceWithGrpcSpecificMethod(psiElement) -> findServiceDeclarations(psiElement, converters)
+      psiElement is GoTypeSpec -> findMessageDeclarations(psiElement)
       else -> emptySequence()
     }
   }
@@ -73,8 +75,8 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
       }
   }
 
-  private fun combineServiceWithInheritors(serviceDefinition: PbServiceDefinition,
-                                           converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
+  private fun findServiceImplementations(serviceDefinition: PbServiceDefinition,
+                                         converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     val generatedServices = findGeneratedServices(serviceDefinition, converters)
     return generatedServices
       .flatMap { typeSpec ->
@@ -147,7 +149,17 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
       }
   }
 
-  private fun findMessageDeclaration(typeSpec: GoTypeSpec): Sequence<PbElement> {
+  private fun findMethodDeclarations(methodDeclaration: GoMethodDeclaration,
+                                     converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
+    val methodName = methodDeclaration.name ?: return emptySequence()
+    val resolvedTypeSpec = methodDeclaration.resolveTypeSpec() ?: return emptySequence()
+    return findServiceDeclarations(resolvedTypeSpec, converters)
+      .mapNotNull { service -> service.body }
+      .flatMap { body -> body.serviceMethodList }
+      .filter { method -> method.name == methodName }
+  }
+
+  private fun findMessageDeclarations(typeSpec: GoTypeSpec): Sequence<PbElement> {
     val specName = typeSpec.name ?: return emptySequence()
     val goPackage = typeSpec.containingFile.packageName
     val pbMessageFqn = if (goPackage.isNullOrBlank()) specName else "$goPackage.$specName"
@@ -155,7 +167,8 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     return sequenceOfNotNull(messageDefinition)
   }
 
-  private fun findServiceDeclaration(typeSpec: GoTypeSpec, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
+  private fun findServiceDeclarations(typeSpec: GoTypeSpec,
+                                      converters: Collection<PbGeneratedCodeConverter>): Sequence<PbServiceDefinition> {
     val substitutedSpec = findSuperInterface(typeSpec) ?: return emptySequence()
     val specFqn = assembleProtoFqnBySpec(substitutedSpec) ?: return emptySequence()
     val protoFileAccessor = substitutedSpec.project.service<ProtoFileAccessor>()
