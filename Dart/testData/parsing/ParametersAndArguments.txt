@@ -1386,6 +1386,20 @@ Dart File
                 ID
                   PsiElement(IDENTIFIER)('foo2')
         PsiElement(,)(',')
+        DEFAULT_FORMAL_NAMED_PARAMETER
+          NORMAL_FORMAL_PARAMETER
+            FIELD_FORMAL_PARAMETER
+              PsiElement(required)('required')
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('String')
+              PsiElement(this)('this')
+              PsiElement(.)('.')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('title')
         PsiComment(SINGLE_LINE_COMMENT)('// required @Deprecated('foo') int? foo3,')
         PsiElement(})('}')
       PsiElement())(')')

@@ -2001,7 +2001,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* finalConstVarVoidOrType? ('this' | 'super') '.' referenceExpression typeParameters? formalParameterList?
+  // metadata* 'required'? finalConstVarVoidOrType? ('this' | 'super') '.' referenceExpression typeParameters? formalParameterList?
   public static boolean fieldFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter")) return false;
     boolean r;
@@ -2009,10 +2009,11 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = fieldFormalParameter_0(b, l + 1);
     r = r && fieldFormalParameter_1(b, l + 1);
     r = r && fieldFormalParameter_2(b, l + 1);
+    r = r && fieldFormalParameter_3(b, l + 1);
     r = r && consumeToken(b, DOT);
     r = r && referenceExpression(b, l + 1);
-    r = r && fieldFormalParameter_5(b, l + 1);
     r = r && fieldFormalParameter_6(b, l + 1);
+    r = r && fieldFormalParameter_7(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2028,16 +2029,23 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // finalConstVarVoidOrType?
+  // 'required'?
   private static boolean fieldFormalParameter_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter_1")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
+  // finalConstVarVoidOrType?
+  private static boolean fieldFormalParameter_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldFormalParameter_2")) return false;
     finalConstVarVoidOrType(b, l + 1);
     return true;
   }
 
   // 'this' | 'super'
-  private static boolean fieldFormalParameter_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldFormalParameter_2")) return false;
+  private static boolean fieldFormalParameter_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldFormalParameter_3")) return false;
     boolean r;
     r = consumeToken(b, THIS);
     if (!r) r = consumeToken(b, SUPER);
@@ -2045,15 +2053,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // typeParameters?
-  private static boolean fieldFormalParameter_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldFormalParameter_5")) return false;
+  private static boolean fieldFormalParameter_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldFormalParameter_6")) return false;
     typeParameters(b, l + 1);
     return true;
   }
 
   // formalParameterList?
-  private static boolean fieldFormalParameter_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldFormalParameter_6")) return false;
+  private static boolean fieldFormalParameter_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fieldFormalParameter_7")) return false;
     formalParameterList(b, l + 1);
     return true;
   }
