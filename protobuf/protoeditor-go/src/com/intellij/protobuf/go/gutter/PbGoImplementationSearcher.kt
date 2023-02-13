@@ -4,10 +4,13 @@ import com.goide.GoLanguage
 import com.goide.psi.GoTypeSpec
 import com.goide.stubs.index.GoTypesIndex
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.intellij.protobuf.ide.gutter.PbCodeImplementationSearcher
 import com.intellij.protobuf.ide.gutter.PbGeneratedCodeConverter
 import com.intellij.protobuf.lang.psi.PbElement
+import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbMessageDefinition
+import com.intellij.protobuf.lang.psi.PbServiceDefinition
 import com.intellij.protobuf.lang.stub.ProtoFileAccessor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -18,6 +21,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
                                                   converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     return when (pbElement) {
       is PbMessageDefinition -> findMessageImplementations(pbElement)
+      is PbServiceDefinition -> findServiceImplementations(pbElement, converters)
       else -> emptySequence()
     }
   }
@@ -31,20 +35,37 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     }
   }
 
+  private fun findServiceImplementations(serviceDefinition: PbServiceDefinition, converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
+    val serviceName = serviceDefinition.name ?: return emptySequence()
+    val goPackage = suggestGoPackage(serviceDefinition.pbFile)
+    return converters.asSequence()
+      .map { converter -> converter.protoToCodeEntityName(serviceName) }
+      .flatMap { maybeExistingCodeEntity ->
+        findTypeSpecsWithName(maybeExistingCodeEntity, goPackage, serviceDefinition.project)
+      }
+  }
+
   private fun findMessageImplementations(messageDefinition: PbMessageDefinition): Sequence<PsiElement> {
-    val explicitGoPackage = messageDefinition.pbFile.options
+    val goPackage = suggestGoPackage(messageDefinition.pbFile)
+    val messageName = messageDefinition.name ?: return emptySequence()
+    return findTypeSpecsWithName(messageName, goPackage, messageDefinition.project)
+  }
+
+  private fun suggestGoPackage(pbFile: PbFile): String {
+    val explicitGoPackage = pbFile.options
       .firstOrNull { it.optionName.text == PB_GO_PACKAGE_OPTION }
       ?.stringValue
       ?.asString
       ?.substringAfterLast("/")
-    val goPackage = explicitGoPackage ?: messageDefinition.pbFile.packageQualifiedName.toString()
-    val messageName = messageDefinition.name ?: return emptySequence()
+    return explicitGoPackage ?: pbFile.packageQualifiedName.toString()
+  }
 
-    return GoTypesIndex.find(messageName, messageDefinition.project, GlobalSearchScope.projectScope(messageDefinition.project), null)
+  private fun findTypeSpecsWithName(name: String, goPackageName: String, project: Project): Sequence<PsiElement> {
+    return GoTypesIndex.find(name, project, GlobalSearchScope.projectScope(project), null)
       .asSequence()
       .filter {
         val packageName = it.containingFile.packageName
-        packageName.isNullOrBlank() || packageName == goPackage
+        packageName.isNullOrBlank() || packageName == goPackageName
       }
   }
 
