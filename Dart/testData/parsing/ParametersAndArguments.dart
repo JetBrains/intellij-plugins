@@ -75,5 +75,6 @@ void foo({
   required Bar required,
   @Deprecated('foo') int? foo1,
   @Deprecated('foo') required int? foo2,
+  required String this.title
   // required @Deprecated('foo') int? foo3,
 }) {}
