@@ -13,6 +13,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
+import com.intellij.psi.util.PsiEditorUtil
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
@@ -49,15 +51,25 @@ class VueAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
         val type = JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element).firstOrNull()
           ?.let { JSResolveUtil.getElementJSType(it) }
           ?.substitute()
+
+        @Suppress("DEPRECATION")
+        val editor = PsiEditorUtil.findEditor(scope)
+          ?.let { InjectedLanguageUtil.getInjectedEditorForInjectedFile(it, place.containingFile) }
+        val shouldPossiblyMoveCursor = editor != null && editor.caretModel.offset == place.textRange.endOffset
         if (type != null && JSTypeUtils.hasFunctionType(type, false, element)) {
           componentEdit.addClassicPropertyReference(METHODS_PROP, info.effectiveName)
         }
         else if (type == null || JSTypeUtils.isInstanceType(type)) {
           componentEdit.addClassicPropertyFunction(METHODS_PROP, info.effectiveName, "return ${info.effectiveName}")
-          // TODO figure out a way to move caret after inserted `()`
           JSChangeUtil.createExpressionPsiWithContext("${info.effectiveName}()", place, JSCallExpression::class.java)
             ?.let { place.replace(it) }
-        } else {
+          PsiDocumentManager.getInstance(place.project).commitAllDocuments()
+
+          if (editor != null && shouldPossiblyMoveCursor) {
+            editor.caretModel.moveCaretRelatively(2, 0, false, false, false)
+          }
+        }
+        else {
           componentEdit.addClassicPropertyFunction(COMPUTED_PROP, info.effectiveName, "return ${info.effectiveName}")
         }
       }

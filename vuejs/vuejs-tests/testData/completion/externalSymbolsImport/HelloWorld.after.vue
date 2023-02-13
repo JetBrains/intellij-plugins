@@ -2,7 +2,7 @@
   <div class="hello">
     <h1 :style="Color.red">{{ msg }}</h1>
     <ul>
-      <li v-for="(item, key) in items" :key="key">{{ item }}</li>
+      <li v-for="(item, key) in items<caret>" :key="key">{{ item }}</li>
     </ul>
     {{ getText() }}
   </div>
