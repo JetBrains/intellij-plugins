@@ -30,9 +30,15 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
                                               converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
     return when {
       psiElement.language != GoLanguage.INSTANCE -> emptySequence()
+      psiElement is GoTypeSpec && hasGrpcSpecificUnimplementedMethod(psiElement) -> findServiceDeclaration(psiElement, converters)
       psiElement is GoTypeSpec -> findMessageDeclaration(psiElement)
       else -> emptySequence()
     }
+  }
+
+  private fun hasGrpcSpecificUnimplementedMethod(typeSpec: GoTypeSpec): Boolean {
+    val specName = typeSpec.name ?: return false
+    return typeSpec.allMethods.any { it.name == "mustEmbedUnimplemented$specName" }
   }
 
   private fun findServiceImplementations(serviceDefinition: PbServiceDefinition, converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
@@ -75,6 +81,20 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     val pbMessageFqn = if (goPackage.isNullOrBlank()) specName else "$goPackage.$specName"
     val messageDefinition = typeSpec.project.service<ProtoFileAccessor>().findMessageByFqn(pbMessageFqn)
     return sequenceOfNotNull(messageDefinition)
+  }
+
+  private fun findServiceDeclaration(typeSpec: GoTypeSpec, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
+    val specFqn = assembleProtoFqnBySpec(typeSpec) ?: return emptySequence()
+    val protoFileAccessor = typeSpec.project.service<ProtoFileAccessor>()
+    return converters.asSequence()
+      .map { converter -> converter.codeEntityNameToProtoName(specFqn) }
+      .mapNotNull { maybeServiceFqn -> protoFileAccessor.findServiceByFqn(maybeServiceFqn) }
+  }
+
+  private fun assembleProtoFqnBySpec(typeSpec: GoTypeSpec): String? {
+    val specName = typeSpec.name ?: return null
+    val goPackage = typeSpec.containingFile.packageName
+    return if (goPackage.isNullOrBlank()) specName else "$goPackage.$specName"
   }
 }
 
