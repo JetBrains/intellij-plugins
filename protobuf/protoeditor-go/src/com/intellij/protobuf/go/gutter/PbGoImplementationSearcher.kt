@@ -11,13 +11,11 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.protobuf.ide.gutter.PbCodeImplementationSearcher
 import com.intellij.protobuf.ide.gutter.PbGeneratedCodeConverter
-import com.intellij.protobuf.lang.psi.PbElement
-import com.intellij.protobuf.lang.psi.PbFile
-import com.intellij.protobuf.lang.psi.PbMessageDefinition
-import com.intellij.protobuf.lang.psi.PbServiceDefinition
+import com.intellij.protobuf.lang.psi.*
 import com.intellij.protobuf.lang.stub.ProtoFileAccessor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.parentOfType
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 import com.intellij.util.containers.sequenceOfNotNull
@@ -27,7 +25,8 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
                                                   converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     return when (pbElement) {
       is PbMessageDefinition -> findMessageImplementations(pbElement)
-      is PbServiceDefinition -> findServiceImplementations(pbElement, converters)
+      is PbServiceDefinition -> combineServiceWithInheritors(pbElement, converters)
+      is PbServiceMethod -> findMethodImplementations(pbElement, converters)
       else -> emptySequence()
     }
   }
@@ -47,10 +46,15 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
   }
 
   private fun findSuperInterface(typeSpec: GoTypeSpec): GoTypeSpec? {
-    return findFirst(
-      { psiElement -> psiElement is GoTypeSpec && hasGrpcSpecificUnimplementedMethod(psiElement) },
-      { processor -> GoGotoSuperHandler.SUPER_SEARCH.processQuery(GoGotoUtil.param(typeSpec), processor) }
-    ) as? GoTypeSpec
+    return if (hasGrpcSpecificUnimplementedMethod(typeSpec)) {
+      typeSpec
+    }
+    else {
+      findFirst(
+        { psiElement -> psiElement is GoTypeSpec && hasGrpcSpecificUnimplementedMethod(psiElement) },
+        { processor -> GoGotoSuperHandler.SUPER_SEARCH.processQuery(GoGotoUtil.param(typeSpec), processor) }
+      ) as? GoTypeSpec
+    }
   }
 
   private fun hasGrpcSpecificUnimplementedMethod(typeSpec: GoTypeSpec): Boolean {
@@ -58,8 +62,8 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     return typeSpec.allMethods.any { it.name == "mustEmbedUnimplemented$specName" }
   }
 
-  private fun findServiceImplementations(serviceDefinition: PbServiceDefinition,
-                                         converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
+  private fun findGeneratedServices(serviceDefinition: PbServiceDefinition,
+                                    converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     val serviceName = serviceDefinition.name ?: return emptySequence()
     val goPackage = suggestGoPackage(serviceDefinition.pbFile)
     return converters.asSequence()
@@ -67,12 +71,34 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
       .flatMap { maybeExistingCodeEntity ->
         findTypeSpecsWithName(maybeExistingCodeEntity, goPackage, serviceDefinition.project)
       }
+  }
+
+  private fun combineServiceWithInheritors(serviceDefinition: PbServiceDefinition,
+                                           converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
+    val generatedServices = findGeneratedServices(serviceDefinition, converters)
+    return generatedServices
       .flatMap { typeSpec ->
         findAllCancellable { processor ->
           GoInheritorsSearch.INHERITORS_SEARCH.processQuery(GoGotoUtil.param(typeSpec), processor)
         }
       }
+      .plus(generatedServices)
   }
+
+  private fun findMethodImplementations(methodDefinition: PbServiceMethod,
+                                        converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
+    val serviceDefinition = methodDefinition.parentOfType<PbServiceDefinition>() ?: return emptySequence()
+    val methodName = methodDefinition.name ?: return emptySequence()
+    return findGeneratedServices(serviceDefinition, converters)
+      .filterIsInstance<GoTypeSpec>()
+      .flatMap { typeSpec -> typeSpec.allMethods.filter { method -> method.name == methodName } }.toList().asSequence()
+      .flatMap { method ->
+        findAllCancellable { processor ->
+          GoInheritorsSearch.METHOD_INHERITORS_SEARCH.processQuery(GoGotoUtil.param(method), processor)
+        }
+      }
+  }
+
 
   private fun findAllCancellable(filter: (PsiElement) -> Boolean = { true },
                                  search: (Processor<PsiElement>) -> Unit): Sequence<PsiElement> {
