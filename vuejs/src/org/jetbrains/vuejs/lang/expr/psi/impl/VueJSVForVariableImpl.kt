@@ -119,7 +119,7 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
   }
 
   private fun useTypeScriptKeyofType(collectionType: JSType): Boolean {
-    return (collectionType.isTypeScript || VueExprMetaLanguage.matches(collectionType.sourceElement?.language)) // hmm
+    return (collectionType.isTypeScript || VueExprMetaLanguage.matches(collectionType.sourceElement?.language))
            && collectionType is JSRecordType
   }
 }
