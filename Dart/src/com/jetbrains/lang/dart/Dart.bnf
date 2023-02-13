@@ -388,7 +388,7 @@ formalParameterList ::= '(' ')' |
                         '(' optionalFormalParameters ')'
 private normalFormalParameters ::= normalFormalParameter (',' normalFormalParameter)*
 
-fieldFormalParameter ::= metadata* finalConstVarVoidOrType? ('this' | 'super') '.' referenceExpression typeParameters? formalParameterList?
+fieldFormalParameter ::= metadata* 'required'? finalConstVarVoidOrType? ('this' | 'super') '.' referenceExpression typeParameters? formalParameterList?
 
 optionalFormalParameters ::= optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
 private optionalPositionalFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
