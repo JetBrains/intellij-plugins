@@ -122,6 +122,18 @@
       ],
       "astro-client-directives": [
         {
+          "name": "load",
+          "description": "Load and hydrate the component JavaScript immediately on page load.\n\n```astro\n<BuyButton client:load />\n```",
+          "doc-url": "https://docs.astro.build/en/reference/directives-reference/#clientload",
+          "description-sections": {
+            "Priority": "High",
+            "Useful for": "Immediately-visible UI elements that need to be interactive as soon as possible."
+          },
+          "attribute-value": {
+            "kind": "no-value"
+          }
+        },
+        {
           "name": "idle",
           "description": "Load and hydrate the component JavaScript once the page is done with its initial load and the `requestIdleCallback` event has fired. If you are in a browser that doesn't support [`requestIdleCallback`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback), then the document [`load`](https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event) event is used.\n\n```astro\n<ShowHideButton client:idle />\n```",
           "doc-url": "https://docs.astro.build/en/reference/directives-reference/#clientidle",

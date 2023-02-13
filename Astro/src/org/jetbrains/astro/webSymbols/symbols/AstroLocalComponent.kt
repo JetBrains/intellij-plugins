@@ -21,10 +21,12 @@ class AstroLocalComponent(override val name: String,
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> {
-    if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES)
-      return listOf(AstroComponentWildcardAttribute)
+    return if (namespace == NAMESPACE_HTML && kind == KIND_HTML_ATTRIBUTES) {
+      if (name?.contains(":") == true) emptyList()
+      else listOf(AstroComponentWildcardAttribute)
+    }
     else
-      return super.getSymbols(namespace, kind, name, params, scope)
+      super.getSymbols(namespace, kind, name, params, scope)
   }
 
   override val origin: WebSymbolOrigin
