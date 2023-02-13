@@ -9,7 +9,6 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.lang.psi.PbElement
-import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.parentOfType
@@ -106,7 +105,7 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
 
 interface PbCodeImplementationSearcher {
   fun findImplementationsForProtoElement(pbElement: PbElement,
-                                         converters: Collection<PbGeneratedCodeConverter>): Sequence<NavigatablePsiElement>
+                                         converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement>
 
   fun findDeclarationsForCodeElement(psiElement: PsiElement, converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement>
 }
