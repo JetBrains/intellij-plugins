@@ -10,5 +10,7 @@
     <gotoDeclarationHandler
         implementation="com.intellij.protobuf.go.PbGolangGotoDeclarationHandler"
         order="first"/>
+    <codeInsight.lineMarkerProvider language="go"
+                                    implementationClass="com.intellij.protobuf.go.gutter.PbGoLineMarkerProvider"/>
   </extensions>
 </idea-plugin>
