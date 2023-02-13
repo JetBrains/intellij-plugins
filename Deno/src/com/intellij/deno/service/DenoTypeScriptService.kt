@@ -30,7 +30,7 @@ import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageS
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lsp.LspServer
-import com.intellij.lsp.LspServerManager
+import com.intellij.lsp.api.LspServerManager
 import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
@@ -141,7 +141,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
   fun quickInfo(element: PsiElement): String? {
-    val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)?.firstOrNull()
+    val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java).firstOrNull()
                  ?: return null
     val raw = server.invokeSynchronously(HoverMethod.create(server, element)) ?: return null
     LOG.info("Quick info for $element : $raw")
