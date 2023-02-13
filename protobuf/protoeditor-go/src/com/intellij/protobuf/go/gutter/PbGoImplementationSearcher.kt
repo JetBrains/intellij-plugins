@@ -17,7 +17,7 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
   override fun findImplementationsForProtoElement(pbElement: PbElement,
                                                   converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     return when (pbElement) {
-      is PbMessageDefinition -> handleMessageImplementations(pbElement)
+      is PbMessageDefinition -> findMessageImplementations(pbElement)
       else -> emptySequence()
     }
   }
@@ -31,16 +31,16 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     }
   }
 
-  private fun handleMessageImplementations(pbElement: PbMessageDefinition): Sequence<PsiElement> {
-    val explicitGoPackage = pbElement.pbFile.options
+  private fun findMessageImplementations(messageDefinition: PbMessageDefinition): Sequence<PsiElement> {
+    val explicitGoPackage = messageDefinition.pbFile.options
       .firstOrNull { it.optionName.text == PB_GO_PACKAGE_OPTION }
       ?.stringValue
       ?.asString
       ?.substringAfterLast("/")
-    val goPackage = explicitGoPackage ?: pbElement.pbFile.packageQualifiedName.toString()
-    val messageName = pbElement.name ?: return emptySequence()
+    val goPackage = explicitGoPackage ?: messageDefinition.pbFile.packageQualifiedName.toString()
+    val messageName = messageDefinition.name ?: return emptySequence()
 
-    return GoTypesIndex.find(messageName, pbElement.project, GlobalSearchScope.projectScope(pbElement.project), null)
+    return GoTypesIndex.find(messageName, messageDefinition.project, GlobalSearchScope.projectScope(messageDefinition.project), null)
       .asSequence()
       .filter {
         val packageName = it.containingFile.packageName
