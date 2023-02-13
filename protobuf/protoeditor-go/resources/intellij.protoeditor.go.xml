@@ -5,6 +5,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- golang -> proto goto -->
+    <protobuf.codeImplementationSearcher implementation="com.intellij.protobuf.go.gutter.PbGoImplementationSearcher"/>
+
     <gotoDeclarationHandler
         implementation="com.intellij.protobuf.go.PbGolangGotoDeclarationHandler"
         order="first"/>
