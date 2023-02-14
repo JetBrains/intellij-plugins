@@ -6,6 +6,7 @@ import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbol
@@ -27,7 +28,7 @@ class Angular2TypeDeclarationProvider : TypeDeclarationProvider, SymbolTypeProvi
     else null
   }
 
-  override fun getSymbolTypes(symbol: Symbol): List<Symbol> {
+  override fun getSymbolTypes(project: Project, symbol: Symbol): List<Symbol> {
     if (symbol is WebSymbol) {
       symbol.properties[PROP_SYMBOL_DIRECTIVE]
         ?.asSafely<Angular2Component>()
