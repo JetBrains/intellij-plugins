@@ -32,6 +32,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
@@ -40,10 +42,12 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
+import com.intellij.util.indexing.FileBasedIndexEx
 import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
@@ -165,6 +169,14 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   val xmlFile = file as? XmlFile ?: return null
   val scriptTag = findScriptTag(xmlFile, false) ?: findScriptTag(xmlFile, true) ?: return null
   return detectLanguage(scriptTag)
+}
+
+fun <T> disableIndexUpToDateCheckIn(scope: PsiElement, computable: () -> T): T {
+  // Perform fake index search to ensure that file is re-indexed before entering no-index stage
+  StubIndex.getInstance().processElements(VueComponentsIndex.KEY, "foo",
+                                          scope.project, GlobalSearchScope.fileScope(scope.containingFile),
+                                          null, JSImplicitElementProvider::class.java) { false }
+  return FileBasedIndexEx.disableUpToDateCheckIn<T, Throwable> { computable() }
 }
 
 fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {

@@ -48,9 +48,9 @@ import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.hasSrcReference
-import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isStrictComponentDefiningCall
+import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 import kotlin.contracts.ExperimentalContracts
@@ -576,9 +576,10 @@ fun findModule(element: PsiElement?, setup: Boolean): JSExecutionScope? =
     ?.asSafely<XmlFile>()
     ?.let { findScriptTag(it, setup) }
     ?.let { tag ->
-      if (tag.hasSrcReference()) {
+      if (tag.hasSrcReference() && !setup) {
         tag.tryResolveSrcReference().asSafely<JSFile>()
-      } else {
+      }
+      else {
         PsiTreeUtil.getStubChildOfType(tag, JSEmbeddedContent::class.java)
       }
     }
