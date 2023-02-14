@@ -5,7 +5,11 @@
   <category>JavaScript Frameworks and Tools</category>
   <vendor>JetBrains</vendor>
   <description> <![CDATA[
-  Yeoman integration
+  <p>Adds support for <a href="https://yeoman.io/">Yeoman</a> generators to your IDE.</p>
+
+  <ul>
+    <li>Install generators and use them via the New Project wizard to streamline the development of web applications.</li>
+  </ul>
     ]]>
   </description>
   <depends>com.intellij.modules.lang</depends>
