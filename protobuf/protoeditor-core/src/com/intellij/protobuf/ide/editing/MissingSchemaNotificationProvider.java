@@ -15,10 +15,7 @@
  */
 package com.intellij.protobuf.ide.editing;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,8 +25,8 @@ import com.intellij.protobuf.ide.settings.PbTextLanguageSettings;
 import com.intellij.protobuf.ide.settings.PbTextLanguageSettingsConfigurable;
 import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.protobuf.lang.resolve.directive.SchemaDirective;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
@@ -69,29 +66,17 @@ public class MissingSchemaNotificationProvider implements EditorNotificationProv
   @Override
   public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project,
                                                                                                                  @NotNull VirtualFile file) {
-    return fileEditor -> createNotificationPanel(file, fileEditor, project);
-  }
+    if (ignoredFiles.contains(file)) {
+      return null;
+    }
 
-  @Nullable
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile,
-                                                         @NotNull FileEditor fileEditor,
-                                                         @NotNull Project project) {
-    if (ignoredFiles.contains(virtualFile)) {
-      return null;
-    }
-    if (!(fileEditor instanceof TextEditor textEditor)) {
-      return null;
-    }
-    Editor editor = textEditor.getEditor();
     PbTextLanguageSettings settings = PbTextLanguageSettings.getInstance(project);
     if (settings == null || !settings.isMissingSchemaWarningEnabled()) {
       return null;
     }
 
-    Document document = editor.getDocument();
-    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-    PsiFile file = documentManager.getPsiFile(document);
-    if (!(file instanceof PbTextFile textFile)) {
+    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+    if (!(psiFile instanceof PbTextFile textFile)) {
       return null;
     }
 
@@ -101,47 +86,42 @@ public class MissingSchemaNotificationProvider implements EditorNotificationProv
       // they're not correct. Defer to that and don't show the top notification bar.
       return null;
     }
-
-    return createPanelForTextFormatFile(textFile);
-  }
-
-  private EditorNotificationPanel createPanelForTextFormatFile(PbTextFile file) {
-    if (file.isBound()) {
+    if (textFile.isBound()) {
       // File has a schema association, so we don't create the notification.
       return null;
     }
 
+    return fileEditor -> createPanelForTextFormatFile(textFile);
+  }
+
+  public EditorNotificationPanel createPanelForTextFormatFile(PbTextFile file) {
     EditorNotificationPanel panel = new EditorNotificationPanel(EditorNotificationPanel.Status.Warning);
     panel.setText(PbIdeBundle.message("prototext.missing.schema.message"));
     HyperlinkListener closingListener =
-        (event) ->
-            EditorNotifications.getInstance(file.getProject())
-                .updateNotifications(file.getVirtualFile());
-    // TODO(volkman): also support a project-level configuration mechanism that will work for
-    // readonly files.
+      (event) -> EditorNotifications.getInstance(file.getProject()).updateNotifications(file.getVirtualFile());
     if (file.isWritable()) {
       panel
-          .createActionLabel(
-              PbIdeBundle.message("prototext.missing.schema.insert.annotation"),
-              InsertSchemaDirectiveAction.ACTION_ID)
-          .addHyperlinkListener(closingListener);
+        .createActionLabel(
+          PbIdeBundle.message("prototext.missing.schema.insert.annotation"),
+          InsertSchemaDirectiveAction.ACTION_ID)
+        .addHyperlinkListener(closingListener);
     }
     PbTextLanguageSettings settings = PbTextLanguageSettings.getInstance(file.getProject());
     if (settings != null) {
       panel
-          .createActionLabel(
-              PbIdeBundle.message("prototext.missing.schema.settings"),
-              () ->
-                  ShowSettingsUtil.getInstance()
-                      .showSettingsDialog(
-                          file.getProject(), PbTextLanguageSettingsConfigurable.class))
-          .addHyperlinkListener(closingListener);
+        .createActionLabel(
+          PbIdeBundle.message("prototext.missing.schema.settings"),
+          () ->
+            ShowSettingsUtil.getInstance()
+              .showSettingsDialog(
+                file.getProject(), PbTextLanguageSettingsConfigurable.class))
+        .addHyperlinkListener(closingListener);
     }
     panel
-        .createActionLabel(
-            PbIdeBundle.message("prototext.missing.schema.ignore"),
-            () -> ignoredFiles.add(file.getVirtualFile()))
-        .addHyperlinkListener(closingListener);
+      .createActionLabel(
+        PbIdeBundle.message("prototext.missing.schema.ignore"),
+        () -> ignoredFiles.add(file.getVirtualFile()))
+      .addHyperlinkListener(closingListener);
     return panel;
   }
 }
