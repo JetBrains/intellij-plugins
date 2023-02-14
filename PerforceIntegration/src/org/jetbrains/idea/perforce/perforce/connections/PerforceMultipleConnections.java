@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
 import com.intellij.openapi.diff.impl.patch.formove.FilePathComparator;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,7 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
     myP4ConfigValue = p4ConfigValue;
     myDefaultParameters = defaultParameters;
     myConfigsMap = configsMap;
-    
+
     myParametersMap = new TreeMap<>(FilePathComparator.getInstance());
     myParametersMap.putAll(parametersMap);
   }
@@ -51,7 +52,7 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
     }
 
     final Map.Entry<VirtualFile, P4ConnectionParameters> entry = myParametersMap.floorEntry(file);
-    if (entry == null) {
+    if (entry == null || !VfsUtilCore.isAncestor(entry.getKey(), file, false)) {
       return null;
     }
     synchronized (myLock) {
