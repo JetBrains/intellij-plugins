@@ -5,13 +5,17 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.openapi.application.WriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.indexing.FileBasedIndexEx
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemInsertHandler
@@ -20,6 +24,7 @@ import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.entities.Angular2Component
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2DirectiveSelector
+import org.angular2.index.Angular2IvyDirectiveIndex
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 
@@ -116,6 +121,15 @@ object Angular2CodeInsightUtils {
              ?.flatMap { (it as Angular2Component).ngContentSelectors }
              ?.flatMap { it.simpleSelectorsWithPsi }
            ?: emptySequence()
+  }
+
+
+  fun <T> disableIndexUpToDateCheckIn(scope: PsiElement, computable: () -> T): T {
+    // Perform fake index search to ensure that file is re-indexed before entering no-index stage
+    StubIndex.getInstance().processElements(Angular2IvyDirectiveIndex.KEY, "foo",
+                                            scope.project, GlobalSearchScope.fileScope(scope.containingFile),
+                                            null, TypeScriptClass::class.java) { false }
+    return FileBasedIndexEx.disableUpToDateCheckIn<T, Throwable> { computable() }
   }
 
   private fun getModules(declarations: List<Angular2Declaration>,

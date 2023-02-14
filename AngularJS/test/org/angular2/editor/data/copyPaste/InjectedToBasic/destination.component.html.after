@@ -1,0 +1,7 @@
+<div>
+    <cdk-cell></cdk-cell>
+    <div ngPlural></div>
+    {{ Colors.red }}
+    {{ Math.abs(12) }}
+    <div [title]="eval('12') | currency"></div>
+</div>

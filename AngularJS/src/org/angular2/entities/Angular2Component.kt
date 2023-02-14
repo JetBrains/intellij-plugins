@@ -19,11 +19,7 @@ interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
   override val imports: Set<Angular2Entity>
     get() = emptySet()
 
-  /**
-   * @see Angular2Module.declarationsInScope
-   */
-  // for self-reference
-  val declarationsInScope: Set<Angular2Declaration>
+  override val declarationsInScope: Set<Angular2Declaration>
     get() {
       val result = HashSet<Angular2Declaration>()
       result.add(this)

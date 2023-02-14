@@ -16,10 +16,7 @@ interface Angular2Module : Angular2Entity, Angular2ImportsOwner {
 
   val allExportedDeclarations: Set<Angular2Declaration>
 
-  /**
-   * @see Angular2Component.declarationsInScope
-   */
-  val declarationsInScope: Set<Angular2Declaration>
+  override val declarationsInScope: Set<Angular2Declaration>
     get() {
       val result = HashSet(declarations)
       forEachEntity(

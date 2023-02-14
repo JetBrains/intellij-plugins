@@ -12,11 +12,12 @@ import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.xml.XmlElement
 import org.angular2.entities.Angular2ComponentLocator
 
 class Angular2AddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
-    if (place !is JSReferenceExpression) return null
+    if (place !is JSReferenceExpression && place.context !is XmlElement) return null
     ApplicationManager.getApplication().assertReadAccessAllowed()
     return Angular2ComponentLocator.findComponentClass(place)?.containingFile
   }
@@ -28,7 +29,8 @@ class Angular2AddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place)
     runUndoTransparentWriteAction {
       PsiDocumentManager.getInstance(place.project).commitAllDocuments()
       val semicolon = JSCodeStyleSettings.getSemicolon(componentClass)
-      JSChangeUtil.createClassMemberPsiFromTextWithContext("protected readonly ${info.importedName} = ${info.importedName}$semicolon", componentClass, JSElement::class.java)?.let { member ->
+      JSChangeUtil.createClassMemberPsiFromTextWithContext("protected readonly ${info.importedName} = ${info.importedName}$semicolon",
+                                                           componentClass, JSElement::class.java)?.let { member ->
         val inserted = componentClass.addBefore(member, anchor)
         CodeStyleManager.getInstance(place.project).reformatNewlyAddedElement(componentClass.node, inserted.node)
       }

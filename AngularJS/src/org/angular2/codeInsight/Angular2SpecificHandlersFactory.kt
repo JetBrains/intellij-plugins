@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
@@ -72,4 +73,9 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
              ?.containingFile as? JSFile
            ?: super.getExportScope(element)
   }
+
+  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler {
+    return Angular2StubBasedScopeHandler
+  }
+
 }
