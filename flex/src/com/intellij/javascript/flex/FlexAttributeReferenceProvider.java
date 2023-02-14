@@ -214,7 +214,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    public LocalQuickFix[] getQuickFixes() {
+    public @NotNull LocalQuickFix @Nullable [] getQuickFixes() {
       final String fqn = myElement.getSimpleValue();
 
       if (fqn != null && LanguageNamesValidation.isIdentifier(JavaScriptSupportLoader.JAVASCRIPT.getLanguage(), StringUtil.getShortName(fqn))) {

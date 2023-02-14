@@ -40,8 +40,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
   }
 
   @Override
-  @NotNull
-  public List<? extends LocalQuickFix> registerFixes(final @NotNull FileReference reference) {
+  public @NotNull List<? extends @NotNull LocalQuickFix> registerFixes(final @NotNull FileReference reference) {
     final PsiElement element = reference.getElement();
     if (!(reference instanceof JSFlexFileReference) || !(element instanceof JSAttributeNameValuePair)) return Collections.emptyList();
 

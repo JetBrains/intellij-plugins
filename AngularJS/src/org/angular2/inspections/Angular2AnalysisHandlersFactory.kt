@@ -41,7 +41,7 @@ class Angular2AnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
       override fun addCreateFromUsageFixesForCall(methodExpression: JSReferenceExpression,
                                                   isNewExpression: Boolean,
                                                   resolveResults: Array<ResolveResult>,
-                                                  quickFixes: MutableList<LocalQuickFix>) {
+                                                  quickFixes: MutableList<in LocalQuickFix>) {
         if (methodExpression is Angular2PipeReferenceExpression) {
           // TODO Create pipe from usage
           return

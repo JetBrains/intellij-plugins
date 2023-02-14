@@ -68,7 +68,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
           assert FlexReferenceContributor.CLASS_REFERENCE.equals(fun.getName());
           refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {
             @Override
-            public LocalQuickFix @Nullable [] getQuickFixes() {
+            public @NotNull LocalQuickFix @Nullable [] getQuickFixes() {
               if (!FlexResolveHelper.isValidClassName(value, true)) {
                 return LocalQuickFix.EMPTY_ARRAY;
               }

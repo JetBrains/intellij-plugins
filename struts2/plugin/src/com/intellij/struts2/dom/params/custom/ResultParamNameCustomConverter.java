@@ -114,7 +114,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
     }
 
     @Override
-    public LocalQuickFix @Nullable [] getQuickFixes() {
+    public @NotNull LocalQuickFix @Nullable [] getQuickFixes() {
       List<LocalQuickFix> quickFixes = new SmartList<>();
       for (BeanPropertyPathReference[] reference : allReferences) {
         for (BeanPropertyPathReference pathReference : reference) {

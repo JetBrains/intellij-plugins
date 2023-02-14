@@ -47,6 +47,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.util.XmlTagUtil;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -490,7 +491,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     }
 
     @Override
-    public LocalQuickFix[] getQuickFixes() {
+    public @NotNull LocalQuickFix @Nullable [] getQuickFixes() {
       if (myQuickFixProvider != null) {
         return myQuickFixProvider.fun(this);
       }

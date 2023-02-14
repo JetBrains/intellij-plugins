@@ -120,7 +120,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   }
 
   @Override
-  public LocalQuickFix[] getQuickFixes() {
+  public @NotNull LocalQuickFix @Nullable [] getQuickFixes() {
     final String value = getValue();
     if (StringUtil.isEmpty(value)) {
       return LocalQuickFix.EMPTY_ARRAY;

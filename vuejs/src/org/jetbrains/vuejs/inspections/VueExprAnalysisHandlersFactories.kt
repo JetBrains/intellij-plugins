@@ -59,7 +59,7 @@ class VueJSAnalysisHandlersFactory : ES6AnalysisHandlersFactory() {
       override fun addCreateFromUsageFixesForCall(referenceExpression: JSReferenceExpression,
                                                   isNewExpression: Boolean,
                                                   resolveResults: Array<out ResolveResult>,
-                                                  quickFixes: MutableList<LocalQuickFix>) {
+                                                  quickFixes: MutableList<in LocalQuickFix>) {
         if (referenceExpression is VueJSFilterReferenceExpression) {
           // TODO Create filter from usage
           return
@@ -124,7 +124,7 @@ class VueTSAnalysisHandlersFactory : TypeScriptAnalysisHandlersFactory() {
       override fun addCreateFromUsageFixesForCall(referenceExpression: JSReferenceExpression,
                                                   isNewExpression: Boolean,
                                                   resolveResults: Array<out ResolveResult>,
-                                                  quickFixes: MutableList<LocalQuickFix>) {
+                                                  quickFixes: MutableList<in LocalQuickFix>) {
         if (referenceExpression is VueJSFilterReferenceExpression) {
           // TODO Create filter from usage
           return
