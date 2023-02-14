@@ -1,0 +1,14 @@
+import Component from './component';
+---
+<div>
+  <Component client:load />
+  <Component client:load=<warning descr="client:load does not accept any value">"incorrect"</warning> />
+  <Component client:idle />
+  <Component client:idle=<warning descr="client:idle does not accept any value">"incorrect"</warning> />
+  <Component client:visible />
+  <Component client:visible=<warning descr="client:visible does not accept any value">"incorrect"</warning> />
+  <Component <warning descr="client:media requires value">client:media</warning> />
+  <Component client:media="(max-width: 50em)" />
+  <Component <warning descr="client:only requires value">client:only</warning> />
+  <Component client:only="react" />
+</div>
