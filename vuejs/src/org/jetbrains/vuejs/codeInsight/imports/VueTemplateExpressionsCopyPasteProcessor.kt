@@ -38,10 +38,10 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueProperty
 import java.awt.datatransfer.DataFlavor
 
-class VueTemplateExprsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExprsCopyPasteProcessor.VueTemplateExprsImportsTransferableData>() {
+class VueTemplateExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplateExpressionsCopyPasteProcessor.VueTemplateExpressionsImportsTransferableData>() {
 
   override val dataFlavor: DataFlavor
-    get() = VUE_TEMPLATE_EXPRS_IMPORTS_FLAVOR
+    get() = VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
 
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
@@ -111,8 +111,8 @@ class VueTemplateExprsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplate
         result
       }
 
-  override fun createTransferableData(importedElements: ArrayList<ImportedElement>): VueTemplateExprsImportsTransferableData =
-    VueTemplateExprsImportsTransferableData(importedElements)
+  override fun createTransferableData(importedElements: ArrayList<ImportedElement>): VueTemplateExpressionsImportsTransferableData =
+    VueTemplateExpressionsImportsTransferableData(importedElements)
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? {
     return super.getExportScope(file, caret)
@@ -122,26 +122,25 @@ class VueTemplateExprsCopyPasteProcessor : ES6CopyPasteProcessorBase<VueTemplate
            }
   }
 
-  override fun processTextRanges(textRanges: List<kotlin.Pair<PsiElement, TextRange>>): Set<ImportedElement> {
-    return super.processTextRanges(textRanges)
-  }
-
-  override fun insertRequiredImports(data: VueTemplateExprsImportsTransferableData,
+  override fun insertRequiredImports(pasteContext: PsiElement,
+                                     data: VueTemplateExpressionsImportsTransferableData,
                                      destinationModule: PsiElement,
                                      imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
                                      pasteContextLanguage: Language) {
+    if (imports.isEmpty()) return
     WriteAction.run<RuntimeException> {
       ES6CreateImportUtil.addRequiredImports(destinationModule, VueJSLanguage.INSTANCE, imports)
     }
   }
 
-  class VueTemplateExprsImportsTransferableData(list: ArrayList<ImportedElement>) : ES6ImportsTransferableDataBase(list) {
+  class VueTemplateExpressionsImportsTransferableData(list: ArrayList<ImportedElement>) : ES6ImportsTransferableDataBase(list) {
     override fun getFlavor(): DataFlavor {
-      return VUE_TEMPLATE_EXPRS_IMPORTS_FLAVOR
+      return VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR
     }
   }
 
   companion object {
-    private val VUE_TEMPLATE_EXPRS_IMPORTS_FLAVOR = DataFlavor(VueTemplateExprsImportsTransferableData::class.java, "vue es6 imports")
+    private val VUE_TEMPLATE_EXPRESSIONS_IMPORTS_FLAVOR = DataFlavor(VueTemplateExpressionsImportsTransferableData::class.java,
+                                                                     "vue es6 imports")
   }
 }

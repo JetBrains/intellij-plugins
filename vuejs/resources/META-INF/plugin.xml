@@ -81,7 +81,7 @@
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
-    <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExprsCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentCopyPasteProcessor"/>
 
     <lang.syntaxHighlighterFactory language="Vue"

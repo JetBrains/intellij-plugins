@@ -21,6 +21,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataModule
 import org.angular2.inspections.quickfixes.Angular2FixesFactory
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil
 import org.angular2.lang.Angular2Bundle
+import org.jetbrains.annotations.ApiStatus.Internal
 
 class NgModuleImportAction internal constructor(editor: Editor?,
                                                 element: PsiElement,
@@ -33,54 +34,15 @@ class NgModuleImportAction internal constructor(editor: Editor?,
   }
 
   override fun getRawCandidates(): List<JSImportCandidate> {
-    val distanceCalculator = DistanceCalculator()
-    val scope = Angular2DeclarationsScope(context)
 
     val candidates = Angular2FixesFactory.getCandidatesForResolution(context, myCodeCompletion)
     if (!candidates.get(Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE).isEmpty()) {
       return emptyList()
     }
 
-    val moduleToDeclarationDistances = MultiMap<Angular2Module, Int>()
     val importableDeclarations = candidates.get(Angular2DeclarationsScope.DeclarationProximity.IMPORTABLE)
-    importableDeclarations.forEach { declaration ->
-      if (!declaration.isStandalone)
-        scope.getPublicModulesExporting(declaration)
-          .distinct()
-          .forEach { module ->
-            moduleToDeclarationDistances.putValue(module, distanceCalculator.get(module, declaration))
-          }
-    }
-    val averageDistances = HashMap<Angular2Entity, Double>()
-    for ((key, value) in moduleToDeclarationDistances.entrySet()) {
-      averageDistances[key] = IntStreamEx.of(value).average().orElse(0.0)
-    }
-
-    for (declaration in importableDeclarations) {
-      if (declaration.isStandalone) {
-        averageDistances[declaration] = 0.0
-      }
-    }
-
-    return averageDistances.keys
-      .asSequence()
-      .sortedBy { averageDistances[it] }
-      .mapNotNull {
-        val cls = it.typeScriptClass ?: return@mapNotNull null
-        val name = detectName(cls) ?: return@mapNotNull null
-        ES6ImportCandidate(name, cls, context)
-      }
-      .toList()
-  }
-
-  private fun detectName(element: PsiElement?): String? {
-    if (element == null) return null
-    val entityToImport = Angular2EntitiesProvider.getEntity(element) ?: return null
-
-    return if (entityToImport is Angular2MetadataModule) { // metadata does not support standalone declarations
-      entityToImport.stub.memberName ?: entityToImport.name
-    }
-    else entityToImport.className
+    val scope = Angular2DeclarationsScope(context)
+    return declarationsToModuleImports(context, importableDeclarations, scope)
   }
 
   override fun runAction(editor: Editor?,
@@ -105,6 +67,57 @@ class NgModuleImportAction internal constructor(editor: Editor?,
       // TODO support NgModuleWithProviders static methods
     }
   }
+
+  companion object {
+
+    @Internal
+    fun declarationsToModuleImports(context: PsiElement,
+                                    declarations: Collection<Angular2Declaration>,
+                                    scope: Angular2DeclarationsScope): List<ES6ImportCandidate> {
+      val distanceCalculator = DistanceCalculator()
+      val moduleToDeclarationDistances = MultiMap<Angular2Module, Int>()
+      declarations.forEach { declaration ->
+        if (!declaration.isStandalone)
+          scope.getPublicModulesExporting(declaration)
+            .distinct()
+            .forEach { module ->
+              moduleToDeclarationDistances.putValue(module, distanceCalculator.get(module, declaration))
+            }
+      }
+      val averageDistances = HashMap<Angular2Entity, Double>()
+      for ((key, value) in moduleToDeclarationDistances.entrySet()) {
+        averageDistances[key] = IntStreamEx.of(value).average().orElse(0.0)
+      }
+
+      for (declaration in declarations) {
+        if (declaration.isStandalone) {
+          averageDistances[declaration] = 0.0
+        }
+      }
+
+      return averageDistances.keys
+        .asSequence()
+        .sortedBy { averageDistances[it] }
+        .mapNotNull {
+          val cls = it.typeScriptClass ?: return@mapNotNull null
+          val name = detectName(cls) ?: return@mapNotNull null
+          ES6ImportCandidate(name, cls, context)
+        }
+        .toList()
+    }
+
+    private fun detectName(element: PsiElement?): String? {
+      if (element == null) return null
+      val entityToImport = Angular2EntitiesProvider.getEntity(element) ?: return null
+
+      return if (entityToImport is Angular2MetadataModule) { // metadata does not support standalone declarations
+        entityToImport.stub.memberName ?: entityToImport.name
+      }
+      else entityToImport.className
+    }
+
+  }
+
 
   private class DistanceCalculator {
 

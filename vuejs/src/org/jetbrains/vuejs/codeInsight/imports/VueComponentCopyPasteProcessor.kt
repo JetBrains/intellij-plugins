@@ -143,12 +143,14 @@ class VueComponentCopyPasteProcessor : ES6CopyPasteProcessorBase<VueComponentCop
   override fun createTransferableData(importedElements: ArrayList<ImportedElement>): VueComponentImportsTransferableData =
     VueComponentImportsTransferableData(importedElements)
 
-  override fun insertRequiredImports(data: VueComponentImportsTransferableData,
+  override fun insertRequiredImports(pasteContext: PsiElement,
+                                     data: VueComponentImportsTransferableData,
                                      destinationModule: PsiElement,
                                      imports: Collection<com.intellij.openapi.util.Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
                                      pasteContextLanguage: Language) {
+    if (imports.isEmpty()) return
     WriteAction.run<RuntimeException> {
-      val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(destinationModule))
+      val componentSourceEdit = VueComponentSourceEdit.create(VueModelManager.findEnclosingContainer(pasteContext))
                                 ?: return@run
       val scriptScope = componentSourceEdit.getOrCreateScriptScope() ?: return@run
       for (import in imports) {

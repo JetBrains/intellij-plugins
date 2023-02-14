@@ -13,14 +13,15 @@ object VueExprStubBasedScopeHandler : JSStubBasedPsiTreeUtil.JSStubBasedScopeHan
   override fun processDeclarationsInScope(context: PsiElement, processor: PsiScopeProcessor, includeParentScopes: Boolean): Boolean {
     val initialScope = getScope(context)
     return if (initialScope == null)
-      processDeclarationsInScriptTagScope(context, processor)
+      processDeclarationsInTemplateScope(context, processor)
     else
       super.processDeclarationsInScope(context, processor, includeParentScopes)
-      && (!includeParentScopes || processDeclarationsInScriptTagScope(context, processor))
+      && (!includeParentScopes || processDeclarationsInTemplateScope(context, processor))
   }
 
-  private fun processDeclarationsInScriptTagScope(context: PsiElement,
-                                                  processor: PsiScopeProcessor): Boolean {
+  private fun processDeclarationsInTemplateScope(context: PsiElement,
+                                                 processor: PsiScopeProcessor): Boolean {
+    // TODO process template scopes
     // Try script setup
     val vueFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context) as? VueFile
                   ?: return true
