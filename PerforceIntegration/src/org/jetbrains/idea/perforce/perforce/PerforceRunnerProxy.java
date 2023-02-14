@@ -7,13 +7,13 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsConnectionProblem;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.Convertor;
 import org.jetbrains.idea.perforce.PerforceBundle;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,13 +28,12 @@ public class PerforceRunnerProxy {
   public PerforceRunnerProxy(final Project project, final PerforceRunner runner) {
     myProject = project;
 
-    myProxy = (PerforceRunnerI) Proxy.newProxyInstance(PerforceRunnerI.class.getClassLoader(), new Class[] {PerforceRunnerI.class},
-                                     new MyPooledThreadProxy(runner));
+    myProxy = ReflectionUtil.proxy(PerforceRunnerI.class, new MyPooledThreadProxy(runner));
     myMethodName = new HashMap<>();
     fillNames();
   }
 
-  private String assumeFirstParamP4File(final Object[] o) {
+  private static String assumeFirstParamP4File(final Object[] o) {
     if (o.length > 0 && o[0] instanceof P4File) {
       return ((P4File) o[0]).getLocalPath();
     } else {
