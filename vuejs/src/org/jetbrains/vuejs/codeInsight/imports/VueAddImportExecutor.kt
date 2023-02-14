@@ -7,12 +7,14 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
+import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.util.PsiEditorUtil
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
@@ -24,6 +26,7 @@ import org.jetbrains.vuejs.model.source.METHODS_PROP
 class VueAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
 
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
+    if (place is JSEmbeddedContentImpl && place.context is HtmlTag) return place
     if (place !is JSReferenceExpression) return null
     ApplicationManager.getApplication().assertReadAccessAllowed()
     val component = VueModelManager.findEnclosingContainer(place) as? VueRegularComponent ?: return null

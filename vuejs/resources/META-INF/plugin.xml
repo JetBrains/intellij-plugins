@@ -81,6 +81,8 @@
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
+    <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExprsCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueComponentCopyPasteProcessor"/>
 
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
@@ -272,7 +274,7 @@
 
     <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator" id="vue"/>
     <webSymbols.queryConfigurator implementation="org.jetbrains.vuejs.libraries.i18n.VueI18NQueryConfigurator"
-                                          id="vue-i18n"/>
+                                  id="vue-i18n"/>
 
     <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.vuejs.web.VueWebSymbolsQueryResultsCustomizer$Provider"/>
     <webSymbols.webTypes.filter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
@@ -351,11 +353,14 @@
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueExprLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <dialectSpecificHandlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.codeInsight.VueTSSpecificHandlersFactory"/>
-    <dialectSpecificHandlersFactory language="Vue" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/> <!-- control flow only, refactor -->
+    <dialectSpecificHandlersFactory language="Vue"
+                                    implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/> <!-- control flow only, refactor -->
     <handlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSHandlersFactory"/>
     <handlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.codeInsight.VueTSHandlersFactory"/>
-    <analysisHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueJSAnalysisHandlersFactory" />
-    <analysisHandlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.inspections.VueTSAnalysisHandlersFactory" />
+    <handlersFactory language="Vue"
+                     implementationClass="org.jetbrains.vuejs.codeInsight.VueJSHandlersFactory"/> <!-- JSImportOnCopyCollectors -->
+    <analysisHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueJSAnalysisHandlersFactory"/>
+    <analysisHandlersFactory language="VueTS" implementationClass="org.jetbrains.vuejs.inspections.VueTSAnalysisHandlersFactory"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFrameworkSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"

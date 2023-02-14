@@ -38,7 +38,10 @@ import org.jetbrains.vuejs.context.isVue3
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
+import org.jetbrains.vuejs.model.source.NAME_PROP
+import org.jetbrains.vuejs.model.source.VueComponents
+import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.model.tryResolveSrcReference
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_TOP_LEVEL_ELEMENTS
@@ -51,6 +54,14 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       if (component is VueSourceComponent)
         VueComponentSourceEdit(component.createPointer())
       else null
+
+    fun getOrCreateScriptScope(component: VueEntitiesContainer?): JSExecutionScope? {
+      return create(component)?.let {
+        val script = it.getOrCreateScriptScope()
+        it.reformatChanges()
+        script
+      }
+    }
 
   }
 
@@ -118,7 +129,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
   private fun createScriptTag(file: XmlFile): XmlTag {
     val dummyScript = createEmptyScript(file)
-    return file.addAfter(dummyScript, file.lastChild) as XmlTag
+    return file.document!!.let { it.addAfter(dummyScript, it.lastChild) as XmlTag }
   }
 
   private fun createEmptyScript(context: XmlFile): XmlTag {

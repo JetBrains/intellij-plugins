@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.TypeScriptSpecificHandlersFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -27,6 +28,10 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   }
 
   override fun getExportScope(element: PsiElement) = getExportScopeImpl(element) { super.getExportScope(element) }
+
+  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler {
+    return VueExprStubBasedScopeHandler
+  }
 }
 
 class VueTSSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
@@ -39,10 +44,15 @@ class VueTSSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
   }
 
   override fun getExportScope(element: PsiElement) = getExportScopeImpl(element) { super.getExportScope(element) }
+
+  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler {
+    return VueExprStubBasedScopeHandler
+  }
+
 }
 
 private fun getExportScopeImpl(element: PsiElement, superCall: (element: PsiElement) -> JSElement?): JSElement? {
-  if (element is PsiFile || isEmbeddedBlock(element))
+  if ((element is PsiFile && !InjectedLanguageManager.getInstance(element.project).isInjectedFragment(element)) || isEmbeddedBlock(element))
     return null
   val file = InjectedLanguageManager.getInstance(element.project).getTopLevelFile(element)
   if (file.fileType is VueFileType) {
