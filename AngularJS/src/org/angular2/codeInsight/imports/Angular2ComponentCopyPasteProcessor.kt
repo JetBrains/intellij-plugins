@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.imports
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.disableIndexUpToDateCheckIn
 import com.intellij.lang.Language
 import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessorBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
@@ -23,7 +24,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
 import org.angular2.Angular2DecoratorUtil
-import org.angular2.codeInsight.Angular2CodeInsightUtils.disableIndexUpToDateCheckIn
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2ElementDescriptor
