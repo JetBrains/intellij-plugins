@@ -18,6 +18,8 @@ class AstroTypingTest : AstroCodeInsightTestCase() {
 
   fun testParensInHtmlCode() = doTest("(")
 
+  fun testEmmetExpressions() = doTest("\t")
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/typing"

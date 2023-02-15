@@ -54,6 +54,7 @@
     <html.compatibleLanguage language="Astro"/>
     <xml.xmlExtension implementation="org.jetbrains.astro.codeInsight.AstroHtmlExtension" order="before html, before web-symbols-react"
                       id="astro"/>
+    <xml.zenCodingGenerator implementation="org.jetbrains.astro.editor.AstroHtmlZenCodingGenerator" id="htmlZen" />
     <xml.fileNSInfoProvider implementation="org.jetbrains.astro.codeInsight.AstroNSInfoProvider"/>
     <lang.documentationProvider language="Astro" implementationClass="com.intellij.xml.util.documentation.HtmlDocumentationProvider"
                                 id="html"/>

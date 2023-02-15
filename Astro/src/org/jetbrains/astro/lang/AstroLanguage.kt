@@ -2,14 +2,21 @@
 package org.jetbrains.astro.lang
 
 import com.intellij.lang.DependentLanguage
+import com.intellij.lang.javascript.DialectOptionHolder
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 
 class AstroLanguage private constructor()
   : JSLanguageDialect("Astro",
-                      JavaScriptSupportLoader.TYPESCRIPT_JSX.optionHolder,
+                      AstroDialectOptionHolder,
                       JavaScriptSupportLoader.TYPESCRIPT_JSX),
     DependentLanguage {
+
+  private object AstroDialectOptionHolder : DialectOptionHolder("TSX", true) {
+    override fun isJSX(): Boolean {
+      return false
+    }
+  }
 
   companion object {
     @JvmField
