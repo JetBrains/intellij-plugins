@@ -1,0 +1,18 @@
+---
+import Layout from "./Layout.astro";
+import {Colors} from "./model/colors";
+import {Cars} from "./model/cars";
+
+export interface Props {
+    color: string;
+    href: string;
+}
+
+const {color, href} = Astro.props;
+---
+
+<li>
+    <selection><Layout href={Cars.Mini} client:idle  >
+        {color ==  Colors.blue && <p>Foo Bar <p>And { 24 } expression</>}
+    </Layout></selection>
+</li>

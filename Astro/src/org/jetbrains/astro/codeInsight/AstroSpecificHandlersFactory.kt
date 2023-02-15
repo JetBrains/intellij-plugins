@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSSourceElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.TypeScriptSpecificHandlersFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
@@ -46,7 +47,7 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
     var result: AstroFrontmatterScript? = null
     ApplicationManager.getApplication().runWriteAction {
       CommandProcessor.getInstance().runUndoTransparentAction {
-        result = AstroComponentSourceEdit(astroFile).getOrCreateFrontmatterScript()
+        result = AstroComponentSourceEdit.getOrCreateFrontmatterScript(astroFile)
       }
     }
     return result
@@ -66,7 +67,7 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
       ApplicationManager.getApplication().runWriteAction {
         val commandProcessor = CommandProcessor.getInstance()
         val runnable = Runnable {
-          AstroComponentSourceEdit(scope.containingFile as AstroFileImpl).getOrCreateFrontmatterScript()
+          AstroComponentSourceEdit.getOrCreateFrontmatterScript(scope.containingFile)
         }
         commandProcessor.runUndoTransparentAction(runnable)
       }
@@ -76,5 +77,8 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
              ?.psi
            ?: scope
   }
+
+  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler =
+    AstroStubBasedScopeHandler
 
 }

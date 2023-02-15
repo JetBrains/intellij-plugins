@@ -10,10 +10,8 @@ import org.jetbrains.astro.lang.AstroFileImpl
 
 class AstroAddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
-    if (place !is JSReferenceExpression) return null
     ApplicationManager.getApplication().assertReadAccessAllowed()
-    return AstroComponentSourceEdit(place.containingFile as? AstroFileImpl ?: return null)
-      .getOrCreateFrontmatterScript()
+    return AstroComponentSourceEdit.getOrCreateFrontmatterScript(place.containingFile)
   }
 
 }
