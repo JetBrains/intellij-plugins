@@ -1,0 +1,8 @@
+---
+import {Cars} from "./model/cars";
+import {Colors} from "./model/colors";
+import Layout from "./Layout.astro";
+---
+<Layout href={Cars.Mini} client:idle  >
+    {color ==  Colors.blue && <p>Foo Bar <p>And { 24 } expression</>}
+</Layout><caret>

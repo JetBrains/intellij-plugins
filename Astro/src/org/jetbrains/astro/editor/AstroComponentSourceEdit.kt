@@ -6,7 +6,9 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.intellij.util.asSafely
 import org.jetbrains.astro.codeInsight.astroContentRoot
 import org.jetbrains.astro.codeInsight.frontmatterScript
 import org.jetbrains.astro.lang.AstroFileImpl
@@ -16,6 +18,13 @@ import org.jetbrains.astro.lang.psi.AstroFrontmatterScript
 class AstroComponentSourceEdit(private val file: AstroFileImpl) {
 
   private val formatFixers = mutableListOf<FormatFixer>()
+
+  companion object {
+    fun getOrCreateFrontmatterScript(file: PsiFile): AstroFrontmatterScript? =
+      file.asSafely<AstroFileImpl>()
+        ?.let { AstroComponentSourceEdit(it) }
+        ?.getOrCreateFrontmatterScript()
+  }
 
   fun getOrCreateFrontmatterScript(): AstroFrontmatterScript {
     file.frontmatterScript()?.let { return it }
@@ -46,6 +55,5 @@ class AstroComponentSourceEdit(private val file: AstroFileImpl) {
   fun reformatChanges() {
     JSRefactoringUtil.format(formatFixers)
   }
-
 
 }

@@ -39,4 +39,7 @@ class AstroContentRootType
   override fun construct(node: ASTNode): AstroContentRoot =
     AstroContentRoot(node)
 
+  override fun isModule(): Boolean =
+    true
+
 }
