@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.imports
 
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.javascript.web.js.WebJSResolveUtil.disableIndexUpToDateCheckIn
 import com.intellij.lang.Language
 import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessorBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
@@ -23,7 +24,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.webSymbols.PsiSourcedWebSymbol
 import com.intellij.xml.util.XmlTagUtil
-import org.jetbrains.vuejs.codeInsight.disableIndexUpToDateCheckIn
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findScriptTag

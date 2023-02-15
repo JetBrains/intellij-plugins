@@ -171,14 +171,6 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   return detectLanguage(scriptTag)
 }
 
-fun <T> disableIndexUpToDateCheckIn(scope: PsiElement, computable: () -> T): T {
-  // Perform fake index search to ensure that file is re-indexed before entering no-index stage
-  StubIndex.getInstance().processElements(VueComponentsIndex.KEY, "foo",
-                                          scope.project, GlobalSearchScope.fileScope(scope.containingFile),
-                                          null, JSImplicitElementProvider::class.java) { false }
-  return FileBasedIndexEx.disableUpToDateCheckIn<T, Throwable> { computable() }
-}
-
 fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
   return resolveElementTo(element, JSObjectLiteralExpression::class)
 }

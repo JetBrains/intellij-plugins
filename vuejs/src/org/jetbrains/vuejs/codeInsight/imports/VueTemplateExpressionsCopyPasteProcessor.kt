@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.codeInsight.imports
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.disableIndexUpToDateCheckIn
 import com.intellij.lang.Language
 import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessorBase
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
@@ -26,7 +27,6 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.codeInsight.disableIndexUpToDateCheckIn
 import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.LangMode

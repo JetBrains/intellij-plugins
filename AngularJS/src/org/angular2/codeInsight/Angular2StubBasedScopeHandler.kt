@@ -1,10 +1,10 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
+import com.intellij.javascript.web.js.WebJSResolveUtil.disableIndexUpToDateCheckIn
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
-import org.angular2.codeInsight.Angular2CodeInsightUtils.disableIndexUpToDateCheckIn
 import org.angular2.entities.Angular2ComponentLocator
 
 object Angular2StubBasedScopeHandler : JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler() {
