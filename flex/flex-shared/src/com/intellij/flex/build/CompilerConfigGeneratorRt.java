@@ -470,11 +470,11 @@ public final class CompilerConfigGeneratorRt {
 
   private void addSourcePaths(final Element rootElement) {
     final String localeValue = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.locale")).first;
-    final List<String> locales = StringUtil.split(localeValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    final List<String> locales = ContainerUtil.concat(StringUtil.split(localeValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR),
     // when adding source paths we respect locales set both in UI and in Additional compiler options
-    locales.addAll(FlexCommonUtils.getOptionValues(myProjectLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
-    locales.addAll(FlexCommonUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"));
-    locales.addAll(FlexCommonUtils.getOptionValues(myBC.getCompilerOptions().getAdditionalOptions(), "locale", "compiler.locale"));
+    FlexCommonUtils.getOptionValues(myProjectLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"),
+    FlexCommonUtils.getOptionValues(myModuleLevelCompilerOptions.getAdditionalOptions(), "locale", "compiler.locale"),
+    FlexCommonUtils.getOptionValues(myBC.getCompilerOptions().getAdditionalOptions(), "locale", "compiler.locale"));
 
     final Set<String> sourcePathsWithLocaleToken = new HashSet<>(); // Set - to avoid duplication of paths like "locale/{locale}"
     final List<String> sourcePathsWithoutLocaleToken = new LinkedList<>();
