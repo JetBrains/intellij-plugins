@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
@@ -68,11 +69,13 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     return TypeScriptTypeHelper.getInstance()
   }
 
-  override fun getExportScope(element: PsiElement): JSElement? {
-    return Angular2ComponentLocator.findComponentClass(element)
-             ?.containingFile as? JSFile
-           ?: super.getExportScope(element)
-  }
+  override fun getExportScope(element: PsiElement): JSElement? =
+    if (element is PsiFile)
+      null
+    else
+      Angular2ComponentLocator.findComponentClass(element)
+        ?.containingFile as? JSFile
+      ?: super.getExportScope(element)
 
   override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler {
     return Angular2StubBasedScopeHandler
