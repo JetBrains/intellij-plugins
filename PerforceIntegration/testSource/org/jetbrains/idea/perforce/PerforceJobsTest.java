@@ -9,7 +9,6 @@ import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.LocalChangeList;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.idea.perforce.application.ConnectionKey;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
@@ -215,9 +214,7 @@ public class PerforceJobsTest extends PerforceTestCase {
       """));
 
     verify(runP4(new String[]{"-c", "test", "job", "-i"},
-                 PerforceRunner.createStringFormRepresentation(ContainerUtil.newHashMap(
-                   List.of(PerforceRunner.JOB),
-                   List.of(Collections.singletonList("justdoit")))).toString()));
+                 PerforceRunner.createStringFormRepresentation(Map.of(PerforceRunner.JOB, Collections.singletonList("justdoit"))).toString()));
 
     final JobsWorker worker = new JobsWorker(myProject);
 
