@@ -22,4 +22,10 @@ class MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
 
   override fun get(key: String, project: Project, scope: GlobalSearchScope): Collection<MakefileTarget> =
       StubIndex.getElements(TARGET_INDEX_KEY, key, project, scope, MakefileTarget::class.java)
+
+  companion object {
+    fun getInstance(): MakefileTargetIndex {
+      return EP_NAME.findExtensionOrFail(MakefileTargetIndex::class.java)
+    }
+  }
 }
