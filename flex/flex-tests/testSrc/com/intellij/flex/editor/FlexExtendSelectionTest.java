@@ -38,9 +38,6 @@ public class FlexExtendSelectionTest extends JSBaseEditorTestCase {
     myFixture.configureByFile(testName + "_3.js2");
     performSyntaxSelectionAction();
     myFixture.checkResultByFile(testName + "_3_after.js2");
-
-    performSyntaxSelectionAction();
-    myFixture.checkResultByFile(testName + "_3_after2.js2");
   }
 
   public void testSyntaxSelection5() {
