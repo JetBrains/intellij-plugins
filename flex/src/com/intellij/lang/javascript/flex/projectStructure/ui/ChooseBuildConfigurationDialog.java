@@ -123,7 +123,7 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
     }
     myTree.setModel(new DefaultTreeModel(root));
     myTree.setRootVisible(false);
-    new TreeSpeedSearch(myTree, true, o -> {
+    TreeSpeedSearch.installOn(myTree, true, o -> {
       Object lastPathComponent = o.getLastPathComponent();
       return getText((DefaultMutableTreeNode)lastPathComponent);
     }).setComparator(new SpeedSearchComparator(false));

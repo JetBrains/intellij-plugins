@@ -324,7 +324,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
 
     myRoot = new BaseNode("", NodeType.veryRoot);
     myTree = new Tree(myRoot);
-    new TreeSpeedSearch(myTree);
+    TreeUIHelper.getInstance().installTreeSpeedSearch(myTree);
     TreeUtil.installActions(myTree);
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(false);
