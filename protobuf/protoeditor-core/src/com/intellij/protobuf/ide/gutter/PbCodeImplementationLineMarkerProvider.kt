@@ -9,11 +9,9 @@ import com.intellij.protobuf.ide.PbIdeBundle
 import com.intellij.protobuf.lang.psi.PbElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
-import com.intellij.psi.util.parentOfType
-import com.intellij.util.asSafely
 import icons.ProtoeditorCoreIcons
 
-internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
+class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerProvider() {
   override fun getId(): String {
     return "PbCodeImplementationLineMarkerProvider"
   }
@@ -41,28 +39,5 @@ internal class PbCodeImplementationLineMarkerProvider : RelatedItemLineMarkerPro
 
   private fun hasImplementation(pbElement: PsiElement): Boolean {
     return findImplementations(pbElement).any()
-  }
-
-  private fun findImplementations(pbElement: PsiElement): Sequence<PsiElement> {
-    val identifierOwner = pbElement.parentIdentifierOwner()?.asSafely<PbElement>() ?: return emptySequence()
-    val converters = collectRpcConverters()
-    return IMPLEMENTATION_SEARCHER_EP_NAME.extensionList.asSequence()
-      .flatMap { it.findImplementationsForProtoElement(identifierOwner, converters) }
-  }
-
-
-  private fun PsiElement.parentIdentifierOwner(): PsiNameIdentifierOwner? {
-    return this.parentOfType(true)
-  }
-
-  private fun collectRpcConverters(): Collection<PbGeneratedCodeConverter> {
-    return fetchConverters()
-      .map(PbGeneratedCodeConverterProvider::getProtoConverter)
-      .toList()
-  }
-
-
-  private fun fetchConverters(): Sequence<PbGeneratedCodeConverterProvider> {
-    return CONVERTER_EP_NAME.extensionList.asSequence()
   }
 }
