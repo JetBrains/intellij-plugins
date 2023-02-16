@@ -43,8 +43,8 @@ class Angular2AddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place)
       super.createImportOrUpdateExistingInner(descriptor)
     }
     else {
-      val scope = prepareScopeToAdd(myPlace, !type.isNamespace) ?: return
-      postProcessScope(myPlace, descriptor, scope)
+      val scope = prepareScopeToAdd(place, !type.isNamespace) ?: return
+      postProcessScope(place, descriptor, scope)
     }
   }
 
