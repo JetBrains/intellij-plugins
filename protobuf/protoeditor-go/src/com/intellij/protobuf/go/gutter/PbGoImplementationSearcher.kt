@@ -5,6 +5,7 @@ import com.goide.go.GoGotoSuperHandler
 import com.goide.go.GoGotoUtil
 import com.goide.go.GoInheritorsSearch
 import com.goide.psi.GoMethodDeclaration
+import com.goide.psi.GoMethodSpec
 import com.goide.psi.GoTypeSpec
 import com.goide.stubs.index.GoTypesIndex
 import com.intellij.openapi.components.service
@@ -37,7 +38,9 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     return when {
       psiElement.language != GoLanguage.INSTANCE -> emptySequence()
       psiElement is GoMethodDeclaration -> findMethodDeclarations(psiElement, converters)
-      psiElement is GoTypeSpec && hasSuperInterfaceWithGrpcSpecificMethod(psiElement) -> findServiceDeclarations(psiElement, converters)
+      psiElement is GoMethodSpec -> findMethodDeclarations(psiElement, converters)
+      psiElement is GoTypeSpec && hasSuperInterfaceWithGrpcSpecificMethod(psiElement)
+      -> findServiceDeclarations(psiElement, converters)
       psiElement is GoTypeSpec -> findMessageDeclarations(psiElement)
       else -> emptySequence()
     }
@@ -91,14 +94,16 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
                                         converters: Collection<PbGeneratedCodeConverter>): Sequence<PsiElement> {
     val serviceDefinition = methodDefinition.parentOfType<PbServiceDefinition>() ?: return emptySequence()
     val methodName = methodDefinition.name ?: return emptySequence()
-    return findGeneratedServices(serviceDefinition, converters)
+    val generatedMethods = findGeneratedServices(serviceDefinition, converters)
       .filterIsInstance<GoTypeSpec>()
-      .flatMap { typeSpec -> typeSpec.allMethods.filter { method -> method.name == methodName } }.toList().asSequence()
+      .flatMap { typeSpec -> typeSpec.allMethods.filter { method -> method.name == methodName } }
+    return generatedMethods
       .flatMap { method ->
         findAllCancellable { processor ->
           GoInheritorsSearch.METHOD_INHERITORS_SEARCH.processQuery(GoGotoUtil.param(method), processor)
         }
       }
+      .plus(generatedMethods)
   }
 
 
@@ -149,14 +154,28 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
       }
   }
 
+  private fun findMethodDeclarations(methodSpec: GoMethodSpec,
+                                     converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
+    val methodName = methodSpec.name ?: return emptySequence()
+    val parentTypeSpec = methodSpec.parentOfType<GoTypeSpec>() ?: return emptySequence()
+    return findMethodByContainingServiceDeclaration(parentTypeSpec, converters, methodName)
+  }
+
   private fun findMethodDeclarations(methodDeclaration: GoMethodDeclaration,
                                      converters: Collection<PbGeneratedCodeConverter>): Sequence<PbElement> {
     val methodName = methodDeclaration.name ?: return emptySequence()
     val resolvedTypeSpec = methodDeclaration.resolveTypeSpec() ?: return emptySequence()
+    return findMethodByContainingServiceDeclaration(resolvedTypeSpec, converters, methodName)
+  }
+
+  private fun findMethodByContainingServiceDeclaration(resolvedTypeSpec: GoTypeSpec,
+                                                       converters: Collection<PbGeneratedCodeConverter>,
+                                                       methodName: String): Sequence<PbServiceMethod> {
     return findServiceDeclarations(resolvedTypeSpec, converters)
       .mapNotNull { service -> service.body }
       .flatMap { body -> body.serviceMethodList }
       .filter { method -> method.name == methodName }
+
   }
 
   private fun findMessageDeclarations(typeSpec: GoTypeSpec): Sequence<PbElement> {
