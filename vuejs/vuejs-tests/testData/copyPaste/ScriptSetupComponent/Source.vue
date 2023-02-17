@@ -12,5 +12,5 @@ defineProps({
 <template>
     <selection><foo-bar :value="Colors.blue"/>
         {{ Checker.state() }}
-    <script-setup-component :title="'copy-paste!'" :foo/></selection>
+    <source :title="'copy-paste!'" :foo/></selection>
 </template>

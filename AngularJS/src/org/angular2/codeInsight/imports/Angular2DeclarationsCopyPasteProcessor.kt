@@ -10,14 +10,11 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.UndoConfirmationPolicy
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtilCore
@@ -115,21 +112,8 @@ class Angular2DeclarationsCopyPasteProcessor : JSCopyPasteProcessorBase<Angular2
       return
     val exportScopePtr = exportScope.createSmartPointer()
     val pasteContextPtr = pasteContext.createSmartPointer()
-    if (ApplicationManager.getApplication().isUnitTestMode) {
+    runInBackground(pasteContext.project, Angular2Bundle.message("angular.progress.title.auto-importing-angular-directives-on-paste")) {
       restoreDeclarationsImports(filteredValues, exportScopePtr, pasteContextPtr)
-    }
-    else {
-      val project = pasteContext.project
-      ApplicationManager.getApplication().executeOnPooledThread {
-        if (!project.isOpen) return@executeOnPooledThread
-        ProgressManager.getInstance().run(
-          object : Task.Backgroundable(project, Angular2Bundle.message("angular.progress.title.auto-importing-angular-directives-on-paste"), true, DEAF) {
-            override fun run(indicator: ProgressIndicator) {
-              restoreDeclarationsImports(filteredValues, exportScopePtr, pasteContextPtr)
-            }
-          }
-        )
-      }
     }
   }
 

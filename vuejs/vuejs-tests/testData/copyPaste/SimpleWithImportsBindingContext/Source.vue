@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import Component from './SimpleWithNoImports_2'
+  import Component from './SimpleWithNoImportsBindingContext_2.vue'
   export default {
     name: 'list',
   }

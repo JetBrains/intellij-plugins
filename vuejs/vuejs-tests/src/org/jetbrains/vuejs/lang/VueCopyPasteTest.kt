@@ -10,7 +10,7 @@ class VueCopyPasteTest : BasePlatformTestCase() {
 
   private fun doTest() {
     myFixture.copyDirectoryToProject(getTestName(false), ".")
-    myFixture.configureFromTempProjectFile(getTestName(false) + ".vue")
+    myFixture.configureFromTempProjectFile("Source.vue")
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
     myFixture.configureFromTempProjectFile("Destination.vue")
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
@@ -25,7 +25,7 @@ class VueCopyPasteTest : BasePlatformTestCase() {
     doTest()
   }
 
-  fun testSimpleWithNoImportsBindingContext() {
+  fun testSimpleWithImportsBindingContext() {
     doTest()
   }
 
@@ -33,7 +33,7 @@ class VueCopyPasteTest : BasePlatformTestCase() {
     doTest()
   }
 
-  fun testScriptSetupToClassicComponent() {
+  fun testScriptSetupToOptionsComponent() {
     doTest()
   }
 
@@ -53,5 +53,12 @@ class VueCopyPasteTest : BasePlatformTestCase() {
     doTest()
   }
 
+  fun testOptionsToOptionsComponent() {
+    doTest()
+  }
+
+  fun testOptionsToScriptSetupComponent() {
+    doTest()
+  }
 
 }
