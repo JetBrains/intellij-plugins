@@ -17,13 +17,13 @@ import javax.swing.*
 
 class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
 
-  private val myUniformIndentRadioButton: JRadioButton = JRadioButton(message("options.indent.radio.uniform.caption"))
-  private val myBlockSpecificIndentRadioButton: JRadioButton = JRadioButton(message("options.indent.radio.block-specific.caption"))
-  private val myIndentChildrenOfTopLevelTags: ExpandableTextField = ExpandableTextField()
-  private val myIndentChildrenOfTopLevelTagsLabel: JLabel = JLabel(message("options.indent.label.top-level.caption"))
-  private val myBlockSpecificIndentPanel: JPanel = JPanel()
+  private val myUniformIndentRadioButton: JRadioButton by lazy { JRadioButton(message("options.indent.radio.uniform.caption")) }
+  private val myBlockSpecificIndentRadioButton: JRadioButton by lazy { JRadioButton(message("options.indent.radio.block-specific.caption")) }
+  private val myIndentChildrenOfTopLevelTags: ExpandableTextField by lazy { ExpandableTextField() }
+  private val myIndentChildrenOfTopLevelTagsLabel: JLabel by lazy { JLabel(message("options.indent.label.top-level.caption")) }
+  private val myBlockSpecificIndentPanel: JPanel by lazy { JPanel() }
 
-  private val myComponentsList = listOf(myBlockSpecificIndentPanel, myUniformIndentRadioButton, myIndentChildrenOfTopLevelTagsLabel)
+  private val myComponentsList get() = listOf(myBlockSpecificIndentPanel, myUniformIndentRadioButton, myIndentChildrenOfTopLevelTagsLabel)
 
   override fun addComponents() {
     myBlockSpecificIndentRadioButton.addActionListener {
