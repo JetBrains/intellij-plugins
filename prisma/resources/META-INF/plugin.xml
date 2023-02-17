@@ -99,6 +99,9 @@
         <lsp.serverSupportProvider implementation="org.intellij.prisma.ide.lsp.PrismaLspServerSupportProvider"/>
 
         <!-- UI -->
-        <notificationGroup id="Prisma" displayType="BALLOON"/>
+        <notificationGroup id="Prisma"
+                           displayType="BALLOON"
+                           bundle="messages.PrismaBundle"
+                           key="notification.group.prisma"/>
     </extensions>
 </idea-plugin>

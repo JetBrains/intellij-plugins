@@ -5,18 +5,21 @@ import com.intellij.CommonBundle;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBUI;
 import jetbrains.plugins.yeoman.YeomanBundle;
 import jetbrains.plugins.yeoman.generators.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 public class YeomanInstalledGeneratorsMain extends YeomanGeneratorsMain {
+
+  public static final char J = 'j';
+  public static final char C = 'C';
 
   public void setInstalledGenerators(List<YeomanInstalledGeneratorInfo> installedGenerators) {
     myInstalledGenerators = installedGenerators;
@@ -39,9 +42,9 @@ public class YeomanInstalledGeneratorsMain extends YeomanGeneratorsMain {
     myInstalledGenerators = new YeomanInstalledGeneratorListProvider().getAllInstalledGenerators();
     myModel.setAllViews(myInstalledGenerators);
     myInstallGenerators = new JButton(YeomanBundle.message("yeoman.generators.dialog.install.generators"));
-    myInstallGenerators.setMnemonic('j');
+    myInstallGenerators.setMnemonic(J);
     myInstallGenerators.addActionListener(createInstallGeneratorsActionListener());
-    myInstallGenerators.setMargin(new Insets(0, 0, 0, 0));
+    myInstallGenerators.setMargin(JBUI.emptyInsets());
     if (myInstalledGenerators.size() > 0) {
       myGeneratorTable.getSelectionModel().addSelectionInterval(0, 0);
     }
@@ -58,7 +61,7 @@ public class YeomanInstalledGeneratorsMain extends YeomanGeneratorsMain {
         DialogWrapper wrapper = new DialogWrapper(YeomanInstalledGeneratorsMain.this.main, true) {
           {
             setOKButtonText(CommonBundle.message("close.action.name"));
-            setOKButtonMnemonic('C');
+            setOKButtonMnemonic(C);
             init();
           }
 
@@ -67,7 +70,6 @@ public class YeomanInstalledGeneratorsMain extends YeomanGeneratorsMain {
             return new Action[]{getOKAction()};
           }
 
-          @Nullable
           @Override
           protected JComponent createCenterPanel() {
             final YeomanAvailableGeneratorsMain availableGeneratorsMain = new YeomanAvailableGeneratorsMain(myInstalledGenerators, myProvider) {
