@@ -19,7 +19,7 @@ class Angular2CopyPasteTest : Angular2CodeInsightFixtureTestCase() {
                                      Angular2TestModule.ANGULAR_CORE_13_3_5,
                                      Angular2TestModule.ANGULAR_COMMON_13_3_5,
                                      Angular2TestModule.ANGULAR_CDK_14_2_0)
-    myFixture.configureFromTempProjectFile(getTestName(true) + ".$srcExt")
+    myFixture.configureFromTempProjectFile("source.component.$srcExt")
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COPY)
     myFixture.configureFromTempProjectFile("destination.component.$destExt")
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_PASTE)
@@ -51,6 +51,30 @@ class Angular2CopyPasteTest : Angular2CodeInsightFixtureTestCase() {
 
   fun testInjectedToBasic() {
     doTest("ts", "html")
+  }
+
+  fun testExpression() {
+    doTest("html", "html")
+  }
+
+  fun testExpressionFromInjected() {
+    doTest("ts", "html")
+  }
+
+  fun testExpressionToInjected() {
+    doTest("html", "ts")
+  }
+
+  fun testExpressionToHtml() {
+    doTest("html", "html")
+  }
+
+  fun testHtmlToExpression() {
+    doTest("html", "html")
+  }
+
+  fun testNgFor() {
+    doTest("html", "html")
   }
 
 }

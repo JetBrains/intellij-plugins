@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight
 
-import com.intellij.javascript.web.js.WebJSResolveUtil.disableIndexUpToDateCheckIn
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -21,9 +20,7 @@ object Angular2StubBasedScopeHandler : JSStubBasedPsiTreeUtil.JSStubBasedScopeHa
   private fun processDeclarationsComponentClassScope(context: PsiElement,
                                                      processor: PsiScopeProcessor): Boolean {
     // TODO process template scopes
-    val componentClass = disableIndexUpToDateCheckIn(context) {
-      Angular2ComponentLocator.findComponentClass(context)
-    } ?: return true
+    val componentClass = Angular2ComponentLocator.findComponentClass(context) ?: return true
     return JSStubBasedPsiTreeUtil.processDeclarationsInScope(componentClass, processor, false)
   }
 

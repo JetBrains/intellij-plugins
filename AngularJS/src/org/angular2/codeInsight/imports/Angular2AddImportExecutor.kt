@@ -5,19 +5,16 @@ import com.intellij.lang.ecmascript6.actions.ES6AddImportExecutor
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.xml.XmlElement
 import org.angular2.entities.Angular2ComponentLocator
 
 class Angular2AddImportExecutor(place: PsiElement) : ES6AddImportExecutor(place) {
   override fun prepareScopeToAdd(place: PsiElement, fromExternalModule: Boolean): PsiElement? {
-    if (place !is JSReferenceExpression && place.context !is XmlElement) return null
     ApplicationManager.getApplication().assertReadAccessAllowed()
     return Angular2ComponentLocator.findComponentClass(place)?.containingFile
   }

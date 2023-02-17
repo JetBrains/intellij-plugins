@@ -17,10 +17,10 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.ELEMENT_NG
 /**
  * @see Angular2EntitiesProvider
  */
-class Angular2ApplicableDirectivesProvider private constructor(project: Project,
-                                                               tagName: String,
-                                                               onlyMatchingTagName: Boolean,
-                                                               cssSelector: Angular2DirectiveSimpleSelector) {
+class Angular2ApplicableDirectivesProvider internal constructor(project: Project,
+                                                                tagName: String,
+                                                                onlyMatchingTagName: Boolean,
+                                                                cssSelector: Angular2DirectiveSimpleSelector) {
 
   private val myDirectiveCandidates: NotNullLazyValue<List<Angular2Directive>>
   val matched: List<Angular2Directive>
@@ -39,7 +39,7 @@ class Angular2ApplicableDirectivesProvider private constructor(project: Project,
 
   init {
     val directiveCandidates = HashSet(findElementDirectivesCandidates(project, tagName))
-    if (!onlyMatchingTagName) {
+    if (!onlyMatchingTagName && tagName != "") {
       directiveCandidates.addAll(findElementDirectivesCandidates(project, ""))
     }
 

@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
@@ -53,7 +54,7 @@ public final class AngularIndexUtil {
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     new ConcurrentHashMap<>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
-  private static Key<Pair<Integer, Long>> VERSION_CACHE = new Key<>("angularjs.version");
+  private static final Key<Pair<Integer, Long>> VERSION_CACHE = new Key<>("angularjs.version");
 
   public static @Nullable JSImplicitElement resolve(@NotNull Project project,
                                                     @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
@@ -83,6 +84,7 @@ public final class AngularIndexUtil {
                                   @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
                                   @NotNull String lookupKey,
                                   @NotNull Processor<? super JSImplicitElement> processor) {
+    ProgressManager.checkCanceled();
     StubIndex.getInstance().processElements(
       index, lookupKey, project, scope, JSImplicitElementProvider.class, provider -> {
         final JSElementIndexingData indexingData = provider.getIndexingData();

@@ -1,0 +1,3 @@
+<div>
+    {{[title]="eval('12') | currency"}}
+</div>

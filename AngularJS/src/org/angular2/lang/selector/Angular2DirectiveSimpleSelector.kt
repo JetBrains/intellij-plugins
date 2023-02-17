@@ -16,37 +16,27 @@ import org.jetbrains.annotations.NonNls
 import java.util.function.Consumer
 import java.util.regex.Pattern
 
-class Angular2DirectiveSimpleSelector internal constructor() {
-  private var mElementName: String? = null
-  private val mClassNames: MutableList<String> = SmartList()
-  private val mAttrs: MutableList<String> = SmartList()
-  private val mNotSelectors: MutableList<Angular2DirectiveSimpleSelector> = SmartList()
-
-  val elementName: String?
-    get() = mElementName
-
-  val classNames: List<String>
-    get() = mClassNames
-
-  val attrs: List<String>
-    get() = mAttrs
-
+class Angular2DirectiveSimpleSelector private constructor(
+  val elementName: String?,
+  val attrsAndValues: List<String>,
+  val classNames: List<String>,
   val notSelectors: List<Angular2DirectiveSimpleSelector>
-    get() = mNotSelectors
+) {
 
-  val isElementSelector: Boolean
-    get() = (hasElementSelector()
-             && classNames.isEmpty()
-             && attrs.isEmpty()
-             && notSelectors.isEmpty())
+  constructor(
+    elementName: String? = null,
+    attrs: Map<String, String?> = emptyMap(),
+    classNames: List<String> = emptyList(),
+    notSelectors: List<Angular2DirectiveSimpleSelector> = emptyList(),
+  ) : this(
+    elementName,
+    attrs.flatMap { attr -> listOf(attr.key, normalizeAttrValue(attr.value)) },
+    classNames.map { normalizeClassName(it) },
+    notSelectors
+  )
 
-  private fun hasElementSelector(): Boolean {
-    return elementName != null
-  }
-
-  fun setElement(element: String?) {
-    mElementName = element
-  }
+  private constructor(parseInfo: ParseInfo)
+    : this(parseInfo.elementName, parseInfo.attrs, parseInfo.classNames, parseInfo.notSelectors.map { Angular2DirectiveSimpleSelector(it) })
 
   /**
    * The selectors are encoded in pairs where:
@@ -67,21 +57,12 @@ class Angular2DirectiveSimpleSelector internal constructor() {
         result.add("class")
       }
       var i = 0
-      while (i < attrs.size) {
-        result.add(attrs[i])
+      while (i < attrsAndValues.size) {
+        result.add(attrsAndValues[i])
         i += 2
       }
       return result
     }
-
-  fun addAttribute(name: String, value: String?) {
-    mAttrs.add(name)
-    mAttrs.add(if (value != null) StringUtil.toLowerCase(value) else "")
-  }
-
-  fun addClassName(name: String) {
-    mClassNames.add(StringUtil.toLowerCase(name))
-  }
 
   override fun toString(): String {
     val result: @NonNls StringBuilder = StringBuilder()
@@ -93,10 +74,10 @@ class Angular2DirectiveSimpleSelector internal constructor() {
       result.append(cls)
     })
     var i = 0
-    while (i < attrs.size) {
+    while (i < attrsAndValues.size) {
       result.append('[')
-      result.append(attrs[i])
-      val value = attrs[i + 1]
+      result.append(attrsAndValues[i])
+      val value = attrsAndValues[i + 1]
       if (!value.isEmpty()) {
         result.append("=")
         result.append(value)
@@ -143,6 +124,24 @@ class Angular2DirectiveSimpleSelector internal constructor() {
   }
 
   class ParseException(s: String?, val errorRange: TextRange) : Exception(s)
+
+  private data class ParseInfo(
+    var elementName: String? = null,
+    val classNames: MutableList<String> = SmartList(),
+    val attrs: MutableList<String> = SmartList(),
+    val notSelectors: MutableList<ParseInfo> = SmartList(),
+  ) {
+
+    fun addAttribute(name: String, value: String?) {
+      attrs.add(name)
+      attrs.add(normalizeAttrValue(value))
+    }
+
+    fun addClassName(name: String) {
+      classNames.add(normalizeClassName(name))
+    }
+  }
+
   companion object {
     private val SELECTOR_REGEXP = Pattern.compile(
       "(:not\\()|" +  //":not("
@@ -160,14 +159,14 @@ class Angular2DirectiveSimpleSelector internal constructor() {
     @JvmStatic
     fun parse(selector: String): List<Angular2DirectiveSimpleSelector> {
       val results: MutableList<Angular2DirectiveSimpleSelector> = SmartList()
-      val addResult = Consumer { cssSel: Angular2DirectiveSimpleSelector ->
+      val addResult = Consumer { cssSel: ParseInfo ->
         if (!cssSel.notSelectors.isEmpty() && cssSel.elementName == null && cssSel.classNames.isEmpty() &&
             cssSel.attrs.isEmpty()) {
-          cssSel.mElementName = "*"
+          cssSel.elementName = "*"
         }
-        results.add(cssSel)
+        results.add(Angular2DirectiveSimpleSelector(cssSel))
       }
-      var cssSelector = Angular2DirectiveSimpleSelector()
+      var cssSelector = ParseInfo()
       var current = cssSelector
       var inNot = false
       val matcher = SELECTOR_REGEXP.matcher(selector)
@@ -178,11 +177,11 @@ class Angular2DirectiveSimpleSelector internal constructor() {
                                  TextRange(matcher.start(1), matcher.end(1)))
           }
           inNot = true
-          current = Angular2DirectiveSimpleSelector()
-          cssSelector.mNotSelectors.add(current)
+          current = ParseInfo()
+          cssSelector.notSelectors.add(current)
         }
         else if (matcher.start(2) >= 0) {
-          current.setElement(matcher.group(2))
+          current.elementName = matcher.group(2)
         }
         if (matcher.start(3) >= 0) {
           current.addClassName(matcher.group(3))
@@ -200,7 +199,7 @@ class Angular2DirectiveSimpleSelector internal constructor() {
                                  TextRange(matcher.start(8), matcher.end(8)))
           }
           addResult.accept(cssSelector)
-          current = Angular2DirectiveSimpleSelector()
+          current = ParseInfo()
           cssSelector = current
         }
       }
@@ -255,22 +254,24 @@ class Angular2DirectiveSimpleSelector internal constructor() {
 
     @JvmStatic
     fun createTemplateBindingsCssSelector(bindings: Angular2TemplateBindings): Angular2DirectiveSimpleSelector {
-      val cssSelector = Angular2DirectiveSimpleSelector()
-      cssSelector.setElement(Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE)
-      cssSelector.addAttribute(bindings.templateName, null)
+      val attributes = mutableMapOf<String, String?>()
+      attributes[bindings.templateName] = null
       for (binding in bindings.bindings) {
         if (!binding.keyIsVar()) {
-          cssSelector.addAttribute(binding.key, binding.expression?.text)
+          attributes[binding.key] = binding.expression?.text
         }
       }
-      return cssSelector
+      return Angular2DirectiveSimpleSelector(
+        Angular2WebSymbolsQueryConfigurator.ELEMENT_NG_TEMPLATE,
+        attributes
+      )
     }
 
     @JvmStatic
     fun createElementCssSelector(element: XmlTag): Angular2DirectiveSimpleSelector {
-      val cssSelector = Angular2DirectiveSimpleSelector()
       val elNameNoNs = XmlUtil.findLocalNameByQualifiedName(element.name)
-      cssSelector.setElement(elNameNoNs)
+      val attributes = mutableMapOf<String, String?>()
+      val classNames = mutableListOf<String>()
       for (attr in element.attributes) {
         val attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.name)
         val info = Angular2AttributeNameParser.parse(attrNameNoNs!!, element)
@@ -279,13 +280,19 @@ class Angular2DirectiveSimpleSelector internal constructor() {
             || info.type == Angular2AttributeType.REFERENCE) {
           continue
         }
-        cssSelector.addAttribute(info.name, attr.value)
-        if (StringUtil.toLowerCase(attr.name) == "class" && attr.value != null) {
-          StringUtil.split(attr.value!!, " ")
-            .forEach(Consumer { clsName: String -> cssSelector.addClassName(clsName) })
+        val attrValue = attr.value
+        attributes[info.name] = attrValue
+        if (StringUtil.toLowerCase(attr.name) == "class" && attrValue != null) {
+          attrValue.splitToSequence(' ').forEach { if (it.isNotEmpty()) classNames.add(it) }
         }
       }
-      return cssSelector
+      return Angular2DirectiveSimpleSelector(elNameNoNs, attributes, classNames)
     }
+
+    private fun normalizeAttrValue(value: String?): String =
+      if (value != null) StringUtil.toLowerCase(value) else ""
+
+    private fun normalizeClassName(className: String): String =
+      StringUtil.toLowerCase(className)
   }
 }

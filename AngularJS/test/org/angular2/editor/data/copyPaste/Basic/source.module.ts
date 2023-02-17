@@ -1,19 +1,19 @@
 import {NgModule} from '@angular/core';
 
-import {AppComponent} from './app.component';
+import {SourceComponent} from './source.component';
 import {CommonModule} from "@angular/common";
 import {CdkTableModule} from "@angular/cdk/table";
 
 @NgModule({
   declarations: [
-    AppComponent
+    SourceComponent
   ],
   imports: [
     CommonModule,
     CdkTableModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [SourceComponent]
 })
-export class AppModule {
+export class SourceModule {
 }

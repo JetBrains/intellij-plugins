@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.codeInsight.imports
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.Language
 import com.intellij.lang.ecmascript6.editor.ES6CopyPasteProcessorBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
@@ -11,7 +12,9 @@ import com.intellij.lang.ecmascript6.refactoring.ES6ReferenceExpressionsInfo
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.modules.imports.JSImportAction
 import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSExecutionScope
+import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
@@ -26,7 +29,6 @@ import com.intellij.psi.XmlRecursiveElementWalkingVisitor
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.util.contextOfType
 import com.intellij.psi.util.parentOfTypes
-import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.util.asSafely
@@ -43,13 +45,11 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   override fun isAcceptableCopyContext(file: PsiFile, contextElements: List<PsiElement>): Boolean {
     val settings = JSApplicationSettings.getInstance()
     return settings.isUseTypeScriptAutoImport
-           && file is Angular2HtmlFile || contextElements.all { it.containingFile is Angular2HtmlFile }
+           && isAcceptablePasteContext(file) || contextElements.all { isAcceptablePasteContext(it) }
   }
 
   override fun isAcceptablePasteContext(context: PsiElement): Boolean =
-    context.containingFile is Angular2HtmlFile
-    && context.parentOfTypes(JSExecutionScope::class, XmlTag::class, XmlDocument::class, withSelf = true)
-      .let { it !is JSExecutionScope && it != null }
+    context.containingFile.let { it is Angular2HtmlFile || (it is JSFile && it.language == Angular2Language.INSTANCE) }
 
   override fun hasUnsupportedContentInCopyContext(parent: PsiElement, textRange: TextRange): Boolean =
     false
@@ -58,29 +58,40 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     if (!super.collectReferenceExpressions(parent, range, addInfo)) return false
     // We need to collect injected Angular 2 expressions as well
     val injectedLanguageManager = InjectedLanguageManager.getInstance(parent.project)
-    parent.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
-      override fun visitXmlText(text: XmlText) {
-        injectedLanguageManager.enumerate(text) { injectedPsi, _ ->
+    if (parent !is JSElement) {
+      parent.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
+        override fun visitXmlText(text: XmlText) {
+          injectedLanguageManager.enumerate(text) { injectedPsi, _ ->
 
-          @Suppress("DEPRECATION")
-          val injectionWindow = InjectedLanguageUtil.getDocumentWindow(injectedPsi)
+            @Suppress("DEPRECATION")
+            val injectionWindow = InjectedLanguageUtil.getDocumentWindow(injectedPsi)
 
-          @Suppress("DEPRECATION")
-          val adjustedRange = if (injectionWindow != null)
-            TextRange(InjectedLanguageUtil.hostToInjectedUnescaped(injectionWindow, range.startOffset),
-                      InjectedLanguageUtil.hostToInjectedUnescaped(injectionWindow, range.endOffset))
-          else
-            range
+            @Suppress("DEPRECATION")
+            val adjustedRange = if (injectionWindow != null)
+              TextRange(InjectedLanguageUtil.hostToInjectedUnescaped(injectionWindow, range.startOffset),
+                        InjectedLanguageUtil.hostToInjectedUnescaped(injectionWindow, range.endOffset))
+            else
+              range
 
-          addInfo(ES6ReferenceExpressionsInfo.getInfo(injectedPsi, adjustedRange))
+            addInfo(ES6ReferenceExpressionsInfo.getInfo(injectedPsi, adjustedRange))
+          }
         }
-      }
-    })
+      })
+    }
     return true
   }
 
+  override fun collectTransferableData(rangesWithParents: List<kotlin.Pair<PsiElement, TextRange>>): Angular2ExpressionsImportsTransferableData? {
+    val expressionContexts = rangesWithParents.count { isExpressionContext(it.first) }
+    if (expressionContexts != 0 && expressionContexts != rangesWithParents.size)
+      return null
+    val importedElements = processTextRanges(rangesWithParents)
+    return importedElements.takeIf { it.isNotEmpty() }
+      ?.let { Angular2ExpressionsImportsTransferableData(ArrayList(it), expressionContexts != 0) }
+  }
+
   override fun createTransferableData(importedElements: ArrayList<ImportedElement>): Angular2ExpressionsImportsTransferableData =
-    Angular2ExpressionsImportsTransferableData(importedElements)
+    throw UnsupportedOperationException()
 
   override fun getExportScope(file: PsiFile, caret: Int): PsiElement? =
     Angular2ComponentLocator.findComponentClass(getContextElementOrFile(file, caret))?.containingFile
@@ -90,6 +101,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
                                      destinationModule: PsiElement,
                                      imports: Collection<Pair<ES6ImportPsiUtil.CreateImportExportInfo, PsiElement>>,
                                      pasteContextLanguage: Language) {
+    if (isExpressionContext(pasteContext) != data.isExpressionContext) return
     val globalImports = data.importedElements.mapNotNull {
       if (it.myInfo.importType == ImportExportType.BARE && it.myPath == "")
         Angular2GlobalImportCandidate(it.myInfo.importedName ?: return@mapNotNull null, pasteContext)
@@ -109,7 +121,7 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   }
 
   override fun toImportedElements(expressions: List<ES6ReferenceExpressionsInfo>, ranges: Collection<TextRange>): Set<ImportedElement> {
-    val result = super.toImportedElements(expressions, ranges).toMutableSet()
+    val result = mutableSetOf<ImportedElement>()
     val imports = mutableListOf<Pair<String, ES6ImportExportDeclarationPart>>()
     for (expressionsInfo in expressions) {
       for (localElement in expressionsInfo.localReferencedElements) {
@@ -140,7 +152,10 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
     return result
   }
 
-  class Angular2ExpressionsImportsTransferableData(list: ArrayList<ImportedElement>) : ES6ImportsTransferableDataBase(list) {
+  class Angular2ExpressionsImportsTransferableData(
+    list: ArrayList<ImportedElement>,
+    val isExpressionContext: Boolean,
+  ) : ES6ImportsTransferableDataBase(list) {
     override fun getFlavor(): DataFlavor {
       return ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR
     }
@@ -149,5 +164,10 @@ class Angular2ExpressionsCopyPasteProcessor : ES6CopyPasteProcessorBase<Angular2
   companion object {
     private val ANGULAR2_EXPRESSIONS_IMPORTS_FLAVOR = DataFlavor(Angular2ExpressionsImportsTransferableData::class.java,
                                                                  "Angular2 es6 imports")
+
+    fun isExpressionContext(context: PsiElement) =
+      (if (context is ASTWrapperPsiElement) context.firstChild else context)
+        .parentOfTypes(JSExecutionScope::class, XmlTag::class, PsiFile::class, withSelf = true)
+        .let { it != null && it is JSExecutionScope }
   }
 }
