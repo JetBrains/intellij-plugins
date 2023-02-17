@@ -63,6 +63,14 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       }
     }
 
+    fun supportsScriptSetup(context: PsiElement?): Boolean =
+      context
+        ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
+        ?.takeIf { it.framework == VueFramework.ID }
+        ?.runNameMatchQuery(listOf(WebSymbolQualifiedName(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME),
+                                   WebSymbolQualifiedName(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME)))
+        ?.firstOrNull() != null
+
   }
 
   fun getOrCreateScriptScope(): JSExecutionScope? {
@@ -135,12 +143,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
   private fun createEmptyScript(context: XmlFile): XmlTag {
     val project = context.project
 
-    val hasScriptSetup = file
-      ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
-      ?.takeIf { it.framework == VueFramework.ID }
-      ?.runNameMatchQuery(listOf(WebSymbolQualifiedName(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME),
-                                 WebSymbolQualifiedName(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME)))
-      ?.firstOrNull() != null
+    val hasScriptSetup = supportsScriptSetup(file)
 
     val hasTypeScript = TypeScriptService.getForFile(context.project, context.virtualFile) != null
     val langText = if (hasTypeScript) " lang=\"ts\"" else ""
