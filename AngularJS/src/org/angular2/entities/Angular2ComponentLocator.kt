@@ -2,12 +2,14 @@
 package org.angular2.entities
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.javascript.web.js.WebJSResolveUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.css.StylesheetFile
@@ -27,7 +29,11 @@ object Angular2ComponentLocator {
 
   @JvmStatic
   fun findComponentClass(templateContext: PsiElement): TypeScriptClass? {
-    return findComponentClasses(templateContext).firstOrNull()
+    return if (ApplicationManager.getApplication().isDispatchThread)
+      WebJSResolveUtil.disableIndexUpToDateCheckIn(templateContext) {
+        findComponentClasses(templateContext).firstOrNull()
+      }
+    else findComponentClasses(templateContext).firstOrNull()
   }
 
   @JvmStatic

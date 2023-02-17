@@ -37,7 +37,7 @@ class Angular2SelectorMatcher<T : Any> {
     var matcher: Angular2SelectorMatcher<T> = this
     val element = cssSelector.elementName
     val classNames = cssSelector.classNames
-    val attrs = cssSelector.attrs
+    val attrs = cssSelector.attrsAndValues
     val selectable = SelectorContext(cssSelector, callbackCtx, listContext)
     if (StringUtil.isNotEmpty(element)) {
       val isTerminal = attrs.isEmpty() && classNames.isEmpty()
@@ -99,7 +99,7 @@ class Angular2SelectorMatcher<T : Any> {
             matchedCallback: ((Angular2DirectiveSimpleSelector, T?) -> Unit)?): Boolean {
     val element = cssSelector.elementName
     val classNames = cssSelector.classNames
-    val attrs = cssSelector.attrs
+    val attrs = cssSelector.attrsAndValues
     _listContexts.forEach(Consumer { l: SelectorListContext -> l.alreadyMatched = false })
     var result = matchTerminal(_elementMap, element, cssSelector, matchedCallback)
     result = result or matchPartial(_elementPartialMap, element, cssSelector, matchedCallback)

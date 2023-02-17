@@ -13,7 +13,7 @@ import {Colors} from "./colors";
     </div>
   `
 })
-export class InjectedToBasic {
+export class SourceComponent {
   @Input()
   color: string
 
