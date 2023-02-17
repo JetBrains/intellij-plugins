@@ -277,7 +277,7 @@ public class MeteorProjectTemplateGenerator extends WebProjectTemplate<MeteorPro
 
 
   private static void showErrorMessage(final @NotNull String message) {
-    Notifications.Bus.notify(new Notification("Meteor JS Generator",
+    Notifications.Bus.notify(new Notification(MeteorBundle.message("notification.group.meteor.js.generator"),
                                               MeteorBundle.message("notification.title.meteor.project"),
                                               MeteorBundle.message("notification.content.error.creating.meteor.app", message), NotificationType.ERROR));
   }

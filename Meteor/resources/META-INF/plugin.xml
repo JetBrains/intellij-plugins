@@ -71,8 +71,14 @@
     <additionalLibraryRootsProvider implementation="com.jetbrains.plugins.meteor.ide.action.MeteorSyntheticLibraryProvider"/>
     <editorHighlighterProvider filetype="Spacebars" implementationClass="com.dmarcotte.handlebars.file.HbHighlighterProvider"/>
     <vfs.asyncListener implementation="com.jetbrains.plugins.meteor.MeteorAsyncFileListener"/>
-    <notificationGroup id="MeteorProject" displayType="BALLOON"/>
-    <notificationGroup id="Meteor JS Generator" displayType="BALLOON"/>
+    <notificationGroup id="MeteorProject"
+                       displayType="BALLOON"
+                       bundle="messages.MeteorBundle"
+                       key="notification.group.meteor.project"/>
+    <notificationGroup id="MeteorJSGenerator"
+                       displayType="BALLOON"
+                       bundle="messages.MeteorBundle"
+                       key="notification.group.meteor.js.generator"/>
   </extensions>
 
 

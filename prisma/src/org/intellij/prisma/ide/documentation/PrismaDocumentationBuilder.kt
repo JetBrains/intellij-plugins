@@ -1,6 +1,7 @@
 package org.intellij.prisma.ide.documentation
 
 import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
@@ -189,6 +190,6 @@ class PrismaDocumentationBuilder(private val element: PsiElement) {
   private fun PrismaPsiRenderer.pre(element: PsiElement?) =
     HtmlChunk.text(build(element)).code().toString()
 
-  private fun StringBuilder.pre(source: String) =
+  private fun StringBuilder.pre(@NlsSafe source: String) =
     append(HtmlChunk.text(source).code().toString())
 }

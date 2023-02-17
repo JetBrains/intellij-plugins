@@ -30,7 +30,10 @@ Adds Cordova support to IntelliJ-based IDEs. Here's what's included in this supp
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
     <backgroundPostStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
     <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>
-    <notificationGroup id="PhoneGap notification" displayType="BALLOON"/>
+    <notificationGroup id="PhoneGap notification"
+                       displayType="BALLOON"
+                       bundle="messages.PhoneGapBundle"
+                       key="notification.group.phonegap.notification"/>
   </extensions>
 
 

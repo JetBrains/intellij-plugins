@@ -1,6 +1,7 @@
 package org.intellij.plugin.mdx.lang
 
 import com.intellij.openapi.fileTypes.LanguageFileType
+import org.intellij.plugin.mdx.MdxBundle
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
@@ -11,7 +12,7 @@ class MdxFileType private constructor() : LanguageFileType(MdxLanguage) {
   }
 
   override fun getDescription(): @Nls(capitalization = Nls.Capitalization.Sentence) String {
-    return "MDX"
+    return MdxBundle.message("mdx.file.type.description")
   }
 
 
