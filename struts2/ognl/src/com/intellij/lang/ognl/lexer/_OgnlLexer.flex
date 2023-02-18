@@ -59,7 +59,6 @@ import com.intellij.lang.ognl.OgnlTypes;
 %class _OgnlLexer
 %public
 %implements FlexLexer
-%unicode
 %function advance
 %type IElementType
 %eof{
