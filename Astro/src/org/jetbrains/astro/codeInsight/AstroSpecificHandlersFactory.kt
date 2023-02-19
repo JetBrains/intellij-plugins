@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSSourceElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.lang.typescript.TypeScriptSpecificHandlersFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
@@ -78,7 +78,7 @@ class AstroSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
            ?: scope
   }
 
-  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler =
+  override fun getStubBasedScopeHandler(): JSStubBasedScopeHandler =
     AstroStubBasedScopeHandler
 
 }

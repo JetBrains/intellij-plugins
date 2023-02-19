@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.lang.typescript.TypeScriptSpecificHandlersFactory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -29,7 +29,7 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
 
   override fun getExportScope(element: PsiElement) = getExportScopeImpl(element) { super.getExportScope(element) }
 
-  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler {
+  override fun getStubBasedScopeHandler(): JSStubBasedScopeHandler {
     return VueExprStubBasedScopeHandler
   }
 }
@@ -45,7 +45,7 @@ class VueTSSpecificHandlersFactory : TypeScriptSpecificHandlersFactory() {
 
   override fun getExportScope(element: PsiElement) = getExportScopeImpl(element) { super.getExportScope(element) }
 
-  override fun getStubBasedScopeHandler(): JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler {
+  override fun getStubBasedScopeHandler(): JSStubBasedScopeHandler {
     return VueExprStubBasedScopeHandler
   }
 
