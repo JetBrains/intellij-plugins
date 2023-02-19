@@ -100,14 +100,16 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
     if (isUseDeno() != useDeno) {
       setUseDeno(useDeno)
 
-      val lspServerManager = LspServerManager.getInstance(project)
-      if (useDeno) {
-        getDenoDescriptor(project)?.let { lspServerManager.ensureServerStarted(DenoLspSupportProvider::class.java, it) }
-        createDenoEntity(project)
-      }
-      else {
-        lspServerManager.getServersForProvider(DenoLspSupportProvider::class.java).forEach { lspServerManager.stopServer(it) }
-        removeDenoEntity(project)
+      if (!project.isDefault) {
+        val lspServerManager = LspServerManager.getInstance(project)
+        if (useDeno) {
+          getDenoDescriptor(project)?.let { lspServerManager.ensureServerStarted(DenoLspSupportProvider::class.java, it) }
+          createDenoEntity(project)
+        }
+        else {
+          lspServerManager.getServersForProvider(DenoLspSupportProvider::class.java).forEach { lspServerManager.stopServer(it) }
+          removeDenoEntity(project)
+        }
       }
     }
 
