@@ -2,11 +2,12 @@
 package org.angular2.codeInsight
 
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.psi.PsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.angular2.entities.Angular2ComponentLocator
 
-object Angular2StubBasedScopeHandler : JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler() {
+object Angular2StubBasedScopeHandler : JSStubBasedScopeHandler() {
 
   override fun processDeclarationsInScope(context: PsiElement, processor: PsiScopeProcessor, includeParentScopes: Boolean): Boolean {
     val initialScope = getScope(context)

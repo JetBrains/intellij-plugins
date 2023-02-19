@@ -2,13 +2,13 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.psi.PsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.parser.VueFile
 
-object VueExprStubBasedScopeHandler : JSStubBasedPsiTreeUtil.JSStubBasedScopeHandler() {
+object VueExprStubBasedScopeHandler : JSStubBasedScopeHandler() {
 
   override fun processDeclarationsInScope(context: PsiElement, processor: PsiScopeProcessor, includeParentScopes: Boolean): Boolean {
     val initialScope = getScope(context)
