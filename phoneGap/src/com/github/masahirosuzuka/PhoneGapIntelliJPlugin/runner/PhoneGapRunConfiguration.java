@@ -19,7 +19,6 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.EnvironmentUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -40,31 +39,31 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
 
   private static final String CORDOVA_IOS_LOG_PATH = "/platforms/ios/cordova/console.log";
 
-  private static final Set<String> MAC_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_IOS,
-                                                                                   PLATFORM_AMAZON_FIREOS,
-                                                                                   PLATFORM_ANDROID,
-                                                                                   PLATFORM_BLACKBERRY_10,
-                                                                                   PLATFORM_BROWSER,
-                                                                                   PLATFORM_FIREFOXOS);
+  private static final Set<String> MAC_SPEC_PLATFORMS = Set.of(PLATFORM_IOS,
+                                                               PLATFORM_AMAZON_FIREOS,
+                                                               PLATFORM_ANDROID,
+                                                               PLATFORM_BLACKBERRY_10,
+                                                               PLATFORM_BROWSER,
+                                                               PLATFORM_FIREFOXOS);
 
-  private static final Set<String> WIN_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_AMAZON_FIREOS,
-                                                                                   PLATFORM_ANDROID,
-                                                                                   PLATFORM_BLACKBERRY_10,
-                                                                                   PLATFORM_FIREFOXOS,
-                                                                                   PLATFORM_WP_8,
-                                                                                   PLATFORM_WINDOWS,
-                                                                                   PLATFORM_BROWSER,
-                                                                                   PLATFORM_WINDOWS_8);
+  private static final Set<String> WIN_SPEC_PLATFORMS = Set.of(PLATFORM_AMAZON_FIREOS,
+                                                               PLATFORM_ANDROID,
+                                                               PLATFORM_BLACKBERRY_10,
+                                                               PLATFORM_FIREFOXOS,
+                                                               PLATFORM_WP_8,
+                                                               PLATFORM_WINDOWS,
+                                                               PLATFORM_BROWSER,
+                                                               PLATFORM_WINDOWS_8);
 
-  private static final Set<String> LINUX_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_AMAZON_FIREOS,
-                                                                                     PLATFORM_ANDROID,
-                                                                                     PLATFORM_BROWSER,
-                                                                                     PLATFORM_FIREFOXOS,
-                                                                                     PLATFORM_UBUNTU);
+  private static final Set<String> LINUX_SPEC_PLATFORMS = Set.of(PLATFORM_AMAZON_FIREOS,
+                                                                 PLATFORM_ANDROID,
+                                                                 PLATFORM_BROWSER,
+                                                                 PLATFORM_FIREFOXOS,
+                                                                 PLATFORM_UBUNTU);
 
-  private static final Set<String> REMOTE_BUILD_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_IOS,
-                                                                                       PLATFORM_ANDROID,
-                                                                                       PLATFORM_WP_8);
+  private static final Set<String> REMOTE_BUILD_PLATFORMS = Set.of(PLATFORM_IOS,
+                                                                   PLATFORM_ANDROID,
+                                                                   PLATFORM_WP_8);
   public static final String ANDROID_HOME_VARIABLE = "ANDROID_HOME";
 
   //public for serializer

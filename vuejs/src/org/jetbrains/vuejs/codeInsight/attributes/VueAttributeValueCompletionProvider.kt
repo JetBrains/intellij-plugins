@@ -10,16 +10,15 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
 import org.jetbrains.vuejs.model.getAvailableSlotsCompletions
 import java.util.*
 
 // TODO move to web-types
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {
-  private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")
+  private val VUE_SCRIPT_LANGUAGE = setOf("js", "ts")
   private val VUE_STYLE_LANGUAGE = vueStyleLanguages()
-  private val VUE_TEMPLATE_LANGUAGE = ContainerUtil.immutableSet("html", "pug")
+  private val VUE_TEMPLATE_LANGUAGE = setOf("html", "pug")
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     val xmlTag = PsiTreeUtil.getParentOfType(parameters.position, XmlTag::class.java, false)

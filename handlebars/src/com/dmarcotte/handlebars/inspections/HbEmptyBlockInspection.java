@@ -9,13 +9,12 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public class HbEmptyBlockInspection extends LocalInspectionTool {
-  private static final Set<String> HELPERS_WITH_ARGUMENTS = ContainerUtil.immutableSet("if", "each", "with");
+  private static final Set<String> HELPERS_WITH_ARGUMENTS = Set.of("if", "each", "with");
 
   @NotNull
   @Override
@@ -29,7 +28,7 @@ public class HbEmptyBlockInspection extends LocalInspectionTool {
         }
 
         String name = ((HbOpenBlockMustache)element).getName();
-        if (HELPERS_WITH_ARGUMENTS.contains(name) &&
+        if (name != null && HELPERS_WITH_ARGUMENTS.contains(name) &&
             null == PsiTreeUtil.getChildrenOfType(element, HbParam.class)) {
           holder.registerProblem(element, HbBundle.message("hb.block.mismatch.inspection.empty.block", name));
         }

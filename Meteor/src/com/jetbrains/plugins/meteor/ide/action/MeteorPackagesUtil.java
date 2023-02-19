@@ -35,9 +35,9 @@ public final class MeteorPackagesUtil {
   public static final String SETTING_SCOPE_IMPORT = "meteor.settings.import.codes.2";
   public static final String SETTING_METEOR_GLOBAL = "meteor.settings.global.path";
 
-  private static final Set<String> IGNORED_PACKAGES = ContainerUtil.immutableSet("meteor", "mongo", "minimongo", "templating");
+  private static final Set<String> IGNORED_PACKAGES = Set.of("meteor", "mongo", "minimongo", "templating");
   public static final Set<String> EXCLUDED_FOLDERS =
-    ContainerUtil.immutableSet("node_modules", "test", "example", "tests", "examples", "tmp");
+    Set.of("node_modules", "test", "example", "tests", "examples", "tmp");
 
 
   public static final String[] EXTENSIONS = JSFileReferencesUtil.IMPLICIT_EXTENSIONS;
