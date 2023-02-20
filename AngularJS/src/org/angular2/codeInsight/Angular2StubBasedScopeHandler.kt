@@ -3,6 +3,7 @@ package org.angular2.codeInsight
 
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.angular2.entities.Angular2ComponentLocator
@@ -20,6 +21,7 @@ object Angular2StubBasedScopeHandler : JSStubBasedScopeHandler() {
 
   private fun processDeclarationsComponentClassScope(context: PsiElement,
                                                      processor: PsiScopeProcessor): Boolean {
+    if (DumbService.isDumb(context.project)) return true
     // TODO process template scopes
     val componentClass = Angular2ComponentLocator.findComponentClass(context) ?: return true
     return JSStubBasedPsiTreeUtil.processDeclarationsInScope(componentClass, processor, false)
