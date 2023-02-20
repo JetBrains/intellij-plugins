@@ -408,7 +408,7 @@ public class MainStep extends AbstractWizardStepEx {
       myResizeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
     }
 
-    Set<String> attrs = ContainerUtil.set(unsetAttributes);
+    Set<String> attrs = ContainerUtil.newHashSet(unsetAttributes);
     attrs.remove(ActionScriptCreateClassOrInterfaceFix.SUPERCLASS);
     attrs.remove(ActionScriptCreateClassOrInterfaceFix.SUPER_INTERFACES);
     attrs.remove(FileTemplate.ATTRIBUTE_NAME);

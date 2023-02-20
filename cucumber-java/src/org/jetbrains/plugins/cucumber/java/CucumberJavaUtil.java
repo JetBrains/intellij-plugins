@@ -87,7 +87,7 @@ public final class CucumberJavaUtil {
     return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
   }
 
-  private static String getCucumberAnnotationSuffix(@NotNull String name) {
+  private static @NotNull String getCucumberAnnotationSuffix(@NotNull String name) {
     for (String pkg : CUCUMBER_ANNOTATION_PACKAGES) {
       if (name.startsWith(pkg)) {
         return name.substring(pkg.length());
