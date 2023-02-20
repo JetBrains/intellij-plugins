@@ -4,14 +4,17 @@ package org.angular2.codeInsight.attributes
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider
 import com.intellij.javascript.web.css.CssClassInJSLiteralOrIdentifierReferenceProvider.Companion.getClassesFromEmbeddedContent
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil
 import org.angular2.lang.Angular2LangUtil
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.parse
+import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType
 import org.angular2.lang.html.psi.PropertyBindingType.CLASS
@@ -55,10 +58,34 @@ class Angular2AttributeValueProvider : HtmlAttributeValueProvider() {
     return null
   }
 
+  override fun getCustomAttributeValue(tag: XmlTag, attributeName: String): PsiElement? {
+    if (attributeName == SRC_ATTR
+        && tag.localName.equals(IMG_TAG, true)
+        && Angular2LangUtil.isAngular2Context(tag)) {
+      for (attribute in tag.attributes) {
+        val attrName = attribute.name
+        val info = parse(attrName, tag)
+        if (isNgSrcAttribute(info)) {
+          return attribute.valueElement
+        }
+      }
+    }
+    return null
+  }
+
   companion object {
 
     @NonNls
     val NG_CLASS_ATTR = "ngClass"
+
+    @NonNls
+    val SRC_ATTR = "src"
+
+    @NonNls
+    val IMG_TAG = "img"
+
+    @NonNls
+    val NG_SRC_ATTR = "ngSrc"
 
     fun isNgClassAttribute(attribute: XmlAttribute?): Boolean {
       return attribute != null && isNgClassAttribute(parse(attribute.name, attribute.parent))
@@ -68,6 +95,12 @@ class Angular2AttributeValueProvider : HtmlAttributeValueProvider() {
       return (info is PropertyBindingInfo
               && info.bindingType == PropertyBindingType.PROPERTY
               && NG_CLASS_ATTR == info.name)
+    }
+
+    fun isNgSrcAttribute(info: AttributeInfo): Boolean {
+      return NG_SRC_ATTR == info.name &&
+             (info.asSafely<PropertyBindingInfo>()?.bindingType == PropertyBindingType.PROPERTY
+             || info.type == Angular2AttributeType.REGULAR)
     }
   }
 
