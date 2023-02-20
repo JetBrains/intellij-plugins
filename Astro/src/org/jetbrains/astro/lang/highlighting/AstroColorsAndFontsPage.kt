@@ -57,8 +57,6 @@ class AstroColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
 
   companion object {
     private val ATTRS: Array<AttributesDescriptor> = arrayOf(
-      AttributesDescriptor(AstroBundle.message("astro.colors.frontmatter"),
-                           AstroHighlighterColors.ASTRO_FRONTMATTER),
       AttributesDescriptor(AstroBundle.message("astro.colors.frontmatter.separator"),
                            AstroHighlighterColors.ASTRO_FRONTMATTER_SEPARATOR),
     )

@@ -11,7 +11,6 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
-import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterHighlighterToken
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl
 import org.jetbrains.astro.lang.lexer.AstroLexerImpl.Companion.HAS_NON_RESTARTABLE_STATE
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
@@ -67,8 +66,7 @@ class AstroHighlightingLexer(styleFileType: FileType?)
   }
 
   override fun getTokenType(): IElementType? {
-    return frontmatterScriptLexer?.tokenType?.let { AstroFrontmatterHighlighterToken[it] }
-           ?: super.getTokenType()
+    return frontmatterScriptLexer?.tokenType ?: super.getTokenType()
   }
 
   override fun getTokenStart(): Int {
