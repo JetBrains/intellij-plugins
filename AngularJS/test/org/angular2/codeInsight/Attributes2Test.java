@@ -1182,4 +1182,11 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testImgSrcWithNg15() {
+    configureLink(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFile("imgSrcWithNg15.html");
+    myFixture.checkHighlighting();
+  }
+
 }

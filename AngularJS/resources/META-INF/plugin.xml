@@ -218,6 +218,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularMultipleStructuralDirectivesInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.multiple-structural-directives.name" bundle="messages.Angular2Bundle"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularNgOptimizedImageInspection"
+                     groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
+                     level="WEAK WARNING" key="angular.inspection.ng-optimized-image.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidAnimationTriggerAssignmentInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.animation-trigger-assignment.name"
