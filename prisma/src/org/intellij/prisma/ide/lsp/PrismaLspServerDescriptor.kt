@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.prisma.PrismaBundle
 import org.intellij.prisma.lang.PrismaFileType
 
-class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptor(project, root) {
+class PrismaLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptor(project, "Prisma", root) {
 
   override fun isSupportedFile(file: VirtualFile) = file.fileType == PrismaFileType
 

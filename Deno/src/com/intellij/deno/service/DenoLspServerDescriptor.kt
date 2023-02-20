@@ -6,8 +6,8 @@ import com.google.gson.JsonPrimitive
 import com.intellij.deno.DenoSettings
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.lang.javascript.TypeScriptFileType
-import com.intellij.lsp.api.LspServerSupportProvider
 import com.intellij.lsp.api.LspServerDescriptor
+import com.intellij.lsp.api.LspServerSupportProvider
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -32,7 +32,7 @@ fun getDenoDescriptor(project: Project): DenoLspServerDescriptor? {
   return null
 }
 
-class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, *roots) {
+class DenoLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, "Deno", *roots) {
 
   override fun isSupportedFile(file: VirtualFile) = file.fileType == TypeScriptFileType.INSTANCE
 
