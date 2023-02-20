@@ -11,10 +11,8 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.tree.IElementType
-import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.map2Array
 import org.jetbrains.astro.lang.AstroLanguage
-import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterHighlighterToken
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
@@ -24,16 +22,7 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
   private val htmlHighlighter = HtmlFileHighlighter()
 
   override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
-    val actualTokenType = AstroFrontmatterHighlighterToken.unwrap(tokenType)
-    var result = keys[actualTokenType]
-    if (result != null) {
-      return result
-    }
-    result = htmlHighlighter.getTokenHighlights(actualTokenType)
-    if (tokenType is AstroFrontmatterHighlighterToken) {
-      result = ArrayUtil.insert(result, 1, AstroHighlighterColors.ASTRO_FRONTMATTER)
-    }
-    return mapToTsKeys(result, tokenType)
+    return keys[tokenType] ?: mapToTsKeys(htmlHighlighter.getTokenHighlights(tokenType), tokenType)
   }
 
   override fun getHighlightingLexer(): Lexer {
@@ -45,13 +34,13 @@ internal class AstroFileHighlighter : JSHighlighter(AstroLanguage.INSTANCE.optio
     private val ourJsHighlighter = JSHighlighter(DialectOptionHolder.JS_1_5)
     private val ourTsHighlighter = TypeScriptHighlighter(false)
     private val ourTsKeyMap: MutableMap<Pair<TextAttributesKey, IElementType>, TextAttributesKey> = ConcurrentHashMap()
+
     private fun put(token: IElementType, vararg keysArr: TextAttributesKey) {
       keys[token] = keysArr.toList().toTypedArray()
     }
 
     init {
-      put(AstroTokenTypes.FRONTMATTER_SEPARATOR, XmlHighlighterColors.HTML_CODE, AstroHighlighterColors.ASTRO_FRONTMATTER,
-          AstroHighlighterColors.ASTRO_FRONTMATTER_SEPARATOR)
+      put(AstroTokenTypes.FRONTMATTER_SEPARATOR, XmlHighlighterColors.HTML_CODE, AstroHighlighterColors.ASTRO_FRONTMATTER_SEPARATOR)
     }
 
     private fun mapToTsKeys(tokenHighlights: Array<TextAttributesKey>, tokenType: IElementType): Array<TextAttributesKey> {

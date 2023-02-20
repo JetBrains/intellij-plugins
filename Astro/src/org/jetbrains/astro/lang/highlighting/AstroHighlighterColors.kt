@@ -5,13 +5,7 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
 object AstroHighlighterColors {
-
-  @JvmField
-  val ASTRO_FRONTMATTER = TextAttributesKey.createTextAttributesKey(
-    "ASTRO.FRONTMATTER", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
-
   @JvmField
   val ASTRO_FRONTMATTER_SEPARATOR = TextAttributesKey.createTextAttributesKey(
     "ASTRO.FRONTMATTER_SEPARATOR", DefaultLanguageHighlighterColors.KEYWORD)
-
 }
