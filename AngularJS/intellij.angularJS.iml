@@ -56,7 +56,7 @@
     <orderEntry type="module" module-name="intellij.sass" scope="TEST" />
     <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.resharper.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.html.tools" />
     <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="jackson-databind" level="project" />
     <orderEntry type="module" module-name="intellij.tslint" />
@@ -69,5 +69,6 @@
     <orderEntry type="module" module-name="intellij.platform.util.jdom" />
     <orderEntry type="module" module-name="intellij.platform.webSymbols" />
     <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.images" />
   </component>
 </module>

@@ -35,6 +35,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularUndefinedBindingInspection.class,
       AngularUndefinedTagInspection.class,
       AngularAmbiguousComponentTagInspection.class,
+      AngularNgOptimizedImageInspection.class,
 
       TypeScriptUnresolvedReferenceInspection.class,
       TypeScriptValidateTypesInspection.class,
