@@ -9,6 +9,7 @@ class Angular2IvyDirectiveIndex : Angular2IndexBase<TypeScriptClass>() {
   override fun getKey(): StubIndexKey<String, TypeScriptClass> = KEY
 
   companion object {
+    @JvmField
     val KEY = StubIndexKey.createIndexKey<String, TypeScriptClass>("angular2.ivy.directive.index")
   }
 }

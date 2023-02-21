@@ -9,6 +9,7 @@ class Angular2MetadataNodeModuleIndex : Angular2IndexBase<Angular2MetadataNodeMo
   override fun getKey(): StubIndexKey<String, Angular2MetadataNodeModule> = KEY
 
   companion object {
+    @JvmField
     val KEY = StubIndexKey.createIndexKey<String, Angular2MetadataNodeModule>("angular2.metadata.node.index")
   }
 }

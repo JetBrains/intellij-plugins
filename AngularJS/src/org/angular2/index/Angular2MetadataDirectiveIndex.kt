@@ -9,6 +9,7 @@ class Angular2MetadataDirectiveIndex : Angular2IndexBase<Angular2MetadataDirecti
   override fun getKey(): StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = KEY
 
   companion object {
+    @JvmField
     val KEY: StubIndexKey<String, Angular2MetadataDirectiveBase<*>> = StubIndexKey.createIndexKey("angular2.metadata.directive.index")
   }
 }

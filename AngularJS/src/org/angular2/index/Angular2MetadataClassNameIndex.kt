@@ -9,6 +9,7 @@ class Angular2MetadataClassNameIndex : Angular2IndexBase<Angular2MetadataClassBa
   override fun getKey(): StubIndexKey<String, Angular2MetadataClassBase<*>> = KEY
 
   companion object {
+    @JvmField
     val KEY: StubIndexKey<String, Angular2MetadataClassBase<*>> = StubIndexKey.createIndexKey("angular2.metadata.className.index")
   }
 }
