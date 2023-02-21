@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
@@ -47,6 +48,7 @@ import org.angular2.index.Angular2IndexingHandler.Companion.isPipe
 import org.angular2.lang.Angular2LangUtil.isAngular2Context
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angularjs.index.AngularIndexUtil
+import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
 /**
@@ -277,25 +279,31 @@ object Angular2EntitiesProvider {
     return isDirective(element) || isPipe(element) || isModule(element)
   }
 
-  private fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> {
-    val result = ArrayList<Angular2Directive>()
-    StubIndex.getInstance().processElements(
-      Angular2SourceDirectiveIndex.KEY, indexLookupName, project, GlobalSearchScope.allScope(project), JSImplicitElementProvider::class.java
-    ) { provider ->
-      provider.indexingData
-        ?.implicitElements
-        ?.filter { it.isValid }
-        ?.firstNotNullOfOrNull { getSourceEntity(it) as? Angular2Directive }
-        ?.let { directive ->
-          result.add(directive)
-        }
-      true
+  private fun findDirectivesCandidates(project: Project, indexLookupName: String): List<Angular2Directive> =
+    CachedValuesManager.getManager(project).getCachedValue(project) {
+      create(ConcurrentHashMap<String, List<Angular2Directive>>(),
+             PsiModificationTracker.MODIFICATION_COUNT,
+             VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+    }.computeIfAbsent(indexLookupName) {
+      val result = ArrayList<Angular2Directive>()
+      StubIndex.getInstance().processElements(
+        Angular2SourceDirectiveIndex.KEY, indexLookupName, project, GlobalSearchScope.allScope(project),
+        JSImplicitElementProvider::class.java
+      ) { provider ->
+        provider.indexingData
+          ?.implicitElements
+          ?.filter { it.isValid }
+          ?.firstNotNullOfOrNull { getSourceEntity(it) as? Angular2Directive }
+          ?.let { directive ->
+            result.add(directive)
+          }
+        true
+      }
+      processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndex.KEY, Angular2Directive::class.java) { result.add(it) }
+      processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase::class.java,
+                              Angular2MetadataDirectiveIndex.KEY) { result.add(it) }
+      result
     }
-    processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndex.KEY, Angular2Directive::class.java) { result.add(it) }
-    processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase::class.java,
-                            Angular2MetadataDirectiveIndex.KEY) { result.add(it) }
-    return result
-  }
 
   private fun <T : Angular2MetadataEntity<*>> processMetadataEntities(project: Project,
                                                                       name: String,
