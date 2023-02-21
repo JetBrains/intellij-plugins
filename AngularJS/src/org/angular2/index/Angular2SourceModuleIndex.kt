@@ -9,6 +9,7 @@ class Angular2SourceModuleIndex : Angular2IndexBase<JSImplicitElementProvider>()
   override fun getKey(): StubIndexKey<String, JSImplicitElementProvider> = KEY
 
   companion object {
+    @JvmField
     val KEY = StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("angular2.source.module.index")
   }
 }
