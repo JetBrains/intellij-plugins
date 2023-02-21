@@ -930,6 +930,11 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
         var result = finishReadString(JSTokenTypes.STRING_LITERAL);
         if (result != null) return result;
       }
+  "`" {
+        readUntil(false, '`');
+        var result = finishReadString(JSTokenTypes.STRING_TEMPLATE_PART);
+        if (result != null) return result;
+      }
 }
 
 // JSX expression rules

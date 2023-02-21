@@ -328,6 +328,19 @@ open class AstroLexerTest : LexerTestCase() {
     |end}>
   """)
 
+  fun testTemplateLiteralInFrontmatter() = doTest("""
+    |---
+    |const foo = `template`;
+    |---
+  """)
+
+  fun testTemplateInterpolationInFrontmatter() = doTest("""
+    |---
+    |const value = 'value';
+    |const foo = `template ${'$'}{value}`;
+    |---
+  """)
+
   fun testTemplateLiteralAttribute() = doTest("""
     |------
     |<a foo=`12`>

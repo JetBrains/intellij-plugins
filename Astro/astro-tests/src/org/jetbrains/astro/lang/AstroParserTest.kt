@@ -209,6 +209,23 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testTemplateLiteralInFrontmatter() {
+    doTestAstro("""
+      ---
+      const foo = `template`;
+      ---
+    """)
+  }
+
+  fun testTemplateInterpolationInFrontmatter() {
+    doTestAstro("""
+      ---
+      const value = 'value';
+      const foo = `template ${'$'}{value}`;
+      ---
+    """)
+  }
+
   fun testExpressionUnterminated() {
     doTestAstro("""
       {12<
