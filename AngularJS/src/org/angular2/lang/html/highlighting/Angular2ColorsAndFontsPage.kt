@@ -16,7 +16,7 @@ import javax.swing.Icon
 
 class Angular2ColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
   override fun getDisplayName(): String {
-    return "Angular Template"
+    return Angular2Bundle.message("angular.configurable.name.angular.template")
   }
 
   override fun getIcon(): Icon {
