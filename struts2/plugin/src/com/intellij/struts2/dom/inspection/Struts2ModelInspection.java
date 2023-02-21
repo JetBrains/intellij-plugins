@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.codeInspection.options.OptPane;
-import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,12 +42,11 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.Set;
 
-import static com.intellij.codeInspection.options.OptPane.*;
+import static com.intellij.codeInspection.options.OptPane.checkbox;
+import static com.intellij.codeInspection.options.OptPane.pane;
 
 /**
  * Default DOM-Model inspection for struts.xml files.
@@ -79,8 +77,8 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
    * @param holder                   Holder.
    */
   @Override
-  public void checkFileElement(final DomFileElement<StrutsRoot> strutsRootDomFileElement,
-                               final DomElementAnnotationHolder holder) {
+  public void checkFileElement(final @NotNull DomFileElement<StrutsRoot> strutsRootDomFileElement,
+                               final @NotNull DomElementAnnotationHolder holder) {
     final Module module = strutsRootDomFileElement.getModule();
     if (module == null) {
       return;
@@ -174,9 +172,9 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   }
 
   @Override
-  protected void checkDomElement(final DomElement element,
-                                 final DomElementAnnotationHolder holder,
-                                 final DomHighlightingHelper helper) {
+  protected void checkDomElement(final @NotNull DomElement element,
+                                 final @NotNull DomElementAnnotationHolder holder,
+                                 final @NotNull DomHighlightingHelper helper) {
     final int oldSize = holder.getSize();
 
     element.accept(new Struts2ModelInspectionVisitor(holder, ignoreExtendableClass));
