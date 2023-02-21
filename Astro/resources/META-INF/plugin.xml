@@ -44,8 +44,7 @@
     <lang.syntaxHighlighterFactory language="Astro"
                                    implementationClass="org.jetbrains.astro.lang.highlighting.AstroHighlighterFactory"/>
     <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
-    <lang.braceMatcher language="AstroFrontmatter" implementationClass="org.jetbrains.astro.lang.frontmatter.AstroFrontmatterBraceMatcher"/>
-    <braceMatcher filetype="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
+x    <braceMatcher filetype="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
     <quoteHandler fileType="Astro" className="com.intellij.javascript.JSQuoteHandler"/>
 
     <stubElementTypeHolder class="org.jetbrains.astro.lang.parser.AstroStubElementTypes" externalIdPrefix="ASTRO:"/>
