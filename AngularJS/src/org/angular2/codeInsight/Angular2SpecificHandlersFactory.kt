@@ -13,10 +13,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeGuard
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.impl.source.resolve.ResolveCache.PolyVariantResolver
 import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
@@ -77,8 +79,11 @@ class Angular2SpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
         ?.containingFile as? JSFile
       ?: super.getExportScope(element)
 
-  override fun getStubBasedScopeHandler(): JSStubBasedScopeHandler {
-    return Angular2StubBasedScopeHandler
+  override fun resolveReferenceLocallyForAnalysis(reference: PsiPolyVariantReference, referenceName: String): PsiElement? {
+    return super.resolveReferenceLocallyForAnalysis(reference, referenceName)
+           ?: Angular2ComponentLocator.findComponentClass(reference.element)?.let {
+             JSStubBasedPsiTreeUtil.resolveLocally(referenceName, it, false)
+           }
   }
 
 }
