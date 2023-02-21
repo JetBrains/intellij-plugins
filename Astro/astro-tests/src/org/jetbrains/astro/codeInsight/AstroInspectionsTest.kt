@@ -2,6 +2,7 @@ package org.jetbrains.astro.codeInsight
 
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.inspections.JSStringConcatenationToES6TemplateInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.AstroCodeInsightTestCase
@@ -39,6 +40,9 @@ class AstroInspectionsTest : AstroCodeInsightTestCase() {
   fun testUnresolvedFunctionCallInFrontmatter() = doTest(TypeScriptUnresolvedReferenceInspection::class,
                                                          JavaScriptBundle.message("javascript.create.function.intention.name",
                                                                                   "test"))
+
+  fun testReplaceWithTemplateString() = doTest(JSStringConcatenationToES6TemplateInspection::class,
+                                               JavaScriptBundle.message("js.replace.string.concatenation.with.es6.template.fix.text"))
 
   //region Test configuration and helper methods
 
