@@ -300,10 +300,12 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     fun parseExpression(supportsNestedTemplateLiterals: Boolean, supportsEmptyExpression: Boolean) {
       withNestedTemplateLiteralsSupport(supportsNestedTemplateLiterals) {
         checkMatches(builder, JSTokenTypes.XML_LBRACE, "javascript.parser.message.expected.lbrace")
-        if (builder.tokenType === JSTokenTypes.XML_RBRACE && !supportsEmptyExpression) {
-          builder.error(AstroBundle.message("astro.parsing.error.empty.expression"))
+        if (builder.tokenType === JSTokenTypes.XML_RBRACE) {
+          if (!supportsEmptyExpression) {
+            builder.error(AstroBundle.message("astro.parsing.error.empty.expression"))
+          }
         }
-        else if (builder.tokenType !== JSTokenTypes.XML_RBRACE && !parseArgument()) {
+        else if (!parseArgument()) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
         }
 
