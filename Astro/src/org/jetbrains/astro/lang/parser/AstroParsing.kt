@@ -173,7 +173,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     when (token()) {
       JSTokenTypes.XML_LBRACE -> {
         result = terminateText(xmlText)
-        parseJsxExpression(false)
+        parseJsxExpression(false, true)
       }
     }
     return result
@@ -201,7 +201,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       parseAttributeTemplateLiteralExpression()
     }
     else {
-      parseJsxExpression(true)
+      parseJsxExpression(true, false)
     }
   }
 
@@ -213,7 +213,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     when (token()) {
       JSTokenTypes.XML_LBRACE -> {
         val attributeName = builder.mark()
-        parseJsxExpression(true)
+        parseJsxExpression(true, false)
         // Consume possible bad characters
         while (token() == XmlTokenType.XML_BAD_CHARACTER) {
           builder.advanceLexer()
@@ -253,9 +253,9 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     return JSElementTypes.XML_ATTRIBUTE_VALUE
   }
 
-  private fun parseJsxExpression(supportsNestedTemplateLiterals: Boolean) {
+  private fun parseJsxExpression(supportsNestedTemplateLiterals: Boolean, supportsEmptyExpression: Boolean) {
     parseExpressionWithTagsHandled {
-      (tsxParser.expressionParser as AstroTypeScriptExpressionParser).parseExpression(supportsNestedTemplateLiterals)
+      (tsxParser.expressionParser as AstroTypeScriptExpressionParser).parseExpression(supportsNestedTemplateLiterals, supportsEmptyExpression)
     }
   }
 
@@ -297,15 +297,16 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     private var supportNestedTemplateLiterals: Boolean = true
     private var topLevelTemplateLiteralParse: Boolean = false
 
-    fun parseExpression(supportsNestedTemplateLiterals: Boolean) {
+    fun parseExpression(supportsNestedTemplateLiterals: Boolean, supportsEmptyExpression: Boolean) {
       withNestedTemplateLiteralsSupport(supportsNestedTemplateLiterals) {
         checkMatches(builder, JSTokenTypes.XML_LBRACE, "javascript.parser.message.expected.lbrace")
-        if (builder.tokenType === JSTokenTypes.XML_RBRACE) {
+        if (builder.tokenType === JSTokenTypes.XML_RBRACE && !supportsEmptyExpression) {
           builder.error(AstroBundle.message("astro.parsing.error.empty.expression"))
         }
-        else if (!parseArgument()) {
+        else if (builder.tokenType !== JSTokenTypes.XML_RBRACE && !parseArgument()) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
         }
+
         if (!checkMatches(builder, JSTokenTypes.XML_RBRACE, "javascript.parser.message.expected.rbrace")) {
           while (builder.tokenType !== JSTokenTypes.XML_RBRACE && !builder.eof()) {
             if (builder.tokenType === JSTokenTypes.XML_END_TAG_START) {
