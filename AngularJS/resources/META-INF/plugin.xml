@@ -326,7 +326,7 @@
     <inheritedLanguagesConfigurableProvider language="Angular2"
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
     <handlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2HandlersFactory"/>
-    <importCandidatesFactory implementation="org.angular2.codeInsight.imports.Angular2GlobalImportCandidatesProvider$Companion"/>
+    <importCandidatesFactory implementation="org.angular2.codeInsight.imports.Angular2GlobalImportCandidatesProvider$Factory"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <nodeModulesIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>
