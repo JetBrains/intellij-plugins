@@ -4,8 +4,6 @@ AstroFile:test.astro
       <empty list>
     JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
       PsiElement(JS:XML_LBRACE)('{')
-      PsiErrorElement:Empty expression not allowed
-        <empty list>
       PsiWhiteSpace(' ')
       PsiComment(JS:XML_STYLE_COMMENT)('<!-- this is a comment } ha -->')
       PsiWhiteSpace(' ')
