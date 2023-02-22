@@ -21,7 +21,7 @@ class Angular2GlobalImportCandidatesProvider(private val placeInfo: JSImportPlac
       ?.let { processor.processCandidate(Angular2GlobalImportCandidate(ref, placeInfo.place)) }
   }
 
-  companion object : JSImportCandidatesProvider.CandidatesFactory {
+  class Factory : JSImportCandidatesProvider.CandidatesFactory {
 
     override fun createProvider(placeInfo: JSImportPlaceInfo): JSImportCandidatesProvider? =
       if (Angular2LangUtil.isAngular2Context(placeInfo.place)) Angular2GlobalImportCandidatesProvider(placeInfo) else null
