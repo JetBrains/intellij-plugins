@@ -2,12 +2,12 @@
 # 588 ITEMS #
 
 + accelerator
++ accent-color
 + accent-height
 + additive-symbols
 + align-content
 + align-items
 + align-self
-+ alignment
 + alignment-baseline
 + all
 + all-space-treatment
@@ -44,12 +44,14 @@
 + background-position-y
 + background-repeat
 + background-size
++ base-palette
 + baseline
 + baseline-shift
 + bbox
 + behavior
 + bikeshedding
 + binding
++ block-ellipsis
 + block-progression
 + block-size
 + bookmark-label
@@ -131,9 +133,7 @@
 + caret-color
 + caret-shape
 + centerline
-+ child-align
 + clear
-+ clear-after
 + clear-side
 + clip-path
 + clip-rule
@@ -143,6 +143,7 @@
 + color-interpolation
 + color-interpolation-filters
 + color-rendering
++ color-scheme
 + column-count
 + column-fill
 + column-gap
@@ -156,7 +157,11 @@
 + composes
 + contain
 + contain-intrinsic-size
++ container
++ container-name
++ container-type
 + content-visibility
++ continue
 + counter-increment
 + counter-reset
 + counter-set
@@ -191,7 +196,6 @@
 + float
 + float-defer-column
 + float-defer-page
-+ float-displace
 + float-offset
 + float-wrap
 + flood-color
@@ -212,6 +216,9 @@
 + font-stretch
 + font-style
 + font-synthesis
++ font-synthesis-small-caps
++ font-synthesis-style
++ font-synthesis-weight
 + font-variant
 + font-variant-caps
 + font-variant-east-asian
@@ -223,6 +230,7 @@
 + font-weight
 + footnote-display
 + footnote-policy
++ forced-color-adjust
 + gap
 + glyph-orientation-horizontal
 + glyph-orientation-vertical
@@ -263,11 +271,11 @@
 + image-orientation
 + image-rendering
 + image-resolution
-+ indent-edge-reset
 + initial-letter
 + initial-letter-align
 + initial-letter-wrap
 + inline-size
++ input-security
 + inset
 + inset-block
 + inset-block-end
@@ -288,6 +296,7 @@
 + letter-spacing
 + lighting-color
 + line-break
++ line-clamp
 + line-grid
 + line-grid-mode
 + line-grid-progression
@@ -391,15 +400,11 @@
 + object-fit
 + object-position
 + offset
-+ offset-after
 + offset-anchor
-+ offset-before
 + offset-distance
-+ offset-end
 + offset-path
 + offset-position
 + offset-rotate
-+ offset-start
 + opacity
 + order
 + orientation
@@ -410,7 +415,11 @@
 + outline-style
 + outline-width
 + overflow
++ overflow-anchor
++ overflow-block
 + overflow-clip
++ overflow-clip-margin
++ overflow-inline
 + overflow-scrolling
 + overflow-style
 + overflow-wrap
@@ -418,6 +427,7 @@
 + overflow-y
 + overline-position
 + overline-thickness
++ override-colors
 + overscroll-behavior
 + overscroll-behavior-x
 + overscroll-behavior-y
@@ -454,6 +464,7 @@
 + pointer-events
 + position
 + presentation-level
++ print-color-adjust
 + punctuation-trim
 + quotes
 + range
@@ -465,6 +476,7 @@
 + rest-before
 + richness
 + right
++ rotate
 + rotation
 + rotation-point
 + round-clip
@@ -475,6 +487,7 @@
 + ruby-overhang
 + ruby-position
 + running
++ scale
 + scroll-behavior
 + scroll-margin
 + scroll-margin-block
@@ -504,11 +517,14 @@
 + scrollbar-3dlight-color
 + scrollbar-arrow-color
 + scrollbar-base-color
++ scrollbar-color
 + scrollbar-darkshadow-color
 + scrollbar-face-color
++ scrollbar-gutter
 + scrollbar-highlight-color
 + scrollbar-shadow-color
 + scrollbar-track-color
++ scrollbar-width
 + separator-image
 + shape-image-threshold
 + shape-margin
@@ -605,6 +621,7 @@
 + text-rendering
 + text-script
 + text-shadow
++ text-size-adjust
 + text-space
 + text-top
 + text-transform
@@ -622,6 +639,7 @@
 + topline
 + touch-action
 + transform
++ transform-box
 + transform-origin
 + transform-style
 + transition
@@ -629,6 +647,7 @@
 + transition-duration
 + transition-property
 + transition-timing-function
++ translate
 + underline-position
 + underline-thickness
 + unicode-bidi
