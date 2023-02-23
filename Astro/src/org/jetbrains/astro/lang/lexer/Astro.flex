@@ -307,6 +307,9 @@ import static com.intellij.util.ArrayUtil.*;
           } else {
             var current = expressionStack.peekInt(0);
             if (current == KIND_HTML_CONTENT) {
+              // TODO properly support auto-close on closing tag, when Astro lexer supports that
+              if (!elementNameStack.isEmpty())
+                elementNameStack.pop();
               yybegin(HTML_INITIAL);
             } else if (current == KIND_EXPRESSION
                       || current == KIND_EXPRESSION_PARENTHESIS
@@ -325,20 +328,20 @@ import static com.intellij.util.ArrayUtil.*;
     }
 
     private void closeTagsOnTagOpen(String tagName) {
-      while (childTerminatesParentInStack(tagName)) {
+      while (canOpeningTagAutoClose(tagName)) {
         expressionStack.popInt();
         elementNameStack.pop();
       }
     }
 
-    private boolean childTerminatesParentInStack(String childName) {
+    private boolean canOpeningTagAutoClose(String childName) {
       int tagDepth = 0;
       while (tagDepth < expressionStack.size() && expressionStack.peekInt(tagDepth) == KIND_HTML_CONTENT)
         tagDepth++;
       var stackSize = elementNameStack.size();
       for (int i = 0; i < tagDepth && i < stackSize; i++) {
         String parentName = elementNameStack.get(stackSize - 1 - i);
-        Boolean result = HtmlParsing.childTerminatesParent(childName, parentName);
+        Boolean result = HtmlUtil.canOpeningTagAutoClose(childName, parentName);
         if (result != null) {
           return result;
         }

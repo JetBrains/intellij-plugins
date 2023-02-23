@@ -495,6 +495,12 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testAutoCloseTableWithinExpression() {
+    doTestAstro("""
+      <table>{ hasContent && <tr><td>12</td><td>14</td></tr> }</table>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 

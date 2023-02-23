@@ -130,11 +130,11 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
       endName, Stack(tagNames.subList(tagNames.indexOfLast { it == EXPRESSION_MARKER }.coerceAtLeast(0), tagNames.size)))
   }
 
-  override fun childTerminatesParent(childName: String?, parentName: String?, tagLevel: Int): Boolean? {
-    return if (parentName == EXPRESSION_MARKER)
+  override fun canOpeningTagAutoClose(tagOnStack: String, openingTag: String, tagLevel: Int): Boolean? {
+    return if (openingTag == EXPRESSION_MARKER)
       false
     else
-      super.childTerminatesParent(childName, parentName, tagLevel)
+      super.canOpeningTagAutoClose(tagOnStack, openingTag, tagLevel)
   }
 
   override fun parseOpenTagName(): String {

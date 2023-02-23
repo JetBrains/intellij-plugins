@@ -1,0 +1,132 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    AstroFrontmatterScript:ASTRO:FRONTMATTER_SCRIPT
+      <empty list>
+    PsiElement(ASTRO:FRONTMATTER_SEPARATOR)('---')
+    PsiWhiteSpace('\n')
+    PsiElement(XML_PROLOG)
+      <empty list>
+    AstroTag:ul
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('ul')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n   ')
+      AstroTag:li
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('li')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n       ')
+        AstroTag:menu
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('menu')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n         ')
+          AstroTag:li
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('li')
+            XmlToken:XML_TAG_END('>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('li')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n       ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('menu')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n   ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('li')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('ul')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    AstroTag:menu
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('menu')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n   ')
+      AstroTag:li
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('li')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n       ')
+        AstroTag:menu
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('menu')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n         ')
+          AstroTag:li
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('li')
+            XmlToken:XML_TAG_END('>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('li')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n       ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('menu')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n   ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('li')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('menu')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    AstroTag:UlUnlisted
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('UlUnlisted')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n   ')
+      AstroTag:li
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('li')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n     ')
+        AstroTag:UlUnlisted
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('UlUnlisted')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n       ')
+          AstroTag:li
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('li')
+            XmlToken:XML_TAG_END('>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('li')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n     ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('UlUnlisted')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n   ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('li')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('UlUnlisted')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
