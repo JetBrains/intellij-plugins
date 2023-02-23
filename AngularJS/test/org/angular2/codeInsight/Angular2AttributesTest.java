@@ -54,7 +54,7 @@ import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.PROP_BINDING_
 import static org.angular2.web.Angular2WebSymbolsQueryConfigurator.PROP_ERROR_SYMBOL;
 import static org.angularjs.AngularTestUtil.*;
 
-public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
+public class Angular2AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected void setUp() throws Exception {
