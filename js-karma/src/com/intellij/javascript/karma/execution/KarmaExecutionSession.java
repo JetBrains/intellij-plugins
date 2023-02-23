@@ -18,6 +18,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
+import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.remote.NodeJsRemoteInterpreter;
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
@@ -39,7 +40,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
-import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +50,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.intellij.javascript.nodejs.execution.NodeTargetRunOptions.shouldUsePtyForTestRunners;
 
 public class KarmaExecutionSession {
 
@@ -150,7 +152,8 @@ public class KarmaExecutionSession {
 
   @NotNull
   private NodeTargetRun createTargetRun(@NotNull NodeJsInterpreter interpreter, @NotNull KarmaServer server) throws ExecutionException {
-    NodeTargetRun targetRun = new NodeTargetRun(interpreter, myProject, null, NodeTargetRun.createOptions(ThreeState.NO, List.of()));
+    NodeTargetRun targetRun = new NodeTargetRun(interpreter, myProject, null, NodeTargetRunOptions.of(shouldUsePtyForTestRunners(),
+                                                                                                      myRunConfiguration));
     TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
     commandLine.setWorkingDirectory(targetRun.path(myRunSettings.getWorkingDirectorySystemDependent()));
     targetRun.addNodeOptionsWithExpandedMacros(false, myRunSettings.getNodeOptions());
