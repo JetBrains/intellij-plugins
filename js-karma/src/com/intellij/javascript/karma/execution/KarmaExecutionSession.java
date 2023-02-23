@@ -31,6 +31,7 @@ import com.intellij.javascript.testFramework.util.JSTestNamePattern;
 import com.intellij.javascript.testing.JSTestRunnerUtil;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -196,7 +197,9 @@ public class KarmaExecutionSession {
       return JSTestRunnerUtil.getTestsPattern(myFailedTestNames, false);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
-      List<List<JSTestNamePattern>> allFileTests = findAllFileTests(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      List<List<JSTestNamePattern>> allFileTests = ReadAction.compute(() -> {
+        return findAllFileTests(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      });
       String testFileName = PathUtil.getFileName(myRunSettings.getTestFileSystemIndependentPath());
       if (allFileTests.isEmpty()) {
         throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFileName));
