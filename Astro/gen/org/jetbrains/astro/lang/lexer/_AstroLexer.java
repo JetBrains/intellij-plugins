@@ -10,6 +10,7 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlTokenType;
+import com.intellij.util.ThreeState;
 import com.intellij.util.containers.Stack;
 import com.intellij.xml.util.HtmlUtil;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -1638,7 +1639,7 @@ public class _AstroLexer implements FlexLexer {
       } else {
         tagName = elementNameStack.pop();
       }
-      if (HtmlUtil.isSingleHtmlTagL(tagName))
+      if (HtmlUtil.isSingleHtmlTag(tagName, true))
         isEmpty = true;
       if (tagKind == KIND_START_TAG && !isEmpty) {
         closeTagsOnTagOpen(tagName);
@@ -1697,9 +1698,9 @@ public class _AstroLexer implements FlexLexer {
       var stackSize = elementNameStack.size();
       for (int i = 0; i < tagDepth && i < stackSize; i++) {
         String parentName = elementNameStack.get(stackSize - 1 - i);
-        Boolean result = HtmlUtil.canOpeningTagAutoClose(childName, parentName);
-        if (result != null) {
-          return result;
+        ThreeState result = HtmlUtil.canOpeningTagAutoClose(childName, parentName, true);
+        if (result != ThreeState.UNSURE) {
+          return result.toBoolean();
         }
       }
       return false;

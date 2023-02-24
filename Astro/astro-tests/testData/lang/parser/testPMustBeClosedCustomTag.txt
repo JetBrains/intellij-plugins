@@ -7,9 +7,9 @@ AstroFile:test.astro
     PsiWhiteSpace('\n')
     PsiElement(XML_PROLOG)
       <empty list>
-    AstroTag:component
+    AstroTag:my-component
       XmlToken:XML_START_TAG_START('<')
-      XmlToken:XML_NAME('component')
+      XmlToken:XML_NAME('my-component')
       XmlToken:XML_TAG_END('>')
       XmlText
         XmlToken:XML_DATA_CHARACTERS('foo')
@@ -22,6 +22,6 @@ AstroFile:test.astro
         PsiErrorElement:Element p is not closed
           <empty list>
       XmlToken:XML_END_TAG_START('</')
-      XmlToken:XML_NAME('component')
+      XmlToken:XML_NAME('my-component')
       XmlToken:XML_TAG_END('>')
     PsiWhiteSpace('\n')

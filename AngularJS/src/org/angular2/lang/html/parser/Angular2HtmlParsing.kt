@@ -9,7 +9,6 @@ import com.intellij.psi.tree.ILazyParseableElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
-import com.intellij.util.containers.Stack
 import com.intellij.xml.psi.XmlPsiBundle
 import com.intellij.xml.util.XmlUtil
 import org.angular2.lang.Angular2Bundle
@@ -20,7 +19,7 @@ import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
 
 class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
-  private val ngNonBindableTags = Stack<PsiBuilder.Marker>()
+
   fun parseExpansionFormContent() {
     val expansionFormContent = mark()
     var xmlText: PsiBuilder.Marker? = null
@@ -95,7 +94,7 @@ class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     var result = xmlText
     when (token()) {
       Angular2HtmlTokenTypes.INTERPOLATION_START -> {
-        result = if (ngNonBindableTags.isEmpty()) {
+        result = if (!inNgNonBindableContext()) {
           terminateText(result)
         }
         else {
@@ -106,7 +105,7 @@ class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         if (token() === Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR) {
           advance()
         }
-        if (ngNonBindableTags.isEmpty()) {
+        if (!inNgNonBindableContext()) {
           if (token() === Angular2HtmlTokenTypes.INTERPOLATION_END) {
             advance()
             interpolation.drop()
@@ -149,24 +148,17 @@ class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     return result
   }
 
-  override fun closeTag(): PsiBuilder.Marker {
-    if (!ngNonBindableTags.isEmpty()
-        && ngNonBindableTags.peek() === peekTagMarker()) {
-      ngNonBindableTags.pop()
-    }
-    return super.closeTag()
+  override fun createHtmlTagInfo(originalTagName: String, startMarker: PsiBuilder.Marker): HtmlTagInfoImpl {
+    return AngularHtmlTagInfo(normalizeTagName(originalTagName), originalTagName, startMarker)
   }
 
   override fun parseAttribute() {
     assert(token() === XmlTokenType.XML_NAME)
     val att = mark()
-    val tagName = XmlUtil.findLocalNameByQualifiedName(peekTagName())
+    val tagName = XmlUtil.findLocalNameByQualifiedName(peekTagInfo().normalizedName)
     val attributeName = builder.tokenText
     if (Angular2WebSymbolsQueryConfigurator.ATTR_NG_NON_BINDABLE == attributeName) {
-      if (ngNonBindableTags.isEmpty()
-          || ngNonBindableTags.peek() !== peekTagMarker()) {
-        ngNonBindableTags.push(peekTagMarker())
-      }
+      (peekTagInfo() as AngularHtmlTagInfo).hasNgNonBindable = true
     }
     val attributeInfo = Angular2AttributeNameParser.parse(attributeName!!, tagName!!)
     if (attributeInfo.error != null) {
@@ -372,6 +364,24 @@ class Angular2HtmlParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       advance()
     }
   }
+
+  private fun inNgNonBindableContext(): Boolean {
+    var result = false
+    processStackItems {
+      if (it is AngularHtmlTagInfo && it.hasNgNonBindable) {
+        result = true
+        false
+      }
+      else true
+    }
+    return result
+  }
+
+  private class AngularHtmlTagInfo(normalizedName: String,
+                                   originalName: String,
+                                   marker: PsiBuilder.Marker,
+                                   var hasNgNonBindable: Boolean = false)
+    : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   companion object {
     private val CUSTOM_CONTENT = TokenSet.create(Angular2HtmlTokenTypes.EXPANSION_FORM_START,

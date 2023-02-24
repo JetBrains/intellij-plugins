@@ -8,9 +8,9 @@ HtmlFile:test.vue
       XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      HtmlTag:component
+      HtmlTag:my-component
         XmlToken:XML_START_TAG_START('<')
-        XmlToken:XML_NAME('component')
+        XmlToken:XML_NAME('my-component')
         XmlToken:XML_TAG_END('>')
         XmlText
           XmlToken:XML_DATA_CHARACTERS('foo')
@@ -23,7 +23,7 @@ HtmlFile:test.vue
           PsiErrorElement:Element p is not closed
             <empty list>
         XmlToken:XML_END_TAG_START('</')
-        XmlToken:XML_NAME('component')
+        XmlToken:XML_NAME('my-component')
         XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n\n')
