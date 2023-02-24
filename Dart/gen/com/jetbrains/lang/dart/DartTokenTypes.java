@@ -168,6 +168,7 @@ public interface DartTokenTypes {
   IElementType ASYNC = new DartElementType("async");
   IElementType AT = new DartElementType("@");
   IElementType AWAIT = new DartElementType("await");
+  IElementType BASE = new DartElementType("base");
   IElementType BIN_NOT = new DartElementType("~");
   IElementType BREAK = new DartElementType("break");
   IElementType CASE = new DartElementType("case");
@@ -217,6 +218,7 @@ public interface DartTokenTypes {
   IElementType IMPLEMENTS = new DartElementType("implements");
   IElementType IMPORT = new DartElementType("import");
   IElementType IN = new DartElementType("in");
+  IElementType INTERFACE = new DartElementType("interface");
   IElementType INT_DIV = new DartElementType("~/");
   IElementType INT_DIV_EQ = new DartElementType("~/=");
   IElementType IS = new DartElementType("is");
@@ -271,6 +273,7 @@ public interface DartTokenTypes {
   IElementType RETHROW = new DartElementType("rethrow");
   IElementType RETURN = new DartElementType("return");
   IElementType RPAREN = new DartElementType(")");
+  IElementType SEALED = new DartElementType("sealed");
   IElementType SEMICOLON = new DartElementType(";");
   IElementType SET = new DartElementType("set");
   IElementType SHORT_TEMPLATE_ENTRY_START = new DartElementType("SHORT_TEMPLATE_ENTRY_START");

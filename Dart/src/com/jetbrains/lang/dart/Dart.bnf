@@ -61,6 +61,7 @@
 // BUILT_IN_IDENTIFIER
   ABSTRACT="abstract"
   AS="as"
+  BASE="base"
   COVARIANT="covariant"
   DEFERRED="deferred"
   EXPORT="export"
@@ -70,10 +71,12 @@
   GET="get"
   IMPLEMENTS="implements"
   IMPORT="import"
+  INTERFACE="interface"
   LIBRARY="library"
   MIXIN="mixin"
   OPERATOR="operator"
   PART="part"
+  SEALED="sealed"
   SET="set"
   STATIC="static"
   TYPEDEF="typedef"
@@ -174,9 +177,9 @@ private topLevelDefinition ::= libraryStatement
                              | incompleteDeclaration // not valid according to spec, but we'd like it to be parsed in order to have completion
                              {recoverWhile="top_level_recover"}
 private top_level_recover ::= !(<<nonStrictID>> |
-                              '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' |
-                              'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
-                              'void')
+                              '(' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' |
+                              'external' | 'final' | 'get' | 'import' | 'interface' | 'late' | 'library' | 'mixin' | 'part' | 'sealed' |
+                              'set' | 'static' | 'typedef' | 'var' | 'void')
 
 incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const' | 'covariant')* type | metadata+;
 
@@ -249,11 +252,16 @@ varDeclarationListPart ::= componentName varInit?
   methods= [getMetadataList]
 }
 
-classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
+classDefinition ::= metadata* (mixinClassModifiers | classModifiers) 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
-mixinDeclaration ::= metadata* 'mixin' componentName typeParameters? onMixins? interfaces? classBody
+private classModifiers ::= 'sealed' | 'abstract'? ('base' | 'interface' | 'final')?
+private mixinClassModifiers ::= 'abstract'? 'base'? 'mixin'
+
+mixinDeclaration ::= metadata* mixinModifier? 'mixin' componentName typeParameters? onMixins? interfaces? classBody
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
+
+private mixinModifier ::= 'sealed' | 'base' | 'interface' | 'final'
 
 enumDefinition ::= metadata* 'enum' componentName typeParameters? mixins? interfaces? '{' enumConstantDeclaration? (',' enumConstantDeclaration)* ','? ';'? classMembers '}'
 {pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
@@ -293,10 +301,10 @@ typeParameters ::= '<' typeParameter? (',' typeParameter)* '>' {pin=1}
 typeParameter ::= metadata* componentName ('extends' type)?
 {recoverWhile="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-private type_parameter_recover ::= !(<<nonStrictID>> | '(' | ')' | ',' | ':' | '=' | '>' | '@' | ']' | 'abstract' | 'class' | 'const' |
-                                   'covariant' | 'enum' | 'export' | 'extends' | 'extension' | 'external' | 'final' | 'get' | 'implements' |
-                                   'import' | 'late' | 'library' | 'mixin' | 'native' | 'on' | 'part' | 'set' | 'static' | 'typedef' |
-                                   'var' | 'void' | 'with' | '{' | '}')
+private type_parameter_recover ::= !(<<nonStrictID>> | '(' | ')' | ',' | ':' | '=' | '>' | '@' | ']' | 'abstract' | 'base' | 'class' |
+                                   'const' | 'covariant' | 'enum' | 'export' | 'extends' | 'extension' | 'external' | 'final' | 'get' |
+                                   'implements' | 'import' | 'interface' | 'late' | 'library' | 'mixin' | 'native' | 'on' | 'part' |
+                                   'sealed' | 'set' | 'static' | 'typedef' | 'var' | 'void' | 'with' | '{' | '}')
 superclass ::= 'extends' type {pin=1}
 mixins ::= 'with' typeList {pin=1}
 onMixins ::= 'on' typeList {pin=1}
@@ -309,7 +317,9 @@ private classMemberDefinition ::= factoryConstructorDeclaration
                                 | varDeclarationListWithSemicolon
                                 | incompleteDeclaration // not valid according to spec, but we'd like it to be parsed in order to have completion
                                 {recoverWhile="class_member_recover"}
-private class_member_recover ::= !(<<nonStrictID>> | 'operator' | '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}' )
+private class_member_recover ::= !(<<nonStrictID>> | 'operator' | '(' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' |
+                                 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'interface' |
+                                 'late' | 'library' | 'mixin' | 'part' | 'sealed' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}')
 
 private functionBodyOrNative ::= 'native' functionBody
                                | functionNative
@@ -336,10 +346,10 @@ superCallOrFieldInitializer ::= (superExpression | thisExpression) ('.' (referen
                               | assertStatement
                               {recoverWhile="super_call_or_field_initializer_recover"}
 private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | 'sync' | 'async' | '=>' | '{' | 'operator' |
-                                                    '(' | ',' | ':' | ';' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' |
-                                                    'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'late' |
-                                                    'library' | 'mixin' | 'native' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
-                                                    'void' | '}' )
+                                                    '(' | ',' | ':' | ';' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' |
+                                                    'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' |
+                                                    'interface' | 'late' | 'library' | 'mixin' | 'native' | 'part' | 'sealed' | 'set' |
+                                                    'static' | 'typedef' | 'var' | 'void' | '}' )
 
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'?
                     | metadata* 'typedef' componentName typeParameters? '=' type ';'?
@@ -559,11 +569,12 @@ private expression_recover ::= !(<<nonStrictID>> |
                                '!' | '!=' | '#' | '%' | '%=' | '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' |
                                ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' |
                                '=' | '==' | '=>' | '>' | '?' | '?.' | '?..' | '??' | '??=' | '@' | '[' | ']' | '^' | '^=' | 'abstract' |
-                               'as' | 'assert' | 'await' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' | 'covariant' |
-                               'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' |
-                               'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'is' | 'late' | 'library' | 'mixin' | 'native' |
-                               'new' | 'on' | 'part' | 'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' |
-                               'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' | '{' | '|' | '|=' | '||' | '||=' | '}' |
+                               'as' | 'assert' | 'await' | 'base' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+                               'covariant' | 'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' |
+                               'factory' | 'final' | 'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'interface' | 'is' | 'late' |
+                               'library' | 'mixin' | 'native' | 'new' | 'on' | 'part' | 'rethrow' | 'return' | 'sealed' | 'set' | 'show' |
+                               'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' |
+                               '{' | '|' | '|=' | '||' | '||=' | '}' |
                                '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END |
                                LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
                                RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START | TRUE)

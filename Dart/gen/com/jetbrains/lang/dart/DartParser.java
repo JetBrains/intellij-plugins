@@ -845,10 +845,11 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
+  // metadata* (mixinClassModifiers | classModifiers) 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
   public static boolean classDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition")) return false;
-    if (!nextTokenIs(b, "<class definition>", ABSTRACT, AT, CLASS)) return false;
+    if (!nextTokenIs(b, "<class definition>", ABSTRACT, AT,
+      BASE, CLASS, FINAL, INTERFACE, MIXIN, SEALED)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CLASS_DEFINITION, "<class definition>");
     r = classDefinition_0(b, l + 1);
@@ -873,11 +874,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'abstract'?
+  // mixinClassModifiers | classModifiers
   private static boolean classDefinition_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition_1")) return false;
-    consumeToken(b, ABSTRACT);
-    return true;
+    boolean r;
+    r = mixinClassModifiers(b, l + 1);
+    if (!r) r = classModifiers(b, l + 1);
+    return r;
   }
 
   // typeParameters?
@@ -932,7 +935,56 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(<<nonStrictID>> | 'operator' | '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}' )
+  // 'sealed' | 'abstract'? ('base' | 'interface' | 'final')?
+  static boolean classModifiers(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, SEALED);
+    if (!r) r = classModifiers_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'abstract'? ('base' | 'interface' | 'final')?
+  private static boolean classModifiers_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = classModifiers_1_0(b, l + 1);
+    r = r && classModifiers_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'abstract'?
+  private static boolean classModifiers_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_1_0")) return false;
+    consumeToken(b, ABSTRACT);
+    return true;
+  }
+
+  // ('base' | 'interface' | 'final')?
+  private static boolean classModifiers_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_1_1")) return false;
+    classModifiers_1_1_0(b, l + 1);
+    return true;
+  }
+
+  // 'base' | 'interface' | 'final'
+  private static boolean classModifiers_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "classModifiers_1_1_0")) return false;
+    boolean r;
+    r = consumeToken(b, BASE);
+    if (!r) r = consumeToken(b, INTERFACE);
+    if (!r) r = consumeToken(b, FINAL);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // !(<<nonStrictID>> | 'operator' | '(' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' |
+  //                                  'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'interface' |
+  //                                  'late' | 'library' | 'mixin' | 'part' | 'sealed' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}')
   static boolean class_member_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "class_member_recover")) return false;
     boolean r;
@@ -942,7 +994,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // <<nonStrictID>> | 'operator' | '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}'
+  // <<nonStrictID>> | 'operator' | '(' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' |
+  //                                  'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'interface' |
+  //                                  'late' | 'library' | 'mixin' | 'part' | 'sealed' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}'
   private static boolean class_member_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "class_member_recover_0")) return false;
     boolean r;
@@ -952,6 +1006,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, LPAREN);
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, ABSTRACT);
+    if (!r) r = consumeToken(b, BASE);
     if (!r) r = consumeToken(b, CLASS);
     if (!r) r = consumeToken(b, CONST);
     if (!r) r = consumeToken(b, COVARIANT);
@@ -963,10 +1018,12 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, FINAL);
     if (!r) r = consumeToken(b, GET);
     if (!r) r = consumeToken(b, IMPORT);
+    if (!r) r = consumeToken(b, INTERFACE);
     if (!r) r = consumeToken(b, LATE);
     if (!r) r = consumeToken(b, LIBRARY);
     if (!r) r = consumeToken(b, MIXIN);
     if (!r) r = consumeToken(b, PART);
+    if (!r) r = consumeToken(b, SEALED);
     if (!r) r = consumeToken(b, SET);
     if (!r) r = consumeToken(b, STATIC);
     if (!r) r = consumeToken(b, TYPEDEF);
@@ -1650,11 +1707,12 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                '!' | '!=' | '#' | '%' | '%=' | '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' |
   //                                ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' |
   //                                '=' | '==' | '=>' | '>' | '?' | '?.' | '?..' | '??' | '??=' | '@' | '[' | ']' | '^' | '^=' | 'abstract' |
-  //                                'as' | 'assert' | 'await' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' | 'covariant' |
-  //                                'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' |
-  //                                'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'is' | 'late' | 'library' | 'mixin' | 'native' |
-  //                                'new' | 'on' | 'part' | 'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' |
-  //                                'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' | '{' | '|' | '|=' | '||' | '||=' | '}' |
+  //                                'as' | 'assert' | 'await' | 'base' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' | 
+  //                                'covariant' | 'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' | 
+  //                                'factory' | 'final' | 'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'interface' | 'is' | 'late' |
+  //                                'library' | 'mixin' | 'native' | 'new' | 'on' | 'part' | 'rethrow' | 'return' | 'sealed' | 'set' | 'show' |
+  //                                'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' | 
+  //                                '{' | '|' | '|=' | '||' | '||=' | '}' |
   //                                '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END |
   //                                LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
   //                                RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START | TRUE)
@@ -1673,11 +1731,12 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                '!' | '!=' | '#' | '%' | '%=' | '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' |
   //                                ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' |
   //                                '=' | '==' | '=>' | '>' | '?' | '?.' | '?..' | '??' | '??=' | '@' | '[' | ']' | '^' | '^=' | 'abstract' |
-  //                                'as' | 'assert' | 'await' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' | 'covariant' |
-  //                                'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' |
-  //                                'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'is' | 'late' | 'library' | 'mixin' | 'native' |
-  //                                'new' | 'on' | 'part' | 'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' |
-  //                                'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' | '{' | '|' | '|=' | '||' | '||=' | '}' |
+  //                                'as' | 'assert' | 'await' | 'base' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' | 
+  //                                'covariant' | 'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' | 
+  //                                'factory' | 'final' | 'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'interface' | 'is' | 'late' |
+  //                                'library' | 'mixin' | 'native' | 'new' | 'on' | 'part' | 'rethrow' | 'return' | 'sealed' | 'set' | 'show' |
+  //                                'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' | 
+  //                                '{' | '|' | '|=' | '||' | '||=' | '}' |
   //                                '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END |
   //                                LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
   //                                RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START | TRUE
@@ -1743,6 +1802,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, AS);
     if (!r) r = consumeToken(b, ASSERT);
     if (!r) r = consumeToken(b, AWAIT);
+    if (!r) r = consumeToken(b, BASE);
     if (!r) r = consumeToken(b, BREAK);
     if (!r) r = consumeToken(b, CASE);
     if (!r) r = consumeToken(b, CATCH);
@@ -1766,6 +1826,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, HIDE);
     if (!r) r = consumeToken(b, IF);
     if (!r) r = consumeToken(b, IMPORT);
+    if (!r) r = consumeToken(b, INTERFACE);
     if (!r) r = consumeToken(b, IS);
     if (!r) r = consumeToken(b, LATE);
     if (!r) r = consumeToken(b, LIBRARY);
@@ -1776,6 +1837,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, PART);
     if (!r) r = consumeToken(b, RETHROW);
     if (!r) r = consumeToken(b, RETURN);
+    if (!r) r = consumeToken(b, SEALED);
     if (!r) r = consumeToken(b, SET);
     if (!r) r = consumeToken(b, SHOW);
     if (!r) r = consumeToken(b, STATIC);
@@ -4446,18 +4508,48 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'mixin' componentName typeParameters? onMixins? interfaces? classBody
+  // 'abstract'? 'base'? 'mixin'
+  static boolean mixinClassModifiers(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinClassModifiers")) return false;
+    if (!nextTokenIs(b, "", ABSTRACT, BASE, MIXIN)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = mixinClassModifiers_0(b, l + 1);
+    r = r && mixinClassModifiers_1(b, l + 1);
+    r = r && consumeToken(b, MIXIN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'abstract'?
+  private static boolean mixinClassModifiers_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinClassModifiers_0")) return false;
+    consumeToken(b, ABSTRACT);
+    return true;
+  }
+
+  // 'base'?
+  private static boolean mixinClassModifiers_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinClassModifiers_1")) return false;
+    consumeToken(b, BASE);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // metadata* mixinModifier? 'mixin' componentName typeParameters? onMixins? interfaces? classBody
   public static boolean mixinDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mixinDeclaration")) return false;
-    if (!nextTokenIs(b, "<mixin declaration>", AT, MIXIN)) return false;
+    if (!nextTokenIs(b, "<mixin declaration>", AT, BASE,
+      FINAL, INTERFACE, MIXIN, SEALED)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, MIXIN_DECLARATION, "<mixin declaration>");
     r = mixinDeclaration_0(b, l + 1);
+    r = r && mixinDeclaration_1(b, l + 1);
     r = r && consumeToken(b, MIXIN);
     r = r && componentName(b, l + 1);
-    r = r && mixinDeclaration_3(b, l + 1);
     r = r && mixinDeclaration_4(b, l + 1);
     r = r && mixinDeclaration_5(b, l + 1);
+    r = r && mixinDeclaration_6(b, l + 1);
     r = r && classBody(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -4474,25 +4566,45 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
+  // mixinModifier?
+  private static boolean mixinDeclaration_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_1")) return false;
+    mixinModifier(b, l + 1);
+    return true;
+  }
+
   // typeParameters?
-  private static boolean mixinDeclaration_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mixinDeclaration_3")) return false;
+  private static boolean mixinDeclaration_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_4")) return false;
     typeParameters(b, l + 1);
     return true;
   }
 
   // onMixins?
-  private static boolean mixinDeclaration_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mixinDeclaration_4")) return false;
+  private static boolean mixinDeclaration_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_5")) return false;
     onMixins(b, l + 1);
     return true;
   }
 
   // interfaces?
-  private static boolean mixinDeclaration_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mixinDeclaration_5")) return false;
+  private static boolean mixinDeclaration_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_6")) return false;
     interfaces(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // 'sealed' | 'base' | 'interface' | 'final'
+  static boolean mixinModifier(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinModifier")) return false;
+    if (!nextTokenIs(b, "", BASE, FINAL, INTERFACE, SEALED)) return false;
+    boolean r;
+    r = consumeToken(b, SEALED);
+    if (!r) r = consumeToken(b, BASE);
+    if (!r) r = consumeToken(b, INTERFACE);
+    if (!r) r = consumeToken(b, FINAL);
+    return r;
   }
 
   /* ********************************************************** */
@@ -6758,10 +6870,10 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // !(<<nonStrictID>> | 'sync' | 'async' | '=>' | '{' | 'operator' |
-  //                                                     '(' | ',' | ':' | ';' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' |
-  //                                                     'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'late' |
-  //                                                     'library' | 'mixin' | 'native' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
-  //                                                     'void' | '}' )
+  //                                                     '(' | ',' | ':' | ';' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' |
+  //                                                     'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' |
+  //                                                     'interface' | 'late' | 'library' | 'mixin' | 'native' | 'part' | 'sealed' | 'set' |
+  //                                                     'static' | 'typedef' | 'var' | 'void' | '}' )
   static boolean super_call_or_field_initializer_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "super_call_or_field_initializer_recover")) return false;
     boolean r;
@@ -6772,10 +6884,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // <<nonStrictID>> | 'sync' | 'async' | '=>' | '{' | 'operator' |
-  //                                                     '(' | ',' | ':' | ';' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' |
-  //                                                     'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'late' |
-  //                                                     'library' | 'mixin' | 'native' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
-  //                                                     'void' | '}'
+  //                                                     '(' | ',' | ':' | ';' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' |
+  //                                                     'enum' | 'export' | 'extension' | 'external' | 'factory' | 'final' | 'get' | 'import' |
+  //                                                     'interface' | 'late' | 'library' | 'mixin' | 'native' | 'part' | 'sealed' | 'set' |
+  //                                                     'static' | 'typedef' | 'var' | 'void' | '}'
   private static boolean super_call_or_field_initializer_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "super_call_or_field_initializer_recover_0")) return false;
     boolean r;
@@ -6792,6 +6904,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, SEMICOLON);
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, ABSTRACT);
+    if (!r) r = consumeToken(b, BASE);
     if (!r) r = consumeToken(b, CLASS);
     if (!r) r = consumeToken(b, CONST);
     if (!r) r = consumeToken(b, COVARIANT);
@@ -6803,11 +6916,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, FINAL);
     if (!r) r = consumeToken(b, GET);
     if (!r) r = consumeToken(b, IMPORT);
+    if (!r) r = consumeToken(b, INTERFACE);
     if (!r) r = consumeToken(b, LATE);
     if (!r) r = consumeToken(b, LIBRARY);
     if (!r) r = consumeToken(b, MIXIN);
     if (!r) r = consumeToken(b, NATIVE);
     if (!r) r = consumeToken(b, PART);
+    if (!r) r = consumeToken(b, SEALED);
     if (!r) r = consumeToken(b, SET);
     if (!r) r = consumeToken(b, STATIC);
     if (!r) r = consumeToken(b, TYPEDEF);
@@ -7018,9 +7133,9 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // !(<<nonStrictID>> |
-  //                               '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' |
-  //                               'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
-  //                               'void')
+  //                               '(' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' |
+  //                               'external' | 'final' | 'get' | 'import' | 'interface' | 'late' | 'library' | 'mixin' | 'part' | 'sealed' |
+  //                               'set' | 'static' | 'typedef' | 'var' | 'void')
   static boolean top_level_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover")) return false;
     boolean r;
@@ -7031,9 +7146,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // <<nonStrictID>> |
-  //                               '(' | '@' | 'abstract' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' | 'external' |
-  //                               'final' | 'get' | 'import' | 'late' | 'library' | 'mixin' | 'part' | 'set' | 'static' | 'typedef' | 'var' |
-  //                               'void'
+  //                               '(' | '@' | 'abstract' | 'base' | 'class' | 'const' | 'covariant' | 'enum' | 'export' | 'extension' |
+  //                               'external' | 'final' | 'get' | 'import' | 'interface' | 'late' | 'library' | 'mixin' | 'part' | 'sealed' |
+  //                               'set' | 'static' | 'typedef' | 'var' | 'void'
   private static boolean top_level_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover_0")) return false;
     boolean r;
@@ -7042,6 +7157,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, LPAREN);
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, ABSTRACT);
+    if (!r) r = consumeToken(b, BASE);
     if (!r) r = consumeToken(b, CLASS);
     if (!r) r = consumeToken(b, CONST);
     if (!r) r = consumeToken(b, COVARIANT);
@@ -7052,10 +7168,12 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, FINAL);
     if (!r) r = consumeToken(b, GET);
     if (!r) r = consumeToken(b, IMPORT);
+    if (!r) r = consumeToken(b, INTERFACE);
     if (!r) r = consumeToken(b, LATE);
     if (!r) r = consumeToken(b, LIBRARY);
     if (!r) r = consumeToken(b, MIXIN);
     if (!r) r = consumeToken(b, PART);
+    if (!r) r = consumeToken(b, SEALED);
     if (!r) r = consumeToken(b, SET);
     if (!r) r = consumeToken(b, STATIC);
     if (!r) r = consumeToken(b, TYPEDEF);
@@ -7302,10 +7420,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(<<nonStrictID>> | '(' | ')' | ',' | ':' | '=' | '>' | '@' | ']' | 'abstract' | 'class' | 'const' |
-  //                                    'covariant' | 'enum' | 'export' | 'extends' | 'extension' | 'external' | 'final' | 'get' | 'implements' |
-  //                                    'import' | 'late' | 'library' | 'mixin' | 'native' | 'on' | 'part' | 'set' | 'static' | 'typedef' |
-  //                                    'var' | 'void' | 'with' | '{' | '}')
+  // !(<<nonStrictID>> | '(' | ')' | ',' | ':' | '=' | '>' | '@' | ']' | 'abstract' | 'base' | 'class' |
+  //                                    'const' | 'covariant' | 'enum' | 'export' | 'extends' | 'extension' | 'external' | 'final' | 'get' |
+  //                                    'implements' | 'import' | 'interface' | 'late' | 'library' | 'mixin' | 'native' | 'on' | 'part' |
+  //                                    'sealed' | 'set' | 'static' | 'typedef' | 'var' | 'void' | 'with' | '{' | '}')
   static boolean type_parameter_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "type_parameter_recover")) return false;
     boolean r;
@@ -7315,10 +7433,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // <<nonStrictID>> | '(' | ')' | ',' | ':' | '=' | '>' | '@' | ']' | 'abstract' | 'class' | 'const' |
-  //                                    'covariant' | 'enum' | 'export' | 'extends' | 'extension' | 'external' | 'final' | 'get' | 'implements' |
-  //                                    'import' | 'late' | 'library' | 'mixin' | 'native' | 'on' | 'part' | 'set' | 'static' | 'typedef' |
-  //                                    'var' | 'void' | 'with' | '{' | '}'
+  // <<nonStrictID>> | '(' | ')' | ',' | ':' | '=' | '>' | '@' | ']' | 'abstract' | 'base' | 'class' |
+  //                                    'const' | 'covariant' | 'enum' | 'export' | 'extends' | 'extension' | 'external' | 'final' | 'get' |
+  //                                    'implements' | 'import' | 'interface' | 'late' | 'library' | 'mixin' | 'native' | 'on' | 'part' |
+  //                                    'sealed' | 'set' | 'static' | 'typedef' | 'var' | 'void' | 'with' | '{' | '}'
   private static boolean type_parameter_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "type_parameter_recover_0")) return false;
     boolean r;
@@ -7333,6 +7451,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, AT);
     if (!r) r = consumeToken(b, RBRACKET);
     if (!r) r = consumeToken(b, ABSTRACT);
+    if (!r) r = consumeToken(b, BASE);
     if (!r) r = consumeToken(b, CLASS);
     if (!r) r = consumeToken(b, CONST);
     if (!r) r = consumeToken(b, COVARIANT);
@@ -7345,12 +7464,14 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, GET);
     if (!r) r = consumeToken(b, IMPLEMENTS);
     if (!r) r = consumeToken(b, IMPORT);
+    if (!r) r = consumeToken(b, INTERFACE);
     if (!r) r = consumeToken(b, LATE);
     if (!r) r = consumeToken(b, LIBRARY);
     if (!r) r = consumeToken(b, MIXIN);
     if (!r) r = consumeToken(b, NATIVE);
     if (!r) r = consumeToken(b, ON);
     if (!r) r = consumeToken(b, PART);
+    if (!r) r = consumeToken(b, SEALED);
     if (!r) r = consumeToken(b, SET);
     if (!r) r = consumeToken(b, STATIC);
     if (!r) r = consumeToken(b, TYPEDEF);
