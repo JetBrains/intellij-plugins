@@ -105,7 +105,7 @@ class JestLesson
           }
         }
 
-        highlightBreakpointGutter { LogicalPosition(4, 0) }
+        highlightBreakpointGutter(xRange = { IntRange(13, it - 17) }) { LogicalPosition(4, 0) }
         task {
           text(JsLessonsBundle.message("js.testing.jest.re.run.test.1", icon(AllIcons.RunConfigurations.TestState.Red2)))
           text(JsLessonsBundle.message("js.testing.jest.re.run.test.2", strong("Run adds 1 + 2 to equal 3")))
