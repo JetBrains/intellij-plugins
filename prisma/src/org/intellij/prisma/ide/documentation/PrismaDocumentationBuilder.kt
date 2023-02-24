@@ -19,6 +19,7 @@ private const val PARAMS_WRAP_LIMIT = 3
 class PrismaDocumentationBuilder(private val element: PsiElement) {
   private val psiRenderer = PrismaPsiRenderer()
 
+  @NlsSafe
   fun buildDocumentation(): String? {
     val schemaDoc = buildDocumentationForSchemaElement(element)
     if (schemaDoc != null) {
