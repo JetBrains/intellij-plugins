@@ -1,7 +1,6 @@
 package com.intellij.protobuf.go.gutter
 
 import com.goide.GoLanguage
-import com.goide.go.GoGotoSuperHandler
 import com.goide.go.GoGotoUtil
 import com.goide.go.GoInheritorsSearch
 import com.goide.psi.GoMethodDeclaration
@@ -39,26 +38,9 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
       psiElement.language != GoLanguage.INSTANCE -> emptySequence()
       psiElement is GoMethodDeclaration -> findMethodDeclarations(psiElement, converters)
       psiElement is GoMethodSpec -> findMethodDeclarations(psiElement, converters)
-      psiElement is GoTypeSpec && hasSuperInterfaceWithGrpcSpecificMethod(psiElement)
-      -> findServiceDeclarations(psiElement, converters)
+      psiElement is GoTypeSpec && hasGrpcSpecificUnimplementedMethod(psiElement) -> findServiceDeclarations(psiElement, converters)
       psiElement is GoTypeSpec -> findMessageDeclarations(psiElement)
       else -> emptySequence()
-    }
-  }
-
-  private fun hasSuperInterfaceWithGrpcSpecificMethod(typeSpec: GoTypeSpec): Boolean {
-    return findSuperInterface(typeSpec) != null
-  }
-
-  private fun findSuperInterface(typeSpec: GoTypeSpec): GoTypeSpec? {
-    return if (hasGrpcSpecificUnimplementedMethod(typeSpec)) {
-      typeSpec
-    }
-    else {
-      findFirst(
-        { psiElement -> psiElement is GoTypeSpec && hasGrpcSpecificUnimplementedMethod(psiElement) },
-        { processor -> GoGotoSuperHandler.SUPER_SEARCH.processQuery(GoGotoUtil.param(typeSpec), processor) }
-      ) as? GoTypeSpec
     }
   }
 
@@ -119,17 +101,6 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
     return processor.results.asSequence()
   }
 
-  private fun findFirst(filter: (PsiElement) -> Boolean = { true },
-                        search: (Processor<PsiElement>) -> Unit): PsiElement? {
-    val processor = object : CommonProcessors.FindFirstProcessor<PsiElement>() {
-      override fun accept(psiElement: PsiElement?): Boolean {
-        return psiElement != null && filter(psiElement)
-      }
-    }
-    search(processor)
-    return processor.foundValue
-  }
-
   private fun findMessageImplementations(messageDefinition: PbMessageDefinition): Sequence<PsiElement> {
     val goPackage = suggestGoPackage(messageDefinition.pbFile)
     val messageName = messageDefinition.name ?: return emptySequence()
@@ -188,9 +159,9 @@ internal class PbGoImplementationSearcher : PbCodeImplementationSearcher {
 
   private fun findServiceDeclarations(typeSpec: GoTypeSpec,
                                       converters: Collection<PbGeneratedCodeConverter>): Sequence<PbServiceDefinition> {
-    val substitutedSpec = findSuperInterface(typeSpec) ?: return emptySequence()
-    val specFqn = assembleProtoFqnBySpec(substitutedSpec) ?: return emptySequence()
-    val protoFileAccessor = substitutedSpec.project.service<ProtoFileAccessor>()
+    if (!hasGrpcSpecificUnimplementedMethod(typeSpec)) return emptySequence()
+    val specFqn = assembleProtoFqnBySpec(typeSpec) ?: return emptySequence()
+    val protoFileAccessor = typeSpec.project.service<ProtoFileAccessor>()
     return converters.asSequence()
       .map { converter -> converter.codeEntityNameToProtoName(specFqn) }
       .mapNotNull { maybeServiceFqn -> protoFileAccessor.findServiceByFqn(maybeServiceFqn) }
