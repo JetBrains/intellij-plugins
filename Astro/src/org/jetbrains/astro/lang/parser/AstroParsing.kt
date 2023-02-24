@@ -109,9 +109,10 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   override fun parseTag(names: Stack<String>): Boolean {
     parseTag()
-    while (tagLevel() > 0 && peekTagName() != EXPRESSION_MARKER) {
-      if (isEndTagRequired(peekTagName())) {
-        error(XmlPsiBundle.message("xml.parsing.named.element.is.not.closed", peekTagName()))
+    while (hasTags()) {
+      val tag = peekTagInfo()
+      if (isEndTagRequired(tag)) {
+        error(XmlPsiBundle.message("xml.parsing.named.element.is.not.closed", tag.originalName))
       }
       doneTag()
     }
@@ -123,20 +124,7 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     if (token === JSTokenTypes.XML_LBRACE || token is JSEmbeddedContentElementType) return true
     if (builder.hasJSToken()) return false
     if (token === XmlTokenType.XML_START_TAG_START) return true
-    return tagLevel() == 0 || peekTagName() != EXPRESSION_MARKER
-  }
-
-  override fun isTagNameFurtherInStack(endName: String, tagNames: Stack<String>): Boolean {
-    // Do not cross expression boundary when closing tags.
-    return super.isTagNameFurtherInStack(
-      endName, Stack(tagNames.subList(tagNames.indexOfLast { it == EXPRESSION_MARKER }.coerceAtLeast(0), tagNames.size)))
-  }
-
-  override fun canOpeningTagAutoClose(tagOnStack: String, openingTag: String, tagLevel: Int): Boolean? {
-    return if (openingTag == EXPRESSION_MARKER)
-      false
-    else
-      super.canOpeningTagAutoClose(tagOnStack, openingTag, tagLevel)
+    return stackSize() == 0 || hasTags()
   }
 
   override fun parseOpenTagName(): String {
@@ -151,19 +139,19 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
     return result
   }
 
-  override fun parseEndTagName(): String {
-    val result: String
+  override fun parseEndTagName(): String? {
     if (token() === XmlTokenType.XML_NAME) {
-      result = StringUtil.toLowerCase(builder.tokenText!!)
+      val result = StringUtil.toLowerCase(builder.tokenText!!)
       advance()
+      return result
     }
-    else {
+    else if (hasTags()) {
       // Astro does not care about closing tag names at all
       // Make an exception and allow empty closing tag </>
       // to close anything.
-      result = peekTagName()
+      return peekTagInfo().normalizedName
     }
-    return result
+    return null
   }
 
   override fun hasCustomTagContent(): Boolean {
@@ -236,15 +224,15 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   override fun doneTag() {
-    if (peekTagName() == EXPRESSION_MARKER) {
+    if (peekStackItem() is AstroExpressionItem) {
       throw IllegalStateException(
         "Expression marker should not be done within the tag parsing code - it will cause unbalanced tree issues.")
     }
     super.doneTag()
   }
 
-  override fun getHtmlTagElementType(): IElementType {
-    val tagName = peekTagName().lowercase(Locale.US)
+  override fun getHtmlTagElementType(info: HtmlTagInfo, tagLevel: Int): IElementType {
+    val tagName = info.originalName.lowercase(Locale.US)
     // AstroTag:script is considered to have language Astro and not JS causing issues with formatting unlike HtmlTag:script
     return if (tagName == "script") XmlElementType.HTML_TAG
     else JSElementTypes.JSX_XML_LITERAL_EXPRESSION
@@ -260,7 +248,8 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   private fun parseJsxExpression(supportsNestedTemplateLiterals: Boolean, supportsEmptyExpression: Boolean) {
     parseExpressionWithTagsHandled {
-      (tsxParser.expressionParser as AstroTypeScriptExpressionParser).parseExpression(supportsNestedTemplateLiterals, supportsEmptyExpression)
+      (tsxParser.expressionParser as AstroTypeScriptExpressionParser)
+        .parseExpression(supportsNestedTemplateLiterals, supportsEmptyExpression)
     }
   }
 
@@ -272,22 +261,27 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
   private fun parseExpressionWithTagsHandled(parse: () -> Unit) {
     val exprStart = mark()
-    pushTag(exprStart, EXPRESSION_MARKER, EXPRESSION_MARKER)
+    pushItemToStack(AstroExpressionItem(exprStart))
     parse()
     // Since we're jumping in and out of HTML parser loop, expression parsing should be properly balanced.
     // We can expect that our `exprStart` marker has not been closed yet.
-    while (tagLevel() > 0 && peekTagMarker() != exprStart) {
-      val tagName = peekTagName()
-      if (isEndTagRequired(tagName)) {
-        error(XmlPsiBundle.message("xml.parsing.named.element.is.not.closed", peekTagName()))
+    while (hasTags()) {
+      val tagOnStack = peekTagInfo()
+      if (isEndTagRequired(tagOnStack)) {
+        error(XmlPsiBundle.message("xml.parsing.named.element.is.not.closed", tagOnStack.originalName))
       }
       doneTag()
     }
-    if (tagLevel() == 0 || peekTagMarker() != exprStart) {
+    if (stackSize() == 0 || peekStackItem().let { it !is AstroExpressionItem || it.startMarker != exprStart }) {
       throw IllegalStateException("Expression marker has already been closed. The tree is unbalanced.")
     }
     exprStart.done(JSStubElementTypes.EMBEDDED_EXPRESSION)
-    closeTag()
+    popItemFromStack()
+  }
+
+  private class AstroExpressionItem(private val startMarker: Marker) : HtmlParserStackItem {
+    override fun getStartMarker(): Marker =
+      startMarker
   }
 
   inner class AstroJsxParser internal constructor() : TypeScriptParser(AstroLanguage.INSTANCE, builder) {
@@ -379,8 +373,6 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   companion object {
-    private const val EXPRESSION_MARKER = "<EXPR>"
-
     private fun PsiBuilder.hasJSToken() =
       tokenType?.language?.isKindOf(JavascriptLanguage.INSTANCE) == true
 

@@ -22,15 +22,17 @@ import java.util.*
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   private val langMode: LangMode get() = builder.getUserData(VueScriptLangs.LANG_MODE) ?: LangMode.DEFAULT
 
-  override fun isSingleTag(tagName: String, originalTagName: String): Boolean {
+  override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
     // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
     // The following 'if' is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
-    if (tagName.length >= 3
-        && tagName != originalTagName
+    val normalizedTagName = tagInfo.normalizedName
+    val originalTagName = tagInfo.originalName
+    if (normalizedTagName.length >= 3
+        && normalizedTagName != originalTagName
         && !originalTagName.all { it.isUpperCase() }) {
       return false
     }
-    return super.isSingleTag(tagName, originalTagName)
+    return super.isSingleTag(tagInfo)
   }
 
   override fun hasCustomTagContent(): Boolean {
@@ -89,13 +91,14 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   override fun parseAttribute() {
     assert(token() === XmlTokenType.XML_NAME)
     val attr = mark()
-    val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, peekTagName(), tagLevel() == 1)
+    val tagName = peekTagInfo().normalizedName
+    val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, tagName, stackSize() == 1)
     advance()
     if (token() === XmlTokenType.XML_EQ) {
       advance()
       parseAttributeValue()
     }
-    if (peekTagName().lowercase(Locale.US) == SLOT_TAG_NAME) {
+    if (tagName.lowercase(Locale.US) == SLOT_TAG_NAME) {
       attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
     }
     else
@@ -108,13 +111,13 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       }
   }
 
-  override fun getHtmlTagElementType(): IElementType {
-    val tagName = peekTagName().lowercase(Locale.US)
+  override fun getHtmlTagElementType(info: HtmlTagInfo, tagLevel: Int): IElementType {
+    val tagName = info.normalizedName.lowercase(Locale.US)
     if (tagName in ALWAYS_STUBBED_TAGS
-        || (tagLevel() == 1 && tagName in TOP_LEVEL_TAGS)) {
+        || (tagLevel == 1 && tagName in TOP_LEVEL_TAGS)) {
       return if (tagName == TEMPLATE_TAG_NAME) VueStubElementTypes.TEMPLATE_TAG else VueStubElementTypes.STUBBED_TAG
     }
-    return super.getHtmlTagElementType()
+    return super.getHtmlTagElementType(info, tagLevel)
   }
 
   companion object {
