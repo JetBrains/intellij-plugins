@@ -37,7 +37,6 @@ To learn more about how to get started with Deno, check out <a href="https://blo
     <postStartupActivity implementation="com.intellij.deno.DenoStartupActivity"/>
     <indexableEntityProvider implementation="com.intellij.deno.roots.DenoIndexableEntityProvider"/>
     <indexableIteratorBuilderHandler implementation="com.intellij.deno.roots.DenoIndexableIteratorBuilderHandler"/>
-    <roots.watchedRootsProvider implementation="com.intellij.deno.roots.DenoWatchedRootsProvider"/>
     <registryKey key="deno.use.workspace.file.index.contributor.api" defaultValue="true"
                  description="Use new WorkspaceFileIndexContributor API for custom entities in Deno plugin.
                  The flag is temporary, legacy API will be removed in the future."/>

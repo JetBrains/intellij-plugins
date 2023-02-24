@@ -4,7 +4,6 @@ import com.intellij.deno.DenoBundle
 import com.intellij.deno.entities.DenoEntity
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentIterator
-import com.intellij.openapi.roots.WatchedRootsProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.util.indexing.roots.IndexableEntityProvider
@@ -81,11 +80,4 @@ class DenoIndexableFilesIterator(private val rootsToIndex: Collection<VirtualFil
   }
 
   class Origin : IndexableSetOrigin
-}
-
-class DenoWatchedRootsProvider : WatchedRootsProvider {
-  override fun getRootsToWatch(project: Project): Set<String> {
-    if (!useWorkspaceModel()) return emptySet()
-    return getRoots(project).toList().filterNotNull().map { it.path }.toSet()
-  }
 }
