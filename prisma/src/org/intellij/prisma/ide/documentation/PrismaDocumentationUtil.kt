@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.richcopy.HtmlSyntaxInfoUtil
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
@@ -102,6 +103,7 @@ internal fun toHtml(project: Project, text: String, scheme: EditorColorsScheme):
            .getHtmlContent(file, code, null, scheme, 0, code.length)?.toString() ?: text
 }
 
+@NlsSafe
 fun documentationMarkdownToHtml(markdown: String?): String? {
   if (markdown.isNullOrBlank()) {
     return null
