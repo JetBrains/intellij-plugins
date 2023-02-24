@@ -98,3 +98,24 @@ extension extension;
 extension on;
 extension extension() => on;
 extension on(){}
+
+abstract final class Vehicle {}
+interface class NoExtend {}
+interface class MySubclass extends NoExtend {}
+@reopen class MySubclass extends NoExtend {}
+base class A {}
+final class A{}
+sealed class A{}
+abstract class A{}
+abstract base class A{}
+abstract interface class A{}
+abstract final class	 A{}
+mixin class A{}
+base mixin class A{}
+abstract mixin class A{}
+abstract base mixin class	A{}
+mixin	A{}
+base mixin A{}
+interface mixin	A{}
+final mixin	A{}
+sealed mixin A{}
