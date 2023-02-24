@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JSStubElementTypes
@@ -10,6 +11,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
@@ -54,9 +56,15 @@ object VueScriptLangs {
     project ?: return LangMode.DEFAULT
     virtualFile ?: return LangMode.DEFAULT
     if (!virtualFile.isValid) return LangMode.DEFAULT
-    val file = PsiManager.getInstance(project).findFile(virtualFile) as? VueFile
-               ?: return LangMode.DEFAULT
-    return file.langMode
+    val file = if (virtualFile is VirtualFileWindow) {
+      // InjectionRegistrarImpl.parseFile used in InjectionRegistrarImpl.reparse
+      // doesn't set ViewProvider for some reason, and PsiManager#findFile fails because of that
+      PsiManagerEx.getInstanceEx(project).fileManager.getCachedPsiFile(virtualFile)
+    }
+    else {
+      PsiManager.getInstance(project).findFile(virtualFile)
+    }
+    return (file as? VueFile)?.langMode ?: LangMode.DEFAULT
   }
 
   fun getLatestKnownLang(element: PsiElement): LangMode {
