@@ -113,7 +113,7 @@ abstract class AbstractUpdateEnvironment implements UpdateEnvironment {
       final PerforceManager perforceManager = PerforceManager.getInstance(myProject);
       for (P4Connection connection : map.keySet()) {
         if (isRevertUnchanged(settings)) {
-          List<String> paths = ContainerUtil.map2List(map.get(connection), path -> P4File.create(path).getRecursivePath());
+          List<String> paths = ContainerUtil.map(map.get(connection), path -> P4File.create(path).getRecursivePath());
           try {
             PerforceRunner.getInstance(myProject).revertUnchanged(connection, paths);
           }

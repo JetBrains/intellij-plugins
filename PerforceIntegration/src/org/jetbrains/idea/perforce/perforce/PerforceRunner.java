@@ -750,7 +750,7 @@ public final class PerforceRunner implements PerforceRunnerI {
                               PerforceChangeCache changeCache,
                               PerforceShelf shelf,
                               List<PerforceChangeList> lists) throws VcsException {
-    List<Long> numbers = ContainerUtil.map2List(lists, list -> list.getNumber());
+    List<Long> numbers = ContainerUtil.map(lists, list -> list.getNumber());
     final PerforceClient client = myPerforceManager.getClient(connection);
 
     Map<Long, Pair<ChangeListData, List<FileChange>>> changeMap = describeAll(connection, numbers, false);

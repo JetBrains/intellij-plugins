@@ -151,7 +151,7 @@ public class RevertAllUnchangedFilesAction extends DumbAwareAction {
     MultiMap<P4Connection,VirtualFile> map = FileGrouper.distributeFilesByConnection(files, project);
     for (P4Connection connection : map.keySet()) {
       try {
-        List<String> paths = ContainerUtil.map2List(map.get(connection), file -> P4File.create(file).getRecursivePath());
+        List<String> paths = ContainerUtil.map(map.get(connection), file -> P4File.create(file).getRecursivePath());
         PerforceRunner.getInstance(project).revertUnchanged(connection, paths);
       }
       catch (VcsException e1) {

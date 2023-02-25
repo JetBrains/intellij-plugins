@@ -80,7 +80,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     if (tags == null) {
       return Collections.emptyList();
     }
-    return ContainerUtil.map2List(tags,
+    return ContainerUtil.map(tags,
                                   cfmlTag -> new CfmlStructureViewElement(cfmlTag));
   }
 }

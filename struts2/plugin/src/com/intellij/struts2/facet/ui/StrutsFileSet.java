@@ -26,12 +26,13 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.UniqueNameGenerator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Groups one or more {@code struts.xml} files in a named set.
@@ -73,11 +74,11 @@ public class StrutsFileSet implements Disposable {
   }
 
   public static String getUniqueId(final Set<? extends StrutsFileSet> list) {
-    return UniqueNameGenerator.generateUniqueName(ID_PREFIX, ContainerUtil.map2List(list, FILESET_ID_FUNCTION));
+    return UniqueNameGenerator.generateUniqueName(ID_PREFIX, ContainerUtil.map(list, FILESET_ID_FUNCTION));
   }
 
   public static String getUniqueName(final String prefix, final Set<? extends StrutsFileSet> list) {
-    return UniqueNameGenerator.generateUniqueName(prefix + " ", ContainerUtil.map2List(list, FILESET_NAME_FUNCTION));
+    return UniqueNameGenerator.generateUniqueName(prefix + " ", ContainerUtil.map(list, FILESET_NAME_FUNCTION));
   }
 
   public boolean isNew() {
