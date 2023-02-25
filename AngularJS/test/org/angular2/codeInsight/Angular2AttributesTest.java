@@ -4,8 +4,6 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
-import com.intellij.webSymbols.PsiSourcedWebSymbol;
-import com.intellij.webSymbols.WebSymbol;
 import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -25,7 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webSymbols.PsiSourcedWebSymbol;
+import com.intellij.webSymbols.WebSymbol;
 import com.intellij.webSymbols.WebTestUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -42,11 +41,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.intellij.webSymbols.WebTestUtil.checkListByFile;
-import static com.intellij.webSymbols.WebTestUtil.multiResolveWebSymbolReference;
-import static com.intellij.webSymbols.WebSymbolDelegate.unwrapAllDelegates;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.*;
+import static com.intellij.webSymbols.WebSymbolDelegate.unwrapAllDelegates;
+import static com.intellij.webSymbols.WebTestUtil.checkListByFile;
+import static com.intellij.webSymbols.WebTestUtil.multiResolveWebSymbolReference;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.angular2.modules.Angular2TestModule.*;
@@ -594,18 +593,18 @@ public class Angular2AttributesTest extends Angular2CodeInsightFixtureTestCase {
                                                         pair("(", ")"),
                                                         pair("[(", ")]"));
 
-    for (Map.Entry<String, String> attr : ContainerUtil.<String, String>immutableMapBuilder()
-      // <simple><input><output><inout>
-      // x -> no resolve, p -> resolve to property, s -> resolve to selector
-      .put("myInput", "ppxx")
-      .put("mySimpleBindingInput", "ppxx")
-      .put("myPlain", "sxxx")
-      .put("myOutput", "xxpx")
-      .put("myInOut", "ppxp")
-      .put("myInOutChange", "xxpx")
-      .put("fake", "ccxc")
-      .put("fakeChange", "sxcx")
-      .build().entrySet()) {
+    for (Map.Entry<String, String> attr : Map.of(
+          // <simple><input><output><inout>
+          // x -> no resolve, p -> resolve to property, s -> resolve to selector
+          "myInput", "ppxx",
+          "mySimpleBindingInput", "ppxx",
+          "myPlain", "sxxx",
+          "myOutput", "xxpx",
+          "myInOut", "ppxp",
+          "myInOutChange", "xxpx",
+          "fake", "ccxc",
+          "fakeChange", "sxcx")
+          .entrySet()) {
 
       String name = attr.getKey();
       String checks = attr.getValue();
