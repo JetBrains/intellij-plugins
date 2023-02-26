@@ -39,7 +39,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
-  override fun postprocessErrors(file: PsiFile, errors: MutableList<JSAnnotationError>): List<JSAnnotationError> {
+  override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
     if (file.virtualFile != null && isVueFile(file.virtualFile)) {
       return ReadAction.compute<List<JSAnnotationError>, Throwable> {
         val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@compute emptyList()
