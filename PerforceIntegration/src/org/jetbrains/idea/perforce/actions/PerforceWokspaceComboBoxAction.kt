@@ -1,5 +1,6 @@
 package org.jetbrains.idea.perforce.actions
 
+import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.ToolbarSettings
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,7 +16,9 @@ import com.intellij.ui.JBColor
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
+import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 import java.awt.event.ActionEvent
+import javax.swing.Icon
 
 class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
   override fun getActionUpdateThread(): ActionUpdateThread {
@@ -37,9 +40,10 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       return
     }
 
-    presentation.isEnabledAndVisible = true
     val perforceSettings = PerforceSettings.getSettings(e.project)
     val connection = perforceSettings.getConnectionForFile(file)
+    presentation.isEnabledAndVisible = true
+    presentation.icon = getIcon(perforceSettings, connection)
     if (connection == null) {
       with (presentation) {
         text = PerforceBundle.message("connection.no.valid.connections.short")
@@ -53,7 +57,12 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
         description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
       }
     }
+  }
 
+  private fun getIcon(settings: PerforceSettings, connection: P4Connection?): Icon {
+    if (connection == null || !settings.ENABLED)
+      return AllIcons.General.Warning
+    return AllIcons.Vcs.Branch
   }
 
   private fun getText(workspace: String, isOnline: Boolean): @NlsSafe String {

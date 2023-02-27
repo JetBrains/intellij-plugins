@@ -1,11 +1,13 @@
 package org.jetbrains.idea.perforce.actions
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.ListPopupStep
+import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.wm.impl.ExpandableComboAction
@@ -14,7 +16,9 @@ import com.intellij.ui.popup.util.PopupImplUtil
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
+import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 import java.util.function.Function
+import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.ListCellRenderer
 
@@ -24,6 +28,8 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     private val workspaceKey = Key.create<@NlsSafe String>("P4_WORKSPACE")
     private val statusKey = Key.create<Boolean>("P4_STATUS")
   }
+
+  private val widgetIcon = IconLoader.getIcon("expui/general/vcs.svg", AllIcons::class.java)
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
@@ -66,9 +72,10 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
       return
     }
 
-    e.presentation.isEnabledAndVisible = true
     val perforceSettings = PerforceSettings.getSettings(project)
     val connection = perforceSettings.getConnectionForFile(file)
+    e.presentation.isEnabledAndVisible = true
+    e.presentation.icon = getIcon(perforceSettings, connection)
     if (connection == null) {
       with(e.presentation) {
         putClientProperty(isConnectedKey, false)
@@ -84,10 +91,15 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
         putClientProperty(isConnectedKey, true)
         putClientProperty(workspaceKey, workspace)
         putClientProperty(statusKey, isOnline)
-
         description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
       }
     }
+  }
+
+  private fun getIcon(settings: PerforceSettings, connection: P4Connection?): Icon {
+    if (connection == null || !settings.ENABLED)
+      return AllIcons.General.Warning
+    return widgetIcon
   }
 
   override fun updateCustomComponent(component: JComponent, presentation: Presentation) {
