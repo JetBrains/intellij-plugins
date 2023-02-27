@@ -1,0 +1,75 @@
+plugins {
+  id 'org.jetbrains.intellij' version '1.13.0'
+  id 'org.jetbrains.kotlin.jvm' version '1.8.0'
+  id 'java'
+}
+
+group 'org.intellij.plugins'
+version '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+  maven {
+    url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+  }
+}
+
+dependencies {
+  implementation("org.intellij.plugins.hcl.terraform:terraform-metadata:2023.1.0")
+}
+
+def properties = new Properties()
+def file = rootProject.file('local.properties')
+
+if (file.exists()) {
+  properties.load(file.newDataInputStream())
+}
+
+def ideaPath = properties.getProperty('idea.path')
+
+intellij {
+  type = 'IU'
+
+  if (ideaPath == null) {
+    version = '231-EAP-SNAPSHOT'
+  } else {
+    localPath = ideaPath
+  }
+
+  plugins = ['com.intellij.plugins.watcher:231.7665.28']
+}
+
+patchPluginXml {
+}
+
+test {
+  useJUnitPlatform()
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs 'src/java', 'gen'
+    }
+    kotlin {
+      srcDir 'src/kotlin'
+    }
+    resources {
+      srcDir 'res'
+    }
+  }
+  test {
+    java {
+      srcDir 'test'
+    }
+    resources {
+      srcDir 'test-data'
+    }
+  }
+}
+
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of('17'))
+  }
+}
