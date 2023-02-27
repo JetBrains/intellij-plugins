@@ -21,5 +21,6 @@ import org.junit.runners.Suite
   AstroFormattingTest::class,
   AstroCopyPasteTest::class,
   AstroHtmlFormatterTest::class,
+  AstroCommenterTest::class
 )
 class AstroTestSuite
