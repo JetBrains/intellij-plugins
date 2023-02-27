@@ -1,0 +1,37 @@
+HCLFile: VariablesAndLocalsSelect.tf
+      HCLProperty at line 12
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIndexSelectExpression - object({dns_name=string})
+            HCLSelectExpression - object({production=object({dns_name=string})})
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLStringLiteral - string
+          HCLIdentifier - identifier
+      HCLProperty at line 13
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLSelectExpression - object({dns_name=string})
+            HCLSelectExpression - object({production=object({dns_name=string})})
+              HCLIdentifier - identifier
+              HCLIdentifier - identifier
+            HCLIdentifier - identifier
+          HCLIdentifier - identifier
+  HCLBlock at line 15
+    HCLIdentifier - identifier
+    HCLStringLiteral - string
+    HCLBlockObject - object({value=string})
+      HCLProperty at line 16
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier
+  HCLBlock at line 18
+    HCLIdentifier - identifier
+    HCLStringLiteral - string
+    HCLBlockObject - object({value=string})
+      HCLProperty at line 19
+        HCLIdentifier
+        HCLSelectExpression - string
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier

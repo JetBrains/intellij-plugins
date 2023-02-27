@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class>Unresolved reference</problem_class>
+    <description>Unresolved reference x</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class>Unresolved reference</problem_class>
+    <description>Unresolved reference y</description>
+  </problem>
+</problems>
+

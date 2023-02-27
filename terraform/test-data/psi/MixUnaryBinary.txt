@@ -1,0 +1,29 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiElement(=)('=')
+    HCLBinaryMultiplyExpression
+      HCLParenthesizedExpression
+        PsiElement(()('(')
+        HCLBinaryAdditionExpression
+          HCLUnaryExpression
+            PsiElement(-)('-')
+            HCLIdentifier
+              PsiElement(ID)('a')
+          PsiElement(+)('+')
+          HCLIdentifier
+            PsiElement(ID)('b')
+        PsiElement())(')')
+      PsiWhiteSpace(' ')
+      PsiElement(*)('*')
+      PsiWhiteSpace(' ')
+      HCLParenthesizedExpression
+        PsiElement(()('(')
+        HCLBinaryAdditionExpression
+          HCLNumberLiteral
+            PsiElement(NUMBER)('-1')
+          PsiElement(+)('+')
+          HCLNumberLiteral
+            PsiElement(NUMBER)('1')
+        PsiElement())(')')

@@ -1,0 +1,48 @@
+HCLFile: ComplexVariables.tf
+      HCLProperty at line 45
+        HCLIdentifier
+        HCLSelectExpression - map(object({port=number, service=string}))
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 46
+        HCLIdentifier
+        HCLSelectExpression - map(object({port=number, service=string}))
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 47
+        HCLIdentifier
+        HCLSelectExpression - list(map(object({port=number, service=string})))
+          HCLIdentifier - identifier
+          HCLIdentifier - identifier
+      HCLProperty at line 48
+        HCLIdentifier
+        HCLForObjectExpression - map(string)
+          HCLForIntroImpl(FOR_INTRO)
+            HCLIdentifier - object({port=number, service=string})
+            HCLIndexSelectExpression - map(object({port=number, service=string}))
+              HCLSelectExpression - list(map(object({port=number, service=string})))
+                HCLIdentifier - identifier
+                HCLIdentifier - identifier
+              HCLNumberLiteral - number
+          HCLSelectExpression - number
+            HCLIdentifier - object({port=number, service=string})
+            HCLIdentifier - identifier
+          HCLSelectExpression - string
+            HCLIdentifier - object({port=number, service=string})
+            HCLIdentifier - identifier
+      HCLProperty at line 52
+        HCLIdentifier
+        HCLForObjectExpression - map(number)
+          HCLForIntroImpl(FOR_INTRO)
+            HCLIdentifier - object({port=number, service=string})
+            HCLIndexSelectExpression - map(object({port=number, service=string}))
+              HCLSelectExpression - list(map(object({port=number, service=string})))
+                HCLIdentifier - identifier
+                HCLIdentifier - identifier
+              HCLNumberLiteral - number
+          HCLSelectExpression - string
+            HCLIdentifier - object({port=number, service=string})
+            HCLIdentifier - identifier
+          HCLSelectExpression - number
+            HCLIdentifier - object({port=number, service=string})
+            HCLIdentifier - identifier

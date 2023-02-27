@@ -1,0 +1,249 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "s3",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "access_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "AWS access key",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "acl": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Canned ACL to be applied to the state file",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "assume_role_duration_seconds": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "Seconds to restrict the assume role session duration."
+    },
+    "assume_role_policy": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "IAM Policy JSON describing further restricting permissions for the IAM Role being assumed.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "assume_role_policy_arns": {
+      "Type": "Set",
+      "Optional": true,
+      "Description": "Amazon Resource Names (ARNs) of IAM Policies describing further restricting permissions for the IAM Role being assumed.",
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "assume_role_tags": {
+      "Type": "Map",
+      "Optional": true,
+      "Description": "Assume role session tags.",
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "assume_role_transitive_tag_keys": {
+      "Type": "Set",
+      "Optional": true,
+      "Description": "Assume role session tag keys to pass to any subsequent sessions.",
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "bucket": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the S3 bucket"
+    },
+    "dynamodb_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the DynamoDB API",
+      "DefaultFunc": "ENV(AWS_DYNAMODB_ENDPOINT)"
+    },
+    "dynamodb_table": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "DynamoDB table for state locking and consistency",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "encrypt": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to enable server side encryption of the state file",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the S3 API",
+      "DefaultFunc": "ENV(AWS_S3_ENDPOINT)"
+    },
+    "external_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The external ID to use when assuming the role",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "force_path_style": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Force s3 to use path style api.",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "iam_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the IAM API",
+      "DefaultFunc": "ENV(AWS_IAM_ENDPOINT)"
+    },
+    "key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to the state file inside the bucket"
+    },
+    "kms_key_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The ARN of a KMS Key to use for encrypting the state",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "max_retries": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "The maximum number of times an AWS API request is retried on retryable failure.",
+      "Default": {
+        "Type": "int",
+        "Value": "5"
+      }
+    },
+    "profile": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "AWS profile name",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "region": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "AWS region of the S3 Bucket and DynamoDB Table (if used).",
+      "DefaultFunc": "MENV(AWS_REGION,AWS_DEFAULT_REGION)"
+    },
+    "role_arn": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The role to be assumed",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "secret_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "AWS secret key",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "session_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The session name to use when assuming the role.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "shared_credentials_file": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Path to a shared credentials file",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "skip_credentials_validation": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Skip the credentials validation via STS API.",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "skip_metadata_api_check": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Skip the AWS Metadata API check.",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "skip_region_validation": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Skip static validation of region name.",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "sse_customer_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The base64-encoded encryption key to use for server-side encryption with customer-provided keys (SSE-C).",
+      "DefaultFunc": "ENV(AWS_SSE_CUSTOMER_KEY)"
+    },
+    "sts_endpoint": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A custom endpoint for the STS API",
+      "DefaultFunc": "ENV(AWS_STS_ENDPOINT)"
+    },
+    "token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "MFA token",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "workspace_key_prefix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The prefix applied to the non-default state path inside the bucket.",
+      "Default": {
+        "Type": "string",
+        "Value": "env:"
+      }
+    }
+  }
+}

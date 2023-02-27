@@ -1,0 +1,80 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILMethodCallExpression
+      ILVariable
+        PsiElement(ID)('format')
+      ILParameterList
+        PsiElement(()('(')
+        ILLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('""')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('a')
+            PsiElement(<)('<')
+            ILLiteral
+              PsiElement(NUMBER)('5')
+          PsiElement(||)('||')
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('b')
+            PsiElement(>)('>')
+            ILLiteral
+              PsiElement(NUMBER)('2')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('a')
+            PsiElement(<)('<')
+            ILLiteral
+              PsiElement(NUMBER)('5')
+          PsiElement(&&)('&&')
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('b')
+            PsiElement(>)('>')
+            ILLiteral
+              PsiElement(NUMBER)('2')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('a')
+            PsiElement(<)('<')
+            ILLiteral
+              PsiElement(NUMBER)('5')
+          PsiWhiteSpace(' ')
+          PsiElement(!=)('!=')
+          PsiWhiteSpace(' ')
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('b')
+            PsiElement(>)('>')
+            ILLiteral
+              PsiElement(NUMBER)('2')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('a')
+            PsiElement(+)('+')
+            ILLiteral
+              PsiElement(NUMBER)('1')
+          PsiWhiteSpace(' ')
+          PsiElement(!=)('!=')
+          PsiWhiteSpace(' ')
+          ILBinaryExpression
+            ILVariable
+              PsiElement(ID)('b')
+            PsiElement(+)('+')
+            ILLiteral
+              PsiElement(NUMBER)('2')
+        PsiElement())(')')
+    PsiElement(})('}')

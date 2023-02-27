@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>12</line>
+    <module>0</module>
+    <package>&lt;default&gt;</package>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: source</description>
+  </problem>
+  <problem>
+    <file>dynamic.tf</file>
+    <line>6</line>
+    <module>0</module>
+    <package>&lt;default&gt;</package>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: registry_arn</description>
+  </problem>
+  <problem>
+    <file>dynamic.tf</file>
+    <line>9</line>
+    <module>0</module>
+    <package>&lt;default&gt;</package>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing required property</problem_class>
+    <description>Missing required properties: registry_arn</description>
+  </problem>
+</problems>
+

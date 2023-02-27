@@ -1,0 +1,242 @@
+HCLFile: Complex.hcl
+  PsiComment(line_c_comment)('// This comes from Terraform, as a test')
+  PsiWhiteSpace('\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('variable')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('default')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"bar"')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('description')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"bar"')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('provider')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"aws"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('access_key')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('secret_key')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"bar"')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('provider')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"do"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('api_key')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${var.foo}"')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"aws_security_group"')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"firewall"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('count')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('5')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLIdentifier
+      PsiElement(ID)('aws_instance')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"web"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('ami')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${var.foo}"')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('security_groups')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLArray
+          PsiElement([)('[')
+          PsiWhiteSpace('\n        ')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+          PsiElement(,)(',')
+          PsiWhiteSpace('\n        ')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"${aws_security_group.firewall.foo}"')
+          PsiWhiteSpace('\n    ')
+          PsiElement(])(']')
+      PsiWhiteSpace('\n\n    ')
+      HCLBlock
+        HCLIdentifier
+          PsiElement(ID)('network_interface')
+        PsiWhiteSpace(' ')
+        HCLBlockObject
+          PsiElement({)('{')
+          PsiWhiteSpace('\n        ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('device_index')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLNumberLiteral
+              PsiElement(NUMBER)('0')
+          PsiWhiteSpace('\n        ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('description')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"Main network interface"')
+          PsiWhiteSpace('\n    ')
+          PsiElement(})('}')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"aws_instance"')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"db"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('security_groups')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${aws_security_group.firewall.*.id}"')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('VPC')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+      PsiWhiteSpace('\n\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('depends_on')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLArray
+          PsiElement([)('[')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"aws_instance.web"')
+          PsiElement(])(']')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('output')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"web_ip"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n    ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('value')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${aws_instance.web.private_ip}"')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

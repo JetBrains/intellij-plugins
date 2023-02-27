@@ -1,0 +1,117 @@
+HCLFile: Simple_Types.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLBooleanLiteral
+      PsiElement(true)('true')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLBooleanLiteral
+      PsiElement(false)('false')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('7')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('-12')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('3.14159')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('bar')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('-3.14159')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('N')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('6.02E+23')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('N')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('6.02E23')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('nano')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('10e-9')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('sqstr')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(SINGLE_QUOTED_STRING)(''baz'')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('dqstr')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"bar"')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('list')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      HCLNumberLiteral
+        PsiElement(NUMBER)('1')
+      PsiElement(,)(',')
+      HCLNumberLiteral
+        PsiElement(NUMBER)('2')
+      PsiElement(,)(',')
+      HCLNumberLiteral
+        PsiElement(NUMBER)('3')
+      PsiElement(])(']')

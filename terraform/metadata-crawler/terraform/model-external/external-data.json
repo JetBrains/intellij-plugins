@@ -1,0 +1,58 @@
+{
+  "aws_alb.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_alb_target_group.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_default_network_acl.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_default_route_table.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_default_security_group.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_dms_replication_subnet_group.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_egress_only_internet_gateway.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_flow_log.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_internet_gateway.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_main_route_table_association.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_network_acl.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_opsworks_stack.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_route53_zone.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_route53_zone_association.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_route_table.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_security_group.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_subnet.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_vpc_dhcp_options_association.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_vpc_endpoint.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "#aws_vpc_peering_connection.peer_vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_vpc_peering_connection.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "#aws_vpc_peering_connection_accepter.peer_vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_vpc_peering_connection_accepter.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_vpn_gateway.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_vpn_gateway_attachment.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_alb.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_route53_zone.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_route_table.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_security_group.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_subnet.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_subnet_ids.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_vpc_endpoint.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "#data.aws_vpc_peering_connection.peer_vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_vpc_peering_connection.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "data.aws_vpn_gateway.attached_vpc_id": { "hint": "resource.aws_vpc.id"},
+
+
+  "aws_lambda_function.vpc_config.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_directory_service_directory.connect_settings.vpc_id": { "hint": "resource.aws_vpc.id"},
+  "aws_directory_service_directory.vpc_settings.vpc_id": { "hint": "resource.aws_vpc.id"},
+
+
+
+  "aws_cloudwatch_event_target.rule": { "hint": "resource.aws_cloudwatch_event_rule.name"},
+
+  "aws_lambda_permission.function_name": { "hint": "resource.aws_lambda_function.function_name"},
+  "aws_lambda_permission.qualifier": { "hint": "resource.aws_lambda_alias.name"},
+  "aws_lambda_permission.source_account": { "hint": "data.aws_caller_identity.account_id"},
+
+  "aws_lambda_alias.function_name": { "hint": "resource.aws_lambda_function.function_name"},
+
+  "aws_lambda_function.role": { "hint": "resource.aws_iam_role.arn"},
+
+  "aws_iam_role_policy.role": { "hint": "resource.aws_iam_role.id"},
+
+  ".keep_last":{}
+}

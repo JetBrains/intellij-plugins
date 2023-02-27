@@ -1,0 +1,65 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "cos",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "acl": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Object ACL to be applied to the state file",
+      "Default": {
+        "Type": "string",
+        "Value": "private"
+      }
+    },
+    "bucket": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the COS bucket"
+    },
+    "encrypt": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to enable server side encryption of the state file",
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    },
+    "key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path for saving the state file in bucket",
+      "Default": {
+        "Type": "string",
+        "Value": "terraform.tfstate"
+      }
+    },
+    "prefix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The directory for saving the state file in bucket"
+    },
+    "region": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The region of the COS bucket",
+      "InputDefault": "ap-guangzhou",
+      "DefaultFunc": "ENV(TENCENTCLOUD_REGION)"
+    },
+    "secret_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Secret id of Tencent Cloud",
+      "DefaultFunc": "ENV(TENCENTCLOUD_SECRET_ID)"
+    },
+    "secret_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Secret key of Tencent Cloud",
+      "DefaultFunc": "ENV(TENCENTCLOUD_SECRET_KEY)"
+    }
+  }
+}

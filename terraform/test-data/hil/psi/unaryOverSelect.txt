@@ -1,0 +1,12 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILUnaryExpression
+      PsiElement(!)('!')
+      ILSelectExpression
+        ILVariable
+          PsiElement(ID)('var')
+        PsiElement(.)('.')
+        ILVariable
+          PsiElement(ID)('private')
+    PsiElement(})('}')

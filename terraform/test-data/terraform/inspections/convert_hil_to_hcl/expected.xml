@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert to HCL2 expression</problem_class>
+    <description>Interpolation can be replaced with HCL2 expression</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>10</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert to HCL2 expression</problem_class>
+    <description>Interpolation can be replaced with HCL2 expression</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>13</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert to HCL2 expression</problem_class>
+    <description>Interpolation can be replaced with HCL2 expression</description>
+  </problem>
+</problems>
+

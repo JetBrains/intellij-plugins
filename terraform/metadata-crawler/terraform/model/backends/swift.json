@@ -1,0 +1,233 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "swift",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "allow_reauth": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "If set to `true`, OpenStack authorization will be perfomed\nautomatically, if the initial auth token get expired. This is useful,\nwhen the token TTL is low or the overall Terraform provider execution\ntime expected to be greater than the initial token TTL.",
+      "DefaultFunc": "ENV(OS_ALLOW_REAUTH)"
+    },
+    "application_credential_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Application Credential ID to login with.",
+      "DefaultFunc": "ENV(OS_APPLICATION_CREDENTIAL_ID)"
+    },
+    "application_credential_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Application Credential name to login with.",
+      "DefaultFunc": "ENV(OS_APPLICATION_CREDENTIAL_NAME)"
+    },
+    "application_credential_secret": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Application Credential secret to login with.",
+      "DefaultFunc": "ENV(OS_APPLICATION_CREDENTIAL_SECRET)"
+    },
+    "archive_container": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Swift container to archive state to."
+    },
+    "archive_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Swift container path to archive state to.",
+      "ConflictsWith": [
+        "archive_container"
+      ],
+      "Deprecated": "Use archive_container instead"
+    },
+    "auth_url": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The Identity authentication URL.",
+      "DefaultFunc": "ENV(OS_AUTH_URL)"
+    },
+    "cacert_file": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A Custom CA certificate.",
+      "DefaultFunc": "ENV(OS_CACERT)"
+    },
+    "cert": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A client certificate to authenticate with.",
+      "DefaultFunc": "ENV(OS_CERT)"
+    },
+    "cloud": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "An entry in a `clouds.yaml` file to use.",
+      "DefaultFunc": "ENV(OS_CLOUD)"
+    },
+    "container": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Swift container to create"
+    },
+    "default_domain": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the Domain ID to scope to if no other domain is specified. Defaults to `default` (Identity v3).",
+      "DefaultFunc": "ENV(OS_DEFAULT_DOMAIN)"
+    },
+    "disable_no_cache_header": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "If set to `true`, the HTTP `Cache-Control: no-cache` header will not be added by default to all API requests.",
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "domain_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The ID of the Domain to scope to (Identity v3).",
+      "DefaultFunc": "ENV(OS_DOMAIN_ID)"
+    },
+    "domain_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the Domain to scope to (Identity v3).",
+      "DefaultFunc": "ENV(OS_DOMAIN_NAME)"
+    },
+    "endpoint_type": {
+      "Type": "String",
+      "Optional": true,
+      "DefaultFunc": "ENV(OS_ENDPOINT_TYPE)"
+    },
+    "expire_after": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Archive object expiry duration."
+    },
+    "insecure": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Trust self-signed certificates.",
+      "DefaultFunc": "ENV(OS_INSECURE)"
+    },
+    "key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A client private key to authenticate with.",
+      "DefaultFunc": "ENV(OS_KEY)"
+    },
+    "lock": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Lock state access",
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    },
+    "max_retries": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "How many times HTTP connection should be retried until giving up.",
+      "Default": {
+        "Type": "int",
+        "Value": "0"
+      }
+    },
+    "password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Password to login with.",
+      "DefaultFunc": "ENV(OS_PASSWORD)"
+    },
+    "path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Swift container path to use.",
+      "ConflictsWith": [
+        "container"
+      ],
+      "Deprecated": "Use container instead"
+    },
+    "project_domain_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The ID of the domain where the proejct resides (Identity v3).",
+      "DefaultFunc": "ENV(OS_PROJECT_DOMAIN_ID)"
+    },
+    "project_domain_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the domain where the project resides (Identity v3).",
+      "DefaultFunc": "ENV(OS_PROJECT_DOMAIN_NAME)"
+    },
+    "region_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the Region to use.",
+      "DefaultFunc": "ENV(OS_REGION_NAME)"
+    },
+    "state_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Name of state object in container",
+      "Default": {
+        "Type": "string",
+        "Value": "tfstate.tf"
+      }
+    },
+    "swauth": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Use Swift's authentication system instead of Keystone.",
+      "DefaultFunc": "ENV(OS_SWAUTH)"
+    },
+    "tenant_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The ID of the Tenant (Identity v2) or Project (Identity v3)\nto login with.",
+      "DefaultFunc": "MENV(OS_TENANT_ID,OS_PROJECT_ID)"
+    },
+    "tenant_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the Tenant (Identity v2) or Project (Identity v3)\nto login with.",
+      "DefaultFunc": "MENV(OS_TENANT_NAME,OS_PROJECT_NAME)"
+    },
+    "token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Authentication token to use as an alternative to username/password.",
+      "DefaultFunc": "MENV(OS_TOKEN,OS_AUTH_TOKEN)"
+    },
+    "user_domain_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The ID of the domain where the user resides (Identity v3).",
+      "DefaultFunc": "ENV(OS_USER_DOMAIN_ID)"
+    },
+    "user_domain_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the domain where the user resides (Identity v3).",
+      "DefaultFunc": "ENV(OS_USER_DOMAIN_NAME)"
+    },
+    "user_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Username to login with.",
+      "DefaultFunc": "ENV(OS_USER_ID)"
+    },
+    "user_name": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Username to login with.",
+      "DefaultFunc": "ENV(OS_USERNAME)"
+    }
+  }
+}

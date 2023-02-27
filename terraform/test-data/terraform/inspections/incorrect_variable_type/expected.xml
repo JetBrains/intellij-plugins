@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Variable value type doesn't match default value type 'string'</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>9</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Variable value type doesn't match default value type 'string'</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>15</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Variable value type doesn't match default value type 'map'</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>19</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Variable value type doesn't match default value type 'map'</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>25</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Variable value type doesn't match default value type 'list'</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>29</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Variable value type doesn't match default value type 'list'</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>34</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>Incorrect variable type, expected string, list or map</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>57</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect variable type</problem_class>
+    <description>The map type constructor requires one argument specifying the element type</description>
+  </problem>
+</problems>
+

@@ -1,0 +1,19 @@
+HCLFile: HereDoc_Indented_End.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLHeredocLiteral
+      PsiElement(HD_START)('<<')
+      HCLHeredocMarkerImpl(HEREDOC_MARKER)
+        PsiElement(HD_MARKER)('EOF')
+      PsiWhiteSpace('\n')
+      HCLHeredocContent
+        PsiElement(HD_LINE)('  bar')
+        PsiElement(HD_EOL)('\n')
+        PsiElement(HD_LINE)('  baz')
+        PsiElement(HD_EOL)('\n')
+      HCLHeredocMarkerImpl(HEREDOC_MARKER)
+        PsiElement(HD_MARKER)(' EOF')

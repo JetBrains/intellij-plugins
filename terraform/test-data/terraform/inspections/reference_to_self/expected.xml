@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>bad.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Scope not available in context</problem_class>
+    <description>Referencing 'self' allowed only in 'provisioner' and 'connection' blocks inside resource definition</description>
+  </problem>
+</problems>
+

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>7</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown resource type referenced</problem_class>
+    <description>Unknown resource type</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>15</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unknown resource type referenced</problem_class>
+    <description>Unknown resource type</description>
+  </problem>
+</problems>
+

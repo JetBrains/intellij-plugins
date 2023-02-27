@@ -1,0 +1,20 @@
+HILFile: a.hil
+  ILTemplateHolder
+    PsiElement(%{)('%{')
+    ILTemplateForStatement
+      PsiElement(ID)('for')
+      PsiWhiteSpace(' ')
+      PsiElement(ID)('a')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      PsiElement(ID)('b')
+      PsiWhiteSpace(' ')
+      PsiElement(ID)('in')
+      PsiWhiteSpace(' ')
+      ILSelectExpression
+        ILVariable
+          PsiElement(ID)('var')
+        PsiElement(.)('.')
+        ILVariable
+          PsiElement(ID)('test')
+    PsiElement(})('~}')

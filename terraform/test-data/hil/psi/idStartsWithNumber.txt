@@ -1,0 +1,14 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILSelectExpression
+      ILSelectExpression
+        ILVariable
+          PsiElement(ID)('null_resource')
+        PsiElement(.)('.')
+        ILVariable
+          PsiElement(ID)('2a')
+      PsiElement(.)('.')
+      ILVariable
+        PsiElement(ID)('id')
+    PsiElement(})('}')

@@ -1,0 +1,16 @@
+HCLFile: Unfinished_String.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('b')
+    PsiElement(=)('=')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('42')

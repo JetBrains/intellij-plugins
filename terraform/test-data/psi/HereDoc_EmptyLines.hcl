@@ -1,0 +1,4 @@
+foo = <<EOF
+
+
+EOF

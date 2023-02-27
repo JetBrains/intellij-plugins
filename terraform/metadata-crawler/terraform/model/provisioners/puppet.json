@@ -1,0 +1,77 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "puppet",
+  "type": "provisioner",
+  "version": "v0.13.0-beta3",
+  "schema": {
+    "autosign": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    },
+    "bolt_timeout": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "5m"
+      }
+    },
+    "certname": {
+      "Type": "String",
+      "Optional": true
+    },
+    "custom_attributes": {
+      "Type": "Map",
+      "Optional": true
+    },
+    "environment": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "production"
+      }
+    },
+    "extension_requests": {
+      "Type": "Map",
+      "Optional": true
+    },
+    "open_source": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    },
+    "os_type": {
+      "Type": "String",
+      "Optional": true
+    },
+    "server": {
+      "Type": "String",
+      "Required": true
+    },
+    "server_user": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "root"
+      }
+    },
+    "use_sudo": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    }
+  }
+}

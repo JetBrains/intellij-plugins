@@ -1,0 +1,14 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "inmem",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "lock_id": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "initializes the state in a locked configuration"
+    }
+  }
+}

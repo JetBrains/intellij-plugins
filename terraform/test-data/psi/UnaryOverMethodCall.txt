@@ -1,0 +1,15 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiElement(=)('=')
+    HCLUnaryExpression
+      PsiElement(!)('!')
+      HCLMethodCallExpression
+        HCLIdentifier
+          PsiElement(ID)('tobool')
+        HCLParameterListImpl(PARAMETER_LIST)
+          PsiElement(()('(')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"false"')
+          PsiElement())(')')

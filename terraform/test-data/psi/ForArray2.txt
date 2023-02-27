@@ -1,0 +1,56 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('cidr_blocks')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLForArrayExpression
+      PsiElement([)('[')
+      PsiWhiteSpace('\n  ')
+      HCLForIntroImpl(FOR_INTRO)
+        PsiElement(ID)('for')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('num')
+        PsiWhiteSpace(' ')
+        PsiElement(ID)('in')
+        PsiWhiteSpace(' ')
+        HCLSelectExpression
+          HCLIdentifier
+            PsiElement(ID)('var')
+          PsiElement(.)('.')
+          HCLIdentifier
+            PsiElement(ID)('subnet_numbers')
+        PsiElement(:)(':')
+      PsiWhiteSpace('\n  ')
+      HCLMethodCallExpression
+        HCLIdentifier
+          PsiElement(ID)('cidrsubnet')
+        HCLParameterListImpl(PARAMETER_LIST)
+          PsiElement(()('(')
+          HCLSelectExpression
+            HCLSelectExpression
+              HCLSelectExpression
+                HCLIdentifier
+                  PsiElement(ID)('data')
+                PsiElement(.)('.')
+                HCLIdentifier
+                  PsiElement(ID)('aws_vpc')
+              PsiElement(.)('.')
+              HCLIdentifier
+                PsiElement(ID)('example')
+            PsiElement(.)('.')
+            HCLIdentifier
+              PsiElement(ID)('cidr_block')
+          PsiElement(,)(',')
+          PsiWhiteSpace(' ')
+          HCLNumberLiteral
+            PsiElement(NUMBER)('8')
+          PsiElement(,)(',')
+          PsiWhiteSpace(' ')
+          HCLIdentifier
+            PsiElement(ID)('num')
+          PsiElement())(')')
+      PsiWhiteSpace('\n')
+      PsiElement(])(']')

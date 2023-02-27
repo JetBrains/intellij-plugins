@@ -1,0 +1,15 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLForArrayExpression
+      PsiElement([)('[')
+      HCLForIntroImpl(FOR_INTRO)
+        PsiElement(ID)('for')
+        PsiErrorElement:<identifier> expected, got ']'
+          <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(])(']')

@@ -1,0 +1,29 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "etcd",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "endpoints": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A space-separated list of the etcd endpoints"
+    },
+    "password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Password"
+    },
+    "path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path where to store the state"
+    },
+    "username": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Username"
+    }
+  }
+}

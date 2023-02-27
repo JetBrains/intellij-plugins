@@ -1,0 +1,178 @@
+{
+  "Modules": [
+    {
+      "Key": "github_git",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git",
+      "Dir": ".terraform/modules/github_git"
+    },
+    {
+      "Key": "github_git_module",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_git_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "registry_full",
+      "Source": "registry.terraform.io/terraform-aws-modules/vpc/aws",
+      "Version": "3.14.2",
+      "Dir": ".terraform/modules/registry_full"
+    },
+    {
+      "Key": "registry_full_module",
+      "Source": "registry.terraform.io/terraform-aws-modules/vpc/aws///modules/vpc-endpoints",
+      "Version": "3.14.2",
+      "Dir": ".terraform/modules/registry_full_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "bitbucket_ref_branch",
+      "Source": "git::https://bitbucket.org/hashicorp/tf-test-git.git?ref=master",
+      "Dir": ".terraform/modules/bitbucket_ref_branch"
+    },
+    {
+      "Key": "bitbucket_ref_hash",
+      "Source": "git::https://bitbucket.org/hashicorp/tf-test-git.git?ref=9077dc1fa372aaeda1b2580eabf5627669be1e9b",
+      "Dir": ".terraform/modules/bitbucket_ref_hash"
+    },
+    {
+      "Key": "generic_git_https_ref_hash_module",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=c3fd1566df23cc4a2d3447b1964956964b9830a3///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/generic_git_https_ref_hash_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "generic_git_https_ref_tag",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2",
+      "Dir": ".terraform/modules/generic_git_https_ref_tag"
+    },
+    {
+      "Key": "registry_short",
+      "Source": "registry.terraform.io/terraform-aws-modules/vpc/aws",
+      "Version": "3.14.2",
+      "Dir": ".terraform/modules/registry_short"
+    },
+    {
+      "Key": "bitbucket",
+      "Source": "git::https://bitbucket.org/hashicorp/tf-test-git.git",
+      "Dir": ".terraform/modules/bitbucket"
+    },
+    {
+      "Key": "generic_git_ssh_ref_module",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/generic_git_ssh_ref_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_git_ref_hash",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=c3fd1566df23cc4a2d3447b1964956964b9830a3",
+      "Dir": ".terraform/modules/github_git_ref_hash"
+    },
+    {
+      "Key": "github_https",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git",
+      "Dir": ".terraform/modules/github_https"
+    },
+    {
+      "Key": "generic_git_https",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git",
+      "Dir": ".terraform/modules/generic_git_https"
+    },
+    {
+      "Key": "generic_git_https_ref_hash",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=c3fd1566df23cc4a2d3447b1964956964b9830a3",
+      "Dir": ".terraform/modules/generic_git_https_ref_hash"
+    },
+    {
+      "Key": "generic_git_ssh",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git",
+      "Dir": ".terraform/modules/generic_git_ssh"
+    },
+    {
+      "Key": "generic_git_ssh_module",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/generic_git_ssh_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_git_ref_branch_module",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=master///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_git_ref_branch_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_git_ref_hash_module",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=c3fd1566df23cc4a2d3447b1964956964b9830a3///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_git_ref_hash_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_https_ref_branch",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=master",
+      "Dir": ".terraform/modules/github_https_ref_branch"
+    },
+    {
+      "Key": "",
+      "Source": "",
+      "Dir": "."
+    },
+    {
+      "Key": "generic_git_https_ref_branch_module",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=master///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/generic_git_https_ref_branch_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "generic_git_ssh_ref",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2",
+      "Dir": ".terraform/modules/generic_git_ssh_ref"
+    },
+    {
+      "Key": "github_git_ref_branch",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=master",
+      "Dir": ".terraform/modules/github_git_ref_branch"
+    },
+    {
+      "Key": "generic_git_https_ref_tag_module",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/generic_git_https_ref_tag_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_https_ref_hash",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=c3fd1566df23cc4a2d3447b1964956964b9830a3",
+      "Dir": ".terraform/modules/github_https_ref_hash"
+    },
+    {
+      "Key": "github_https_ref_tag",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2",
+      "Dir": ".terraform/modules/github_https_ref_tag"
+    },
+    {
+      "Key": "generic_git_https_ref_branch",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=master",
+      "Dir": ".terraform/modules/generic_git_https_ref_branch"
+    },
+    {
+      "Key": "github_https_ref_tag_module",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_https_ref_tag_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "registry_short_module",
+      "Source": "registry.terraform.io/terraform-aws-modules/vpc/aws///modules/vpc-endpoints",
+      "Version": "3.14.2",
+      "Dir": ".terraform/modules/registry_short_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_git_ref_tag_module",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_git_ref_tag_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_git_ref_tag",
+      "Source": "git::ssh://git@github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=v3.14.2",
+      "Dir": ".terraform/modules/github_git_ref_tag"
+    },
+    {
+      "Key": "github_https_ref_branch_module",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=master///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_https_ref_branch_module/modules/vpc-endpoints"
+    },
+    {
+      "Key": "github_https_ref_hash_module",
+      "Source": "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=c3fd1566df23cc4a2d3447b1964956964b9830a3///modules/vpc-endpoints",
+      "Dir": ".terraform/modules/github_https_ref_hash_module/modules/vpc-endpoints"
+    }
+  ]
+}

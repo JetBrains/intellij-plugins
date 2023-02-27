@@ -1,0 +1,47 @@
+HCLFile: List_Of_Maps.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      PsiWhiteSpace('\n')
+      HCLObject
+        PsiElement({)('{')
+        HCLProperty
+          HCLIdentifier
+            PsiElement(ID)('somekey1')
+          PsiWhiteSpace(' ')
+          PsiElement(=)('=')
+          PsiWhiteSpace(' ')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"someval1"')
+        PsiElement(})('}')
+      PsiElement(,)(',')
+      PsiWhiteSpace('\n')
+      HCLObject
+        PsiElement({)('{')
+        HCLProperty
+          HCLIdentifier
+            PsiElement(ID)('somekey2')
+          PsiWhiteSpace(' ')
+          PsiElement(=)('=')
+          PsiWhiteSpace(' ')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"someval2"')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        HCLProperty
+          HCLIdentifier
+            PsiElement(ID)('someextrakey')
+          PsiWhiteSpace(' ')
+          PsiElement(=)('=')
+          PsiWhiteSpace(' ')
+          HCLStringLiteral
+            PsiElement(DOUBLE_QUOTED_STRING)('"someextraval"')
+        PsiElement(})('}')
+      PsiElement(,)(',')
+      PsiWhiteSpace('\n')
+      PsiElement(])(']')

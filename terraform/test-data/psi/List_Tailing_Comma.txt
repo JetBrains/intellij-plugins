@@ -1,0 +1,26 @@
+HCLFile: List_Tailing_Comma.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      HCLBooleanLiteral
+        PsiElement(true)('true')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLNumberLiteral
+        PsiElement(NUMBER)('42')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLStringLiteral
+        PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLStringLiteral
+        PsiElement(SINGLE_QUOTED_STRING)(''baz'')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      PsiElement(])(']')

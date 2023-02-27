@@ -1,0 +1,21 @@
+HCLFile: ArrayTailComment.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      PsiWhiteSpace('\n    ')
+      HCLStringLiteral
+        PsiElement(DOUBLE_QUOTED_STRING)('"1"')
+      PsiElement(,)(',')
+      PsiWhiteSpace('\n    ')
+      HCLStringLiteral
+        PsiElement(DOUBLE_QUOTED_STRING)('"2"')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      PsiComment(line_hash_comment)('# comment')
+      PsiWhiteSpace('\n')
+      PsiElement(])(']')

@@ -1,0 +1,44 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLForObjectExpression
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLForIntroImpl(FOR_INTRO)
+        PsiElement(ID)('for')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('instance')
+        PsiWhiteSpace(' ')
+        PsiElement(ID)('in')
+        PsiWhiteSpace(' ')
+        HCLSelectExpression
+          HCLIdentifier
+            PsiElement(ID)('aws_instance')
+          PsiElement(.)('.')
+          HCLIdentifier
+            PsiElement(ID)('example')
+        PsiElement(:)(':')
+      PsiWhiteSpace('\n  ')
+      HCLSelectExpression
+        HCLIdentifier
+          PsiElement(ID)('instance')
+        PsiElement(.)('.')
+        HCLIdentifier
+          PsiElement(ID)('availability_zone')
+      PsiWhiteSpace(' ')
+      PsiElement(=>)('=>')
+      PsiWhiteSpace(' ')
+      HCLSelectExpression
+        HCLIdentifier
+          PsiElement(ID)('instance')
+        PsiElement(.)('.')
+        HCLIdentifier
+          PsiElement(ID)('id')
+      PsiElement(...)('...')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

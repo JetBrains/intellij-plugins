@@ -1,0 +1,178 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "chef",
+  "type": "provisioner",
+  "version": "v0.13.0-beta3",
+  "schema": {
+    "attributes_json": {
+      "Type": "String",
+      "Optional": true
+    },
+    "channel": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "stable"
+      }
+    },
+    "client_options": {
+      "Type": "List",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "disable_reporting": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "environment": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "_default"
+      }
+    },
+    "fetch_chef_certificates": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "http_proxy": {
+      "Type": "String",
+      "Optional": true
+    },
+    "https_proxy": {
+      "Type": "String",
+      "Optional": true
+    },
+    "log_to_file": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "max_retries": {
+      "Type": "Int",
+      "Optional": true,
+      "Default": {
+        "Type": "int",
+        "Value": "0"
+      }
+    },
+    "named_run_list": {
+      "Type": "String",
+      "Optional": true
+    },
+    "no_proxy": {
+      "Type": "List",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "node_name": {
+      "Type": "String",
+      "Required": true
+    },
+    "ohai_hints": {
+      "Type": "List",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "os_type": {
+      "Type": "String",
+      "Optional": true
+    },
+    "policy_group": {
+      "Type": "String",
+      "Optional": true
+    },
+    "policy_name": {
+      "Type": "String",
+      "Optional": true
+    },
+    "prevent_sudo": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "recreate_client": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "retry_on_exit_code": {
+      "Type": "List",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "Int"
+      }
+    },
+    "run_list": {
+      "Type": "List",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "secret_key": {
+      "Type": "String",
+      "Optional": true
+    },
+    "server_url": {
+      "Type": "String",
+      "Required": true
+    },
+    "skip_install": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "skip_register": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "ssl_verify_mode": {
+      "Type": "String",
+      "Optional": true
+    },
+    "use_policyfile": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "user_key": {
+      "Type": "String",
+      "Required": true
+    },
+    "user_name": {
+      "Type": "String",
+      "Required": true
+    },
+    "vault_json": {
+      "Type": "String",
+      "Optional": true
+    },
+    "version": {
+      "Type": "String",
+      "Optional": true
+    },
+    "wait_for_retry": {
+      "Type": "Int",
+      "Optional": true,
+      "Default": {
+        "Type": "int",
+        "Value": "30"
+      }
+    }
+  }
+}

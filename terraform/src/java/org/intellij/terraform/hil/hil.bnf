@@ -1,0 +1,359 @@
+{
+  elementTypeHolderClass = 'org.intellij.terraform.hil.HILElementTypes'
+  tokenTypeClass = 'org.intellij.terraform.hil.HILTokenType'
+  elementTypeClass = 'org.intellij.terraform.hil.HILElementType'
+  parserClass = 'org.intellij.terraform.hil.HILParser'
+  parserUtilClass = 'org.intellij.terraform.hil.psi.HILParserUtil'
+  psiVisitorName = 'ILGeneratedVisitor'
+  psiImplUtilClass = 'org.intellij.terraform.hil.psi.impl.HILPsiImplUtilJ'
+
+  implements = 'org.intellij.terraform.hil.psi.ILExpression'
+  extends = 'org.intellij.terraform.hil.psi.impl.ILExpressionBase'
+
+  psiPackage = 'org.intellij.terraform.hil.psi'
+  psiImplPackage = 'org.intellij.terraform.hil.psi.impl'
+
+  extends("ILBinary.+Expression")=ILBinaryExpression
+
+  extends(".*Expression|.*Variable|ILExpressionHolder")=ILExpression
+
+  extends("ILTemplate.*Statement")=ILTemplateStatement
+
+  tokens = [
+//    space = "regexp:\s+"
+    TEMPLATE_START='%{'
+    INTERPOLATION_START='${'
+    L_PAREN='('
+    R_PAREN=')'
+    L_BRACKET='['
+    R_BRACKET=']'
+    L_CURLY='{'
+    R_CURLY='}'
+    COMMA=','
+    EQUALS='='
+
+    OP_DOT='.'
+
+    // Operators
+    OP_PLUS='+'
+    OP_MINUS='-'
+    OP_MUL='*'
+    OP_DIV='/'
+    OP_MOD='%'
+
+    // Logic operators
+    // Unary
+    OP_NOT='!'
+    // Binary
+    OP_EQUAL='=='
+    OP_NOT_EQUAL='!='
+    OP_LESS='<'
+    OP_GREATER='>'
+    OP_LESS_OR_EQUAL='<='
+    OP_GREATER_OR_EQUAL='>='
+    OP_AND_AND='&&'
+    OP_OR_OR='||'
+    // Ternary condition
+    OP_COLON=':'
+    OP_QUEST='?'
+
+    OP_ELLIPSIS='...'
+
+    DOUBLE_QUOTED_STRING="regexp:\"([^\\\"\r\n]|\\[^\r\n])*\"?"
+
+    NUMBER='regexp:(0x)?(0|[1-9])\d*(\.\d+)?([eE][-+]?\d+)?'
+
+    TRUE='true'
+    FALSE='false'
+    NULL='null'
+
+    ID="regexp:[a-zA-Z_][0-9a-zA-Z\-_*]*"
+  ]
+
+}
+
+// This bnf based on SpringEL bnf. Thanks to IntelliJ team
+
+private root ::= ILTemplateHolder | ILExpressionHolder
+{
+  consumeTokenMethod = 'smart'
+}
+
+// Expressions
+// Update HILElementType.IL_EXPRESSIONS on change
+ILExpression ::=
+    ILParenthesizedExpression
+  | ILExpressionHolder
+
+  | ILConditionalExpression
+
+  | ILBinaryOrExpression
+  | ILBinaryAndExpression
+
+  | ILBinaryEqualityExpression
+  | ILBinaryRelationalExpression
+
+  | ILBinaryAdditionExpression
+  | ILBinaryMultiplyExpression
+
+  | ILMethodCallExpression
+  | ILUnaryExpression
+  | ILSelectExpression
+  | ILIndexSelectExpression
+  | ILCollectionValue
+  | ILVariable
+  | ILLiteralExpression
+{
+  name="expression"
+  implements=[
+    "org.intellij.terraform.hcl.psi.common.BaseExpression"
+    "com.intellij.psi.templateLanguages.OuterLanguageElement"
+  ]
+  methods =[
+  ]
+}
+
+ILTemplateHolder ::= TEMPLATE_START ILTemplateStatement '}'
+
+ILTemplateStatement ::=
+    ILTemplateForStatement
+  | ILTemplateEndForStatement
+  | ILTemplateIfStatement
+  | ILTemplateElseStatement
+  | ILTemplateEndIfStatement
+
+ILTemplateForStatement ::= "for" identifier ("," identifier)? ("in" ILExpression)
+{
+  pin('.*')=1
+  methods=[
+    getVar1
+    getVar2
+    getContainer
+    ILExpression=""
+  ]
+}
+ILTemplateEndForStatement::= "endfor"
+
+ILTemplateIfStatement::= "if" ILExpression
+ILTemplateElseStatement::= "else"
+ILTemplateEndIfStatement::= "endif"
+
+ILExpressionHolder ::= INTERPOLATION_START ILExpression '}'
+{
+  methods = [
+    ILExpression=""
+    expression="ILExpression"
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.ParenthesizedExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+ILParenthesizedExpression ::= '(' ILExpression ')'
+{
+  methods = [
+    ILExpression=""
+    expression="ILExpression"
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.ParenthesizedExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+ILUnaryExpression ::= UnaryOp ILExpression
+{
+  methods = [
+    operand="ILExpression"
+    getOperationSign
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.UnaryExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+ILConditionalExpression ::= ILExpression ('?' ILExpression (':' ILExpression))
+{
+  pin(".*")="'\?'|'\:'"
+  methods=[
+    ILExpression="" // Magic hack
+    condition="ILExpression[0]"
+    then="ILExpression[1]"
+    otherwise="ILExpression[2]"
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.ConditionalExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+fake ILBinaryExpression ::= ILExpression+ {
+  methods = [
+    ILExpression="" // Magic hack
+    LeftOperand="ILExpression[0]"
+    RightOperand="ILExpression[1]"
+    getOperationSign
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.BinaryExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+ILBinaryRelationalExpression ::= ILExpression relationalOp ILExpression
+ILBinaryEqualityExpression ::= ILExpression equalityOp ILExpression
+
+ILBinaryAndExpression ::= ILExpression andOp ILExpression
+ILBinaryOrExpression ::= ILExpression orOp ILExpression
+
+ILBinaryAdditionExpression ::= ILExpression AddOp ILExpression
+ILBinaryMultiplyExpression ::= ILExpression MulOp ILExpression
+ILMethodCallExpression ::= ILExpression ILParameterList
+{
+  methods=[
+    Callee="ILExpression"
+    ParameterList="ILParameterList"
+    getQualifier
+    getMethod
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.MethodCallExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+ILLiteralExpression ::= literal /*| identifier*/ | number | 'true' | 'false' | 'null' {
+  name="Literal"
+  mixin="org.intellij.terraform.hil.psi.impl.ILExpressionWithReference"
+  methods=[
+    getUnquotedText
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.LiteralExpression"
+}
+
+ILParameterList ::= '(' ILParameterListElement* '...'? ')' {
+  pin(".*")=1
+  methods=[
+    ILExpression=""
+    Elements="ILExpression"
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.ParameterList<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+private ILParameterListElement ::=  (ILExpression) (','|&')')? {
+  pin=1
+  recoverWhile = not_paren_or_next_value
+}
+private not_paren_or_next_value ::= !(')'|'...'|ILExpression)
+
+ILSelectExpression ::= ILExpression OP_DOT ILVariable {
+  methods=[
+    ILExpression=""
+    from="ILExpression[0]"
+    field="ILExpression[1]"
+    getReference
+    getReferences
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.SelectExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+ILIndexSelectExpression ::= ILExpression ('[' ILExpression ']') {
+  pin(".*")="'\['"
+  extends = ILSelectExpression
+  implements="org.intellij.terraform.hcl.psi.common.IndexSelectExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+ILCollectionValue ::= ILArray | ILObject {
+  extends = ILExpression
+}
+
+ILArray ::= '[' array_element* ']'  {
+  methods=[
+//    getPresentation
+    Elements="ILExpression"
+  ]
+  pin=1
+  implements="org.intellij.terraform.hcl.psi.common.CollectionExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+private array_element ::= (ILExpression) (','|&']') {
+  pin=1
+  recoverWhile = not_bracket_or_next_value
+}
+
+ILObject ::= '{' object_element2* '}' {
+  pin=1
+  methods=[
+//    findProperty
+//    getPresentation
+//    getBlockList
+    PropertyList="ILProperty"
+    getElements
+  ]
+  implements="org.intellij.terraform.hcl.psi.common.CollectionExpression<org.intellij.terraform.hil.psi.ILExpression>"
+}
+
+private object_element2 ::= (ObjectElement) (','|&'}')? {
+  pin=1
+  recoverWhile = not_brace_or_next_value_2
+}
+
+private ObjectElement ::= ILExpression ILProperty (','|&'}')?
+{
+  pin=2
+}
+
+left ILProperty ::= ('='|':') ILExpression {
+  methods=[
+    getName
+    getNameElement
+    getValue
+    ILExpression=""
+  ]
+  implements=[
+    'org.intellij.terraform.hil.psi.ILExpression'
+    'com.intellij.psi.PsiNameIdentifierOwner'
+  ]
+  mixin="org.intellij.terraform.hil.psi.impl.ILPropertyMixin"
+  pin('.*')=1
+}
+
+ILVariable ::= identifier | '*' {
+  name="Identifier"
+  mixin="org.intellij.terraform.hil.psi.impl.ILVariableMixin"
+  implements="org.intellij.terraform.hcl.psi.common.Identifier"
+}
+
+// Operators
+private MulOp ::= OP_MUL | OP_DIV | OP_MOD
+{
+  name="operator"
+}
+private AddOp ::= OP_PLUS | OP_MINUS
+{
+  name="operator"
+}
+private UnaryOp ::= AddOp | OP_NOT //Not sure whether unary plus should be supported
+{
+  name="operator"
+}
+private orOp ::= OP_OR_OR
+{
+  name="operator"
+}
+private andOp ::= OP_AND_AND
+{
+  name="operator"
+}
+private equalityOp ::= OP_EQUAL
+                    | OP_NOT_EQUAL
+{
+  name="operator"
+}
+private relationalOp ::= OP_LESS
+                       | OP_GREATER
+                       | OP_LESS_OR_EQUAL
+                       | OP_GREATER_OR_EQUAL
+{
+  name="operator"
+}
+private fake ConditionOp ::=
+    orOp
+  | andOp
+  | equalityOp
+  | relationalOp
+{
+  name="operator"
+}
+
+// Primitives
+private literal ::= DOUBLE_QUOTED_STRING
+private identifier ::= ID
+private number ::= NUMBER
+
+// Recoveries
+private not_bracket_or_next_value ::= !(']'|ILExpression)
+private not_brace_or_next_value_2 ::= !('}'|ObjectElement)
