@@ -1,0 +1,113 @@
+HCLFile: Backslash_Escaping_In_Interpolation.tf
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('variable')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"developers"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('default')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLObject
+          PsiElement({)('{')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('user1')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"toto"')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('user2')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"titi"')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('user3')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"tata"')
+          PsiWhiteSpace('\n  ')
+          PsiElement(})('}')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"template_file"')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"test"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('template')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${devs}"')
+      PsiWhiteSpace('\n  ')
+      HCLBlock
+        HCLIdentifier
+          PsiElement(ID)('vars')
+        PsiWhiteSpace(' ')
+        HCLBlockObject
+          PsiElement({)('{')
+          PsiWhiteSpace('\n    ')
+          HCLProperty
+            HCLIdentifier
+              PsiElement(ID)('devs')
+            PsiWhiteSpace(' ')
+            PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            HCLStringLiteral
+              PsiElement(DOUBLE_QUOTED_STRING)('"${join("\\",\\"", values(var.developers))}"')
+          PsiWhiteSpace('\n  ')
+          PsiElement(})('}')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('output')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"out"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('value')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${template_file.test.rendered}"')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

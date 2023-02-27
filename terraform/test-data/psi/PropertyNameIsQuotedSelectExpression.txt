@@ -1,0 +1,24 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('providers')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"aws.target"')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLSelectExpression
+          HCLIdentifier
+            PsiElement(ID)('aws')
+          PsiElement(.)('.')
+          HCLIdentifier
+            PsiElement(ID)('iam')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

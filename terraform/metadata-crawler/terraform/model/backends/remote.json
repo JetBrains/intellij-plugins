@@ -1,0 +1,49 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "remote",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "hostname": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The remote backend hostname to connect to (defaults to app.terraform.io).",
+      "ConfigImplicitMode": "Attr"
+    },
+    "organization": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the organization containing the targeted workspace(s).",
+      "ConfigImplicitMode": "Attr"
+    },
+    "token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The token used to authenticate with the remote backend. If credentials for the\nhost are configured in the CLI Config File, then those will be used instead.",
+      "ConfigImplicitMode": "Attr"
+    },
+    "workspaces": {
+      "Type": "NestingSingle",
+      "IsBlock": true,
+      "ConfigImplicitMode": "Block",
+      "Elem": {
+        "Type": "SchemaInfo",
+        "Info": {
+          "name": {
+            "Type": "String",
+            "Optional": true,
+            "Description": "A workspace name used to map the default workspace to a named remote workspace.\nWhen configured only the default workspace can be used. This option conflicts\nwith \"prefix\"",
+            "ConfigImplicitMode": "Attr"
+          },
+          "prefix": {
+            "Type": "String",
+            "Optional": true,
+            "Description": "A prefix used to filter workspaces using a single configuration. New workspaces\nwill automatically be prefixed with this prefix. If omitted only the default\nworkspace can be used. This option conflicts with \"name\"",
+            "ConfigImplicitMode": "Attr"
+          }
+        }
+      }
+    }
+  }
+}

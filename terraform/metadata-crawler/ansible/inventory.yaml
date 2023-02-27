@@ -1,0 +1,10 @@
+all:
+  hosts:
+    my-agent:
+      ansible_host: <your-host-here>
+      ansible_user: root
+      ansible_become: true
+  children:
+    agent:
+      hosts:
+        my-agent:

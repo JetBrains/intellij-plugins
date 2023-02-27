@@ -1,0 +1,51 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "manta",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "account": {
+      "Type": "String",
+      "Optional": true,
+      "DefaultFunc": "MENV(TRITON_ACCOUNT,SDC_ACCOUNT)"
+    },
+    "insecure_skip_tls_verify": {
+      "Type": "Bool",
+      "Optional": true,
+      "DefaultFunc": "ENV(TRITON_SKIP_TLS_VERIFY)"
+    },
+    "key_id": {
+      "Type": "String",
+      "Optional": true,
+      "DefaultFunc": "MENV(TRITON_KEY_ID,SDC_KEY_ID)"
+    },
+    "key_material": {
+      "Type": "String",
+      "Optional": true,
+      "DefaultFunc": "MENV(TRITON_KEY_MATERIAL,SDC_KEY_MATERIAL)"
+    },
+    "object_name": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "terraform.tfstate"
+      }
+    },
+    "path": {
+      "Type": "String",
+      "Optional": true
+    },
+    "url": {
+      "Type": "String",
+      "Optional": true,
+      "DefaultFunc": "MENV(MANTA_URL)"
+    },
+    "user": {
+      "Type": "String",
+      "Optional": true,
+      "DefaultFunc": "MENV(TRITON_USER,SDC_USER)"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "remote-exec",
+  "type": "provisioner",
+  "version": "v1.1.4",
+  "schema": {
+    "inline": {
+      "Type": "List(cty.String)",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "script": {
+      "Type": "cty.String",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    },
+    "scripts": {
+      "Type": "List(cty.String)",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+chef
+file
+habitat
+local-exec
+puppet
+remote-exec
+salt-masterless

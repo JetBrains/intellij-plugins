@@ -1,0 +1,6 @@
+HCLFile: Incomplete_Block.hcl
+  PsiElement(ID)('resource')
+  PsiWhiteSpace(' ')
+  PsiElement(DOUBLE_QUOTED_STRING)('"aws"')
+  PsiErrorElement:<boolean>, <identifier>, <null>, <string literal> or '{' expected
+    <empty list>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>242.tf</file>
+    <line>42</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference x</description>
+  </problem>
+  <problem>
+    <file>242.tf</file>
+    <line>42</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference y</description>
+  </problem>
+  <problem>
+    <file>242.tf</file>
+    <line>44</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference x</description>
+  </problem>
+  <problem>
+    <file>242.tf</file>
+    <line>44</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference y</description>
+  </problem>
+  <problem>
+    <file>242.tf</file>
+    <line>46</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference x</description>
+  </problem>
+  <problem>
+    <file>242.tf</file>
+    <line>46</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference y</description>
+  </problem>
+  <problem>
+    <file>258.tf</file>
+    <line>21</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference x</description>
+  </problem>
+  <problem>
+    <file>258.tf</file>
+    <line>21</line>
+    <module>0</module>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference y</description>
+  </problem>
+</problems>
+

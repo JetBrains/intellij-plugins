@@ -1,0 +1,47 @@
+HCLFile: Identifiers.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('simple')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLBooleanLiteral
+      PsiElement(true)('true')
+  PsiWhiteSpace('\n')
+  PsiComment(line_c_comment)('//po.int = false')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('under_score')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLNumberLiteral
+      PsiElement(NUMBER)('1')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('mi-nus')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(SINGLE_QUOTED_STRING)(''yep'')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('_5')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLBooleanLiteral
+      PsiElement(true)('true')
+  PsiWhiteSpace('\n')
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('w1th_num8er5')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(SINGLE_QUOTED_STRING)(''acceptable'')

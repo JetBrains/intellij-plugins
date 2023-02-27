@@ -1,0 +1,51 @@
+- hosts: agent
+  # Tested on Ubuntu 22.10
+  tasks:
+    - name: install openjdk-17-jdk
+      apt: { name: openjdk-17-jdk, update_cache: yes }
+    - name: Install Terraform
+      block:
+        - name: Add Terraform GPG apt Key
+          apt_key:
+            url: https://apt.releases.hashicorp.com/gpg
+            state: present
+        - name: Add Terraform Repository
+          apt_repository:
+            repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+            filename: hashicorp
+            state: present
+        - name: Install Terraform
+          apt: name=terraform state=latest
+    - name: Copy scripts
+      copy:
+        src: ../ls-schemas-extractor/{{ item }}
+        dest: /opt/ls-schemas-extractor/{{ item }}
+        mode: 0755
+      with_items:
+        - src/
+        - gradle/
+        - gradlew
+        - build.gradle.kts
+        - settings.gradle.kts
+    - name: run script (can take hours)
+      shell:
+        cmd: "./gradlew run --no-daemon > run.log"
+        chdir: /opt/ls-schemas-extractor/
+      async: 14400
+      poll: 10
+      ignore_errors: True
+      register: result_async
+    - debug: var=result_async
+    - name: Check command
+      shell:
+        cmd: "tail run.log"
+        chdir: /opt/ls-schemas-extractor/
+      register: result
+      failed_when: "'Everything done!' not in result.stdout"
+    - name: fetch schemas
+      synchronize:
+        src: /opt/ls-schemas-extractor/plugins-meta/
+        dest: ../plugins-meta/
+        mode: pull
+
+        

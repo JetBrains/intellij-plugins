@@ -1,0 +1,26 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILMethodCallExpression
+      ILVariable
+        PsiElement(ID)('format')
+      ILParameterList
+        PsiElement(()('(')
+        ILIndexSelectExpression
+          ILVariable
+            PsiElement(ID)('foo')
+          PsiElement([)('[')
+          ILLiteral
+            PsiElement(NUMBER)('1')
+          PsiElement(])(']')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILIndexSelectExpression
+          ILVariable
+            PsiElement(ID)('baz')
+          PsiElement([)('[')
+          ILLiteral
+            PsiElement(NUMBER)('0')
+          PsiElement(])(']')
+        PsiElement())(')')
+    PsiElement(})('}')

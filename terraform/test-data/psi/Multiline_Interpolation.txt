@@ -1,0 +1,9 @@
+HCLFile: Multiline_Interpolation.tf
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('multiline_interpolation')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"${hello\n  world}"')

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>first.tf</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Duplicated variable</problem_class>
+    <description>Variable 'x' declared multiple times</description>
+  </problem>
+  <problem>
+    <file>second.tf</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Duplicated variable</problem_class>
+    <description>Variable 'x' declared multiple times</description>
+  </problem>
+</problems>
+

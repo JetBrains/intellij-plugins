@@ -1,0 +1,4 @@
+HCLFile: Comment_Single.hcl
+  PsiComment(line_hash_comment)('# Hello')
+  PsiWhiteSpace('\n')
+  PsiComment(line_c_comment)('// World')

@@ -1,0 +1,209 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "habitat",
+  "type": "provisioner",
+  "version": "v0.13.0-beta3",
+  "schema": {
+    "accept_license": {
+      "Type": "Bool",
+      "Required": true
+    },
+    "auto_update": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "builder_auth_token": {
+      "Type": "String",
+      "Optional": true
+    },
+    "channel": {
+      "Type": "String",
+      "Optional": true
+    },
+    "ctl_secret": {
+      "Type": "String",
+      "Optional": true
+    },
+    "events": {
+      "Type": "String",
+      "Optional": true
+    },
+    "gateway_auth_token": {
+      "Type": "String",
+      "Optional": true
+    },
+    "http_disable": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "listen_ctl": {
+      "Type": "String",
+      "Optional": true
+    },
+    "listen_gossip": {
+      "Type": "String",
+      "Optional": true
+    },
+    "listen_http": {
+      "Type": "String",
+      "Optional": true
+    },
+    "organization": {
+      "Type": "String",
+      "Optional": true
+    },
+    "peer": {
+      "Type": "String",
+      "Optional": true
+    },
+    "peers": {
+      "Type": "List",
+      "Optional": true,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "permanent_peer": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "false"
+      }
+    },
+    "ring_key": {
+      "Type": "String",
+      "Optional": true
+    },
+    "ring_key_content": {
+      "Type": "String",
+      "Optional": true
+    },
+    "service": {
+      "Type": "Set",
+      "Optional": true,
+      "IsBlock": true,
+      "ConfigImplicitMode": "Block",
+      "Elem": {
+        "Type": "SchemaInfo",
+        "Info": {
+          "application": {
+            "Type": "String",
+            "Optional": true
+          },
+          "bind": {
+            "Type": "Set",
+            "Optional": true,
+            "IsBlock": true,
+            "ConfigImplicitMode": "Block",
+            "Elem": {
+              "Type": "SchemaInfo",
+              "Info": {
+                "alias": {
+                  "Type": "String",
+                  "Required": true
+                },
+                "group": {
+                  "Type": "String",
+                  "Required": true
+                },
+                "service": {
+                  "Type": "String",
+                  "Required": true
+                }
+              }
+            }
+          },
+          "binds": {
+            "Type": "List",
+            "Optional": true,
+            "ConfigImplicitMode": "Attr",
+            "Elem": {
+              "Type": "SchemaElements",
+              "ElementsType": "String"
+            }
+          },
+          "channel": {
+            "Type": "String",
+            "Optional": true
+          },
+          "environment": {
+            "Type": "String",
+            "Optional": true
+          },
+          "group": {
+            "Type": "String",
+            "Optional": true
+          },
+          "name": {
+            "Type": "String",
+            "Required": true
+          },
+          "service_key": {
+            "Type": "String",
+            "Optional": true
+          },
+          "strategy": {
+            "Type": "String",
+            "Optional": true
+          },
+          "topology": {
+            "Type": "String",
+            "Optional": true
+          },
+          "url": {
+            "Type": "String",
+            "Optional": true
+          },
+          "user_toml": {
+            "Type": "String",
+            "Optional": true
+          }
+        }
+      }
+    },
+    "service_name": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "hab-supervisor"
+      }
+    },
+    "service_type": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "systemd"
+      }
+    },
+    "url": {
+      "Type": "String",
+      "Optional": true
+    },
+    "use_sudo": {
+      "Type": "Bool",
+      "Optional": true,
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    },
+    "version": {
+      "Type": "String",
+      "Optional": true
+    }
+  }
+}

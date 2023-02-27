@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>1</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Duplicated provider</problem_class>
+    <description>Provider 'null' declared multiple times</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>6</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Duplicated provider</problem_class>
+    <description>Provider 'null' declared multiple times</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>8</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Duplicated provider</problem_class>
+    <description>Provider 'null.x' declared multiple times</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>11</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Duplicated provider</problem_class>
+    <description>Provider 'null.x' declared multiple times</description>
+  </problem>
+</problems>
+

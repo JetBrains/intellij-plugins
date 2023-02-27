@@ -1,0 +1,8 @@
+HCLFile: Comment_Multiline.hcl
+  PsiComment(block_comment)('/* simple */')
+  PsiWhiteSpace('\n')
+  PsiComment(block_comment)('/* two\n   lines */')
+  PsiWhiteSpace('\n')
+  PsiComment(block_comment)('/*\n   four\n   lines\n*/')
+  PsiWhiteSpace('\n')
+  PsiComment(block_comment)('/**stars**/')

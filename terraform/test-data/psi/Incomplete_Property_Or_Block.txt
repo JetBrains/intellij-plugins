@@ -1,0 +1,4 @@
+HCLFile: Incomplete_Property_Or_Block.hcl
+  PsiElement(ID)('name')
+  PsiErrorElement:<block> or <property> expected
+    <empty list>

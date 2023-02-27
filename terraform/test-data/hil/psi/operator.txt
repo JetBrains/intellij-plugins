@@ -1,0 +1,14 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILBinaryExpression
+      ILSelectExpression
+        ILVariable
+          PsiElement(ID)('count')
+        PsiElement(.)('.')
+        ILVariable
+          PsiElement(ID)('index')
+      PsiElement(+)('+')
+      ILLiteral
+        PsiElement(NUMBER)('1')
+    PsiElement(})('}')

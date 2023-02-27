@@ -1,0 +1,32 @@
+HCLFile: Unfinished_Block_Name.hcl
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('block')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"a ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('inside')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('42')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')
+  PsiWhiteSpace('\n\n')
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('block')
+    PsiWhiteSpace(' ')
+    HCLIdentifier
+      PsiElement(ID)('b')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

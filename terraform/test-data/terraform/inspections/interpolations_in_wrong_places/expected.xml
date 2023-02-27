@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>2</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in variables</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>3</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in variables</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>8</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in variables</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>10</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in variables</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>10</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in variables</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>15</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in module source</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>18</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in depends_on</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>21</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in properties inside 'terraform' block</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>26</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in depends_on</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>27</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>A single static variable reference is required: only attribute access and indexing with constant keys (no calculations, function calls, template expressions, and so on).</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>35</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in depends_on</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>39</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in module source</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>43</line>
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Interpolations not allowed</problem_class>
+    <description>Interpolations are not allowed in depends_on</description>
+  </problem>
+</problems>
+

@@ -1,0 +1,12 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILMethodCallExpression
+      ILVariable
+        PsiElement(ID)('x')
+      ILParameterList
+        PsiElement(()('(')
+        ILLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"}"')
+        PsiElement())(')')
+    PsiElement(})('}')

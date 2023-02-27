@@ -1,0 +1,40 @@
+<html>
+<body>
+<p>Reports old style HCL expressions and suggests converting them to HCL2 expressions.</p>
+
+<p><b>Example:</b></p>
+
+<pre><code>
+  # Terraform 0.11 Configuration. Some sections omitted for clarity.
+resource "azurerm_app_service" "example" {
+ count               = "${length(local.app_services)}"
+ name                = "${lower(lookup(local.app_services[count.index], "kind"))}-appservice"
+ location            = "${azurerm_resource_group.example.location}"
+ resource_group_name = "${azurerm_resource_group.example.name}"
+ app_service_plan_id = "${element(azurerm_app_service_plan.example.*.id, count.index)}"
+
+ site_config {
+   # omitted for clarity
+ }
+}
+</code></pre>
+
+<p>After applying the quick-fix:</p>
+
+<pre><code>
+  # Terraform 0.12 Configuration. Some sections omitted for clarity.
+resource "azurerm_app_service" "example" {
+ count               = length(local.app_services)
+ name                = "${lower(local.app_services[count.index].kind)}-appservice"
+ location            = azurerm_resource_group.example.location
+ resource_group_name = azurerm_resource_group.example.name
+ app_service_plan_id = azurerm_app_service_plan.example[count.index].id
+
+ site_config {
+    # omitted for clarity
+ }
+}
+</code></pre>
+
+</body>
+</html>

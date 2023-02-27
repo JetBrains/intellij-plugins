@@ -1,0 +1,12 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILConditionalExpression
+      ILLiteral
+        PsiElement(true)('true')
+      PsiElement(?)('?')
+      ILLiteral
+        PsiElement(true)('true')
+      PsiErrorElement:'(' or <operator> expected, got '}'
+        <empty list>
+    PsiElement(})('}')

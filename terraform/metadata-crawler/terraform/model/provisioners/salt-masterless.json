@@ -1,0 +1,77 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "salt-masterless",
+  "type": "provisioner",
+  "version": "v0.13.0-beta3",
+  "schema": {
+    "bootstrap_args": {
+      "Type": "String",
+      "Optional": true
+    },
+    "cmd_args": {
+      "Type": "String",
+      "Optional": true
+    },
+    "custom_state": {
+      "Type": "String",
+      "Optional": true
+    },
+    "disable_sudo": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "local_pillar_roots": {
+      "Type": "String",
+      "Optional": true
+    },
+    "local_state_tree": {
+      "Type": "String",
+      "Required": true
+    },
+    "log_level": {
+      "Type": "String",
+      "Optional": true
+    },
+    "minion_config_file": {
+      "Type": "String",
+      "Optional": true
+    },
+    "no_exit_on_failure": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "remote_pillar_roots": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "/srv/pillar"
+      }
+    },
+    "remote_state_tree": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "/srv/salt"
+      }
+    },
+    "salt_call_args": {
+      "Type": "String",
+      "Optional": true
+    },
+    "skip_bootstrap": {
+      "Type": "Bool",
+      "Optional": true
+    },
+    "temp_config_dir": {
+      "Type": "String",
+      "Optional": true,
+      "Default": {
+        "Type": "string",
+        "Value": "/tmp/salt"
+      }
+    }
+  }
+}

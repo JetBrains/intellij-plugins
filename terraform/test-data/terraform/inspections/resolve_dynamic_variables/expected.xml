@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>235.tf</file>
+    <line>44</line>
+    <entry_point TYPE="file" FQNAME="235.tf" />
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>The "each" object can be used only in "resource"/"data"/"module" blocks, and only when the "for_each" argument is set</description>
+  </problem>
+  <problem>
+    <file>235.tf</file>
+    <line>44</line>
+    <entry_point TYPE="file" FQNAME="235.tf" />
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unresolved reference value</description>
+  </problem>
+  <problem>
+    <file>227.tf</file>
+    <line>57</line>
+    <entry_point TYPE="file" FQNAME="227.tf" />
+    <problem_class severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Unresolved reference</problem_class>
+    <description>Unknown iterator field unknown</description>
+  </problem>
+</problems>
+

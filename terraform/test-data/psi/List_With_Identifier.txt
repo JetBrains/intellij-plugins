@@ -1,0 +1,36 @@
+HCLFile: List_With_Identifier.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      HCLBooleanLiteral
+        PsiElement(true)('true')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLNumberLiteral
+        PsiElement(NUMBER)('42')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLStringLiteral
+        PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLStringLiteral
+        PsiElement(SINGLE_QUOTED_STRING)(''baz'')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLIdentifier
+        PsiElement(ID)('id')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLIdentifier
+        PsiElement(ID)('another_id')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLBooleanLiteral
+        PsiElement(false)('false')
+      PsiElement(])(']')

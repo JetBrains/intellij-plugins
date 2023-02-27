@@ -1,0 +1,38 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('providers')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('a')
+        PsiElement(=)('=')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"x"')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLParenthesizedExpression
+          PsiElement(()('(')
+          HCLSelectExpression
+            HCLIdentifier
+              PsiElement(ID)('aws')
+            PsiElement(.)('.')
+            HCLIdentifier
+              PsiElement(ID)('target')
+          PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLSelectExpression
+          HCLIdentifier
+            PsiElement(ID)('aws')
+          PsiElement(.)('.')
+          HCLIdentifier
+            PsiElement(ID)('iam')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

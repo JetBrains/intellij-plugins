@@ -1,0 +1,28 @@
+HCLFile: List_Of_Lists.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      PsiWhiteSpace('\n')
+      HCLArray
+        PsiElement([)('[')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"someval1"')
+        PsiElement(])(']')
+      PsiElement(,)(',')
+      PsiWhiteSpace('\n')
+      HCLArray
+        PsiElement([)('[')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"someval2"')
+        PsiElement(,)(',')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"someextraval"')
+        PsiElement(])(']')
+      PsiElement(,)(',')
+      PsiWhiteSpace('\n')
+      PsiElement(])(']')

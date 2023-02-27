@@ -1,0 +1,82 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "etcdv3",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "cacert_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to a PEM-encoded CA bundle with which to verify certificates of TLS-enabled etcd servers.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "cert_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to a PEM-encoded certificate to provide to etcd for secure client identification.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "endpoints": {
+      "Type": "List",
+      "Optional": true,
+      "Description": "Endpoints for the etcd cluster.",
+      "MinItems": 1,
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "key_path": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The path to a PEM-encoded key to provide to etcd for secure client identification.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "lock": {
+      "Type": "Bool",
+      "Optional": true,
+      "Description": "Whether to lock state access.",
+      "Default": {
+        "Type": "bool",
+        "Value": "true"
+      }
+    },
+    "max_request_bytes": {
+      "Type": "Int",
+      "Optional": true,
+      "Description": "The max request size to send to etcd.",
+      "Default": {
+        "Type": "int",
+        "Value": "0"
+      }
+    },
+    "password": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Password used to connect to the etcd cluster.",
+      "DefaultFunc": "ENV(ETCDV3_PASSWORD)"
+    },
+    "prefix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "An optional prefix to be added to keys when to storing state in etcd.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "username": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Username used to connect to the etcd cluster.",
+      "DefaultFunc": "ENV(ETCDV3_USERNAME)"
+    }
+  }
+}

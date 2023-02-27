@@ -1,0 +1,57 @@
+{
+  ".schema_version": "2",
+  ".sdk_type": "builtin",
+  "name": "gcs",
+  "type": "backend",
+  "version": "v1.3.0-dev",
+  "schema": {
+    "access_token": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "An OAuth2 token used for GCP authentication",
+      "DefaultFunc": "MENV(GOOGLE_OAUTH_ACCESS_TOKEN)"
+    },
+    "bucket": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The name of the Google Cloud Storage bucket"
+    },
+    "credentials": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "Google Cloud JSON Account Key",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "encryption_key": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "A 32 byte base64 encoded 'customer supplied encryption key' used to encrypt all state.",
+      "Default": {
+        "Type": "string"
+      }
+    },
+    "impersonate_service_account": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The service account to impersonate for all Google API Calls",
+      "DefaultFunc": "MENV(GOOGLE_IMPERSONATE_SERVICE_ACCOUNT)"
+    },
+    "impersonate_service_account_delegates": {
+      "Type": "List",
+      "Optional": true,
+      "Description": "The delegation chain for the impersonated service account",
+      "ConfigImplicitMode": "Attr",
+      "Elem": {
+        "Type": "SchemaElements",
+        "ElementsType": "String"
+      }
+    },
+    "prefix": {
+      "Type": "String",
+      "Optional": true,
+      "Description": "The directory where state files will be saved inside the bucket"
+    }
+  }
+}

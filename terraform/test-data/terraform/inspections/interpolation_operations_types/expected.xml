@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>4</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Number expected instead of string</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>5</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Number expected instead of string</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>6</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Number expected instead of string</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>7</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Boolean expected instead of number</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>8</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Boolean expected instead of number</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>8</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Boolean expected instead of number</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>9</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Boolean expected instead of string</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>11</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Number expected instead of bool</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>12</line>
+    <module>0</module>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Boolean expected instead of number</description>
+  </problem>
+
+  <problem>
+    <file>ternary.tf</file>
+    <line>7</line>
+    <entry_point TYPE="file" FQNAME="ternary.tf" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Condition should be bool or string with bool value</description>
+  </problem>
+  <problem>
+    <file>ternary.tf</file>
+    <line>8</line>
+    <entry_point TYPE="file" FQNAME="ternary.tf" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Condition should be bool or string with bool value</description>
+  </problem>
+  <problem>
+    <file>ternary.tf</file>
+    <line>14</line>
+    <entry_point TYPE="file" FQNAME="ternary.tf" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Operation argument type mismatch</problem_class>
+    <description>Both branches expected to have same type. 'then' is number, 'else' is bool</description>
+  </problem>
+</problems>
+

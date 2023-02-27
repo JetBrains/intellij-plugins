@@ -1,0 +1,14 @@
+HCLFile: Multiline_Literal.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('multiline_literal')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"hello')
+  PsiWhiteSpace('\n  ')
+  PsiElement(ID)('world')
+  PsiElement(DOUBLE_QUOTED_STRING)('"')
+  PsiErrorElement:<boolean>, <identifier>, <null>, <string literal> or '{' expected
+    <empty list>

@@ -1,0 +1,23 @@
+HILFile: a.hil
+  ILTemplateHolder
+    PsiElement(%{)('%{~')
+    PsiWhiteSpace(' ')
+    ILTemplateIfStatement
+      PsiElement(ID)('if')
+      PsiWhiteSpace(' ')
+      ILBinaryExpression
+        ILMethodCallExpression
+          ILVariable
+            PsiElement(ID)('test')
+          ILParameterList
+            PsiElement(()('(')
+            PsiElement())(')')
+        PsiWhiteSpace(' ')
+        PsiElement(>)('>')
+        PsiWhiteSpace(' ')
+        ILUnaryExpression
+          PsiElement(-)('-')
+          ILLiteral
+            PsiElement(NUMBER)('1')
+    PsiWhiteSpace(' ')
+    PsiElement(})('~}')

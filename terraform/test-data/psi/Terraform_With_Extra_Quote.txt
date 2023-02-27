@@ -1,0 +1,21 @@
+HCLFile: Terraform_With_Extra_Quote.tf
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n  ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('container_definitions')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLStringLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('"${file("ecs-container-definitions.json")}"')
+      PsiElement(DOUBLE_QUOTED_STRING)('"')
+      PsiErrorElement:<block> or <property> expected, got '}'
+        <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

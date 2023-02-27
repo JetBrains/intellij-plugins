@@ -1,0 +1,13 @@
+HCLFile: HereDoc_Incomplete.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiErrorElement:<boolean>, <expression>, <heredoc>, <null>, <number>, <string literal> or HD_START expected, got '<<'
+      <empty list>
+  PsiWhiteSpace(' ')
+  PsiElement(HD_START)('<<')
+  PsiElement(HD_MARKER)('EOF')
+  PsiWhiteSpace('\n')
+  PsiElement(HD_LINE)('bar')

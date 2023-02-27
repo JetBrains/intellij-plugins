@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<problems>
+  <problem>
+    <file>test.tf</file>
+    <line>5</line>
+    <module>0</module>
+    <problem_class>Unresolved reference</problem_class>
+    <description>Unresolved reference abracadabra</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>6</line>
+    <module>0</module>
+    <problem_class>Unresolved reference</problem_class>
+    <description>Unresolved reference aa</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>6</line>
+    <module>0</module>
+    <problem_class>Unresolved reference</problem_class>
+    <description>Unresolved reference *</description>
+  </problem>
+  <problem>
+    <file>test.tf</file>
+    <line>6</line>
+    <module>0</module>
+    <problem_class>Unresolved reference</problem_class>
+    <description>Unresolved reference abracadabra</description>
+  </problem>
+</problems>
+

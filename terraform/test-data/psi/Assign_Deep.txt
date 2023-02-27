@@ -1,0 +1,38 @@
+HCLFile: Assign_Deep.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLArray
+      PsiElement([)('[')
+      HCLObject
+        PsiElement({)('{')
+        PsiWhiteSpace('\n\t')
+        HCLProperty
+          HCLIdentifier
+            PsiElement(ID)('foo')
+          PsiWhiteSpace(' ')
+          PsiElement(=)('=')
+          PsiWhiteSpace(' ')
+          HCLArray
+            PsiElement([)('[')
+            HCLObject
+              PsiElement({)('{')
+              PsiWhiteSpace('\n\t\t')
+              HCLProperty
+                HCLIdentifier
+                  PsiElement(ID)('bar')
+                PsiWhiteSpace(' ')
+                PsiElement(=)('=')
+                PsiWhiteSpace(' ')
+                HCLObject
+                  PsiElement({)('{')
+                  PsiElement(})('}')
+              PsiWhiteSpace('\n\t')
+              PsiElement(})('}')
+            PsiElement(])(']')
+        PsiWhiteSpace('\n')
+        PsiElement(})('}')
+      PsiElement(])(']')

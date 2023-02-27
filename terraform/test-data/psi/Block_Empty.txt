@@ -1,0 +1,14 @@
+HCLFile: Block_Empty.hcl
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('resource')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"foo"')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"bar"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiElement(})('}')

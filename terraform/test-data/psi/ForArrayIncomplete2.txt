@@ -1,0 +1,29 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLForArrayExpression
+      PsiElement([)('[')
+      HCLForIntroImpl(FOR_INTRO)
+        PsiElement(ID)('for')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('k')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('in')
+        PsiErrorElement:in expected, got 'foo'
+          <empty list>
+      PsiWhiteSpace(' ')
+      HCLIdentifier
+        PsiElement(ID)('foo')
+      PsiErrorElement:'(', ']' or if expected, got ':'
+        <empty list>
+  PsiElement(:)(':')
+  PsiWhiteSpace(' ')
+  PsiElement(ID)('v')
+  PsiElement(])(']')

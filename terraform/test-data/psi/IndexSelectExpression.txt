@@ -1,0 +1,18 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLSelectExpression
+      HCLIndexSelectExpression
+        HCLIdentifier
+          PsiElement(ID)('foo')
+        PsiElement([)('[')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('5')
+        PsiElement(])(']')
+      PsiElement(.)('.')
+      HCLIdentifier
+        PsiElement(ID)('baz')

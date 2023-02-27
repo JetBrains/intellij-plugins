@@ -1,0 +1,63 @@
+HILFile: a.hil
+  ILExpressionHolder
+    PsiElement(${)('${')
+    ILMethodCallExpression
+      ILVariable
+        PsiElement(ID)('format')
+      ILParameterList
+        PsiElement(()('(')
+        ILLiteral
+          PsiElement(DOUBLE_QUOTED_STRING)('""')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILLiteral
+            PsiElement(NUMBER)('2')
+          PsiWhiteSpace(' ')
+          PsiElement(+)('+')
+          PsiWhiteSpace(' ')
+          ILBinaryExpression
+            ILLiteral
+              PsiElement(NUMBER)('2')
+            PsiWhiteSpace(' ')
+            PsiElement(*)('*')
+            PsiWhiteSpace(' ')
+            ILLiteral
+              PsiElement(NUMBER)('2')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILLiteral
+            PsiElement(NUMBER)('2')
+          PsiWhiteSpace(' ')
+          PsiElement(*)('*')
+          PsiWhiteSpace(' ')
+          ILParenthesizedExpression
+            PsiElement(()('(')
+            ILBinaryExpression
+              ILLiteral
+                PsiElement(NUMBER)('2')
+              PsiWhiteSpace(' ')
+              PsiElement(+)('+')
+              PsiWhiteSpace(' ')
+              ILLiteral
+                PsiElement(NUMBER)('2')
+            PsiElement())(')')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        ILBinaryExpression
+          ILBinaryExpression
+            ILLiteral
+              PsiElement(NUMBER)('1')
+            PsiWhiteSpace(' ')
+            PsiElement(-)('-')
+            PsiWhiteSpace(' ')
+            ILLiteral
+              PsiElement(NUMBER)('2')
+          PsiWhiteSpace(' ')
+          PsiElement(+)('+')
+          PsiWhiteSpace(' ')
+          ILLiteral
+            PsiElement(NUMBER)('3')
+        PsiElement())(')')
+    PsiElement(})('}')

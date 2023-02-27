@@ -1,0 +1,24 @@
+HCLFile: Block.hcl
+  HCLBlock
+    HCLIdentifier
+      PsiElement(ID)('foo')
+    PsiWhiteSpace(' ')
+    HCLIdentifier
+      PsiElement(ID)('bar')
+    PsiWhiteSpace(' ')
+    HCLStringLiteral
+      PsiElement(DOUBLE_QUOTED_STRING)('"baz"')
+    PsiWhiteSpace(' ')
+    HCLBlockObject
+      PsiElement({)('{')
+      PsiWhiteSpace('\n\t')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('inside')
+        PsiWhiteSpace(' ')
+        PsiElement(=)('=')
+        PsiWhiteSpace(' ')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('42')
+      PsiWhiteSpace('\n')
+      PsiElement(})('}')

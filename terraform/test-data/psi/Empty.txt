@@ -1,0 +1,2 @@
+HCLFile: Empty.hcl
+  <empty list>

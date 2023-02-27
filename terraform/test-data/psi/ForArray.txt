@@ -1,0 +1,34 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLForArrayExpression
+      PsiElement([)('[')
+      HCLForIntroImpl(FOR_INTRO)
+        PsiElement(ID)('for')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('k')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('v')
+        PsiWhiteSpace(' ')
+        PsiElement(ID)('in')
+        PsiWhiteSpace(' ')
+        HCLIdentifier
+          PsiElement(ID)('foo')
+        PsiElement(:)(':')
+      PsiWhiteSpace(' ')
+      HCLIdentifier
+        PsiElement(ID)('v')
+      PsiWhiteSpace(' ')
+      HCLForConditionImpl(FOR_CONDITION)
+        PsiElement(ID)('if')
+        PsiWhiteSpace(' ')
+        HCLBooleanLiteral
+          PsiElement(true)('true')
+      PsiElement(])(']')

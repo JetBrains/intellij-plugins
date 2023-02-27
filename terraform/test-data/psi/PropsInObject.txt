@@ -1,0 +1,46 @@
+HCLFile: a.hcl
+  HCLProperty
+    HCLIdentifier
+      PsiElement(ID)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    HCLObject
+      PsiElement({)('{')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('a')
+        PsiElement(=)('=')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('1')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('b')
+        PsiElement(:)(':')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('2')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('c')
+        PsiElement(=)('=')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('3')
+      PsiWhiteSpace('\n')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('d')
+        PsiElement(=)('=')
+        HCLNumberLiteral
+          PsiElement(NUMBER)('4')
+      PsiWhiteSpace('\n')
+      HCLProperty
+        HCLIdentifier
+          PsiElement(ID)('e')
+        PsiElement(:)(':')
+        HCLNullLiteral
+          PsiElement(null)('null')
+      PsiElement(})('}')
