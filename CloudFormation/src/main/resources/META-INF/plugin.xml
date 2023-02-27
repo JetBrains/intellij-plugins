@@ -29,6 +29,7 @@
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
     <plugin id="org.jetbrains.plugins.yaml"/>
+    <plugin id="com.intellij.modules.json"/>
   </dependencies>
 
   <actions>
