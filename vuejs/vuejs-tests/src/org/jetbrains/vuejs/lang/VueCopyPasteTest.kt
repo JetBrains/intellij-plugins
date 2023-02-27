@@ -61,4 +61,8 @@ class VueCopyPasteTest : BasePlatformTestCase() {
     doTest()
   }
 
+  fun testEmptyScriptSetup() {
+    doTest()
+  }
+
 }

@@ -32,6 +32,7 @@ import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.WebSymbolQualifiedName
 import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVue3
@@ -89,8 +90,13 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       ?.let { return it }
 
     // Script content is empty - let's add a new line
+    // Keep attributes intact
+    val tagText = XmlTagUtil.getStartTagRange(scriptTag)
+                    ?.substring(file.text)
+                    ?.trimEnd { it == '>' || it == '/' }
+                  ?: "<script"
     val newScriptTag = PsiFileFactory.getInstance(file.project)
-      .createFileFromText("dummy.vue", VueFileType.INSTANCE, "<script>\n</script>")
+      .createFileFromText("dummy.vue", VueFileType.INSTANCE, "$tagText>\n</script>")
       .let { PsiTreeUtil.findChildOfType(it, XmlTag::class.java)!! }
 
     return scriptTag.replace(newScriptTag)
