@@ -11,11 +11,10 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.ColorUtil
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.JBColor
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
-import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 import java.awt.event.ActionEvent
 
 class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
@@ -48,20 +47,20 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       }
     }
     else {
+      val workspace = connection.connectionKey.client
       with (presentation) {
-        setText(getText(connection, perforceSettings.ENABLED), false)
-        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description")
+        setText(getText(workspace, perforceSettings.ENABLED), false)
+        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
       }
     }
 
   }
 
-  private fun getText(connection: P4Connection, isOnline: Boolean): @NlsSafe String {
-    val workspace = connection.connectionKey.client
+  private fun getText(workspace: String, isOnline: Boolean): @NlsSafe String {
     if (isOnline)
       return workspace
 
-    val color = ColorUtil.toHex(JBUI.CurrentTheme.Focus.errorColor(true))
+    val color = ColorUtil.toHex(JBColor.namedColor("Label.errorForeground"))
     val builder = HtmlBuilder().append(
       HtmlChunk.html().addText("$workspace: ").child(HtmlChunk.font(color)
                                                        .addText(PerforceBundle.message("connection.status.offline"))))

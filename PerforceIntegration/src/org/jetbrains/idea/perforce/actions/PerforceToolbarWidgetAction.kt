@@ -79,12 +79,13 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     }
     else {
       val isOnline = perforceSettings.ENABLED
+      val workspace = connection.connectionKey.client
       with(e.presentation) {
         putClientProperty(isConnectedKey, true)
-        putClientProperty(workspaceKey, connection.connectionKey.client)
+        putClientProperty(workspaceKey, workspace)
         putClientProperty(statusKey, isOnline)
 
-        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description")
+        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
       }
     }
   }
