@@ -10,8 +10,12 @@ import com.intellij.openapi.ui.popup.ListPopupStep
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.text.HtmlBuilder
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.wm.impl.ExpandableComboAction
 import com.intellij.openapi.wm.impl.ToolbarComboWidget
+import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
 import com.intellij.ui.popup.util.PopupImplUtil
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
@@ -111,7 +115,13 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     val text = when {
       !isConnected -> PerforceBundle.message("connection.no.valid.connections.short")
       isOnline -> "$workspace"
-      else -> "$workspace: ${PerforceBundle.message("connection.status.offline")}"
+      else -> {
+        val color = ColorUtil.toHex(JBColor.namedColor("Label.errorForeground"))
+        val builder = HtmlBuilder().append(
+          HtmlChunk.html().addText("$workspace: ").child(HtmlChunk.font(color)
+                                                          .addText(PerforceBundle.message("connection.status.offline"))))
+        builder.toString()
+      }
     }
 
     widget.isExpandable = isConnected
