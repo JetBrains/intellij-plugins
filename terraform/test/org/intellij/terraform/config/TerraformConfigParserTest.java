@@ -3,7 +3,6 @@ package org.intellij.terraform.config;
 
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.terraform.hcl.HCLParserDefinition;
-import org.intellij.terraform.config.TerraformParserDefinition;
 
 import java.io.IOException;
 
