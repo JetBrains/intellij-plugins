@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.html.lexer
 import com.intellij.html.embedding.*
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyleTagEmbedmentInfo
 import com.intellij.lang.Language
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JavaScriptSupportLoader
@@ -18,6 +19,7 @@ import com.intellij.psi.xml.XmlElementType.HTML_EMBEDDED_CONTENT
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TYPE_ATTRIBUTE_NAME
+import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.LangMode
@@ -220,18 +222,18 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
 
   companion object {
     fun styleLanguage(styleLang: String?): Language? {
-      val cssLanguage = Language.findLanguageByID("CSS")
+      val cssLanguage = CSSLanguage.INSTANCE
       if (styleLang != null) {
         if (styleLang.equals("text/css", ignoreCase = true)) return cssLanguage
         cssLanguage
-          ?.dialects
-          ?.firstOrNull { dialect ->
+          .dialects
+          .firstOrNull { dialect ->
             dialect.id.equals(styleLang, ignoreCase = true)
             || dialect.mimeTypes.any { it.equals(styleLang, ignoreCase = true) }
           }
           ?.let { return it }
       }
-      return Language.findLanguageByID("PostCSS") ?: cssLanguage
+      return PostCssLanguage.INSTANCE
     }
   }
 

@@ -40,6 +40,7 @@
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
     <plugin id="intellij.webpack"/>
+    <plugin id="org.intellij.plugins.postcss"/>
   </dependencies>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
 
