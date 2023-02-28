@@ -9,7 +9,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.intellij.terraform.hcl.HCLFileType;
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings;
-import org.intellij.terraform.config.TerraformFileType;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -9,6 +9,6 @@ public final class TerraformTestUtils {
   }
 
   public static String getTestDataRelativePath() {
-    return "/plugins/terraform/test-data";
+    return "/contrib/terraform/test-data";
   }
 }

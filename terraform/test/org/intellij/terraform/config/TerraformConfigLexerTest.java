@@ -3,7 +3,6 @@ package org.intellij.terraform.config;
 
 import com.intellij.lexer.Lexer;
 import org.intellij.terraform.hcl.HCLElementTypes;
-import org.intellij.terraform.config.TerraformParserDefinition;
 
 import java.util.Arrays;
 import java.util.List;

@@ -5,7 +5,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
