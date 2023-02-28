@@ -34,7 +34,7 @@ AstroFile:test.astro
       XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n')
-      AstroTag:script
+      HtmlTag:script
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('script')
         PsiWhiteSpace(' ')

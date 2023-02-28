@@ -11,6 +11,8 @@ class AstroFormattingTest : AstroCodeInsightTestCase() {
 
   fun testWhitespacesBeforeFrontmatter() = doTest()
 
+  fun testScriptTag() = doTest()
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/formatting"

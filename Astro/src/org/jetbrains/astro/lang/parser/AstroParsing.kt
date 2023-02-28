@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.parsing.JSXmlParser
 import com.intellij.lang.javascript.types.JSEmbeddedContentElementType
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.Stack
 import com.intellij.xml.psi.XmlPsiBundle
@@ -230,7 +231,9 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   override fun getHtmlTagElementType(info: HtmlTagInfo, tagLevel: Int): IElementType {
-    return JSElementTypes.JSX_XML_LITERAL_EXPRESSION
+    // AstroTag:script is considered to have language Astro and not JS causing issues with formatting unlike HtmlTag:script
+    return if (info.normalizedName == "script") XmlElementType.HTML_TAG
+    else JSElementTypes.JSX_XML_LITERAL_EXPRESSION
   }
 
   override fun getHtmlAttributeElementType(): IElementType {
