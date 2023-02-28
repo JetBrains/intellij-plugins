@@ -19,6 +19,8 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
+import org.intellij.plugins.postcss.PostCssCommentProvider
+import org.intellij.plugins.postcss.PostCssLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueCommenterProvider : MultipleLangCommentProvider {
@@ -43,7 +45,11 @@ class VueCommenterProvider : MultipleLangCommentProvider {
                else
                  elementLanguage
              }
-             ?.let { LanguageCommenters.INSTANCE.forLanguage(it) }
+             ?.let {
+               if (it == PostCssLanguage.INSTANCE)
+                 PostCssCommentProvider().getLineCommenter(file, editor, lineStartLanguage, lineEndLanguage)
+               else LanguageCommenters.INSTANCE.forLanguage(it)
+             }
            ?: if (lineStartLanguage == VueLanguage.INSTANCE) {
              CodeStyle.getLanguageSettings(file, HTMLLanguage.INSTANCE).let { styleSettings ->
                object : XmlCommenter(), IndentedCommenter {
