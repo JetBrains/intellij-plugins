@@ -12,12 +12,14 @@ import com.intellij.lang.javascript.parsing.JSXmlParser
 import com.intellij.lang.javascript.types.JSEmbeddedContentElementType
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.Stack
 import com.intellij.xml.psi.XmlPsiBundle
 import org.jetbrains.astro.AstroBundle
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.lexer.AstroTokenTypes
+import java.util.*
 
 class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
 
@@ -242,7 +244,10 @@ class AstroParsing(builder: PsiBuilder) : HtmlParsing(builder), JSXmlParser {
   }
 
   override fun getHtmlTagElementType(): IElementType {
-    return JSElementTypes.JSX_XML_LITERAL_EXPRESSION
+    val tagName = peekTagName().lowercase(Locale.US)
+    // AstroTag:script is considered to have language Astro and not JS causing issues with formatting unlike HtmlTag:script
+    return if (tagName == "script") XmlElementType.HTML_TAG
+    else JSElementTypes.JSX_XML_LITERAL_EXPRESSION
   }
 
   override fun getHtmlAttributeElementType(): IElementType {
