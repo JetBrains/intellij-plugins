@@ -576,7 +576,8 @@ public class DartSpacingProcessor {
          elementType != RECORD_TYPE_NAMED_FIELDS &&
          elementType != OPTIONAL_FORMAL_PARAMETERS &&
          elementType != OPTIONAL_PARAMETER_TYPES &&
-         elementType != SET_OR_MAP_LITERAL_EXPRESSION) ||
+         elementType != SET_OR_MAP_LITERAL_EXPRESSION &&
+         elementType != MAP_PATTERN) ||
         BLOCKS_EXT.contains(type1) ||
         FUNCTION_DEFINITION.contains(type1)) {
       return addLineBreak();

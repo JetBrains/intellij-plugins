@@ -38,6 +38,12 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   List<DartLabel> getLabelList();
 
   @NotNull
+  List<DartPatternAssignment> getPatternAssignmentList();
+
+  @NotNull
+  List<DartPatternVariableDeclaration> getPatternVariableDeclarationList();
+
+  @NotNull
   List<DartRethrowStatement> getRethrowStatementList();
 
   @NotNull

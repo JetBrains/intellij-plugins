@@ -90,6 +90,18 @@ public class DartParenthesizedExpressionImpl extends DartClassReferenceImpl impl
 
   @Override
   @Nullable
+  public DartPatternAssignment getPatternAssignment() {
+    return findChildByClass(DartPatternAssignment.class);
+  }
+
+  @Override
+  @Nullable
+  public DartPatternVariableDeclaration getPatternVariableDeclaration() {
+    return findChildByClass(DartPatternVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public DartRethrowStatement getRethrowStatement() {
     return findChildByClass(DartRethrowStatement.class);
   }

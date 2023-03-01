@@ -38,6 +38,12 @@ public interface DartWhileStatement extends DartPsiCompositeElement {
   List<DartLabel> getLabelList();
 
   @Nullable
+  DartPatternAssignment getPatternAssignment();
+
+  @Nullable
+  DartPatternVariableDeclaration getPatternVariableDeclaration();
+
+  @Nullable
   DartRethrowStatement getRethrowStatement();
 
   @Nullable

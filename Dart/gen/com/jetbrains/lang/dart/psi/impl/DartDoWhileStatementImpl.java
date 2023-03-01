@@ -89,6 +89,18 @@ public class DartDoWhileStatementImpl extends DartPsiCompositeElementImpl implem
 
   @Override
   @Nullable
+  public DartPatternAssignment getPatternAssignment() {
+    return findChildByClass(DartPatternAssignment.class);
+  }
+
+  @Override
+  @Nullable
+  public DartPatternVariableDeclaration getPatternVariableDeclaration() {
+    return findChildByClass(DartPatternVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public DartRethrowStatement getRethrowStatement() {
     return findChildByClass(DartRethrowStatement.class);
   }
