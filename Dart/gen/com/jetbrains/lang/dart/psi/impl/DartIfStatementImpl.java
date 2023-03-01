@@ -89,6 +89,18 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @NotNull
+  public List<DartPatternAssignment> getPatternAssignmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartPatternAssignment.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartPatternVariableDeclaration> getPatternVariableDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartPatternVariableDeclaration.class);
+  }
+
+  @Override
+  @NotNull
   public List<DartRethrowStatement> getRethrowStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartRethrowStatement.class);
   }

@@ -11,14 +11,15 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements DartForLoopParts {
+public class DartConstObjectExpressionImpl extends DartExpressionImpl implements DartConstObjectExpression {
 
-  public DartForLoopPartsImpl(@NotNull ASTNode node) {
+  public DartConstObjectExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitForLoopParts(this);
+    visitor.visitConstObjectExpression(this);
   }
 
   @Override
@@ -28,33 +29,27 @@ public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements
   }
 
   @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  @NotNull
+  public DartArguments getArguments() {
+    return findNotNullChildByClass(DartArguments.class);
   }
 
   @Override
   @Nullable
-  public DartExpressionList getExpressionList() {
-    return findChildByClass(DartExpressionList.class);
+  public DartComponentName getComponentName() {
+    return findChildByClass(DartComponentName.class);
+  }
+
+  @Override
+  @NotNull
+  public DartReferenceExpression getReferenceExpression() {
+    return findNotNullChildByClass(DartReferenceExpression.class);
   }
 
   @Override
   @Nullable
-  public DartForInPart getForInPart() {
-    return findChildByClass(DartForInPart.class);
-  }
-
-  @Override
-  @Nullable
-  public DartPatternVariableDeclaration getPatternVariableDeclaration() {
-    return findChildByClass(DartPatternVariableDeclaration.class);
-  }
-
-  @Override
-  @Nullable
-  public DartVarDeclarationList getVarDeclarationList() {
-    return findChildByClass(DartVarDeclarationList.class);
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }
