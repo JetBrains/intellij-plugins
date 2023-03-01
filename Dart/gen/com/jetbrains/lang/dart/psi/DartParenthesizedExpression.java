@@ -38,6 +38,12 @@ public interface DartParenthesizedExpression extends DartExpression, DartReferen
   List<DartLabel> getLabelList();
 
   @Nullable
+  DartPatternAssignment getPatternAssignment();
+
+  @Nullable
+  DartPatternVariableDeclaration getPatternVariableDeclaration();
+
+  @Nullable
   DartRethrowStatement getRethrowStatement();
 
   @Nullable

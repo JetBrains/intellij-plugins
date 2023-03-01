@@ -5,10 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartForInPart extends DartPsiCompositeElement {
-
-  @Nullable
-  DartComponentName getComponentName();
+public interface DartPatternVariableDeclaration extends DartPsiCompositeElement {
 
   @NotNull
   DartExpression getExpression();
@@ -30,8 +27,5 @@ public interface DartForInPart extends DartPsiCompositeElement {
 
   @Nullable
   DartRecordPattern getRecordPattern();
-
-  @Nullable
-  DartVarAccessDeclaration getVarAccessDeclaration();
 
 }

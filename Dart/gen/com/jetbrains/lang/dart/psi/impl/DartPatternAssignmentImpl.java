@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements DartForLoopParts {
+public class DartPatternAssignmentImpl extends DartPsiCompositeElementImpl implements DartPatternAssignment {
 
-  public DartForLoopPartsImpl(@NotNull ASTNode node) {
+  public DartPatternAssignmentImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitForLoopParts(this);
+    visitor.visitPatternAssignment(this);
   }
 
   @Override
@@ -28,33 +28,39 @@ public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements
   }
 
   @Override
-  @Nullable
+  @NotNull
   public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+    return findNotNullChildByClass(DartExpression.class);
   }
 
   @Override
   @Nullable
-  public DartExpressionList getExpressionList() {
-    return findChildByClass(DartExpressionList.class);
+  public DartListPattern getListPattern() {
+    return findChildByClass(DartListPattern.class);
   }
 
   @Override
   @Nullable
-  public DartForInPart getForInPart() {
-    return findChildByClass(DartForInPart.class);
+  public DartMapPattern getMapPattern() {
+    return findChildByClass(DartMapPattern.class);
   }
 
   @Override
   @Nullable
-  public DartPatternVariableDeclaration getPatternVariableDeclaration() {
-    return findChildByClass(DartPatternVariableDeclaration.class);
+  public DartObjectPattern getObjectPattern() {
+    return findChildByClass(DartObjectPattern.class);
   }
 
   @Override
   @Nullable
-  public DartVarDeclarationList getVarDeclarationList() {
-    return findChildByClass(DartVarDeclarationList.class);
+  public DartParenthesizedPattern getParenthesizedPattern() {
+    return findChildByClass(DartParenthesizedPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartRecordPattern getRecordPattern() {
+    return findChildByClass(DartRecordPattern.class);
   }
 
 }

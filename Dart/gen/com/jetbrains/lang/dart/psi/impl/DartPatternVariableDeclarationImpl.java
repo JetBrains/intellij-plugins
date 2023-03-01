@@ -11,26 +11,20 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartForInPartImpl extends DartPsiCompositeElementImpl implements DartForInPart {
+public class DartPatternVariableDeclarationImpl extends DartPsiCompositeElementImpl implements DartPatternVariableDeclaration {
 
-  public DartForInPartImpl(@NotNull ASTNode node) {
+  public DartPatternVariableDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitForInPart(this);
+    visitor.visitPatternVariableDeclaration(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
   }
 
   @Override
@@ -73,12 +67,6 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
   @Nullable
   public DartRecordPattern getRecordPattern() {
     return findChildByClass(DartRecordPattern.class);
-  }
-
-  @Override
-  @Nullable
-  public DartVarAccessDeclaration getVarAccessDeclaration() {
-    return findChildByClass(DartVarAccessDeclaration.class);
   }
 
 }

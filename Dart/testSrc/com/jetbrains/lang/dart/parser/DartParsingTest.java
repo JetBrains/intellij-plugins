@@ -172,4 +172,8 @@ public class DartParsingTest extends ParsingTestCase {
   public void testRecords() {
     doTest();
   }
+
+  public void testPatterns() {
+    doTest();
+  }
 }

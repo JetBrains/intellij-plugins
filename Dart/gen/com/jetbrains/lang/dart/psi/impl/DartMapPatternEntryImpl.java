@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartForInPartImpl extends DartPsiCompositeElementImpl implements DartForInPart {
+public class DartMapPatternEntryImpl extends DartPsiCompositeElementImpl implements DartMapPatternEntry {
 
-  public DartForInPartImpl(@NotNull ASTNode node) {
+  public DartMapPatternEntryImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitForInPart(this);
+    visitor.visitMapPatternEntry(this);
   }
 
   @Override
@@ -29,14 +29,20 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
 
   @Override
   @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
+  public DartConstantPattern getConstantPattern() {
+    return findChildByClass(DartConstantPattern.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+    return findChildByClass(DartExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartIdentifierPattern getIdentifierPattern() {
+    return findChildByClass(DartIdentifierPattern.class);
   }
 
   @Override
@@ -47,14 +53,20 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
 
   @Override
   @Nullable
-  public DartMapPattern getMapPattern() {
-    return findChildByClass(DartMapPattern.class);
+  public DartLogicalAndPattern getLogicalAndPattern() {
+    return findChildByClass(DartLogicalAndPattern.class);
   }
 
   @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  @Nullable
+  public DartLogicalOrPattern getLogicalOrPattern() {
+    return findChildByClass(DartLogicalOrPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartMapPattern getMapPattern() {
+    return findChildByClass(DartMapPattern.class);
   }
 
   @Override
@@ -77,8 +89,20 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
 
   @Override
   @Nullable
-  public DartVarAccessDeclaration getVarAccessDeclaration() {
-    return findChildByClass(DartVarAccessDeclaration.class);
+  public DartRelationalPattern getRelationalPattern() {
+    return findChildByClass(DartRelationalPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartUnaryPattern getUnaryPattern() {
+    return findChildByClass(DartUnaryPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartVariablePattern getVariablePattern() {
+    return findChildByClass(DartVariablePattern.class);
   }
 
 }
