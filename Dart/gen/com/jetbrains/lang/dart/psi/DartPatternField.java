@@ -5,22 +5,28 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartForInPart extends DartPsiCompositeElement {
+public interface DartPatternField extends DartPsiCompositeElement {
 
   @Nullable
   DartComponentName getComponentName();
 
-  @NotNull
-  DartExpression getExpression();
+  @Nullable
+  DartConstantPattern getConstantPattern();
+
+  @Nullable
+  DartIdentifierPattern getIdentifierPattern();
 
   @Nullable
   DartListPattern getListPattern();
 
   @Nullable
-  DartMapPattern getMapPattern();
+  DartLogicalAndPattern getLogicalAndPattern();
 
-  @NotNull
-  List<DartMetadata> getMetadataList();
+  @Nullable
+  DartLogicalOrPattern getLogicalOrPattern();
+
+  @Nullable
+  DartMapPattern getMapPattern();
 
   @Nullable
   DartObjectPattern getObjectPattern();
@@ -32,6 +38,12 @@ public interface DartForInPart extends DartPsiCompositeElement {
   DartRecordPattern getRecordPattern();
 
   @Nullable
-  DartVarAccessDeclaration getVarAccessDeclaration();
+  DartRelationalPattern getRelationalPattern();
+
+  @Nullable
+  DartUnaryPattern getUnaryPattern();
+
+  @Nullable
+  DartVariablePattern getVariablePattern();
 
 }
