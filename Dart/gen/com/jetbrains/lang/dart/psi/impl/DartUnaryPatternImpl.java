@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartForInPartImpl extends DartPsiCompositeElementImpl implements DartForInPart {
+public class DartUnaryPatternImpl extends DartPsiCompositeElementImpl implements DartUnaryPattern {
 
-  public DartForInPartImpl(@NotNull ASTNode node) {
+  public DartUnaryPatternImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitForInPart(this);
+    visitor.visitUnaryPattern(this);
   }
 
   @Override
@@ -29,14 +29,14 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
 
   @Override
   @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
+  public DartConstantPattern getConstantPattern() {
+    return findChildByClass(DartConstantPattern.class);
   }
 
   @Override
-  @NotNull
-  public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+  @Nullable
+  public DartIdentifierPattern getIdentifierPattern() {
+    return findChildByClass(DartIdentifierPattern.class);
   }
 
   @Override
@@ -49,12 +49,6 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
   @Nullable
   public DartMapPattern getMapPattern() {
     return findChildByClass(DartMapPattern.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
   }
 
   @Override
@@ -77,8 +71,14 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
 
   @Override
   @Nullable
-  public DartVarAccessDeclaration getVarAccessDeclaration() {
-    return findChildByClass(DartVarAccessDeclaration.class);
+  public DartType getType() {
+    return findChildByClass(DartType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartVariablePattern getVariablePattern() {
+    return findChildByClass(DartVariablePattern.class);
   }
 
 }

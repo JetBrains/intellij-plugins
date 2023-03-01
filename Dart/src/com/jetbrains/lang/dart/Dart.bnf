@@ -476,7 +476,8 @@ block ::= '{' statements '}' {extraRoot=true pin=1 implements="com.jetbrains.lan
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement
 
-private nonLabelledStatement ::= block // Guard to break tie with map literal.
+private nonLabelledStatement ::= patternAssignment
+                               | block // Guard to break tie with map literal.
                                | functionDeclarationWithBody
                                | forStatement
                                | whileStatement
@@ -489,6 +490,7 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | continueStatement
                                | returnStatement
                                | assertStatementWithSemicolon
+                               | patternVariableDeclaration ';'?
                                | statementFollowedBySemiColon
                                | yieldEachStatement
                                | yieldStatement
@@ -524,10 +526,12 @@ rethrowStatement ::= 'rethrow' ';' {pin=1}
 forLoopPartsInBraces::= '(' forLoopParts ')'
 forLoopParts::= forInPart
               | varDeclarationList (';' expression? (';' expressionList?)?)?
+              | patternVariableDeclaration (';' expression? (';' expressionList?)?)?
               | expressionList? (';' expression? (';' expressionList?)?)?
               {recoverWhile="for_loops_parts_recover"}
 
-forInPart ::= (varAccessDeclaration | componentName) 'in' expression
+forInPart ::= (varAccessDeclaration | componentName) 'in' expression |
+              metadata* ( 'final' | 'var' ) outerPattern 'in' expression
 
 private for_loops_parts_recover ::= !')'
 
@@ -732,3 +736,51 @@ private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' expression {pin=2}
 private blockBody ::= ('async' '*'? | 'sync' '*'?)? lazyParseableBlock
 private lazyParseableBlock ::= <<lazyParseableBlockImpl>>
 
+
+private pattern ::= logicalOrPatternWrapper
+
+private logicalOrPatternWrapper ::= logicalAndPatternWrapper logicalOrPattern*
+left logicalOrPattern ::= '||' logicalAndPatternWrapper
+
+private logicalAndPatternWrapper ::= relationalPatternWrapper logicalAndPattern*
+left logicalAndPattern ::= '&&' relationalPatternWrapper
+
+private relationalPatternWrapper ::= relationalPattern | unaryPatternWrapper
+relationalPattern ::= (equalityOperator | relationalOperator) bitwiseExpressionWrapper
+
+private unaryPatternWrapper ::= primaryPattern unaryPattern?
+left unaryPattern ::= 'as' type | '?' | '!'
+
+private primaryPattern  ::= variablePattern | listPattern | mapPattern | recordPattern | parenthesizedPattern | objectPattern | constantPattern | identifierPattern
+
+constantPattern ::= NULL | TRUE | FALSE | '-'? (NUMBER | HEX_NUMBER) | stringLiteralExpression | symbolLiteralExpression |
+                    simpleQualifiedReferenceExpression |
+                    constObjectExpression |
+                    'const' typeArguments? '[' elements? ']' |
+                    'const' typeArguments? '{' elements? '}' |
+                    'const' '(' expression ')'
+
+constObjectExpression ::= 'const' constructorDesignation arguments
+private constructorDesignation ::= simpleQualifiedReferenceExpression (typeArguments ('.' componentName)?)?
+variablePattern ::= 'final' type componentName | 'final' componentName | 'var' componentName
+identifierPattern ::= componentName // unreachable because captured by simpleQualifiedReferenceExpression
+parenthesizedPattern ::= '(' pattern ')'
+
+listPattern ::= typeArguments? '[' listPatternElements? ']'
+private listPatternElements ::= listPatternElement (',' listPatternElement)* ','?
+listPatternElement ::= restPattern | pattern
+restPattern ::= '...' pattern?
+
+mapPattern ::= typeArguments? '{' mapPatternEntries? '}'
+private mapPatternEntries ::= mapPatternEntry (',' mapPatternEntry)* ','?
+mapPatternEntry ::= '...' | expression ':' pattern
+
+recordPattern ::= '(' patternFields? ')'
+private patternFields ::= patternField (',' patternField)* ','?
+patternField ::= (componentName? ':')? pattern
+
+objectPattern ::= simpleQualifiedReferenceExpression typeArguments? '(' patternFields? ')'
+
+private outerPattern ::= listPattern | mapPattern | recordPattern | parenthesizedPattern | objectPattern
+patternVariableDeclaration ::= metadata* ('final' | 'var') outerPattern '=' expression
+patternAssignment ::= outerPattern '=' expression
