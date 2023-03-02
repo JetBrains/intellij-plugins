@@ -49,6 +49,7 @@ public final class BundleVersionParser extends StandardHeaderParser {
     HeaderValue value = header.getHeaderValue();
     if (value instanceof HeaderValuePart) {
       try {
+        //noinspection ResultOfObjectAllocationIgnored
         new Version(value.getUnwrappedText());
       }
       catch (IllegalArgumentException e) {
