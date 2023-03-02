@@ -1809,6 +1809,21 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'case' expression ':'
+  static boolean expressionCase(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "expressionCase")) return false;
+    if (!nextTokenIs(b, CASE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, CASE);
+    p = r; // pin = 1
+    r = r && report_error_(b, expression(b, l + 1));
+    r = p && consumeToken(b, COLON) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // expression | statement
   static boolean expressionInParentheses(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expressionInParentheses")) return false;
@@ -1894,10 +1909,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                'covariant' | 'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' |
   //                                'factory' | 'final' | 'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'interface' | 'is' | 'late' |
   //                                'library' | 'mixin' | 'native' | 'new' | 'on' | 'part' | 'rethrow' | 'return' | 'sealed' | 'set' | 'show' |
-  //                                'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' |
-  //                                '{' | '|' | '|=' | '||' | '||=' | '}' |
-  //                                '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END |
-  //                                LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
+  //                                'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'when' | 'while' |
+  //                                'yield' | '{' | '|' | '|=' | '||' | '||=' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER |
+  //                                LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
   //                                RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START | TRUE)
   static boolean expression_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_recover")) return false;
@@ -1918,10 +1932,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                'covariant' | 'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' |
   //                                'factory' | 'final' | 'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'interface' | 'is' | 'late' |
   //                                'library' | 'mixin' | 'native' | 'new' | 'on' | 'part' | 'rethrow' | 'return' | 'sealed' | 'set' | 'show' |
-  //                                'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' |
-  //                                '{' | '|' | '|=' | '||' | '||=' | '}' |
-  //                                '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END |
-  //                                LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
+  //                                'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'when' | 'while' |
+  //                                'yield' | '{' | '|' | '|=' | '||' | '||=' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER |
+  //                                LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
   //                                RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START | TRUE
   private static boolean expression_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_recover_0")) return false;
@@ -2032,6 +2045,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, TYPEDEF);
     if (!r) r = consumeToken(b, VAR);
     if (!r) r = consumeToken(b, VOID);
+    if (!r) r = consumeToken(b, WHEN);
     if (!r) r = consumeToken(b, WHILE);
     if (!r) r = consumeToken(b, YIELD);
     if (!r) r = consumeToken(b, LBRACE);
@@ -3835,6 +3849,36 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     r = getterDeclaration(b, l + 1);
     if (!r) r = setterDeclaration(b, l + 1);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // pattern ('when' expression)?
+  static boolean guardedPattern(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = pattern(b, l + 1);
+    r = r && guardedPattern_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ('when' expression)?
+  private static boolean guardedPattern_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern_1")) return false;
+    guardedPattern_1_0(b, l + 1);
+    return true;
+  }
+
+  // 'when' expression
+  private static boolean guardedPattern_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, WHEN);
+    r = r && expression(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -6130,6 +6174,20 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'case' guardedPattern ':'
+  static boolean patternCase(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "patternCase")) return false;
+    if (!nextTokenIs(b, CASE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CASE);
+    r = r && guardedPattern(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // (componentName? ':')? pattern
   public static boolean patternField(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "patternField")) return false;
@@ -7804,19 +7862,16 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // label* 'case' expression ':' statements
+  // label* (patternCase | expressionCase) statements
   public static boolean switchCase(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switchCase")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, SWITCH_CASE, "<switch case>");
     r = switchCase_0(b, l + 1);
-    r = r && consumeToken(b, CASE);
-    p = r; // pin = 2
-    r = r && report_error_(b, expression(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, COLON)) && r;
-    r = p && statements(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    r = r && switchCase_1(b, l + 1);
+    r = r && statements(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   // label*
@@ -7828,6 +7883,15 @@ public class DartParser implements PsiParser, LightPsiParser {
       if (!empty_element_parsed_guard_(b, "switchCase_0", c)) break;
     }
     return true;
+  }
+
+  // patternCase | expressionCase
+  private static boolean switchCase_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchCase_1")) return false;
+    boolean r;
+    r = patternCase(b, l + 1);
+    if (!r) r = expressionCase(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */

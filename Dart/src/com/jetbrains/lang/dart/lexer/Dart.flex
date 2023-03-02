@@ -188,6 +188,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "set"                  { return SET; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "static"               { return STATIC; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "typedef"              { return TYPEDEF; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "when"                 { return WHEN; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "sync"                 { return SYNC; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "async"                { return ASYNC; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "await"                { return AWAIT; }
