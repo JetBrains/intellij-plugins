@@ -122,7 +122,7 @@ public class YeomanGeneratorsMain implements Disposable {
   }
 
   protected void installTableActions() {
-    new YeomanGeneratorSpeedSearch(myGeneratorTable);
+    YeomanGeneratorSpeedSearch.installOn(myGeneratorTable);
 
     myGeneratorTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       @Override

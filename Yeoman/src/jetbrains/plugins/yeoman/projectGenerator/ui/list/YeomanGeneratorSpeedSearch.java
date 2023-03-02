@@ -3,11 +3,18 @@ package jetbrains.plugins.yeoman.projectGenerator.ui.list;
 import com.intellij.ui.SpeedSearchBase;
 import com.intellij.ui.TableUtil;
 import jetbrains.plugins.yeoman.generators.YeomanGeneratorInfo;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class YeomanGeneratorSpeedSearch extends SpeedSearchBase<YeomanGeneratorTable> {
-  public YeomanGeneratorSpeedSearch(YeomanGeneratorTable component) {
-    super(component);
+  private YeomanGeneratorSpeedSearch(YeomanGeneratorTable component) {
+    super(component, null);
+  }
+
+  public static @NotNull YeomanGeneratorSpeedSearch installOn(YeomanGeneratorTable component) {
+    YeomanGeneratorSpeedSearch search = new YeomanGeneratorSpeedSearch(component);
+    search.setupListeners();
+    return search;
   }
 
   @Override
