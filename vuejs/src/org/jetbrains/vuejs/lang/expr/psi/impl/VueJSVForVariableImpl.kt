@@ -22,7 +22,10 @@ import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
-class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<JSVariable>, JSVariable>(node), VueJSVForVariable, JSEvaluableElement {
+class VueJSVForVariableImpl(node: ASTNode) :
+  JSVariableImpl<JSVariableStubBase<JSVariable>, JSVariable>(node),
+  VueJSVForVariable,
+  JSEvaluableElement {
 
   override fun hasBlockScope(): Boolean = true
 
@@ -63,7 +66,7 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
               else -> {
                 val typeEvaluator = JSDialectSpecificHandlersFactory.forElement(collectionExpr).newTypeEvaluator(evaluateContext)
                 val componentTypeFromArrayExpression = typeEvaluator.getComponentTypeFromArrayExpression(expression, collectionExpr)
-                getVForVarType(collectionExpr, *componentTypeFromArrayExpression.toTypedArray())
+                getVForVarType(collectionExpr, *componentTypeFromArrayExpression.map { preprocessItemType(it) }.toTypedArray())
               }
             }
           }
@@ -79,7 +82,10 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
         val type: JSType? = if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
           getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
         }
-        else if (JSTypeUtils.isArrayLikeType(collectionType) || collectionType is JSPrimitiveType) {
+        else if (JSTypeUtils.isArrayLikeType(collectionType) ||
+                 collectionType is JSPrimitiveType ||
+                 (collectionType is JSUnionType &&
+                  collectionType.types.all { JSTypeUtils.isArrayLikeType(it) || it is JSPrimitiveType })) {
           getVForVarType(collectionExpr, ::JSNumberType)
         }
         else {
@@ -115,7 +121,15 @@ class VueJSVForVariableImpl(node: ASTNode) : JSVariableImpl<JSVariableStubBase<J
 
   private fun getVForVarType(source: PsiElement, vararg types: JSType): JSType? {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    return (JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false).toArrayType(false) as JSArrayType).type
+    val tupleType = JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false)
+    return (tupleType.toArrayType(false) as JSArrayType).type
+  }
+
+  private fun preprocessItemType(type: JSType): JSType = when {
+    type is JSIterableComponentTypeImpl && type.iterableType is JSNumberType -> {
+      type.iterableType
+    }
+    else -> type
   }
 
   private fun useTypeScriptKeyofType(collectionType: JSType): Boolean {
