@@ -11,6 +11,7 @@ import com.intellij.psi.templateLanguages.MultipleLangCommentProvider;
 import com.intellij.psi.tree.IElementType;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.settings.PostCssCodeStyleSettings;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PostCssCommentProvider implements MultipleLangCommentProvider {
@@ -28,7 +29,10 @@ public class PostCssCommentProvider implements MultipleLangCommentProvider {
   };
 
   @Override
-  public @Nullable Commenter getLineCommenter(PsiFile file, Editor editor, Language lineStartLanguage, Language lineEndLanguage) {
+  public @Nullable Commenter getLineCommenter(@NotNull PsiFile file,
+                                              @NotNull Editor editor,
+                                              @NotNull Language lineStartLanguage,
+                                              @NotNull Language lineEndLanguage) {
     if (CodeStyle.getSettings(file).getCustomSettings(PostCssCodeStyleSettings.class).COMMENTS_INLINE_STYLE) {
       return POST_CSS_COMMENTER;
     }
@@ -36,7 +40,7 @@ public class PostCssCommentProvider implements MultipleLangCommentProvider {
   }
 
   @Override
-  public boolean canProcess(PsiFile file, FileViewProvider viewProvider) {
+  public boolean canProcess(@NotNull PsiFile file, @NotNull FileViewProvider viewProvider) {
     return file.getLanguage() == PostCssLanguage.INSTANCE;
   }
 }

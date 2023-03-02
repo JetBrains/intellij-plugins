@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueCommenterProvider : MultipleLangCommentProvider {
 
-  override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language?, lineEndLanguage: Language?): Commenter? {
+  override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter? {
     val minimalElement = editor.caretModel.currentCaret
       .let { findMinimalElementContainingRange(file, it.selectionStart, it.selectionEnd) }
     return minimalElement
@@ -38,7 +38,7 @@ class VueCommenterProvider : MultipleLangCommentProvider {
                      ?.takeIf { it is XmlAttributeValue }
                      ?.also { xmlParent = it } != null
                ) {
-                 xmlParent?.language.takeIf { it !=  VueLanguage.INSTANCE}
+                 xmlParent?.language.takeIf { it != VueLanguage.INSTANCE }
                }
                else
                  elementLanguage
@@ -52,10 +52,10 @@ class VueCommenterProvider : MultipleLangCommentProvider {
                }
              }
            }
-           else lineStartLanguage?.let { LanguageCommenters.INSTANCE.forLanguage(it) }
+           else lineStartLanguage.let { LanguageCommenters.INSTANCE.forLanguage(it) }
   }
 
-  override fun canProcess(file: PsiFile?, viewProvider: FileViewProvider?): Boolean = file?.language == VueLanguage.INSTANCE
+  override fun canProcess(file: PsiFile, viewProvider: FileViewProvider): Boolean = file.language == VueLanguage.INSTANCE
 
   private fun findMinimalElementContainingRange(file: PsiFile, startOffset: Int, endOffset: Int): PsiElement? {
     val element1 = file.viewProvider.findElementAt(startOffset, VueLanguage.INSTANCE)

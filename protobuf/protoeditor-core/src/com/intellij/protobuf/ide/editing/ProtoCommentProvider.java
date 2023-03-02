@@ -18,11 +18,12 @@ package com.intellij.protobuf.ide.editing;
 import com.intellij.lang.Commenter;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.templateLanguages.MultipleLangCommentProvider;
-import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.protobuf.lang.psi.PbTextFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -34,7 +35,7 @@ public class ProtoCommentProvider implements MultipleLangCommentProvider {
   @Nullable
   @Override
   public Commenter getLineCommenter(
-      PsiFile file, Editor editor, Language lineStartLanguage, Language lineEndLanguage) {
+    @NotNull PsiFile file, @NotNull Editor editor, @NotNull Language lineStartLanguage, @NotNull Language lineEndLanguage) {
     if (file instanceof PbFile) {
       return PbCommenter.INSTANCE;
     }
@@ -45,7 +46,7 @@ public class ProtoCommentProvider implements MultipleLangCommentProvider {
   }
 
   @Override
-  public boolean canProcess(PsiFile file, FileViewProvider viewProvider) {
+  public boolean canProcess(@NotNull PsiFile file, @NotNull FileViewProvider viewProvider) {
     return file instanceof PbFile || file instanceof PbTextFile;
   }
 }

@@ -11,14 +11,14 @@ import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.psi.AstroContentRoot
 
 class AstroCommentProvider : JSXCommentProvider() {
-  override fun getLineCommenter(file: PsiFile?, editor: Editor?, lineStartLanguage: Language?, lineEndLanguage: Language?): Commenter? {
+  override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter? {
     val at = findFirstElementOnLine(file, editor)
     val isRootElement = at?.parent?.parent is AstroContentRoot
     // The default implementation falls back to an incompatible comment style for root elements
-    return if (isRootElement) JSXCommenter(file!!) else super.getLineCommenter(file, editor, lineStartLanguage, lineEndLanguage)
+    return if (isRootElement) JSXCommenter(file) else super.getLineCommenter(file, editor, lineStartLanguage, lineEndLanguage)
   }
 
-  override fun canProcess(file: PsiFile?, viewProvider: FileViewProvider?): Boolean {
-    return file?.language === AstroLanguage.INSTANCE
+  override fun canProcess(file: PsiFile, viewProvider: FileViewProvider): Boolean {
+    return file.language === AstroLanguage.INSTANCE
   }
 }

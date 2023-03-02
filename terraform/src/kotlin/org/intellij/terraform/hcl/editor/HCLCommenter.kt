@@ -9,21 +9,21 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiFile
 import com.intellij.psi.templateLanguages.MultipleLangCommentProvider
+import org.intellij.terraform.config.TerraformFileType
 import org.intellij.terraform.hcl.HCLFileType
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings
 import org.intellij.terraform.hcl.formatter.HCLCodeStyleSettings.LineCommenterPrefix
-import org.intellij.terraform.config.TerraformFileType
 
 class HCLCommenter : MultipleLangCommentProvider, Commenter {
   companion object {
     private val COMMENTER_KEY = Key<MyCommenter>("Project.HCLCommenter")
   }
 
-  override fun canProcess(file: PsiFile?, viewProvider: FileViewProvider?) =
-      file?.fileType in setOf(HCLFileType, TerraformFileType)
+  override fun canProcess(file: PsiFile, viewProvider: FileViewProvider) =
+    file.fileType in setOf(HCLFileType, TerraformFileType)
 
-  override fun getLineCommenter(file: PsiFile?, editor: Editor?, lineStartLanguage: Language?, lineEndLanguage: Language?): Commenter {
-    val project = file?.project ?: return this
+  override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter {
+    val project = file.project
     val settings = CodeStyle.getCustomSettings(file, HCLCodeStyleSettings::class.java)
     var commenter = project.getUserData(COMMENTER_KEY)
     if (commenter != null && settings == commenter.settings) return commenter
@@ -55,5 +55,5 @@ class HCLCommenter : MultipleLangCommentProvider, Commenter {
     override fun getCommentedBlockCommentPrefix(): String? = null
 
     override fun getCommentedBlockCommentSuffix(): String? = null
-  } 
+  }
 }
