@@ -24,6 +24,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
 import org.jetbrains.vuejs.model.source.METHODS_PROP
 import org.jetbrains.vuejs.model.source.WATCH_PROP
+import org.jetbrains.vuejs.types.VueLazyThisType
 
 class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
   companion object {
@@ -51,7 +52,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
   private fun getObjectLiteralTypeForComponent(obj: JSObjectLiteralExpression): JSType? {
     /* The information about `this` type is processed only in TS context. */
     val thisType = VueModelManager.findEnclosingComponent(obj)
-      ?.thisType
+      ?.let { VueLazyThisType(it) }
       ?.let {
         JSGenericTypeImpl(it.source, JSNamedTypeFactory.createType("ThisType", it.source, JSTypeContext.INSTANCE), it)
       }
@@ -72,7 +73,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
       }
       ?.let {
         if (it is JSUnionType) {
-          JSCompositeTypeFactory.createContextualUnionType(it.types, it.source)
+          JSCompositeTypeFactory.createContextualUnionType(it.types, it.source, false)
         }
         else it
       }
