@@ -484,7 +484,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
     group.add(new RestoreDefaultValueAction(tree));
     PopupHandler.installPopupMenu(treeTable, group, "FlexCompilerOptionsTreePopup");
 
-    new TreeTableSpeedSearch(treeTable, o -> {
+    TreeTableSpeedSearch.installOn(treeTable, o -> {
       final Object userObject = ((DefaultMutableTreeNode)o.getLastPathComponent()).getUserObject();
       return userObject instanceof CompilerOptionInfo ? ((CompilerOptionInfo)userObject).DISPLAY_NAME : "";
     }).setComparator(new SpeedSearchComparator(false));
