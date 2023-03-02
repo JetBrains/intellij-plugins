@@ -6362,14 +6362,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variablePattern | listPattern | mapPattern | recordPattern | parenthesizedPattern | objectPattern | constantPattern | identifierPattern
+  // listPattern | mapPattern | recordPattern | variablePattern | parenthesizedPattern | objectPattern | constantPattern | identifierPattern
   static boolean primaryPattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primaryPattern")) return false;
     boolean r;
-    r = variablePattern(b, l + 1);
-    if (!r) r = listPattern(b, l + 1);
+    r = listPattern(b, l + 1);
     if (!r) r = mapPattern(b, l + 1);
     if (!r) r = recordPattern(b, l + 1);
+    if (!r) r = variablePattern(b, l + 1);
     if (!r) r = parenthesizedPattern(b, l + 1);
     if (!r) r = objectPattern(b, l + 1);
     if (!r) r = constantPattern(b, l + 1);
@@ -9070,15 +9070,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'final' type componentName | 'final' componentName | 'var' componentName
+  // 'final' type componentName | 'final' componentName | 'var' componentName | type !'as' componentName
   public static boolean variablePattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variablePattern")) return false;
-    if (!nextTokenIs(b, "<variable pattern>", FINAL, VAR)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, VARIABLE_PATTERN, "<variable pattern>");
     r = variablePattern_0(b, l + 1);
     if (!r) r = variablePattern_1(b, l + 1);
     if (!r) r = variablePattern_2(b, l + 1);
+    if (!r) r = variablePattern_3(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -9114,6 +9114,28 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, VAR);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // type !'as' componentName
+  private static boolean variablePattern_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variablePattern_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = type(b, l + 1);
+    r = r && variablePattern_3_1(b, l + 1);
+    r = r && componentName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !'as'
+  private static boolean variablePattern_3_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variablePattern_3_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, AS);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
