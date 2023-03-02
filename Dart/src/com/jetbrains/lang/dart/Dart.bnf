@@ -80,6 +80,7 @@
   SET="set"
   STATIC="static"
   TYPEDEF="typedef"
+  WHEN="when"
 
 // other
   ON="on"
@@ -536,9 +537,12 @@ forInPart ::= (varAccessDeclaration | componentName) 'in' expression |
 private for_loops_parts_recover ::= !')'
 
 ifStatement ::= 'if' '(' expressionWithRecoverUntilParen ')' statement ('else' statement)?  {pin=1}
-switchStatement ::= 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}' {pin=1}
 
-switchCase ::= label* 'case' expression ':' statements {pin=2}
+switchStatement ::= 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}' {pin=1}
+switchCase ::= label* (patternCase | expressionCase) statements
+private patternCase ::= 'case' guardedPattern ':'
+private expressionCase ::= 'case' expression ':' {pin=1}
+private guardedPattern ::= pattern ('when' expression)?
 defaultCase::= label* 'default' ':' statements {pin = 2}
 
 tryStatement ::= 'try' block (onPart+ finallyPart? | finallyPart) {pin=1}
@@ -577,10 +581,9 @@ private expression_recover ::= !(<<nonStrictID>> |
                                'covariant' | 'default' | 'deferred' | 'do' | 'else' | 'enum' | 'export' | 'extension' | 'external' |
                                'factory' | 'final' | 'finally' | 'for' | 'get' | 'hide' | 'if' | 'import' | 'interface' | 'is' | 'late' |
                                'library' | 'mixin' | 'native' | 'new' | 'on' | 'part' | 'rethrow' | 'return' | 'sealed' | 'set' | 'show' |
-                               'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'while' | 'yield' |
-                               '{' | '|' | '|=' | '||' | '||=' | '}' |
-                               '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END |
-                               LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
+                               'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' | 'void' | 'when' | 'while' |
+                               'yield' | '{' | '|' | '|=' | '||' | '||=' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HEX_NUMBER |
+                               LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING |
                                RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START | TRUE)
 
 private assignExpressionWrapper ::= ternaryExpressionWrapper assignExpression*

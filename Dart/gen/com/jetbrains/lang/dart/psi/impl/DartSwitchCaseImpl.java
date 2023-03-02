@@ -29,8 +29,20 @@ public class DartSwitchCaseImpl extends DartPsiCompositeElementImpl implements D
 
   @Override
   @Nullable
+  public DartConstantPattern getConstantPattern() {
+    return findChildByClass(DartConstantPattern.class);
+  }
+
+  @Override
+  @Nullable
   public DartExpression getExpression() {
     return findChildByClass(DartExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartIdentifierPattern getIdentifierPattern() {
+    return findChildByClass(DartIdentifierPattern.class);
   }
 
   @Override
@@ -41,8 +53,68 @@ public class DartSwitchCaseImpl extends DartPsiCompositeElementImpl implements D
 
   @Override
   @Nullable
+  public DartListPattern getListPattern() {
+    return findChildByClass(DartListPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartLogicalAndPattern getLogicalAndPattern() {
+    return findChildByClass(DartLogicalAndPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartLogicalOrPattern getLogicalOrPattern() {
+    return findChildByClass(DartLogicalOrPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartMapPattern getMapPattern() {
+    return findChildByClass(DartMapPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartObjectPattern getObjectPattern() {
+    return findChildByClass(DartObjectPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartParenthesizedPattern getParenthesizedPattern() {
+    return findChildByClass(DartParenthesizedPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartRecordPattern getRecordPattern() {
+    return findChildByClass(DartRecordPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartRelationalPattern getRelationalPattern() {
+    return findChildByClass(DartRelationalPattern.class);
+  }
+
+  @Override
+  @NotNull
   public DartStatements getStatements() {
-    return findChildByClass(DartStatements.class);
+    return findNotNullChildByClass(DartStatements.class);
+  }
+
+  @Override
+  @Nullable
+  public DartUnaryPattern getUnaryPattern() {
+    return findChildByClass(DartUnaryPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartVariablePattern getVariablePattern() {
+    return findChildByClass(DartVariablePattern.class);
   }
 
 }
