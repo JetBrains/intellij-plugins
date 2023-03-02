@@ -506,6 +506,7 @@ label::= componentName ':'
   methods = [getMetadataList]
 }
 
+private ifExpressionWithRecoverUntilParen ::= expression ('case' guardedPattern)? {recoverWhile="not_paren_recover"}
 private expressionWithRecoverUntilParen ::= expression {recoverWhile="not_paren_recover"}
 private expressionWithRecoverUntilParenOrComma ::= expression {recoverWhile="not_paren_or_comma_recover"}
 private not_paren_recover ::= !')'
@@ -536,7 +537,7 @@ forInPart ::= (varAccessDeclaration | componentName) 'in' expression |
 
 private for_loops_parts_recover ::= !')'
 
-ifStatement ::= 'if' '(' expressionWithRecoverUntilParen ')' statement ('else' statement)?  {pin=1}
+ifStatement ::= 'if' '(' ifExpressionWithRecoverUntilParen ')' statement ('else' statement)?  {pin=1}
 
 switchStatement ::= 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}' {pin=1}
 switchCase ::= label* (patternCase | expressionCase) statements
@@ -717,7 +718,7 @@ element ::= spreadElement | ifElement | forElement | mapEntry | expression
 
 mapEntry ::= expression ':' expression {pin=2};
 spreadElement ::= ('...' | '...?') expression {pin=1};
-ifElement ::= 'if' '(' expressionWithRecoverUntilParen ')' element ('else' element)? {pin = 1};
+ifElement ::= 'if' '(' ifExpressionWithRecoverUntilParen ')' element ('else' element)? {pin = 1};
 forElement ::= 'await'? 'for' '(' forLoopParts ')' element {pin=2};
 
 functionExpression ::= typeParameters? formalParameterList functionExpressionBody
