@@ -144,7 +144,7 @@ Dart File
                   PsiElement({)('{')
                   SWITCH_CASE
                     PsiElement(case)('case')
-                    LITERAL_EXPRESSION
+                    CONSTANT_PATTERN
                       PsiElement(NUMBER)('42')
                     PsiElement(:)(':')
                     STATEMENTS
@@ -164,7 +164,7 @@ Dart File
                         PsiElement(;)(';')
                   SWITCH_CASE
                     PsiElement(case)('case')
-                    LITERAL_EXPRESSION
+                    CONSTANT_PATTERN
                       PsiElement(NUMBER)('87')
                     PsiElement(:)(':')
                     STATEMENTS

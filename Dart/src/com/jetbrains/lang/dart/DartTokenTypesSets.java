@@ -99,6 +99,7 @@ public interface DartTokenTypesSets {
                                                   SET,
                                                   STATIC,
                                                   TYPEDEF,
+                                                  WHEN,
                                                   // next are not listed in spec, but they seem to have the same sense as BUILT_IN_IDENTIFIERS: somewhere treated as keywords, but can be used as normal identifiers
                                                   ON,
                                                   OF,
