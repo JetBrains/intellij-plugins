@@ -117,7 +117,7 @@ class SerialProfileConfigurable(var name: @NlsContexts.ConfigurableName String,
           comboBox(listOf(*SerialProfileService.NewLine.values())).bindItem(portProfile::newLine) { portProfile.newLine = it!! }.label(
             SerialMonitorBundle.message("label.new.line"))
           comboBox(charsets)
-            .applyToComponent { ComboboxSpeedSearch(this) }
+            .applyToComponent { ComboboxSpeedSearch.installOn(this) }
             .bindItem(portProfile::encoding) { portProfile.encoding = it!! }
             .label(SerialMonitorBundle.message("label.encoding"))
         }.layout(RowLayout.PARENT_GRID)
