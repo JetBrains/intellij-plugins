@@ -3920,7 +3920,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'if' '(' expressionWithRecoverUntilParen ')' element ('else' element)?
+  // 'if' '(' ifExpressionWithRecoverUntilParen ')' element ('else' element)?
   public static boolean ifElement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ifElement")) return false;
     if (!nextTokenIs(b, IF)) return false;
@@ -3928,7 +3928,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, IF_ELEMENT, null);
     r = consumeTokens(b, 1, IF, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = r && report_error_(b, ifExpressionWithRecoverUntilParen(b, l + 1));
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && report_error_(b, element(b, l + 1)) && r;
     r = p && ifElement_5(b, l + 1) && r;
@@ -3950,6 +3950,36 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, ELSE);
     r = r && element(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // expression ('case' guardedPattern)?
+  static boolean ifExpressionWithRecoverUntilParen(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifExpressionWithRecoverUntilParen")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = expression(b, l + 1);
+    r = r && ifExpressionWithRecoverUntilParen_1(b, l + 1);
+    exit_section_(b, l, m, r, false, DartParser::not_paren_recover);
+    return r;
+  }
+
+  // ('case' guardedPattern)?
+  private static boolean ifExpressionWithRecoverUntilParen_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifExpressionWithRecoverUntilParen_1")) return false;
+    ifExpressionWithRecoverUntilParen_1_0(b, l + 1);
+    return true;
+  }
+
+  // 'case' guardedPattern
+  private static boolean ifExpressionWithRecoverUntilParen_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifExpressionWithRecoverUntilParen_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CASE);
+    r = r && guardedPattern(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3991,7 +4021,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'if' '(' expressionWithRecoverUntilParen ')' statement ('else' statement)?
+  // 'if' '(' ifExpressionWithRecoverUntilParen ')' statement ('else' statement)?
   public static boolean ifStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ifStatement")) return false;
     if (!nextTokenIs(b, IF)) return false;
@@ -3999,7 +4029,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, IF_STATEMENT, null);
     r = consumeTokens(b, 1, IF, LPAREN);
     p = r; // pin = 1
-    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = r && report_error_(b, ifExpressionWithRecoverUntilParen(b, l + 1));
     r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
     r = p && report_error_(b, statement(b, l + 1)) && r;
     r = p && ifStatement_5(b, l + 1) && r;

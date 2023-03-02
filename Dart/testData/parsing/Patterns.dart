@@ -77,3 +77,9 @@ bar() {
     case {"a": int a}:
   }
 }
+
+iff() {
+  if (json case [int x, int y]);
+  if (json case [int x, int y] when x == y);
+  if (x case int(isEven: true));
+}

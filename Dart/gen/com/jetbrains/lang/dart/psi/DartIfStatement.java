@@ -16,6 +16,9 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartBreakStatement> getBreakStatementList();
 
+  @Nullable
+  DartConstantPattern getConstantPattern();
+
   @NotNull
   List<DartContinueStatement> getContinueStatementList();
 
@@ -31,17 +34,44 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartFunctionDeclarationWithBody> getFunctionDeclarationWithBodyList();
 
+  @Nullable
+  DartIdentifierPattern getIdentifierPattern();
+
   @NotNull
   List<DartIfStatement> getIfStatementList();
 
   @NotNull
   List<DartLabel> getLabelList();
 
+  @Nullable
+  DartListPattern getListPattern();
+
+  @Nullable
+  DartLogicalAndPattern getLogicalAndPattern();
+
+  @Nullable
+  DartLogicalOrPattern getLogicalOrPattern();
+
+  @Nullable
+  DartMapPattern getMapPattern();
+
+  @Nullable
+  DartObjectPattern getObjectPattern();
+
+  @Nullable
+  DartParenthesizedPattern getParenthesizedPattern();
+
   @NotNull
   List<DartPatternAssignment> getPatternAssignmentList();
 
   @NotNull
   List<DartPatternVariableDeclaration> getPatternVariableDeclarationList();
+
+  @Nullable
+  DartRecordPattern getRecordPattern();
+
+  @Nullable
+  DartRelationalPattern getRelationalPattern();
 
   @NotNull
   List<DartRethrowStatement> getRethrowStatementList();
@@ -55,8 +85,14 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartTryStatement> getTryStatementList();
 
+  @Nullable
+  DartUnaryPattern getUnaryPattern();
+
   @NotNull
   List<DartVarDeclarationList> getVarDeclarationListList();
+
+  @Nullable
+  DartVariablePattern getVariablePattern();
 
   @NotNull
   List<DartWhileStatement> getWhileStatementList();
