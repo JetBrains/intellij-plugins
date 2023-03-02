@@ -7,10 +7,46 @@ import com.intellij.psi.PsiElement;
 
 public interface DartIfElement extends DartPsiCompositeElement {
 
+  @Nullable
+  DartConstantPattern getConstantPattern();
+
   @NotNull
   List<DartElement> getElementList();
 
+  @NotNull
+  List<DartExpression> getExpressionList();
+
   @Nullable
-  DartExpression getExpression();
+  DartIdentifierPattern getIdentifierPattern();
+
+  @Nullable
+  DartListPattern getListPattern();
+
+  @Nullable
+  DartLogicalAndPattern getLogicalAndPattern();
+
+  @Nullable
+  DartLogicalOrPattern getLogicalOrPattern();
+
+  @Nullable
+  DartMapPattern getMapPattern();
+
+  @Nullable
+  DartObjectPattern getObjectPattern();
+
+  @Nullable
+  DartParenthesizedPattern getParenthesizedPattern();
+
+  @Nullable
+  DartRecordPattern getRecordPattern();
+
+  @Nullable
+  DartRelationalPattern getRelationalPattern();
+
+  @Nullable
+  DartUnaryPattern getUnaryPattern();
+
+  @Nullable
+  DartVariablePattern getVariablePattern();
 
 }
