@@ -23,3 +23,33 @@ main() {
   {1: a, 2: b} = {1: 2};
   Point(x: x, y: y) = Point(1, 2);
 }
+
+foo() {
+  switch (shape) {
+    case Square(size: var s) || Circle(size: var s) when s > 0:
+      print('Non-empty symmetric shape');
+    case Square() || Circle():
+      print('Empty symmetric shape');
+    default:
+      print('Asymmetric shape');
+  }
+
+  switch (list) {
+    case ['a' || 'b', var c]:
+    case {1: a, 2: b} when 1 == 2:
+    case (a as A || b? && c! || == d && != e << f >>> g >> h & i ^ j | k-- + ~l++ - !m * +n / -o % ++p ~/ --r):
+    case 5 + 5 * 2:
+    case a + a:
+    case -a:
+    case (a, b, x: x):
+    case (5 + 5 * 2):
+    case const [a, b]:
+    case SomeClass(1, 2):
+    case const SomeClass(1, 2):
+    case const (A + A):
+    case const (A + 'b'):
+    case const (-ER):
+    case const (List<RPChoice>):
+    case const (720 * 1280):
+  }
+}
