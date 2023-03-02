@@ -100,7 +100,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       ((DartProblemsTableModel)myTable.getModel()).setSortKey(sortKeys.get(0));
     });
 
-    new TableSpeedSearch(table, object -> object instanceof DartProblem
+    TableSpeedSearch.installOn(table, object -> object instanceof DartProblem
                                           ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
                                           : "");
 
