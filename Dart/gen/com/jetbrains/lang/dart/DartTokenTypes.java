@@ -308,6 +308,7 @@ public interface DartTokenTypes {
   IElementType TYPEDEF = new DartElementType("typedef");
   IElementType VAR = new DartElementType("var");
   IElementType VOID = new DartElementType("void");
+  IElementType WHEN = new DartElementType("when");
   IElementType WHILE = new DartElementType("while");
   IElementType WITH = new DartElementType("with");
   IElementType XOR = new DartElementType("^");
