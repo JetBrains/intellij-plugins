@@ -53,3 +53,27 @@ foo() {
     case const (720 * 1280):
   }
 }
+
+bar() {
+  var [...] = [1, 2];
+  var [...x] = [1, 2];
+  var [int a, num b] = [1, 2];
+  var <int>[a, b] = <num>[1, 2]; // List<int> (and compile error).
+  var [a, b] = <num>[1, 2]; // List<num>, a is num, b is num.
+  var [int a, b] = <num>[1, 2]; // List<num>.
+  var (int a, int b) = null;
+  var (int? a, int? b) = (null, null);
+
+  switch ((1, 2)) {
+    case Square(size: var s) || Circle(size: var s) when s > 0:
+    case (int a, int b) when a > b:
+    // case (int a, int b) foo:
+      print('First element greater');
+      break;
+    case (int a, int b):
+      print('Other order');
+      break;
+    case [int a, int n] when n > 0:
+    case {"a": int a}:
+  }
+}
