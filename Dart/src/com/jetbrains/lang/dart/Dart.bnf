@@ -754,7 +754,7 @@ relationalPattern ::= (equalityOperator | relationalOperator) bitwiseExpressionW
 private unaryPatternWrapper ::= primaryPattern unaryPattern?
 left unaryPattern ::= 'as' type | '?' | '!'
 
-private primaryPattern  ::= variablePattern | listPattern | mapPattern | recordPattern | parenthesizedPattern | objectPattern | constantPattern | identifierPattern
+private primaryPattern  ::= listPattern | mapPattern | recordPattern | variablePattern | parenthesizedPattern | objectPattern | constantPattern | identifierPattern
 
 constantPattern ::= NULL | TRUE | FALSE | '-'? (NUMBER | HEX_NUMBER) | stringLiteralExpression | symbolLiteralExpression |
                     simpleQualifiedReferenceExpression |
@@ -765,7 +765,7 @@ constantPattern ::= NULL | TRUE | FALSE | '-'? (NUMBER | HEX_NUMBER) | stringLit
 
 constObjectExpression ::= 'const' constructorDesignation arguments
 private constructorDesignation ::= simpleQualifiedReferenceExpression (typeArguments ('.' componentName)?)?
-variablePattern ::= 'final' type componentName | 'final' componentName | 'var' componentName
+variablePattern ::= 'final' type componentName | 'final' componentName | 'var' componentName | type !'as' componentName
 identifierPattern ::= componentName // unreachable because captured by simpleQualifiedReferenceExpression
 parenthesizedPattern ::= '(' pattern ')'
 
