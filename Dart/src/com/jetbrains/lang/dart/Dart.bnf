@@ -483,7 +483,7 @@ private nonLabelledStatement ::= patternAssignment
                                | forStatement
                                | whileStatement
                                | doWhileStatement
-                               | switchStatement
+                               | switchStatementOrExpression
                                | ifStatement
                                | rethrowStatement
                                | tryStatement
@@ -539,11 +539,14 @@ private for_loops_parts_recover ::= !')'
 
 ifStatement ::= 'if' '(' ifExpressionWithRecoverUntilParen ')' statement ('else' statement)?  {pin=1}
 
-switchStatement ::= 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}' {pin=1}
+// switchStatementOrExpression doesn't appear in PSI tree because of 'upper' modifier
+switchStatementOrExpression ::= 'switch' '(' expressionWithRecoverUntilParen ')' (switchStatement | switchExpression) {pin=1}
+upper switchStatement ::=  '{' switchCase* defaultCase? '}'
 switchCase ::= label* (patternCase | expressionCase) statements
 private patternCase ::= 'case' guardedPattern ':'
 private expressionCase ::= 'case' expression ':' {pin=1}
-private guardedPattern ::= pattern ('when' expression)?
+private guardedPattern ::= constantPattern 'when' expression | // to capture "case a when b:..."
+                           pattern ('when' expression)?
 defaultCase::= label* 'default' ':' statements {pin = 2}
 
 tryStatement ::= 'try' block (onPart+ finallyPart? | finallyPart) {pin=1}
@@ -645,7 +648,8 @@ private primary ::=  functionExpression |
                      literalExpression |
                      newExpression | // constant object expression is also parsed as newExpression
                      refOrThisOrSuperOrParenExpression |
-                     throwExpression
+                     throwExpression |
+                     switchExpressionWrapper
 
 parenthesizedExpression ::= '(' expressionInParentheses ')'
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -788,3 +792,9 @@ objectPattern ::= simpleQualifiedReferenceExpression typeArguments? '(' patternF
 private outerPattern ::= listPattern | mapPattern | recordPattern | parenthesizedPattern | objectPattern
 patternVariableDeclaration ::= metadata* ('final' | 'var') outerPattern '=' expression
 patternAssignment ::= outerPattern '=' expression
+
+// switchExpressionWrapper doesn't appear in PSI tree because of 'upper' modifier
+switchExpressionWrapper ::= 'switch' '(' expressionWithRecoverUntilParen ')' switchExpression {pin=1}
+upper switchExpression ::=  '{' switchExpressionCase (',' switchExpressionCase)* ','? recoverUntilRBrace '}' {pin=1}
+private recoverUntilRBrace ::= {recoverWhile=simple_scope_recover}
+switchExpressionCase ::= guardedPattern '=>' expression

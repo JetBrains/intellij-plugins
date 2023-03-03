@@ -113,12 +113,6 @@ public class DartDoWhileStatementImpl extends DartPsiCompositeElementImpl implem
 
   @Override
   @Nullable
-  public DartSwitchStatement getSwitchStatement() {
-    return findChildByClass(DartSwitchStatement.class);
-  }
-
-  @Override
-  @Nullable
   public DartTryStatement getTryStatement() {
     return findChildByClass(DartTryStatement.class);
   }
