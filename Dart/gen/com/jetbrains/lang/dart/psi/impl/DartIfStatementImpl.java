@@ -173,12 +173,6 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @NotNull
-  public List<DartSwitchStatement> getSwitchStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSwitchStatement.class);
-  }
-
-  @Override
-  @NotNull
   public List<DartTryStatement> getTryStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTryStatement.class);
   }

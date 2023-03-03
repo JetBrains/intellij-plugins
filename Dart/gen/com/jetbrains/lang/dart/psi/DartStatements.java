@@ -50,9 +50,6 @@ public interface DartStatements extends DartExecutionScope {
   List<DartReturnStatement> getReturnStatementList();
 
   @NotNull
-  List<DartSwitchStatement> getSwitchStatementList();
-
-  @NotNull
   List<DartTryStatement> getTryStatementList();
 
   @NotNull

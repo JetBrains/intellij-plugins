@@ -150,7 +150,11 @@ public interface DartTokenTypes {
   IElementType SUPER_CALL_OR_FIELD_INITIALIZER = new DartElementType("SUPER_CALL_OR_FIELD_INITIALIZER");
   IElementType SUPER_EXPRESSION = new DartElementType("SUPER_EXPRESSION");
   IElementType SWITCH_CASE = new DartElementType("SWITCH_CASE");
+  IElementType SWITCH_EXPRESSION = new DartElementType("SWITCH_EXPRESSION");
+  IElementType SWITCH_EXPRESSION_CASE = new DartElementType("SWITCH_EXPRESSION_CASE");
+  IElementType SWITCH_EXPRESSION_WRAPPER = new DartElementType("SWITCH_EXPRESSION_WRAPPER");
   IElementType SWITCH_STATEMENT = new DartElementType("SWITCH_STATEMENT");
+  IElementType SWITCH_STATEMENT_OR_EXPRESSION = new DartElementType("SWITCH_STATEMENT_OR_EXPRESSION");
   IElementType SYMBOL_LITERAL_EXPRESSION = new DartElementType("SYMBOL_LITERAL_EXPRESSION");
   IElementType TERNARY_EXPRESSION = new DartElementType("TERNARY_EXPRESSION");
   IElementType THIS_EXPRESSION = new DartElementType("THIS_EXPRESSION");
@@ -744,8 +748,20 @@ public interface DartTokenTypes {
       else if (type == SWITCH_CASE) {
         return new DartSwitchCaseImpl(node);
       }
+      else if (type == SWITCH_EXPRESSION) {
+        return new DartSwitchExpressionImpl(node);
+      }
+      else if (type == SWITCH_EXPRESSION_CASE) {
+        return new DartSwitchExpressionCaseImpl(node);
+      }
+      else if (type == SWITCH_EXPRESSION_WRAPPER) {
+        return new DartSwitchExpressionWrapperImpl(node);
+      }
       else if (type == SWITCH_STATEMENT) {
         return new DartSwitchStatementImpl(node);
+      }
+      else if (type == SWITCH_STATEMENT_OR_EXPRESSION) {
+        return new DartSwitchStatementOrExpressionImpl(node);
       }
       else if (type == SYMBOL_LITERAL_EXPRESSION) {
         return new DartSymbolLiteralExpressionImpl(node);

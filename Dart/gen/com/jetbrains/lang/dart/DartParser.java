@@ -50,8 +50,9 @@ public class DartParser implements PsiParser, LightPsiParser {
       LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
       NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
       REFERENCE_EXPRESSION, SET_OR_MAP_LITERAL_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
-      SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION,
-      THIS_EXPRESSION, THROW_EXPRESSION, VALUE_EXPRESSION),
+      SUFFIX_EXPRESSION, SUPER_EXPRESSION, SWITCH_EXPRESSION, SWITCH_STATEMENT_OR_EXPRESSION,
+      SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, THROW_EXPRESSION,
+      VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -3853,27 +3854,51 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // pattern ('when' expression)?
+  // constantPattern 'when' expression | // to capture "case a when b:..."
+  //                            pattern ('when' expression)?
   static boolean guardedPattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "guardedPattern")) return false;
     boolean r;
     Marker m = enter_section_(b);
+    r = guardedPattern_0(b, l + 1);
+    if (!r) r = guardedPattern_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // constantPattern 'when' expression
+  private static boolean guardedPattern_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = constantPattern(b, l + 1);
+    r = r && consumeToken(b, WHEN);
+    r = r && expression(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // pattern ('when' expression)?
+  private static boolean guardedPattern_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
     r = pattern(b, l + 1);
-    r = r && guardedPattern_1(b, l + 1);
+    r = r && guardedPattern_1_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ('when' expression)?
-  private static boolean guardedPattern_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "guardedPattern_1")) return false;
-    guardedPattern_1_0(b, l + 1);
+  private static boolean guardedPattern_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern_1_1")) return false;
+    guardedPattern_1_1_0(b, l + 1);
     return true;
   }
 
   // 'when' expression
-  private static boolean guardedPattern_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "guardedPattern_1_0")) return false;
+  private static boolean guardedPattern_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "guardedPattern_1_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, WHEN);
@@ -5596,7 +5621,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                                | forStatement
   //                                | whileStatement
   //                                | doWhileStatement
-  //                                | switchStatement
+  //                                | switchStatementOrExpression
   //                                | ifStatement
   //                                | rethrowStatement
   //                                | tryStatement
@@ -5620,7 +5645,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = forStatement(b, l + 1);
     if (!r) r = whileStatement(b, l + 1);
     if (!r) r = doWhileStatement(b, l + 1);
-    if (!r) r = switchStatement(b, l + 1);
+    if (!r) r = switchStatementOrExpression(b, l + 1);
     if (!r) r = ifStatement(b, l + 1);
     if (!r) r = rethrowStatement(b, l + 1);
     if (!r) r = tryStatement(b, l + 1);
@@ -6379,7 +6404,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                      literalExpression |
   //                      newExpression | // constant object expression is also parsed as newExpression
   //                      refOrThisOrSuperOrParenExpression |
-  //                      throwExpression
+  //                      throwExpression |
+  //                      switchExpressionWrapper
   static boolean primary(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary")) return false;
     boolean r;
@@ -6388,6 +6414,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = newExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
     if (!r) r = throwExpression(b, l + 1);
+    if (!r) r = switchExpressionWrapper(b, l + 1);
     return r;
   }
 
@@ -6866,6 +6893,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean recordTypeNamedFields_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordTypeNamedFields_3")) return false;
     consumeToken(b, COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  static boolean recoverUntilRBrace(PsiBuilder b, int l) {
+    Marker m = enter_section_(b, l, _NONE_);
+    exit_section_(b, l, m, true, false, DartParser::simple_scope_recover);
     return true;
   }
 
@@ -7925,39 +7959,137 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}'
-  public static boolean switchStatement(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switchStatement")) return false;
-    if (!nextTokenIs(b, SWITCH)) return false;
+  // '{' switchExpressionCase (',' switchExpressionCase)* ','? recoverUntilRBrace '}'
+  public static boolean switchExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchExpression")) return false;
+    if (!nextTokenIs(b, LBRACE)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, SWITCH_STATEMENT, null);
-    r = consumeTokens(b, 1, SWITCH, LPAREN);
+    Marker m = enter_section_(b, l, _UPPER_, SWITCH_EXPRESSION, null);
+    r = consumeToken(b, LBRACE);
     p = r; // pin = 1
-    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
-    r = p && report_error_(b, consumeTokens(b, -1, RPAREN, LBRACE)) && r;
-    r = p && report_error_(b, switchStatement_5(b, l + 1)) && r;
-    r = p && report_error_(b, switchStatement_6(b, l + 1)) && r;
+    r = r && report_error_(b, switchExpressionCase(b, l + 1));
+    r = p && report_error_(b, switchExpression_2(b, l + 1)) && r;
+    r = p && report_error_(b, switchExpression_3(b, l + 1)) && r;
+    r = p && report_error_(b, recoverUntilRBrace(b, l + 1)) && r;
     r = p && consumeToken(b, RBRACE) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // (',' switchExpressionCase)*
+  private static boolean switchExpression_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchExpression_2")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!switchExpression_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "switchExpression_2", c)) break;
+    }
+    return true;
+  }
+
+  // ',' switchExpressionCase
+  private static boolean switchExpression_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchExpression_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && switchExpressionCase(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean switchExpression_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchExpression_3")) return false;
+    consumeToken(b, COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // guardedPattern '=>' expression
+  public static boolean switchExpressionCase(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchExpressionCase")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, SWITCH_EXPRESSION_CASE, "<switch expression case>");
+    r = guardedPattern(b, l + 1);
+    r = r && consumeToken(b, EXPRESSION_BODY_DEF);
+    r = r && expression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'switch' '(' expressionWithRecoverUntilParen ')' switchExpression
+  public static boolean switchExpressionWrapper(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchExpressionWrapper")) return false;
+    if (!nextTokenIs(b, SWITCH)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SWITCH_EXPRESSION_WRAPPER, null);
+    r = consumeTokens(b, 1, SWITCH, LPAREN);
+    p = r; // pin = 1
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
+    r = p && switchExpression(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // '{' switchCase* defaultCase? '}'
+  public static boolean switchStatement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchStatement")) return false;
+    if (!nextTokenIs(b, LBRACE)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _UPPER_, SWITCH_STATEMENT, null);
+    r = consumeToken(b, LBRACE);
+    r = r && switchStatement_1(b, l + 1);
+    r = r && switchStatement_2(b, l + 1);
+    r = r && consumeToken(b, RBRACE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
   // switchCase*
-  private static boolean switchStatement_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switchStatement_5")) return false;
+  private static boolean switchStatement_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchStatement_1")) return false;
     while (true) {
       int c = current_position_(b);
       if (!switchCase(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "switchStatement_5", c)) break;
+      if (!empty_element_parsed_guard_(b, "switchStatement_1", c)) break;
     }
     return true;
   }
 
   // defaultCase?
-  private static boolean switchStatement_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switchStatement_6")) return false;
+  private static boolean switchStatement_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchStatement_2")) return false;
     defaultCase(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // 'switch' '(' expressionWithRecoverUntilParen ')' (switchStatement | switchExpression)
+  public static boolean switchStatementOrExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchStatementOrExpression")) return false;
+    if (!nextTokenIs(b, SWITCH)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SWITCH_STATEMENT_OR_EXPRESSION, null);
+    r = consumeTokens(b, 1, SWITCH, LPAREN);
+    p = r; // pin = 1
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
+    r = p && switchStatementOrExpression_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // switchStatement | switchExpression
+  private static boolean switchStatementOrExpression_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switchStatementOrExpression_4")) return false;
+    boolean r;
+    r = switchStatement(b, l + 1);
+    if (!r) r = switchExpression(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */
