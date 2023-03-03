@@ -12,13 +12,13 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.lang.javascript.psi.stubs.JSVariableStubBase
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
+import com.intellij.lang.javascript.psi.types.primitives.JSObjectType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
@@ -58,11 +58,7 @@ class VueJSVForVariableImpl(node: ASTNode) :
             val type = JSTypeUtils.getIterableComponentType(collectionType)
             when {
               type != null -> type
-              useTypeScriptKeyofType(collectionType) -> {
-                val keyOfType = JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
-                val indexedAccessType = JSCompositeTypeFactory.createIndexedAccessType(collectionType, keyOfType, collectionType.source)
-                JSWidenType.createWidening(indexedAccessType, null)
-              }
+              collectionType is JSRecordType -> createIndexedAccessType(collectionType)
               else -> {
                 val typeEvaluator = JSDialectSpecificHandlersFactory.forElement(collectionExpr).newTypeEvaluator(evaluateContext)
                 val componentTypeFromArrayExpression = typeEvaluator.getComponentTypeFromArrayExpression(expression, collectionExpr)
@@ -98,8 +94,7 @@ class VueJSVForVariableImpl(node: ASTNode) :
 
             when {
               indexerTypes.isNotEmpty() -> getVForVarType(collectionExpr, *indexerTypes.toTypedArray())
-              useTypeScriptKeyofType(collectionType) ->
-                JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
+              useKeyOfForIndexParam(collectionType) -> JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
               else -> getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
             }
           }
@@ -114,6 +109,12 @@ class VueJSVForVariableImpl(node: ASTNode) :
     return true
   }
 
+  private fun createIndexedAccessType(collectionType: JSType): JSType {
+    val keyOfType = JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
+    val indexedAccessType = JSCompositeTypeFactory.createIndexedAccessType(collectionType, keyOfType, collectionType.source)
+    return JSWidenType.createWidening(indexedAccessType, null)
+  }
+
   private fun getVForVarType(source: PsiElement, vararg types: (Boolean, JSTypeSource, JSTypeContext) -> JSType): JSType? {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
     return getVForVarType(source, *types.map { it(true, typeSource, JSTypeContext.INSTANCE) }.toTypedArray())
@@ -125,15 +126,18 @@ class VueJSVForVariableImpl(node: ASTNode) :
     return (tupleType.toArrayType(false) as JSArrayType).type
   }
 
-  private fun preprocessItemType(type: JSType): JSType = when {
-    type is JSIterableComponentTypeImpl && type.iterableType is JSNumberType -> {
-      type.iterableType
+  private fun preprocessItemType(type: JSType): JSType {
+    if (type !is JSIterableComponentTypeImpl) {
+      return type
     }
-    else -> type
+
+    return when (val iterableType = type.iterableType) {
+      is JSNumberType -> iterableType
+      is JSTypeImpl, is JSWrapperType -> createIndexedAccessType(iterableType.asRecordType())
+      else -> type
+    }
   }
 
-  private fun useTypeScriptKeyofType(collectionType: JSType): Boolean {
-    return (collectionType.isTypeScript || VueExprMetaLanguage.matches(collectionType.sourceElement?.language))
-           && collectionType is JSRecordType
-  }
+  private fun useKeyOfForIndexParam(collectionType: JSType): Boolean =
+    collectionType !is JSObjectType
 }
