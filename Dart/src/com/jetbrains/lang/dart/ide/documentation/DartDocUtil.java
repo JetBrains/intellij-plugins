@@ -12,7 +12,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.text.MarkdownUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
@@ -21,7 +20,6 @@ import com.jetbrains.lang.dart.util.DartGenericSpecialization;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
-import com.petebevin.markdown.MarkdownProcessor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.intellij.markdown.utils.MarkdownToHtmlConverterKt.convertMarkdownToHtml;
 
 public final class DartDocUtil {
   private static final String FORMATTED_HOVER_SDK_VERSION = "2.14";
@@ -190,14 +190,8 @@ public final class DartDocUtil {
     builder.append("</code>\n");
     if (docText != null) {
       List<String> lines = StringUtil.split(docText, "\n", true, false);
-      MarkdownUtil.replaceCodeBlock(lines);
-      MarkdownUtil.replaceHeaders(lines);
-      MarkdownUtil.generateLists(lines);
-
-      docText = handleInlineCodeBlocks(StringUtil.join(lines, "\n"));
-
-      MarkdownProcessor processor = new MarkdownProcessor();
-      builder.append(processor.markdown(docText));
+      docText = handleInlineCodeBlocks(String.join("\n", lines));
+      builder.append(convertMarkdownToHtml(docText));
     }
     // done
     return builder.toString().trim();

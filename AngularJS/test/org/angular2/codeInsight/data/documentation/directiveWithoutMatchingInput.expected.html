@@ -1,55 +1,24 @@
 <div class='definition'><pre>export class NgForOf&lt;T,S&gt;
 implements </pre></div><div class='content'><p>The <code>NgForOf</code> directive instantiates a template once per item from an iterable. The context
 for each instantiated template inherits from the outer context with the given loop variable
-set to the current item from the iterable.
-<h3>Local Variables</h3>
-<p><code>NgForOf</code> provides several exported values that can be aliased to local variables:
-<ul>
-<li><code>$implicit: T</code>: The value of the individual items in the iterable (<code>ngForOf</code>).</li>
-<li><code>ngForOf: NgIterable&lt;T&gt;</code>: The value of the iterable expression. Useful when the expression is
+set to the current item from the iterable.<h3>Local Variables</h3><p><code>NgForOf</code> provides several exported values that can be aliased to local variables:<ul><li><code>$implicit: T</code>: The value of the individual items in the iterable (<code>ngForOf</code>).</li><li><code>ngForOf: NgIterable&lt;T&gt;</code>: The value of the iterable expression. Useful when the expression is
 more complex then a property access, for example when using the async pipe (<code>userStreams |
-&lt;br /&gt;async</code>).</li>
-<li><code>index: number</code>: The index of the current item in the iterable.</li>
-<li><code>first: boolean</code>: True when the item is the first item in the iterable.</li>
-<li><code>last: boolean</code>: True when the item is the last item in the iterable.</li>
-<li><code>even: boolean</code>: True when the item has an even index in the iterable.</li>
-<li><code>odd: boolean</code>: True when the item has an odd index in the iterable.</li>
-</ul>
-<pre>&lt;li *ngFor="let user of userObservable | async as users; index as i; first as isFirst"&gt;
-   {{i}}/{{users.length}}. {{user}} &lt;span *ngIf="isFirst"&gt;default&lt;/span&gt;
+async</code>).</li><li><code>index: number</code>: The index of the current item in the iterable.</li><li><code>first: boolean</code>: True when the item is the first item in the iterable.</li><li><code>last: boolean</code>: True when the item is the last item in the iterable.</li><li><code>even: boolean</code>: True when the item has an even index in the iterable.</li><li><code>odd: boolean</code>: True when the item has an odd index in the iterable.</li></ul><pre>&lt;li *ngFor=&quot;let user of userObservable | async as users; index as i; first as isFirst&quot;&gt;
+   {{i}}/{{users.length}}. {{user}} &lt;span *ngIf=&quot;isFirst&quot;&gt;default&lt;/span&gt;
 &lt;/li&gt;
-</pre>
-<h3>Change Propagation</h3>
-<p>When the contents of the iterator changes, <code>NgForOf</code> makes the corresponding changes to the DOM:
-<ul>
-<li>When an item is added, a new instance of the template is added to the DOM.</li>
-<li>When an item is removed, its template instance is removed from the DOM.</li>
-<li>When items are reordered, their respective templates are reordered in the DOM.</li>
-<li>Otherwise, the DOM element for that item will remain the same.</li>
-</ul>
-<p>Angular uses object identity to track insertions and deletions within the iterator and reproduce
+</pre><h3>Change Propagation</h3><p>When the contents of the iterator changes, <code>NgForOf</code> makes the corresponding changes to the DOM:<ul><li>When an item is added, a new instance of the template is added to the DOM.</li><li>When an item is removed, its template instance is removed from the DOM.</li><li>When items are reordered, their respective templates are reordered in the DOM.</li><li>Otherwise, the DOM element for that item will remain the same.</li></ul><p>Angular uses object identity to track insertions and deletions within the iterator and reproduce
 those changes in the DOM. This has important implications for animations and any stateful
 controls (such as <code>&lt;input&gt;</code> elements which accept user input) that are present. Inserted rows can
 be animated in, deleted rows can be animated out, and unchanged rows retain any unsaved state
-such as user input.
-<p>It is possible for the identities of elements in the iterator to change while the data does not.
+such as user input.<p>It is possible for the identities of elements in the iterator to change while the data does not.
 This can happen, for example, if the iterator produced from an RPC to the server, and that
 RPC is re-run. Even if the data hasn't changed, the second response will produce objects with
 different identities, and Angular will tear down the entire DOM and rebuild it (as if all old
 elements were deleted and all new elements inserted). This is an expensive operation and should
-be avoided if possible.
-<p>To customize the default tracking algorithm, <code>NgForOf</code> supports <code>trackBy</code> option.
+be avoided if possible.<p>To customize the default tracking algorithm, <code>NgForOf</code> supports <code>trackBy</code> option.
 <code>trackBy</code> takes a function which has two arguments: <code>index</code> and <code>item</code>.
-If <code>trackBy</code> is given, Angular tracks changes by the return value of the function.
-<h3>Syntax</h3>
-<ul>
-<li><code>&lt;li *ngFor="let item of items; index as i; trackBy: trackByFn"&gt;...&lt;/li&gt;</code></li>
-</ul>
-<p>With <code>&lt;ng-template&gt;</code> element:
-<pre>&lt;ng-template ngFor let-item [ngForOf]="items" let-i="index" [ngForTrackBy]="trackByFn"&gt;
+If <code>trackBy</code> is given, Angular tracks changes by the return value of the function.<h3>Syntax</h3><ul><li><code>&lt;li *ngFor=&quot;let item of items; index as i; trackBy: trackByFn&quot;&gt;...&lt;/li&gt;</code></li></ul><p>With <code>&lt;ng-template&gt;</code> element:<pre>&lt;ng-template ngFor let-item [ngForOf]=&quot;items&quot; let-i=&quot;index&quot; [ngForTrackBy]=&quot;trackByFn&quot;&gt;
   &lt;li&gt;...&lt;/li&gt;
 &lt;/ng-template&gt;
-</pre>
-<h3>Example</h3>
-<p>See a <a href="http://plnkr.co/edit/KVuXxDp0qinGDyo307QW?p=preview">live demo</a> for a more detailed
+</pre><h3>Example</h3><p>See a <a href="http://plnkr.co/edit/KVuXxDp0qinGDyo307QW?p=preview">live demo</a> for a more detailed
 example.</div><table class='sections'><tr><td valign='top' class='section'><p>@usageNotes</td><td valign='top'><p></td><tr><td valign='top' colspan='2'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_for_of.ts</td></table>

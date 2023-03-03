@@ -226,11 +226,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionDoc2() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>(int x) " + RIGHT_ARROW + " void<br><br></code>\n" +
-           "<p> Good for:</p>\n" +
-           "\n" +
-           "<ul><li>this</li>\n" +
-           "<li>that</li></ul>",
+    doTest("<code><b>test.dart</b><br><b>foo</b>(int x) → void<br><br></code>\n" +
+           "<p>Good for:</p><ul><li>this</li><li>that</li></ul>",
            """
              /** Good for:
 
@@ -244,14 +241,10 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   public void testClassMultilineDoc1() {
     doTest("""
              <code><b>test.dart</b><br>class <b>A</b><br><br></code>
-             <pre><code>     doc1</code></pre>
-
-             <p>doc2
-              doc3</p>
-
-             <p>   doc4</p>
-
-             <pre><code>    code</code></pre>""",
+             <pre><code> doc1
+             </code></pre><p>doc2
+              doc3</p><p>doc4</p><pre><code>code
+             </code></pre>""",
 
            """
              /** 1 */
@@ -294,8 +287,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   public void testClassSingleLineDocs1() {
     doTest("""
              <code><b>test.dart</b><br>class <b>A</b><br><br></code>
-             <p>  doc1 <br />
-             doc2   </p>""",
+             <p>doc1<br />
+             doc2</p>""",
 
            """
              // not doc\s
@@ -309,8 +302,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   public void testClassSingleLineDocs2() {
     doTest("""
              <code><b>test.dart</b><br>class <b>A</b><br><br></code>
-             <p>  doc1 <br />
-             doc2   </p>""",
+             <p>doc1<br />
+             doc2</p>""",
 
            """
              @deprecated// not doc\s
@@ -323,15 +316,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMethodMultilineDoc() {
     doTest(
-      "<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing class:</b> A<br><br></code>\n" +
-      "<pre><code>     doc1</code></pre>\n" +
-      "\n" +
-      "<p>doc2\n" +
-      " doc3</p>\n" +
-      "\n" +
-      "<p>   doc4</p>\n" +
-      "\n" +
-      "<pre><code>    code</code></pre>",
+      "<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<pre><code> doc1\n" +
+      "</code></pre><p>doc2\n" +
+      " doc3</p><p>doc4</p><pre><code>code\n" +
+      "</code></pre>",
 
       """
         class A{
@@ -351,10 +340,9 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodSingleLineDocs() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing class:</b> A<br><br></code>\n" +
-           "<p>  doc1  </p>\n" +
-           "\n" +
-           "<pre><code>    doc2   </code></pre>",
+    doTest("<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br><b>Containing class:</b> A<br><br></code>\n" +
+           "<p>doc1</p><pre><code>doc2   \n" +
+           "</code></pre>",
 
            """
              class A{
@@ -383,21 +371,13 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMarkdownUtil_testReplaceCodeBlock() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
-           "<p>   text</p>\n" +
-           "\n" +
-           "<pre><code>    code block</code></pre>\n" +
-           "\n" +
-           "<pre><code>\n" +
-           " code block too\n" +
-           "</code></pre>\n" +
-           "\n" +
-           "<p>simple text</p>\n" +
-           "\n" +
-           "<pre><code>    $ code\n" +
-           "    $ code continues</code></pre>\n" +
-           "\n" +
-           "<p>code done</p>",
+    doTest("<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br></code>\n" +
+           "<p>text\n" +
+           "    code block</p><pre><code> code block too\n" +
+           "</code></pre><p>simple text\n" +
+           "    $ code\n" +
+           "\t$ code continues\n" +
+           "code done</p>",
            """
              ///    text
              ///     code block
@@ -412,21 +392,13 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testInlineCodeBlocks() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
-           "<p>   text <code>one</code> <a href=\"www.example.com\">two</a></p>\n" +
-           "\n" +
-           "<pre><code>    code block [three]</code></pre>\n" +
-           "\n" +
-           "<pre><code>\n" +
-           " code block too [four]\n" +
-           "</code></pre>\n" +
-           "\n" +
-           "<p>simple text <code>five</code> <a href=\"www.example.com\">six</a></p>\n" +
-           "\n" +
-           "<pre><code>    $ code [seven]\n" +
-           "    $ code continues [eight] </code></pre>\n" +
-           "\n" +
-           "<p>code done <code></code> <code>nine</code></p>",
+    doTest("<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br></code>\n" +
+           "<p>text <code>one</code> <a href=\"www.example.com\">two</a>\n" +
+           "    code block <code>three</code></p><pre><code> code block too &lt;code&gt;four&lt;/code&gt;\n" +
+           "</code></pre><p>simple text <code>five</code> <a href=\"www.example.com\">six</a>\n" +
+           "    $ code <code>seven</code>\n" +
+           "\t$ code continues <code>eight</code> \n" +
+           "code done <code></code> <code>nine</code></p>",
            """
              ///    text [one] [two](www.example.com)
              ///     code block [three]
@@ -451,24 +423,18 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMarkdownUtil_testReplaceHeaders() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
-           "<h1>Hello1</h1>\n" +
-           "\n" +
-           "<h2>Hello2</h2>\n" +
-           "\n" +
-           "<h2>Hello3</h2>",
+    doTest("<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br></code>\n" +
+           "<h1>Hello1</h1><h2>Hello2</h2><h2>Hello3</h2>",
            """
              /// # Hello1
-             /// ## Hello2##
-             /// ## Hello3#
+             /// ## Hello2 ##
+             /// ## Hello3 ###
              <caret>foo(){}""");
   }
 
   public void testMarkdownUtil_testGenerateLists() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
-           "<ul><li>red</li>\n" +
-           "<li>green</li>\n" +
-           "<li>blue</li></ul>",
+    doTest("<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br></code>\n" +
+           "<ul><li>red</li><li>green</li><li>blue</li></ul>",
            """
              /// *   red
              /// *   green
