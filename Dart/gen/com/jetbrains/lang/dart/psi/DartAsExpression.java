@@ -10,6 +10,9 @@ public interface DartAsExpression extends DartExpression, DartReference {
   @Nullable
   DartExpression getExpression();
 
+  @Nullable
+  DartSwitchExpressionWrapper getSwitchExpressionWrapper();
+
   @NotNull
   DartType getType();
 

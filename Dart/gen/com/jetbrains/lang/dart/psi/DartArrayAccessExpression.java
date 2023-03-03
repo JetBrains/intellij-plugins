@@ -11,6 +11,9 @@ public interface DartArrayAccessExpression extends DartExpression, DartReference
   List<DartExpression> getExpressionList();
 
   @Nullable
+  DartSwitchExpressionWrapper getSwitchExpressionWrapper();
+
+  @Nullable
   DartTypeArguments getTypeArguments();
 
 }

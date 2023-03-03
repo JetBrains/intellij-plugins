@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartSwitchStatement extends DartPsiCompositeElement {
-
-  @Nullable
-  DartDefaultCase getDefaultCase();
+public interface DartSwitchExpression extends DartExpression {
 
   @NotNull
-  List<DartSwitchCase> getSwitchCaseList();
+  List<DartSwitchExpressionCase> getSwitchExpressionCaseList();
 
 }

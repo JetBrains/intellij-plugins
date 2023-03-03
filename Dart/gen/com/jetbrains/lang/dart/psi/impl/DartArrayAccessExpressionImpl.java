@@ -36,6 +36,12 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
 
   @Override
   @Nullable
+  public DartSwitchExpressionWrapper getSwitchExpressionWrapper() {
+    return findChildByClass(DartSwitchExpressionWrapper.class);
+  }
+
+  @Override
+  @Nullable
   public DartTypeArguments getTypeArguments() {
     return findChildByClass(DartTypeArguments.class);
   }

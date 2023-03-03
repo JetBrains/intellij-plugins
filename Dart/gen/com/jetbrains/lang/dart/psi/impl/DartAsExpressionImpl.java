@@ -35,6 +35,12 @@ public class DartAsExpressionImpl extends DartClassReferenceImpl implements Dart
   }
 
   @Override
+  @Nullable
+  public DartSwitchExpressionWrapper getSwitchExpressionWrapper() {
+    return findChildByClass(DartSwitchExpressionWrapper.class);
+  }
+
+  @Override
   @NotNull
   public DartType getType() {
     return findNotNullChildByClass(DartType.class);

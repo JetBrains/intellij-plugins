@@ -53,9 +53,6 @@ public interface DartForStatement extends DartPsiCompositeElement {
   DartReturnStatement getReturnStatement();
 
   @Nullable
-  DartSwitchStatement getSwitchStatement();
-
-  @Nullable
   DartTryStatement getTryStatement();
 
   @Nullable
