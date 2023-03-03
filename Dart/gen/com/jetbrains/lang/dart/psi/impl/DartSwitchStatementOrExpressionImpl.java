@@ -11,14 +11,15 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartSwitchStatementImpl extends DartPsiCompositeElementImpl implements DartSwitchStatement {
+public class DartSwitchStatementOrExpressionImpl extends DartExpressionImpl implements DartSwitchStatementOrExpression {
 
-  public DartSwitchStatementImpl(@NotNull ASTNode node) {
+  public DartSwitchStatementOrExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
+  @Override
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitSwitchStatement(this);
+    visitor.visitSwitchStatementOrExpression(this);
   }
 
   @Override
@@ -29,14 +30,8 @@ public class DartSwitchStatementImpl extends DartPsiCompositeElementImpl impleme
 
   @Override
   @Nullable
-  public DartDefaultCase getDefaultCase() {
-    return findChildByClass(DartDefaultCase.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartSwitchCase> getSwitchCaseList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSwitchCase.class);
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
   }
 
 }

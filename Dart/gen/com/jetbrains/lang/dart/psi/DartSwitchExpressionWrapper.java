@@ -5,18 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartIsExpression extends DartExpression {
+public interface DartSwitchExpressionWrapper extends DartPsiCompositeElement {
 
   @Nullable
   DartExpression getExpression();
-
-  @Nullable
-  DartSwitchExpressionWrapper getSwitchExpressionWrapper();
-
-  @NotNull
-  DartType getType();
-
-  @Nullable
-  DartTypeArguments getTypeArguments();
 
 }
