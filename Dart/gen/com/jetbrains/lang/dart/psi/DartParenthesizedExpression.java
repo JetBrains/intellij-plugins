@@ -50,9 +50,6 @@ public interface DartParenthesizedExpression extends DartExpression, DartReferen
   DartReturnStatement getReturnStatement();
 
   @Nullable
-  DartSwitchStatement getSwitchStatement();
-
-  @Nullable
   DartTryStatement getTryStatement();
 
   @Nullable

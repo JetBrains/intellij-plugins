@@ -50,9 +50,6 @@ public interface DartWhileStatement extends DartPsiCompositeElement {
   DartReturnStatement getReturnStatement();
 
   @Nullable
-  DartSwitchStatement getSwitchStatement();
-
-  @Nullable
   DartTryStatement getTryStatement();
 
   @Nullable

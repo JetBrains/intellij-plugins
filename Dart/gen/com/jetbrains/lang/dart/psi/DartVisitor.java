@@ -602,8 +602,24 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitSwitchExpression(@NotNull DartSwitchExpression o) {
+    visitExpression(o);
+  }
+
+  public void visitSwitchExpressionCase(@NotNull DartSwitchExpressionCase o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitSwitchExpressionWrapper(@NotNull DartSwitchExpressionWrapper o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitSwitchStatement(@NotNull DartSwitchStatement o) {
     visitPsiCompositeElement(o);
+  }
+
+  public void visitSwitchStatementOrExpression(@NotNull DartSwitchStatementOrExpression o) {
+    visitExpression(o);
   }
 
   public void visitSymbolLiteralExpression(@NotNull DartSymbolLiteralExpression o) {
