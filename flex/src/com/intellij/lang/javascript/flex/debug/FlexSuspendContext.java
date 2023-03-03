@@ -132,7 +132,7 @@ public class FlexSuspendContext extends XSuspendContext {
     final int line = fileNameAndIndexAndLine.third;
 
     if (!StringUtil.isEmpty(fileName)) {
-      file = flexDebugProcess.findFileByNameOrId(fileName, getPackageFromFrameText(frameText), fileId);
+      file = ReadAction.compute(() -> flexDebugProcess.findFileByNameOrId(fileName, getPackageFromFrameText(frameText), fileId));
 
       if (file == null) {
         // todo find position in decompiled code
