@@ -107,8 +107,4 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   override fun testAddExcessMembersToOtherFile() {
     // inapplicable
   }
-
-  override fun testIncludeLibByReference() {
-    // inapplicable
-  }
 }
