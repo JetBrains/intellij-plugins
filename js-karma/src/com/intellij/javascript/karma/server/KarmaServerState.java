@@ -46,13 +46,13 @@ public class KarmaServerState {
   private final List<String> myFailedToStartBrowsers = ContainerUtil.createLockFreeCopyOnWriteList();
   private volatile KarmaConfig myConfig;
 
-  public KarmaServerState(@NotNull KarmaServer server, @NotNull File configurationFile) {
+  public KarmaServerState(@NotNull KarmaServer server, @NotNull String configurationFilePath, @NotNull String workingDirectory) {
     myServer = server;
     myOverriddenBrowsers = parseBrowsers(findBrowsers(server.getServerSettings().getKarmaOptions()));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserCapturingFailedEventHandler());
-    myServer.registerStreamEventHandler(new ConfigHandler(configurationFile));
+    myServer.registerStreamEventHandler(new ConfigHandler(configurationFilePath, workingDirectory));
   }
 
   @NotNull
@@ -221,8 +221,14 @@ public class KarmaServerState {
 
     private final File myConfigurationFileDir;
 
-    ConfigHandler(@NotNull File configurationFile) {
-      myConfigurationFileDir = configurationFile.getParentFile();
+    public ConfigHandler(@NotNull String configurationFilePath, @NotNull String workingDirectory) {
+      File configFile = new File(configurationFilePath);
+      if (configFile.isFile()) {
+        myConfigurationFileDir = configFile.getParentFile();
+      }
+      else {
+        myConfigurationFileDir = new File(workingDirectory);
+      }
     }
 
     @NotNull

@@ -11,7 +11,9 @@ var intellijUtil = require('./intellijUtil')
 function setBasePath(config) {
   var path = require('path');
   var basePath = config.basePath || '.';
-  config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
+  if (originalConfigPath) {
+    config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
+  }
 }
 
 function configureDebug(config) {
@@ -63,12 +65,17 @@ function disableSingleRun(config) {
 }
 
 module.exports = function (config) {
-  var originalConfigModule = require(originalConfigPath);
-  // https://github.com/karma-runner/karma/blob/v1.7.0/lib/config.js#L364
-  if (typeof originalConfigModule === 'object' && typeof originalConfigModule.default !== 'undefined') {
-    originalConfigModule = originalConfigModule.default;
+  if (originalConfigPath) {
+    var originalConfigModule = require(originalConfigPath);
+    // https://github.com/karma-runner/karma/blob/v1.7.0/lib/config.js#L364
+    if (typeof originalConfigModule === 'object' && typeof originalConfigModule.default !== 'undefined') {
+      originalConfigModule = originalConfigModule.default;
+    }
+    originalConfigModule(config);
   }
-  originalConfigModule(config);
+  else {
+    require('./ng-template').getBuiltInKarmaConfig(config);
+  }
 
   var reporters = config.reporters;
   if (intellijUtil.isString(reporters)) {
