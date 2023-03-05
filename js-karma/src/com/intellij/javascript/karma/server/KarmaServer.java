@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
+import com.intellij.javascript.nodejs.execution.NodeTargetRunOptions;
 import com.intellij.javascript.nodejs.library.yarn.pnp.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testing.AngularCliConfig;
@@ -27,7 +28,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.text.SemVer;
@@ -171,9 +171,8 @@ public final class KarmaServer {
                                                         @Nullable KarmaCoveragePeer coveragePeer,
                                                         @NotNull ConsoleCommandLineFolder commandLineFolder)
     throws IOException, ExecutionException {
-    NodeTargetRun targetRun =
-      new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null,
-                        NodeTargetRun.createOptions(ThreeState.NO, List.of(), false, null, serverSettings.getRunConfiguration()));
+    NodeTargetRun targetRun = new NodeTargetRun(serverSettings.getNodeInterpreter(), project, null,
+                                                NodeTargetRunOptions.of(false, serverSettings.getRunConfiguration()));
     targetRun.setEnvData(serverSettings.getEnvData());
     TargetedCommandLineBuilder commandLine = targetRun.getCommandLineBuilder();
     commandLine.setWorkingDirectory(targetRun.path(serverSettings.getWorkingDirectorySystemDependent()));
