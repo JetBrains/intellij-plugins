@@ -69,15 +69,15 @@ public final class KarmaServer {
     KillableProcessHandler processHandler = startServer(project, serverSettings, myCoveragePeer, myCommandLineFolder);
     myTargetRun = NodeTargetRun.getTargetRun(processHandler);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
-    File configurationFile = myServerSettings.getConfigurationFile();
-    myState = new KarmaServerState(this, configurationFile);
+    String configurationFilePath = myServerSettings.getConfigurationFilePath();
+    myState = new KarmaServerState(this, configurationFilePath, myServerSettings.getWorkingDirectorySystemDependent());
     myProcessOutputManager = new KarmaProcessOutputManager(processHandler, myState::onStandardOutputLineAvailable);
     registerStreamEventHandlers();
     myProcessOutputManager.startNotify();
 
     myDisposable = new MyDisposable();
     Disposer.register(KarmaServerRegistry.getInstance(project), myDisposable);
-    myRestarter = new KarmaServerRestarter(configurationFile, myDisposable);
+    myRestarter = new KarmaServerRestarter(configurationFilePath, myDisposable);
 
     final int processHashCode = System.identityHashCode(processHandler.getProcess());
     LOG.info("Karma server " + processHashCode + " started successfully: " + processHandler.getCommandLine());
@@ -182,7 +182,8 @@ public final class KarmaServer {
       targetRun.addNodeOptionsWithExpandedMacros(false, "--inspect-brk=34598");
     }
     NodePackage pkg = serverSettings.getKarmaPackage();
-    String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
+    String configurationFilePath = serverSettings.getConfigurationFilePath();
+    String userConfigFileName = PathUtil.getFileName(configurationFilePath);
     // upload karma-intellij/ folder to the remote if needed
     targetRun.path(KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
@@ -200,7 +201,7 @@ public final class KarmaServer {
       SemVer version = pkg.getVersion();
       if (version == null || version.isGreaterOrEqualThan(6, 0, 0)) {
         AngularCliConfig config = AngularCliConfig.findProjectConfig(workingDir);
-        VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(serverSettings.getConfigurationFilePath());
+        VirtualFile karmaConfFile = LocalFileSystem.getInstance().findFileByPath(configurationFilePath);
         String defaultProject = config != null ? config.getProjectContainingFileOrDefault(karmaConfFile) : null;
         if (defaultProject != null) {
           commandLine.addParameter(defaultProject);
@@ -238,7 +239,8 @@ public final class KarmaServer {
     List<String> karmaOptions = ParametersListUtil.parse(serverSettings.getKarmaOptions());
     commandLine.addParameters(karmaOptions);
     commandLineFolder.addPlaceholderTexts(karmaOptions);
-    setIntellijParameter(commandLine, "user_config", targetRun.path(serverSettings.getConfigurationFilePath()));
+    setIntellijParameter(commandLine, "user_config", configurationFilePath.isEmpty() ? TargetValue.fixed("")
+                                                                                     : targetRun.path(configurationFilePath));
     if (coveragePeer != null) {
       setIntellijParameter(commandLine, "coverage_temp_dir", targetRun.path(coveragePeer.getCoverageTempDir().getAbsolutePath()));
       if (angularCli) {

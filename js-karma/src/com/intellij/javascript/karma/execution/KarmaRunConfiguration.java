@@ -168,7 +168,9 @@ public class KarmaRunConfiguration extends AbstractNodeTargetRunProfile
   private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
     NodeInterpreterUtil.checkForRunConfiguration(myRunSettings.getInterpreterRef().resolve(getProject()));
     karmaPackage.validateForRunConfiguration(KarmaUtil.KARMA_PACKAGE_NAME);
-    validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
+    if (!myRunSettings.getConfigPathSystemDependent().isEmpty() || !KarmaUtil.isAngularCliPkg(karmaPackage)) {
+      validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
+    }
     validatePath("working directory", myRunSettings.getWorkingDirectorySystemDependent(), false);
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       validatePath("test file", myRunSettings.getTestFileSystemDependentPath(), true);

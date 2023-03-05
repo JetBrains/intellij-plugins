@@ -10,7 +10,6 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.openapi.util.JDOMUtil
 import org.jdom.Element
-import java.io.File
 
 class KarmaServerSettings(private val executor: Executor,
                           val nodeInterpreter: NodeJsInterpreter,
@@ -24,9 +23,6 @@ class KarmaServerSettings(private val executor: Executor,
   val envData: EnvironmentVariablesData = settings.envData
   // Restart Karma server on extensions change, e.g. on adding a new Docker publish port
   private val myRunConfigurationExtensionsXml: String = runConfigurationExtensionsToXml(runConfiguration)
-
-  val configurationFile: File
-    get() = File(configurationFilePath)
 
   val isWithCoverage: Boolean
     get() = executor is CoverageExecutor
