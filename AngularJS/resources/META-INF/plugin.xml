@@ -4,7 +4,7 @@
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
     <p>Provides support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a>
-      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a></p>
+      to all JetBrains IDEs that <a href="https://www.jetbrains.com/products/#lang=js&type=ide">support JavaScript</a>.</p>
     <h2>Features</h2>
     <ul>
       <li>Code completion for Angular or AngularJS APIs in JavaScript or TypeScript files
