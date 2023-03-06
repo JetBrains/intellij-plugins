@@ -159,7 +159,7 @@ abstract class VmServiceBase implements VmServiceConst {
    *
    * @deprecated prefer the Url based constructor {@link VmServiceBase#connect}
    */
-  @Deprecated(forRemoval = true)
+  @Deprecated
   public static VmService localConnect(int port) throws IOException {
     return connect("ws://localhost:" + port + "/ws");
   }
