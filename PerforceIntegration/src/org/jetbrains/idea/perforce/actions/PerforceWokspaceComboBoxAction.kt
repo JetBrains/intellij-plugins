@@ -12,7 +12,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.ColorUtil
-import com.intellij.ui.JBColor
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
@@ -69,7 +69,7 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     if (isOnline)
       return workspace
 
-    val color = ColorUtil.toHex(JBColor.namedColor("Label.errorForeground"))
+    val color = ColorUtil.toHex(UIUtil.getErrorForeground())
     val builder = HtmlBuilder().append(
       HtmlChunk.html().addText("$workspace: ").child(HtmlChunk.font(color)
                                                        .addText(PerforceBundle.message("connection.status.offline"))))
