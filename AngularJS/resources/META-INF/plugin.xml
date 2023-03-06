@@ -29,6 +29,7 @@
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends>HtmlTools</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="tslint-support.xml">tslint</depends>
   <depends>intellij.webpack</depends>
