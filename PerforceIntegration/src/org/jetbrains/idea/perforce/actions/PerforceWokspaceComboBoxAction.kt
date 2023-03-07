@@ -13,6 +13,7 @@ import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
@@ -65,13 +66,13 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     return AllIcons.Vcs.Branch
   }
 
-  private fun getText(workspace: String, isOnline: Boolean): @NlsSafe String {
+  private fun getText(@Nls workspace: String, isOnline: Boolean): @NlsSafe String {
     if (isOnline)
       return workspace
 
     val color = ColorUtil.toHex(UIUtil.getErrorForeground())
     val builder = HtmlBuilder().append(
-      HtmlChunk.html().addText("$workspace: ").child(HtmlChunk.font(color)
+      HtmlChunk.html().addText("$workspace ").child(HtmlChunk.font(color)
                                                        .addText(PerforceBundle.message("connection.status.offline"))))
     return builder.toString()
   }
