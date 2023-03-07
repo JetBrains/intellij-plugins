@@ -118,7 +118,7 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
       else -> {
         val color = ColorUtil.toHex(UIUtil.getErrorForeground())
         val builder = HtmlBuilder().append(
-          HtmlChunk.html().addText("$workspace: ").child(HtmlChunk.font(color)
+          HtmlChunk.html().addText("$workspace ").child(HtmlChunk.font(color)
                                                           .addText(PerforceBundle.message("connection.status.offline"))))
         builder.toString()
       }
