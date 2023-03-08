@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.ui.ColorChooser;
+import com.intellij.ui.ColorChooserService;
 import com.intellij.ui.ColorLineMarkerProvider;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.ColorIcon;
@@ -168,8 +168,8 @@ public class FlexMxmlColorAnnotator implements Annotator {
           final Editor editor = e.getData(CommonDataKeys.EDITOR);
           if (editor != null) {
             Color currentColor = getColor(myColorValue);
-            final Color color = ColorChooser
-              .chooseColor(editor.getProject(), editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
+            final Color color = ColorChooserService.getInstance()
+              .showDialog(editor.getProject(), editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
             if (color != null && !color.equals(currentColor)) {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;
