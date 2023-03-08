@@ -1,9 +1,11 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
+import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.refactoring.suggested.createSmartPointer
 import org.angular2.entities.Angular2Declaration
 import org.angular2.entities.Angular2Entity
 import org.angular2.entities.Angular2Module
@@ -40,6 +42,10 @@ class Angular2MetadataModule(element: Angular2MetadataModuleStub) : Angular2Meta
 
   override fun areDeclarationsFullyResolved(): Boolean {
     return myModuleResolver.areDeclarationsFullyResolved()
+  }
+
+  override fun createPointer(): Pointer<out Angular2Module> {
+    return this.createSmartPointer()
   }
 
   companion object {

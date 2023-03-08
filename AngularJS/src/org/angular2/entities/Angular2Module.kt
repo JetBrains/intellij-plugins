@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.model.Pointer
 import org.angular2.entities.Angular2EntityUtils.forEachEntity
 import org.angular2.entities.Angular2EntityUtils.forEachModule
 
@@ -31,6 +32,8 @@ interface Angular2Module : Angular2Entity, Angular2ImportsOwner {
   fun areDeclarationsFullyResolved(): Boolean
 
   fun areExportsFullyResolved(): Boolean
+
+  override fun createPointer(): Pointer<out Angular2Module>
 
   companion object {
 

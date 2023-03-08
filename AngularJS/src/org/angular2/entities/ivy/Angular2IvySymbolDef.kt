@@ -65,6 +65,13 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
     override fun createEntity(): Angular2IvyModule {
       return Angular2IvyModule(this)
     }
+
+    fun createPointer(): Pointer<out Module> {
+      val fieldPtr = field.createSmartPointer()
+      return Pointer {
+        fieldPtr.dereference()?.let { Module(field) }
+      }
+    }
   }
 
   open class Directive internal constructor(fieldStubOrPsi: Any) : Entity(fieldStubOrPsi) {
@@ -149,6 +156,13 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
 
     override fun createEntity(): Angular2IvyPipe {
       return Angular2IvyPipe(this)
+    }
+
+    fun createPointer(): Pointer<out Pipe> {
+      val fieldPtr = field.createSmartPointer()
+      return Pointer {
+        fieldPtr.dereference()?.let { Pipe(field) }
+      }
     }
   }
 

@@ -4,6 +4,7 @@ package org.angular2.entities.source
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.model.Pointer
 import com.intellij.psi.util.CachedValueProvider
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.Angular2Pipe
@@ -18,4 +19,10 @@ class Angular2SourcePipe(decorator: ES6Decorator, implicitElement: JSImplicitEle
       CachedValueProvider.Result.create(
         Angular2EntityUtils.getPipeTransformMethods(typeScriptClass), classModificationDependencies)
     }
+
+  override fun createPointer(): Pointer<out Angular2Pipe> {
+    return createPointer { decorator, implicitElement ->
+      Angular2SourcePipe(decorator, implicitElement)
+    }
+  }
 }

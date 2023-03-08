@@ -4,6 +4,7 @@ package org.angular2.entities.ivy
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements
+import com.intellij.model.Pointer
 import com.intellij.psi.util.CachedValueProvider.Result
 import org.angular2.entities.*
 import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList
@@ -33,6 +34,13 @@ class Angular2IvyModule(entityDef: Angular2IvySymbolDef.Module)
 
   override fun areExportsFullyResolved(): Boolean {
     return myModuleResolver.areExportsFullyResolved()
+  }
+
+  override fun createPointer(): Pointer<Angular2IvyModule> {
+    val source = myEntityDef.createPointer()
+    return Pointer {
+      source.dereference()?.let { Angular2IvyModule(it) }
+    }
   }
 
   override fun areDeclarationsFullyResolved(): Boolean {

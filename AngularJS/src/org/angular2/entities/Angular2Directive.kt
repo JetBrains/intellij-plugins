@@ -28,7 +28,7 @@ interface Angular2Directive : Angular2Declaration {
   val isComponent: Boolean
     get() = false
 
-  fun createPointer(): Pointer<out Angular2Directive>
+  override fun createPointer(): Pointer<out Angular2Directive>
 
   companion object {
 
