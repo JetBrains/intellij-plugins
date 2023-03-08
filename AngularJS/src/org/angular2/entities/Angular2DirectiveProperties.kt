@@ -8,8 +8,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.WebSymbol
-import org.angular2.entities.Angular2DirectiveProperty.Companion.hasNonPrivateDocComment
-import org.angular2.entities.impl.TypeScriptElementDocumentationTarget
+import org.angular2.entities.impl.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.web.Angular2PsiSourcedSymbolDelegate
 import org.angular2.web.Angular2Symbol
@@ -88,19 +87,10 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
       return "<$delegate,$myOutput>"
     }
 
-    override fun getDocumentationTarget(): DocumentationTarget {
-      if (hasNonPrivateDocComment(delegate.sourceElement)) {
-        return TypeScriptElementDocumentationTarget(name, delegate.sourceElement)
-      }
-      if (hasNonPrivateDocComment(myOutput.sourceElement)) {
-        return TypeScriptElementDocumentationTarget(name, myOutput.sourceElement)
-      }
-      val clazz = PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java)
-      return if (clazz != null) {
-        TypeScriptElementDocumentationTarget(name, clazz)
-      }
-      else super.getDocumentationTarget()
-    }
+    override fun getDocumentationTarget(): DocumentationTarget =
+      Angular2ElementDocumentationTarget.create(
+        name, delegate, myOutput, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
+      ?: super.getDocumentationTarget()
   }
 
 }

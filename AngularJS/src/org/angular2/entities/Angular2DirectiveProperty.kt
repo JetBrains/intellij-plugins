@@ -2,10 +2,8 @@
 package org.angular2.entities
 
 import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.jsdoc.JSDocComment
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.documentation.DocumentationTarget
@@ -13,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
-import org.angular2.entities.impl.TypeScriptElementDocumentationTarget
+import org.angular2.entities.impl.Angular2ElementDocumentationTarget
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
@@ -54,22 +52,8 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty>
 
-  override fun getDocumentationTarget(): DocumentationTarget {
-    if (hasNonPrivateDocComment(sourceElement)) {
-      return TypeScriptElementDocumentationTarget(name, sourceElement)
-    }
-    val clazz = PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java)
-    return if (clazz != null) {
-      TypeScriptElementDocumentationTarget(name, clazz)
-    }
-    else super.getDocumentationTarget()
-  }
-
-  companion object {
-
-    fun hasNonPrivateDocComment(element: PsiElement): Boolean {
-      val comment = JSDocumentationUtils.findDocComment(element)
-      return comment is JSDocComment && comment.tags.none { tag -> "docs-private" == tag.name }
-    }
-  }
+  override fun getDocumentationTarget(): DocumentationTarget =
+    Angular2ElementDocumentationTarget.create(
+      name, this, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
+    ?: super.getDocumentationTarget()
 }

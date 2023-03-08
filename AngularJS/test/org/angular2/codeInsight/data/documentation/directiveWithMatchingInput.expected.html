@@ -1,1 +1,97 @@
-<div class='definition'><pre><span style="color:#000080;">set&#32;</span><span style="color:#7a7a43;">NgIf&lt;T&gt;.ngIf</span><span style="">(<br></span><span style="">&#32;&#32;&#32;&#32;condition:&#32;T)</span></pre></div><div class='content'><p>The Boolean expression to evaluate as the condition for showing a template.</div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_if.ts</td></table>
+<div class='definition'><pre><span style='color: #000080'>directive property</span> <span style='color: #660e7a'>ngIf</span><span style="">:&#32;T</span></pre></div><div class='content'><p>The Boolean expression to evaluate as the condition for showing a template.</div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_if.ts</td></table>
+<hr>
+<div class='definition'><pre><span style='color: #000080'>directive</span> <span style='color: #000000'>NgIf</span></pre></div><div class='content'><p>A structural directive that conditionally includes a template based on the value of
+an expression coerced to Boolean.
+When the expression evaluates to true, Angular renders the template
+provided in a <code>then</code> clause, and when  false or null,
+Angular renders the template provided in an optional <code>else</code> clause. The default
+template for the <code>else</code> clause is blank.
+<p>A <a href="guide/structural-directives#the-asterisk--prefix">shorthand form</a> of the directive,
+<code>*ngIf="condition"</code>, is generally used, provided
+as an attribute of the anchor element for the inserted template.
+Angular expands this into a more explicit version, in which the anchor element
+is contained in an <code>&lt;ng-template&gt;</code> element.
+<p>Simple form with shorthand syntax:
+<pre>&lt;div *ngIf="condition"&gt;Content to render when condition is true.&lt;/div&gt;
+</pre>
+<p>Simple form with expanded syntax:
+<pre>&lt;ng-template [ngIf]="condition"&gt;&lt;div&gt;Content to render when condition is
+true.&lt;/div&gt;&lt;/ng-template&gt;
+</pre>
+<p>Form with an &ldquo;else&rdquo; block:
+<pre>&lt;div *ngIf="condition; else elseBlock"&gt;Content to render when condition is true.&lt;/div&gt;
+&lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;
+</pre>
+<p>Shorthand form with &ldquo;then&rdquo; and &ldquo;else&rdquo; blocks:
+<pre>&lt;div *ngIf="condition; then thenBlock else elseBlock"&gt;&lt;/div&gt;
+&lt;ng-template #thenBlock&gt;Content to render when condition is true.&lt;/ng-template&gt;
+&lt;ng-template #elseBlock&gt;Content to render when condition is false.&lt;/ng-template&gt;
+</pre>
+<p>Form with storing the value locally:
+<pre>&lt;div *ngIf="condition as value; else elseBlock"&gt;{{value}}&lt;/div&gt;
+&lt;ng-template #elseBlock&gt;Content to render when value is null.&lt;/ng-template&gt;
+</pre>
+<h3>Usage Notes</h3>
+<p>The <code>*ngIf</code> directive is most commonly used to conditionally show an inline template,
+as seen in the following  example.
+The default <code>else</code> template is blank.
+<p>{@example common/ngIf/ts/module.ts region='NgIfSimple'}
+<h3>Showing an alternative template using <code>else</code></h3>
+<p>To display a template when <code>expression</code> evaluates to false, use an <code>else</code> template
+binding as shown in the following example.
+The <code>else</code> binding points to an <code>&lt;ng-template&gt;</code>  element labeled <code>#elseBlock</code>.
+The template can be defined anywhere in the component view, but is typically placed right after
+<code>ngIf</code> for readability.
+<p>{@example common/ngIf/ts/module.ts region='NgIfElse'}
+<h3>Using an external <code>then</code> template</h3>
+<p>In the previous example, the then-clause template is specified inline, as the content of the
+tag that contains the <code>ngIf</code> directive. You can also specify a template that is defined
+externally, by referencing a labeled <code>&lt;ng-template&gt;</code> element. When you do this, you can
+change which template to use at runtime, as shown in the following example.
+<p>{@example common/ngIf/ts/module.ts region='NgIfThenElse'}
+<h3>Storing a conditional result in a variable</h3>
+<p>You might want to show a set of properties from the same object. If you are waiting
+for asynchronous data, the object can be undefined.
+In this case, you can use <code>ngIf</code> and store the result of the condition in a local
+variable as shown in the following example.
+<p>{@example common/ngIf/ts/module.ts region='NgIfAs'}
+<p>This code uses only one <code>AsyncPipe</code>, so only one subscription is created.
+The conditional statement stores the result of <code>userStream|async</code> in the local variable <code>user</code>.
+You can then bind the local <code>user</code> repeatedly.
+<p>The conditional displays the data only if <code>userStream</code> returns a value,
+so you don't need to use the
+safe-navigation-operator (<code>?.</code>)
+to guard against null values when accessing properties.
+You can display an alternative template while waiting for the data.
+<h3>Shorthand syntax</h3>
+<p>The shorthand syntax <code>*ngIf</code> expands into two separate template specifications
+for the &ldquo;then&rdquo; and &ldquo;else&rdquo; clauses. For example, consider the following shorthand statement,
+that is meant to show a loading page while waiting for data to be loaded.
+<pre>&lt;div class="hero-list" *ngIf="heroes else loading"&gt;
+ ...
+&lt;/div&gt;
+
+&lt;ng-template #loading&gt;
+ &lt;div&gt;Loading...&lt;/div&gt;
+&lt;/ng-template&gt;
+</pre>
+<p>You can see that the &ldquo;else&rdquo; clause references the <code>&lt;ng-template&gt;</code>
+with the <code>#loading</code> label, and the template for the &ldquo;then&rdquo; clause
+is provided as the content of the anchor element.
+<p>However, when Angular expands the shorthand syntax, it creates
+another <code>&lt;ng-template&gt;</code> tag, with <code>ngIf</code> and <code>ngIfElse</code> directives.
+The anchor element containing the template for the &ldquo;then&rdquo; clause becomes
+the content of this unlabeled <code>&lt;ng-template&gt;</code> tag.
+<pre>&lt;ng-template [ngIf]="heroes" [ngIfElse]="loading"&gt;
+ &lt;div class="hero-list"&gt;
+  ...
+ &lt;/div&gt;
+&lt;/ng-template&gt;
+
+&lt;ng-template #loading&gt;
+ &lt;div&gt;Loading...&lt;/div&gt;
+&lt;/ng-template&gt;
+</pre>
+<p>The presence of the implicit template object has implications for the nesting of
+structural directives. For more on this subject, see
+<a href="https://angular.io/guide/structural-directives#one-per-element">Structural Directives</a>.</div><table class='sections'><tr><td valign='top' class='section'><p>NgModule:</td><td valign='top'><p>CommonModule</td><tr><td valign='top' class='section'><p>Public API</td><td valign='top'><p></td><tr><td valign='top' colspan='2'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/ng_if.ts</td></table>
