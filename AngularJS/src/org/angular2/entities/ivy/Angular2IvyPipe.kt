@@ -2,6 +2,7 @@
 package org.angular2.entities.ivy
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.model.Pointer
 import com.intellij.psi.util.CachedValueProvider
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.Angular2Pipe
@@ -16,4 +17,11 @@ class Angular2IvyPipe(entityDef: Angular2IvySymbolDef.Pipe) : Angular2IvyDeclara
       CachedValueProvider.Result.create(
         Angular2EntityUtils.getPipeTransformMethods(typeScriptClass), classModificationDependencies)
     }
+
+  override fun createPointer(): Pointer<Angular2IvyPipe> {
+    val source = myEntityDef.createPointer()
+    return Pointer {
+      source.dereference()?.let { Angular2IvyPipe(it) }
+    }
+  }
 }

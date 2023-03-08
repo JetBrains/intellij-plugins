@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.model.Pointer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
@@ -48,6 +49,12 @@ class Angular2SourceModule(decorator: ES6Decorator, implicitElement: JSImplicitE
 
   override fun areDeclarationsFullyResolved(): Boolean {
     return myModuleResolver.areDeclarationsFullyResolved()
+  }
+
+  override fun createPointer(): Pointer<out Angular2Module> {
+    return createPointer { decorator, implicitElement ->
+      Angular2SourceModule(decorator, implicitElement)
+    }
   }
 
   private class SourceSymbolCollector<T : Angular2Entity>(entityClass: Class<T>, private val myDecorator: ES6Decorator)

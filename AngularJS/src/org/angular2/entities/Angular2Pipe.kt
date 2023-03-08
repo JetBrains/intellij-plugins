@@ -2,8 +2,11 @@
 package org.angular2.entities
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
+import com.intellij.model.Pointer
 
 interface Angular2Pipe : Angular2Declaration {
 
   val transformMethods: Collection<TypeScriptFunction>
+
+  override fun createPointer(): Pointer<out Angular2Pipe>
 }

@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.model.Pointer
 import org.angular2.entities.Angular2EntitiesProvider.getDeclarationToModuleMap
 import java.util.*
 
@@ -23,4 +24,6 @@ interface Angular2Declaration : Angular2Entity {
       val map = getDeclarationToModuleMap(sourceElement.project)
       return Collections.unmodifiableCollection(map.get(this))
     }
+
+  override fun createPointer(): Pointer<out Angular2Declaration>
 }
