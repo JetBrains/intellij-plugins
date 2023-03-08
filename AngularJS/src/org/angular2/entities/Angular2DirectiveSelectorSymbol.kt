@@ -26,7 +26,7 @@ import com.intellij.webSymbols.WebSymbolOrigin
 import com.intellij.webSymbols.utils.createPsiRangeNavigationItem
 import com.intellij.xml.XmlElementDescriptor
 import org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement
-import org.angular2.entities.impl.TypeScriptElementDocumentationTarget
+import org.angular2.entities.impl.Angular2ElementDocumentationTarget
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolOrigin
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
@@ -127,11 +127,10 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
     return presentation
   }
 
-  override fun getDocumentationTarget(): DocumentationTarget {
-    val clazz = PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java)
-                ?: return super.getDocumentationTarget()
-    return TypeScriptElementDocumentationTarget(name, clazz)
-  }
+  override fun getDocumentationTarget(): DocumentationTarget =
+    Angular2ElementDocumentationTarget.create(
+      name, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
+    ?: super.getDocumentationTarget()
 
   override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {
     val parent = myParent.createPointer()

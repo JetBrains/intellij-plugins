@@ -77,7 +77,8 @@ class Angular2CompletionContributor : CompletionContributor() {
             continue
           }
           val match = bestMatch.first
-          var builder = LookupElementBuilder.create(key)
+          var builder = (match.typeScriptClass?.let { LookupElementBuilder.create(it, key) }
+                         ?: LookupElementBuilder.create(key))
             .withIcon(AngularJSIcons.Angular2)
             .withTypeText(Angular2Bundle.message("angular.description.pipe"), null, true)
             .withInsertHandler(JSLookupElementInsertHandler(false, null))
