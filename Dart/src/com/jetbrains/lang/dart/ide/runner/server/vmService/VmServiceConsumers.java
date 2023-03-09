@@ -2,10 +2,9 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import org.dartlang.vm.service.consumer.*;
-import org.dartlang.vm.service.element.ErrorRef;
-import org.dartlang.vm.service.element.RPCError;
-import org.dartlang.vm.service.element.Sentinel;
-import org.dartlang.vm.service.element.Success;
+import org.dartlang.vm.service.element.*;
+
+import java.util.List;
 
 public final class VmServiceConsumers {
 
@@ -37,7 +36,9 @@ public final class VmServiceConsumers {
     }
   }
 
-  public static abstract class BreakpointConsumerWrapper implements BreakpointConsumer {
+  public static abstract class BreakpointsConsumer {
+    abstract void received(List<Breakpoint> breakpointResponses, List<RPCError> errorResponses);
+
     abstract void sourcePositionNotApplicable();
   }
 
@@ -78,4 +79,15 @@ public final class VmServiceConsumers {
 
     abstract public void noGoodResult();
   }
+
+  public static abstract class EmptyResumeConsumer extends ConsumerWrapper implements ResumeConsumer {
+    @Override
+    public void received(Sentinel response) {
+    }
+
+    @Override
+    public void received(Success response) {
+    }
+  }
+
 }
