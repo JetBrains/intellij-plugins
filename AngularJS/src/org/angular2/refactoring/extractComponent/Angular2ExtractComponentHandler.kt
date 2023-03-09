@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.markup.HighlighterLayer
@@ -109,6 +110,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
             Angular2CliComponentGenerator.getInstance(project).generateComponent(cliDir, workingDir, arguments)
           }
           catch (e: Exception) {
+            thisLogger().warn("Couldn't create component with Angular CLI", e)
             showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.cli-error"))
             return
           }
@@ -120,7 +122,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
               .withName(Angular2Bundle.message("angular.refactor.extractComponent.dialog"))
               .withGlobalUndo()
               .withUndoConfirmationPolicy(UndoConfirmationPolicy.REQUEST_CONFIRMATION)
-              .run<Nothing> {
+              .run<Throwable> {
                 afterGenerator(project, editor, cliDir, extractedComponent, file, postProcessCli)
               }
           }
@@ -163,11 +165,13 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
         modifyComponentFile(project, sourceComponentFile, componentFile, componentClass, extractedComponent)
       }
       catch (e: Exception) {
+        thisLogger().warn("Something went wrong during file modification", e)
         showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
       }
 
     }
     catch (e: Exception) {
+      thisLogger().warn("Unexpected CLI output", e)
       showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.unexpected-cli-output"))
     }
   }
@@ -236,7 +240,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
                                   componentFile: PsiFile,
                                   componentClass: TypeScriptClass,
                                   extractedComponent: Angular2ExtractedComponent) {
-    val anchor = componentClass.constructors.first() ?: componentClass.lastChild
+    val anchor = componentClass.constructors.firstOrNull() ?: componentClass.lastChild
     val semicolon = JSCodeStyleSettings.getSemicolon(componentClass)
 
     var seenInput = false
