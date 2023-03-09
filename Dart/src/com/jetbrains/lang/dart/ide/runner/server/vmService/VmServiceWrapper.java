@@ -323,12 +323,6 @@ public class VmServiceWrapper implements Disposable {
       consumer.sourcePositionNotApplicable();
       return;
     }
-    //addRequest(() -> {
-    //  final int line = position.getLine() + 1;
-    //  for (String uri : myDebugProcess.getUrisForFile(position.getFile())) {
-    //    myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
-    //  }
-    //});
     if (supportsLookupPackageUris()) {
       addBreakpointWithVmService(isolateId, position, consumer);
     } else {
