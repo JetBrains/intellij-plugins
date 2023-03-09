@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -42,6 +43,17 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       Triple("unionItem", "string | number", "number"),
       Triple("cast", "string | boolean | number", "\"name\" | \"age\" | \"verified\""),
       Triple("aliased", "string | boolean", "\"name\" | \"verified\""),
+      iterations = 2
+    )
+  }
+
+  fun testVForScriptSetupTS_strict() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureByFile("vForScriptSetup-ts-strict.vue")
+    testVFor(
+      Triple("item", "string", "number"),
+      Triple("itemByRef", "string", "number"),
       iterations = 2
     )
   }
