@@ -1,5 +1,6 @@
+package com.intellij.aws.cloudformation.metadata
+
 import com.intellij.aws.cloudformation.CloudFormationConstants
-import com.intellij.aws.cloudformation.metadata.*
 
 private val nameRegex = Regex("^[a-zA-Z0-9.]+$")
 
