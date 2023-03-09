@@ -6,4 +6,7 @@ repositories {
   maven("https://download.jetbrains.com/teamcity-repository")
 }
 
-rootProject.extensions.add("targetVersion","222.3739.24")
+// Check marketplace for published plugin versions
+rootProject.extensions.add("targetVersion","231.8109.2")
+// See https://www.jetbrains.com/intellij-repository/snapshots - com.jetbrains.intellij.idea
+rootProject.extensions.add("iuVersion","231.8109.2-EAP-SNAPSHOT")
