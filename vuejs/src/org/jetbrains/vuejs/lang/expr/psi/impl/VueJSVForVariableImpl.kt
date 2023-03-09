@@ -11,10 +11,7 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.lang.javascript.psi.stubs.JSVariableStubBase
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
-import com.intellij.lang.javascript.psi.types.primitives.JSObjectType
-import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
-import com.intellij.lang.javascript.psi.types.primitives.JSStringType
+import com.intellij.lang.javascript.psi.types.primitives.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
@@ -51,7 +48,7 @@ class VueJSVForVariableImpl(node: ASTNode) :
       0 -> {
         val destructuringParents = JSTypeEvaluator.findDestructuringParents(this)
         val expression = evaluateContext.processedExpression
-        val type = when (val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()) {
+        val type = when (val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())) {
           is JSStringType -> getVForVarType(collectionExpr, ::JSStringType)
           is JSNumberType -> getVForVarType(collectionExpr, ::JSNumberType)
           is JSType -> {
@@ -74,7 +71,7 @@ class VueJSVForVariableImpl(node: ASTNode) :
         }
       }
       1 -> {
-        val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()
+        val collectionType = removeNullAndUndefinedFromUnion(JSResolveUtil.getElementJSType(collectionExpr)?.substitute())
         val type: JSType? = if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
           getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
         }
@@ -108,6 +105,15 @@ class VueJSVForVariableImpl(node: ASTNode) :
     }
     return true
   }
+
+  private fun removeNullAndUndefinedFromUnion(type: JSType?): JSType? =
+    if (type is JSUnionType)
+      JSCompositeTypeFactory.createUnionType(
+        type.source,
+        type.types.filter { it !is JSUndefinedType && it !is JSNullType }
+      )
+    else
+      type
 
   private fun createIndexedAccessType(collectionType: JSType): JSType {
     val keyOfType = JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
