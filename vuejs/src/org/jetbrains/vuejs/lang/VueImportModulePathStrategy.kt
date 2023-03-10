@@ -13,5 +13,5 @@ class VueImportModulePathStrategy : JSImportModulePathStrategy {
     return if (auto && extensionWithDot == VUE_FILE_EXTENSION) ExtensionSettings.FORCE_EXTENSION else null
   }
 
-  override fun getDefaultImplicitExtensions(place: PsiElement): Array<String> = VUE_DEFAULT_EXTENSIONS_WITH_DOT
+  override fun getDefaultImplicitExtensions(): Array<String> = VUE_DEFAULT_EXTENSIONS_WITH_DOT
 }
