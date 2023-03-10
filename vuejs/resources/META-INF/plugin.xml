@@ -80,6 +80,7 @@
     <pom.declarationSearcher implementation="org.jetbrains.vuejs.codeInsight.refs.VuePomDeclarationSearcher"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
+    <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
     <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>

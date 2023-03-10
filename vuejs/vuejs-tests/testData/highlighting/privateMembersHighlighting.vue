@@ -8,7 +8,7 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator'
 
-  <warning descr="Unused default export">export default</warning>
+  export default
   @Component({})
   class Index extends <error descr="No base constructor has the specified number of type arguments">Vue</error> {
 

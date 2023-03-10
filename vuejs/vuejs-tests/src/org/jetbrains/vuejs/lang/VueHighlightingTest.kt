@@ -576,6 +576,22 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
+  fun testLifecycleEventsVue2() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  }
+
+  fun testLifecycleEventsVue3() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
