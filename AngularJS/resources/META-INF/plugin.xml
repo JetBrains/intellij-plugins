@@ -128,7 +128,7 @@
                     serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
                     testServiceImplementation="org.angular2.refactoring.Angular2CliComponentGeneratorMockImpl"
     />
-    <platform.documentation.psiTargetProvider implementation="org.angular2.entities.impl.Angular2ElementDocumentationTargetFactory"/>
+    <platform.backend.documentation.psiTargetProvider implementation="org.angular2.entities.impl.Angular2ElementDocumentationTargetFactory"/>
 
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
