@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 class MdxImportModulePathStrategy : JSImportModulePathStrategy {
 
   private val extensions = arrayOf(".mdx")
-  override fun getDefaultImplicitExtensions(): Array<String> = extensions
+  override fun getDefaultImplicitExtensions(place: PsiElement): Array<String> = extensions
 
   override fun getPathSettings(place: PsiElement, extensionWithDot: String, auto: Boolean): ExtensionSettings? {
     return if (extensionWithDot == ".mdx") ExtensionSettings.FORCE_EXTENSION else null
