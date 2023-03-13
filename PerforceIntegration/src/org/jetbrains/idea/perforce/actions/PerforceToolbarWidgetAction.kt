@@ -1,13 +1,13 @@
 package org.jetbrains.idea.perforce.actions
 
 import com.intellij.icons.AllIcons
+import com.intellij.icons.ExpUiIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.ListPopupStep
-import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
@@ -33,7 +33,7 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     private val statusKey = Key.create<Boolean>("P4_STATUS")
   }
 
-  private val widgetIcon = IconLoader.getIcon("expui/general/vcs.svg", AllIcons::class.java)
+  private val widgetIcon = ExpUiIcons.General.Vcs
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
