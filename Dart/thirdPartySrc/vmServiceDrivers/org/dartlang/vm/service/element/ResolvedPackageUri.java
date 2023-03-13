@@ -11,13 +11,22 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dartlang.vm.service.consumer;
+package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-import org.dartlang.vm.service.element.ClientName;
+import com.google.gson.JsonObject;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public interface ClientNameConsumer extends Consumer {
-    void received(ClientName response);
+public class ResolvedPackageUri extends Response {
+    public ResolvedPackageUri(JsonObject json) {
+        super(json);
+    }
+
+    /**
+   * The file URI for a given package.
+   */
+    public String getResolvedUri() {
+        return getAsString("resolvedUri");
+    }
 }
