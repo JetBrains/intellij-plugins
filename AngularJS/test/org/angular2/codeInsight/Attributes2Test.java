@@ -1166,7 +1166,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
 
   public void testStyleUnitLengthCompletion() {
     myFixture.configureByFiles("package.json");
-    WebTestUtil.doCompletionItemsTest(myFixture, "styleUnitLengthCompletion.html");
+    WebTestUtil.doCompletionItemsTest(myFixture, "styleUnitLengthCompletion.html", false);
   }
 
   public void testStyleUnitLengthHighlighting() {
