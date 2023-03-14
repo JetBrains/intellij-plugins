@@ -46,6 +46,8 @@
     <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
     <braceMatcher filetype="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
     <quoteHandler fileType="Astro" className="com.intellij.javascript.JSQuoteHandler"/>
+    <lang.commenter language="Astro" implementationClass="com.intellij.lang.xml.XmlCommenter" />
+    <multiLangCommenter implementation="org.jetbrains.astro.editor.AstroCommentProvider"/>
 
     <stubElementTypeHolder class="org.jetbrains.astro.lang.parser.AstroStubElementTypes" externalIdPrefix="ASTRO:"/>
     <implicitUsageProvider implementation="org.jetbrains.astro.codeInsight.refs.AstroImplicitUsageProvider"/>
