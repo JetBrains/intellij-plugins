@@ -60,6 +60,14 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("newName")
   }
 
+  fun testQualifiedWatchProperty() {
+    doTest("newName")
+  }
+
+  fun testWatchProperty() {
+    doTest("newName")
+  }
+
   fun testInlineFieldRename() {
     myFixture.configureByFile("inlineField.vue")
     CodeInsightTestUtil.doInlineRename(VariableInplaceRenameHandler(), "foo", myFixture)

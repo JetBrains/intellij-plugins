@@ -1,5 +1,5 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.web.containers
+package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.ecmascript6.psi.*
@@ -176,17 +176,16 @@ class VueCodeModelSymbolsScope<K> private constructor(private val container: Vue
       } ?: emptyList()
 
     val toMerge = locations.flatMap { webTypesContributions[it] }
-    if (toMerge.isNotEmpty()) {
+    return if (toMerge.isNotEmpty())
       if (source is ES6ExportDefaultAssignment || source is HtmlFileImpl) {
         // Merge with the source component - we need to merge both ways
         val names = toMerge.asSequence().map { it.name }.plus(this.name).toSet()
-        return names.map { VueWebTypesMergedSymbol(it, this, toMerge) }
+        names.map { VueWebTypesMergedSymbol(it, this, toMerge) }
       }
-      else {
-        return listOf(VueWebTypesMergedSymbol(this.name, this, toMerge))
-      }
-    }
-    return listOf(this)
+      else
+        listOf(VueWebTypesMergedSymbol(this.name, this, toMerge))
+    else
+      listOf(this)
   }
 
   private fun symbolLocationsFromSpecifier(specifier: ES6ImportSpecifier?, symbolKind: String): List<WebTypesSymbolLocation> {

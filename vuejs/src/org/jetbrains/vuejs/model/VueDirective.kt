@@ -3,9 +3,8 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 
-interface VueDirective : VueNamedEntity, VueScopeElement, VueDocumentedItem {
+interface VueDirective : VueNamedEntity, VueScopeElement {
   val jsType: JSType? get() = null
   val modifiers: List<VueDirectiveModifier> get() = emptyList()
   val argument: VueDirectiveArgument? get() = null
