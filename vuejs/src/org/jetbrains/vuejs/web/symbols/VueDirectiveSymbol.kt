@@ -25,7 +25,7 @@ class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueP
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
+    if (namespace == WebSymbol.NAMESPACE_HTML
         && (kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_ARGUMENT || (name != null && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_DIRECTIVE_MODIFIERS))) {
       listOf(VueAnySymbol(this.origin, WebSymbol.NAMESPACE_HTML, kind, name ?: "Vue directive argument"))
     }

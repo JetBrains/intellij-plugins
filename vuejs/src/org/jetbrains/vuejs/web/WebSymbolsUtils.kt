@@ -5,9 +5,13 @@ import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.model.Symbol
 import com.intellij.refactoring.rename.api.RenameTarget
+import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
+import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_MODEL
@@ -44,3 +48,18 @@ fun VueModelVisitor.Proximity.asWebSymbolPriority(): WebSymbol.Priority =
     VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> WebSymbol.Priority.NORMAL
     VueModelVisitor.Proximity.OUT_OF_SCOPE -> WebSymbol.Priority.LOW
   }
+
+
+fun <T : VueSourceElement> List<T>.mapWithNameFilter(
+  name: String?,
+  params: WebSymbolsNameMatchQueryParams,
+  context: Stack<WebSymbolsScope>,
+  mapper: (T) -> WebSymbol
+): List<WebSymbol> =
+  if (name != null) {
+    asSequence()
+      .map(mapper)
+      .flatMap { it.match(name, context, params) }
+      .toList()
+  }
+  else this.map(mapper)

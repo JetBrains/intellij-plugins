@@ -1,5 +1,5 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package org.jetbrains.vuejs.web.containers
+package org.jetbrains.vuejs.web.scopes
 
 import com.intellij.model.Pointer
 import com.intellij.psi.xml.XmlTag
@@ -28,7 +28,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
+    if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
         && params.queryExecutor.allowResolve)
       getAvailableSlots(tag, name, true)
@@ -39,7 +39,7 @@ class VueAvailableSlotsScope(private val tag: XmlTag) : WebSymbolsScope {
                                   name: String?,
                                   params: WebSymbolsCodeCompletionQueryParams,
                                   scope: Stack<WebSymbolsScope>): List<WebSymbolCodeCompletionItem> =
-    if ((namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
+    if (namespace == WebSymbol.NAMESPACE_HTML
         && kind == VueWebSymbolsQueryConfigurator.KIND_VUE_AVAILABLE_SLOTS
         && params.queryExecutor.allowResolve)
       getAvailableSlotsCompletions(tag, name, params.position, true)

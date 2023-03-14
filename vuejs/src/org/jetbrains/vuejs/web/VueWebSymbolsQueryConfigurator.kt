@@ -1,23 +1,25 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web
 
-import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
-import com.intellij.webSymbols.WebSymbolsScope
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
+import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueSourceComponent
-import org.jetbrains.vuejs.web.containers.VueAvailableSlotsScope
-import org.jetbrains.vuejs.web.containers.VueCodeModelSymbolsScope
-import org.jetbrains.vuejs.web.containers.VueIncorrectlySelfReferredComponentFilteringScope
-import org.jetbrains.vuejs.web.containers.VueTopLevelElementsScope
+import org.jetbrains.vuejs.model.source.WATCH_PROP
+import org.jetbrains.vuejs.web.scopes.*
 
 class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
@@ -25,6 +27,8 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val KIND_VUE_TOP_LEVEL_ELEMENTS = "vue-file-top-elements"
     const val KIND_VUE_COMPONENTS = "vue-components"
     const val KIND_VUE_COMPONENT_PROPS = "props"
+    const val KIND_VUE_COMPONENT_COMPUTED_PROPERTIES = "computed-properties"
+    const val KIND_VUE_COMPONENT_DATA_PROPERTIES = "data-properties"
     const val KIND_VUE_DIRECTIVES = "vue-directives"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
     const val KIND_VUE_MODEL = "vue-model"
@@ -44,6 +48,10 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
                         context: WebSymbolsContext,
                         allowResolve: Boolean): List<WebSymbolsScope> {
     if (context.framework != VueFramework.ID || element == null) return emptyList()
+
+    if (element is JSElement && element !is XmlElement)
+      return getScopeForJSElement(element, allowResolve)
+
     val result = SmartList<WebSymbolsScope>()
     val tag = (element as? XmlAttribute)?.parent ?: element as? XmlTag
     val fileContext = element.containingFile?.originalFile ?: return emptyList()
@@ -59,6 +67,17 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     }
 
     return result
+  }
+
+  private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<WebSymbolsScope> {
+    if (element is JSProperty
+        && allowResolve
+        && element.context?.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
+      val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
+                               ?: return emptyList()
+      return listOf(VueWatchSymbolsScope(enclosingComponent))
+    }
+    return emptyList()
   }
 
   private fun addEntityContainers(element: PsiElement,

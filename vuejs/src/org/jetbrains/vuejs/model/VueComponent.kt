@@ -2,8 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.model.Pointer
-import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 
-interface VueComponent : VueNamedEntity, VueInstanceOwner, VueDocumentedItem {
+interface VueComponent : VueNamedEntity, VueInstanceOwner {
   fun createPointer(): Pointer<out VueComponent>
 }

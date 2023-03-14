@@ -9,7 +9,6 @@ import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.query.WebSymbolMatch
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
-import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueCompositionApp
 import org.jetbrains.vuejs.model.source.VueSourceContainer
@@ -18,6 +17,7 @@ import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import org.jetbrains.vuejs.web.VueComponentSourceNavigationTarget
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
+import org.jetbrains.vuejs.web.mapWithNameFilter
 
 class VueComponentSymbol(name: String, component: VueComponent, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueComponent>(name, component) {
@@ -57,11 +57,10 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
                           name: String?,
                           params: WebSymbolsNameMatchQueryParams,
                           scope: Stack<WebSymbolsScope>): List<WebSymbolsScope> =
-    if (namespace == null || namespace == WebSymbol.NAMESPACE_HTML)
+    if (namespace == WebSymbol.NAMESPACE_HTML)
       when (kind) {
         VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_PROPS -> {
           val props = mutableListOf<VueInputProperty>()
-          // TODO ambiguous resolution in case of duplicated names
           item.acceptPropertiesAndMethods(object : VueModelVisitor() {
             override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
               props.add(prop)
@@ -69,6 +68,26 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
             }
           })
           props.mapWithNameFilter(name, params, scope) { VueInputPropSymbol(it, item, this.origin) }
+        }
+        VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_DATA_PROPERTIES -> {
+          val props = mutableListOf<VueDataProperty>()
+          item.acceptPropertiesAndMethods(object : VueModelVisitor() {
+            override fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
+              props.add(dataProperty)
+              return true
+            }
+          }, onlyPublic = false)
+          props.mapWithNameFilter(name, params, scope) { VueDataPropertySymbol(it, item, this.origin) }
+        }
+        VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENT_COMPUTED_PROPERTIES -> {
+          val props = mutableListOf<VueComputedProperty>()
+          item.acceptPropertiesAndMethods(object : VueModelVisitor() {
+            override fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
+              props.add(computedProperty)
+              return true
+            }
+          }, onlyPublic = false)
+          props.mapWithNameFilter(name, params, scope) { VueComputedPropertySymbol(it, item, this.origin) }
         }
         WebSymbol.KIND_HTML_SLOTS -> {
           (item as? VueContainer)
@@ -108,16 +127,4 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
     }
   }
 
-
-  private fun <T> List<T>.mapWithNameFilter(name: String?,
-                                            params: WebSymbolsNameMatchQueryParams,
-                                            context: Stack<WebSymbolsScope>,
-                                            mapper: (T) -> WebSymbol): List<WebSymbol> =
-    if (name != null) {
-      asSequence()
-        .map(mapper)
-        .flatMap { it.match(name, context, params) }
-        .toList()
-    }
-    else this.map(mapper)
 }

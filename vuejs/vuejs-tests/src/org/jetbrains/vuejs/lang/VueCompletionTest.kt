@@ -34,7 +34,7 @@ class VueCompletionTest : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     // Let's ensure we don't get WebSymbols registry stack overflows randomly
-    this.enableIdempotenceChecksOnEveryCache();
+    this.enableIdempotenceChecksOnEveryCache()
   }
 
   fun testCompleteCssClasses() {
@@ -712,7 +712,7 @@ export default {
       assertNotNull(myFixture.lookupElements)
       val item: LookupElement? = myFixture.lookupElements?.firstOrNull { "callMe" == it.lookupString }
       assertNotNull(item)
-      val presentation = renderReal(item!!!!)
+      val presentation = renderReal(item!!)
       assertEquals("number", presentation.typeText)
       assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
     }
@@ -2117,6 +2117,19 @@ export default {
 
   fun testVueTscComponent() {
     doLookupTest(VueTestModule.VUE_3_2_2, dir = true, renderPriority = true, filter = { it.startsWith("!") })
+  }
+
+  fun testWatchProperty() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("watchProperty.vue")
+    myFixture.completeBasic()
+    myFixture.type("doubleA")
+    myFixture.lookup.let { lookup ->
+      lookup.currentItem = lookup.items.find { it.lookupString == "doubleAge." }
+    }
+    myFixture.type("\n")
+    myFixture.type("\n")
+    myFixture.checkResultByFile("watchProperty.after.vue")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
