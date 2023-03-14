@@ -3,19 +3,27 @@ package org.jetbrains.astro.editor
 
 import com.intellij.lang.Commenter
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.frameworks.jsx.JSXCommentProvider
+import com.intellij.lang.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.editing.JavascriptCommenter
+import com.intellij.lang.javascript.psi.JSEmbeddedContent
+import com.intellij.lang.xml.XmlCommenter
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiFile
+import com.intellij.psi.templateLanguages.MultipleLangCommentProvider
 import org.jetbrains.astro.lang.AstroLanguage
-import org.jetbrains.astro.lang.psi.AstroContentRoot
+import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 
-class AstroCommentProvider : JSXCommentProvider() {
-  override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter? {
-    val at = findFirstElementOnLine(file, editor)
-    val isRootElement = at?.parent?.parent is AstroContentRoot
-    // The default implementation falls back to an incompatible comment style for root elements
-    return if (isRootElement) JSXCommenter(file) else super.getLineCommenter(file, editor, lineStartLanguage, lineEndLanguage)
+class AstroCommentProvider : MultipleLangCommentProvider {
+  override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter {
+    val element = file.findElementAt(editor.caretModel.offset)
+    return if (
+      lineStartLanguage == AstroFrontmatterLanguage.INSTANCE ||
+      lineStartLanguage.baseLanguage == JavascriptLanguage.INSTANCE ||
+      element?.parent is JSEmbeddedContent ||
+      // Used for block comments because their language suddenly changes to Astro
+      element?.parent?.language == AstroFrontmatterLanguage.INSTANCE) JavascriptCommenter()
+    else XmlCommenter()
   }
 
   override fun canProcess(file: PsiFile, viewProvider: FileViewProvider): Boolean {

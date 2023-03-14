@@ -4,29 +4,29 @@ import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.astro.AstroCodeInsightTestCase
 
 class AstroCommenterTest : AstroCodeInsightTestCase() {
-  fun testJsxBlockComment() = doBlockCommentTest()
+  fun testBlockComment() = doBlockCommentTest()
 
-  fun testJsxBlockCommentMultilineSelection() = doBlockCommentTest()
+  fun testBlockCommentMultilineSelection() = doBlockCommentTest()
 
-  fun testJsxBlockCommentRootElement() = doBlockCommentTest()
+  fun testBlockCommentRootElement() = doBlockCommentTest()
 
-  fun testJsxBlockCommentRootElementMultilineSelection() = doBlockCommentTest()
+  fun testBlockCommentRootElementMultilineSelection() = doBlockCommentTest()
 
-  fun testJsxBlockCommentRootElementSelection() = doBlockCommentTest()
+  fun testBlockCommentRootElementSelection() = doBlockCommentTest()
 
-  fun testJsxBlockCommentSelection() = doBlockCommentTest()
+  fun testBlockCommentSelection() = doBlockCommentTest()
 
-  fun testJsxLineComment() = doLineCommentTest()
+  fun testLineComment() = doLineCommentTest()
 
-  fun testJsxLineCommentMultilineSelection() = doLineCommentTest()
+  fun testLineCommentMultilineSelection() = doLineCommentTest()
 
-  fun testJsxLineCommentRootElement() = doLineCommentTest()
+  fun testLineCommentRootElement() = doLineCommentTest()
 
-  fun testJsxLineCommentRootElementMultilineSelection() = doLineCommentTest()
+  fun testLineCommentRootElementMultilineSelection() = doLineCommentTest()
 
-  fun testJsxLineCommentRootElementSelection() = doLineCommentTest()
+  fun testLineCommentRootElementSelection() = doLineCommentTest()
 
-  fun testJsxLineCommentSelection() = doLineCommentTest()
+  fun testLineCommentSelection() = doLineCommentTest()
 
   fun testNestedScriptBlockComment() = doBlockCommentTest()
 
@@ -39,6 +39,8 @@ class AstroCommenterTest : AstroCodeInsightTestCase() {
   fun testNestedScriptLineCommentMultilineSelection() = doLineCommentTest()
 
   fun testNestedScriptLineCommentSelection() = doLineCommentTest()
+
+  fun testFrontmatterBlockUncomment() = doBlockCommentTest()
 
   override fun getBasePath() = "codeInsight/commenter"
 
