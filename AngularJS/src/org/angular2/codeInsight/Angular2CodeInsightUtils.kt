@@ -46,7 +46,7 @@ object Angular2CodeInsightUtils {
       override val priority: WebSymbol.Priority
         get() = WebSymbol.Priority.LOWEST
 
-      override fun prepare(context: InsertionContext, item: LookupElement): Runnable {
+      override fun prepare(context: InsertionContext, item: LookupElement, completeAfterInsert: Boolean): Runnable? {
         val templateBindings = Angular2TemplateBindings::class.java == elementClass
         val elementPointer =
           PsiTreeUtil.getParentOfType<PsiElement>(
@@ -54,7 +54,7 @@ object Angular2CodeInsightUtils {
             if (templateBindings) XmlAttribute::class.java else elementClass
           )
             ?.createSmartPointer()
-          ?: return Runnable { }
+          ?: return null
         return Runnable {
           WriteAction.run<RuntimeException> { PsiDocumentManager.getInstance(context.project).commitDocument(context.document) }
           var newElement = elementPointer.element ?: return@Runnable
