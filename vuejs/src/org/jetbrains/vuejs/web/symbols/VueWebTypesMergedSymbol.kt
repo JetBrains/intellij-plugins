@@ -164,7 +164,7 @@ class VueWebTypesMergedSymbol(override val name: String,
         }
       }
 
-  override fun createPointer(): Pointer<out WebSymbol> {
+  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
     val pointers = symbols.map { it.createPointer() }
     val matchedName = name
     return Pointer {
