@@ -128,7 +128,7 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
         WebSymbolHtmlAttributeValue.create(required = false)
       else null
 
-    override fun createPointer(): Pointer<out WebSymbol> {
+    override fun createPointer(): Pointer<Angular2OneTimeBinding> {
       val delegatePtr = this.delegate.createPointer()
       val requiresValue = this.requiresValue
       return Pointer {

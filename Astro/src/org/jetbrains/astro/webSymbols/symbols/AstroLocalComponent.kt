@@ -7,6 +7,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
+import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.astro.webSymbols.AstroProximity
@@ -33,15 +34,15 @@ class AstroLocalComponent(override val name: String,
     get() = AstroProjectSymbolOrigin
 
   override val namespace: SymbolNamespace
-    get() = WebSymbol.NAMESPACE_HTML
+    get() = NAMESPACE_HTML
 
   override val kind: SymbolKind
-    get() = WebSymbol.KIND_HTML_ELEMENTS
+    get() = KIND_HTML_ELEMENTS
 
   override val properties: Map<String, Any>
     get() = mapOf(Pair(AstroQueryConfigurator.PROP_ASTRO_PROXIMITY, AstroProximity.LOCAL))
 
-  override fun createPointer(): Pointer<out WebSymbol> {
+  override fun createPointer(): Pointer<out PsiSourcedWebSymbol> {
     val name = name
     val sourcePtr = source.createSmartPointer()
     return Pointer {

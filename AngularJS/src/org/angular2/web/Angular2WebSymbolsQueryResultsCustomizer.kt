@@ -166,26 +166,9 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       fun create(symbol: WebSymbol,
                  scopeProximity: DeclarationProximity): Angular2ScopedSymbol =
         when (symbol) {
-          is PsiSourcedWebSymbol ->
-            object : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
-
-              override val source: PsiElement?
-                get() = (delegate as PsiSourcedWebSymbol).source
-
-              override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-                super<Angular2ScopedSymbol>.getNavigationTargets(project)
-
-              override val psiContext: PsiElement?
-                get() = super<Angular2ScopedSymbol>.psiContext
-
-              override fun isEquivalentTo(symbol: Symbol): Boolean =
-                super<Angular2ScopedSymbol>.isEquivalentTo(symbol)
-            }
-          is RenameableSymbol, is RenameTarget ->
-            object : Angular2ScopedSymbol(symbol, scopeProximity), RenameableSymbol {
-              override val renameTarget: RenameTarget
-                get() = renameTargetFromDelegate()
-            }
+          is PsiSourcedWebSymbol -> Angular2PsiSourcedScopedSymbol(symbol, scopeProximity)
+          is RenameableSymbol,
+          is RenameTarget -> Angular2RenameableScopedSymbol(symbol, scopeProximity)
           else -> Angular2ScopedSymbol(symbol, scopeProximity)
         }
 
@@ -197,7 +180,12 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
       else
         WebSymbol.Priority.LOWEST
 
-    override fun createPointer(): Pointer<Angular2ScopedSymbol> {
+    override fun createPointer(): Pointer<out Angular2ScopedSymbol> =
+      createPointer(::Angular2ScopedSymbol)
+
+    protected fun <T : Angular2ScopedSymbol> createPointer(
+      create: (symbol: WebSymbol, scopeProximity: DeclarationProximity) -> T
+    ): Pointer<T> {
       val delegatePtr = delegate.createPointer()
       val scopeProximity = this.scopeProximity
       return Pointer {
@@ -220,5 +208,35 @@ class Angular2WebSymbolsQueryResultsCustomizer private constructor(private val c
     override val properties: Map<String, Any>
       get() = super.properties + Pair(PROP_SCOPE_PROXIMITY, scopeProximity)
 
+
+    private class Angular2RenameableScopedSymbol(symbol: WebSymbol,
+                                                 scopeProximity: DeclarationProximity)
+      : Angular2ScopedSymbol(symbol, scopeProximity), RenameableSymbol {
+      override val renameTarget: RenameTarget
+        get() = renameTargetFromDelegate()
+
+      override fun createPointer(): Pointer<Angular2RenameableScopedSymbol> =
+        createPointer(::Angular2RenameableScopedSymbol)
+    }
+
+    private class Angular2PsiSourcedScopedSymbol(symbol: WebSymbol,
+                                                 scopeProximity: DeclarationProximity)
+      : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
+
+      override val source: PsiElement?
+        get() = (delegate as PsiSourcedWebSymbol).source
+
+      override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+        super<Angular2ScopedSymbol>.getNavigationTargets(project)
+
+      override val psiContext: PsiElement?
+        get() = super<Angular2ScopedSymbol>.psiContext
+
+      override fun isEquivalentTo(symbol: Symbol): Boolean =
+        super<Angular2ScopedSymbol>.isEquivalentTo(symbol)
+
+      override fun createPointer(): Pointer<Angular2PsiSourcedScopedSymbol> =
+        createPointer(::Angular2PsiSourcedScopedSymbol)
+    }
   }
 }

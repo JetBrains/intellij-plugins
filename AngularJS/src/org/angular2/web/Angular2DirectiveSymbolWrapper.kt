@@ -8,7 +8,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
-import com.intellij.webSymbols.*
+import com.intellij.webSymbols.PsiSourcedWebSymbol
+import com.intellij.webSymbols.SymbolKind
+import com.intellij.webSymbols.SymbolNamespace
+import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
@@ -26,26 +29,9 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
                delegate: Angular2Symbol,
                forcedPriority: WebSymbol.Priority? = null): Angular2DirectiveSymbolWrapper =
       when (delegate) {
-        is PsiSourcedWebSymbol ->
-          object : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority), PsiSourcedWebSymbol {
-
-            override val source: PsiElement?
-              get() = (this.delegate as PsiSourcedWebSymbol).source
-
-            override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
-              super<Angular2DirectiveSymbolWrapper>.getNavigationTargets(project)
-
-            override fun isEquivalentTo(symbol: Symbol): Boolean =
-              super<Angular2DirectiveSymbolWrapper>.isEquivalentTo(symbol)
-
-            override val psiContext: PsiElement?
-              get() = super<Angular2DirectiveSymbolWrapper>.psiContext
-          }
-        is RenameableSymbol, is RenameTarget ->
-          object : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority), RenameableSymbol {
-            override val renameTarget: RenameTarget
-              get() = renameTargetFromDelegate()
-          }
+        is PsiSourcedWebSymbol -> Angular2PsiSourcedDirectiveSymbolWrapper(directive, delegate, forcedPriority)
+        is RenameableSymbol,
+        is RenameTarget -> Angular2RenameableDirectiveSymbolWrapper(directive, delegate, forcedPriority)
         else -> Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority)
       }
   }
@@ -58,6 +44,9 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
       WebSymbolHtmlAttributeValue.create(required = false)
     }
     else super.attributeValue
+
+  override fun createPointer(): Pointer<out Angular2SymbolDelegate<Angular2Symbol>> =
+    createPointer(::Angular2DirectiveSymbolWrapper)
 
   override val namespace: SymbolNamespace
     get() = delegate.namespace
@@ -72,7 +61,20 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
     return this == symbol || delegate.isEquivalentTo(symbol)
   }
 
-  override fun createPointer(): Pointer<Angular2DirectiveSymbolWrapper> {
+  override fun equals(other: Any?): Boolean =
+    other === this ||
+    other is Angular2DirectiveSymbolWrapper
+    && other.directive == directive
+    && other.delegate == delegate
+
+  override fun hashCode(): Int =
+    Objects.hash(directive, delegate)
+
+  protected fun <T : Angular2DirectiveSymbolWrapper> createPointer(
+    create: (directive: Angular2Directive,
+             delegate: Angular2Symbol,
+             forcedPriority: WebSymbol.Priority?) -> T
+  ): Pointer<T> {
     val directivePtr = directive.createPointer()
     val delegatePtr = delegate.createPointer()
     val forcedPriority = this.forcedPriority
@@ -83,13 +85,37 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
     }
   }
 
-  override fun equals(other: Any?): Boolean =
-    other === this ||
-    other is Angular2DirectiveSymbolWrapper
-    && other.directive == directive
-    && other.delegate == delegate
+  private class Angular2PsiSourcedDirectiveSymbolWrapper(directive: Angular2Directive,
+                                                         delegate: Angular2Symbol,
+                                                         forcedPriority: WebSymbol.Priority?)
+    : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority), PsiSourcedWebSymbol {
 
-  override fun hashCode(): Int =
-    Objects.hash(directive, delegate)
+    override val source: PsiElement?
+      get() = (this.delegate as PsiSourcedWebSymbol).source
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      super<Angular2DirectiveSymbolWrapper>.getNavigationTargets(project)
+
+    override fun isEquivalentTo(symbol: Symbol): Boolean =
+      super<Angular2DirectiveSymbolWrapper>.isEquivalentTo(symbol)
+
+    override fun createPointer(): Pointer<Angular2PsiSourcedDirectiveSymbolWrapper> =
+      createPointer(::Angular2PsiSourcedDirectiveSymbolWrapper)
+
+    override val psiContext: PsiElement?
+      get() = super<Angular2DirectiveSymbolWrapper>.psiContext
+  }
+
+  private class Angular2RenameableDirectiveSymbolWrapper(directive: Angular2Directive,
+                                                         delegate: Angular2Symbol,
+                                                         forcedPriority: WebSymbol.Priority?)
+    : Angular2DirectiveSymbolWrapper(directive, delegate, forcedPriority), RenameableSymbol {
+    override val renameTarget: RenameTarget
+      get() = renameTargetFromDelegate()
+
+    override fun createPointer(): Pointer<out Angular2SymbolDelegate<Angular2Symbol>> =
+      createPointer(::Angular2DirectiveSymbolWrapper)
+
+  }
 
 }
