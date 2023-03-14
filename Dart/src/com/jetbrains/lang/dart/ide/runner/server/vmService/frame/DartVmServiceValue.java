@@ -474,11 +474,29 @@ public class DartVmServiceValue extends XNamedValue {
     }
 
     final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
-    for (BoundField field : fields) {
-      final InstanceRef value = field.getValue();
-      if (value != null) {
-        childrenList
-          .add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, null, field.getDecl(), false));
+    if (getInstanceRef().getKind() == InstanceKind.Record) {
+      for (BoundField field : fields) {
+        assert field != null;
+        Object name = field.getName();
+        InstanceRef value = field.getValue();
+        if (name != null && value != null) {
+          final String n;
+          if (name instanceof String) {
+            n = (String)name;
+          } else {
+            n = "$" + (int)name;
+          }
+          childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, n, value, null, null, false));
+        }
+      }
+    }
+    else {
+      for (BoundField field : fields) {
+        final InstanceRef value = field.getValue();
+        if (value != null) {
+          childrenList
+            .add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, null, field.getDecl(), false));
+        }
       }
     }
     node.addChildren(childrenList, true);
