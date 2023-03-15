@@ -57,6 +57,7 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.source.PROPS_DEFAULT_PROP
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import org.jetbrains.vuejs.types.asCompleteType
@@ -360,6 +361,12 @@ fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
       (type as? JSBooleanLiteralTypeImpl)?.literal
     }
   ?: false
+
+fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
+  (expression as? JSObjectLiteralExpression)
+    ?.findProperty(PROPS_DEFAULT_PROP)
+    ?.jsType
+    ?.substitute()
 
 inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T

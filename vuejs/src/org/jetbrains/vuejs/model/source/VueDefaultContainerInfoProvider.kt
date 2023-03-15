@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
+import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.StubBasedPsiElement
@@ -211,7 +212,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val required: Boolean = isRequired(hasOuterDefault, sourceElement)
 
     override val source: VueImplicitElement =
-      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(!required),
+      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(isOptional(sourceElement)),
                          sourceElement, JSImplicitElement.Type.Property, true)
 
     override val jsType: JSType? = source.jsType
@@ -225,6 +226,16 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       // withDefaults call is incompatible, but defaults from props destructure should work
       if (hasOuterDefault) return false
       return getRequiredFromPropOptions((sourceElement as? JSProperty)?.initializerOrStub)
+    }
+
+    private fun isOptional(sourceElement: PsiElement?): Boolean {
+      val options = (sourceElement as? JSProperty)?.initializerOrStub
+      return when (val defaultType = getDefaultTypeFromPropOptions(options)) {
+        null -> !required
+        is JSUndefinedType -> true
+        is JSFunctionType -> defaultType.returnType?.substitute() is JSUndefinedType
+        else -> false
+      }
     }
 
   }

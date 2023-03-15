@@ -37,6 +37,7 @@ const val DELIMITERS_PROP = "delimiters"
 const val PROPS_PROP = "props"
 const val PROPS_TYPE_PROP = "type"
 const val PROPS_REQUIRED_PROP = "required"
+const val PROPS_DEFAULT_PROP = "default"
 const val EL_PROP = "el"
 
 const val INSTANCE_PROPS_PROP = "\$props"
