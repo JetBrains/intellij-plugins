@@ -12,13 +12,13 @@ import Component from 'vue-class-component'
 
 // Define the component in class-style
 @Component({
-             mounted() {
+   mounted() {
 
-             },
-             <warning descr="Unused function bar">bar</warning>() {
+   },
+   <warning descr="Unused function bar">bar</warning>() {
 
-             }
-           })
+   }
+})
 export default class Counter extends Vue {
   // Class properties will be component data
   count = 0

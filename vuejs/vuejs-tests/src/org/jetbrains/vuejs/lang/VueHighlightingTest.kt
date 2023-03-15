@@ -576,7 +576,7 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
-  fun testLifecycleEventsVue2() {
+  fun testLifecycleEventsVue2ClassComponent() {
     myFixture.enableInspections(
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
@@ -584,7 +584,23 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
   }
 
-  fun testLifecycleEventsVue3() {
+  fun testLifecycleEventsVue2VueExtend() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+  }
+
+  fun testLifecycleEventsVue3Options() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testLifecycleEventsVue3DefineComponent() {
     myFixture.enableInspections(
       JSUnusedLocalSymbolsInspection(),
       JSUnusedGlobalSymbolsInspection()
