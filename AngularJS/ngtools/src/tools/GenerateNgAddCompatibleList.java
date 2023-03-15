@@ -70,24 +70,24 @@ public final class GenerateNgAddCompatibleList {
   }
 
   public static void generate() throws Exception {
-    Map<String, NodePackageBasicInfo> angularPkgs = new ConcurrentHashMap<>();
-    NpmRegistryService service = new NpmRegistryServiceImpl();
-
     ApplicationImpl app = (ApplicationImpl)ApplicationManager.getApplication();
     Field f = ApplicationImpl.class.getDeclaredField("myTestModeFlag");
     f.setAccessible(true);
     f.setBoolean(app, false);
 
+    Map<String, NodePackageBasicInfo> angularPkgs = new ConcurrentHashMap<>();
+    NpmRegistryService service = new NpmRegistryServiceImpl();
+
     Consumer<NodePackageBasicInfo> addPkg = pkg -> angularPkgs.merge(pkg.getName(), pkg, (p1, p2) -> {
       if (!StringUtil.equals(p1.getDescription(), p2.getDescription())) {
         System.err.println("Different descriptions for " +
                            p1.getName() +
-                           " (keeping the first one):\n- " +
+                           " (taking the new one - second):\n- " +
                            p1.getDescription() +
                            "\n- " +
                            p2.getDescription());
       }
-      return p1;
+      return p2;
     });
     System.out.println("Current directory: " + new File(".").getCanonicalPath());
     System.out.println("Reading existing list of packages");
@@ -200,14 +200,14 @@ public final class GenerateNgAddCompatibleList {
         candidates[0] = "WebStorm";
       }
       File tmpPath = FileUtil.createTempDirectory("ng-add-gen", null, true);
-      System.out.println("Using temporary configuration folder: " + tmpPath.toString());
-      System.setProperty(PathManager.PROPERTY_PLUGINS_PATH, tmpPath.toString() + "/plugins");
-      System.setProperty(PathManager.PROPERTY_SYSTEM_PATH, tmpPath.toString() + "/system");
-      System.setProperty(PathManager.PROPERTY_CONFIG_PATH, tmpPath.toString() + "/config");
+      System.out.println("Using temporary configuration folder: " + tmpPath);
+      System.setProperty(PathManager.PROPERTY_PLUGINS_PATH, tmpPath + "/plugins");
+      System.setProperty(PathManager.PROPERTY_SYSTEM_PATH, tmpPath + "/system");
+      System.setProperty(PathManager.PROPERTY_CONFIG_PATH, tmpPath + "/config");
       TestApplicationManager.getInstance();
     }
     catch (Throwable t) {
-      //ignore
+      throw new RuntimeException(t);
     }
   }
 }
