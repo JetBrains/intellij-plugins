@@ -53,6 +53,12 @@
               }
             }
           ]
+        },
+        {
+          "name": "Astro component",
+          "pattern": {
+            "items": "/html/astro-components"
+          }
         }
       ],
       "attributes": [
@@ -77,6 +83,13 @@
               "#item"
             ]
           }
+        }
+      ],
+      "astro-components": [
+        {
+          "name": "Fragment",
+          "doc-url": "https://docs.astro.build/en/core-concepts/astro-syntax/#fragments--multiple-elements",
+          "description": "When using an expression to dynamically create multiple elements, you should wrap these elements inside a fragment as you would in JavaScript and JSX. Astro supports using either `<Fragment></Fragment>` or the shorthand `<></>`."
         }
       ],
       "astro-common-directives": [
