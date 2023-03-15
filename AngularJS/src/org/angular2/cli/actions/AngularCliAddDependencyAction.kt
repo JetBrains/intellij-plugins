@@ -304,22 +304,24 @@ class AngularCliAddDependencyAction : DumbAwareAction() {
           throw ExecutionException(Angular2Bundle.message("angular.action.ng-add.pacakge-not-installed"))
         }
         val module = modules[0]
-        val handler = NpmPackageProjectGenerator.generate(
-          interpreter, NodePackage(module.virtualFile!!.path),
-          { pkg -> pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)!!.absolutePath },
-          cli, VfsUtilCore.virtualToIoFile(cli),
-          project, { GistManager.getInstance().invalidateData() },
-          Angular2Bundle.message("angular.action.ng-add.installing-for", packageSpec, cli.name),
-          arrayOf<Filter>(AngularCliFilter(project, cli.path)),
-          "add", packageSpec)
-        if (proposeLatestVersionIfNeeded) {
-          handler.addProcessListener(object : ProcessAdapter() {
-            override fun processTerminated(event: ProcessEvent) {
-              if (event.exitCode != 0) {
-                installLatestIfFeasible(project, cli, packageSpec)
+        ApplicationManager.getApplication().executeOnPooledThread {
+          val handler = NpmPackageProjectGenerator.generate(
+            interpreter, NodePackage(module.virtualFile!!.path),
+            { pkg -> pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)!!.absolutePath },
+            cli, VfsUtilCore.virtualToIoFile(cli),
+            project, { GistManager.getInstance().invalidateData() },
+            Angular2Bundle.message("angular.action.ng-add.installing-for", packageSpec, cli.name),
+            arrayOf<Filter>(AngularCliFilter(project, cli.path)),
+            "add", packageSpec)
+          if (proposeLatestVersionIfNeeded) {
+            handler.addProcessListener(object : ProcessAdapter() {
+              override fun processTerminated(event: ProcessEvent) {
+                if (event.exitCode != 0) {
+                  installLatestIfFeasible(project, cli, packageSpec)
+                }
               }
-            }
-          })
+            })
+          }
         }
       }
       catch (e: Exception) {
