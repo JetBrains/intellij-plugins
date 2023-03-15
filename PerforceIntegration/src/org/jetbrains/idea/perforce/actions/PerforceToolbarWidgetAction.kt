@@ -15,7 +15,6 @@ import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.openapi.wm.impl.ExpandableComboAction
 import com.intellij.openapi.wm.impl.ToolbarComboWidget
 import com.intellij.ui.ColorUtil
-import com.intellij.ui.popup.util.PopupImplUtil
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.idea.perforce.PerforceBundle
 import org.jetbrains.idea.perforce.application.PerforceManager
@@ -44,7 +43,7 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     val popupFactory = JBPopupFactory.getInstance()
     val widget = event.getData(PlatformCoreDataKeys.CONTEXT_COMPONENT) as? ToolbarComboWidget?
     val step = createStep(popupFactory, widget, actionGroup, event.dataContext)
-    return createPopup(project, popupFactory, widget, step)
+    return createPopup(project, popupFactory, step)
   }
 
   private fun createStep(popupFactory: JBPopupFactory, widget: ToolbarComboWidget?, actionGroup: ActionGroup, context: DataContext): ListPopupStep<Any> {
@@ -52,11 +51,9 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
                                           null, widget, false, 0, false)
   }
 
-  private fun createPopup(project: Project, popupFactory: JBPopupFactory, widget: ToolbarComboWidget?, step: ListPopupStep<Any>): ListPopup {
+  private fun createPopup(project: Project, popupFactory: JBPopupFactory, step: ListPopupStep<Any>): ListPopup {
     val renderer = Function<ListCellRenderer<Any>, ListCellRenderer<out Any>> { base -> base }
-    val popup = popupFactory.createListPopup(project, step, renderer)
-    PopupImplUtil.setPopupToggleButton(popup, widget)
-    return popup
+    return popupFactory.createListPopup(project, step, renderer)
   }
 
   override fun update(e: AnActionEvent) {
