@@ -68,6 +68,26 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testPropsWithDefaultTS() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureByFile("propsWithDefault-ts.vue")
+
+    val strict = "\"center\" | \"left\" | \"right\""
+    val optional = "\"center\" | \"left\" | \"right\" | undefined"
+
+    doTest(
+      "align1" to strict,
+      "align2" to optional,
+      "align3" to strict,
+      "align4" to strict,
+      "align5" to optional,
+      "align6" to optional,
+      "align7" to optional,
+      "align8" to strict,
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {
@@ -80,6 +100,15 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       val index = findReferenceBySignature("${test.first}<caret>2Ind }}")
       TestCase.assertNotNull("${test.first}2Ind", index)
       assertEquals("${test.first}2Ind", test.third, getElementTypeText(index))
+    }
+  }
+
+  private fun doTest(vararg testCases: Pair<String, String>, prefix: String = "{{ ") {
+    for (test in testCases) {
+      val element = findReferenceBySignature("$prefix<caret>${test.first}")
+      TestCase.assertNotNull(test.first, element)
+      val expected = test.second
+      assertEquals(test.first, expected, getElementTypeText(element))
     }
   }
 
