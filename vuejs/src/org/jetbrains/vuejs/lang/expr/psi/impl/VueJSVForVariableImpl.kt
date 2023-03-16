@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl
@@ -122,12 +123,12 @@ class VueJSVForVariableImpl(node: ASTNode) :
   }
 
   private fun getVForVarType(source: PsiElement, vararg types: (Boolean, JSTypeSource, JSTypeContext) -> JSType): JSType? {
-    val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
+    val typeSource = JSTypeSourceFactory.createTypeSource(source, DialectDetector.isTypeScript(source))
     return getVForVarType(source, *types.map { it(true, typeSource, JSTypeContext.INSTANCE) }.toTypedArray())
   }
 
   private fun getVForVarType(source: PsiElement, vararg types: JSType): JSType? {
-    val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
+    val typeSource = JSTypeSourceFactory.createTypeSource(source, DialectDetector.isTypeScript(source))
     val tupleType = JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false)
     return (tupleType.toArrayType(false) as JSArrayType).type
   }
@@ -138,7 +139,7 @@ class VueJSVForVariableImpl(node: ASTNode) :
     }
 
     return when (val iterableType = type.iterableType) {
-      is JSNumberType -> iterableType
+      is JSNumberType, is JSStringType -> iterableType
       is JSTypeImpl, is JSWrapperType -> createIndexedAccessType(iterableType.asRecordType())
       else -> type
     }
