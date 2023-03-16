@@ -693,7 +693,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     NotificationsConfiguration.getNotificationsConfiguration()
       .changeSettings(getCompileBeforeLaunchNotificationGroup().getDisplayId(), NotificationDisplayType.NONE, false, false);
     ToolWindowManager.getInstance(project)
-      .notifyByBalloon(EventLog.LOG_TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
+      .notifyByBalloon(ActionCenter.TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
   }
 
   private static void checkDebuggerFromSdk4(final Project project,
