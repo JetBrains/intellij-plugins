@@ -106,4 +106,8 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     myFixture.allowTreeAccessForAllFiles()
     myFixture.testHighlighting()
   }
+
+  fun testTSOverVuePriority() {
+    doHighlightOnlyTestWithCopyDirectory(extension)
+  }
 }
