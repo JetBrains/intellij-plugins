@@ -26,7 +26,38 @@
         {
           "name": "Vue component",
           "pattern": {
-            "items": "/html/vue-components"
+            "or": [
+              {
+                "items": "/html/vue-components"
+              },
+              {
+                "items":"/js/vue-component-namespaces",
+                "template":  [
+                  "#item",
+                  {
+                    "items": [
+                      {
+                        "path": "/html/vue-components",
+                        "name-conversion": {
+                          "canonical-names": "as-is",
+                          "match-names": ["as-is"],
+                          "name-variants": ["as-is"]
+                        }
+                      },
+                      "/js/vue-component-namespaces"
+                    ],
+                    "template": [
+                      ".",
+                      "#...",
+                      "#item"
+                    ],
+                    "repeat": true,
+                    "unique": false,
+                    "required": false
+                  }
+                ]
+              }
+            ]
           },
           "attributes": [
             {

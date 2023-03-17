@@ -2132,6 +2132,21 @@ export default {
     myFixture.checkResultByFile("watchProperty.after.vue")
   }
 
+  fun testNamespacedComponents() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureFromTempProjectFile("scriptSetup.vue")
+    myFixture.type("Forms.")
+    myFixture.completeBasic()
+    myFixture.type("Fo\n")
+    myFixture.type(".")
+    myFixture.completeBasic()
+    myFixture.type("In\n :")
+    myFixture.completeBasic()
+    myFixture.type("fo\n")
+    myFixture.checkResultByFile("${getTestName(true)}/scriptSetup_after.vue")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
