@@ -43,7 +43,7 @@
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="library" name="caffeine" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.web" />
-    <orderEntry type="library" name="Velocity" level="project" />
+    <orderEntry type="library" name="commons-lang" level="project" />
     <orderEntry type="module" module-name="intellij.platform.webSymbols" />
     <orderEntry type="module" module-name="intellij.postcss" />
   </component>
