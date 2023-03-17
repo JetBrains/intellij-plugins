@@ -14,11 +14,10 @@ import com.intellij.util.asSafely
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueCompositionApp
-import org.jetbrains.vuejs.model.source.VueSourceComponent
-import org.jetbrains.vuejs.model.source.WATCH_PROP
+import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.web.scopes.*
 
 class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -34,6 +33,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val KIND_VUE_MODEL = "vue-model"
     const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
     const val KIND_VUE_DIRECTIVE_MODIFIERS = "modifiers"
+    const val KIND_VUE_COMPONENT_NAMESPACES = "vue-component-namespaces"
 
     const val PROP_VUE_MODEL_PROP = "prop"
     const val PROP_VUE_MODEL_EVENT = "event"
@@ -59,6 +59,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     if (allowResolve) {
       addEntityContainers(element, fileContext, result)
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
+      findModule(tag, true)?.let { result.add(VueScriptSetupNamespacedComponentsScope(it)) }
     }
 
     // Top level tags
