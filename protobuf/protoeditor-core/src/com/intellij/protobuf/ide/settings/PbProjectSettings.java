@@ -16,14 +16,22 @@
 package com.intellij.protobuf.ide.settings;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.util.BackgroundTaskUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.lang.PbFileType;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -35,25 +43,45 @@ import java.util.Objects;
 
 /** A persistent service that stores protobuf settings. */
 @State(name = "ProtobufLanguageSettings", storages = @Storage("protoeditor.xml"))
-public final class PbProjectSettings implements PersistentStateComponent<PbProjectSettings.State> {
+public final class PbProjectSettings implements PersistentStateComponent<PbProjectSettings.State>, Disposable {
   private State state;
+  private final Project project;
 
-  public PbProjectSettings() {
-    this(new State());
+  public PbProjectSettings(@NotNull Project project) {
+    this(project, new State());
   }
 
   @NonInjectable
-  private PbProjectSettings(State state) {
+  private PbProjectSettings(@NotNull Project project, State state) {
     this.state = state;
+    this.project = project;
+  }
+
+  @Override
+  public void dispose() {
+
   }
 
   public static PbProjectSettings getInstance(Project project) {
     return project.getService(PbProjectSettings.class);
   }
 
-  public static void notifyUpdated(Project project) {
-    getInstance(project).state.incModificationCount();
-    DaemonCodeAnalyzer.getInstance(project).restart();
+  public static void notifyUpdated(Project project)  {
+    PbProjectSettings serviceInstance = getInstance(project);
+    serviceInstance.state.incModificationCount();
+
+    BackgroundTaskUtil.executeOnPooledThread(serviceInstance, () -> {
+      ReadAction.run(() -> {
+        for (VirtualFile file : FileEditorManager.getInstance(project).getOpenFiles()) {
+          if (file.getFileType() == PbFileType.INSTANCE) {
+            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+            if (psiFile != null) {
+              DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+            }
+          }
+        }
+      });
+    });
   }
 
   public static ModificationTracker getModificationTracker(Project project) {
@@ -108,7 +136,7 @@ public final class PbProjectSettings implements PersistentStateComponent<PbProje
   }
 
   public PbProjectSettings copy() {
-    return new PbProjectSettings(XmlSerializer.deserialize(XmlSerializer.serialize(state), State.class));
+    return new PbProjectSettings(project, XmlSerializer.deserialize(XmlSerializer.serialize(state), State.class));
   }
 
   @Override

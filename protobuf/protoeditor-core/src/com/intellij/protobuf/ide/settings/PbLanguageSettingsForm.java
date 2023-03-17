@@ -221,7 +221,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private boolean isDescriptorPathValid() {
-    PbProjectSettings tempSettings = new PbProjectSettings();
+    PbProjectSettings tempSettings = new PbProjectSettings(project);
     applyNoNotify(tempSettings);
     FileResolveProvider provider = new SettingsFileResolveProvider(tempSettings);
     return provider.getDescriptorFile(project) != null;

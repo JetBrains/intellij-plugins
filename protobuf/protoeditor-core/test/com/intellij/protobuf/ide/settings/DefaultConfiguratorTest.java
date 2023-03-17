@@ -99,7 +99,7 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
               model2.commit();
             });
 
-    PbProjectSettings settings = new PbProjectSettings();
+    PbProjectSettings settings = new PbProjectSettings(project);
     // The default project's directory exists in some temp path that shouldn't descend from
     // /google3/.
     settings = new DefaultConfigurator().configure(project, settings);
