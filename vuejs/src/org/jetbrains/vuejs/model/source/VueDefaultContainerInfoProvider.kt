@@ -212,10 +212,13 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val required: Boolean = isRequired(hasOuterDefault, sourceElement)
 
     override val source: VueImplicitElement =
-      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(isOptional(sourceElement)),
+      VueImplicitElement(name, createType(sourceElement, isOptional(sourceElement)),
                          sourceElement, JSImplicitElement.Type.Property, true)
 
-    override val jsType: JSType? = source.jsType
+    override val jsType: JSType? = createType(sourceElement, !required)
+
+    private fun createType(sourceElement: PsiElement, optional: Boolean) =
+      (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(optional)
 
     override fun toString(): String {
       return "VueSourceInputProperty(name='$name', required=$required, jsType=$jsType)"
