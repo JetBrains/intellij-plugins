@@ -236,8 +236,8 @@
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
     <lang.syntaxHighlighterFactory language="VueTS"
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueTSHighlighterFactory"/>
-    <idIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
-    <todoIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueTodoIndexer"/>
+    <idIndexer filetype="Vue.js" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
+    <todoIndexer filetype="Vue.js" implementationClass="org.jetbrains.vuejs.lang.html.index.VueTodoIndexer"/>
 
     <codeInsight.parameterInfo language="VueExpr" implementationClass="com.intellij.javascript.JSParameterInfoHandler"/>
     <codeInsight.parameterNameHints language="Vue"
