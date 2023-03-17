@@ -73,18 +73,22 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
     myFixture.configureByFile("propsWithDefault-ts.vue")
 
-    val strict = "\"center\" | \"left\" | \"right\""
-    val optional = "\"center\" | \"left\" | \"right\" | undefined"
+    val strictUnion = "\"center\" | \"left\" | \"right\""
+    val optionalUnion = "\"center\" | \"left\" | \"right\" | undefined"
 
     doTest(
-      "align1" to strict,
-      "align2" to optional,
-      "align3" to strict,
-      "align4" to strict,
-      "align5" to optional,
-      "align6" to optional,
-      "align7" to optional,
-      "align8" to strict,
+      "align1" to strictUnion,
+      "align2" to optionalUnion,
+      "align3" to strictUnion,
+      "align4" to strictUnion,
+      "align5" to optionalUnion,
+      "align6" to optionalUnion,
+      "align7" to optionalUnion,
+      "align8" to strictUnion,
+      "bool" to "boolean",
+      "boolOptional" to "boolean | undefined",
+      "boolDefault" to "boolean",
+      "boolNotRequired" to "boolean",
     )
   }
 

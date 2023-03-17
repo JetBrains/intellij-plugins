@@ -47,6 +47,21 @@ export default {
       },
       type: String as PropType<TextAlignType>,
     },
+    bool: {
+      type: Boolean,
+    },
+    boolOptional: {
+      default: undefined,
+      type: Boolean,
+    },
+    boolDefault: {
+      default: true,
+      type: Boolean,
+    },
+    boolNotRequired: {
+      required: false,
+      type: Boolean,
+    },
   }
 }
 </script>
@@ -60,4 +75,8 @@ export default {
   <div>{{ align6 }}</div>
   <div>{{ align7 }}</div>
   <div>{{ align8 }}</div>
+  <div>{{ bool }}</div>
+  <div>{{ boolOptional }}</div>
+  <div>{{ boolDefault }}</div>
+  <div>{{ boolNotRequired }}</div>
 </template>
