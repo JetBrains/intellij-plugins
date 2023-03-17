@@ -608,6 +608,14 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
+  fun testIdIndexer() {
+    myFixture.enableInspections(
+      JSUnusedLocalSymbolsInspection(),
+      JSUnusedGlobalSymbolsInspection()
+    )
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
