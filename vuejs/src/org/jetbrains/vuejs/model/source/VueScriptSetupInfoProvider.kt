@@ -5,6 +5,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -13,6 +14,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -64,12 +66,11 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         module,
         { element, _ ->
           val name = (element as? JSPsiNamedElementBase)?.let { if (it is ES6ImportSpecifier) it.declaredName else it.name }
-          if (name?.getOrNull(0)?.isUpperCase() == true) {
+          if (name?.getOrNull(0) == 'v' && name.getOrNull(1)?.isUpperCase() == true) {
+            directives[name.substring(1)] = VueSourceDirective(name.substring(1), element)
+          } else if (name != null && element !is JSClass && element !is JSVariable) {
             (VueModelManager.getComponent(VueComponents.getComponentDescriptor(element)) ?: VueUnresolvedComponent(element, element, name))
               .let { components[name] = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, element) else it }
-          }
-          else if (name?.getOrNull(0) == 'v' && name.getOrNull(1)?.isUpperCase() == true) {
-            directives[name.substring(1)] = VueSourceDirective(name.substring(1), element)
           }
           true
         },
@@ -78,7 +79,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
 
       val fileName = FileUtil.getNameWithoutExtension(module.containingFile.name)
       VueModelManager.findEnclosingComponent(module)?.let { component ->
-        components.putIfAbsent(fileName.capitalize(), component)
+        components.putIfAbsent(StringUtil.capitalize(fileName), component)
       }
 
       this.components = components

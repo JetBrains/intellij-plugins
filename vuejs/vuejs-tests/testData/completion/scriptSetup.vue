@@ -1,6 +1,7 @@
 <script setup="foos">
 // imported components are also directly usable in template
 import Foo from './Foo.vue'
+import fooBar from './fooBar.vue'
 import { directive as vClickOutside } from 'v-click-outside'
 import { ref } from 'vue'
 
