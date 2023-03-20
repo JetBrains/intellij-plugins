@@ -620,6 +620,10 @@ const props = {seeMe: {}}
     doDirTest(fileName = "test.html")
   }
 
+  fun testInstanceMountedOnElement() {
+    doDirTest(fileName = "test.html")
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

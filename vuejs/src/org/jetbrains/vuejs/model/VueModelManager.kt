@@ -15,8 +15,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
@@ -27,6 +25,7 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
@@ -299,21 +298,14 @@ class VueModelManager {
           }
         } ?: return null
 
-      var result: VueApp? = null
-      PsiTreeUtil.findFirstParent(xmlElement, Condition {
-        if (it is PsiFile) return@Condition true
-        val idValue = (it as? XmlTag)?.getAttribute("id")?.valueElement?.value
-                      ?: return@Condition false
-        if (idValue.isNotBlank()) {
-          val idReference = "#$idValue"
-          global.apps.find { app -> idReference == app.element }?.let { app ->
-            result = app
-            return@Condition true
-          }
+      val element2app = global.apps.associateBy { it.element }
+      return xmlElement
+        .parents(true)
+        .filterIsInstance<XmlTag>()
+        .firstNotNullOfOrNull { parent ->
+          element2app[parent.localName]
+          ?: element2app[parent.getAttributeValue("id")?.let { "#$it" }]
         }
-        false
-      })
-      return result
     }
 
     /**
