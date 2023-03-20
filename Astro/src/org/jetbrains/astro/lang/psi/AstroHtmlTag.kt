@@ -57,7 +57,11 @@ class AstroHtmlTag(type: IElementType) : XmlTagImpl(type), HtmlTag, JSLiteralExp
         .createFileFromText("foo.astro", language, text, false, true)
       val root = file.firstChild
       assert(root is AstroContentRoot) { "Failed to parse as tag $text" }
-      val tag = (root as AstroContentRoot).childrenOfType<AstroHtmlTag>().firstOrNull()
+      val tag = (root as AstroContentRoot).let {
+        // script is no longer an AstroHtmlTag
+        if (text == "<script/>") childrenOfType<HtmlTag>()
+        else childrenOfType<AstroHtmlTag>()
+      }.firstOrNull()
       assert(tag != null) { "Failed to parse as tag $text" }
       return tag!!
     }
