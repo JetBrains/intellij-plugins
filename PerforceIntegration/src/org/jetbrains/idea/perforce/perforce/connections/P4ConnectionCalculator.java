@@ -73,6 +73,12 @@ public class P4ConnectionCalculator {
           value = getParametersFromConfig(configParentDir, p4ConfigFileName);
         }
         value.setConfigFileName(p4ConfigFileName);
+        if (!value.allFieldsDefined()) {
+          // todo: reduce number of calls in 232
+          P4ConnectionParameters params = runSetOnFile(physicalParameters, defaultParameters, mapping.getPath());
+          value.trySetParams(params);
+        }
+
         LOG.debug("Using " + value + " for " + mapping);
         connectionSettings.put(mapping, value);
       }
