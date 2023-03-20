@@ -1,6 +1,7 @@
 Foo#null
 count#number
 foo#null
+fooBar#null
 foos#null
 inc#function(): void
 props#Readonly<{foo?: unknown} & {foo?: InferPropType<String | StringConstructor>}>

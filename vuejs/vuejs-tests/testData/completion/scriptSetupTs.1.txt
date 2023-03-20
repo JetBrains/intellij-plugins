@@ -3,6 +3,7 @@ SelectProps#null
 count#number
 emit#null
 foo#string | undefined
+fooBar#null
 foos#null
 inc#() => void
 props#null

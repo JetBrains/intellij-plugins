@@ -1,6 +1,8 @@
 Foo#null
+FooBar#null
 ScriptSetup#null
 foo#null
+foo-bar#null
 script-setup#null
 Component#vue
 KeepAlive#vue

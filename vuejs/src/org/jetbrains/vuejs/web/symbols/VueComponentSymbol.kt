@@ -32,7 +32,7 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
 
   // The source field is used for refactoring purposes by Web Symbols framework
   override val source: PsiElement?
-    get() = (item as? VueRegularComponent)?.nameElement ?: item.source
+    get() = (item as? VueRegularComponent)?.nameElement ?: item.rawSource
 
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
