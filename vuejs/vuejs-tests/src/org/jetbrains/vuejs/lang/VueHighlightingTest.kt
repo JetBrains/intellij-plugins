@@ -616,6 +616,10 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
+  fun testVueCreateApp() {
+    doDirTest(fileName = "test.html")
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

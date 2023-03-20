@@ -504,7 +504,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       if (!hasQualifier)
         refName == CREATE_APP_FUN
       else {
-        refName == MOUNT_FUN || refName == MIXIN_FUN ||
+        refName == CREATE_APP_FUN || refName == MOUNT_FUN || refName == MIXIN_FUN ||
         ((refName == COMPONENT_FUN || refName == FILTER_FUN || refName == DIRECTIVE_FUN)
          && callNode.findChildByType(JSElementTypes.ARGUMENT_LIST)?.getChildren(JSElementTypes.EXPRESSIONS)?.size == 2)
       }
