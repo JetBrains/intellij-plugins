@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.JSKeywordSets
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.lexer.Lexer
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.cache.CacheUtil
 import com.intellij.psi.impl.cache.impl.BaseFilterLexer
 import com.intellij.psi.impl.cache.impl.OccurrenceConsumer
@@ -18,13 +20,18 @@ import com.intellij.psi.tree.TokenSet.orSet
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory
 import kotlin.experimental.or
 
-class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexer) : BaseFilterLexer(originalLexer,
-                                                                                                     occurrenceConsumer) {
+class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexer)
+  : BaseFilterLexer(originalLexer, occurrenceConsumer) {
+
+  constructor(occurrenceConsumer: OccurrenceConsumer, project: Project?, file: VirtualFile?) :
+    this(occurrenceConsumer, getHighlightingLexer(project, file))
 
   override fun advance() {
     val tokenType = myDelegate.tokenType
@@ -65,6 +72,14 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
   }
 
   companion object {
+
+    private fun getHighlightingLexer(project: Project?, file: VirtualFile?): Lexer {
+      // We need to choose lexer lang mode, since we don't have access to the indices here.
+      // The JavaScript and TypeScript lexer do not produce significantly different results
+      // in terms of ID or TO-DO scanning, so we can choose JS here, which is lighter.
+      return VueSyntaxHighlighterFactory.getSyntaxHighlighter(project, file, LangMode.NO_TS)
+        .highlightingLexer
+    }
 
     private val SUPPORTED_LANGUAGES = ContainerUtil.newHashSet(
       XMLLanguage.INSTANCE,
