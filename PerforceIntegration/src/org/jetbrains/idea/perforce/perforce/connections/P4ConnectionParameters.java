@@ -86,6 +86,17 @@ public class P4ConnectionParameters {
     myPassword = password;
   }
 
+  public void trySetParams(P4ConnectionParameters parameters) {
+    if (myServer == null)
+      setServer(parameters.myServer);
+    if (myUser == null)
+      setUser(parameters.myUser);
+    if (myClient == null)
+      setClient(parameters.myClient);
+    if (myPassword == null)
+      setPassword(parameters.myPassword);
+  }
+
   public Throwable getException() {
     return myException;
   }
