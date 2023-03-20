@@ -92,6 +92,16 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testScriptCaseSensitivity() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    TypeScriptTestUtil.setStrictNullChecks(project, testRootDisposable)
+    myFixture.configureByFile("scriptCaseSensitivity.vue")
+
+    doTest(
+      "example" to "RealType",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {

@@ -111,7 +111,7 @@ class VueResolveTest : BasePlatformTestCase() {
   fun testResolveIntoComputedProperty() {
     myFixture.configureByText("ResolveIntoComputedProperty.vue", """
 <template>
-{{<caret>TestRight}}
+{{<caret>testRight}}
 </template>
 <script>
 export default {
@@ -133,7 +133,7 @@ export default {
   fun testResolveIntoComputedES6FunctionProperty() {
     myFixture.configureByText("ResolveIntoComputedES6FunctionProperty.vue", """
 <template>
-{{<caret>TestRight}}
+{{<caret>testRight}}
 </template>
 <script>
 export default {

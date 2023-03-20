@@ -624,6 +624,10 @@ const props = {seeMe: {}}
     doDirTest(fileName = "test.html")
   }
 
+  fun testScriptCaseSensitivity() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

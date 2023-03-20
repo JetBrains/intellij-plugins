@@ -97,10 +97,10 @@ class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpress
       .getExpressionAccess(expression)
 
     val results = SmartList<ResolveResult>()
-    val name = StringUtils.uncapitalize(myReferencedName)
+    val name = myReferencedName
     VueTemplateScopesResolver.resolve(myRef, Processor { resolveResult ->
       val element = resolveResult.element as? JSPsiNamedElementBase
-      if (element != null && name == StringUtils.uncapitalize(element.name)) {
+      if (element != null && name == element.name) {
         remapSetterGetterIfNeeded(results, resolveResult, access)
         return@Processor false
       }
