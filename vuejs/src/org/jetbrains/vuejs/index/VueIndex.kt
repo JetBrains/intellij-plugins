@@ -1,26 +1,14 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.index
 
-import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.nodejs.packages.NodePackageUtil
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
-import com.intellij.webSymbols.context.WebSymbolsContext
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
@@ -30,7 +18,6 @@ const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
 const val SHARDS_VUE_MODULE: String = "shards-vue"
-const val VUE_CLASS_COMPONENT_MODULE: String = "vue-class-component"
 const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
 
 val VUE_DEFAULT_EXTENSIONS_WITH_DOT = arrayOf(VUE_FILE_EXTENSION)
@@ -65,9 +52,6 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
     })
   return result
 }
-
-fun hasVueClassComponentLibrary(location: PsiElement): Boolean =
-  WebSymbolsContext.get(VUE_CLASS_COMPONENT_MODULE, location) == VUE_CLASS_COMPONENT_MODULE
 
 internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 

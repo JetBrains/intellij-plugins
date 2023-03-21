@@ -1,0 +1,21 @@
+<script${SCRIPT_LANG_ATTR}>
+#if($USE_DEFINE_COMPONENT)
+import {defineComponent} from 'Vue'
+
+export default defineComponent({
+name: "${COMPONENT_NAME}"
+})
+#else
+export default {
+name: "${COMPONENT_NAME}"
+}
+#end
+</script>
+
+<template>
+  #[[$END$]]#
+</template>
+
+<style scoped${STYLE_LANG_ATTR}>
+
+</style>

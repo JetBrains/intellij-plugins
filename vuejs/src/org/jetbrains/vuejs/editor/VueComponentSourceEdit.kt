@@ -27,16 +27,15 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
-import com.intellij.webSymbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
-import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
-import com.intellij.webSymbols.WebSymbolQualifiedName
-import com.intellij.webSymbols.query.WebSymbolsQueryExecutorFactory
-import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import com.intellij.xml.util.XmlTagUtil
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.getVueClassComponentDecoratorName
+import org.jetbrains.vuejs.context.getVueClassComponentLibrary
 import org.jetbrains.vuejs.context.isVue3
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.context.supportsScriptSetup
+import org.jetbrains.vuejs.index.VUE_MODULE
+import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
@@ -44,8 +43,6 @@ import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueSourceComponent
 import org.jetbrains.vuejs.model.tryResolveSrcReference
-import org.jetbrains.vuejs.web.VueFramework
-import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_TOP_LEVEL_ELEMENTS
 
 class VueComponentSourceEdit private constructor(private val component: Pointer<VueSourceComponent>) {
 
@@ -63,14 +60,6 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
         script
       }
     }
-
-    fun supportsScriptSetup(context: PsiElement?): Boolean =
-      context
-        ?.let { WebSymbolsQueryExecutorFactory.create(it, false) }
-        ?.takeIf { it.framework == VueFramework.ID }
-        ?.runNameMatchQuery(listOf(WebSymbolQualifiedName(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, SCRIPT_TAG_NAME),
-                                   WebSymbolQualifiedName(NAMESPACE_HTML, KIND_HTML_ATTRIBUTES, SETUP_ATTRIBUTE_NAME)))
-        ?.firstOrNull() != null
 
   }
 
@@ -186,12 +175,13 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
 
     @Suppress("UnnecessaryVariable")
     val useDefineComponent = isVue3
-    val useClassComponent = hasVueClassComponentLibrary(scriptScope)
+    val classComponentLibrary = getVueClassComponentLibrary(scriptScope)
+    val componentDecoratorName = getVueClassComponentDecoratorName(scriptScope)
     val useVueExtend = isTs && !isVue3
 
     val componentName = toAsset(StringUtil.capitalize(fileName).replace(Regex("[^0-9a-zA-Z-]+"), "-"))
     val exportText = when {
-      useClassComponent -> "@Component\nexport default class $componentName extends Vue {\n}"
+      classComponentLibrary != null -> "@$componentDecoratorName({})\nexport default class $componentName extends Vue {\n}"
       useDefineComponent -> "export default defineComponent({\n})"
       useVueExtend -> "export default Vue.extend({\n})"
       else -> "export default {\n}"
@@ -207,9 +197,9 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
       addedExport = JSChangeUtil.doAddBefore(scriptScope, defaultExport, anchorPair.second) as JSExportAssignment
     }
     when {
-      useClassComponent -> {
+      classComponentLibrary != null -> {
         insertImportIfNotThere("Vue", true, VUE_MODULE, scriptScope)
-        insertImportIfNotThere("Component", false, VUE_CLASS_COMPONENT_MODULE, scriptScope)
+        insertImportIfNotThere(componentDecoratorName, false, classComponentLibrary, scriptScope)
       }
       useDefineComponent -> {
         insertImportIfNotThere("defineComponent", false, VUE_MODULE, scriptScope)

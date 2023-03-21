@@ -4,7 +4,10 @@ package org.jetbrains.vuejs.libraries.componentDecorator
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 
-private val COMPONENT_DECS = setOf("Component", "Options")
+const val COMPONENT_DEC = "Component"
+const val OPTIONS_DEC = "Options"
+
+private val COMPONENT_DECS = setOf(COMPONENT_DEC, OPTIONS_DEC)
 
 fun findComponentDecorator(clazz: JSClass): ES6Decorator? =
   clazz.attributeList
