@@ -1,0 +1,11 @@
+<script setup${SCRIPT_LANG_ATTR}>
+
+</script>
+
+<template>
+  #[[$END$]]#
+</template>
+
+<style scoped${STYLE_LANG_ATTR}>
+
+</style>

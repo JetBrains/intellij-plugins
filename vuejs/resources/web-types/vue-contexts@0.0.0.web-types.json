@@ -23,10 +23,26 @@
       }
     },
     "vue-class-component": {
-      "kind": "vue-class-component",
+      "kind": "vue-class-component-library",
       "enable-when": {
         "node-packages": [
           "vue-class-component"
+        ]
+      }
+    },
+    "vue-property-decorator": {
+      "kind": "vue-class-component-library",
+      "enable-when": {
+        "node-packages": [
+          "vue-property-decorator"
+        ]
+      }
+    },
+    "vuex-class": {
+      "kind": "vue-class-component-library",
+      "enable-when": {
+        "node-packages": [
+          "vuex-class"
         ]
       }
     }

@@ -1,0 +1,16 @@
+<script${SCRIPT_LANG_ATTR}>
+import { ${CLASS_COMPONENT_DECORATOR}, Vue } from '${CLASS_COMPONENT_LIB}';
+
+@${CLASS_COMPONENT_DECORATOR}({})
+export default class ${COMPONENT_NAME} extends Vue {
+
+}
+</script>
+
+<template>
+  #[[$END$]]#
+</template>
+
+<style scoped${STYLE_LANG_ATTR}>
+
+</style>

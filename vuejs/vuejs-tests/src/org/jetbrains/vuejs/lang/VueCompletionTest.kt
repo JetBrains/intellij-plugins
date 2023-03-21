@@ -26,7 +26,7 @@ import com.intellij.webSymbols.*
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.index.VUE_CLASS_COMPONENT_MODULE
+import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 
 class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/completion/"
@@ -994,7 +994,7 @@ $script""")
 
   fun testComponentInsertion() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    createPackageJsonWithVueDependency(myFixture, """"$VUE_CLASS_COMPONENT_MODULE": "*"""")
+    createPackageJsonWithVueDependency(myFixture, """"$VUE_CLASS_COMPONENT": "*"""")
     val data = listOf(
       Pair("""<template>
   <Sho<caret>

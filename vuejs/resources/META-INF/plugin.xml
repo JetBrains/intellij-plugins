@@ -105,6 +105,7 @@
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalFiltersIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex"/>
     <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueEmptyComponentInitializersIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueComponentStylesIndex"/>
 
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes" externalIdPrefix="VUE-JS:"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes" externalIdPrefix="VUE:"/>
@@ -197,8 +198,11 @@
                        order="before JSConfigurationInjector, before WebSymbolsHtmlText, after TemporaryPlacesInjector"
                        id="VueInjector"/>
 
-    <internalFileTemplate name="Vue Single File Component"/>
+    <internalFileTemplate name="Vue Options API Component"/>
+    <internalFileTemplate name="Vue Class API Component"/>
+    <internalFileTemplate name="Vue Composition API Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
+    <defaultTemplatePropertiesProvider implementation="org.jetbrains.vuejs.VueDefaultTemplatePropertiesProvider"/>
 
     <spellchecker.bundledDictionaryProvider implementation="org.jetbrains.vuejs.spellchecker.VueSpellcheckingDictionaryProvider"/>
 
