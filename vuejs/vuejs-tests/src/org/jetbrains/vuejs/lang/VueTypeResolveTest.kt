@@ -102,6 +102,17 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     )
   }
 
+  fun testSlotTS() {
+    myFixture.configureByFile("slot-ts.vue")
+
+    doTest(
+      "row" to "{uid: boolean}",
+      "row.u<caret>id" to "boolean",
+      "bag" to "{row: {uid: boolean}}",
+      "bag.row.u<caret>id" to "boolean",
+    )
+  }
+
   private fun testVFor(vararg testCases: Triple<String, String, String>, iterations: Int = 3) {
     for (test in testCases) {
       for (i in 1..iterations) {
@@ -119,7 +130,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
   private fun doTest(vararg testCases: Pair<String, String>, prefix: String = "{{ ") {
     for (test in testCases) {
-      val element = findReferenceBySignature("$prefix<caret>${test.first}")
+      val caretMarker = if (test.first.contains("<caret>")) "" else "<caret>"
+      val element = findReferenceBySignature("$prefix$caretMarker${test.first}")
       TestCase.assertNotNull(test.first, element)
       val expected = test.second
       assertEquals(test.first, expected, getElementTypeText(element))
