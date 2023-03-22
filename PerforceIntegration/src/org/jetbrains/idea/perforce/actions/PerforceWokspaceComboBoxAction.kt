@@ -2,10 +2,7 @@ package org.jetbrains.idea.perforce.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.ToolbarSettings
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.PlatformCoreDataKeys
-import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.NlsSafe
@@ -35,27 +32,38 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
       return
     }
 
-    val file = e.getData(PlatformCoreDataKeys.VIRTUAL_FILE) ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY)
-    if (file == null) {
-      presentation.isEnabledAndVisible = false
-      return
+    val perforceSettings = PerforceSettings.getSettings(e.project)
+    val file = e.getData(PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR)?.file ?: e.getData(PlatformCoreDataKeys.VIRTUAL_FILE) ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY)
+
+    val currentFileConnection = if (file != null) {
+      perforceSettings.getConnectionForFile(file)
+    } else {
+      null
     }
 
-    val perforceSettings = PerforceSettings.getSettings(e.project)
-    val connection = perforceSettings.getConnectionForFile(file)
+    val allConnections = perforceSettings.allConnections
+    val connection = currentFileConnection ?: allConnections.singleOrNull()
+
     presentation.isEnabledAndVisible = true
     presentation.icon = getIcon(perforceSettings, connection)
-    if (connection == null) {
+    if (connection != null) {
+      val workspace = connection.connectionKey.client
+      with (presentation) {
+        setText(getText(workspace, perforceSettings.ENABLED), false)
+        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
+      }
+
+    }
+    else if (allConnections.isEmpty()) {
       with (presentation) {
         text = PerforceBundle.message("connection.no.valid.connections.short")
         description = PerforceBundle.message("connection.no.valid.connections")
       }
     }
     else {
-      val workspace = connection.connectionKey.client
       with (presentation) {
-        setText(getText(workspace, perforceSettings.ENABLED), false)
-        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
+        text = PerforceBundle.message("action.Perforce.Toolbar.multiple.workspaces")
+        description = PerforceBundle.message("action.Perforce.Toolbar.multiple.workspaces.description")
       }
     }
   }
