@@ -11,8 +11,6 @@ interface Angular2Module : Angular2Entity, Angular2ImportsOwner {
 
   val exports: Set<Angular2Entity>
 
-  val isScopeFullyResolved: Boolean
-
   val isPublic: Boolean
 
   val allExportedDeclarations: Set<Angular2Declaration>

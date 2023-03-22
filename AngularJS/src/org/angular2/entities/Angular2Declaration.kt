@@ -16,14 +16,11 @@ interface Angular2Declaration : Angular2Entity {
   val isStandalone: Boolean
 
   val allDeclaringModules: Collection<Angular2Module>
-    get() {
-      if (isStandalone) {
-        return emptyList()
-      }
-
-      val map = getDeclarationToModuleMap(sourceElement.project)
-      return Collections.unmodifiableCollection(map.get(this))
-    }
+    get() =
+      if (isStandalone)
+        emptyList()
+      else
+        Collections.unmodifiableCollection(getDeclarationToModuleMap(sourceElement.project).get(this))
 
   override fun createPointer(): Pointer<out Angular2Declaration>
 }

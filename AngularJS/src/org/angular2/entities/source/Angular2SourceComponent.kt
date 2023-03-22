@@ -33,22 +33,27 @@ import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider
 class Angular2SourceComponent(decorator: ES6Decorator, implicitElement: JSImplicitElement)
   : Angular2SourceDirective(decorator, implicitElement), Angular2Component {
 
-  private var myModuleResolver: Angular2ModuleResolver<ES6Decorator>? = null
+  private var moduleResolverField: Angular2ModuleResolver<ES6Decorator>? = null
+  private val moduleResolver: Angular2ModuleResolver<ES6Decorator>
+    get() = moduleResolverField
+            ?: Angular2ModuleResolver({ decorator }, Angular2SourceModule.symbolCollector)
+              .also { moduleResolverField = it }
 
   override val imports: Set<Angular2Entity>
-    get() {
-      if (!isStandalone) return emptySet()
+    get() = if (isStandalone)
+      moduleResolver.imports
+    else
+      emptySet()
 
-      if (myModuleResolver == null) {
-        myModuleResolver = Angular2ModuleResolver({ decorator }, Angular2SourceModule.symbolCollector)
-      }
-      return myModuleResolver!!.imports
-    }
+  override val isScopeFullyResolved: Boolean
+    get() = if (isStandalone)
+      moduleResolver.isScopeFullyResolved
+    else
+      true
 
   override val templateFile: PsiFile?
     get() = getCachedValue {
-      create(
-        findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
+      create(findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, decorator)
     }
 
   override val cssFiles: List<PsiFile>

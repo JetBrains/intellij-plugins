@@ -108,33 +108,15 @@ class Angular2DeclarationsScope(element: PsiElement) {
       val file = element.containingFile
                  ?: return@createValue ScopeResult(null, null, false)
       CachedValuesManager.getCachedValue(file) {
-        var importsOwner: Angular2ImportsOwner? = null
-        var declarations: Set<Angular2Declaration>? = null
-        var fullyResolved = false
-
-        val currentComponent = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
-        if (currentComponent != null) {
-          if (currentComponent.isStandalone) {
-            importsOwner = currentComponent
-            declarations = currentComponent.declarationsInScope
-            fullyResolved = true
-          }
-          else {
-            val module = selectModule(currentComponent, file)
-            if (module != null) {
-              importsOwner = module
-              declarations = module.declarationsInScope
-              fullyResolved = module.isScopeFullyResolved
-            }
-          }
-        }
-
-        val result = ScopeResult(importsOwner, declarations, fullyResolved)
+        val importsOwner = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file))
+          ?.let { selectImportsOwner(it, file) }
+        val result = ScopeResult(importsOwner, importsOwner?.declarationsInScope, importsOwner?.isScopeFullyResolved ?: false)
         CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
 
-    private fun selectModule(component: Angular2Component, context: PsiFile): Angular2Module? {
+    private fun selectImportsOwner(component: Angular2Component, context: PsiFile): Angular2ImportsOwner? {
+      if (component.isStandalone) return component
       val modules = component.allDeclaringModules
       if (modules.size > 1) {
         for (handler in Angular2FrameworkHandler.EP_NAME.extensionList) {

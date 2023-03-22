@@ -31,5 +31,8 @@ interface Angular2Component : Angular2Directive, Angular2ImportsOwner {
       return result
     }
 
+  override val isScopeFullyResolved: Boolean
+    get() = true
+
   override fun createPointer(): Pointer<out Angular2Component>
 }
