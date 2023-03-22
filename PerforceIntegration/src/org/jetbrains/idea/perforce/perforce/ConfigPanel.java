@@ -130,7 +130,7 @@ public class ConfigPanel {
       public void actionPerformed(ActionEvent e) {
         final boolean isEmpty = PerforceLoginManager.getInstance(myProject).getNotifier().isEmpty();
 
-        final PerforceSettings settings = new PerforceSettings(myProject);
+        final PerforceSettings settings = new PerforceSettings(myProject, false);
         settings.setCanGoOffline(false);
         applyImpl(settings);
 

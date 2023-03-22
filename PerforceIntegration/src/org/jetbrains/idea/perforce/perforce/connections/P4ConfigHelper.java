@@ -1,13 +1,17 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
+import com.intellij.openapi.project.BaseProjectDirectories;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +25,33 @@ public class P4ConfigHelper {
                                                           P4ConfigFields.P4USER.getName(), P4ConfigFields.P4PASSWD.getName(),
                                                           P4ConfigFields.P4CONFIG.getName());
 
+  private final Map<Path, P4ConnectionParameters> myRootParameters = new HashMap<>();
+  private String myP4ConfigName = getP4ConfigFileName();
+
+  public void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
+    myRootParameters.clear();
+    P4ConnectionCalculator calculator = new P4ConnectionCalculator(project);
+
+    // P4 global variables might be set not only through env vars but also with p4 set command (in p4enviro file).
+    for (VirtualFile dir : BaseProjectDirectories.getBaseDirectories(project)) {
+      P4ConnectionParameters params = calculator.runSetOnFile(physicalParameters, new P4ConnectionParameters(), dir.getPath());
+
+      // We don't expect P4Config variable to be changed inside P4Config files
+      // (it changes what you will see in p4 set output but does nothing)
+      // So if we get P4Config value from p4 set, while env var is not set, we will pretend that it comes from P4Enviro file
+      if (myP4ConfigName == null) {
+        myP4ConfigName = params.getConfigFileName();
+      }
+
+      myRootParameters.put(dir.toNioPath(), params);
+    }
+  }
+
   public static boolean hasP4ConfigSettingInEnvironment() {
     return EnvironmentUtil.getValue(P4_CONFIG) != null;
   }
 
+  // todo: fix for P4Enviro
   public static String getUnsetP4EnvironmentConfig() {
     return ENV_CONFIGS.stream()
       .filter(env -> EnvironmentUtil.getValue(env) == null)
@@ -38,6 +65,12 @@ public class P4ConfigHelper {
   @Nullable
   public static String getP4ConfigFileName() {
     return EnvironmentUtil.getValue(P4_CONFIG);
+  }
+
+  // todo: merge with the method above
+  @Nullable
+  public String getP4Config() {
+    return myP4ConfigName;
   }
 
   @Nullable

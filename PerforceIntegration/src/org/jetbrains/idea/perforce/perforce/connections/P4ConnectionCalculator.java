@@ -38,17 +38,13 @@ public class P4ConnectionCalculator {
     final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
     final PerforceSettings settings = PerforceSettings.getSettings(myProject);
-    final PerforcePhysicalConnectionParameters physicalParameters =
-      new PerforcePhysicalConnectionParameters(settings.getPathToExec(), settings.getPathToIgnore(), myProject, settings.getServerTimeout(), settings.getCharsetName());
+    final PerforcePhysicalConnectionParameters physicalParameters = settings.getPhysicalSettings();
 
     final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
                                                   ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
                                                   : vcsManager.getDetailedVcsMappings(vcs);
 
-    final String p4ConfigFileName =
-      detailedVcsMappings.isEmpty()
-      ? P4ConfigHelper.getP4ConfigFileName()
-      : runSetOnFile(physicalParameters, new P4ConnectionParameters(), detailedVcsMappings.get(0).getPath()).getConfigFileName();
+    final String p4ConfigFileName = settings.myP4ConfigHelper.getP4Config();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
@@ -192,7 +188,7 @@ public class P4ConnectionCalculator {
     return result;
   }
 
-  private P4ConnectionParameters runSetOnFile(final PerforcePhysicalConnectionParametersI settings, P4ConnectionParameters defaultParameters, final String file) {
+  public P4ConnectionParameters runSetOnFile(final PerforcePhysicalConnectionParametersI settings, P4ConnectionParameters defaultParameters, final String file) {
     final P4ConnectionParameters parameters = new P4ConnectionParameters();
 
     final ExecResult retVal = new ExecResult();
@@ -284,7 +280,7 @@ public class P4ConnectionCalculator {
     try {
       // todo hack =((
       // do not expect "password invalid" when P4 SET is executed, so just use empty settings
-      PerforceRunner.checkError(retVal, new PerforceSettings(myProject), localConnection);
+      PerforceRunner.checkError(retVal, new PerforceSettings(myProject, false), localConnection);
     }
     catch (VcsException e) {
       parameters.setException(e);

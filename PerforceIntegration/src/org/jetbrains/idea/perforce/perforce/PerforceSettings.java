@@ -32,6 +32,7 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -100,6 +101,8 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public boolean USE_PERFORCE_JOBS = false;
   public boolean SHOW_INTEGRATED_IN_COMMITTED_CHANGES = true;
 
+  public final P4ConfigHelper myP4ConfigHelper = new P4ConfigHelper();
+
 
   //
   // public PerforceSettings methods
@@ -111,13 +114,25 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   }
 
   public PerforceSettings(Project project) {
+    this(project, true);
+  }
+
+  @NonInjectable
+  public PerforceSettings(Project project, Boolean initializeConfigHelper) {
     myProject = project;
     myOfflineNotification = new PerforceOfflineNotification(myProject);
     myCanGoOffline = true;
+
+    if (initializeConfigHelper)
+      myP4ConfigHelper.initializeP4SetVariables(myProject, getPhysicalSettings());
   }
 
   public static PerforceSettings getSettings(final Project project) {
     return project.getService(PerforceSettings.class);
+  }
+
+  public PerforcePhysicalConnectionParameters getPhysicalSettings() {
+    return new PerforcePhysicalConnectionParameters(getPathToExec(), getPathToIgnore(), myProject, getServerTimeout(), getCharsetName());
   }
 
   @SuppressWarnings({"HardCodedStringLiteral"})
