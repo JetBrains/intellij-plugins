@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang.typescript
 
 import com.intellij.lang.javascript.config.JSImportResolveContext
-import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
+import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver.JS_DEFAULT_PRIORITY
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolverImpl
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportsResolverProvider
 import com.intellij.openapi.project.Project
@@ -36,5 +36,5 @@ class VueFileImportsResolver(project: Project,
       ?.let { processor.process(it) }
   }
 
-  override fun getPriority(): Int = TypeScriptFileImportsResolver.DEFAULT_PRIORITY + 1
+  override fun getPriority(): Int = JS_DEFAULT_PRIORITY
 }

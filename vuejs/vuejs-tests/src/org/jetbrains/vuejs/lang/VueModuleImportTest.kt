@@ -110,4 +110,8 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   fun testTSOverVuePriority() {
     doHighlightOnlyTestWithCopyDirectory(extension)
   }
+
+  fun testJSOverVuePriority() {
+    doHighlightOnlyTestWithCopyDirectory(extension)
+  }
 }
