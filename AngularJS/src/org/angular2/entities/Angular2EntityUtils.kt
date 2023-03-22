@@ -14,7 +14,6 @@ import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException
 import org.jetbrains.annotations.NonNls
-import java.util.function.Consumer
 
 object Angular2EntityUtils {
 
@@ -261,8 +260,8 @@ object Angular2EntityUtils {
    */
   @JvmStatic
   fun forEachModule(entities: Iterable<Angular2Entity>,
-                    moduleConsumer: Consumer<Angular2Module>) {
-    forEachEntity(entities, moduleConsumer, null)
+                    moduleConsumer: (Angular2Module) -> Unit) {
+    forEachEntity(entities, moduleConsumer) {}
   }
 
   /**
@@ -272,14 +271,12 @@ object Angular2EntityUtils {
    */
   @JvmStatic
   fun forEachEntity(entities: Iterable<Angular2Entity>,
-                    moduleConsumer: Consumer<Angular2Module>,
-                    declarationConsumer: Consumer<Angular2Declaration>?) {
+                    moduleConsumer: (Angular2Module) -> Unit,
+                    declarationConsumer: (Angular2Declaration) -> Unit) {
     entities.forEach { entity ->
-      if (entity is Angular2Module) {
-        moduleConsumer.accept(entity)
-      }
-      else if (entity is Angular2Declaration && declarationConsumer != null) {
-        declarationConsumer.accept(entity)
+      when (entity) {
+        is Angular2Module -> moduleConsumer(entity)
+        is Angular2Declaration -> declarationConsumer(entity)
       }
     }
   }

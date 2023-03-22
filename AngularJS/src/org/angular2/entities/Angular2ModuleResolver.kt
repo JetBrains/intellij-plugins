@@ -59,11 +59,7 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
           while (!moduleQueue.empty()) {
             val current = moduleQueue.pop()
             if (processedModules.add(current)) {
-              forEachEntity(
-                current.exports,
-                { m -> moduleQueue.push(m) },
-                { declaration -> result.add(declaration) }
-              )
+              forEachEntity(current.exports, moduleQueue::push, result::add)
             }
           }
         }
@@ -126,7 +122,7 @@ class Angular2ModuleResolver<T : PsiElement>(private val mySourceSupplier: () ->
     val NG_MODULE_PROP = "ngModule"
 
     /**
-     * @see [ModuleWithProviders](https://angular.io/api/core/ModuleWithProviders)
+     * See [ModuleWithProviders](https://angular.io/api/core/ModuleWithProviders)
      */
     @NonNls
     val MODULE_WITH_PROVIDERS_CLASS = "ModuleWithProviders"

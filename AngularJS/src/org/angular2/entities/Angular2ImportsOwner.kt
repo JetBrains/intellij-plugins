@@ -13,4 +13,6 @@ interface Angular2ImportsOwner : Angular2Entity {
   val imports: Set<Angular2Entity>
 
   val declarationsInScope: Set<Angular2Declaration>
+
+  val isScopeFullyResolved: Boolean
 }
