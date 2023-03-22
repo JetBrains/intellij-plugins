@@ -37,7 +37,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
     PrettierConfiguration.getInstance(getProject())
-      .withLinterPackage(NodePackageRef.create(getNodePackage()));
+      .withLinterPackage(NodePackageRef.create(getNodePackage()))
+      .setConfigurationMode(PrettierConfiguration.ConfigurationMode.MANUAL);
   }
 
   public void testWithoutConfig() {
@@ -181,6 +182,18 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile("webc");
   }
 
+  public void testAutoconfigured() {
+    PrettierConfiguration.getInstance(getProject())
+      .setConfigurationMode(PrettierConfiguration.ConfigurationMode.AUTOMATIC);
+    doReformatFile("subdir/formatted", "js", () -> {
+      myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "subdir/node_modules/prettier");
+    });
+
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("ignored.js"));
+    runReformatAction();
+    myFixture.checkResultByFile(getTestName(true) + "/ignored_after.js");
+  }
+
   private void configureYarnPrettierPackage(VirtualFile root) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
@@ -188,7 +201,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
                                                                    PrettierUtil.PACKAGE_NAME, false, false);
     assertNotNull(yarnPrettierPkg);
     configuration.withLinterPackage(NodePackageRef.create(yarnPrettierPkg));
-    NodePackage readYarnPrettierPkg = configuration.getPackage();
+    NodePackage readYarnPrettierPkg = configuration.getPackage(null);
     assertInstanceOf(readYarnPrettierPkg, YarnPnpNodePackage.class);
     assertEquals("yarn:package.json:prettier", readYarnPrettierPkg.getSystemIndependentPath());
   }
@@ -211,6 +224,11 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     if (configureFixture != null) {
       configureFixture.run();
     }
+    runReformatAction();
+    myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
+  }
+
+  private void runReformatAction() {
     myFixture.testAction(new ReformatWithPrettierAction((new ReformatWithPrettierAction.ErrorHandler() {
       @Override
       public void showError(@NotNull Project project, @Nullable Editor editor,
@@ -224,7 +242,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
         throw new RuntimeException(text + " " + details);
       }
     })));
-    myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
   }
 
   private static void assertError(Condition<String> checkException, Runnable runnable) {

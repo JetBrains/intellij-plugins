@@ -4,8 +4,10 @@ package com.intellij.prettierjs
 import com.intellij.ide.actionsOnSave.*
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.util.NodePackageField
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
@@ -13,17 +15,24 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.prettierjs.PrettierConfiguration.ConfigurationMode
+import com.intellij.ui.ContextHelpLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.MutableProperty
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.layout.not
+import com.intellij.ui.layout.selected
 import com.intellij.util.text.SemVer
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
 import javax.swing.JCheckBox
+import javax.swing.JRadioButton
 import javax.swing.text.JTextComponent
 
 private const val CONFIGURABLE_ID = "settings.javascript.prettier"
@@ -35,18 +44,66 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   private lateinit var runForFilesField: JBTextField
   private lateinit var runOnSaveCheckBox: JCheckBox
 
+  private lateinit var disabledConfiguration: JRadioButton
+  private lateinit var automaticConfiguration: JRadioButton
+  private lateinit var manualConfiguration: JRadioButton
+
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
 
     return panel {
-      packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME) { NodeJsInterpreterManager.getInstance(project).interpreter }
+      buttonsGroup {
+        row {
+          disabledConfiguration =
+            radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.disabled", displayName))
+              .bindSelected(ConfigurationModeProperty(prettierConfiguration, ConfigurationMode.DISABLED))
+              .component
+        }
+        row {
+          automaticConfiguration =
+            radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.configure.automatically", displayName))
+              .bindSelected(ConfigurationModeProperty(prettierConfiguration, ConfigurationMode.AUTOMATIC))
+              .component
 
-      row(PrettierBundle.message("prettier.package.label")) {
-        cell(packageField)
-          .align(AlignX.FILL)
-          .bind({ it.selectedRef }, { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
-                MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
+          val detectAutomaticallyHelpText = JavaScriptBundle.message(
+            "settings.javascript.linters.autodetect.configure.automatically.help.text",
+            ApplicationNamesInfo.getInstance().fullProductName,
+            displayName,
+            ".prettierrc.*"
           )
+
+          val helpLabel = ContextHelpLabel.create(detectAutomaticallyHelpText)
+          helpLabel.border = JBUI.Borders.emptyLeft(UIUtil.DEFAULT_HGAP)
+          cell(helpLabel)
+        }
+        row {
+          manualConfiguration =
+            radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.configure.manually", displayName))
+              .bindSelected(ConfigurationModeProperty(prettierConfiguration, ConfigurationMode.MANUAL))
+              .component
+        }
+      }
+      row("") {
+        panel {
+          packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME) { NodeJsInterpreterManager.getInstance(project).interpreter }
+
+          row(PrettierBundle.message("prettier.package.label")) {
+            cell(packageField)
+              .align(AlignX.FILL)
+              .bind({ it.selectedRef }, { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
+                    MutableProperty({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
+              )
+          }
+
+          row {
+            checkBox(PrettierBundle.message("on.code.reformat.label"))
+              .bindSelected(prettierConfiguration::isRunOnReformat, prettierConfiguration::setRunOnReformat)
+
+            val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
+            shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
+          }
+          separator()
+        }.visibleIf(manualConfiguration.selected)
       }
 
       row(PrettierBundle.message("run.for.files.label")) {
@@ -67,15 +124,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
             }
           }
           .component
-      }
-
-      row("") {
-        checkBox(PrettierBundle.message("on.code.reformat.label"))
-          .bindSelected(prettierConfiguration::isRunOnReformat, prettierConfiguration::setRunOnReformat)
-
-        val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
-        shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
-      }
+      }.enabledIf(!disabledConfiguration.selected)
 
       row("") {
         runOnSaveCheckBox = checkBox(PrettierBundle.message("on.save.label"))
@@ -84,10 +133,21 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
         val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
         cell(link)
-      }
+      }.enabledIf(!disabledConfiguration.selected)
     }
   }
 
+  private class ConfigurationModeProperty(private val prettierConfiguration: PrettierConfiguration,
+                                          private val mode: ConfigurationMode) : MutableProperty<Boolean> {
+    override fun get(): Boolean =
+      prettierConfiguration.configurationMode == mode
+
+    override fun set(value: Boolean) {
+      if (value)
+        prettierConfiguration.configurationMode = mode
+    }
+
+  }
 
   class PrettierOnSaveInfoProvider : ActionOnSaveInfoProvider() {
     override fun getActionOnSaveInfos(context: ActionOnSaveContext):
@@ -105,7 +165,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
 
     override fun getCommentAccordingToStoredState() =
-      PrettierConfiguration.getInstance(project).let { getComment(it.`package`.getVersion(project), it.filesPattern) }
+      PrettierConfiguration.getInstance(project).let { getComment(it.getPackage(null).getVersion(project), it.filesPattern) }
 
     override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) =
       getComment(configurable.packageField.selectedRef.constantPackage?.getVersion(project),
