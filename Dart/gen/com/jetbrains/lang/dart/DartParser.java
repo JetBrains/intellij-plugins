@@ -1237,7 +1237,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // simpleQualifiedReferenceExpression (typeArguments ('.' componentName)?)?
+  // simpleQualifiedReferenceExpression (typeArguments ('.' referenceExpression)?)?
   static boolean constructorDesignation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constructorDesignation")) return false;
     boolean r;
@@ -1248,14 +1248,14 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (typeArguments ('.' componentName)?)?
+  // (typeArguments ('.' referenceExpression)?)?
   private static boolean constructorDesignation_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constructorDesignation_1")) return false;
     constructorDesignation_1_0(b, l + 1);
     return true;
   }
 
-  // typeArguments ('.' componentName)?
+  // typeArguments ('.' referenceExpression)?
   private static boolean constructorDesignation_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constructorDesignation_1_0")) return false;
     boolean r;
@@ -1266,20 +1266,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('.' componentName)?
+  // ('.' referenceExpression)?
   private static boolean constructorDesignation_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constructorDesignation_1_0_1")) return false;
     constructorDesignation_1_0_1_0(b, l + 1);
     return true;
   }
 
-  // '.' componentName
+  // '.' referenceExpression
   private static boolean constructorDesignation_1_0_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constructorDesignation_1_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, DOT);
-    r = r && componentName(b, l + 1);
+    r = r && referenceExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3934,12 +3934,12 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // componentName
+  // referenceExpression
   public static boolean identifierPattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "identifierPattern")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, IDENTIFIER_PATTERN, "<identifier pattern>");
-    r = componentName(b, l + 1);
+    r = referenceExpression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -6243,7 +6243,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (componentName? ':')? pattern
+  // (referenceExpression? ':')? pattern
   public static boolean patternField(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "patternField")) return false;
     boolean r;
@@ -6254,14 +6254,14 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (componentName? ':')?
+  // (referenceExpression? ':')?
   private static boolean patternField_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "patternField_0")) return false;
     patternField_0_0(b, l + 1);
     return true;
   }
 
-  // componentName? ':'
+  // referenceExpression? ':'
   private static boolean patternField_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "patternField_0_0")) return false;
     boolean r;
@@ -6272,10 +6272,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // componentName?
+  // referenceExpression?
   private static boolean patternField_0_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "patternField_0_0_0")) return false;
-    componentName(b, l + 1);
+    referenceExpression(b, l + 1);
     return true;
   }
 
@@ -9232,7 +9232,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'final' type componentName | 'final' componentName | 'var' componentName | type !'as' componentName
+  // 'final' type referenceExpression | 'final' referenceExpression | 'var' referenceExpression | type !'as' referenceExpression
   public static boolean variablePattern(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variablePattern")) return false;
     boolean r;
@@ -9245,48 +9245,48 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // 'final' type componentName
+  // 'final' type referenceExpression
   private static boolean variablePattern_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variablePattern_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, FINAL);
     r = r && type(b, l + 1);
-    r = r && componentName(b, l + 1);
+    r = r && referenceExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'final' componentName
+  // 'final' referenceExpression
   private static boolean variablePattern_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variablePattern_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, FINAL);
-    r = r && componentName(b, l + 1);
+    r = r && referenceExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'var' componentName
+  // 'var' referenceExpression
   private static boolean variablePattern_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variablePattern_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, VAR);
-    r = r && componentName(b, l + 1);
+    r = r && referenceExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // type !'as' componentName
+  // type !'as' referenceExpression
   private static boolean variablePattern_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variablePattern_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = type(b, l + 1);
     r = r && variablePattern_3_1(b, l + 1);
-    r = r && componentName(b, l + 1);
+    r = r && referenceExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

@@ -29,8 +29,8 @@ public class DartIdentifierPatternImpl extends DartPsiCompositeElementImpl imple
 
   @Override
   @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findNotNullChildByClass(DartReferenceExpression.class);
   }
 
 }

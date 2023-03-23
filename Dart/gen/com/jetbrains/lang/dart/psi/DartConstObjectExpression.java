@@ -10,11 +10,8 @@ public interface DartConstObjectExpression extends DartExpression {
   @NotNull
   DartArguments getArguments();
 
-  @Nullable
-  DartComponentName getComponentName();
-
   @NotNull
-  DartReferenceExpression getReferenceExpression();
+  List<DartReferenceExpression> getReferenceExpressionList();
 
   @Nullable
   DartTypeArguments getTypeArguments();
