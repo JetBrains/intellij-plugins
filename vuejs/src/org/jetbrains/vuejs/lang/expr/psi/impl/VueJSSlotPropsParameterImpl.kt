@@ -29,9 +29,9 @@ class VueJSSlotPropsParameterImpl(node: ASTNode) : JSParameterImpl(node), VueJSS
     PsiTreeUtil.getContextOfType(this, XmlTag::class.java, PsiFile::class.java)
 
   override fun calculateType(): JSType? {
-    val type = JSDestructuringUtil.getTypeFromInitializer(this) {
+    val type = calculateDeclaredType() ?: JSDestructuringUtil.getTypeFromInitializer(this) {
       getSlotTypeFromContext(this)
-    } ?: calculateDeclaredType()
+    }
 
     return type?.asCompleteType()
   }
