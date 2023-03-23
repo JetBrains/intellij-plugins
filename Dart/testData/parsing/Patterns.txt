@@ -316,7 +316,7 @@ Dart File
                       PsiElement(IDENTIFIER)('b')
               PsiElement(,)(',')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('x')
                 PsiElement(:)(':')
@@ -354,7 +354,7 @@ Dart File
                   PsiElement(IDENTIFIER)('Point')
               PsiElement(()('(')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('x')
                 PsiElement(:)(':')
@@ -364,7 +364,7 @@ Dart File
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('y')
                 PsiElement(:)(':')
@@ -588,7 +588,7 @@ Dart File
                             PsiElement(IDENTIFIER)('b')
                     PsiElement(,)(',')
                     PATTERN_FIELD
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('x')
                       PsiElement(:)(':')
@@ -625,7 +625,7 @@ Dart File
                           PsiElement(IDENTIFIER)('a')
                     PsiElement(()('(')
                     PATTERN_FIELD
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('x')
                       PsiElement(:)(':')
@@ -635,7 +635,7 @@ Dart File
                             PsiElement(IDENTIFIER)('x')
                     PsiElement(,)(',')
                     PATTERN_FIELD
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('y')
                       PsiElement(:)(':')
@@ -815,7 +815,7 @@ Dart File
                   PsiElement(IDENTIFIER)('Point')
               PsiElement(()('(')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('x')
                 PsiElement(:)(':')
@@ -825,7 +825,7 @@ Dart File
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('y')
                 PsiElement(:)(':')
@@ -878,13 +878,13 @@ Dart File
                       PsiElement(IDENTIFIER)('Square')
                   PsiElement(()('(')
                   PATTERN_FIELD
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                     PsiElement(:)(':')
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('s')
                   PsiElement())(')')
@@ -895,13 +895,13 @@ Dart File
                       PsiElement(IDENTIFIER)('Circle')
                   PsiElement(()('(')
                   PATTERN_FIELD
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                     PsiElement(:)(':')
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('s')
                   PsiElement())(')')
@@ -1007,7 +1007,7 @@ Dart File
                 LIST_PATTERN_ELEMENT
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('c')
                 PsiElement(])(']')
@@ -1252,7 +1252,7 @@ Dart File
                         PsiElement(IDENTIFIER)('b')
                 PsiElement(,)(',')
                 PATTERN_FIELD
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('x')
                   PsiElement(:)(':')
@@ -1467,7 +1467,7 @@ Dart File
               UNARY_PATTERN
                 VARIABLE_PATTERN
                   PsiElement(var)('var')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('s')
                 PsiElement(?)('?')
@@ -1549,7 +1549,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('a')
               PsiElement(,)(',')
@@ -1560,7 +1560,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('num')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('b')
               PsiElement(])(']')
@@ -1672,7 +1672,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('a')
               PsiElement(,)(',')
@@ -1715,7 +1715,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('a')
               PsiElement(,)(',')
@@ -1726,7 +1726,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('b')
               PsiElement())(')')
@@ -1746,7 +1746,7 @@ Dart File
                         ID
                           PsiElement(IDENTIFIER)('int')
                       PsiElement(?)('?')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('a')
               PsiElement(,)(',')
@@ -1758,7 +1758,7 @@ Dart File
                         ID
                           PsiElement(IDENTIFIER)('int')
                       PsiElement(?)('?')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('b')
               PsiElement())(')')
@@ -1800,13 +1800,13 @@ Dart File
                       PsiElement(IDENTIFIER)('Square')
                   PsiElement(()('(')
                   PATTERN_FIELD
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                     PsiElement(:)(':')
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('s')
                   PsiElement())(')')
@@ -1817,13 +1817,13 @@ Dart File
                       PsiElement(IDENTIFIER)('Circle')
                   PsiElement(()('(')
                   PATTERN_FIELD
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                     PsiElement(:)(':')
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('s')
                   PsiElement())(')')
@@ -1850,7 +1850,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -1861,7 +1861,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('b')
                 PsiElement())(')')
@@ -1905,7 +1905,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -1916,7 +1916,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('b')
                 PsiElement())(')')
@@ -1949,7 +1949,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -1960,7 +1960,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('n')
                 PsiElement(])(']')
@@ -1992,7 +1992,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(})('}')
@@ -2057,7 +2057,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
@@ -2068,7 +2068,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('y')
               PsiElement(])(']')
@@ -2090,7 +2090,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
@@ -2101,7 +2101,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('y')
               PsiElement(])(']')
@@ -2130,7 +2130,7 @@ Dart File
                   PsiElement(IDENTIFIER)('int')
               PsiElement(()('(')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('isEven')
                 PsiElement(:)(':')
@@ -2803,13 +2803,13 @@ Dart File
                 PsiElement(IDENTIFIER)('Square')
             PsiElement(()('(')
             PATTERN_FIELD
-              COMPONENT_NAME
+              REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('length')
               PsiElement(:)(':')
               VARIABLE_PATTERN
                 PsiElement(var)('var')
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('l')
             PsiElement())(')')
@@ -2831,13 +2831,13 @@ Dart File
                 PsiElement(IDENTIFIER)('Circle')
             PsiElement(()('(')
             PATTERN_FIELD
-              COMPONENT_NAME
+              REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('radius')
               PsiElement(:)(':')
               VARIABLE_PATTERN
                 PsiElement(var)('var')
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('r')
             PsiElement())(')')
@@ -2980,13 +2980,13 @@ Dart File
                       PsiElement(IDENTIFIER)('Square')
                   PsiElement(()('(')
                   PATTERN_FIELD
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                     PsiElement(:)(':')
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('s')
                   PsiElement())(')')
@@ -2997,13 +2997,13 @@ Dart File
                       PsiElement(IDENTIFIER)('Circle')
                   PsiElement(()('(')
                   PATTERN_FIELD
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                     PsiElement(:)(':')
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('s')
                   PsiElement())(')')
@@ -3148,7 +3148,7 @@ Dart File
                 LIST_PATTERN_ELEMENT
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('c')
                 PsiElement(])(']')
@@ -3245,7 +3245,7 @@ Dart File
                   LIST_PATTERN_ELEMENT
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('c')
                   PsiElement(])(']')
@@ -3562,7 +3562,7 @@ Dart File
               UNARY_PATTERN
                 VARIABLE_PATTERN
                   PsiElement(var)('var')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('s')
                 PsiElement(?)('?')
@@ -3791,7 +3791,7 @@ Dart File
                   UNARY_PATTERN
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('name')
                     PsiElement(!)('!')
@@ -4031,14 +4031,14 @@ Dart File
                 PATTERN_FIELD
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
                 PATTERN_FIELD
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('b')
                 PsiElement())(')')
@@ -4087,7 +4087,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('x')
                 PsiElement(,)(',')
@@ -4098,7 +4098,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('String')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('s')
                 PsiElement())(')')
@@ -4140,7 +4140,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('String')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('_')
                 PsiElement(,)(',')
@@ -4151,7 +4151,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('_')
                 PsiElement())(')')
@@ -4177,14 +4177,14 @@ Dart File
                 PATTERN_FIELD
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('n')
                 PsiElement(,)(',')
                 PATTERN_FIELD
                   VARIABLE_PATTERN
                     PsiElement(final)('final')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('m')
                 PsiElement())(')')
@@ -4543,7 +4543,7 @@ Dart File
             RECORD_PATTERN
               PsiElement(()('(')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('untyped')
                 PsiElement(:)(':')
@@ -4553,7 +4553,7 @@ Dart File
                       PsiElement(IDENTIFIER)('untyped1')
               PsiElement(,)(',')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('typed')
                 PsiElement(:)(':')
@@ -4563,7 +4563,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('typed1')
               PsiElement())(')')
@@ -4605,7 +4605,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('typed')
               PsiElement())(')')
@@ -4702,18 +4702,18 @@ Dart File
               RECORD_PATTERN
                 PsiElement(()('(')
                 PATTERN_FIELD
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('untyped')
                   PsiElement(:)(':')
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('untyped')
                 PsiElement(,)(',')
                 PATTERN_FIELD
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('typed')
                   PsiElement(:)(':')
@@ -4723,7 +4723,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('typed')
                 PsiElement())(')')
@@ -4739,7 +4739,7 @@ Dart File
                   PsiElement(:)(':')
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('untyped')
                 PsiElement(,)(',')
@@ -4751,7 +4751,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('typed')
                 PsiElement())(')')
@@ -4795,27 +4795,27 @@ Dart File
               RECORD_PATTERN
                 PsiElement(()('(')
                 PATTERN_FIELD
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('checked')
                   PsiElement(:)(':')
                   UNARY_PATTERN
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('checked')
                     PsiElement(?)('?')
                 PsiElement(,)(',')
                 PATTERN_FIELD
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('asserted')
                   PsiElement(:)(':')
                   UNARY_PATTERN
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('asserted')
                     PsiElement(!)('!')
@@ -4832,7 +4832,7 @@ Dart File
                   UNARY_PATTERN
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('checked')
                     PsiElement(?)('?')
@@ -4842,7 +4842,7 @@ Dart File
                   UNARY_PATTERN
                     VARIABLE_PATTERN
                       PsiElement(var)('var')
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('asserted')
                     PsiElement(!)('!')
@@ -4879,7 +4879,7 @@ Dart File
             RECORD_PATTERN
               PsiElement(()('(')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('field')
                 PsiElement(:)(':')
@@ -5004,7 +5004,7 @@ Dart File
                   PsiElement(:)(':')
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('size')
                 PsiElement())(')')
@@ -5045,7 +5045,7 @@ Dart File
                   PsiElement(IDENTIFIER)('Point')
               PsiElement(()('(')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('x')
                 PsiElement(:)(':')
@@ -5055,7 +5055,7 @@ Dart File
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
               PATTERN_FIELD
-                COMPONENT_NAME
+                REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('y')
                 PsiElement(:)(':')
@@ -5842,7 +5842,7 @@ Dart File
                   PsiElement(:)(':')
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('width')
                 PsiElement(,)(',')
@@ -5850,7 +5850,7 @@ Dart File
                   PsiElement(:)(':')
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('height')
                 PsiElement())(')')
@@ -6034,7 +6034,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -6045,7 +6045,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('b')
                 PsiElement())(')')
@@ -6116,7 +6116,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -6127,7 +6127,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('b')
                 PsiElement())(')')
@@ -6574,7 +6574,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
@@ -6585,7 +6585,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('y')
               PsiElement(])(']')
@@ -6656,7 +6656,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('x')
               PsiElement(,)(',')
@@ -6667,7 +6667,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('y')
               PsiElement(])(']')
@@ -6749,7 +6749,7 @@ Dart File
                               REFERENCE_EXPRESSION
                                 ID
                                   PsiElement(IDENTIFIER)('int')
-                          COMPONENT_NAME
+                          REFERENCE_EXPRESSION
                             ID
                               PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
@@ -6760,7 +6760,7 @@ Dart File
                               REFERENCE_EXPRESSION
                                 ID
                                   PsiElement(IDENTIFIER)('int')
-                          COMPONENT_NAME
+                          REFERENCE_EXPRESSION
                             ID
                               PsiElement(IDENTIFIER)('y')
                       PsiElement(])(']')
@@ -6931,7 +6931,7 @@ Dart File
                                 ID
                                   PsiElement(IDENTIFIER)('int')
                         PsiElement())(')')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('f')
               PsiElement(,)(',')
@@ -6942,7 +6942,7 @@ Dart File
                       REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('String')
-                  COMPONENT_NAME
+                  REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('s')
               PsiElement())(')')
@@ -7159,7 +7159,7 @@ Dart File
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('String')
-              COMPONENT_NAME
+              REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('s')
             PsiElement())(')')
@@ -7239,7 +7239,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -7250,7 +7250,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('n')
                 PsiElement(])(']')
@@ -7282,7 +7282,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(})('}')
@@ -7408,7 +7408,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('String')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(])(']')
@@ -7458,7 +7458,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('String')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(])(']')
@@ -7535,7 +7535,7 @@ Dart File
                 LIST_PATTERN_ELEMENT
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -7546,7 +7546,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('int')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('n')
                 PsiElement(])(']')
@@ -7569,7 +7569,7 @@ Dart File
                 LIST_PATTERN_ELEMENT
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -7580,7 +7580,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('double')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('n')
                 PsiElement(])(']')
@@ -7603,7 +7603,7 @@ Dart File
                 LIST_PATTERN_ELEMENT
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(,)(',')
@@ -7614,7 +7614,7 @@ Dart File
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('String')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('s')
                 PsiElement(])(']')
@@ -7740,7 +7740,7 @@ Dart File
                         PsiElement(IDENTIFIER)('int')
                     PsiElement(()('(')
                     PATTERN_FIELD
-                      COMPONENT_NAME
+                      REFERENCE_EXPRESSION
                         ID
                           PsiElement(IDENTIFIER)('isEven')
                       PsiElement(:)(':')
@@ -7751,7 +7751,7 @@ Dart File
                 LIST_PATTERN_ELEMENT
                   VARIABLE_PATTERN
                     PsiElement(var)('var')
-                    COMPONENT_NAME
+                    REFERENCE_EXPRESSION
                       ID
                         PsiElement(IDENTIFIER)('a')
                 PsiElement(])(']')
