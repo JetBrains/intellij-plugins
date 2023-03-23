@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartPatternField extends DartPsiCompositeElement {
 
   @Nullable
-  DartComponentName getComponentName();
-
-  @Nullable
   DartConstantPattern getConstantPattern();
 
   @Nullable
@@ -36,6 +33,9 @@ public interface DartPatternField extends DartPsiCompositeElement {
 
   @Nullable
   DartRecordPattern getRecordPattern();
+
+  @Nullable
+  DartReferenceExpression getReferenceExpression();
 
   @Nullable
   DartRelationalPattern getRelationalPattern();
