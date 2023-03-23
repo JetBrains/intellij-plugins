@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -226,7 +226,7 @@ public final class RevealRunConfigurationExtension extends AppCodeRunConfigurati
       if (!settings.askToEnableAutoInstall) return null;
 
       boolean[] response = new boolean[1];
-      UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+      UIUtil.invokeAndWaitIfNeeded(() -> {
         response[0] = MessageDialogBuilder.yesNo(RevealBundle.message("dialog.title.reveal"),
                                                  RevealBundle.message("project.is.not.configured.with.reveal.library"))
           .doNotAsk(new DoNotAskOption() {

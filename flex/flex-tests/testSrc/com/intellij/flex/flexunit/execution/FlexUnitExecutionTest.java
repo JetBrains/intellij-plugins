@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.intellij.flex.flexunit.execution;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
@@ -128,7 +128,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
 
   @Override
   protected void setUp() {
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+    UIUtil.invokeAndWaitIfNeeded(() -> {
       try {
         super.setUp();
         CompilerProjectExtension.getInstance(myProject).setCompilerOutputUrl(createOutputFolder().getUrl());
@@ -192,7 +192,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
   @Override
   protected VirtualFile configureByFiles(final File projectRoot, final VirtualFile @NotNull [] vFiles) {
     final Ref<VirtualFile> result = new Ref<>();
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+    UIUtil.invokeAndWaitIfNeeded(() -> {
       try {
         result.set(super.configureByFiles(projectRoot, vFiles));
       }
@@ -230,7 +230,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
                                    String... files) throws Exception {
     configureByFiles(projectRoot, files);
     final Ref<IXMLElement> expected = new Ref<>();
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> WriteAction.run(() -> {
+    UIUtil.invokeAndWaitIfNeeded(() -> WriteAction.run(() -> {
       try {
         Collection<IXMLElement> collection = JSTestUtils.extractXml(myEditor.getDocument(), "testResults");
         assertEquals("Invalid expected structure", 1, collection.size());
@@ -242,7 +242,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       }
     }));
 
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> WriteAction.run(
+    UIUtil.invokeAndWaitIfNeeded(() -> WriteAction.run(
       () -> FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> configuration.setTargetPlatform(myTargetPlatform))));
 
     final RunnerAndConfigurationSettings runnerAndConfigurationSettings =
@@ -447,7 +447,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     c.USE_FCSH = myUseFcsh;
     c.USE_BUILT_IN_COMPILER = myUseBuiltInCompiler;
 
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+    UIUtil.invokeAndWaitIfNeeded(() -> {
       if (BLOCK_PORT_843) {
         myStopBlocking = true;
       }
