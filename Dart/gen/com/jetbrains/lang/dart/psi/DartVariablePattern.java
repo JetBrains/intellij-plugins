@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface DartVariablePattern extends DartPsiCompositeElement {
 
   @NotNull
-  DartComponentName getComponentName();
+  DartReferenceExpression getReferenceExpression();
 
   @Nullable
   DartType getType();

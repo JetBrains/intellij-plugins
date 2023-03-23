@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartIdentifierPattern extends DartPsiCompositeElement {
 
   @NotNull
-  DartComponentName getComponentName();
+  DartReferenceExpression getReferenceExpression();
 
 }

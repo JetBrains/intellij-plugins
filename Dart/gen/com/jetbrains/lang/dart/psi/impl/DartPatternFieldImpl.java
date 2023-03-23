@@ -29,12 +29,6 @@ public class DartPatternFieldImpl extends DartPsiCompositeElementImpl implements
 
   @Override
   @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
-  }
-
-  @Override
-  @Nullable
   public DartConstantPattern getConstantPattern() {
     return findChildByClass(DartConstantPattern.class);
   }
@@ -85,6 +79,12 @@ public class DartPatternFieldImpl extends DartPsiCompositeElementImpl implements
   @Nullable
   public DartRecordPattern getRecordPattern() {
     return findChildByClass(DartRecordPattern.class);
+  }
+
+  @Override
+  @Nullable
+  public DartReferenceExpression getReferenceExpression() {
+    return findChildByClass(DartReferenceExpression.class);
   }
 
   @Override

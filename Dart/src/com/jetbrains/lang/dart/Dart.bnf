@@ -769,9 +769,9 @@ constantPattern ::= NULL | TRUE | FALSE | '-'? (NUMBER | HEX_NUMBER) | stringLit
                     'const' '(' expression ')'
 
 constObjectExpression ::= 'const' constructorDesignation arguments
-private constructorDesignation ::= simpleQualifiedReferenceExpression (typeArguments ('.' componentName)?)?
-variablePattern ::= 'final' type componentName | 'final' componentName | 'var' componentName | type !'as' componentName
-identifierPattern ::= componentName // unreachable because captured by simpleQualifiedReferenceExpression
+private constructorDesignation ::= simpleQualifiedReferenceExpression (typeArguments ('.' referenceExpression)?)?
+variablePattern ::= 'final' type referenceExpression | 'final' referenceExpression | 'var' referenceExpression | type !'as' referenceExpression
+identifierPattern ::= referenceExpression // unreachable because captured by simpleQualifiedReferenceExpression
 parenthesizedPattern ::= '(' pattern ')'
 
 listPattern ::= typeArguments? '[' listPatternElements? ']'
@@ -785,7 +785,7 @@ mapPatternEntry ::= '...' | expression ':' pattern
 
 recordPattern ::= '(' patternFields? ')'
 private patternFields ::= patternField (',' patternField)* ','?
-patternField ::= (componentName? ':')? pattern
+patternField ::= (referenceExpression? ':')? pattern
 
 objectPattern ::= simpleQualifiedReferenceExpression typeArguments? '(' patternFields? ')'
 

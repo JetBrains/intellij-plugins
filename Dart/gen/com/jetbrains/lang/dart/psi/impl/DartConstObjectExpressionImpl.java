@@ -35,15 +35,9 @@ public class DartConstObjectExpressionImpl extends DartExpressionImpl implements
   }
 
   @Override
-  @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
-  }
-
-  @Override
   @NotNull
-  public DartReferenceExpression getReferenceExpression() {
-    return findNotNullChildByClass(DartReferenceExpression.class);
+  public List<DartReferenceExpression> getReferenceExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartReferenceExpression.class);
   }
 
   @Override
