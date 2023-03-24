@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.TypeScriptTestUtil
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.PsiDocumentManager
@@ -16,6 +17,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.webSymbols.DebugOutputPrinter
 import com.intellij.webSymbols.checkTextByFile
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
 
 /**
@@ -244,7 +246,8 @@ class VueComponentTest : BasePlatformTestCase() {
           printProperty(level, "pattern", sourceElement.pattern)
         }
         if (sourceElement is VueEntitiesContainer) {
-          printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }?.toSortedMap())
+          printProperty(level, "components", sourceElement.components.takeIf { it.isNotEmpty() }
+            ?.filterOutLowercaseScriptSetupVariables()?.toSortedMap())
           printProperty(level, "directives", sourceElement.directives.takeIf { it.isNotEmpty() }?.toSortedMap())
           printProperty(level, "mixins", sourceElement.mixins.takeIf { it.isNotEmpty() })
         }
@@ -284,5 +287,14 @@ class VueComponentTest : BasePlatformTestCase() {
   }
 
 }
+
+private fun Map<String, VueComponent>.filterOutLowercaseScriptSetupVariables(): Map<String, VueComponent> =
+  filter { (_, component) ->
+    component.rawSource.let {
+      it !is JSVariable
+      || findModule(it, true) == null
+      || it.name?.getOrNull(0)?.isUpperCase() == true
+    }
+  }
 
 
