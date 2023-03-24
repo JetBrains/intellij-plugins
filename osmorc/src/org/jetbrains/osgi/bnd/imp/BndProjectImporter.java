@@ -143,7 +143,7 @@ public final class BndProjectImporter {
             ApplicationManager.getApplication().invokeLater(() -> {
               createProjectStructure();
               if (refresh) {
-                VirtualFileManager.getInstance().asyncRefresh(null);
+                VirtualFileManager.getInstance().asyncRefresh();
               }
             }, BndProjectImporter.this.myProject.getDisposed());
           }
