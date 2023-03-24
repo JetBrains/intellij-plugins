@@ -31,7 +31,8 @@ import java.io.File;
 import java.util.*;
 
 @Service(Service.Level.PROJECT)
-public class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
+public final class PerforceExceptionsHotFixer implements VcsExceptionsHotFixer {
+
   private final MyListChecker myUpdateChecker;
 
   public PerforceExceptionsHotFixer(final Project project) {
