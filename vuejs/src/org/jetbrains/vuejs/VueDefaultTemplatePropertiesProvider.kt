@@ -3,7 +3,6 @@ package org.jetbrains.vuejs
 
 import com.intellij.ide.fileTemplates.DefaultTemplatePropertiesProvider
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigServiceImpl
-import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
@@ -23,11 +22,11 @@ class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
     if (!hasVueFiles(directory.project) && !isVueContext(directory))
       return
     if (TypeScriptConfigServiceImpl.getNearestParentTsConfigs(directory.virtualFile, false).isNotEmpty()) {
-      props["SCRIPT_LANG_ATTR"] = " lang='ts'"
+      props["SCRIPT_LANG_ATTR"] = " lang=\"ts\""
       props["USE_DEFINE_COMPONENT"] = true
     }
     getDefaultVueStyleLang(directory.project)?.let {
-      props["STYLE_LANG_ATTR"] = " lang='$it'"
+      props["STYLE_LANG_ATTR"] = " lang=\"$it\""
     }
     props["CLASS_COMPONENT_LIB"] = getVueClassComponentLibrary(directory) ?: VUE_CLASS_COMPONENT
     props["CLASS_COMPONENT_DECORATOR"] = getVueClassComponentDecoratorName(directory)
