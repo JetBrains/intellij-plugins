@@ -91,7 +91,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     final MavenPlugin plugin = getFlexmojosPlugin(mavenProject);
     final String version = plugin.getVersion();
     if (version != null && StringUtil.compareVersionNumbers(version, "4") < 0) {
-      embedder.resolvePlugin(plugin, mavenProject.getRemoteRepositories(), nativeMavenProject, true);
+      embedder.resolvePlugin(plugin, nativeMavenProject);
     }
   }
 
