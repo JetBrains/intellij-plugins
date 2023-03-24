@@ -16,6 +16,7 @@ import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -163,7 +164,8 @@ public final class PubspecYamlUtil {
   @Nullable
   private static Map<String, Object> loadPubspecYamlInfo(final @NotNull String pubspecYamlFileContents) {
     // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap() [https://github.com/dart-lang/eclipse3]
-    final Yaml yaml = new Yaml(new SafeConstructor(), new Representer(), new DumperOptions(), new Resolver() {
+    DumperOptions dumperOptions = new DumperOptions();
+    final Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()), new Representer(dumperOptions), dumperOptions, new Resolver() {
       @Override
       protected void addImplicitResolvers() {
         addImplicitResolver(Tag.BOOL, BOOL, "yYnNtTfFoO");
