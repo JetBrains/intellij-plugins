@@ -4,11 +4,8 @@ package org.jetbrains.vuejs.model.typed
 import com.intellij.javascript.web.js.WebJSResolveUtil.resolveSymbolFromNodeModule
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider
-import com.intellij.lang.javascript.psi.JSFunctionType
-import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
@@ -199,14 +196,17 @@ class VueTypedComponent(override val source: PsiElement,
 
   private class VueTypedEmit(override val name: String,
                              private val callSignature: JSRecordType.CallSignature) : VueTypedDocumentedElement(), VueEmitCall {
-    override val eventJSType: JSType?
-      get() = callSignature.functionType.parameters.getOrNull(1)?.inferredType
+    override val params: List<JSParameterTypeDecorator>
+      get() = callSignature.functionType.parameters.drop(1)
 
     override val source: PsiElement?
       get() = callSignature.functionType.parameters.getOrNull(0)
                 ?.inferredType?.asSafely<JSTypeKeyTypeImpl>()
                 ?.keySourceElements?.firstOrNull()
               ?: callSignature.memberSource.singleElement
+
+    override val hasStrictSignature: Boolean
+      get() = true
   }
 
   private class VueTypedSlot(override val name: String,

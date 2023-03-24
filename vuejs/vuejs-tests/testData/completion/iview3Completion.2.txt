@@ -1,5 +1,5 @@
-!on-close#HTMLElement#100
-!onClose#HTMLElement#100
+!on-close#(event: HTMLElement) => void#100
+!onClose#(event: HTMLElement) => void#100
 abort#null#1
 auxclick#null#1
 beforeinput#null#1

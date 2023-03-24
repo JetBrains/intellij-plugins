@@ -1,4 +1,4 @@
-!close#boolean#100
+!close#(_close: boolean) => void#100
 abort#null#1
 auxclick#null#1
 beforeinput#null#1
