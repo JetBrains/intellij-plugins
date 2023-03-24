@@ -13,5 +13,5 @@ public final class NextjsIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, NextjsIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon NextJsGen = load("icons/nextJsGen.svg", 1150052507, 2);
+  /** 16x16 */ public static final @NotNull Icon NextJsGen = load("icons/nextJsGen.svg", -605587865, 2);
 }

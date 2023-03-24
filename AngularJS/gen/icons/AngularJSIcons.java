@@ -14,6 +14,6 @@ public final class AngularJSIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, AngularJSIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Angular2 = load("icons/angular2.svg", -1716775961, 0);
-  /** 16x16 */ public static final @NotNull Icon AngularJS = load("icons/AngularJS.svg", -735623858, 0);
+  /** 16x16 */ public static final @NotNull Icon Angular2 = load("icons/angular2.svg", -646416409, 0);
+  /** 16x16 */ public static final @NotNull Icon AngularJS = load("icons/AngularJS.svg", -1171440886, 0);
 }

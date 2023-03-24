@@ -14,8 +14,8 @@ public final class OsmorcIdeaIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, OsmorcIdeaIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Bnd = load("icons/bnd.svg", 1449701139, 0);
-  /** 16x16 */ public static final @NotNull Icon BndLaunch = load("icons/bndLaunch.svg", 688419419, 0);
-  /** 16x16 */ public static final @NotNull Icon BndTest = load("icons/bndTest.svg", 1372267342, 0);
-  /** 16x16 */ public static final @NotNull Icon Osgi = load("icons/osgi.svg", -1981117853, 0);
+  /** 16x16 */ public static final @NotNull Icon Bnd = load("icons/bnd.svg", -560989913, 0);
+  /** 16x16 */ public static final @NotNull Icon BndLaunch = load("icons/bndLaunch.svg", 981570993, 0);
+  /** 16x16 */ public static final @NotNull Icon BndTest = load("icons/bndTest.svg", 132887286, 0);
+  /** 16x16 */ public static final @NotNull Icon Osgi = load("icons/osgi.svg", -1981119802, 0);
 }

@@ -14,5 +14,5 @@ public final class JbossDroolsIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, JbossDroolsIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Drools_16 = load("resources/icons/drools_16.svg", -1807239339, 0);
+  /** 16x16 */ public static final @NotNull Icon Drools_16 = load("resources/icons/drools_16.svg", -1781030421, 0);
 }

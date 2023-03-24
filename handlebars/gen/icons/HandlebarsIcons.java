@@ -16,12 +16,12 @@ public final class HandlebarsIcons {
   }
 
   public static final class Elements {
-    /** 16x16 */ public static final @NotNull Icon OpenBlock = load("icons/elements/openBlock.svg", -1862257554, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenInverse = load("icons/elements/openInverse.svg", 664434751, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenMustache = load("icons/elements/openMustache.svg", -46606889, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenPartial = load("icons/elements/openPartial.svg", -1935351293, 2);
-    /** 16x16 */ public static final @NotNull Icon OpenUnescaped = load("icons/elements/openUnescaped.svg", 36741477, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenBlock = load("icons/elements/openBlock.svg", 1867605843, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenInverse = load("icons/elements/openInverse.svg", 517289502, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenMustache = load("icons/elements/openMustache.svg", 291635954, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenPartial = load("icons/elements/openPartial.svg", -935146636, 2);
+    /** 16x16 */ public static final @NotNull Icon OpenUnescaped = load("icons/elements/openUnescaped.svg", -1428626002, 2);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Handlebars_icon = load("icons/handlebars_icon.svg", -153626154, 0);
+  /** 16x16 */ public static final @NotNull Icon Handlebars_icon = load("icons/handlebars_icon.svg", -1079559553, 0);
 }

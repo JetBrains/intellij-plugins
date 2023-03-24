@@ -14,7 +14,7 @@ public final class CFMLIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, CFMLIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Cfml = load("icons/cfml.svg", -191676664, 2);
-  /** 16x16 */ public static final @NotNull Icon Cfunit = load("icons/cfunit.svg", 730758825, 2);
-  /** 16x16 */ public static final @NotNull Icon Remote_access = load("icons/remote_access.svg", -1336776273, 0);
+  /** 16x16 */ public static final @NotNull Icon Cfml = load("icons/cfml.svg", 1858322830, 2);
+  /** 16x16 */ public static final @NotNull Icon Cfunit = load("icons/cfunit.svg", 1949884754, 2);
+  /** 16x16 */ public static final @NotNull Icon Remote_access = load("icons/remote_access.svg", 864057905, 0);
 }

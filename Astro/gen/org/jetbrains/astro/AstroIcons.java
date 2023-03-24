@@ -14,5 +14,5 @@ public final class AstroIcons {
   private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, AstroIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Astro = load("icons/astro.svg", 1748303011, 2);
+  /** 16x16 */ public static final @NotNull Icon Astro = load("icons/astro.svg", -2028536824, 2);
 }
