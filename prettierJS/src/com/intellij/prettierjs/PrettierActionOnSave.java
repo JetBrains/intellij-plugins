@@ -26,19 +26,20 @@ public class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListen
   @Override
   public boolean isEnabledForProject(@NotNull Project project) {
     var configuration = PrettierConfiguration.getInstance(project);
-    return configuration.isRunOnSave() && !configuration.isDisabled();
+    return configuration.isRunOnSave();
   }
 
   @Override
   public void processDocuments(@NotNull Project project, @NotNull Document @NotNull [] documents) {
     PrettierConfiguration prettierConfiguration = PrettierConfiguration.getInstance(project);
-    if (!prettierConfiguration.isRunOnSave() || prettierConfiguration.isDisabled())
+    if (!prettierConfiguration.isRunOnSave()) {
       return;
+    }
 
     FileDocumentManager manager = FileDocumentManager.getInstance();
     List<VirtualFile> files = ContainerUtil.mapNotNull(documents, document -> {
       VirtualFile file = manager.getFile(document);
-      if (file != null && (prettierConfiguration.isRunOnReformat() || prettierConfiguration.isAutomatic())) {
+      if (file != null && prettierConfiguration.isRunOnReformat()) {
         FormatOnSaveOptions onSaveOptions = FormatOnSaveOptions.getInstance(project);
         if (onSaveOptions.isRunOnSaveEnabled() &&
             (onSaveOptions.isAllFileTypesSelected() || onSaveOptions.isFileTypeSelected(file.getFileType()))) {

@@ -36,7 +36,7 @@ public final class PrettierPostFormatProcessor implements PostFormatProcessor {
   private static boolean isApplicable(@NotNull PsiFile psiFile) {
     Project project = psiFile.getProject();
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    if (!(configuration.isRunOnReformat() || configuration.isAutomatic()) || configuration.isDisabled()) return false;
+    if (!configuration.isRunOnReformat()) return false;
 
     VirtualFile file = psiFile.getVirtualFile();
     if (file == null) return false;
