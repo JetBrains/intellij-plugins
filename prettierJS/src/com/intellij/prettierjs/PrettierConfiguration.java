@@ -12,6 +12,8 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.xmlb.annotations.OptionTag;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,23 +24,26 @@ import java.util.List;
 public final class PrettierConfiguration implements JSNpmLinterState<PrettierConfiguration>,
                                                     PersistentStateComponent<PrettierConfiguration.State> {
 
-  enum ConfigurationMode {
+  @ApiStatus.Internal
+  public enum ConfigurationMode {
     DISABLED,
     AUTOMATIC,
     MANUAL
   }
 
-  static class State {
-    public ConfigurationMode myConfigurationMode = ConfigurationMode.AUTOMATIC;
-    public boolean myRunOnSave = PRETTIER_ON_SAVE_DEFAULT;
-    public boolean myRunOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
-    public @NotNull String myFilesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
+  @ApiStatus.Internal
+  public static class State {
+    @OptionTag("myConfigurationMode")
+    public ConfigurationMode configurationMode = ConfigurationMode.AUTOMATIC;
+    @OptionTag("myRunOnSave")
+    public boolean runOnSave = PRETTIER_ON_SAVE_DEFAULT;
+    @OptionTag("myRunOnReformat")
+    public boolean runOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
+    @OptionTag("myFilesPattern")
+    public @NotNull String filesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
   }
 
   @NonNls private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
-
-  @NonNls private static final String OLD_PRETTIER_ON_SAVE_PROPERTY = "run.prettier.on.save";
-  @NonNls private static final String OLD_PRETTIER_FILES_PATTERN_PROPERTY = "prettier.files.pattern";
 
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
   private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = true;
@@ -66,43 +71,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
-
-    PropertiesComponent.getInstance(myProject).setValue(OLD_PRETTIER_ON_SAVE_PROPERTY, null);
-    PropertiesComponent.getInstance(myProject).setValue(OLD_PRETTIER_FILES_PATTERN_PROPERTY, null);
-  }
-
-  @Override
-  public void noStateLoaded() {
-    // Previously, 'run on save' and 'pattern' values were stored in workspace.xml. Need to load old values if any.
-    PropertiesComponent properties = PropertiesComponent.getInstance(myProject);
-    boolean oldRunOnSave = properties.getBoolean(OLD_PRETTIER_ON_SAVE_PROPERTY, PRETTIER_ON_SAVE_DEFAULT);
-    String oldPattern = properties.getValue(OLD_PRETTIER_FILES_PATTERN_PROPERTY, PRETTIER_FILES_PATTERN_DEFAULT);
-
-    properties.setValue(OLD_PRETTIER_ON_SAVE_PROPERTY, null);
-    properties.setValue(OLD_PRETTIER_FILES_PATTERN_PROPERTY, null);
-
-    if (oldRunOnSave != PRETTIER_ON_SAVE_DEFAULT) {
-      setRunOnSave(oldRunOnSave);
-    }
-    if (!PRETTIER_FILES_PATTERN_DEFAULT.equals(oldPattern)) {
-      setFilesPattern(oldPattern);
-    }
-  }
-
-  public void setConfigurationMode(ConfigurationMode configurationMode) {
-    myState.myConfigurationMode = configurationMode;
-  }
-
-  public ConfigurationMode getConfigurationMode() {
-    return myState.myConfigurationMode;
-  }
-
-  public boolean isDisabled() {
-    return myState.myConfigurationMode == ConfigurationMode.DISABLED;
-  }
-
-  public boolean isAutomatic() {
-    return myState.myConfigurationMode == ConfigurationMode.AUTOMATIC;
   }
 
   @NotNull
@@ -124,7 +92,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     if (isDisabled()) {
       return PKG_DESC.createPackage("");
     }
-    if (myState.myConfigurationMode == ConfigurationMode.MANUAL) {
+    if (myState.configurationMode == ConfigurationMode.MANUAL) {
       String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
       if (value != null && !value.isBlank()) {
         return PKG_DESC.createPackage(value);
@@ -154,27 +122,23 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   }
 
   public boolean isRunOnSave() {
-    return myState.myRunOnSave;
-  }
-
-  public void setRunOnSave(boolean runOnSave) {
-    myState.myRunOnSave = runOnSave;
+    return !isDisabled() && myState.runOnSave;
   }
 
   public boolean isRunOnReformat() {
-    return myState.myRunOnReformat;
-  }
-
-  public void setRunOnReformat(boolean runOnReformat) {
-    myState.myRunOnReformat = runOnReformat;
+    return !isDisabled() && (isAutomatic() || myState.runOnReformat);
   }
 
   @NotNull
   public String getFilesPattern() {
-    return myState.myFilesPattern;
+    return myState.filesPattern;
   }
 
-  public void setFilesPattern(@NotNull String filesPattern) {
-    myState.myFilesPattern = filesPattern;
+  private boolean isDisabled() {
+    return myState.configurationMode == ConfigurationMode.DISABLED;
+  }
+
+  private boolean isAutomatic() {
+    return myState.configurationMode == ConfigurationMode.AUTOMATIC;
   }
 }

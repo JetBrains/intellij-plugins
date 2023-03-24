@@ -38,7 +38,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
     PrettierConfiguration.getInstance(getProject())
       .withLinterPackage(NodePackageRef.create(getNodePackage()))
-      .setConfigurationMode(PrettierConfiguration.ConfigurationMode.MANUAL);
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.MANUAL;
   }
 
   public void testWithoutConfig() {
@@ -114,8 +114,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   private void doTestRunPrettierOnSave(@NotNull String saveActionId) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnSave = configuration.isRunOnSave();
-    configuration.setRunOnSave(true);
+    boolean origRunOnSave = configuration.getState().runOnSave;
+    configuration.getState().runOnSave = true;
     try {
       myFixture.configureByText("foo.js", "var  a=''");
       myFixture.type(' ');
@@ -124,21 +124,21 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
       myFixture.checkResult("var a = \"\";\n");
     }
     finally {
-      configuration.setRunOnSave(origRunOnSave);
+      configuration.getState().runOnSave = origRunOnSave;
     }
   }
 
   public void testRunPrettierOnCodeReformat() {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnReformat = configuration.isRunOnReformat();
-    configuration.setRunOnReformat(true);
+    boolean origRunOnReformat = configuration.getState().runOnReformat;
+    configuration.getState().runOnReformat = true;
     try {
       myFixture.configureByText("foo.js", "var  a=''");
       myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
       myFixture.checkResult("var a = \"\";\n");
     }
     finally {
-      configuration.setRunOnReformat(origRunOnReformat);
+      configuration.getState().runOnReformat = origRunOnReformat;
     }
   }
 
@@ -154,8 +154,8 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   public void testIncompleteBlock() {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
-    boolean origRunOnReformat = configuration.isRunOnReformat();
-    configuration.setRunOnReformat(true);
+    boolean origRunOnReformat = configuration.getState().runOnReformat;
+    configuration.getState().runOnReformat = true;
     try {
       String dirName = getTestName(true);
       myFixture.copyDirectoryToProject(dirName, "");
@@ -166,7 +166,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
       myFixture.checkResultByFile(dirName + "/" + "toReformat_after.js");
     }
     finally {
-      configuration.setRunOnReformat(origRunOnReformat);
+      configuration.getState().runOnReformat = origRunOnReformat;
     }
   }
 
@@ -184,7 +184,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   public void testAutoconfigured() {
     PrettierConfiguration.getInstance(getProject())
-      .setConfigurationMode(PrettierConfiguration.ConfigurationMode.AUTOMATIC);
+      .getState().configurationMode = PrettierConfiguration.ConfigurationMode.AUTOMATIC;
     doReformatFile("subdir/formatted", "js", () -> {
       myFixture.getTempDirFixture().copyAll(getNodePackage().getSystemIndependentPath(), "subdir/node_modules/prettier");
     });
