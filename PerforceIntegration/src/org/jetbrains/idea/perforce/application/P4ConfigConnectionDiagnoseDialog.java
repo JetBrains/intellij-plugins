@@ -115,7 +115,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
       ++i;
     }
 
-    String envP4Config = P4ConfigHelper.getP4ConfigFileName();
+    String envP4Config = P4ConfigHelper.getP4ConfigFileNameFromEnv();
     if (envP4Config != null) {
       addNode(myRoot,
               new BaseNode(PerforceBundle.message("connection.env", envP4Config), NodeType.info));

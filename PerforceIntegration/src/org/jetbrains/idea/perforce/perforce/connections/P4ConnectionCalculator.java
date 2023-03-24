@@ -44,7 +44,7 @@ public class P4ConnectionCalculator {
                                                   ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
                                                   : vcsManager.getDetailedVcsMappings(vcs);
 
-    final String p4ConfigFileName = settings.myP4ConfigHelper.getP4Config();
+    final String p4ConfigFileName = P4ConfigHelper.getP4ConfigFileNameFromEnv();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
@@ -280,7 +280,7 @@ public class P4ConnectionCalculator {
     try {
       // todo hack =((
       // do not expect "password invalid" when P4 SET is executed, so just use empty settings
-      PerforceRunner.checkError(retVal, new PerforceSettings(myProject, false), localConnection);
+      PerforceRunner.checkError(retVal, new PerforceSettings(myProject), localConnection);
     }
     catch (VcsException e) {
       parameters.setException(e);

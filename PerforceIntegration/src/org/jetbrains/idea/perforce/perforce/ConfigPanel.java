@@ -130,7 +130,7 @@ public class ConfigPanel {
       public void actionPerformed(ActionEvent e) {
         final boolean isEmpty = PerforceLoginManager.getInstance(myProject).getNotifier().isEmpty();
 
-        final PerforceSettings settings = new PerforceSettings(myProject, false);
+        final PerforceSettings settings = new PerforceSettings(myProject);
         settings.setCanGoOffline(false);
         applyImpl(settings);
 
@@ -243,7 +243,7 @@ public class ConfigPanel {
     boolean useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
     if (useP4CONFIG && P4ConfigHelper.hasP4ConfigSettingInEnvironment()) {
       String basePath = myProject.getBasePath();
-      @Nullable String configFileName = P4ConfigHelper.getP4ConfigFileName();
+      @Nullable String configFileName = P4ConfigHelper.getP4ConfigFileNameFromEnv();
       P4ConnectionParameters params = P4ConnectionCalculator.getParametersFromConfig(new File(basePath), configFileName);
 
       return params.getIgnoreFileName() == null;

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
+import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -24,9 +25,24 @@ public class P4ConfigHelper {
   private static final List<String> ENV_CONFIGS = List.of(P4ConfigFields.P4PORT.getName(), P4ConfigFields.P4CLIENT.getName(),
                                                           P4ConfigFields.P4USER.getName(), P4ConfigFields.P4PASSWD.getName(),
                                                           P4ConfigFields.P4CONFIG.getName());
+  private final Project myProject;
+
+  public P4ConfigHelper() {
+    myProject = null;
+  }
+
+  public P4ConfigHelper(Project project) {
+    myProject = project;
+    PerforceSettings settings = PerforceSettings.getSettings(project);
+    initializeP4SetVariables(myProject, settings.getPhysicalSettings());
+  }
+
+  public static P4ConfigHelper getConfigHelper(final Project project) {
+    return project.getService(P4ConfigHelper.class);
+  }
 
   private final Map<Path, P4ConnectionParameters> myRootParameters = new HashMap<>();
-  private String myP4ConfigName = getP4ConfigFileName();
+  private String myP4ConfigName = getP4ConfigFileNameFromEnv();
 
   public void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
     myRootParameters.clear();
@@ -63,7 +79,7 @@ public class P4ConfigHelper {
   }
 
   @Nullable
-  public static String getP4ConfigFileName() {
+  public static String getP4ConfigFileNameFromEnv() {
     return EnvironmentUtil.getValue(P4_CONFIG);
   }
 
@@ -74,7 +90,7 @@ public class P4ConfigHelper {
   }
 
   @Nullable
-  public static String getP4IgnoreVariable() { return EnvironmentUtil.getValue(P4_IGNORE); }
+  public static String getP4IgnoreFileNameFromEnv() { return EnvironmentUtil.getValue(P4_IGNORE); }
 
   private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
 

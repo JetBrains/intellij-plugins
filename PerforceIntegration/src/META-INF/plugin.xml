@@ -100,6 +100,7 @@
     <projectService serviceImplementation="org.jetbrains.idea.perforce.operations.VcsOperationLog"/>
     <projectService serviceImplementation="org.jetbrains.idea.perforce.application.LastSuccessfulUpdateTracker"/>
     <projectService serviceImplementation="org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer"/>
+    <projectService serviceImplementation="org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper"/>
 
     <registryKey key="p4.ignore.all.potentially.ignored" defaultValue="true"
                  description="Consider all excluded files as ignored and do not check them via native ignores"/>
