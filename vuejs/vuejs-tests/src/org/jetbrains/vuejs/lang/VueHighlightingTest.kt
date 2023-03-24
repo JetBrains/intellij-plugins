@@ -576,6 +576,10 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
+  fun testCustomEventsTypedComponent() {
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
   fun testLifecycleEventsVue2ClassComponent() {
     myFixture.enableInspections(
       JSUnusedLocalSymbolsInspection(),

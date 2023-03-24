@@ -1,5 +1,5 @@
-!change#boolean#100
-!scroll#{scrollTop: number, fixed: boolean}#100
+!change#(fixed: boolean) => void#100
+!scroll#({scrollTop, fixed}: {scrollTop: number, fixed: boolean}) => void#100
 abort#null#1
 auxclick#null#1
 beforeinput#null#1
