@@ -68,7 +68,8 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
           val name = (element as? JSPsiNamedElementBase)?.let { if (it is ES6ImportSpecifier) it.declaredName else it.name }
           if (name?.getOrNull(0) == 'v' && name.getOrNull(1)?.isUpperCase() == true) {
             directives[name.substring(1)] = VueSourceDirective(name.substring(1), element)
-          } else if (name != null && element !is JSClass && element !is JSVariable) {
+          }
+          else if (name != null && element !is JSClass) {
             (VueModelManager.getComponent(VueComponents.getComponentDescriptor(element)) ?: VueUnresolvedComponent(element, element, name))
               .let { components[name] = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, element) else it }
           }
