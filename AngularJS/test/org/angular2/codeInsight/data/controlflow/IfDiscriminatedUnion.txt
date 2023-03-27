@@ -53,4 +53,24 @@
 52(53) element: JSReferenceExpression Read(item)
 53(55) element: JSReferenceExpression Read(age)
 54(55) element: HtmlTag:ng-template IF (branch) false
-55() element: null
+55(56) element: HtmlTag:div
+56(57) element: JSReferenceExpression Read(isNamed)
+57(58) element: JSReferenceExpression Read(item)
+58(59,60) element: JSCallExpression
+59(61) element: JSCallExpression condition: true, reachable
+60(64) element: JSCallExpression condition: false, reachable
+61(62) element: HtmlTag:div IF (branch) true
+62(63) element: JSReferenceExpression Read(item)
+63(65) element: JSReferenceExpression Read(name)
+64(65) element: HtmlTag:div IF (branch) false
+65(66) element: HtmlTag:div
+66(67) element: JSReferenceExpression Read(isNamed)
+67(68) element: JSReferenceExpression Read(item)
+68(69,70) element: JSCallExpression
+69(71) element: JSCallExpression condition: true, reachable
+70(74) element: JSCallExpression condition: false, reachable
+71(72) element: HtmlTag:div IF (branch) true
+72(73) element: JSReferenceExpression Read(item)
+73(75) element: JSReferenceExpression Read(age)
+74(75) element: HtmlTag:div IF (branch) false
+75() element: null
