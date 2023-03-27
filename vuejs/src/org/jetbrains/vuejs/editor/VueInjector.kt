@@ -20,7 +20,9 @@ import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
@@ -96,6 +98,8 @@ class VueInjector : MultiHostInjector {
     val parent = context.parent
     if (parent == null || !isVueContext(context)) return
 
+    if (inVPreContext(context)) return
+
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl
         && context.value.isNotBlank()
@@ -170,4 +174,9 @@ class VueInjector : MultiHostInjector {
                   XmlAttributeValueImpl::class.java,
                   JSLiteralExpressionImpl::class.java)
   }
+
+  private fun inVPreContext(element: PsiElement): Boolean =
+    element.parents(true).any {
+      (it as? XmlTag)?.getAttribute("v-pre") != null
+    }
 }
