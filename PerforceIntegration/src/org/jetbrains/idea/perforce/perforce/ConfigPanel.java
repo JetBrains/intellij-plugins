@@ -69,6 +69,7 @@ public class ConfigPanel {
   private JButton myTestConnectionButton;
 
   private final Project myProject;
+  private final P4ConfigHelper myP4ConfigHelper;
   private JCheckBox myShowBranchingHistory;
   private JCheckBox myIsEnabled;
   private JCheckBox myUseLogin;
@@ -102,6 +103,7 @@ public class ConfigPanel {
 
   public ConfigPanel(final Project project) {
     myProject  = project;
+    myP4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
 
     final ButtonGroup bg = new ButtonGroup();
     bg.add(myUseConnectionParametersRadioButton);
@@ -200,14 +202,14 @@ public class ConfigPanel {
       hideProjectSpecificControls();
     }
 
-
+    // todo: use non static alternative
     String unsetEnv = P4ConfigHelper.getUnsetP4EnvironmentConfig();
     if (!unsetEnv.isEmpty()) {
       myP4ConfigWarningLabel.setText(PerforceBundle.message("radio.no.p4config.env", unsetEnv));
       myP4ConfigWarningLabel.setVisible(true);
       RelativeFont.SMALL.install(myP4ConfigWarningLabel);
     }
-
+    // todo: use non static alternative
     myP4IgnoreWarningLabel.setVisible(!P4ConfigHelper.hasP4IgnoreSettingInEnvironment());
     RelativeFont.SMALL.install(myP4IgnoreWarningLabel);
   }
@@ -241,9 +243,11 @@ public class ConfigPanel {
 
   private boolean shouldIgnorePanelBeEnabled() {
     boolean useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
-    if (useP4CONFIG && P4ConfigHelper.hasP4ConfigSettingInEnvironment()) {
+    if (useP4CONFIG && myP4ConfigHelper.hasP4ConfigSetting()) {
       String basePath = myProject.getBasePath();
-      @Nullable String configFileName = P4ConfigHelper.getP4ConfigFileNameFromEnv();
+      @Nullable String configFileName = myP4ConfigHelper.getP4Config();
+      if (configFileName == null)
+        return false;
       P4ConnectionParameters params = P4ConnectionCalculator.getParametersFromConfig(new File(basePath), configFileName);
 
       return params.getIgnoreFileName() == null;

@@ -17,7 +17,7 @@ public class PerforceLocalConnection extends AbstractP4Connection {
 
   public PerforceLocalConnection(@NotNull final String workingDir) {
     myCwd = new File(workingDir);
-    myConnectionId = new ConnectionId(P4ConfigHelper.getP4ConfigFileNameFromEnv(), workingDir);
+    myConnectionId = new ConnectionId(null, workingDir);
   }
 
   @Override

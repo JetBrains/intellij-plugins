@@ -44,7 +44,7 @@ public class P4ConnectionCalculator {
                                                   ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
                                                   : vcsManager.getDetailedVcsMappings(vcs);
 
-    final String p4ConfigFileName = P4ConfigHelper.getP4ConfigFileNameFromEnv();
+    final String p4ConfigFileName = P4ConfigHelper.getConfigHelper(myProject).getP4Config();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()

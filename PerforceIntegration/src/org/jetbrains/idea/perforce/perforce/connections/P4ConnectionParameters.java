@@ -20,7 +20,7 @@ public class P4ConnectionParameters {
   @Nullable
   private String myCharset;
   @Nullable  
-  private String myConfigFileName = P4ConfigHelper.getP4ConfigFileNameFromEnv();
+  private String myConfigFileName;
   @Nullable 
   private String myIgnoreFileName = P4ConfigHelper.getP4IgnoreFileName();
 

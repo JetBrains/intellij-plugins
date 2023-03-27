@@ -37,12 +37,14 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
   private Tree myTree;
   private BaseNode myRoot;
   private final Project myProject;
+  private final P4ConfigHelper myP4ConfigHelper;
   private final ConnectionDiagnoseRefresher myRefresher;
   private DialogWrapper.DialogWrapperAction myRefreshAction;
 
   public P4ConfigConnectionDiagnoseDialog(Project project, ConnectionDiagnoseRefresher refresher) {
     super(project, true);
     myProject = project;
+    myP4ConfigHelper = P4ConfigHelper.getConfigHelper(project);
     myRefresher = refresher;
     setTitle(PerforceBundle.message("config.dialog.title"));
     setCancelButtonText(CommonBundle.message("close.action.name"));
@@ -115,7 +117,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
       ++i;
     }
 
-    String envP4Config = P4ConfigHelper.getP4ConfigFileNameFromEnv();
+    String envP4Config = myP4ConfigHelper.getP4Config();
     if (envP4Config != null) {
       addNode(myRoot,
               new BaseNode(PerforceBundle.message("connection.env", envP4Config), NodeType.info));

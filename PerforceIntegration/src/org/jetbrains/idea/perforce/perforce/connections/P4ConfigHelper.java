@@ -44,7 +44,7 @@ public class P4ConfigHelper {
   private final Map<Path, P4ConnectionParameters> myRootParameters = new HashMap<>();
   private String myP4ConfigName = getP4ConfigFileNameFromEnv();
 
-  public void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
+  private void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
     myRootParameters.clear();
     P4ConnectionCalculator calculator = new P4ConnectionCalculator(project);
 
@@ -67,6 +67,10 @@ public class P4ConfigHelper {
     return EnvironmentUtil.getValue(P4_CONFIG) != null;
   }
 
+  public boolean hasP4ConfigSetting() {
+    return myP4ConfigName != null;
+  }
+
   // todo: fix for P4Enviro
   public static String getUnsetP4EnvironmentConfig() {
     return ENV_CONFIGS.stream()
@@ -79,7 +83,7 @@ public class P4ConfigHelper {
   }
 
   @Nullable
-  public static String getP4ConfigFileNameFromEnv() {
+  private static String getP4ConfigFileNameFromEnv() {
     return EnvironmentUtil.getValue(P4_CONFIG);
   }
 
