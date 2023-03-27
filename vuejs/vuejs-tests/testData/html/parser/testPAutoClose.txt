@@ -22,42 +22,44 @@ HtmlFile:test.vue
             XmlToken:XML_START_TAG_START('<')
             XmlToken:XML_NAME('br')
             XmlToken:XML_EMPTY_ELEMENT_END('/>')
-        HtmlTag:div
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('div')
-          XmlToken:XML_TAG_END('>')
-          HtmlTag:span
+          HtmlTag:div
             XmlToken:XML_START_TAG_START('<')
-            XmlToken:XML_NAME('span')
+            XmlToken:XML_NAME('div')
             XmlToken:XML_TAG_END('>')
-            HtmlTag:p
+            HtmlTag:span
               XmlToken:XML_START_TAG_START('<')
-              XmlToken:XML_NAME('p')
+              XmlToken:XML_NAME('span')
               XmlToken:XML_TAG_END('>')
+              HtmlTag:p
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('p')
+                XmlToken:XML_TAG_END('>')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('p')
+                XmlToken:XML_TAG_END('>')
               XmlToken:XML_END_TAG_START('</')
-              XmlToken:XML_NAME('p')
+              XmlToken:XML_NAME('span')
               XmlToken:XML_TAG_END('>')
             XmlToken:XML_END_TAG_START('</')
-            XmlToken:XML_NAME('span')
+            XmlToken:XML_NAME('div')
             XmlToken:XML_TAG_END('>')
-          XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('div')
-          XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
-        HtmlTag:P
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('P')
-          XmlToken:XML_TAG_END('>')
-        HtmlTag:table
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('table')
-          XmlToken:XML_TAG_END('>')
-          XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('table')
-          XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
+          XmlText
+            PsiWhiteSpace('\n')
+          HtmlTag:P
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('P')
+            XmlToken:XML_TAG_END('>')
+            HtmlTag:table
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('table')
+              XmlToken:XML_TAG_END('>')
+              XmlToken:XML_END_TAG_START('</')
+              XmlToken:XML_NAME('table')
+              XmlToken:XML_TAG_END('>')
+            XmlText
+              PsiWhiteSpace('\n')
+            PsiErrorElement:Element P is not closed
+              <empty list>
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('div')
         XmlToken:XML_TAG_END('>')

@@ -21,37 +21,41 @@ HtmlFile:test.vue
           XmlText
             XmlToken:XML_DATA_CHARACTERS('Paragraph')
             PsiWhiteSpace('\n    ')
-        HtmlTag:blockquote
-          XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('blockquote')
-          XmlToken:XML_TAG_END('>')
-          XmlText
-            PsiWhiteSpace('\n      ')
-          HtmlTag:p
+          HtmlTag:blockquote
             XmlToken:XML_START_TAG_START('<')
-            XmlToken:XML_NAME('p')
+            XmlToken:XML_NAME('blockquote')
             XmlToken:XML_TAG_END('>')
             XmlText
-              XmlToken:XML_DATA_CHARACTERS('Quoted')
-              PsiWhiteSpace(' ')
-              XmlToken:XML_DATA_CHARACTERS('text')
               PsiWhiteSpace('\n      ')
-            HtmlTag:cite
+            HtmlTag:p
               XmlToken:XML_START_TAG_START('<')
-              XmlToken:XML_NAME('cite')
+              XmlToken:XML_NAME('p')
               XmlToken:XML_TAG_END('>')
               XmlText
-                XmlToken:XML_DATA_CHARACTERS('cite')
-              XmlToken:XML_END_TAG_START('</')
-              XmlToken:XML_NAME('cite')
-              XmlToken:XML_TAG_END('>')
-            XmlText
-              PsiWhiteSpace('\n    ')
-          XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('blockquote')
-          XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n')
+                XmlToken:XML_DATA_CHARACTERS('Quoted')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('text')
+                PsiWhiteSpace('\n      ')
+              HtmlTag:cite
+                XmlToken:XML_START_TAG_START('<')
+                XmlToken:XML_NAME('cite')
+                XmlToken:XML_TAG_END('>')
+                XmlText
+                  XmlToken:XML_DATA_CHARACTERS('cite')
+                XmlToken:XML_END_TAG_START('</')
+                XmlToken:XML_NAME('cite')
+                XmlToken:XML_TAG_END('>')
+              XmlText
+                PsiWhiteSpace('\n    ')
+              PsiErrorElement:Element p is not closed
+                <empty list>
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('blockquote')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n')
+          PsiErrorElement:Element p is not closed
+            <empty list>
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('body')
         XmlToken:XML_TAG_END('>')

@@ -3,9 +3,11 @@ package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
+import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.util.ThreeState
 import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -20,7 +22,8 @@ import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
-  private val langMode: LangMode get() = builder.getUserData(VueScriptLangs.LANG_MODE) ?: LangMode.DEFAULT
+  private val langMode: LangMode = builder.getUserData(VueScriptLangs.LANG_MODE) ?: LangMode.DEFAULT
+  private val htmlCompatMode: Boolean = HTML_COMPAT_MODE.get(builder)
 
   override fun isSingleTag(tagInfo: HtmlTagInfo): Boolean {
     // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
@@ -144,6 +147,15 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     return VueHtmlTagInfo(normalizeTagName(originalTagName), originalTagName, startMarker, inVPreContext())
   }
 
+  override fun isEndTagRequired(tagInfo: HtmlTagInfo): Boolean =
+    if (htmlCompatMode) super.isEndTagRequired(tagInfo) else true
+
+  override fun canOpeningTagAutoClose(tagToClose: HtmlTagInfo, openingTag: HtmlTagInfo): ThreeState =
+    if (htmlCompatMode) super.canOpeningTagAutoClose(tagToClose, openingTag) else ThreeState.NO
+
+  override fun canClosingTagAutoClose(tagToClose: HtmlTagInfo, closingTag: String): Boolean =
+    if (htmlCompatMode) super.canClosingTagAutoClose(tagToClose, closingTag) else false
+
   private fun inVPreContext(): Boolean {
     var result = false
     processStackItems {
@@ -165,5 +177,6 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   companion object {
     val ALWAYS_STUBBED_TAGS: List<String> = listOf(SCRIPT_TAG_NAME, SLOT_TAG_NAME)
     val TOP_LEVEL_TAGS: List<String> = listOf(TEMPLATE_TAG_NAME, STYLE_TAG_NAME)
+    val HTML_COMPAT_MODE: KeyWithDefaultValue<Boolean> = KeyWithDefaultValue.create("vue.html.compat.mode", true)
   }
 }

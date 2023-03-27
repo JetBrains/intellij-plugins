@@ -404,6 +404,10 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """.trimIndent())
   }
 
+  fun testDivNestedUnderP() {
+    doTestVue("<template><p><div></div></p></template>")
+  }
+
   fun testLangReparse() {
     val baseText = """
       <script lang="js">

@@ -643,6 +643,14 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testHtmlTagOmission() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2), extension = "html")
+  }
+
+  fun testVueNoTagOmission() {
+    doTest()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
