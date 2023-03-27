@@ -14,27 +14,26 @@ HtmlFile:test.vue
         XmlToken:XML_TAG_END('>')
         XmlText
           PsiWhiteSpace('\n')
-      HtmlTag:dl
-        XmlToken:XML_START_TAG_START('<')
-        XmlToken:XML_NAME('dl')
-        XmlToken:XML_TAG_END('>')
-        XmlText
-          PsiWhiteSpace('\n  ')
-        HtmlTag:dd
+        HtmlTag:dl
           XmlToken:XML_START_TAG_START('<')
-          XmlToken:XML_NAME('dd')
+          XmlToken:XML_NAME('dl')
           XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n  ')
+          HtmlTag:dd
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('dd')
+            XmlToken:XML_TAG_END('>')
+            XmlToken:XML_END_TAG_START('</')
+            XmlToken:XML_NAME('dd')
+            XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n')
           XmlToken:XML_END_TAG_START('</')
-          XmlToken:XML_NAME('dd')
+          XmlToken:XML_NAME('dl')
           XmlToken:XML_TAG_END('>')
         XmlText
           PsiWhiteSpace('\n')
-        XmlToken:XML_END_TAG_START('</')
-        XmlToken:XML_NAME('dl')
-        XmlToken:XML_TAG_END('>')
-      XmlText
-        PsiWhiteSpace('\n')
-      PsiErrorElement:Closing tag matches nothing
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('p')
         XmlToken:XML_TAG_END('>')

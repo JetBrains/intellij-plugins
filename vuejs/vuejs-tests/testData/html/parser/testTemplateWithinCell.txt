@@ -64,21 +64,25 @@ HtmlFile:test.vue
                     PsiWhiteSpace(' ')
                     XmlToken:XML_DATA_CHARACTERS('cell')
                     PsiWhiteSpace('\n      ')
+                  PsiErrorElement:Element td is not closed
+                    <empty list>
               XmlToken:XML_END_TAG_START('</')
               XmlToken:XML_NAME('template')
               XmlToken:XML_TAG_END('>')
             XmlText
               PsiWhiteSpace('\n    ')
-          HtmlTag:td
-            XmlToken:XML_START_TAG_START('<')
-            XmlToken:XML_NAME('td')
-            XmlToken:XML_TAG_END('>')
-            XmlText
-              PsiWhiteSpace('\n      ')
-              XmlToken:XML_DATA_CHARACTERS('2nd')
-              PsiWhiteSpace(' ')
-              XmlToken:XML_DATA_CHARACTERS('cell')
-              PsiWhiteSpace('\n')
+            HtmlTag:td
+              XmlToken:XML_START_TAG_START('<')
+              XmlToken:XML_NAME('td')
+              XmlToken:XML_TAG_END('>')
+              XmlText
+                PsiWhiteSpace('\n      ')
+                XmlToken:XML_DATA_CHARACTERS('2nd')
+                PsiWhiteSpace(' ')
+                XmlToken:XML_DATA_CHARACTERS('cell')
+                PsiWhiteSpace('\n')
+              PsiErrorElement:Element td is not closed
+                <empty list>
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('table')
         XmlToken:XML_TAG_END('>')
