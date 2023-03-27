@@ -88,7 +88,7 @@ HtmlFile:test.vue
       PsiElement(VUE:STUBBED_ATTRIBUTE)
         XmlToken:XML_NAME('setup')
       XmlToken:XML_TAG_END('>')
-      JSEmbeddedContent:JS:MOD_ES6_EMBEDDED_CONTENT
+      VueScriptSetupEmbeddedContent:VUE:SCRIPT_SETUP_JS_EMBEDDED_CONTENT
         PsiWhiteSpace('\n')
         ES6Class
           JSAttributeList

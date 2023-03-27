@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
+import com.intellij.lang.javascript.JSStubElementTypes.*
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
@@ -18,6 +19,8 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
+import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_JS_EMBEDDED_CONTENT
+import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes.SCRIPT_SETUP_TS_EMBEDDED_CONTENT
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
@@ -93,11 +96,21 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   }
 
   override fun maybeRemapCurrentToken(tokenType: IElementType) {
-    if (tokenType is VueJSEmbeddedExprTokenType) {
-      if (inVPreContext())
-        builder.remapCurrentToken(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN)
-      else
-        builder.remapCurrentToken(tokenType.copyWithLanguage(langMode))
+    when (tokenType) {
+      is VueJSEmbeddedExprTokenType -> {
+        if (inVPreContext())
+          builder.remapCurrentToken(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN)
+        else
+          builder.remapCurrentToken(tokenType.copyWithLanguage(langMode))
+      }
+      MOD_TS_EMBEDDED_CONTENT -> {
+        if (inScriptSetup())
+          builder.remapCurrentToken(SCRIPT_SETUP_TS_EMBEDDED_CONTENT)
+      }
+      MOD_ES6_EMBEDDED_CONTENT, MOD_EMBEDDED_CONTENT -> {
+        if (inScriptSetup())
+          builder.remapCurrentToken(SCRIPT_SETUP_JS_EMBEDDED_CONTENT)
+      }
     }
   }
 
@@ -117,6 +130,9 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         && attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.PRE) {
       (peekTagInfo() as VueHtmlTagInfo).hasVPre = true
     }
+    else if (attributeInfo.kind == SCRIPT_SETUP) {
+      (peekTagInfo() as VueHtmlTagInfo).hasScriptSetup = true
+    }
     if (token() === XmlTokenType.XML_EQ) {
       advance()
       parseAttributeValue()
@@ -128,7 +144,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       when (attributeInfo.kind) {
         TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
         SCRIPT_ID -> attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
-        SCRIPT_SETUP, STYLE_MODULE -> attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
+        SCRIPT_SETUP, SCRIPT_GENERIC, STYLE_MODULE -> attr.done(VueStubElementTypes.STUBBED_ATTRIBUTE)
         REF -> attr.done(VueStubElementTypes.REF_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
@@ -168,10 +184,14 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     return result
   }
 
+  private fun inScriptSetup(): Boolean =
+    (peekTagInfo() as? VueHtmlTagInfo)?.hasScriptSetup == true
+
   private class VueHtmlTagInfo(normalizedName: String,
                                originalName: String,
                                marker: PsiBuilder.Marker,
-                               var hasVPre: Boolean)
+                               var hasVPre: Boolean,
+                               var hasScriptSetup: Boolean = false)
     : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   companion object {

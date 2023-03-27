@@ -15,18 +15,31 @@ import java.util.function.Consumer
 class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
 
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
-    return findModule(element, true)?.let {
-      listOf(VueScriptSetupScope(it))
+    return findModule(element, true)?.let { scriptSetupModule ->
+      listOfNotNull(VueScriptSetupScope(scriptSetupModule),
+                    findModule(element, false)?.let { VueRegularScriptScope(it) }
+      )
     } ?: emptyList()
   }
 
-  private class VueScriptSetupScope constructor(private val module: JSExecutionScope) : VueTemplateScope(null) {
+  private class VueScriptSetupScope(private val module: JSExecutionScope) : VueTemplateScope(null) {
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
         val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
         val elementToConsume = VueCompositionInfoHelper.getUnwrappedRefElement(resolved, module)
                                ?: resolved ?: element
+        consumer.accept(PsiElementResolveResult(elementToConsume, true)).let { true }
+      }, false)
+    }
+  }
+
+  private class VueRegularScriptScope(private val module: JSExecutionScope) : VueTemplateScope(null) {
+
+    override fun resolve(consumer: Consumer<in ResolveResult>) {
+      JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
+        val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
+        val elementToConsume = resolved ?: element
         consumer.accept(PsiElementResolveResult(elementToConsume, true)).let { true }
       }, false)
     }

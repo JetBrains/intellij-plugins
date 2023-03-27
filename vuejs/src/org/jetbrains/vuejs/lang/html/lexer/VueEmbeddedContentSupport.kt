@@ -152,7 +152,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     }
 
     return findEmbedmentInfo(lang)
-    }
+  }
 
 
   private fun getBoundScriptLangTagInfo(): HtmlEmbedmentInfo {

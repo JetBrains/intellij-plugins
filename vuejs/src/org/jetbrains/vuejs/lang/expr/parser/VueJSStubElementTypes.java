@@ -16,5 +16,7 @@ public interface VueJSStubElementTypes {
 
   JSParameterElementType SCRIPT_SETUP_PARAMETER = new VueJSScriptSetupParameterElementType();
 
+  VueJSScriptSetupTypeParameterListElementType SCRIPT_SETUP_TYPE_PARAMETER_LIST =
+    new VueJSScriptSetupTypeParameterListElementType();
 }
 

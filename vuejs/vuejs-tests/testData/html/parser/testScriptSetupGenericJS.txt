@@ -1,0 +1,32 @@
+HtmlFile:test.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      PsiWhiteSpace(' ')
+      PsiElement(VUE:STUBBED_ATTRIBUTE)
+        XmlToken:XML_NAME('setup')
+      PsiWhiteSpace(' ')
+      PsiElement(VUE:STUBBED_ATTRIBUTE)
+        XmlToken:XML_NAME('generic')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR_VueJS)
+            VueJSEmbeddedExpressionContent(VueJS)
+              PsiErrorElement:Generic component parameters are supported only with TypeScript language.
+                PsiElement(JS:IDENTIFIER)('Clearable')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:EXTENDS_KEYWORD)('extends')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:IDENTIFIER)('boolean')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      VueScriptSetupEmbeddedContent:VUE:SCRIPT_SETUP_JS_EMBEDDED_CONTENT
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+  PsiElement(VUE_LANG_MODE_NO_TS)('')

@@ -65,6 +65,7 @@ const val LANG_ATTRIBUTE_NAME = "lang"
 const val SETUP_ATTRIBUTE_NAME = "setup"
 const val REF_ATTRIBUTE_NAME = "ref"
 const val MODULE_ATTRIBUTE_NAME = "module"
+const val GENERIC_ATTRIBUTE_NAME = "generic"
 const val ATTR_DIRECTIVE_PREFIX = "v-"
 const val ATTR_EVENT_SHORTHAND = '@'
 const val ATTR_SLOT_SHORTHAND = '#'
@@ -364,7 +365,7 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.jsType
     ?.substitute()
 
-inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
+inline fun <reified T : JSElement> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T
 }
 
