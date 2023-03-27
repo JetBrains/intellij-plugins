@@ -29,10 +29,9 @@ import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Test
 
 class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
-  override fun getService(): JSLanguageServiceBase {
-    val services = JSLanguageServiceProvider.getLanguageServices(project)
-    return ContainerUtil.find(services) { el: JSLanguageService? -> el is VueTypeScriptService } as JSLanguageServiceBase
-  }
+  override fun getService(): JSLanguageServiceBase =
+    JSLanguageServiceProvider.getLanguageServices(project)
+      .firstNotNullOf { it as? VueTypeScriptService }
 
   override fun getExtension(): String {
     return "vue"
@@ -155,6 +154,18 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureFileAndCheckHighlighting("ScriptSetupSkippedErrors.vue")
     myFixture.configureFileAndCheckHighlighting("ScriptSetupAwait.vue") // WEB-52317
     myFixture.configureFileAndCheckHighlighting("ScriptSetupAwaitTwoScripts.vue") // WEB-52317
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS36)
+  @Test
+  fun testScriptSetupGeneric() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_3_0_ALPHA5)
+    myFixture.configureByFile("tsconfig.json")
+    // Required to load global declarations (defineProps) by the service
+    myFixture.configureByText("import.ts", "import * from 'vue'")
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    myFixture.checkHighlighting()
   }
 
   fun testTSErrorsInsideTemplate() {

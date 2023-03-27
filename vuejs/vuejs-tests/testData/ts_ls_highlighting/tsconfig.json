@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "strict": true
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "strict": true,
+    "noUnusedLocals": true
   },
   "include": [
     "**/*.ts",

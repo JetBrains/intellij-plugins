@@ -19,9 +19,9 @@ defineProps({
 
 <template>
   {{optional}}
-  <!-- Unresolved warning is the WebStorm bug -->
   <Rename
-    :optional="new <weak_warning descr="Unresolved type Struct">Struct</weak_warning>()"
+    :optional="new Struct()"
     v-if="optional === undefined"
   />
+  {{new Struct()}}
 </template>

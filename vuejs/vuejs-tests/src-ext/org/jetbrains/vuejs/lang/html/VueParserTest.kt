@@ -407,6 +407,27 @@ class VueParserTest : HtmlParsingTest("", "vue",
     doTestVue("<template><p><div></div></p></template>")
   }
 
+  fun testScriptSetupGeneric() {
+    doTestVue("""
+      <script setup lang="ts" generic="Clearable extends boolean, ValueType extends string | number | null | undefined">
+      </script>
+    """.trimIndent())
+  }
+
+  fun testScriptSetupGenericBroken() {
+    doTestVue("""
+      <script setup lang="ts" generic="Clearable boolean, , ValueType extends string || number, ||">
+      </script>
+    """.trimIndent())
+  }
+
+  fun testScriptSetupGenericJS() {
+    doTestVue("""
+      <script setup generic="Clearable extends boolean">
+      </script>
+    """.trimIndent())
+  }
+
   fun testLangReparse() {
     val baseText = """
       <script lang="js">
