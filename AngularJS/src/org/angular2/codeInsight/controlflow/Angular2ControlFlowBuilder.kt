@@ -145,6 +145,12 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     return (templateMode && attribute is Angular2HtmlPropertyBinding) || attribute.name.startsWith(STAR)
   }
 
+  private var currentTopConditionExpression: JSExpression? = null
+
+  override fun isStatementCondition(parent: PsiElement?, currentElement: PsiElement?): Boolean {
+    return currentElement == currentTopConditionExpression
+  }
+
   private fun processIfBranching(element: HtmlTag, conditionAttribute: XmlAttribute, guard: JSElement?) {
     val conditionExpression = PsiTreeUtil.findChildOfType(conditionAttribute.valueElement, JSExpression::class.java)
 
@@ -153,7 +159,9 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     element.visitingMode = HtmlTagVisitingMode.VisitChildren
     myBuilder.startNode(element)
     val elseBranch = null // no support for the else branch narrowing in Angular, see https://github.com/angular/angular/issues/21504
+    currentTopConditionExpression = conditionExpression
     processBranching(element, conditionExpression, element, elseBranch, BranchOwner.IF)
+    currentTopConditionExpression = null
   }
 
   override fun createConditionInstruction(conditionExpression: JSExpression,
