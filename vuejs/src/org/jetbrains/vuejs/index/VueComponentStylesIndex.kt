@@ -15,6 +15,9 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.parser.VueFile
 
+/**
+ * Indexes style languages used in *.vue files.
+ */
 class VueComponentStylesIndex : ScalarIndexExtension<String>() {
   companion object {
     val KEY = ID.create<String, Void>("VueComponentStylesIndex")
