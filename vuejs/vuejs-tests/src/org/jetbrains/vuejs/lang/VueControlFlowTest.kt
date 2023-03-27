@@ -38,6 +38,8 @@ class VueControlFlowTest : BaseJSControlFlowTest() {
 
   fun testIfDiscriminator() = doTest()
 
+  fun testIfWithBinaryExpression() = doTest()
+
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return VueControlFlowBuilder()
   }

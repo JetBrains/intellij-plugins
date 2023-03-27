@@ -1,0 +1,65 @@
+0(1) element: null
+1(2) element: HtmlTag:div
+2(3) element: JSReferenceExpression Read(isString)
+3(4) element: JSReferenceExpression Read(bar)
+4(5,6) element: JSCallExpression
+5(7) element: JSCallExpression condition: true, reachable
+6(23) element: JSCallExpression condition: false, reachable
+7(8,9) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+8(10) element: JSLiteralExpression condition: true, reachable
+9(23) element: JSLiteralExpression condition: false, unreachable
+10(11) element: HtmlTag:div IF (branch) true
+11(12) element: JSReferenceExpression Read(bar)
+12(13) element: JSReferenceExpression Read(length)
+13(14) element: JSReferenceExpression Read(bar)
+14(15,16) element: JSReferenceExpression Read(unresolved)
+15(20) element: JSLiteralExpression condition: true, reachable
+16(17) element: JSLiteralExpression condition: false, unreachable
+17(18,19) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) false
+18(20) element: JSLiteralExpression condition: true, unreachable
+19(20) element: JSLiteralExpression condition: false, reachable
+20(21) element: JSBinaryExpression
+21(22) element: JSReferenceExpression Read(bar)
+22(24) element: JSReferenceExpression Read(length)
+23(24) element: HtmlTag:div IF (branch) false
+24(25) element: JSReferenceExpression Read(bar)
+25(26) element: JSReferenceExpression Read(length)
+26(27) element: JSReferenceExpression Read(isString)
+27(28) element: JSReferenceExpression Read(bar)
+28(29,30) element: JSCallExpression
+29(31) element: JSCallExpression condition: true, reachable
+30(36) element: JSCallExpression condition: false, reachable
+31(32) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+32(33) element: JSReferenceExpression Read(bar)
+33(34,35) element: JSReferenceExpression Read(length)
+34(36) element: JSReferenceExpression condition: true, reachable
+35(36) element: JSReferenceExpression condition: false, reachable
+36(37) element: JSBinaryExpression
+37(38) element: JSConditionalExpression
+38(39) element: JSReferenceExpression Read(isString)
+39(40) element: JSReferenceExpression Read(bar)
+40(41,42) element: JSCallExpression
+41(43) element: JSCallExpression condition: true, reachable
+42(46) element: JSCallExpression condition: false, reachable
+43(44) element: JSConditionalExpression CONDITIONAL_EXPRESSION (branch) true
+44(45) element: JSReferenceExpression Read(bar)
+45(49) element: JSReferenceExpression Read(length)
+46(47) element: JSConditionalExpression CONDITIONAL_EXPRESSION (branch) false
+47(48) element: JSReferenceExpression Read(bar)
+48(49) element: JSReferenceExpression Read(length)
+49(50) element: HtmlTag:div
+50(51) element: JSReferenceExpression Read(isString)
+51(52) element: JSReferenceExpression Read(bar)
+52(53,54) element: JSCallExpression
+53(55) element: JSCallExpression condition: true, reachable
+54(63) element: JSCallExpression condition: false, reachable
+55(56) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+56(57) element: JSReferenceExpression Read(bar)
+57(58,59) element: JSReferenceExpression Read(length)
+58(60) element: JSReferenceExpression condition: true, reachable
+59(63) element: JSReferenceExpression condition: false, reachable
+60(61) element: HtmlTag:div IF (branch) true
+61(62) element: JSReferenceExpression Read(bar)
+62(64) element: JSReferenceExpression Read(length)
+63(64) element: HtmlTag:div IF (branch) false
+64() element: null

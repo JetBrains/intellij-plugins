@@ -26,6 +26,8 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
 
   fun testIfDiscriminatedUnion() = doTest("<div <caret>*customIf")
 
+  fun testIfWithBinaryExpression() = doTest("<div <caret>*ngIf")
+
   fun testIfLoadedTypeGuard() = doTest("<p <caret>*appIfLoaded")
 
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
