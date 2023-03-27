@@ -58,19 +58,32 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     var result = xmlText
     val tt = token()
     if (tt === INTERPOLATION_START) {
-      result = terminateText(result)
+      result = if (!inVPreContext()) {
+        terminateText(result)
+      }
+      else {
+        startText(result)
+      }
       val interpolation = mark()
       advance()
       if (token() is VueJSEmbeddedExprTokenType) {
         maybeRemapCurrentToken(token())
         advance()
       }
-      if (token() === INTERPOLATION_END) {
-        advance()
-        interpolation.drop()
+      if (!inVPreContext()) {
+        if (token() === INTERPOLATION_END) {
+          advance()
+          interpolation.drop()
+        }
+        else {
+          interpolation.error(VueBundle.message("vue.parser.message.unterminated.interpolation"))
+        }
       }
       else {
-        interpolation.error(VueBundle.message("vue.parser.message.unterminated.interpolation"))
+        if (token() === INTERPOLATION_END) {
+          advance()
+        }
+        interpolation.collapse(XmlTokenType.XML_DATA_CHARACTERS)
       }
     }
     return result
@@ -78,7 +91,10 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
   override fun maybeRemapCurrentToken(tokenType: IElementType) {
     if (tokenType is VueJSEmbeddedExprTokenType) {
-      builder.remapCurrentToken(tokenType.copyWithLanguage(langMode))
+      if (inVPreContext())
+        builder.remapCurrentToken(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN)
+      else
+        builder.remapCurrentToken(tokenType.copyWithLanguage(langMode))
     }
   }
 
@@ -94,6 +110,10 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     val tagName = peekTagInfo().normalizedName
     val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, tagName, stackSize() == 1)
     advance()
+    if (attributeInfo is VueAttributeNameParser.VueDirectiveInfo
+        && attributeInfo.directiveKind == VueAttributeNameParser.VueDirectiveKind.PRE) {
+      (peekTagInfo() as VueHtmlTagInfo).hasVPre = true
+    }
     if (token() === XmlTokenType.XML_EQ) {
       advance()
       parseAttributeValue()
@@ -119,6 +139,28 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     }
     return super.getHtmlTagElementType(info, tagLevel)
   }
+
+  override fun createHtmlTagInfo(originalTagName: String, startMarker: PsiBuilder.Marker): HtmlTagInfoImpl {
+    return VueHtmlTagInfo(normalizeTagName(originalTagName), originalTagName, startMarker, inVPreContext())
+  }
+
+  private fun inVPreContext(): Boolean {
+    var result = false
+    processStackItems {
+      if (it is VueHtmlTagInfo) {
+        result = it.hasVPre
+        false
+      }
+      else true
+    }
+    return result
+  }
+
+  private class VueHtmlTagInfo(normalizedName: String,
+                               originalName: String,
+                               marker: PsiBuilder.Marker,
+                               var hasVPre: Boolean)
+    : HtmlTagInfoImpl(normalizedName, originalName, marker)
 
   companion object {
     val ALWAYS_STUBBED_TAGS: List<String> = listOf(SCRIPT_TAG_NAME, SLOT_TAG_NAME)
