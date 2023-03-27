@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.typescript.service
 
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
@@ -10,10 +11,12 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
+import com.intellij.lang.typescript.library.TypeScriptServiceDirectoryWatcher
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
@@ -97,10 +100,23 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
   override fun isDisabledByContext(context: VirtualFile): Boolean {
     if (super.isDisabledByContext(context)) return true
-    if (context.fileType is VueFileType) return false
+
+    return !isVueServiceAvailableByContext(context)
+  }
+
+  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean {
+    if (context.fileType is VueFileType) return isServiceVersionAcceptable()
 
     //other files
-    return !isVueContext(context, myProject)
+    return isVueContext(context, myProject) && isServiceVersionAcceptable()
+  }
+
+  private fun isServiceVersionAcceptable(): Boolean {
+    val path = TypeScriptServiceDirectoryWatcher.getService(myProject).calcServiceDirectoryAndRefresh()
+    val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
+    if (packageJson == null) return true
+    val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
+    return version.major < 5;
   }
 
   override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
