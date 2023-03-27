@@ -18,7 +18,11 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
     AngularTestUtil.enableAstLoadingFilter(this)
   }
 
-  fun testNonStrictMode() = doTest("<div <caret>*customIf", skipTSConfig = true)
+  fun testNonStrictMode() = doTest("<div <caret>*ngIf", skipTSConfig = true)
+
+  fun testLogicalExpression() = doTest("{{<caret>isString")
+
+  fun testConditionalExpression() = doTest("{{<caret>isString")
 
   fun testIfDiscriminatedUnion() = doTest("<div <caret>*customIf")
 
@@ -29,7 +33,7 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
   }
 
   fun doTest(signature: String, skipTSConfig: Boolean = false) {
-    Angular2TestModule.configureLink(myFixture, Angular2TestModule.ANGULAR_CORE_13_3_5, Angular2TestModule.ANGULAR_COMMON_13_3_5)
+    Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_15_1_5, Angular2TestModule.ANGULAR_COMMON_15_1_5)
     if (!skipTSConfig) {
       myFixture.configureByFile("tsconfig.json")
       myFixture.configureByFile("tsconfig.app.json")
