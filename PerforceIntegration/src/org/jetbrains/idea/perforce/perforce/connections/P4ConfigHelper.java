@@ -38,7 +38,8 @@ public class P4ConfigHelper {
 
   public void reset() {
     PerforceSettings settings = PerforceSettings.getSettings(myProject);
-    initializeP4SetVariables(myProject, settings.getPhysicalSettings());
+    initializeP4SetVariables(myProject, settings.getPhysicalSettings(false));
+    settings.setEnvP4IgnoreVar(getP4Ignore());
   }
 
   private final Map<String, String> myDefaultParams = new HashMap<>();

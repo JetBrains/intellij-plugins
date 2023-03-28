@@ -34,7 +34,7 @@ public class P4ConnectionCalculator {
     final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
     final PerforceSettings settings = PerforceSettings.getSettings(myProject);
-    final PerforcePhysicalConnectionParameters physicalParameters = settings.getPhysicalSettings();
+    final PerforcePhysicalConnectionParameters physicalParameters = settings.getPhysicalSettings(true);
 
     final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
                                                   ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
@@ -63,6 +63,7 @@ public class P4ConnectionCalculator {
         }
         else {
           assert p4ConfigFileName != null;
+          // todo: working incorrect when nested p4configs
           value = P4ParamsCalculator.getParametersFromConfig(configParentDir, p4ConfigFileName);
         }
         value.setConfigFileName(p4ConfigFileName);
@@ -71,7 +72,7 @@ public class P4ConnectionCalculator {
         LOG.debug("Using " + value + " for " + mapping);
         connectionSettings.put(mapping, value);
       }
-
+      // todo: default values are already defined in P4ConfigHelper. Use them instead and update inside this call
       fillDefaultValues(p4ConfigHelper, physicalParameters, detailedVcsMappings, defaultParameters);
     });
 

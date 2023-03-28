@@ -67,6 +67,8 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   private final Project myProject;
   private final PerforceOfflineNotification myOfflineNotification;
 
+  private String myEnvIgnore = P4ConfigHelper.getP4IgnoreFileNameFromEnv();
+
   // ------------------ persistent state start
 
   @Property(surroundWithTag = false)
@@ -119,8 +121,12 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     return project.getService(PerforceSettings.class);
   }
 
-  public PerforcePhysicalConnectionParameters getPhysicalSettings() {
-    return new PerforcePhysicalConnectionParameters(getPathToExec(), getPathToIgnore(), myProject, getServerTimeout(), getCharsetName());
+  public void setEnvP4IgnoreVar(String p4Ignore) {
+    myEnvIgnore = p4Ignore;
+  }
+
+  public PerforcePhysicalConnectionParameters getPhysicalSettings(boolean useP4Ignore) {
+    return new PerforcePhysicalConnectionParameters(getPathToExec(), useP4Ignore ? getPathToIgnore() : null, myProject, getServerTimeout(), getCharsetName());
   }
 
   @SuppressWarnings({"HardCodedStringLiteral"})
@@ -164,7 +170,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   @Override
   public String getPathToIgnore() {
     if (useP4IGNORE) {
-      return P4ConfigHelper.getP4IgnoreFileNameFromEnv();
+      return myEnvIgnore;
     }
 
     return pathToIgnore;
