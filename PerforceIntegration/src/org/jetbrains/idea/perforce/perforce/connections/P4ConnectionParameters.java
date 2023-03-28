@@ -22,7 +22,7 @@ public class P4ConnectionParameters {
   @Nullable  
   private String myConfigFileName;
   @Nullable 
-  private String myIgnoreFileName = P4ConfigHelper.getP4IgnoreFileName();
+  private String myIgnoreFileName;
 
   private Throwable myException;
   private final List<String> myWarnings;

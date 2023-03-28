@@ -70,14 +70,14 @@ public class P4ConfigHelper {
     }
   }
 
-  public boolean hasP4ConfigSetting() {
-    return myDefaultParams.get(P4ConfigFields.P4CONFIG.getName()) != null;
-  }
-
   public String getUnsetP4EnvironmentVars() {
     return ENV_CONFIGS.stream()
       .filter(env -> myDefaultParams.get(env) == null)
       .collect(Collectors.joining(","));
+  }
+
+  public boolean hasP4ConfigSetting() {
+    return myDefaultParams.get(P4ConfigFields.P4CONFIG.getName()) != null;
   }
 
   public boolean hasP4IgnoreSetting() {
@@ -87,6 +87,11 @@ public class P4ConfigHelper {
   @Nullable
   public String getP4Config() {
     return myDefaultParams.get(P4ConfigFields.P4CONFIG.getName());
+  }
+
+  @Nullable
+  public String getP4Ignore() {
+    return myDefaultParams.get(P4ConfigFields.P4IGNORE.getName());
   }
 
   public void fillDefaultValues(P4ConnectionParameters parameters) {
@@ -100,18 +105,15 @@ public class P4ConfigHelper {
       parameters.setPassword(myDefaultParams.get(P4ConfigFields.P4PASSWD.getName()));
   }
 
+  // todo: use non-static
   @Nullable
-  public static String getP4IgnoreFileNameFromEnv() { return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName()); }
-
-  private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
-
-  @Nullable
-  public static String getP4IgnoreFileName() {
+  public static String getP4IgnoreFileNameFromEnv() {
     String testValue = AbstractP4Connection.getTestEnvironment().get(P4ConfigFields.P4IGNORE.getName());
     if (testValue != null) return testValue;
 
-    return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName());
-  }
+    return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName()); }
+
+  private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
 
   @Nullable
   public File findDirWithP4ConfigFile(@NotNull final VirtualFile parent, @NotNull final String p4ConfigFileName) {
