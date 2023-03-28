@@ -89,8 +89,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @Override
-  @NotNull
-  public String getId() {
+  public @NotNull String getId() {
     return myId;
   }
 
@@ -100,7 +99,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @Override
-  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
+  public @NotNull Collection<BuildTarget<?>> computeDependencies(@NotNull BuildTargetRegistry targetRegistry, @NotNull TargetOutputIndex outputIndex) {
     final ArrayList<BuildTarget<?>> result = new ArrayList<>();
 
     final FlexResourceBuildTargetType type = FlexCommonUtils.isFlexUnitBC(myBC) ? FlexResourceBuildTargetType.TEST
@@ -121,10 +120,10 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   @Override
   @NotNull
-  public List<BuildRootDescriptor> computeRootDescriptors(final JpsModel model,
-                                                          final ModuleExcludeIndex index,
-                                                          final IgnoredFileIndex ignoredFileIndex,
-                                                          final BuildDataPaths dataPaths) {
+  public List<BuildRootDescriptor> computeRootDescriptors(final @NotNull JpsModel model,
+                                                          final @NotNull ModuleExcludeIndex index,
+                                                          final @NotNull IgnoredFileIndex ignoredFileIndex,
+                                                          final @NotNull BuildDataPaths dataPaths) {
     final List<BuildRootDescriptor> result = new ArrayList<>();
 
     final Collection<File> srcRoots = new ArrayList<>();
@@ -215,7 +214,7 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   @Override
   @Nullable
-  public BuildRootDescriptor findRootDescriptor(final String rootId, final BuildRootIndex rootIndex) {
+  public BuildRootDescriptor findRootDescriptor(final @NotNull String rootId, final @NotNull BuildRootIndex rootIndex) {
     for (BuildRootDescriptor descriptor : rootIndex.getTargetRoots(this, null)) {
       if (descriptor.getRootId().equals(rootId)) {
         return descriptor;
@@ -233,12 +232,12 @@ public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   @Override
   @NotNull
-  public Collection<File> getOutputRoots(CompileContext context) {
+  public Collection<File> getOutputRoots(@NotNull CompileContext context) {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
   @Override
-  public void writeConfiguration(ProjectDescriptor pd, final PrintWriter out) {
+  public void writeConfiguration(@NotNull ProjectDescriptor pd, final @NotNull PrintWriter out) {
     out.println("id: " + myId);
 
     out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC))));

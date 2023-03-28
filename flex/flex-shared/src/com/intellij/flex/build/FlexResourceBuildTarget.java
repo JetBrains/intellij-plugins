@@ -35,7 +35,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
-  public String getId() {
+  public @NotNull String getId() {
     return getModule().getName();
   }
 
@@ -47,16 +47,16 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
-  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
+  public @NotNull Collection<BuildTarget<?>> computeDependencies(@NotNull BuildTargetRegistry targetRegistry, @NotNull TargetOutputIndex outputIndex) {
     return Collections.emptyList();
   }
 
   @NotNull
   @Override
-  public List<BuildRootDescriptor> computeRootDescriptors(final JpsModel model,
-                                                          final ModuleExcludeIndex index,
-                                                          final IgnoredFileIndex ignoredFileIndex,
-                                                          final BuildDataPaths dataPaths) {
+  public List<BuildRootDescriptor> computeRootDescriptors(final @NotNull JpsModel model,
+                                                          final @NotNull ModuleExcludeIndex index,
+                                                          final @NotNull IgnoredFileIndex ignoredFileIndex,
+                                                          final @NotNull BuildDataPaths dataPaths) {
     final List<BuildRootDescriptor> result = new ArrayList<>();
 
     final JavaSourceRootType rootType = getTargetType() == FlexResourceBuildTargetType.PRODUCTION ? JavaSourceRootType.SOURCE
@@ -77,7 +77,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
 
   @Nullable
   @Override
-  public BuildRootDescriptor findRootDescriptor(final String rootId, final BuildRootIndex rootIndex) {
+  public BuildRootDescriptor findRootDescriptor(final @NotNull String rootId, final @NotNull BuildRootIndex rootIndex) {
     for (BuildRootDescriptor descriptor : rootIndex.getTargetRoots(this, null)) {
       if (descriptor.getRootId().equals(rootId)) {
         return descriptor;
@@ -94,7 +94,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
 
   @NotNull
   @Override
-  public Collection<File> getOutputRoots(CompileContext context) {
+  public Collection<File> getOutputRoots(@NotNull CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
       final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
       return outputDir == null ? Collections.emptyList() : Collections.singletonList(outputDir);
@@ -111,7 +111,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   }
 
   @Override
-  public void writeConfiguration(ProjectDescriptor pd, final PrintWriter out) {
+  public void writeConfiguration(@NotNull ProjectDescriptor pd, final @NotNull PrintWriter out) {
     out.println("Module: " + getModule().getName());
     for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
       if (!bc.isSkipCompile() &&
