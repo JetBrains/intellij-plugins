@@ -45,9 +45,8 @@ public class P4ConfigHelper {
 
   private void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
     myDefaultParams.clear();
-    P4ConnectionCalculator calculator = new P4ConnectionCalculator(project);
 
-
+    P4ParamsCalculator calculator = new P4ParamsCalculator(project);
     P4ConnectionParameters defaultParams = new P4ConnectionParameters();
     calculator.runSetOnFile(physicalParameters, defaultParams, SystemProperties.getUserHome());
 
@@ -88,6 +87,17 @@ public class P4ConfigHelper {
   @Nullable
   public String getP4Config() {
     return myDefaultParams.get(P4ConfigFields.P4CONFIG.getName());
+  }
+
+  public void fillDefaultValues(P4ConnectionParameters parameters) {
+    if (parameters.getServer() == null)
+      parameters.setServer(myDefaultParams.get(P4ConfigFields.P4PORT.getName()));
+    if (parameters.getUser() == null)
+      parameters.setUser(myDefaultParams.get(P4ConfigFields.P4USER.getName()));
+    if (parameters.getClient() == null)
+      parameters.setClient(myDefaultParams.get(P4ConfigFields.P4CLIENT.getName()));
+    if (parameters.getPassword() == null)
+      parameters.setPassword(myDefaultParams.get(P4ConfigFields.P4PASSWD.getName()));
   }
 
   @Nullable

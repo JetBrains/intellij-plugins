@@ -209,6 +209,9 @@ public class ConfigPanel {
       myP4ConfigWarningLabel.setVisible(true);
       RelativeFont.SMALL.install(myP4ConfigWarningLabel);
     }
+    else {
+      myP4ConfigWarningLabel.setVisible(false);
+    }
 
     myP4IgnoreWarningLabel.setVisible(!myP4ConfigHelper.hasP4IgnoreSetting());
     RelativeFont.SMALL.install(myP4IgnoreWarningLabel);
@@ -244,10 +247,11 @@ public class ConfigPanel {
   private boolean shouldIgnorePanelBeEnabled() {
     boolean useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
     @Nullable String configFileName = myP4ConfigHelper.getP4Config();
-    if (useP4CONFIG && myP4ConfigHelper.hasP4ConfigSetting() && !myProject.isDefault() && configFileName != null) {
+    if (useP4CONFIG && myP4ConfigHelper.hasP4ConfigSetting() && !myProject.isDefault()) {
       String basePath = myProject.getBasePath();
       assert basePath != null;
-      P4ConnectionParameters params = P4ConnectionCalculator.getParametersFromConfig(new File(basePath), configFileName);
+      assert configFileName != null;
+      P4ConnectionParameters params = P4ParamsCalculator.getParametersFromConfig(new File(basePath), configFileName);
 
       return params.getIgnoreFileName() == null;
     }
