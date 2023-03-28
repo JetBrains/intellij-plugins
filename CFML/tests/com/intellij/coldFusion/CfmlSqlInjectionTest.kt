@@ -6,8 +6,8 @@ import com.intellij.database.Dbms
 import com.intellij.database.psi.DbDataSource
 import com.intellij.database.psi.DbPsiFacade
 import com.intellij.database.psi.DbPsiFacadeImpl
+import com.intellij.database.util.DbImplUtil
 import com.intellij.database.util.DbSqlUtil
-import com.intellij.database.util.DbUIUtil
 import com.intellij.database.util.SqlDialects
 import com.intellij.injected.editor.DocumentWindow
 import com.intellij.lang.annotation.HighlightSeverity
@@ -150,7 +150,7 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   val dataSourceElement = dbPsiFacade.dataSources.first { it.delegate == dataSource }
   TestCase.assertNotNull(dataSourceElement)
 
-  DbUIUtil.invokeOnPooledThreadSync(dataSource::waitComputed)
+  DbImplUtil.invokeOnPooledThreadSync { dataSource.waitComputed() }
   UIUtil.dispatchAllInvocationEvents()
   dbPsiFacade.flushUpdates()
   UIUtil.dispatchAllInvocationEvents()
