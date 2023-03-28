@@ -16,6 +16,8 @@ import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
+import org.jetbrains.vuejs.lang.html.VueFile
+import org.jetbrains.vuejs.lang.html.VueFileElementType
 
 class VueParserDefinition : HTMLParserDefinition() {
 

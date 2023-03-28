@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.lang.html.parser
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+package org.jetbrains.vuejs.lang.html
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LanguageParserDefinitions
@@ -18,10 +18,13 @@ import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
-import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
+import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
+import org.jetbrains.vuejs.lang.html.parser.VueParsing
+import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
+import org.jetbrains.vuejs.lang.html.stub.impl.VueFileStubImpl
 
-class VueFileElementType : IStubFileElementType<VueFileStub>("vue", VueLanguage.INSTANCE) {
+class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLanguage.INSTANCE) {
   companion object {
     @JvmStatic
     val INSTANCE: VueFileElementType = VueFileElementType()
@@ -51,17 +54,17 @@ class VueFileElementType : IStubFileElementType<VueFileStub>("vue", VueLanguage.
   override fun getBuilder(): StubBuilder? {
     return object : DefaultStubBuilder() {
       override fun createStubForFile(file: PsiFile): StubElement<*> {
-        return if (file is VueFile) VueFileStub(file) else super.createStubForFile(file)
+        return if (file is VueFile) VueFileStubImpl(file) else super.createStubForFile(file)
       }
     }
   }
 
-  override fun serialize(stub: VueFileStub, dataStream: StubOutputStream) {
+  override fun serialize(stub: VueFileStubImpl, dataStream: StubOutputStream) {
     dataStream.writeName(stub.langMode.canonicalAttrValue)
   }
 
-  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): VueFileStub {
-    return VueFileStub(LangMode.fromAttrValue(dataStream.readNameString()!!))
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): VueFileStubImpl {
+    return VueFileStubImpl(LangMode.fromAttrValue(dataStream.readNameString()!!))
   }
 
   override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {

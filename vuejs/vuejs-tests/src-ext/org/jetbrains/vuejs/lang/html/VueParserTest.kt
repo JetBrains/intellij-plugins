@@ -47,7 +47,6 @@ import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport
 import org.jetbrains.vuejs.lang.html.parser.VueASTComparator
-import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
 class VueParserTest : HtmlParsingTest("", "vue",

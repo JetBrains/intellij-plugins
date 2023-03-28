@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedScopeHandler
 import com.intellij.psi.PsiElement
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.html.parser.VueFile
+import org.jetbrains.vuejs.lang.html.VueFile
 
 object VueExprStubBasedScopeHandler : JSStubBasedScopeHandler() {
 

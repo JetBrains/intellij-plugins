@@ -36,7 +36,7 @@ import org.jetbrains.vuejs.editor.VueComponentSourceEdit
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.html.parser.VueFile
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.model.VueContainer
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelVisitor
