@@ -11,6 +11,7 @@ import com.intellij.psi.tree.ILazyParseableElementType
 import com.intellij.psi.tree.ILightLazyParseableElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.vuejs.lang.VueScriptLangs
+import org.jetbrains.vuejs.lang.html.VueFileElementType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 object VueElementTypes {

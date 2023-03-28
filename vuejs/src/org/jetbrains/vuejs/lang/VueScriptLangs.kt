@@ -20,7 +20,7 @@ import org.jetbrains.vuejs.lang.expr.highlighting.VueTSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.parser.*
 import org.jetbrains.vuejs.lang.html.lexer.VueLangModeMarkerElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
-import org.jetbrains.vuejs.lang.html.parser.VueFile
+import org.jetbrains.vuejs.lang.html.VueFile
 
 object VueScriptLangs {
   val LANG_MODE = Key.create<LangMode>("LANG_MODE")

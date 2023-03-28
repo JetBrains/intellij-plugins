@@ -13,7 +13,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.lang.html.parser.VueFile
+import org.jetbrains.vuejs.lang.html.VueFile
 
 /**
  * Indexes style languages used in *.vue files.
