@@ -7,7 +7,7 @@ import com.intellij.model.Pointer
 import com.intellij.navigation.EmptyNavigatable
 import com.intellij.navigation.NavigationRequest
 import com.intellij.navigation.NavigationTarget
-import com.intellij.navigation.TargetPresentation
+import com.intellij.platform.backend.presentation.TargetPresentation
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
