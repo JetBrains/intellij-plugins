@@ -1,18 +1,16 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
-import com.intellij.openapi.project.BaseProjectDirectories;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +18,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class P4ConfigHelper {
-  @NonNls public static final String P4_CONFIG = "P4CONFIG";
-  @NonNls public static final String P4_IGNORE = "P4IGNORE";
   private static final List<String> ENV_CONFIGS = List.of(P4ConfigFields.P4PORT.getName(), P4ConfigFields.P4CLIENT.getName(),
                                                           P4ConfigFields.P4USER.getName(), P4ConfigFields.P4PASSWD.getName(),
-                                                          P4ConfigFields.P4CONFIG.getName());
+                                                          P4ConfigFields.P4CONFIG.getName(), P4ConfigFields.P4IGNORE.getName());
   private final Project myProject;
 
   public P4ConfigHelper() {
@@ -33,68 +29,69 @@ public class P4ConfigHelper {
 
   public P4ConfigHelper(Project project) {
     myProject = project;
-    PerforceSettings settings = PerforceSettings.getSettings(project);
-    initializeP4SetVariables(myProject, settings.getPhysicalSettings());
+    reset();
   }
 
   public static P4ConfigHelper getConfigHelper(final Project project) {
     return project.getService(P4ConfigHelper.class);
   }
 
-  private final Map<Path, P4ConnectionParameters> myRootParameters = new HashMap<>();
-  private String myP4ConfigName = getP4ConfigFileNameFromEnv();
+  public void reset() {
+    PerforceSettings settings = PerforceSettings.getSettings(myProject);
+    initializeP4SetVariables(myProject, settings.getPhysicalSettings());
+  }
+
+  private final Map<String, String> myDefaultParams = new HashMap<>();
 
   private void initializeP4SetVariables(Project project, PerforcePhysicalConnectionParametersI physicalParameters) {
-    myRootParameters.clear();
+    myDefaultParams.clear();
     P4ConnectionCalculator calculator = new P4ConnectionCalculator(project);
 
-    // P4 global variables might be set not only through env vars but also with p4 set command (in p4enviro file).
-    for (VirtualFile dir : BaseProjectDirectories.getBaseDirectories(project)) {
-      P4ConnectionParameters params = calculator.runSetOnFile(physicalParameters, new P4ConnectionParameters(), dir.getPath());
 
-      // We don't expect P4Config variable to be changed inside P4Config files
-      // (it changes what you will see in p4 set output but does nothing)
-      // So if we get P4Config value from p4 set, while env var is not set, we will pretend that it comes from P4Enviro file
-      if (myP4ConfigName == null) {
-        myP4ConfigName = params.getConfigFileName();
-      }
+    P4ConnectionParameters defaultParams = new P4ConnectionParameters();
+    calculator.runSetOnFile(physicalParameters, defaultParams, SystemProperties.getUserHome());
 
-      myRootParameters.put(dir.toNioPath(), params);
+    for (String envVar : ENV_CONFIGS) {
+      String value = EnvironmentUtil.getValue(envVar);
+      tryToPutVariable(envVar, value);
+    }
+
+    tryToPutVariable(P4ConfigFields.P4PORT.getName(), defaultParams.getServer());
+    tryToPutVariable(P4ConfigFields.P4USER.getName(), defaultParams.getUser());
+    tryToPutVariable(P4ConfigFields.P4CLIENT.getName(), defaultParams.getClient());
+    tryToPutVariable(P4ConfigFields.P4PASSWD.getName(), defaultParams.getPassword());
+    tryToPutVariable(P4ConfigFields.P4CONFIG.getName(), defaultParams.getConfigFileName());
+    tryToPutVariable(P4ConfigFields.P4IGNORE.getName(), defaultParams.getIgnoreFileName());
+    tryToPutVariable(P4ConfigFields.P4CHARSET.getName(), defaultParams.getCharset());
+  }
+
+  private void tryToPutVariable(String variable, @Nullable String value) {
+    if (value != null) {
+      myDefaultParams.put(variable, value);
     }
   }
 
-  public static boolean hasP4ConfigSettingInEnvironment() {
-    return EnvironmentUtil.getValue(P4_CONFIG) != null;
-  }
-
   public boolean hasP4ConfigSetting() {
-    return myP4ConfigName != null;
+    return myDefaultParams.get(P4ConfigFields.P4CONFIG.getName()) != null;
   }
 
-  // todo: fix for P4Enviro
-  public static String getUnsetP4EnvironmentConfig() {
+  public String getUnsetP4EnvironmentVars() {
     return ENV_CONFIGS.stream()
-      .filter(env -> EnvironmentUtil.getValue(env) == null)
+      .filter(env -> myDefaultParams.get(env) == null)
       .collect(Collectors.joining(","));
   }
 
-  public static boolean hasP4IgnoreSettingInEnvironment() {
-    return EnvironmentUtil.getValue(P4_IGNORE) != null;
+  public boolean hasP4IgnoreSetting() {
+    return myDefaultParams.get(P4ConfigFields.P4IGNORE.getName()) != null;
   }
 
-  @Nullable
-  private static String getP4ConfigFileNameFromEnv() {
-    return EnvironmentUtil.getValue(P4_CONFIG);
-  }
-
-  // todo: merge with the method above
   @Nullable
   public String getP4Config() {
-    return myP4ConfigName;
+    return myDefaultParams.get(P4ConfigFields.P4CONFIG.getName());
   }
 
   @Nullable
-  public static String getP4IgnoreFileNameFromEnv() { return EnvironmentUtil.getValue(P4_IGNORE); }
+  public static String getP4IgnoreFileNameFromEnv() { return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName()); }
 
   private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
 

@@ -202,15 +202,15 @@ public class ConfigPanel {
       hideProjectSpecificControls();
     }
 
-    // todo: use non static alternative
-    String unsetEnv = P4ConfigHelper.getUnsetP4EnvironmentConfig();
+
+    String unsetEnv = myP4ConfigHelper.getUnsetP4EnvironmentVars();
     if (!unsetEnv.isEmpty()) {
       myP4ConfigWarningLabel.setText(PerforceBundle.message("radio.no.p4config.env", unsetEnv));
       myP4ConfigWarningLabel.setVisible(true);
       RelativeFont.SMALL.install(myP4ConfigWarningLabel);
     }
-    // todo: use non static alternative
-    myP4IgnoreWarningLabel.setVisible(!P4ConfigHelper.hasP4IgnoreSettingInEnvironment());
+
+    myP4IgnoreWarningLabel.setVisible(!myP4ConfigHelper.hasP4IgnoreSetting());
     RelativeFont.SMALL.install(myP4IgnoreWarningLabel);
   }
 
@@ -243,11 +243,10 @@ public class ConfigPanel {
 
   private boolean shouldIgnorePanelBeEnabled() {
     boolean useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
-    if (useP4CONFIG && myP4ConfigHelper.hasP4ConfigSetting()) {
+    @Nullable String configFileName = myP4ConfigHelper.getP4Config();
+    if (useP4CONFIG && myP4ConfigHelper.hasP4ConfigSetting() && !myProject.isDefault() && configFileName != null) {
       String basePath = myProject.getBasePath();
-      @Nullable String configFileName = myP4ConfigHelper.getP4Config();
-      if (configFileName == null)
-        return false;
+      assert basePath != null;
       P4ConnectionParameters params = P4ConnectionCalculator.getParametersFromConfig(new File(basePath), configFileName);
 
       return params.getIgnoreFileName() == null;
@@ -334,6 +333,7 @@ public class ConfigPanel {
 
   public void applyTo(PerforceSettings settings) {
     applyImpl(settings);
+    myP4ConfigHelper.reset();
     if (settings.ENABLED != myIsEnabled.isSelected()) {
       if (myIsEnabled.isSelected()) {
         settings.enable();

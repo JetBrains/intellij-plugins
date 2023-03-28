@@ -44,7 +44,8 @@ public class P4ConnectionCalculator {
                                                   ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
                                                   : vcsManager.getDetailedVcsMappings(vcs);
 
-    final String p4ConfigFileName = P4ConfigHelper.getConfigHelper(myProject).getP4Config();
+    final P4ConfigHelper p4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
+    final String p4ConfigFileName = p4ConfigHelper.getP4Config();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
@@ -79,7 +80,7 @@ public class P4ConnectionCalculator {
         connectionSettings.put(mapping, value);
       }
 
-      fillDefaultValues(physicalParameters, detailedVcsMappings, defaultParameters);
+      fillDefaultValues(p4ConfigHelper, physicalParameters, detailedVcsMappings, defaultParameters);
     });
 
     // filter what left
@@ -120,9 +121,9 @@ public class P4ConnectionCalculator {
     filter.doFilter(detailedVcsMappings);
   }
 
-  private void fillDefaultValues(PerforcePhysicalConnectionParametersI physicalParameters,
+  private void fillDefaultValues(P4ConfigHelper p4ConfigHelper, PerforcePhysicalConnectionParametersI physicalParameters,
                                  List<VirtualFile> detailedVcsMappings, P4ConnectionParameters defaultParameters) {
-    if (P4ConfigHelper.hasP4ConfigSettingInEnvironment()) {
+    if (p4ConfigHelper.hasP4ConfigSetting()) {
       for (VirtualFile vcsMapping : detailedVcsMappings) {
         final P4ConnectionParameters parameters = runSetOnFile(physicalParameters, defaultParameters, vcsMapping.getPath());
         takeProblemsInfoDefaultParams(parameters, defaultParameters);
@@ -222,10 +223,15 @@ public class P4ConnectionCalculator {
             // all variables end up in parameters
             setField(fieldType, value, parameters);
 
-            // the ones defined in enviro or env vars also get into default parameters to be shared between connections
-            if (configIdx < 0) {
-              setField(fieldType, value, defaultParameters);
+            if (configIdx >= 0) {
+              // P4CONFIG might have suffix (config 'noconfig') if set
+              int noConfigIdx = line.indexOf(ourNoConfig, configIdx);
+              if (noConfigIdx < 0)
+                continue;
             }
+
+            // the ones defined in enviro or env vars also get into default parameters to be shared between connections
+            setField(fieldType, value, defaultParameters);
           }
         }
       }
@@ -310,6 +316,7 @@ public class P4ConnectionCalculator {
   }
 
   private final static String ourInConfig = "(config";
+  private final static String ourNoConfig = "'noconfig'";
   private final static String ourInEnvironment = "(set";
   private final static String ourInEnvironment2 = "(env";
 }
