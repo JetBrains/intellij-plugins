@@ -51,7 +51,7 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
     return "$language:$this"
   }
 
-  override fun getBuilder(): StubBuilder? {
+  override fun getBuilder(): StubBuilder {
     return object : DefaultStubBuilder() {
       override fun createStubForFile(file: PsiFile): StubElement<*> {
         return if (file is VueFile) VueFileStubImpl(file) else super.createStubForFile(file)

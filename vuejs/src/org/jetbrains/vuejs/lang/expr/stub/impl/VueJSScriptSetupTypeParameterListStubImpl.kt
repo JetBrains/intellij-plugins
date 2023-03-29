@@ -8,10 +8,10 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSStubBase
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
-import org.jetbrains.vuejs.lang.expr.stub.VueScriptSetupTypeParameterListStub
+import org.jetbrains.vuejs.lang.expr.stub.VueJSScriptSetupTypeParameterListStub
 
 
-class VueScriptSetupTypeParameterListStubImpl : JSStubBase<TypeScriptTypeParameterList>, VueScriptSetupTypeParameterListStub {
+class VueJSScriptSetupTypeParameterListStubImpl : JSStubBase<TypeScriptTypeParameterList>, VueJSScriptSetupTypeParameterListStub {
   constructor(psi: TypeScriptTypeParameterList?,
               parent: StubElement<*>?,
               elementType: JSStubElementType<*, *>) : super(psi!!, parent, elementType)

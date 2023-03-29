@@ -2147,6 +2147,11 @@ export default {
     myFixture.checkResultByFile("${getTestName(true)}/scriptSetup_after.vue")
   }
 
+  fun testScriptSetupGeneric() {
+    doLookupTest(VueTestModule.VUE_3_3_0_ALPHA5, locations = listOf(
+      "clearable.<caret>", "value.<caret>", "Clearable).<caret>\">", "Clearable).<caret> }}", "foo.<caret>;"))
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

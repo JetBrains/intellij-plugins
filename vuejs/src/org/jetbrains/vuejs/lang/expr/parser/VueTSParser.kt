@@ -17,7 +17,7 @@ class VueTSParser(builder: PsiBuilder) : TypeScriptParser(builder), VueExprParse
   }
 
   override fun parseEmbeddedExpression(root: IElementType, attributeInfo: VueAttributeInfo?) {
-    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSElementTypes.EMBEDDED_EXPR_CONTENT_TS)
+    extraParser.parseEmbeddedExpression(root, attributeInfo, VueJSStubElementTypes.EMBEDDED_EXPR_CONTENT_TS)
   }
 
   private fun parseExpressionOptional() = expressionParser.parseExpressionOptional()

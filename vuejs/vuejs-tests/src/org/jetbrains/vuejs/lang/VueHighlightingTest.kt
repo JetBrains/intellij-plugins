@@ -644,6 +644,10 @@ const props = {seeMe: {}}
     doTest()
   }
 
+  fun testScriptSetupGeneric() {
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

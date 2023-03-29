@@ -166,7 +166,7 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =
       getForAllKeys(scope, VueOptionsIndex.KEY)
         .filter(VueComponents.Companion::isNotInLibrary)
-        .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
+        .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getContextOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
         .plus(

@@ -41,7 +41,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     myFixture.configureByFile("vForScriptSetup-ts.vue")
     testVFor(
       Triple("unionItem", "string | number", "number"),
-      Triple("cast", "string | boolean | number", "\"name\" | \"age\" | \"verified\""),
+      Triple("cast", "string | number | boolean", "\"name\" | \"age\" | \"verified\""),
       Triple("aliased", "string | boolean", "\"name\" | \"verified\""),
       iterations = 2
     )
@@ -63,7 +63,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     myFixture.configureByFile("vForScriptSetup-js.vue")
     testVFor(
       Triple("empty", "never", "never"),
-      Triple("person", "string | boolean | number", "\"name\" | \"age\" | \"verified\""),
+      Triple("person", "string | number | boolean", "\"name\" | \"age\" | \"verified\""),
       iterations = 2
     )
   }
