@@ -13,7 +13,7 @@
   {
    class: "VueScriptSetupInputProperty",
    name: "onChange",
-   jsType: "(value: ValueType) => void",
+   jsType: "Clearable extends true ? (<ValueType>(value: (ValueType | null)) => void) : (<Va…",
    required: false,
   },
   {

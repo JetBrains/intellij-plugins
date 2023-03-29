@@ -8,7 +8,6 @@ import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.VueTSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.impl.*
 
 object VueJSElementTypes {
@@ -33,23 +32,12 @@ object VueJSElementTypes {
   val SCRIPT_SETUP_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SCRIPT_SETUP_EXPRESSION", ::VueJSScriptSetupExpressionImpl)
 
-  val EMBEDDED_EXPR_CONTENT_JS: IElementType = VueJSEmbeddedExpressionContentElementType(
-    "VUE:EMBEDDED_EXPR_CONTENT_JS", VueJSLanguage.INSTANCE, ::VueJSEmbeddedExpressionContentImpl)
-
-  val EMBEDDED_EXPR_CONTENT_TS: IElementType = VueJSEmbeddedExpressionContentElementType(
-    "VUE:EMBEDDED_EXPR_CONTENT_TS", VueTSLanguage.INSTANCE, ::VueJSEmbeddedExpressionContentImpl)
-
   private abstract class VueJSElementType(@NonNls debugName: String,
                                           language: Language,
                                           private val myClassConstructor: (VueJSElementType) -> ASTNode)
     : IElementType(debugName, language), ICompositeElementType {
     final override fun createCompositeNode(): ASTNode = myClassConstructor(this)
   }
-
-  private class VueJSEmbeddedExpressionContentElementType(@NonNls debugName: String,
-                                                          language: Language,
-                                                          classConstructor: (VueJSElementType) -> ASTNode)
-    : VueJSElementType(debugName, language, classConstructor) // todo implement JSEmbeddedBlockElementType
 
   private class VueJSExpressionElementType(@NonNls debugName: String,
                                            classConstructor: (VueJSElementType) -> ASTNode)

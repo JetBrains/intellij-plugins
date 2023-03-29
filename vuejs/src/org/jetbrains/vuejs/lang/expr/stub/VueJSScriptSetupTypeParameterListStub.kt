@@ -3,4 +3,4 @@ package org.jetbrains.vuejs.lang.expr.stub
 
 import com.intellij.lang.javascript.psi.stubs.TypeScriptTypeParameterListStub
 
-interface VueScriptSetupTypeParameterListStub: TypeScriptTypeParameterListStub
+interface VueJSScriptSetupTypeParameterListStub : TypeScriptTypeParameterListStub

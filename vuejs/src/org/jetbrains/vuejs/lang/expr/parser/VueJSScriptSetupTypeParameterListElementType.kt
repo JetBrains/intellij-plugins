@@ -9,14 +9,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes.EXTERNAL_ID_PREFIX
-import org.jetbrains.vuejs.lang.expr.stub.VueScriptSetupTypeParameterListStub
-import org.jetbrains.vuejs.lang.expr.stub.impl.VueScriptSetupTypeParameterListStubImpl
+import org.jetbrains.vuejs.lang.expr.stub.VueJSScriptSetupTypeParameterListStub
+import org.jetbrains.vuejs.lang.expr.stub.impl.VueJSScriptSetupTypeParameterListStubImpl
 import java.io.IOException
 
-class VueJSScriptSetupTypeParameterListElementType : JSStubElementType<VueScriptSetupTypeParameterListStub, TypeScriptTypeParameterList>(
+class VueJSScriptSetupTypeParameterListElementType : JSStubElementType<VueJSScriptSetupTypeParameterListStub, TypeScriptTypeParameterList>(
   "SCRIPT_SETUP_TYPE_PARAMETER_LIST") {
-  override fun createStub(psi: TypeScriptTypeParameterList, parentStub: StubElement<*>?): VueScriptSetupTypeParameterListStub {
-    return VueScriptSetupTypeParameterListStubImpl(psi, parentStub, this)
+  override fun createStub(psi: TypeScriptTypeParameterList, parentStub: StubElement<*>?): VueJSScriptSetupTypeParameterListStub {
+    return VueJSScriptSetupTypeParameterListStubImpl(psi, parentStub, this)
   }
 
   override fun construct(node: ASTNode): PsiElement {
@@ -24,8 +24,8 @@ class VueJSScriptSetupTypeParameterListElementType : JSStubElementType<VueScript
   }
 
   @Throws(IOException::class)
-  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): VueScriptSetupTypeParameterListStub {
-    return VueScriptSetupTypeParameterListStubImpl(dataStream, parentStub, this)
+  override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): VueJSScriptSetupTypeParameterListStub {
+    return VueJSScriptSetupTypeParameterListStubImpl(dataStream, parentStub, this)
   }
 
   override fun shouldCreateStub(node: ASTNode): Boolean =

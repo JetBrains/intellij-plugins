@@ -18,10 +18,12 @@ import com.intellij.lang.javascript.psi.resolve.WalkUpResolveProcessor
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
+import com.intellij.psi.util.contextOfType
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.Processor
 import com.intellij.util.SmartList
-import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
+import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 import org.jetbrains.vuejs.model.VueFilter
 import org.jetbrains.vuejs.model.VueImplicitElement
@@ -51,6 +53,8 @@ class VueExprReferenceExpressionResolver(referenceExpression: JSReferenceExpress
   override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
     val ref = myRef
     return when {
+      expression.contextOfType<XmlTag>()?.isScriptSetupTag() == true ->
+        super.resolve(expression, incompleteCode)
       myReferencedName == null -> ResolveResult.EMPTY_ARRAY
       ref is VueJSFilterReferenceExpression -> resolveFilterNameReference(ref, incompleteCode)
       myQualifier is JSThisExpression -> resolveTemplateVariable(expression)
