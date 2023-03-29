@@ -58,8 +58,10 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
             it,
             LocalSearchScope(scriptTag.containingFile),
             UsageSearchContext.IN_CODE,
-            false, element,
-            PsiSourcedWebSymbolRequestResultProcessor(element, true))
+            false,
+            element,
+            PsiSourcedWebSymbolRequestResultProcessor(element, true)
+          )
         }
 
         if (element is JSVariable) {
@@ -112,9 +114,10 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
                                  false, PairProcessor { reference, _ ->
                 if (reference is JSReferenceExpression && reference.parent.let { it is ES6Property && it.isShorthanded }) {
                   val innerCollector = SearchRequestCollector(optimizer.searchSession)
-                  optimizer.searchQuery(QuerySearchRequest(ReferencesSearch.search(reference.parent, LocalSearchScope(reference.containingFile)),
-                                                           innerCollector, false,
-                                                           PairProcessor { propRef, _ -> consumer.process(propRef)}))
+                  optimizer.searchQuery(
+                    QuerySearchRequest(ReferencesSearch.search(reference.parent, LocalSearchScope(reference.containingFile)),
+                                       innerCollector, false,
+                                       PairProcessor { propRef, _ -> consumer.process(propRef) }))
                   if (!PsiSearchHelper.getInstance(element.getProject()).processRequests(optimizer, consumer)) return@PairProcessor false
                 }
                 consumer.process(reference)
@@ -125,9 +128,13 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         val searchTarget = if (element is JSImplicitElement) component.source ?: element else element
         alternateNames().forEach {
           queryParameters.optimizer.searchWord(
-            it, searchScope,
+            it,
+            searchScope,
             (UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS).toShort(),
-            false, searchTarget, PsiSourcedWebSymbolRequestResultProcessor(element, true))
+            false,
+            searchTarget,
+            PsiSourcedWebSymbolRequestResultProcessor(element, true)
+          )
         }
         return
       }
@@ -135,9 +142,13 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       if (queryParameters.effectiveSearchScope != searchScope) {
         alternateNames().forEach {
           queryParameters.optimizer.searchWord(
-            it, searchScope,
+            it,
+            searchScope,
             (UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS).toShort(),
-            false, element, PsiSourcedWebSymbolRequestResultProcessor(element, true))
+            false,
+            element,
+            PsiSourcedWebSymbolRequestResultProcessor(element, true)
+          )
         }
         return
       }
