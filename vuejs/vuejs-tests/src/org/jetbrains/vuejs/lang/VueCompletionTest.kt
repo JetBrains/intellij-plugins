@@ -2147,6 +2147,10 @@ export default {
     myFixture.checkResultByFile("${getTestName(true)}/scriptSetup_after.vue")
   }
 
+  fun testNoFilterForOnProps() {
+    doLookupTest()
+  }
+
   fun testScriptSetupGeneric() {
     doLookupTest(VueTestModule.VUE_3_3_0_ALPHA5, locations = listOf(
       "clearable.<caret>", "value.<caret>", "Clearable).<caret>\">", "Clearable).<caret> }}", "foo.<caret>;"))
