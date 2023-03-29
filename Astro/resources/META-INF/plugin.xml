@@ -69,6 +69,8 @@
     <webSymbols.queryConfigurator implementation="org.jetbrains.astro.webSymbols.AstroQueryConfigurator"/>
     <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroWebSymbolsQueryResultsCustomizer$Provider"/>
 
+    <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />
+
     <localInspection language="Astro" groupKey="astro.inspection.group.name" shortName="AstroMissingComponentImportInspection"
                      enabledByDefault="true" level="ERROR"
                      implementationClass="org.jetbrains.astro.inspections.AstroMissingComponentImportInspection"
