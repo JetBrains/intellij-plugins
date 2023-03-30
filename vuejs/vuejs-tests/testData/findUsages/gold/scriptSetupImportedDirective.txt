@@ -1,0 +1,5 @@
+<scriptSetupImportedDirective.vue:(128,134):(0,6)>	vRenamedFocus = vFocus
+<scriptSetupImportedDirective.vue:(209,216):(2,7)>	v-focus
+<scriptSetupImportedDirective.vue:(24,30):(0,6)>	{ vFocus }
+<scriptSetupImportedDirective.vue:(247,259):(2,12)>	v-some-focus
+<scriptSetupImportedDirective.vue:(62,82):(0,6)>	{ vFocus as vSomeFocus }
