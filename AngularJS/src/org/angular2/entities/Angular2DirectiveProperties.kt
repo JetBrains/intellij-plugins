@@ -87,10 +87,11 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
       return "<$delegate,$myOutput>"
     }
 
-    override fun getDocumentationTarget(): DocumentationTarget =
+    override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
       Angular2ElementDocumentationTarget.create(
-        name, delegate, myOutput, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
-      ?: super.getDocumentationTarget()
+        name, delegate, myOutput,
+        Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
+      ?: super.getDocumentationTarget(location)
   }
 
 }
