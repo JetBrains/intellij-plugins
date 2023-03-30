@@ -6,9 +6,7 @@ import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
+import com.intellij.lang.javascript.psi.ecma6.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
@@ -149,6 +147,12 @@ class VueTypedComponent(override val source: PsiElement,
   override val mixins: List<VueMixin>
     get() = emptyList()
 
+  override val typeParameters: List<TypeScriptTypeParameter>
+    get() = resolveElementTo(source, TypeScriptVariable::class, TypeScriptPropertySignature::class, TypeScriptClass::class)
+              .asSafely<TypeScriptTypeParameterListOwner>()
+              ?.typeParameters?.toList()
+            ?: emptyList()
+
   override fun createPointer(): Pointer<out VueRegularComponent> {
     val sourcePtr = source.createSmartPointer()
     val defaultName = this.defaultName
@@ -183,13 +187,13 @@ class VueTypedComponent(override val source: PsiElement,
 
   }
 
-  private abstract class VueTypedProperty(protected val property: JSRecordType.PropertySignature) : VueTypedDocumentedElement(), VueProperty {
+  private abstract class VueTypedProperty(protected val property: PropertySignature) : VueTypedDocumentedElement(), VueProperty {
     override val name: String get() = property.memberName
     override val jsType: JSType? get() = property.jsType
     override val source: PsiElement? get() = property.memberSource.singleElement
   }
 
-  private class VueTypedInputProperty(property: JSRecordType.PropertySignature) : VueTypedProperty(property), VueInputProperty {
+  private class VueTypedInputProperty(property: PropertySignature) : VueTypedProperty(property), VueInputProperty {
     override val required: Boolean
       get() = false
   }

@@ -97,9 +97,6 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
       return listOf<WebSymbol>(this)
     }
 
-  val textOffset: Int
-    get() = myParent.psiParent.textOffset + textRangeInSource.startOffset
-
   val isAttributeSelector: Boolean
     get() = !isElementSelector
 
@@ -174,10 +171,10 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
   class DirectiveSelectorSymbolNavigationTarget(private val mySymbol: Angular2DirectiveSelectorSymbol) : NavigationTarget {
 
     override fun createPointer(): Pointer<out NavigationTarget> {
-      return Pointer.delegatingPointer(
-        mySymbol.createPointer(),
-        DirectiveSelectorSymbolNavigationTarget::class.java
-      ) { DirectiveSelectorSymbolNavigationTarget(it) }
+      val symbolPtr = mySymbol.createPointer()
+      return Pointer {
+        symbolPtr.dereference()?.let { DirectiveSelectorSymbolNavigationTarget(it) }
+      }
     }
 
     override fun presentation(): TargetPresentation {

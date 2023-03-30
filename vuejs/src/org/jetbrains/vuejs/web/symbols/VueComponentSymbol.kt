@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
@@ -26,6 +27,9 @@ class VueComponentSymbol(name: String, component: VueComponent, private val vueP
 
   val sourceDescriptor: VueSourceEntityDescriptor?
     get() = (item as? VueSourceContainer)?.descriptor
+
+  val typeParameters: List<TypeScriptTypeParameter>
+    get() = (item as? VueRegularComponent)?.typeParameters ?: emptyList()
 
   override val kind: SymbolKind
     get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPONENTS
