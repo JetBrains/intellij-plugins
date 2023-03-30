@@ -127,10 +127,10 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
     return presentation
   }
 
-  override fun getDocumentationTarget(): DocumentationTarget =
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
     Angular2ElementDocumentationTarget.create(
       name, Angular2EntitiesProvider.getEntity(PsiTreeUtil.getContextOfType(source, TypeScriptClass::class.java, false)))
-    ?: super.getDocumentationTarget()
+    ?: super.getDocumentationTarget(location)
 
   override fun createPointer(): Pointer<Angular2DirectiveSelectorSymbol> {
     val parent = myParent.createPointer()

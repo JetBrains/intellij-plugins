@@ -3,6 +3,9 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.js.renderJsTypeForDocs
 import com.intellij.openapi.util.text.Strings
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.xml.XmlTag
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.documentation.WebSymbolDocumentation
 import com.intellij.webSymbols.documentation.WebSymbolDocumentationCustomizer
@@ -10,7 +13,7 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.context.isVueContext
 
 class VueDocumentationCustomizer : WebSymbolDocumentationCustomizer {
-  override fun customize(symbol: WebSymbol, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
+  override fun customize(symbol: WebSymbol, location: PsiElement?, documentation: WebSymbolDocumentation): WebSymbolDocumentation {
     if (symbol.namespace == WebSymbol.NAMESPACE_HTML
         && symbol.kind == WebSymbol.KIND_HTML_SLOTS
         && (symbol.origin.framework == VueFramework.ID

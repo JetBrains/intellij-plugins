@@ -7,6 +7,8 @@ import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.platform.backend.presentation.TargetPresentation
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
@@ -92,15 +94,15 @@ class VueWebTypesMergedSymbol(override val name: String,
   override val queryScope: List<WebSymbolsScope>
     get() = listOf(this)
 
-  override val documentation: WebSymbolDocumentation
-    get() = WebSymbolDocumentation.create(this).let { doc ->
+  override fun createDocumentation(location: PsiElement?): WebSymbolDocumentation =
+    WebSymbolDocumentation.create(this, location).let { doc ->
       originalName
         ?.let { doc.withDefinition(StringUtil.escapeXmlEntities(it) + " as " + doc.definition) }
       ?: doc
     }
 
-  override fun getDocumentationTarget(): DocumentationTarget =
-    VueMergedSymbolDocumentationTarget(this, originalName ?: name)
+  override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =
+    VueMergedSymbolDocumentationTarget(this, location, originalName ?: name)
 
   override fun getSymbols(namespace: SymbolNamespace,
                           kind: SymbolKind,
@@ -177,6 +179,7 @@ class VueWebTypesMergedSymbol(override val name: String,
 
   class VueMergedSymbolDocumentationTarget(
     override val symbol: WebSymbol,
+    override val location: PsiElement?,
     @Nls val displayName: String,
   ) : WebSymbolDocumentationTarget {
 
@@ -188,9 +191,10 @@ class VueWebTypesMergedSymbol(override val name: String,
 
     override fun createPointer(): Pointer<out DocumentationTarget> {
       val pointer = symbol.createPointer()
+      val locationPtr = location?.createSmartPointer()
       val displayName = this.displayName
       return Pointer<DocumentationTarget> {
-        pointer.dereference()?.let { VueMergedSymbolDocumentationTarget(it, displayName) }
+        pointer.dereference()?.let { VueMergedSymbolDocumentationTarget(it, locationPtr?.dereference(), displayName) }
       }
     }
   }
