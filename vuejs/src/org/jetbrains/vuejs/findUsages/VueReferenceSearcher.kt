@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.findUsages
 
+import com.intellij.lang.ecmascript6.findUsages.JSFindReferencesResultProcessor
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -42,21 +44,12 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
     val elementName = (element as? JSPsiNamedElementBase)?.name
 
     if (elementName != null) {
-      fun alternateNames() =
-        sequenceOf(elementName, fromAsset(elementName),
-                   fromAsset(elementName.removePrefix("v")))
-          .map { it.lowercase(Locale.US) }
-          .distinct()
-          .toList()
-
       // Script setup local vars
-      val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
-      if (scriptTag.isScriptSetupTag()
-          && scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
-        alternateNames().forEach {
+      getFullComponentScopeIfInsideScriptSetup(element)?.let { scope ->
+        alternateNames(elementName).forEach {
           queryParameters.optimizer.searchWord(
             it,
-            LocalSearchScope(scriptTag.containingFile),
+            scope,
             UsageSearchContext.IN_CODE,
             false,
             element,
@@ -86,7 +79,17 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         return
       }
 
-      // Components
+      // Vue Scope Elements imported into script setup (as is & aliased)
+      queryParameters.optimizer.searchWord(
+        elementName,
+        queryParameters.effectiveSearchScope,
+        UsageSearchContext.IN_CODE,
+        true,
+        element,
+        ScriptSetupImportProcessor(element, queryParameters)
+      )
+
+      // Components (will also mistakenly find directives)
       val component = if (element is JSImplicitElement && element.context is JSLiteralExpression)
         VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
       else
@@ -126,7 +129,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
         }
 
         val searchTarget = if (element is JSImplicitElement) component.source ?: element else element
-        alternateNames().forEach {
+        alternateNames(elementName).forEach {
           queryParameters.optimizer.searchWord(
             it,
             searchScope,
@@ -140,7 +143,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       }
 
       if (queryParameters.effectiveSearchScope != searchScope) {
-        alternateNames().forEach {
+        alternateNames(elementName).forEach {
           queryParameters.optimizer.searchWord(
             it,
             searchScope,
@@ -173,5 +176,63 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       }
     }
   }
+}
 
+private class ScriptSetupImportProcessor(target: PsiElement?, queryParameters: ReferencesSearch.SearchParameters?)
+  : JSFindReferencesResultProcessor(target, queryParameters) {
+  override fun proceedWithReference(element: PsiElement, collector: SearchRequestCollector): Boolean {
+    if (element !is ES6ImportSpecifier) return false
+
+    val localElement: PsiElement
+    val localName: String?
+
+    run {
+      val alias = element.alias
+      if (alias != null) {
+        localElement = alias
+        localName = alias.name
+      }
+      else {
+        localElement = element
+        localName = element.declaredName
+      }
+    }
+
+    if (localName == null) return false
+
+    getFullComponentScopeIfInsideScriptSetup(localElement)?.let { scope ->
+      alternateNames(localName).forEach {
+        collector.searchWord(
+          it,
+          scope,
+          UsageSearchContext.IN_CODE,
+          false,
+          localElement,
+          PsiSourcedWebSymbolRequestResultProcessor(localElement, true)
+        )
+      }
+
+      return true
+    }
+
+    return false
+  }
+
+}
+
+private fun getFullComponentScopeIfInsideScriptSetup(element: PsiElement): LocalSearchScope? {
+  val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
+
+  if (scriptTag.isScriptSetupTag() && scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
+    return LocalSearchScope(scriptTag.containingFile)
+  }
+
+  return null
+}
+
+private fun alternateNames(elementName: String): List<String> {
+  return sequenceOf(elementName, fromAsset(elementName), fromAsset(elementName.removePrefix("v")))
+    .map { it.lowercase(Locale.US) }
+    .distinct()
+    .toList()
 }
