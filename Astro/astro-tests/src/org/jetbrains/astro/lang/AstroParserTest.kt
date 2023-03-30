@@ -52,6 +52,7 @@ import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
 import org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport
 import org.jetbrains.astro.lang.parser.AstroParserDefinition
+import org.junit.AssumptionViolatedException
 
 class AstroParserTest : HtmlParsingTest("", "astro",
                                         AstroParserDefinition(),
@@ -60,11 +61,11 @@ class AstroParserTest : HtmlParsingTest("", "astro",
                                         CSSParserDefinition()) {
 
   override fun testUnclosedTag() {
-    // disable
+    throw AssumptionViolatedException("disable")
   }
 
   override fun testContent1() {
-    // disable
+    throw AssumptionViolatedException("disable")
   }
 
   fun testBasic1() {
