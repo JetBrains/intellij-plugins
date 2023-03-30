@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
@@ -43,6 +44,9 @@ private constructor(override val delegate: VueRegularComponent, source: PsiEleme
 
   override val description: String?
     get() = delegate.description
+
+  override val typeParameters: List<TypeScriptTypeParameter>
+    get() = delegate.typeParameters
 
   override fun createPointer(): Pointer<VueLocallyDefinedRegularComponent> {
     val delegate = this.delegate.createPointer()

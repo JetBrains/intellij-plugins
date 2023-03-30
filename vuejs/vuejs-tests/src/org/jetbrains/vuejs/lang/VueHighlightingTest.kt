@@ -655,6 +655,10 @@ const props = {seeMe: {}}
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
   }
 
+  fun testGenericComponentUsage() {
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

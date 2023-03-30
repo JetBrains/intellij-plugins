@@ -1,27 +1,41 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.expr.psi.impl
 
+import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
+import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
+import com.intellij.javascript.web.js.jsType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.psi.JSElementVisitor
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
-import com.intellij.lang.javascript.psi.JSSuppressionHolder
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterList
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterListOwner
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
+import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
+import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
+import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.CachedValuesManagerImpl
+import com.intellij.util.asSafely
+import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.lang.expr.stub.VueJSEmbeddedExpressionContentStub
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl
+import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
 class VueJSEmbeddedExpressionContentImpl :
   JSStubElementImpl<VueJSEmbeddedExpressionContentStub>, JSSuppressionHolder, VueJSEmbeddedExpressionContent,
@@ -80,5 +94,65 @@ class VueJSEmbeddedExpressionContentImpl :
   override fun getTypeParameterList(): TypeScriptTypeParameterList? =
     (findModule(this, true) as? VueScriptSetupEmbeddedContentImpl)
       ?.typeParameterList
+
+  override fun getTypeSubstitutorForGenerics(): JSTypeSubstitutor? {
+    val tag = (InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this)
+                .parentOfType<XmlTag>() ?: return null
+    return CachedValuesManagerImpl.getCachedValue(tag) {
+      CachedValueProvider.Result.create(getTypeSubstitutorForGenerics(tag), PsiModificationTracker.MODIFICATION_COUNT)
+    }
+  }
+
+  companion object {
+    fun getTypeSubstitutorForGenerics(tag: XmlTag): JSTypeSubstitutor {
+      val pairs = tag.attributes.mapNotNull { attr ->
+        val value = attr.valueElement
+        val expression = if (value != null)
+          value.findJSExpression<JSExpression>()
+          ?: return@mapNotNull null
+        else
+          null
+
+        val expectedType =
+          attr.descriptor
+            ?.asSafely<WebSymbolAttributeDescriptor>()
+            ?.symbol
+            ?.jsType
+        if (expectedType != null)
+          Pair(expectedType, expression)
+        else
+          null
+      }
+
+      val substitutor = TypeScriptGenericTypesEvaluator.getInstance().getTypeSubstitutorForCallItem(
+        JSFunctionTypeImpl(
+          JSTypeSource.EMPTY_TS,
+          pairs.map { (paramType, _) -> JSParameterTypeDecoratorImpl(paramType, false, false, true) },
+          null
+        ),
+        object : JSCallItem {
+          override fun getArgumentTypes(argumentTypeFactory: JSExpressionTypeFactory): List<JSType?> =
+            pairs.map { (_, expression) ->
+              if (expression == null) JSBooleanLiteralTypeImpl(true, false, JSTypeSource.EMPTY_TS)
+              else argumentTypeFactory.evaluate(expression)
+            }
+
+          override fun getPsiContext(): PsiElement =
+            tag
+        }, null
+      ) as JSTypeSubstitutorImpl
+      val component = (tag.descriptor as? WebSymbolElementDescriptor)
+        ?.symbol
+        ?.unwrapMatchedSymbols()
+        ?.firstNotNullOfOrNull { it as? VueComponentSymbol }
+      component?.typeParameters?.forEach {
+        if (!substitutor.containsId(it.genericId)) {
+          substitutor.put(it.genericId, JSUndefinedType(JSTypeSource.EMPTY_TS, false))
+        }
+      }
+      return substitutor
+    }
+  }
+
 
 }
