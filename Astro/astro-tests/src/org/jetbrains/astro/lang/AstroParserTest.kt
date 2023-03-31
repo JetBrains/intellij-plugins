@@ -50,6 +50,7 @@ import com.intellij.psi.stubs.StubElementTypeHolderEP
 import com.intellij.util.ObjectUtils
 import org.jetbrains.astro.getAstroTestDataPath
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
+import org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport
 import org.jetbrains.astro.lang.parser.AstroParserDefinition
 
 class AstroParserTest : HtmlParsingTest("", "astro",
@@ -501,6 +502,22 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     """)
   }
 
+  fun testTypeScriptInTemplate() {
+    doTestAstro("""
+      <script>
+          const value: string = 'foo';
+      </script>
+    """)
+  }
+
+  fun testInlineScriptInTemplate() {
+    doTestAstro("""
+      <script is:inline>
+          const value: string = 'foo';
+      </script>
+    """)
+  }
+
   override fun setUp() {
     super.setUp()
 
@@ -529,7 +546,8 @@ class AstroParserTest : HtmlParsingTest("", "astro",
     project.registerService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
 
     HtmlEmbeddedContentSupport.register(application, testRootDisposable,
-                                        CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java)
+                                        CssHtmlEmbeddedContentSupport::class.java, JSHtmlEmbeddedContentSupport::class.java,
+                                        AstroEmbeddedContentSupport::class.java)
 
     registerExtensionPoint(StubElementTypeHolderEP.EP_NAME, StubElementTypeHolderEP::class.java)
 

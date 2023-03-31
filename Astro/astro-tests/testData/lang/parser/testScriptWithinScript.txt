@@ -11,7 +11,7 @@ AstroFile:test.astro
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('script')
       XmlToken:XML_TAG_END('>')
-      JSEmbeddedContent
+      JSEmbeddedContent:JS:TS_EMBEDDED_CONTENT
         PsiWhiteSpace('\n    ')
         JSExpressionStatement
           JSCallExpression

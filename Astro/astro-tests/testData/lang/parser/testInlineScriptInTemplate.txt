@@ -1,0 +1,35 @@
+AstroFile:test.astro
+  AstroContentRoot:ASTRO:CONTENT_ROOT
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('is:inline')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent:JS:ES6_EMBEDDED_CONTENT
+        PsiWhiteSpace('\n    ')
+        JSVarStatement
+          JSAttributeList
+            <empty list>
+          PsiElement(JS:CONST_KEYWORD)('const')
+          PsiWhiteSpace(' ')
+          JSVariable
+            PsiElement(JS:IDENTIFIER)('value')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            TypeScriptSingleType
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('string')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:EQ)('=')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''foo'')
+          PsiElement(JS:SEMICOLON)(';')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
