@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -11,13 +12,22 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
+import com.intellij.webSymbols.WebSymbolQualifiedKind
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.context.WebSymbolsContext
+import com.intellij.webSymbols.query.WebSymbolNameConversionRules
+import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
+import com.intellij.webSymbols.query.WebSymbolNameConverter
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
+import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.isCompositionApiLocalDirectiveName
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.*
+import org.jetbrains.vuejs.model.source.VueCompositionApp
+import org.jetbrains.vuejs.model.source.VueSourceComponent
+import org.jetbrains.vuejs.model.source.WATCH_PROP
 import org.jetbrains.vuejs.web.scopes.*
 
 class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
@@ -29,6 +39,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val KIND_VUE_COMPONENT_COMPUTED_PROPERTIES = "computed-properties"
     const val KIND_VUE_COMPONENT_DATA_PROPERTIES = "data-properties"
     const val KIND_VUE_DIRECTIVES = "vue-directives"
+    const val KIND_VUE_COMPOSITION_API_LOCAL_DIRECTIVES = "vue-composition-api-local-directives"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
     const val KIND_VUE_MODEL = "vue-model"
     const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
@@ -59,7 +70,9 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     if (allowResolve) {
       addEntityContainers(element, fileContext, result)
       tag?.let { result.add(VueAvailableSlotsScope(it)) }
-      findModule(tag, true)?.let { result.add(VueScriptSetupNamespacedComponentsScope(it)) }
+      findModule(tag, true)?.let {
+        result.add(VueScriptSetupNamespacedComponentsScope(it))
+      }
     }
 
     // Top level tags
@@ -69,6 +82,14 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 
     return result
   }
+
+  override fun getNameConversionRulesProviders(project: Project,
+                                               element: PsiElement?,
+                                               context: WebSymbolsContext): List<WebSymbolNameConversionRulesProvider> =
+    if (context.framework == VueFramework.ID)
+      listOf(VueScriptSetupLocalDirectiveNameConversionRulesProvider)
+    else
+      super.getNameConversionRulesProviders(project, element, context)
 
   private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<WebSymbolsScope> {
     if (element is JSProperty
@@ -125,6 +146,33 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
           }
       }
     }
+  }
+
+  object VueScriptSetupLocalDirectiveNameConversionRulesProvider : WebSymbolNameConversionRulesProvider, WebSymbolNameConversionRules {
+    override fun getNameConversionRules(): WebSymbolNameConversionRules = this
+
+    override fun createPointer(): Pointer<out WebSymbolNameConversionRulesProvider> =
+      Pointer.hardPointer(this)
+
+    override fun getModificationCount(): Long = 0
+
+    override val canonicalNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter> =
+      mapOf(WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPOSITION_API_LOCAL_DIRECTIVES) to
+              WebSymbolNameConverter {
+                listOf(
+                  if (isCompositionApiLocalDirectiveName(it))
+                    fromAsset(it.substring(1))
+                  else
+                    it
+                )
+              })
+
+    override val matchNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+      get() = canonicalNames
+
+    override val nameVariants: Map<WebSymbolQualifiedKind, WebSymbolNameConverter>
+      get() = canonicalNames
+
   }
 
 }

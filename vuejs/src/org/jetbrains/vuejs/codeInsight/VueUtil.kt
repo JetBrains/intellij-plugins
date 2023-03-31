@@ -443,3 +443,6 @@ inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   val host = InjectedLanguageManager.getInstance(project).getInjectionHost(this) ?: this
   return host.parentOfType<T>()
 }
+
+fun isCompositionApiLocalDirectiveName(name: String): Boolean =
+  name.length > 1 && name[0] == 'v' && name[1].isUpperCase()

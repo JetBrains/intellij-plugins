@@ -14,12 +14,14 @@ import com.intellij.webSymbols.refactoring.WebSymbolRenameTarget
 import com.intellij.webSymbols.utils.match
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.source.VueCompositionApiLocalDirective
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.KIND_VUE_MODEL
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_MODEL_EVENT
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator.Companion.PROP_VUE_MODEL_PROP
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 import org.jetbrains.vuejs.web.symbols.VueDirectiveSymbol
 import org.jetbrains.vuejs.web.symbols.VueScopeElementSymbol
+import org.jetbrains.vuejs.web.symbols.VueCompositionApiLocalDirectiveSymbol
 
 fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
   runNameMatchQuery(NAMESPACE_HTML, KIND_VUE_MODEL, "").firstOrNull()
@@ -32,6 +34,7 @@ fun WebSymbolElementDescriptor.getModel(): VueModelDirectiveProperties =
 fun VueScopeElement.asWebSymbol(name: String, forcedProximity: VueModelVisitor.Proximity): WebSymbol? =
   when (this) {
     is VueComponent -> VueComponentSymbol(toAsset(name, true), this, forcedProximity)
+    is VueCompositionApiLocalDirective -> VueCompositionApiLocalDirectiveSymbol(this, forcedProximity)
     is VueDirective -> VueDirectiveSymbol(name, this, forcedProximity)
     else -> null
   }

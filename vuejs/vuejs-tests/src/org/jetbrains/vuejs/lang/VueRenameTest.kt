@@ -144,6 +144,14 @@ class VueRenameTest : BasePlatformTestCase() {
     checkResultByDir("namespacedComponents_after")
   }
 
+  fun testCompositionApiLocalDirective() {
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureFromTempProjectFile("scriptSetup.vue")
+    myFixture.renameWebSymbol("vNewName")
+    checkResultByDir("${getTestName(true)}_after")
+  }
+
   private fun doTest(newName: String, usingHandler: Boolean = false) {
     myFixture.configureByFile(getTestName(true) + ".vue")
     if (usingHandler) {
