@@ -16,6 +16,8 @@ object Angular2TypeGuardEvaluator : TypeScriptTypeGuardEvaluator() {
                                            resolvedElement: PsiElement?): JSType? {
     val config = TypeScriptConfigUtil.getConfigForPsiFile(namedElement.containingFile)
 
+    // Actually, expressions like {{isString(qux) && qux.length}} in Angular language tools are type-narrowed even outside strictTemplates,
+    // so ideally we'd need 2 separate type narrowing mechanisms
     if (Angular2TypeScriptConfigCustomizer.isStrictTemplates(config)) {
       return super.getTypeFromTypeGuard(namedElement, place, type, resolvedElement)
     }
