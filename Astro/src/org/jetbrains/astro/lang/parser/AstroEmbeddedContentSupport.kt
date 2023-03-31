@@ -39,7 +39,7 @@ class AstroTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedCon
   }
 
   private fun createScriptEmbedmentInfo(): HtmlEmbedmentInfo? {
-    val attributeName = attributeName?.trim()?.toString()
+    val attributeName = attributeName?.trim()
     return when {
       namesEqual(attributeName, ASTRO_INLINE_DIRECTIVE) ->
         HtmlEmbeddedContentSupport.getScriptTagEmbedmentInfo(JavaScriptSupportLoader.ECMA_SCRIPT_6)
