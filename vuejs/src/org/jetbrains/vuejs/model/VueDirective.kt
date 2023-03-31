@@ -9,5 +9,5 @@ interface VueDirective : VueNamedEntity, VueScopeElement {
   val modifiers: List<VueDirectiveModifier> get() = emptyList()
   val argument: VueDirectiveArgument? get() = null
 
-  fun createPointer(): Pointer<VueDirective>
+  fun createPointer(): Pointer<out VueDirective>
 }

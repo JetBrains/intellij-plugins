@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
+open class VueDirectiveSymbol(name: String, directive: VueDirective, private val vueProximity: VueModelVisitor.Proximity) :
   VueScopeElementSymbol<VueDirective>(fromAsset(name), directive) {
 
   override val kind: SymbolKind
