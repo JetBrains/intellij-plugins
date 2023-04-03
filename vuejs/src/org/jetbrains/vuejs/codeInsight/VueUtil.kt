@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -23,14 +22,13 @@ import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
+import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPolyVariantReference
-import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
@@ -146,16 +144,15 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
     }
 }
 
-@StubSafe
-fun getTextIfLiteral(holder: PsiElement?): String? =
+fun getTextIfLiteral(holder: PsiElement?, forceStubs: Boolean = true): String? =
   (if (holder is JSReferenceExpression) {
-    resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
+    resolveLocally(holder).firstNotNullOfOrNull { (it as? JSVariable)?.initializerOrStub }
   }
   else holder)
     ?.asSafely<JSLiteralExpression>()
     ?.let { literalExpr ->
       when {
-        (literalExpr as? StubBasedPsiElement<*>)?.stub != null -> literalExpr.significantValue?.let { es6Unquote(it) }
+        forceStubs -> literalExpr.stubSafeStringValue
         literalExpr.isQuotedLiteral -> literalExpr.stringValue
         else -> null
       }
@@ -274,42 +271,6 @@ fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
         .map { Pair(prop.memberName, it) }
     }
   ?: emptyList()
-
-val XmlTag.stubSafeAttributes: List<XmlAttribute>
-  get() =
-    if (isStubBased(this)) {
-      PsiTreeUtil.getStubChildrenOfTypeAsList(this, XmlAttribute::class.java)
-    }
-    else {
-      this.attributes.filter { isStubBased(it) }
-    }
-
-fun XmlTag.stubSafeGetAttribute(qname: String): XmlAttribute? =
-  stubSafeAttributes.find { it.name == qname }
-
-val JSCallExpression.stubSafeCallArguments: List<PsiElement>
-  get() {
-    if (isStubBased(this)) {
-      (this as StubBasedPsiElementBase<*>).stub?.let { stub ->
-        val methodExpr = stubSafeMethodExpression
-        return stub.childrenStubs.map { it.psi }.filter { it !== methodExpr }.toList()
-      }
-      return arguments.filter { isStubBased(it) }.toList()
-    }
-    return emptyList()
-  }
-
-val JSArrayLiteralExpression.stubSafeElements: List<PsiElement>
-  get() {
-    if (isStubBased(this)) {
-      (this as StubBasedPsiElementBase<*>).stub
-        ?.childrenStubs
-        ?.map { it.psi }
-        ?.let { return it }
-      return expressions.filter { isStubBased(it) }.toList()
-    }
-    return emptyList()
-  }
 
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {

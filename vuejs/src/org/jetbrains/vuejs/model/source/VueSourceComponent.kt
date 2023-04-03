@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameter
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
@@ -18,7 +19,6 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.findJSExpression
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.stubSafeAttributes
 import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.psi.impl.VueScriptSetupEmbeddedContentImpl

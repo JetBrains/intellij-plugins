@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -45,6 +46,7 @@ import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
+import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.getSlotTypeFromContext
 import org.jetbrains.vuejs.model.hasSrcReference
@@ -435,19 +437,36 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
-    val parentType = expression.node.treeParent?.elementType ?: return false
+    val treeParent = expression.node.treeParent
+    val parentType = treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
-        || (JSElementTypes.PROPERTY == parentType
-            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP,
-                                                                                                   NAME_PROP))) {
+        || (JSElementTypes.PROPERTY == parentType && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(
+        treeParent)))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
-      return expression.node.treeParent.treeParent
-        .let { it != null && isCompositionApiAppObjectCall(it) }
+      return treeParent.treeParent
+        .let { it != null && (isCompositionApiAppObjectCall(it) || isVueComponentDecoratorCall(it)) }
     }
     return false
   }
+
+  private fun isComponentPropertyWithStubbedLiteral(property: ASTNode) =
+    property.findChildByType(JSTokenTypes.IDENTIFIER)?.text in
+      listOf(PROPS_REQUIRED_PROP, EL_PROP, TEMPLATE_PROP, NAME_PROP)
+
+  private fun isComponentModelProperty(property: ASTNode) =
+    property.findChildByType(JSTokenTypes.IDENTIFIER)?.text.let { it == MODEL_PROP_PROP || it == MODEL_EVENT_PROP }
+    && property.treeParent?.treeParent.let {
+      it != null && it.elementType == JSElementTypes.PROPERTY
+      && it.findChildByType(JSTokenTypes.IDENTIFIER)?.text == MODEL_PROP
+    }
+
+  private fun isVueComponentDecoratorCall(callNode: ASTNode): Boolean =
+    callNode.treeParent?.elementType == JSElementTypes.ES6_DECORATOR
+    && checkCallExpression(callNode) { refName, hasQualifier ->
+      !hasQualifier && VueDecoratedComponentInfoProvider.isVueComponentDecoratorName(refName)
+    }
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
   private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
