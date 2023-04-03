@@ -21,7 +21,25 @@ import java.util.*
 
 class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VueDecoratedComponentInfo) {
 
-  private class VueDecoratedComponentInfo constructor(clazz: JSClass) : VueContainerInfo {
+  companion object {
+
+    private const val PROP_DEC = "Prop"
+    private const val PROP_SYNC_DEC = "PropSync"
+    private const val MODEL_DEC = "Model"
+    private const val EMIT_DEC = "Emit"
+
+    private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
+
+    private fun getNameFromDecorator(decorator: ES6Decorator): String? {
+      return getDecoratorArgument(decorator, 0)
+        ?.let { getTextIfLiteral(it) }
+    }
+
+    fun isVueComponentDecoratorName(name: String) =
+      name in DECS
+  }
+
+  private class VueDecoratedComponentInfo(clazz: JSClass) : VueContainerInfo {
     override val mixins: List<VueMixin>
     override val extends: List<VueMixin>
     override val data: List<VueDataProperty>
@@ -114,21 +132,6 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       this.emits = emits
       this.props = props
       this.model = model
-    }
-
-    companion object {
-
-      private const val PROP_DEC = "Prop"
-      private const val PROP_SYNC_DEC = "PropSync"
-      private const val MODEL_DEC = "Model"
-      private const val EMIT_DEC = "Emit"
-
-      private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
-
-      private fun getNameFromDecorator(decorator: ES6Decorator): String? {
-        return getDecoratorArgument(decorator, 0)
-          ?.let { getTextIfLiteral(it) }
-      }
     }
 
     private abstract class VueDecoratedNamedSymbol<T : TypeMember>(override val name: String, protected val member: T)

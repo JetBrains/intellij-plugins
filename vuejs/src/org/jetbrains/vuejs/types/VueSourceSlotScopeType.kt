@@ -7,10 +7,10 @@ import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl.PropertySignatureImpl
+import com.intellij.lang.javascript.psi.util.stubSafeAttributes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.stubSafeAttributes
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import org.jetbrains.vuejs.model.VueImplicitElement

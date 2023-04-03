@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.StubSafe
+import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
@@ -12,7 +13,6 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
-import org.jetbrains.vuejs.codeInsight.stubSafeGetAttribute
 
 fun XmlTag.hasSrcReference(): Boolean =
   !stubSafeGetAttribute(SRC_ATTRIBUTE_NAME)?.value.isNullOrBlank()

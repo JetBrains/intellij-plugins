@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
@@ -24,7 +25,6 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.applyIf
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
-import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 import org.jetbrains.vuejs.lang.html.VueFileType

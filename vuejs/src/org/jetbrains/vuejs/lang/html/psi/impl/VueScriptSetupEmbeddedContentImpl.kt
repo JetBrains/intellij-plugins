@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterList
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeParameterListOwner
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.stubs.JSEmbeddedContentStub
+import com.intellij.lang.javascript.psi.util.stubSafeGetAttribute
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.StubBasedPsiElement
@@ -19,7 +20,6 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.GENERIC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.findJSExpression
-import org.jetbrains.vuejs.codeInsight.stubSafeGetAttribute
 import org.jetbrains.vuejs.codeInsight.findVueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag

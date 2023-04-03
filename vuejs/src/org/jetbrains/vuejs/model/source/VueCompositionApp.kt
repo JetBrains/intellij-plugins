@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
@@ -18,7 +19,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueCompositionAppIndex
 import org.jetbrains.vuejs.index.resolve

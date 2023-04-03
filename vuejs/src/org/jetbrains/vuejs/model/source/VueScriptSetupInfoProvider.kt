@@ -11,6 +11,8 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
+import com.intellij.lang.javascript.psi.util.stubSafeChildren
 import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
@@ -229,7 +231,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       val arg = call.stubSafeCallArguments.getOrNull(0)
 
       if (arg is JSArrayLiteralExpression) {
-        return arg.stubSafeElements.mapNotNull { literal ->
+        return arg.stubSafeChildren.mapNotNull { literal ->
           (literal as? JSLiteralExpression)
             ?.significantValue
             ?.let { VueScriptSetupLiteralBasedEvent(es6Unquote(it), literal) }
