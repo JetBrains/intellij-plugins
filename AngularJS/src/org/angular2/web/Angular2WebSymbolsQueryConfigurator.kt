@@ -12,7 +12,7 @@ import org.angular2.Angular2Framework
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
-import org.angular2.web.containers.*
+import org.angular2.web.scopes.*
 
 class Angular2WebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
 

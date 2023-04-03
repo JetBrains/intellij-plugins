@@ -13,7 +13,7 @@ import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DI
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_IN_OUTS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
-import org.angular2.web.containers.OneTimeBindingsProvider
+import org.angular2.web.scopes.OneTimeBindingsProvider
 
 class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
 
