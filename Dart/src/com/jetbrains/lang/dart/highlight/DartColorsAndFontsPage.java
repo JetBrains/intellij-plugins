@@ -93,6 +93,8 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_LOCAL_VARIABLE_DECLARATION", LOCAL_VARIABLE_DECLARATION);
     PREVIEW_TAGS.put("DART_LOCAL_VARIABLE_REFERENCE", LOCAL_VARIABLE_REFERENCE);
 
+    PREVIEW_TAGS.put("DART_MIXIN", MIXIN);
+
     PREVIEW_TAGS.put("DART_PARAMETER_DECLARATION", PARAMETER_DECLARATION);
     PREVIEW_TAGS.put("DART_PARAMETER_REFERENCE", PARAMETER_REFERENCE);
 
@@ -209,6 +211,8 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.declaration"),
                                LOCAL_VARIABLE_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.reference"), LOCAL_VARIABLE_REFERENCE),
+
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.mixin"), MIXIN),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parameter.declaration"), PARAMETER_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parameter.reference"), PARAMETER_REFERENCE),
