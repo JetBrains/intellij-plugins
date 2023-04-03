@@ -1,3 +1,17 @@
 <div>
-  <todo-cmp data-foo <warning descr="Attribute dta-foo is not allowed here">dta-foo</warning> <warning descr="Attribute bar is not allowed here">bar</warning> [oneTime]="'foo'"></todo-cmp>
+  <todo-cmp data-foo
+      <warning descr="Attribute dta-foo is not allowed here">dta-foo</warning>
+      <warning descr="Attribute bar is not allowed here">bar</warning>
+      [attr.data-bar]="'foo'"
+      [attr.<warning descr="Unrecognized HTML Attribute">dta-bar</warning>]="'foo'"
+      [oneTime]="'foo'"
+  >
+  </todo-cmp>
+  <div data-foo
+    <warning descr="Attribute dta-foo is not allowed here">dta-foo</warning>
+    <warning descr="Attribute bar is not allowed here">bar</warning>
+    [attr.data-bar]="'foo'"
+    [attr.<warning descr="Unrecognized HTML Attribute">dta-bar</warning>]="'foo'"
+  >
+  </div>
 </div>
