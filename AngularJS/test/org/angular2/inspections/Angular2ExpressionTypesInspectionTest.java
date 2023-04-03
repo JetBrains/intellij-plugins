@@ -85,4 +85,20 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.configureByFiles("inputValue.html", "inputValue.ts");
     myFixture.checkHighlighting();
   }
+
+  public void testNullChecks() {
+    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
+    myFixture.configureByFile("tsconfig.json");
+    myFixture.configureByFile("tsconfig.app.json");
+    myFixture.configureByFiles("null-checks.html", "null-checks.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNullChecksInline() {
+    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
+    myFixture.configureByFile("tsconfig.json");
+    myFixture.configureByFile("tsconfig.app.json");
+    myFixture.configureByFiles("null-checks-inline.ts");
+    myFixture.checkHighlighting();
+  }
 }
