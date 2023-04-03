@@ -560,7 +560,7 @@ module Spec
         end
 
         def dry_run?
-          @options&.dry_run ? true : false
+          (@options && (@options.dry_run)) ? true : false
         end
 
         # Refactored initialize method. Is used for support rspec API < 1.1 and >= 1.1.
