@@ -42,7 +42,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.Angular2HtmlEvent
 import org.angular2.lang.html.psi.PropertyBindingType
-import org.angular2.web.containers.OneTimeBindingsProvider
+import org.angular2.web.scopes.OneTimeBindingsProvider
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
