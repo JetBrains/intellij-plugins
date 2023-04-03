@@ -102,6 +102,12 @@ object Angular2DecoratorUtil {
   @NonNls
   const val STYLES_PROP = "styles"
 
+  @NonNls
+  const val REQUIRED_PROP = "required"
+
+  @NonNls
+  const val ALIAS_PROP = "alias"
+
   @JvmStatic
   fun isLiteralInNgDecorator(element: PsiElement?, propertyName: String, vararg decoratorNames: String): Boolean {
     val parent = (element as? JSLiteralExpression)?.takeIf { it.isQuotedLiteral }?.parent?.asSafely<JSProperty>()

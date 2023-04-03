@@ -8,18 +8,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.*;
 import org.angular2.modules.Angular2TestModule;
+import org.angular2.web.Angular2Symbol;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.angular2.modules.Angular2TestModule.*;
 
@@ -218,10 +213,28 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                      ANGULAR_CORE_9_1_1_MIXED);
   }
 
+  public void testRequiredProperties() {
+    doResolutionTest("required-properties",
+                     "app.module.ts",
+                     "export class App<caret>Module {",
+                     "check.txt",
+                     true,
+                     ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4);
+  }
+
   private void doResolutionTest(@NotNull String directory,
                                 @NotNull String moduleFile,
                                 @NotNull String signature,
                                 @NotNull String checkFile,
+                                @NotNull Angular2TestModule @NotNull ... modules) {
+    doResolutionTest(directory, moduleFile, signature, checkFile, false, modules);
+  }
+
+  private void doResolutionTest(@NotNull String directory,
+                                @NotNull String moduleFile,
+                                @NotNull String signature,
+                                @NotNull String checkFile,
+                                Boolean printDirectives,
                                 @NotNull Angular2TestModule @NotNull ... modules) {
     VirtualFile testDir = myFixture.copyDirectoryToProject(directory, "/");
     configureCopy(myFixture, modules);
@@ -235,7 +248,7 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
     assert module != null;
 
     StringBuilder result = new StringBuilder();
-    printEntity(0, module, result, new HashSet<>());
+    printEntity(0, module, result, printDirectives, new HashSet<>());
     myFixture.configureByText("__my-check.txt", result.toString());
     myFixture.checkResultByFile(directory + "/" + checkFile, true);
   }
@@ -264,6 +277,7 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
   private static void printEntity(int level,
                                   @NotNull Angular2Entity entity,
                                   @NotNull StringBuilder result,
+                                  Boolean printDirectives,
                                   @NotNull Set<Angular2Entity> printed) {
     withIndent(level, result)
       .append(entity.getName())
@@ -277,11 +291,11 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
         return;
       }
       level++;
-      printEntityList(level, "imports", module.getImports(), result, printed);
-      printEntityList(level, "declarations", module.getDeclarations(), result, printed);
-      printEntityList(level, "exports", module.getExports(), result, printed);
-      printEntityList(level, "all-exported-declarations", module.getAllExportedDeclarations(), result, printed);
-      printEntityList(level, "scope", module.getDeclarationsInScope(), result, printed);
+      printEntityList(level, "imports", module.getImports(), printDirectives, result, printed);
+      printEntityList(level, "declarations", module.getDeclarations(), printDirectives, result, printed);
+      printEntityList(level, "exports", module.getExports(), printDirectives, result, printed);
+      printEntityList(level, "all-exported-declarations", module.getAllExportedDeclarations(), printDirectives, result, printed);
+      printEntityList(level, "scope", module.getDeclarationsInScope(), printDirectives, result, printed);
       withIndent(level, result)
         .append("scope fully resolved: ")
         .append(module.isScopeFullyResolved())
@@ -295,25 +309,76 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
         .append(module.areDeclarationsFullyResolved())
         .append('\n');
     }
+    else if (entity instanceof Angular2Directive directive) {
+      if ((printDirectives || directive.isStandalone()) && !printed.add(entity)) {
+        withIndent(level + 1, result)
+          .append("<printed above>\n");
+        return;
+      }
+
+      if (printDirectives) {
+        level++;
+        withIndent(level, result)
+          .append("standalone: ")
+          .append(directive.isStandalone())
+          .append("\n");
+        withIndent(level, result)
+          .append("selector: ")
+          .append(directive.getSelector())
+          .append("\n");
+        withIndent(level, result)
+          .append("kind: ")
+          .append(directive.getDirectiveKind())
+          .append("\n");
+        if (!directive.getExportAsList().isEmpty()) {
+          withIndent(level, result)
+            .append("exportAs list: ")
+            .append(directive.getExportAsList())
+            .append("\n");
+        }
+        printSymbolList(level, "inputs", directive.getInputs(), result);
+        printSymbolList(level, "outputs", directive.getOutputs(), result);
+        printSymbolList(level, "inOuts", directive.getInOuts(), result);
+        printSymbolList(level, "attributes", directive.getAttributes(), result);
+      }
+      if (directive.isStandalone() && directive instanceof Angular2ImportsOwner importsOwner) {
+        printEntityList(level, "imports", importsOwner.getImports(), printDirectives, result, printed);
+        printEntityList(level, "scope", importsOwner.getDeclarationsInScope(), printDirectives, result, printed);
+        withIndent(level, result)
+          .append("scope fully resolved: ")
+          .append(importsOwner.isScopeFullyResolved())
+          .append('\n');
+      }
+    }
   }
 
   private static void printEntityList(int level,
                                       @NotNull String name,
                                       @NotNull Set<? extends Angular2Entity> entities,
+                                      Boolean printDirectives,
                                       @NotNull StringBuilder result,
                                       @NotNull Set<Angular2Entity> printed) {
     withIndent(level, result)
       .append(name)
       .append(":\n");
     ContainerUtil.sorted(entities, Comparator.comparing(Angular2Entity::getName))
-      .forEach(m -> printEntity(level + 1, m, result, printed));
+      .forEach(m -> printEntity(level + 1, m, result, printDirectives, printed));
+  }
+
+  private static void printSymbolList(int level,
+                                      @NotNull String name,
+                                      @NotNull Collection<? extends Angular2Symbol> symbols,
+                                      @NotNull StringBuilder result) {
+    if (symbols.isEmpty()) return;
+    withIndent(level, result)
+      .append(name)
+      .append(":\n");
+    ContainerUtil.sorted(symbols, Comparator.comparing(Angular2Symbol::getName))
+      .forEach(m -> withIndent(level + 1, result).append(m).append("\n"));
   }
 
   @NotNull
   private static StringBuilder withIndent(int level, @NotNull StringBuilder result) {
-    for (int i = 0; i < level; i++) {
-      result.append("  ");
-    }
-    return result;
+    return result.append("  ".repeat(Math.max(0, level)));
   }
 }

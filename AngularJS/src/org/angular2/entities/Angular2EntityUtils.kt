@@ -183,7 +183,7 @@ object Angular2EntityUtils {
     }
     else return when (element) {
       is Angular2Pipe -> element.getName() + " <" + sourceKind + " pipe>"
-      is Angular2DirectiveProperty -> element.name
+      is Angular2DirectiveProperty -> element.name + (if (element.required) " <required>" else "")
       is Angular2DirectiveAttribute -> element.name
       is Angular2Module -> element.getName() +
                            " <" + sourceKind + " module>: " +

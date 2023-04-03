@@ -1,7 +1,6 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -9,9 +8,13 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.util.JSClassUtils
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.getStubSafeChildren
+import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
+import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
@@ -20,6 +23,8 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.util.AstLoadingFilter
 import com.intellij.util.asSafely
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
+import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver
 import org.angular2.entities.*
 import org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback
@@ -105,10 +110,10 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         }
 
       inputMap.values.forEach { input ->
-        inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS)
+        inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS, false)
       }
       outputMap.values.forEach { output ->
-        outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)
+        outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS, false)
       }
 
       val inheritedProperties = Ref<Angular2DirectiveProperties>()
@@ -207,14 +212,15 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
                                 decorator: String,
                                 kind: String,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
-      val bindingName: String? =
+      val info: Angular2PropertyInfo? =
         mappings.remove(property.memberName)
+          ?.let { Angular2PropertyInfo(it, false) }
         ?: field.attributeList
           ?.decorators
           ?.firstOrNull { it.decoratorName == decorator }
-          ?.let { d -> StringUtil.notNullize(getStringParamValue(d), property.memberName) }
-      if (bindingName != null) {
-        result.putIfAbsent(bindingName, Angular2SourceDirectiveProperty(sourceClass, property, kind, bindingName))
+          ?.let { createPropertyInfo(it, property.memberName) }
+      if (info != null) {
+        result.putIfAbsent(info.alias, Angular2SourceDirectiveProperty(sourceClass, property, kind, info.alias, info.required))
       }
     }
 
@@ -232,31 +238,18 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         .distinctBy { it.name }
     }
 
-    private fun getStringParamValue(decorator: ES6Decorator?): String? {
-      if (decorator == null || !Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
-        return null
-      }
-      val stub = decorator.stub
-      if (stub != null) {
-        return stub.childrenStubs.firstNotNullOfOrNull { callExpr ->
-          callExpr
-            .takeIf { it.stubType == JSStubElementTypes.CALL_EXPRESSION }
-            ?.psi
-            ?.asSafely<JSCallExpression>()
-            ?.let { JSStubBasedPsiTreeUtil.findRequireCallArgument(it) }
-            ?.significantValue
-            ?.let { Angular2EntityUtils.unquote(it) }
-        }
-      }
-      val expression = decorator.expression as? JSCallExpression
-      if (expression != null) {
-        val args = expression.arguments
-        if (args.size == 1 && args[0] is JSLiteralExpression && (args[0] as JSLiteralExpression).isQuotedLiteral) {
-          return (args[0] as JSLiteralExpression).stringValue
-        }
-      }
-      return null
-    }
+    private fun getStringParamValue(decorator: ES6Decorator?): String? =
+      getDecoratorParamValue(decorator)
+        ?.asSafely<JSLiteralExpression>()
+        ?.stubSafeStringValue
+
+    private fun getDecoratorParamValue(decorator: ES6Decorator?): PsiElement? =
+      decorator
+        ?.takeIf { Angular2IndexingHandler.isDecoratorStringArgStubbed(it) }
+        ?.getStubSafeChildren<JSCallExpression>()
+        ?.firstOrNull()
+        ?.stubSafeCallArguments
+        ?.firstOrNull()
 
     @JvmStatic
     fun getDirectiveKindNoCache(clazz: TypeScriptClass): Angular2DirectiveKind {
@@ -280,5 +273,18 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
       }
       return if (result.isNull) Angular2DirectiveKind.REGULAR else result.get()
     }
+
+    private fun createPropertyInfo(decorator: ES6Decorator, defaultName: String): Angular2PropertyInfo =
+      when (val param = getDecoratorParamValue(decorator)) {
+        is JSObjectLiteralExpression -> {
+          Angular2PropertyInfo(
+            param.findProperty(ALIAS_PROP)?.jsType?.asSafely<JSStringLiteralTypeImpl>()?.literal
+            ?: defaultName,
+            param.findProperty(REQUIRED_PROP)?.jsType?.asSafely<JSBooleanLiteralTypeImpl>()?.literal
+            ?: false
+          )
+        }
+        else -> Angular2PropertyInfo((param as? JSLiteralExpression)?.stubSafeStringValue ?: defaultName, false)
+      }
   }
 }
