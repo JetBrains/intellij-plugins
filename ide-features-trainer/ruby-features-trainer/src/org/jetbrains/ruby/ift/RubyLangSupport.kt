@@ -9,13 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.plugins.ruby.RBundle
-import org.jetbrains.plugins.ruby.gem.GemDependency
-import org.jetbrains.plugins.ruby.gem.GemInstallUtil
-import org.jetbrains.plugins.ruby.gem.gem.GemRunner
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
@@ -27,7 +23,6 @@ import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import training.project.ReadMeCreator
 import training.util.getFeedbackLink
-import java.io.File
 
 internal class RubyLangSupport : AbstractLangSupport() {
   private val rubyProjectName: String
@@ -97,23 +92,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
 
   override val defaultProductName: String = "RubyMine"
 
-  override fun applyToProjectAfterConfigure(): (Project) -> Unit {
-    return l@{ project ->
-      val sdk = ProjectRootManager.getInstance(project).projectSdk ?: return@l
-      val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
-      val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
-      val bundler = RubyLangSupport::class.java.getResourceAsStream("/learnProjects/ruby/gems/bundler-2.0.1.gem")
-      FileUtil.writeToFile(bundlerGem, bundler.readAllBytes())
-
-      val module = project.module
-      GemInstallUtil.installGemsRequirements(sdk,
-                                             module,
-                                             listOf(GemDependency.any(bundlerGem.absolutePath)),
-                                             false, false, false, false, true, null, mutableMapOf())
-
-      GemRunner.bundle(module, sdk, "install", null, null, null, "--local")
-    }
-  }
+  override fun applyToProjectAfterConfigure(): (Project) -> Unit = { }
 
   override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean = true
 
