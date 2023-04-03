@@ -5,11 +5,29 @@ import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.*;
 import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypeSets.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.TokenType;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 %%
 %{
   public _DroolsLexer() {
     this((java.io.Reader)null);
+  }
+  private final IntArrayList myStateStack = new IntArrayList();
+
+  private void pushState(int newState) {
+   myStateStack.add(yystate());
+   yybegin(newState);
+  }
+
+  private void popState() {
+   if (myStateStack.isEmpty()) return;
+   int state = myStateStack.removeInt(myStateStack.size() - 1);
+   yybegin(state);
+  }
+
+  protected void resetInternal() {
+    myStateStack.clear();
   }
 %}
 
@@ -23,6 +41,7 @@ import com.intellij.psi.tree.IElementType;
 %state LHS_STATE
 %state RHS_STATE
 %state QUERY_STATE
+%state FQN_STATE
 
 WHITE_SPACE_CHAR=[\ \n\r\t\f]
 SINGLE_LINE_COMMENT="/""/"[^\r\n]*
@@ -54,6 +73,10 @@ NUM_FLOAT = ( (({DIGIT}* "." {DIGIT}+) | ({DIGIT}+ "." {DIGIT}*)) {FLOAT_EXPONEN
 CHARACTER_LITERAL="'"([^\\\'\r\n]|{ESCAPE_SEQUENCE})*("'"|\\)?
 STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 
+%eof{
+  resetInternal();
+%eof}
+
 %%
 <YYINITIAL> "when" {{ yybegin(LHS_STATE);  return WHEN;}}
 <YYINITIAL> "query" {{ yybegin(QUERY_STATE);  return QUERY;}}
@@ -66,6 +89,11 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
     "break"                       {  return      BREAK; }
     "then" {yybegin(YYINITIAL); return THEN; }
     "end" {yybegin(YYINITIAL); return END;}
+}
+
+<FQN_STATE> {
+  "."                         { return DOT; }
+  {JAVA_IDENTIFIER}           {  return JAVA_IDENTIFIER ; }
 }
 
 <YYINITIAL, LHS_STATE, QUERY_STATE> {
@@ -139,7 +167,6 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 ";"                           {  return       SEMICOLON; }
 ":"                           {  return       COLON; }
 ","                           {  return       COMMA; }
-"."                           {  return       DOT; }
 "?"                           {  return       QUEST; }
 
 "+"                           {  return       OP_PLUS; }
@@ -189,8 +216,10 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 "float"                       {  return       FLOAT; }
 "double"                      {  return       DOUBLE; }
 "void"                        {  return       VOID; }
+"."                            { return DOT; }
 
-{JAVA_IDENTIFIER}             {  return     JAVA_IDENTIFIER ; }
+{JAVA_IDENTIFIER}             {  pushState(FQN_STATE); return JAVA_IDENTIFIER ; }
+
 {SINGLE_LINE_COMMENT}         {  return     SINGLE_LINE_COMMENT ; }
 {SINGLE_LINE_COMMENT_DEPR}    {  return     SINGLE_LINE_COMMENT_DEPR ; }
 {MULTI_LINE_COMMENT}          {  return     MULTI_LINE_COMMENT ; }
@@ -200,4 +229,12 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 {NUM_FLOAT}                   {  return     FLOAT_TOKEN ; }
 {STRING_IDENTIFIER}           {  return     STRING_IDENTIFIER ; }
 }
-[^] {  yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
+
+[^] {
+        if (myStateStack.isEmpty()) {
+          return TokenType.BAD_CHARACTER;
+        }
+
+        yypushback(yylength());
+        popState();
+    }
