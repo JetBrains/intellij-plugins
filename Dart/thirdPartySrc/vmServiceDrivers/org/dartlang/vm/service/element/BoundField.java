@@ -44,7 +44,14 @@ public class BoundField extends Element {
    */
   public Object getName() {
     final JsonElement elem = json.get("name");
-    if (elem == null) return null;
+    if (elem == null) {
+      Object name = getDecl().getName();
+      if (name != null) {
+        return name;
+      } else {
+        return null;
+      }
+    }
 
     if (elem.isJsonPrimitive()) {
     final JsonPrimitive p = (JsonPrimitive) elem;
