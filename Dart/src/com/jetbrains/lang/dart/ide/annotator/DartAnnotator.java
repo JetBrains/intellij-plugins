@@ -106,6 +106,7 @@ public final class DartAnnotator implements Annotator {
     // HighlightRegionType.METHOD_DECLARATION - Only for version 1 of highlight.
     // HighlightRegionType.METHOD_DECLARATION_STATIC - Only for version 1 of highlight.
     // HighlightRegionType.METHOD_STATIC - Only for version 1 of highlight.
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.MIXIN, DartSyntaxHighlighterColors.DART_MIXIN);
     // HighlightRegionType.PARAMETER - Only for version 1 of highlight.
     // HighlightRegionType.SETTER_DECLARATION - Only for version 1 of highlight.
     // HighlightRegionType.TOP_LEVEL_VARIABLE - Only for version 1 of highlight.

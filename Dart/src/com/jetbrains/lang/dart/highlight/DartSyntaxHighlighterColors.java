@@ -50,6 +50,8 @@ public final class DartSyntaxHighlighterColors {
   public static final String DART_LOCAL_VARIABLE_DECLARATION = "DART_LOCAL_VARIABLE_DECLARATION";
   public static final String DART_LOCAL_VARIABLE_REFERENCE = "DART_LOCAL_VARIABLE_REFERENCE";
 
+  public static final String DART_MIXIN = "DART_MIXIN";
+
   public static final String DART_PARAMETER_DECLARATION = "DART_PARAMETER_DECLARATION";
   public static final String DART_PARAMETER_REFERENCE = "DART_PARAMETER_REFERENCE";
 
@@ -171,6 +173,10 @@ public final class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_LOCAL_VARIABLE_DECLARATION, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
   public static final TextAttributesKey LOCAL_VARIABLE_REFERENCE =
     createTextAttributesKey(DART_LOCAL_VARIABLE_REFERENCE, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
+
+  public static final TextAttributesKey MIXIN =
+    createTextAttributesKey(DART_MIXIN, DefaultLanguageHighlighterColors.CLASS_NAME);
+
   public static final TextAttributesKey PARAMETER_DECLARATION =
     createTextAttributesKey(DART_PARAMETER_DECLARATION, DefaultLanguageHighlighterColors.PARAMETER);
   public static final TextAttributesKey PARAMETER_REFERENCE =
