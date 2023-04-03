@@ -264,7 +264,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   public void testLocalLibCompletion() {
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
-                     "MyLibModule - \"../../dist/my-lib\"");
+                     "MyLibModule - \"my-lib\"");
   }
 
   public void testImportStandaloneComponentToStandaloneComponent() {
