@@ -184,7 +184,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     TextRange range = editor.getSelectionModel().hasSelection()
                       ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd()) : null;
     ensureConfigsSaved(Collections.singletonList(vFile), project);
-    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject(), vFile, nodePackage);
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable =
       () -> performRequestForFile(project, nodePackage, service, file, range);
     PrettierLanguageService.FormatResult result = ProgressManager
@@ -243,7 +243,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
     VirtualFile vFile = file.getVirtualFile();
     ensureConfigsSaved(Collections.singletonList(vFile), project);
-    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject(), vFile, nodePackage);
     PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, file, range);
     if (result != null) {
       int delta = applyFormatResult(project, vFile, result);
@@ -290,7 +290,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                           @NotNull final FileTreeIterator fileIterator,
                                           boolean reportSkippedFiles,
                                           @NotNull ErrorHandler errorHandler) {
-    PrettierLanguageService service = PrettierLanguageService.getInstance(project);
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
     @SuppressWarnings("UsagesOfObsoleteApi")
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
@@ -309,6 +308,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, errorHandler))
           return Collections.emptyMap();
 
+        PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
         if (result == null) {

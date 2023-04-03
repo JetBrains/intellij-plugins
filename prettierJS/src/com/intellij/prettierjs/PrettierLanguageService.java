@@ -2,8 +2,11 @@
 package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +20,18 @@ public interface PrettierLanguageService {
                                          @Nullable TextRange range);
 
   @NotNull
-  static PrettierLanguageServiceImpl getInstance(@NotNull Project project) {
-    return ((PrettierLanguageServiceImpl)project.getService(PrettierLanguageService.class));
+  static PrettierLanguageServiceImpl getInstance(@NotNull Project project,
+                                                 @NotNull VirtualFile contextVirtualFile,
+                                                 @NotNull NodePackage prettierPackage) {
+    VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(contextVirtualFile);
+    VirtualFile workingDirectory = packageJson != null ? packageJson.getParent() : null;
+    if (workingDirectory == null) {
+      workingDirectory = ProjectUtil.guessProjectDir(project);
+    }
+    if (workingDirectory == null) {
+      workingDirectory = contextVirtualFile.getParent();
+    }
+    return project.getService(PrettierLanguageServiceManager.class).createServiceInstance(prettierPackage, workingDirectory);
   }
 
   final class FormatResult {
