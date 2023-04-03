@@ -12,7 +12,8 @@ import java.util.*
 
 class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClass,
                                              override val name: String,
-                                             override val kind: String) : Angular2DirectiveProperty {
+                                             override val kind: String,
+                                             override val required: Boolean) : Angular2DirectiveProperty {
 
   override val rawJsType: JSType?
     get() = null
@@ -31,19 +32,23 @@ class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClas
     if (this === other) return true
     if (other == null || javaClass != other.javaClass) return false
     val property = other as Angular2SourceDirectiveVirtualProperty?
-    return myOwner == property!!.myOwner && name == property.name && kind == property.kind
+    return myOwner == property!!.myOwner
+           && name == property.name
+           && kind == property.kind
+           && required == property.required
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(myOwner, name, kind)
+    return Objects.hash(myOwner, name, kind, required)
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {
     val name = this.name
     val kind = this.kind
     val owner = myOwner.createSmartPointer()
+    val required = this.required
     return Pointer {
-      owner.element?.let { Angular2SourceDirectiveVirtualProperty(it, name, kind) }
+      owner.element?.let { Angular2SourceDirectiveVirtualProperty(it, name, kind, required) }
     }
   }
 }

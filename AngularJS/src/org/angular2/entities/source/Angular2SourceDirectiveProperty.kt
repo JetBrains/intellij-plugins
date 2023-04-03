@@ -19,7 +19,8 @@ import java.util.*
 class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
                                       private val mySignature: JSRecordType.PropertySignature,
                                       override val kind: String,
-                                      override val name: String) : Angular2DirectiveProperty {
+                                      override val name: String,
+                                      override val required: Boolean) : Angular2DirectiveProperty {
 
   override val rawJsType: JSType?
     get() = mySignature.jsType
@@ -57,11 +58,13 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
     return (mySource == property!!.mySource
             && mySignature.memberName == property.mySignature.memberName
             && name == property.name
-            && kind == property.kind)
+            && kind == property.kind
+            && required == property.required
+           )
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(mySource, mySignature.memberName, name, kind)
+    return Objects.hash(mySource, mySignature.memberName, name, kind, required)
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveProperty> {
@@ -69,6 +72,7 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
     val propertyName = mySignature.memberName
     val name = this.name
     val kind = this.kind
+    val required = this.required
     return Pointer {
       val source = sourcePtr.dereference()
                    ?: return@Pointer null
@@ -76,7 +80,8 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
                                 .buildTypeFromClass(source, false)
                                 .findPropertySignature(propertyName)
                               ?: return@Pointer null
-      Angular2SourceDirectiveProperty(source, propertySignature, kind, name)
+      Angular2SourceDirectiveProperty(source, propertySignature, kind, name, required)
     }
   }
+
 }

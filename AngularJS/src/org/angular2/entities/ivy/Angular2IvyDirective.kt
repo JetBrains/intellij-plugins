@@ -16,14 +16,15 @@ import org.angular2.Angular2DecoratorUtil
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs
 import org.angular2.entities.*
 import org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity
+import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getDirectiveKindNoCache
 import org.angular2.entities.source.Angular2SourceDirectiveProperty
 import org.angular2.entities.source.Angular2SourceDirectiveVirtualProperty
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_OUTPUTS
 
-open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive) : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(
-  entityDef), Angular2Directive {
+open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
+  : Angular2IvyDeclaration<Angular2IvySymbolDef.Directive>(entityDef), Angular2Directive {
 
   override val selector: Angular2DirectiveSelector
     get() = getLazyValue(IVY_SELECTOR) {
@@ -54,8 +55,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive) : Ang
       val inputs = LinkedHashMap<String, Angular2DirectiveProperty>()
       val outputs = LinkedHashMap<String, Angular2DirectiveProperty>()
 
-      val inputMap = LinkedHashMap<String, String>()
-      val outputMap = LinkedHashMap<String, String>()
+      val inputMap = LinkedHashMap<String, Angular2PropertyInfo>()
+      val outputMap = LinkedHashMap<String, Angular2PropertyInfo>()
 
       val clazz = typeScriptClass
 
@@ -80,11 +81,15 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive) : Ang
           }
         }
 
-      hackIonicComponentOutputs(this, outputMap)
+      val ionicOutputs = mutableMapOf<String, String>()
+      hackIonicComponentOutputs(this, ionicOutputs)
+      ionicOutputs.forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false) }
 
-      inputMap.values.forEach { input -> inputs[input] = Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS) }
+      inputMap.values.forEach { input ->
+        inputs[input.alias] = Angular2SourceDirectiveVirtualProperty(clazz, input.alias, KIND_NG_DIRECTIVE_INPUTS, input.required)
+      }
       outputMap.values.forEach { output ->
-        outputs[output] = Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)
+        outputs[output.alias] = Angular2SourceDirectiveVirtualProperty(clazz, output.alias, KIND_NG_DIRECTIVE_OUTPUTS, output.required)
       }
 
       return Angular2DirectiveProperties(inputs.values, outputs.values)
@@ -160,19 +165,21 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive) : Ang
       }
     }
 
-    private fun readMappingsInto(directiveDef: Angular2IvySymbolDef.Directive, field: String, target: MutableMap<String, String>) {
+    private fun readMappingsInto(directiveDef: Angular2IvySymbolDef.Directive,
+                                 field: String,
+                                 target: MutableMap<String, Angular2PropertyInfo>) {
       directiveDef.readPropertyMappings(field)
         .forEach { (key, value) -> target.putIfAbsent(key, value) }
     }
 
     private fun processProperty(clazz: TypeScriptClass,
                                 property: JSRecordType.PropertySignature,
-                                mappings: MutableMap<String, String>,
+                                mappings: MutableMap<String, Angular2PropertyInfo>,
                                 kind: String,
                                 result: MutableMap<String, Angular2DirectiveProperty>) {
-      val bindingName = mappings.remove(property.memberName)
-      if (bindingName != null) {
-        result.putIfAbsent(bindingName, Angular2SourceDirectiveProperty(clazz, property, kind, bindingName))
+      val info = mappings.remove(property.memberName)
+      if (info != null) {
+        result.putIfAbsent(info.alias, Angular2SourceDirectiveProperty(clazz, property, kind, info.alias, info.required))
       }
     }
   }

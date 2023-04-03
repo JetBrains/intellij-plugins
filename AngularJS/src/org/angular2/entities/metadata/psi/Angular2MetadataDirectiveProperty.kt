@@ -30,6 +30,9 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
   override val sourceElement: PsiElement
     get() = mySignature.value?.memberSource?.singleElement ?: myOwner.sourceElement
 
+  override val required: Boolean
+    get() = false
+
   override fun createPointer(): Pointer<Angular2MetadataDirectiveProperty> {
     val owner = myOwner.createSmartPointer()
     val name = this.name

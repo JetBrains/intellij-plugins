@@ -12,11 +12,15 @@ import com.intellij.lang.typescript.TypeScriptStubElementTypes
 import com.intellij.model.Pointer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.asSafely
+import org.angular2.Angular2DecoratorUtil.ALIAS_PROP
 import org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP
 import org.angular2.Angular2DecoratorUtil.EXPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.IMPORTS_PROP
 import org.angular2.Angular2DecoratorUtil.INPUTS_PROP
 import org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP
+import org.angular2.Angular2DecoratorUtil.REQUIRED_PROP
+import org.angular2.entities.source.Angular2PropertyInfo
 import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.function.BiConsumer
@@ -106,15 +110,31 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       return Angular2IvyDirective(this)
     }
 
-    fun readPropertyMappings(kind: String): Map<String, String> {
-      val index: Int
+    fun readPropertyMappings(kind: String): Map<String, Angular2PropertyInfo> =
       when (kind) {
-        INPUTS_PROP -> index = 3
-        OUTPUTS_PROP -> index = 4
-        else -> return emptyMap()
+        INPUTS_PROP -> processObjectArgument(3, TypeScriptType::class) { type, defaultName ->
+          when (type) {
+            is TypeScriptStringLiteralType -> type.innerText?.let { Angular2PropertyInfo(it, false) }
+            is TypeScriptObjectType -> {
+              val name = type.typeMembers
+                .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == ALIAS_PROP }?.typeDeclaration }
+                ?.asSafely<TypeScriptStringLiteralType>()
+                ?.innerText
+              val required = type.typeMembers
+                               .firstNotNullOfOrNull { member -> (member as? TypeScriptPropertySignature)?.takeIf { it.name == REQUIRED_PROP }?.typeDeclaration }
+                               ?.asSafely<TypeScriptBooleanLiteralType>()
+                               ?.value ?: false
+              Angular2PropertyInfo(name ?: defaultName, required)
+            }
+            else -> null
+          }
+        }
+        OUTPUTS_PROP -> processObjectArgument(4, TypeScriptStringLiteralType::class) { type, defaultName ->
+          Angular2PropertyInfo(type.innerText ?: defaultName, false)
+        }
+        else -> emptyMap()
       }
-      return processObjectArgument(index, TypeScriptStringLiteralType::class) { it.innerText }
-    }
+
   }
 
   class Component internal constructor(fieldStubOrPsi: Any) : Directive(fieldStubOrPsi) {
@@ -269,7 +289,7 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
 
   protected fun <T : JSTypeDeclaration, R> processObjectArgument(index: Int,
                                                                  valueClass: KClass<T>,
-                                                                 valueMapper: (T) -> R?): Map<String, R> {
+                                                                 valueMapper: (T, String) -> R?): Map<String, R> {
     val `object` = getDefFieldArgument(index)
     if (`object` !is TypeScriptObjectType) {
       return emptyMap()
@@ -277,15 +297,17 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
     val result = LinkedHashMap<String, R>()
     for (child in `object`.typeMembers) {
       val prop = child as? TypeScriptPropertySignature
-      if (prop != null && prop.name != null) {
+      val propName = prop?.name
+      if (propName != null) {
         valueClass.safeCast(prop.typeDeclaration)
-          ?.let { valueMapper(it) }
-          ?.let { value -> result[prop.name!!] = value }
+          ?.let { valueMapper(it, propName) }
+          ?.let { value -> result[propName] = value }
       }
     }
     return result
   }
 
+  @Suppress("NonAsciiCharacters")
   companion object {
     @JvmStatic
     fun get(typeScriptClass: TypeScriptClass, allowAbstractClass: Boolean): Entity? {
@@ -419,24 +441,14 @@ abstract class Angular2IvySymbolDef private constructor(private val myFieldOrStu
       else field.name?.let { symbolFactory(it, field) }
     }
 
-    private fun createEntityDef(fieldName: String?, fieldPsiOrStub: Any): Entity? {
-      if (fieldName == null) {
-        return null
+    private fun createEntityDef(fieldName: String?, fieldPsiOrStub: Any): Entity? =
+      when (fieldName) {
+        FIELD_COMPONENT_DEF -> Component(fieldPsiOrStub)
+        FIELD_DIRECTIVE_DEF -> Directive(fieldPsiOrStub)
+        FIELD_MODULE_DEF -> Module(fieldPsiOrStub)
+        FIELD_PIPE_DEF -> Pipe(fieldPsiOrStub)
+        else -> null
       }
-      if (fieldName == FIELD_COMPONENT_DEF) {
-        return Component(fieldPsiOrStub)
-      }
-      else if (fieldName == FIELD_DIRECTIVE_DEF) {
-        return Directive(fieldPsiOrStub)
-      }
-      else if (fieldName == FIELD_MODULE_DEF) {
-        return Module(fieldPsiOrStub)
-      }
-      else if (fieldName == FIELD_PIPE_DEF) {
-        return Pipe(fieldPsiOrStub)
-      }
-      return null
-    }
 
     private fun createFactoryDef(fieldName: String?, fieldPsiOrStub: Any): Factory? {
       return if (fieldName != null && fieldName == FIELD_FACTORY_DEF) Factory(fieldPsiOrStub) else null

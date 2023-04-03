@@ -20,6 +20,8 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
 
   override val name: String
 
+  override val required: Boolean
+
   val rawJsType: JSType?
 
   override val source: PsiElement
