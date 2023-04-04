@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <xs:schema 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    targetNamespace="http://ns.adobe.com/air/application/50.1"
-    xmlns="http://ns.adobe.com/air/application/50.1"
+    targetNamespace="http://ns.adobe.com/air/application/50.3"
+    xmlns="http://ns.adobe.com/air/application/50.3"
     elementFormDefault="qualified"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
 >
@@ -304,6 +304,8 @@
               <xs:element name="buildArchitectures" type="xs:string" minOccurs="0" />
               <xs:element name="uncompressedExtensions" type="xs:string" minOccurs="0" />
               <xs:element name="disableSensorAccess" type="xs:boolean" minOccurs="0" />
+              <xs:element name="runtimeInBackgroundThread" type="xs:boolean" minOccurs="0" />
+              <xs:element name="storageAccessFrameworkFromAPI" type="xs:unsignedInt" minOccurs="0" />
 
               <!-- asset packs: list of assetPack entries each with 'id', 'delivery' and 'folder' attributes -->
               <xs:element name="assetPacks" minOccurs="0">
