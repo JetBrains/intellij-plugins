@@ -23,7 +23,7 @@ class VueScopeElementOrigin(private val item: VueScopeElement) : WebSymbolOrigin
       ?.containingFile
       ?.virtualFile
       ?.let { PackageJsonUtil.findUpPackageJson(it) }
-      ?.takeIf { NodeModuleUtil.isFromNodeModules(item.source!!.project, it) }
+      ?.takeIf { NodeModuleUtil.hasNodeModulesDirInPath(it, null) }
       ?.let { PackageJsonData.getOrCreate(it) }
       ?.let { Pair(it.name, it.version?.rawVersion) }
   }
