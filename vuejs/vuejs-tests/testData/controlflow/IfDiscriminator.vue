@@ -7,6 +7,10 @@ const items: Union[] = [
   { type: "Named", name: "John" },
   { type: "Aged", age: 42 },
 ];
+
+function isNamed(item: Union): item is Named {
+  return item.type === 'Named';
+}
 </script>
 
 <template>
@@ -15,5 +19,7 @@ const items: Union[] = [
     <div v-if="item.type === 'Named'">Age: {{ item.<error descr="Unresolved variable age">age</error> }}</div> <!-- expect error -->
     <div v-if="item.type === 'Aged'">Name: {{ item.<error descr="Unresolved variable name">name</error> }}</div> <!-- expect error -->
     <div v-if="item.type === 'Aged'">Age: {{ item.age }}</div> <!-- ok -->
+    <div v-if="isNamed(item)">Name: {{ item.name }}</div> <!-- ok -->
+    <div v-if="isNamed(item)">Age: {{ item.<error descr="Unresolved variable age">age</error> }}</div> <!-- expect error -->
   </div>
 </template>

@@ -24,6 +24,8 @@ function acceptNumber(x: number): number {
     </div>
     <span v-text="acceptNumber(<error descr="Argument type number | undefined is not assignable to parameter type number  Type undefined is not assignable to type number">union</error>)"></span>
     <span>{{ acceptNumber(<error descr="Argument type number | undefined is not assignable to parameter type number  Type undefined is not assignable to type number">union</error>) }}</span>
+    {{union ? union.toFixed() : union.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}
+    {{union.<error descr="Unresolved function or method toFixed()">toFixed</error>()}}
   </section>
 </template>
 
