@@ -3,10 +3,7 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.codeInspection.htmlInspections.HtmlWrongAttributeValueInspection;
+import com.intellij.codeInspection.htmlInspections.*;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
@@ -30,6 +27,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularInvalidAnimationTriggerAssignmentInspection.class,
       AngularInvalidTemplateReferenceVariableInspection.class,
       AngularMissingEventHandlerInspection.class,
+      AngularMissingRequiredDirectiveInputBindingInspection.class,
       AngularMultipleStructuralDirectivesInspection.class,
       AngularNonEmptyNgContentInspection.class,
       AngularUndefinedBindingInspection.class,
@@ -53,6 +51,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       HtmlDeprecatedTagInspection.class,
       HtmlDeprecatedAttributeInspection.class,
       HtmlWrongAttributeValueInspection.class,
+      RequiredAttributesInspection.class,
 
       CheckEmptyTagInspection.class
     };

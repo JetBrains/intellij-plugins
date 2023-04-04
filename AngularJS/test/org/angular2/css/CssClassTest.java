@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.angular2.modules.Angular2TestModule.ANGULAR_COMMON_4_0_0;
-import static org.angular2.modules.Angular2TestModule.configureLink;
+import static org.angular2.modules.Angular2TestModule.*;
 
 public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -180,7 +179,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testClassCodeCompletionRun() {
-    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
+    configureLink(myFixture, ANGULAR_COMMON_15_1_5);
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json");
@@ -195,6 +194,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type(" ");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "[ngClass]");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "ngClass");
     myFixture.type("ngCl\n");
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
     myFixture.type("{");

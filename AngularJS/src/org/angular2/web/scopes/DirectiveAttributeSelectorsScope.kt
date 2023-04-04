@@ -20,6 +20,7 @@ import org.angular2.web.Angular2DirectiveSymbolWrapper
 import org.angular2.web.Angular2StructuralDirectiveSymbol
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator
+import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
 
 class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
 
@@ -127,7 +128,7 @@ class DirectiveAttributeSelectorsScope(val project: Project) : WebSymbolsScope {
                 .mapNotNull { it[attrName] }
                 .forEach {
                   consumer(Angular2DirectiveSymbolWrapper.create(candidate, it))
-                  addSelector = addSelector && (it as? Angular2DirectiveProperty)?.virtual == true
+                  addSelector = addSelector && (it !is Angular2DirectiveProperty || it.virtualProperty || (it.kind == KIND_NG_DIRECTIVE_INPUTS && !it.required))
                 }
               if (addSelector) {
                 consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))

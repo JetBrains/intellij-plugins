@@ -8,6 +8,9 @@ import org.angular2.Angular2Framework.Companion.instance
 
 object Angular2LangUtil {
   const val ANGULAR_CORE_PACKAGE: String = "@angular/core"
+  const val ANGULAR_COMMON_PACKAGE: String = "@angular/common"
+  const val ANGULAR_FORMS_PACKAGE: String = "@angular/forms"
+  const val ANGULAR_ROUTER_PACKAGE: String = "@angular/router"
   const val ANGULAR_CLI_PACKAGE: String = "@angular/cli"
   const val `$IMPLICIT`: String = "\$implicit"
   const val EVENT_EMITTER: String = "EventEmitter"

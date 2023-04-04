@@ -24,7 +24,7 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
   override val rawJsType: JSType?
     get() = mySignature.value?.let { Angular2LibrariesHacks.hackQueryListTypeInNgForOf(it.jsType, this) }
 
-  override val virtual: Boolean
+  override val virtualProperty: Boolean
     get() = mySignature.value == null
 
   override val sourceElement: PsiElement

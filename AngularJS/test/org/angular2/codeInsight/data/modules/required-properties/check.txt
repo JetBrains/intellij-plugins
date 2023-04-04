@@ -2,10 +2,10 @@ AppModule: Angular2SourceModule
   imports:
     NgForOf: Angular2IvyDirective
       standalone: true
-      selector: [ngFor][ngForOf]
+      selector: [ngFor]
       kind: STRUCTURAL
       inputs:
-        ngForOf
+        ngForOf <required>
         ngForTemplate
         ngForTrackBy
     NgIf: Angular2IvyDirective
@@ -13,7 +13,7 @@ AppModule: Angular2SourceModule
       selector: [ngIf]
       kind: STRUCTURAL
       inputs:
-        ngIf
+        ngIf <required>
         ngIfElse
         ngIfThen
   declarations:

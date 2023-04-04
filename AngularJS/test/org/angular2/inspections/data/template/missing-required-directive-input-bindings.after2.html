@@ -1,0 +1,10 @@
+<ng-template ngFor let-item let-i="index" [ngForTrackBy]="trackByFn">
+
+</ng-template>
+
+<div *ngFor="let item"></div>
+
+<div appFooBar [appFooBar2]="<caret>"></div>
+
+<div appFooBar="foo"></div>
+<div appFooBar="bar" [appFooBar2]="'12'"></div>

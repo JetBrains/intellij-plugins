@@ -86,7 +86,7 @@ abstract class Angular2MetadataClassBase<Stub : Angular2MetadataClassStubBase<*>
         current = current.extendedClass
       }
       if (this is Angular2Directive) {
-        Angular2LibrariesHacks.hackIonicComponentOutputs(this, outputs)
+        outputs.putAll(Angular2LibrariesHacks.hackIonicComponentOutputs(this))
       }
       while (!classes.isEmpty()) {
         current = classes.pop()
