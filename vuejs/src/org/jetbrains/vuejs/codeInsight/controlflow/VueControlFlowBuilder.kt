@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight.controlflow
 
 import com.intellij.codeInsight.controlflow.Instruction
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.psi.JSConditionalExpression
 import com.intellij.lang.javascript.psi.JSControlFlowScope
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowBuilder
@@ -129,6 +130,11 @@ class VueControlFlowBuilder : JSControlFlowBuilder() {
     element.visitingMode = HtmlTagVisitingMode.VisitChildren
     myBuilder.startNode(element)
     processBranching(element, condition, element, findElseBranch(element), BranchOwner.IF)
+  }
+
+  override fun visitJSConditionalExpression(node: JSConditionalExpression) {
+    super.visitJSConditionalExpression(node)
+    flushDelayedPendingEdges()
   }
 
   private fun findElseBranch(initialElement: HtmlTag): PsiElement? {

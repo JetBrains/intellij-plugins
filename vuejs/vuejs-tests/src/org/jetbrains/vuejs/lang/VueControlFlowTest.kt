@@ -16,6 +16,8 @@ class VueControlFlowTest : BaseJSControlFlowTest() {
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
+  fun testConditionalExpression() = doTest()
+
   fun testIfElseIfElse() = doTest()
 
   fun testIfElseIfElseWithRef() = doTest()

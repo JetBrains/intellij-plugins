@@ -1,0 +1,15 @@
+0(1) element: null
+1(2) element: VueJSEmbeddedExpressionContent(VueTS)
+2(3) element: JSConditionalExpression
+3(4) element: JSReferenceExpression Read(isString)
+4(5) element: JSReferenceExpression Read(bar)
+5(6,7) element: JSCallExpression
+6(8) element: JSCallExpression condition: true, reachable
+7(11) element: JSCallExpression condition: false, reachable
+8(9) element: JSConditionalExpression CONDITIONAL_EXPRESSION (branch) true
+9(10) element: JSReferenceExpression Read(bar)
+10(14) element: JSReferenceExpression Read(length)
+11(12) element: JSConditionalExpression CONDITIONAL_EXPRESSION (branch) false
+12(13) element: JSReferenceExpression Read(bar)
+13(14) element: JSReferenceExpression Read(length)
+14() element: null
