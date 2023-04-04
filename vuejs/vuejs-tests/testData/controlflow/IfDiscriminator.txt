@@ -42,4 +42,24 @@
 41(42) element: XmlText
 42(44) element: JSFile:IfDiscriminator.vue.int
 43(44) element: HtmlTag:div IF (branch) false
-44() element: null
+44(45) element: HtmlTag:div
+45(46) element: JSReferenceExpression Read(isNamed)
+46(47) element: JSReferenceExpression Read(item)
+47(48,49) element: JSCallExpression
+48(50) element: JSCallExpression condition: true, reachable
+49(53) element: JSCallExpression condition: false, reachable
+50(51) element: HtmlTag:div IF (branch) true
+51(52) element: XmlText
+52(54) element: JSFile:IfDiscriminator.vue.int
+53(54) element: HtmlTag:div IF (branch) false
+54(55) element: HtmlTag:div
+55(56) element: JSReferenceExpression Read(isNamed)
+56(57) element: JSReferenceExpression Read(item)
+57(58,59) element: JSCallExpression
+58(60) element: JSCallExpression condition: true, reachable
+59(63) element: JSCallExpression condition: false, reachable
+60(61) element: HtmlTag:div IF (branch) true
+61(62) element: XmlText
+62(64) element: JSFile:IfDiscriminator.vue.int
+63(64) element: HtmlTag:div IF (branch) false
+64() element: null

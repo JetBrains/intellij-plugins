@@ -29,4 +29,7 @@
 28(29) element: JSCallExpression
 29(30) element: XmlText
 30(31) element: JSFile:IfElseNullChecks.vue.int
-31() element: null
+31(32) element: XmlText
+32(33) element: JSFile:IfElseNullChecks.vue.int
+33(34) element: JSFile:IfElseNullChecks.vue.int
+34() element: null

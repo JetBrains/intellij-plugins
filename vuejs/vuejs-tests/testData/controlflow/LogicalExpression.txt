@@ -1,0 +1,19 @@
+0(1) element: null
+1(2) element: VueJSEmbeddedExpressionContent(VueTS)
+2(3) element: JSReferenceExpression Read(isString)
+3(4) element: JSReferenceExpression Read(bar)
+4(5,6) element: JSCallExpression
+5(7) element: JSCallExpression condition: true, reachable
+6(12) element: JSCallExpression condition: false, reachable
+7(8) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+8(9) element: JSReferenceExpression Read(bar)
+9(10,11) element: JSReferenceExpression Read(length)
+10(12) element: JSReferenceExpression condition: true, reachable
+11(12) element: JSReferenceExpression condition: false, reachable
+12(13) element: JSBinaryExpression
+13(14) element: VueJSEmbeddedExpressionContent(VueTS)
+14(15) element: JSReferenceExpression Read(bar)
+15(16) element: JSReferenceExpression Read(length)
+16(17) element: XmlText
+17(18) element: JSFile:LogicalExpression.vue.int
+18() element: null
