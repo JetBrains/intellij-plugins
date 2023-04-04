@@ -245,7 +245,7 @@ public class AngularUiRouterDiagramBuilder {
       @Override
       protected boolean check(VirtualFile file) {
         // do not add lib (especially angular) files
-        return !NodeModuleUtil.isFromNodeModules(myProject, file);
+        return !NodeModuleUtil.hasNodeModulesDirInPath(file, null);
       }
     };
 
@@ -302,7 +302,7 @@ public class AngularUiRouterDiagramBuilder {
       if (element != null && element.getNavigationElement() != null && element.getNavigationElement().getContainingFile() != null) {
         final VirtualFile file = element.getNavigationElement().getContainingFile().getVirtualFile();
         // prefer library resolves
-        if (NodeModuleUtil.isFromNodeModules(myProject, file)) return;
+        if (NodeModuleUtil.hasNodeModulesDirInPath(file, null)) return;
       }
     }
 
