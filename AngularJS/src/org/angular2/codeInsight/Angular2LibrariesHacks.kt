@@ -28,8 +28,12 @@ import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.ivy.Angular2IvyDirective
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty
+import org.angular2.entities.source.Angular2PropertyInfo
 import org.angular2.lang.Angular2LangUtil
+import org.angular2.lang.Angular2LangUtil.ANGULAR_COMMON_PACKAGE
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE
+import org.angular2.lang.Angular2LangUtil.ANGULAR_FORMS_PACKAGE
+import org.angular2.lang.Angular2LangUtil.ANGULAR_ROUTER_PACKAGE
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2SymbolDelegate
 import org.jetbrains.annotations.NonNls
@@ -72,11 +76,12 @@ object Angular2LibrariesHacks {
    * Hack for WEB-37838
    */
   @JvmStatic
-  fun hackIonicComponentOutputs(directive: Angular2Directive, outputs: MutableMap<String, String>) {
+  fun hackIonicComponentOutputs(directive: Angular2Directive): Map<String, String> {
     if (!isIonicDirective(directive)) {
-      return
+      return emptyMap()
     }
-    val cls = directive.typeScriptClass ?: return
+    val cls = directive.typeScriptClass ?: return emptyMap()
+    val outputs = mutableMapOf<String, String>()
     // We can guess outputs by looking for fields with EventEmitter type
     cls.jsType.asRecordType().properties.forEach { prop ->
       try {
@@ -89,6 +94,7 @@ object Angular2LibrariesHacks {
         //getTypeText may throw IllegalArgumentException - ignore it
       }
     }
+    return outputs
   }
 
   /**
@@ -102,19 +108,33 @@ object Angular2LibrariesHacks {
     // Add kebab case version of attribute - Ionic takes these directly from element bypassing Angular
   }
 
-  private fun isIonicDirective(directive: Angular2Directive): Boolean {
-    val containingNodePackage = if (directive is Angular2IvyDirective && directive.getName().startsWith("Ion")) {
-      directive.typeScriptClass
-        .let { PsiUtilCore.getVirtualFile(it) }
-        ?.let { vf -> PackageJsonUtil.findUpPackageJson(vf) }
-        ?.let { NodeModuleUtil.inferNodeModulePackageName(it) }
-    }
+  // We need to hack required property of input, as Angular team hasn't added `required` in Angular 16 to keep backward compatibility
+  @JvmStatic
+  fun hackCoreDirectiveRequiredInputStatus(directive: Angular2IvyDirective,
+                                           inputMap: LinkedHashMap<String, Angular2PropertyInfo>) {
+    val requiredInput = coreDirectiveRequiredInput[directive.className]
+                        ?: return
+    if (!isFromPackage(directive, ANGULAR_COMMON_PACKAGE, ANGULAR_FORMS_PACKAGE, ANGULAR_ROUTER_PACKAGE))
+      return
+    inputMap[requiredInput]?.copy(required = true)?.let { inputMap[requiredInput] = it }
+  }
+
+  // We need to hack selector for ngForOf, as Angular team hasn't added `required` for inputs in Angular 16 to keep backward compatibility,
+  // and [NgForOf] part of the selector is no longer needed to match the directive
+  @JvmStatic
+  fun hackNgForOfDirectiveSelector(directive: Angular2IvyDirective, text: String?): String? =
+    if (text == "[ngFor][ngForOf]" && directive.className == "NgForOf" && isFromPackage(directive, ANGULAR_COMMON_PACKAGE))
+      "[ngFor]"
+    else
+      text
+
+  private fun isIonicDirective(directive: Angular2Directive): Boolean =
+    if (directive is Angular2IvyDirective && directive.getName().startsWith("Ion"))
+      isFromPackage(directive, IONIC_ANGULAR_PACKAGE)
     else
       (directive as? Angular2MetadataDirectiveBase<*>)
         ?.nodeModule
-        ?.name
-    return containingNodePackage == IONIC_ANGULAR_PACKAGE
-  }
+        ?.name == IONIC_ANGULAR_PACKAGE
 
   /**
    * Hack for WEB-38825. Make ngForOf accept QueryList in addition to NgIterable
@@ -147,6 +167,14 @@ object Angular2LibrariesHacks {
     }?.jsType
   }
 
+  private fun isFromPackage(directive: Angular2IvyDirective, vararg packages: String): Boolean =
+    directive.typeScriptClass
+      .let { PsiUtilCore.getVirtualFile(it) }
+      ?.let { vf -> PackageJsonUtil.findUpPackageJson(vf) }
+      ?.let { NodeModuleUtil.inferNodeModulePackageName(it) }
+      ?.let { pkg -> packages.any { pkg == it } }
+    ?: false
+
   private class IonicComponentAttribute(input: Angular2DirectiveProperty)
     : Angular2SymbolDelegate<Angular2DirectiveProperty>(input) {
 
@@ -177,5 +205,31 @@ object Angular2LibrariesHacks {
       return delegate.hashCode()
     }
   }
+
+  private val coreDirectiveRequiredInput = mapOf(
+    "NgOptimizedImage" to "ngSrc",
+    "NgClass" to "ngClass",
+    "NgComponentOutlet" to "ngComponentOutlet",
+    "NgForOf" to "ngForOf",
+    "NgIf" to "ngIf",
+    "NgPlural" to "ngPlural",
+    "NgStyle" to "ngStyle",
+    "NgSwitch" to "ngSwitch",
+    "NgSwitchCase" to "ngSwitchCase",
+    "NgTemplateOutlet" to "ngTemplateOutlet",
+    "FormControlDirective" to "form",
+    "FormControlName" to "name",
+    "FormGroupDirective" to "form",
+    "FormGroupName" to "name",
+    "FormArrayName" to "name",
+    "NgModelGroup" to "name",
+    "MaxValidator" to "max",
+    "MinValidator" to "min",
+    "EmailValidator" to "email",
+    "MinLengthValidator" to "minlength",
+    "MaxLengthValidator" to "maxlength",
+    "PatternValidator" to "pattern",
+    "RouterLink" to "routerLink",
+  )
 
 }

@@ -13,7 +13,9 @@ import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.angular2.Angular2DecoratorUtil
+import org.angular2.codeInsight.Angular2LibrariesHacks.hackCoreDirectiveRequiredInputStatus
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs
+import org.angular2.codeInsight.Angular2LibrariesHacks.hackNgForOfDirectiveSelector
 import org.angular2.entities.*
 import org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity
 import org.angular2.entities.source.Angular2PropertyInfo
@@ -71,6 +73,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
         true
       }
 
+      hackCoreDirectiveRequiredInputStatus(this, inputMap)
+
       TypeScriptTypeParser
         .buildTypeFromClass(clazz, false)
         .properties
@@ -81,9 +85,8 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
           }
         }
 
-      val ionicOutputs = mutableMapOf<String, String>()
-      hackIonicComponentOutputs(this, ionicOutputs)
-      ionicOutputs.forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false) }
+      hackIonicComponentOutputs(this)
+        .forEach { outputMap[it.key] = Angular2PropertyInfo(it.value, false) }
 
       inputMap.values.forEach { input ->
         inputs[input.alias] = Angular2SourceDirectiveVirtualProperty(clazz, input.alias, KIND_NG_DIRECTIVE_INPUTS, input.required)
@@ -103,7 +106,7 @@ open class Angular2IvyDirective(entityDef: Angular2IvySymbolDef.Directive)
   }
 
   protected fun createSelectorFromStringLiteralType(type: TypeScriptStringLiteralType): Angular2DirectiveSelector {
-    return Angular2DirectiveSelectorImpl(type, type.innerText, 1)
+    return Angular2DirectiveSelectorImpl(type, hackNgForOfDirectiveSelector(this, type.innerText), 1)
   }
 
   companion object {

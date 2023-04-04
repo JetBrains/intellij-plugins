@@ -24,6 +24,8 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
 
   val rawJsType: JSType?
 
+  val virtualProperty: Boolean
+
   override val source: PsiElement
     get() = sourceElement
 

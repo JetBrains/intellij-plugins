@@ -470,7 +470,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testTemplatesCompletion2() {
-    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
+    configureLink(myFixture, ANGULAR_COMMON_16_0_0_NEXT_4);
     myFixture.configureByFiles("templates_completion2.html");
     myFixture.completeBasic();
     assertEquals(asList("*ngComponentOutlet", "*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
@@ -595,8 +595,8 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
                                                         pair("[(", ")]"));
 
     for (Map.Entry<String, String> attr : ContainerUtil.<String, String>immutableMapBuilder()
-      // <simple><input><output><inout>
-      // x -> no resolve, p -> resolve to property, s -> resolve to selector
+        // <simple><input><output><inout>
+        // x -> no resolve, p -> resolve to property, s -> resolve to selector
       .put("myInput", "ppxx")
       .put("mySimpleBindingInput", "ppxx")
       .put("myPlain", "sxxx")
@@ -643,6 +643,11 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     }
   }
 
+  public void testRequiredInputs() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("requiredInputs.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 
   public void testExportAs() {
     myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class,
@@ -734,7 +739,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
     myFixture.completeBasic();
     assertContainsElements(
-      AngularTestUtil.renderLookupItems(myFixture, false, true),
+      renderLookupItems(myFixture, false, true),
       "plainBoolean#boolean",
       "[plainBoolean]#boolean",
       "simpleStringEnum#MyType",
@@ -756,7 +761,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
     myFixture.completeBasic();
     assertContainsElements(
-      AngularTestUtil.renderLookupItems(myFixture, true, false),
+      renderLookupItems(myFixture, true, false),
       "!plainBoolean#100",
       "![plainBoolean]#100",
       "!simpleStringEnum#100",
@@ -1099,7 +1104,7 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByText("hammer.html", "<div <caret>");
     myFixture.completeBasic();
     myFixture.type("(");
-    assertContainsElements(AngularTestUtil.renderLookupItems(myFixture, false, true),
+    assertContainsElements(renderLookupItems(myFixture, false, true),
                            "(pan)#HammerInput", "(panstart)#HammerInput", "(pinch)#HammerInput", "(tap)#HammerInput");
     myFixture.type("pan\n\" on-");
     myFixture.completeBasic();
@@ -1186,6 +1191,13 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     configureLink(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFile("imgSrcWithNg15.html");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNoRequiredBindingsWithoutModuleScope() {
+    configureCopy(myFixture, ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4, ANGULAR_FORMS_16_0_0_NEXT_4);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFile("noRequiredBindings.html");
     myFixture.checkHighlighting();
   }
 

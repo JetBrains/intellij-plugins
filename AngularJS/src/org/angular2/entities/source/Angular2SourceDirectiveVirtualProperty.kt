@@ -18,7 +18,7 @@ class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClas
   override val rawJsType: JSType?
     get() = null
 
-  override val virtual: Boolean
+  override val virtualProperty: Boolean
     get() = true
 
   override val sourceElement: JSElement

@@ -3,12 +3,14 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.codeInsight.InspectionsTest;
+import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -156,6 +158,33 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
     doTest(AngularUndefinedBindingInspection.class, "hammerJs.html");
   }
 
+  public void testMissingRequiredInputBinding1() {
+    Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
+                                     Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4);
+    myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection.class);
+    doTest(1, "<ng-<caret>template", "Create '[ngForOf]' attribute",
+           AngularMissingRequiredDirectiveInputBindingInspection.class,
+           "missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts");
+  }
+
+  public void testMissingRequiredInputBinding2() {
+    Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
+                                     Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4);
+    myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection.class);
+    doTest(2, "<d<caret>iv appFooBar>", "Create '[appFooBar2]' attribute",
+           AngularMissingRequiredDirectiveInputBindingInspection.class,
+           "missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts");
+  }
+
+  public void testMissingRequiredInputBinding3() {
+    Angular2TestModule.configureCopy(myFixture, Angular2TestModule.ANGULAR_CORE_16_0_0_NEXT_4,
+                                     Angular2TestModule.ANGULAR_COMMON_16_0_0_NEXT_4);
+    myFixture.enableInspections(HtmlUnknownBooleanAttributeInspection.class);
+    doTest(3, "<d<caret>iv appFooBar=\"foo\"", "Create 'appFooBar2' attribute",
+           AngularMissingRequiredDirectiveInputBindingInspection.class,
+           "missing-required-directive-input-bindings.html", "missing-required-directive-input-bindings-module.ts", "foo-bar.directive.ts");
+  }
+
   public void testTypeScriptSpecifyTypeNoFix() {
     doTestNoFix("no-specify-type-variable.html",
                 TypeScriptExplicitMemberTypeInspection.class,
@@ -198,7 +227,9 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
                       @NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
     myFixture.enableInspections(inspection);
-    myFixture.configureByFiles("package.json");
+    if (myFixture.getTempDirFixture().getFile("package.json") == null) {
+      myFixture.configureByFiles("package.json");
+    }
     myFixture.configureByFiles(files);
     myFixture.checkHighlighting();
     if (location == null || quickFixName == null) {

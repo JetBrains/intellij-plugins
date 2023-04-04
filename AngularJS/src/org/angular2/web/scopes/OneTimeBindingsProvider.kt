@@ -21,6 +21,7 @@ import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
+import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_INPUTS
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
@@ -77,7 +78,7 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
       if (ONE_TIME_BINDING_EXCLUDES.contains(property.name) || KIND_NG_DIRECTIVE_INPUTS != property.kind) {
         return false
       }
-      if (property.virtual) return true
+      if ((property as? Angular2DirectiveProperty)?.virtualProperty == true) return true
       val type = property.jsType ?: return true
       val source = (property as? PsiSourcedWebSymbol)?.source ?: return true
 
@@ -111,6 +112,10 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
                 ?.let { super<WebSymbolDelegate>.properties + Pair(PROP_DELEGATE_PRIORITY, it) }
               ?: super<WebSymbolDelegate>.properties
 
+    // Even though an input property might be required,
+    // we need to do the check through AngularMissingRequiredDirectiveInputBindingInspection
+    override val required: Boolean
+      get() = false
 
     override val attributeValue: WebSymbolHtmlAttributeValue?
       get() = if (WebTypesTypeScriptSymbolTypeSupport.isBoolean(jsType)) {

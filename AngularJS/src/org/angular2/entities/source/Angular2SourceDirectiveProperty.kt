@@ -25,7 +25,7 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
   override val rawJsType: JSType?
     get() = mySignature.jsType
 
-  override val virtual: Boolean
+  override val virtualProperty: Boolean
     get() = false
 
   override val sourceElement: PsiElement
