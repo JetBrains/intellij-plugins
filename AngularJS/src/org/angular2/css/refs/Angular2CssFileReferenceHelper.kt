@@ -1,6 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.css.refs
 
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.frameworks.modules.langs.TildeFileSystemItemCompletion
 import com.intellij.lang.javascript.frameworks.modules.langs.getSyntheticResolveContext
 import com.intellij.lang.javascript.frameworks.modules.resolver.JSDefaultFileReferenceContext
@@ -31,19 +32,22 @@ class Angular2CssFileReferenceHelper : FileReferenceHelper() {
                                hostFile: VirtualFile,
                                bind: Boolean,
                                processor: Processor<in PsiFileSystemItem>): Boolean {
-    val hasTilde = parameters.pathString.startsWith("~")
+    val pathString = parameters.pathString
+    val hasTilde = pathString.startsWith("~")
 
     val element = parameters.element
     val angularProject = angularProject(element)
     if (angularProject == null) return true
 
-    hostFile.parent?.let {
-      processor.process(TildeFileSystemItemCompletion(element.project, it, Angular2OverrideContextFilesProvider(angularProject, element)))
+    if (!JSFileReferencesUtil.isRelative(pathString)) {
+      hostFile.parent?.let {
+        processor.process(TildeFileSystemItemCompletion(element.project, it, Angular2OverrideContextFilesProvider(angularProject, element)))
+      }
     }
 
     //webpack-specific case for angular
     if (hasTilde) {
-      getOverrideTildeContexts(angularProject, parameters.pathString.substring(1), element).forEach(processor::process)
+      getOverrideTildeContexts(angularProject, pathString.substring(1), element).forEach(processor::process)
       return false //stop(!) processing
     }
 
