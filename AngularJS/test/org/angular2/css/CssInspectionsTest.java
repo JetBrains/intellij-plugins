@@ -6,10 +6,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedMixinInspection;
 
-public class CssInspectionsTest extends Angular2CodeInsightFixtureTestCase {
+public class CssInspectionsTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
@@ -155,6 +157,15 @@ public class CssInspectionsTest extends Angular2CodeInsightFixtureTestCase {
         """);
       myFixture.checkHighlighting();
     });
+  }
+
+  public void testRelativePathWithAngularRoot() {
+    myFixture.enableInspections(new SassScssUnresolvedMixinInspection(), new CssUnknownTargetInspection());
+    //css doesn't have stubs
+
+    myFixture.copyDirectoryToProject(getTestName(false), "");
+    myFixture.configureFromTempProjectFile("dir/usage.scss");
+    myFixture.checkHighlighting();
   }
 
   private void doTest(InspectionProfileEntry inspection, Runnable testRunnable) {
