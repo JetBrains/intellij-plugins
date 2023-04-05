@@ -1,5 +1,4 @@
 *cdk-connected-overlay#null#50
-*cdk-portal#null#50
 *cdkCellDef#null#50
 *cdkCellOutlet#null#50
 *cdkConnectedOverlay#null#50
@@ -12,7 +11,6 @@
 *cdkHeaderRowDef#null#50
 *cdkNoDataRow#null#50
 *cdkPortal#null#50
-*cdkPortalHost#null#50
 *cdkPortalOutlet#null#50
 *cdkRowDef#null#50
 *cdkStepLabel#null#50
@@ -23,6 +21,8 @@
 *footerRowOutlet#null#50
 *headerRowOutlet#null#50
 *noDataRowOutlet#null#50
-*portal#null#50
-*portalHost#null#50
 *rowOutlet#null#50
+~*cdk-portal#null#0
+~*cdkPortalHost#null#0
+~*portal#null#0
+~*portalHost#null#0

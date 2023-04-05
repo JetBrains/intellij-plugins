@@ -4,9 +4,16 @@ package org.angular2.codeInsight;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.SyntaxTraverser;
+import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.testFramework.ExpectedHighlightingData;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2DecoratorInspectionsTest;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -14,6 +21,7 @@ import org.angular2.inspections.Angular2TemplateInspectionsTest;
 import org.angularjs.AngularTestUtil;
 
 import static java.util.Arrays.asList;
+import static org.angularjs.AngularTestUtil.moveToOffsetBySignature;
 
 
 /**
@@ -61,7 +69,7 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
 
     for (String attrToRemove : asList("notUsedRef", "anotherNotUsedRef", "notUsedRefWithAttr", "anotherNotUsedRefWithAttr")) {
-      AngularTestUtil.moveToOffsetBySignature("<caret>" + attrToRemove, myFixture);
+      moveToOffsetBySignature("<caret>" + attrToRemove, myFixture);
       myFixture.launchAction(myFixture.findSingleIntention("Remove unused variable '" + attrToRemove + "'"));
     }
     myFixture.checkResultByFile("unusedReference.after.html");
@@ -94,7 +102,7 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testComplexGenerics() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.configureByFiles("complex-generics.html", "complex-generics.ts","package.json");
+    myFixture.configureByFiles("complex-generics.html", "complex-generics.ts", "package.json");
     myFixture.checkHighlighting();
   }
 
@@ -112,7 +120,7 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testNestedComponentClasses() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.configureByFiles("nested-classes.html", "nested-classes.ts","package.json");
+    myFixture.configureByFiles("nested-classes.html", "nested-classes.ts", "package.json");
     myFixture.checkHighlighting();
   }
 
@@ -133,5 +141,31 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("ngAcceptInputType.ts", "package.json");
     myFixture.checkHighlighting();
+  }
+
+  public void testDeprecated() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("deprecated.html", "deprecated.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
+  public void testDeprecatedInline() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("deprecated.ts", "package.json");
+    loadInjectionsAndCheckHighlighting();
+  }
+
+  private void loadInjectionsAndCheckHighlighting() {
+    ExpectedHighlightingData data = new ExpectedHighlightingData(
+      myFixture.getEditor().getDocument(), true, true, false, true);
+    data.init();
+    EdtTestUtil.runInEdtAndWait(() -> PsiDocumentManager.getInstance(myFixture.getProject()).commitAllDocuments());
+    var injectedLanguageManager = InjectedLanguageManager.getInstance(myFixture.getProject());
+    // We need to ensure that injections are cached before we check deprecated highlighting
+    SyntaxTraverser.psiTraverser(myFixture.getFile())
+      .forEach((it) -> {
+        if (it instanceof PsiLanguageInjectionHost) injectedLanguageManager.getInjectedPsiFiles(it);
+      });
+    ((CodeInsightTestFixtureImpl)myFixture).collectAndCheckHighlighting(data);
   }
 }

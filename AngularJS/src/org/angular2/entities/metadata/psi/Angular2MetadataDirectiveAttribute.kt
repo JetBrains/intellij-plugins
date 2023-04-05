@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
@@ -16,7 +17,7 @@ class Angular2MetadataDirectiveAttribute internal constructor(private val myOwne
                                                               private val myIndex: Int,
                                                               override val name: String) : Angular2DirectiveAttribute {
 
-  private val myParameter: NullableLazyValue<JSParameter>
+  private val myParameter: NullableLazyValue<JSParameter> = lazyNullable { myOwner.getConstructorParameter(myIndex) }
 
   override val type: JSType?
     get() = myParameter.value?.jsType
@@ -24,9 +25,9 @@ class Angular2MetadataDirectiveAttribute internal constructor(private val myOwne
   override val sourceElement: PsiElement
     get() = myParameter.value ?: myOwner.sourceElement
 
-  init {
-    myParameter = lazyNullable { myOwner.getConstructorParameter(myIndex) }
-  }
+  override val deprecated: Boolean
+    get() = JSDocumentationUtils.isDeprecated(myParameter.value)
+            || JSDocumentationUtils.isDeprecated(myOwner.sourceElement)
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

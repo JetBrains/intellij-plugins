@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.ivy
 
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.model.Pointer
@@ -18,6 +19,9 @@ class Angular2IvyDirectiveAttribute internal constructor(override val name: Stri
 
   override val sourceElement: PsiElement
     get() = mySource
+
+  override val deprecated: Boolean
+    get() = JSDocumentationUtils.isDeprecated(mySource)
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

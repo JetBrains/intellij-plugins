@@ -54,6 +54,8 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
       null
     }
 
+  override val deprecated: Boolean
+
   override fun createPointer(): Pointer<out Angular2DirectiveProperty>
 
   override fun getDocumentationTarget(location: PsiElement?): DocumentationTarget =

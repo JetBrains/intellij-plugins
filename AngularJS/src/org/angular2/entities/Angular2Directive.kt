@@ -28,6 +28,9 @@ interface Angular2Directive : Angular2Declaration {
   val isComponent: Boolean
     get() = false
 
+  val deprecated: Boolean
+    get() = typeScriptClass?.isDeprecated ?: false
+
   override fun createPointer(): Pointer<out Angular2Directive>
 
   companion object {

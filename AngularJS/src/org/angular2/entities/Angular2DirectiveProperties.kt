@@ -62,6 +62,9 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
     override val kind: String
       get() = KIND_NG_DIRECTIVE_IN_OUTS
 
+    override val deprecated: Boolean
+      get() = delegate.deprecated || myOutput.deprecated
+
     override fun createPointer(): Pointer<out Angular2PsiSourcedSymbolDelegate<Angular2DirectiveProperty>> {
       val input = delegate.createPointer()
       val output = myOutput.createPointer()
