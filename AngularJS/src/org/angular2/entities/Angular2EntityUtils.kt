@@ -25,6 +25,8 @@ object Angular2EntityUtils {
   @NonNls
   const val VIEW_CONTAINER_REF = "ViewContainerRef"
 
+  const val NG_ACCEPT_INPUT_TYPE_PREFIX = "ngAcceptInputType_"
+
   private const val INDEX_ELEMENT_NAME_PREFIX = ">"
   const val anyElementDirectiveIndexName = "E"
   private const val INDEX_ATTRIBUTE_NAME_PREFIX = "="

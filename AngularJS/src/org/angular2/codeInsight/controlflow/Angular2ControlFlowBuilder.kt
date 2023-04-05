@@ -26,7 +26,9 @@ import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
  */
 class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
   companion object {
-    const val CUSTOM_GUARD_PREFIX = "ngTemplateGuard_"
+    const val NG_TEMPLATE_CONTEXT_GUARD = "ngTemplateContextGuard"
+    const val NG_TEMPLATE_GUARD_PREFIX = "ngTemplateGuard_"
+
     private const val STAR = "*"
 
     private val CUSTOM_GUARD = Key.create<JSElement>("CUSTOM_GUARD")
@@ -114,7 +116,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
       declarationsScope.contains(d)
     }
 
-    val guardName = "$CUSTOM_GUARD_PREFIX$relevantName"
+    val guardName = "$NG_TEMPLATE_GUARD_PREFIX$relevantName"
     directives.firstOrNull()?.typeScriptClass?.let { cls ->
       for (member in cls.members) {
         if (member.name == guardName) {

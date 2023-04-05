@@ -23,6 +23,7 @@ import org.angularjs.AngularTestUtil;
 import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.moveToOffsetBySignature;
 
+
 /**
  * @see Angular2DecoratorInspectionsTest
  * @see Angular2TemplateInspectionsTest
@@ -146,6 +147,12 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("deprecated.ts", "package.json");
     loadInjectionsAndCheckHighlighting();
+  }
+
+  public void testNgAcceptInputType() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("ngAcceptInputType.ts", "package.json");
+    myFixture.checkHighlighting();
   }
 
   private void loadInjectionsAndCheckHighlighting() {
