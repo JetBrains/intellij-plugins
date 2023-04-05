@@ -1,11 +1,10 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.openapi.util.text.StringUtil
 import org.angular2.entities.ivy.Angular2IvyEntity
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity
@@ -31,23 +30,16 @@ object Angular2EntityUtils {
   private const val INDEX_ATTRIBUTE_NAME_PREFIX = "="
 
   @JvmStatic
-  fun getPipeTransformMethods(cls: TypeScriptClass): Collection<TypeScriptFunction> {
-    //noinspection RedundantCast,unchecked
-    return TypeScriptTypeParser
-             .buildTypeFromClass(cls, false)
-             .properties
-             .asSequence()
-             .filter { prop ->
-               Angular2EntitiesProvider.TRANSFORM_METHOD == prop.memberName &&
-               prop.memberSource.singleElement is TypeScriptFunction
-             }
-             .firstOrNull()
-             ?.memberSource
-             ?.allSourceElements
-             ?.filterIsInstance<TypeScriptFunction>()
-             ?.filter { it !is TypeScriptFunctionSignature }
-           ?: emptyList()
-  }
+  fun getPipeTransformMembers(cls: TypeScriptClass): Collection<JSElement> =
+    cls.jsType
+      .asRecordType()
+      .properties
+      .asSequence()
+      .filter { Angular2EntitiesProvider.TRANSFORM_METHOD == it.memberName }
+      .flatMap { it.memberSource.allSourceElements }
+      .filterIsInstance<JSElement>()
+      .filter { it !is TypeScriptFunctionSignature }
+      .toList()
 
   @JvmStatic
   fun parsePropertyMapping(property: String): Pair<String, String> {

@@ -51,8 +51,8 @@ class Angular2ReferenceExpressionResolver(expression: JSReferenceExpressionImpl,
     val scope = Angular2DeclarationsScope(expression)
     val pipe = Angular2EntitiesProvider.findPipes(expression.project, myReferencedName!!).find { scope.contains(it) }
                ?: return ResolveResult.EMPTY_ARRAY
-    return if (!pipe.transformMethods.isEmpty())
-      pipe.transformMethods.map { JSResolveResult(it) }.toTypedArray()
+    return if (!pipe.transformMembers.isEmpty())
+      pipe.transformMembers.map { JSResolveResult(it) }.toTypedArray()
     else
       arrayOf(JSResolveResult(pipe.typeScriptClass ?: pipe.sourceElement))
   }
