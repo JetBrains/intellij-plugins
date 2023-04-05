@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
@@ -26,6 +27,10 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
 
   override val virtualProperty: Boolean
     get() = mySignature.value == null
+
+  override val deprecated: Boolean
+    get() = mySignature.value?.memberSource?.allSourceElements?.any { JSDocumentationUtils.isDeprecated(it) } == true
+            || JSDocumentationUtils.isDeprecated(myOwner.sourceElement)
 
   override val sourceElement: PsiElement
     get() = mySignature.value?.memberSource?.singleElement ?: myOwner.sourceElement

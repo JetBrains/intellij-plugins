@@ -28,5 +28,7 @@ interface Angular2DirectiveAttribute : Angular2PsiSourcedSymbol, Angular2Element
   override val kind: String
     get() = KIND_NG_DIRECTIVE_ATTRIBUTES
 
+  override val deprecated: Boolean
+
   override fun createPointer(): Pointer<out Angular2DirectiveAttribute>
 }

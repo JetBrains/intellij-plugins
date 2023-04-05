@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -30,6 +31,10 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
 
   override val sourceElement: PsiElement
     get() = sources[0]
+
+  override val deprecated: Boolean
+    get() = sources.any { JSDocumentationUtils.isDeprecated(it) }
+            || mySource.isDeprecated
 
   val sources: List<PsiElement>
     get() {

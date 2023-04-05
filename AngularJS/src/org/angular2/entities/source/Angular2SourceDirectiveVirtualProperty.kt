@@ -24,6 +24,9 @@ class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClas
   override val sourceElement: JSElement
     get() = myOwner
 
+  override val deprecated: Boolean
+    get() = myOwner.isDeprecated
+
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)
   }

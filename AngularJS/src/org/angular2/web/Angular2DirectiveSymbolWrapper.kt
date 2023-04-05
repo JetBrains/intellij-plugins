@@ -57,6 +57,9 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
   override val properties: Map<String, Any>
     get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)
 
+  override val deprecated: Boolean
+    get() = directive.deprecated || delegate.deprecated
+
   override fun isEquivalentTo(symbol: Symbol): Boolean {
     return this == symbol || delegate.isEquivalentTo(symbol)
   }

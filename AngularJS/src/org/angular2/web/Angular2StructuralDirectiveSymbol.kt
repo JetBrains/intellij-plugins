@@ -49,6 +49,9 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
   override val properties: Map<String, Any>
     get() = super.properties + Pair(Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE, directive)
 
+  override val deprecated: Boolean
+    get() = directive.deprecated || delegate.deprecated
+
   override fun createPointer(): Pointer<out Angular2StructuralDirectiveSymbol> =
     createPointer(::Angular2StructuralDirectiveSymbol)
 

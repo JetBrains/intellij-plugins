@@ -22,6 +22,9 @@ class Angular2SourceDirectiveAttribute internal constructor(private val myParame
   override val navigableElement: PsiElement
     get() = myParameter.navigationElement
 
+  override val deprecated: Boolean
+    get() = myParameter.isDeprecated
+
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)
   }
