@@ -62,7 +62,8 @@ object Angular2FixesPsiUtil {
     val formattedProperty = propertyPointer.element!!
 
     val documentManager = PsiDocumentManager.getInstance(formattedProperty.project)
-    val document = documentManager.getDocument(formattedProperty.containingFile)!!
+    val document = documentManager.getDocument(formattedProperty.containingFile)
+                   ?: return propertyPointer.element!!
     documentManager.commitDocument(document)
     val htmlContent = Angular2InjectionUtils.getFirstInjectedFile(formattedProperty.value)
     if (htmlContent != null) {
