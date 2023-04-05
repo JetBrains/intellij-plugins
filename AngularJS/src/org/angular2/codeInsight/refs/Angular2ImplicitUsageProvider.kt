@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.openapi.util.Ref
@@ -22,8 +23,10 @@ import com.intellij.util.AstLoadingFilter
 import org.angular2.Angular2DecoratorUtil
 import org.angular2.Angular2DecoratorUtil.COMPONENT_DEC
 import org.angular2.Angular2DecoratorUtil.DIRECTIVE_DEC
-import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder
+import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
+import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_GUARD_PREFIX
 import org.angular2.entities.Angular2EntitiesProvider
+import org.angular2.entities.Angular2EntityUtils.NG_ACCEPT_INPUT_TYPE_PREFIX
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
 
@@ -33,10 +36,17 @@ class Angular2ImplicitUsageProvider : ImplicitUsageProvider {
   override fun isImplicitUsage(element: PsiElement): Boolean {
     if (element is TypeScriptFunction || element is TypeScriptField) {
       val name = (element as JSAttributeListOwner).name
-      if (name != null && ("ngTemplateContextGuard" == name || name.startsWith(Angular2ControlFlowBuilder.CUSTOM_GUARD_PREFIX))) {
-        // ngTemplateGuard_ suffix should actually match the name of directive input, but it does not matter much
-        val cls = JSUtils.getMemberContainingClass(element)
-        return null != Angular2DecoratorUtil.findDecorator(cls, COMPONENT_DEC, DIRECTIVE_DEC)
+      if (name != null) {
+        if (NG_TEMPLATE_CONTEXT_GUARD == name || name.startsWith(NG_TEMPLATE_GUARD_PREFIX)) {
+          val cls = JSUtils.getMemberContainingClass(element)
+          return cls.hasDirectiveDecorator()
+                 && (name == NG_TEMPLATE_CONTEXT_GUARD || cls.hasMember(name.substring(NG_TEMPLATE_GUARD_PREFIX.length)))
+        }
+        else if (element is TypeScriptField && name.startsWith(NG_ACCEPT_INPUT_TYPE_PREFIX)) {
+          // https://angular.io/guide/template-typecheck#input-setter-coercion
+          val cls = JSUtils.getMemberContainingClass(element)
+          return cls.hasMember(name.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length)) && cls.hasDirectiveDecorator()
+        }
       }
     }
 
@@ -65,6 +75,12 @@ class Angular2ImplicitUsageProvider : ImplicitUsageProvider {
     }
     return false
   }
+
+  private fun JSClass.hasMember(name: String): Boolean =
+    jsType.asRecordType().findPropertySignature(name) != null
+
+  private fun JSClass.hasDirectiveDecorator(): Boolean =
+    Angular2DecoratorUtil.findDecorator(this, COMPONENT_DEC, DIRECTIVE_DEC) != null
 
   private fun isReferencedInTemplate(node: PsiElement, template: PsiFile): Boolean {
     val predicate = { reference: PsiReference ->

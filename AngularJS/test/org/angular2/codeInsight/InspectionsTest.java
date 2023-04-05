@@ -15,6 +15,7 @@ import org.angularjs.AngularTestUtil;
 
 import static java.util.Arrays.asList;
 
+
 /**
  * @see Angular2DecoratorInspectionsTest
  * @see Angular2TemplateInspectionsTest
@@ -125,6 +126,12 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testMissingLabelSuppressed() {
     myFixture.enableInspections(new HtmlFormInputWithoutLabelInspection());
     myFixture.configureByFiles("missingLabelSuppressed.html", "missingLabelSuppressed.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgAcceptInputType() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("ngAcceptInputType.ts", "package.json");
     myFixture.checkHighlighting();
   }
 }
