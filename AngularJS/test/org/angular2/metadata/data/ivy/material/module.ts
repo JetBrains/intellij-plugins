@@ -11,7 +11,7 @@ import {MatFormFieldModule, MatInputModule, MatTabsModule, MatTableModule} from 
     ></mat-tab-group>
     <mat-form-field></mat-form-field>
     <error descr="More than one component is matched on this element: FooComponent (foo) and FooComponent2 (foo)"><foo></error></foo>
-    <bar></bar>
+    <<warning descr="Unknown html tag bar">bar</warning>></<warning descr="Unknown html tag bar">bar</warning>>
     <table mat-table>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

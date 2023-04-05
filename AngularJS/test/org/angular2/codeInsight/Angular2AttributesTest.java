@@ -1207,4 +1207,10 @@ public class Angular2AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFile("genericDirectiveReference.ts");
     myFixture.checkHighlighting();
   }
+
+  public void testUnknownTagsAttributesInlineTemplate() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("unknownTagsAttributesInlineTemplate.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }
