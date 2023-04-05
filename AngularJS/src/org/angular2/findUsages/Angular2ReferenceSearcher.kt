@@ -25,7 +25,7 @@ class Angular2ReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSear
     val element = queryParameters.elementToSearch
     val pipe = Angular2EntitiesProvider.getPipe(element)
     if (pipe != null) {
-      for (el in pipe.transformMethods) {
+      for (el in pipe.transformMembers) {
         if (queryParameters.effectiveSearchScope.contains(el.containingFile.viewProvider.virtualFile)) {
           queryParameters.optimizer.searchWord(pipe.getName(), queryParameters.effectiveSearchScope,
                                                true, el)

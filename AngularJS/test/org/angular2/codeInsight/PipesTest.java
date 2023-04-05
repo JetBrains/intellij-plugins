@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
@@ -154,5 +155,12 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
                                               || item.startsWith("uppercase") || item.startsWith("async"))
                      .sorted().collect(Collectors.toList()));
     }
+  }
+
+  public void testTypedPipe() {
+    configureCopy(myFixture, ANGULAR_COMMON_16_0_0_NEXT_4, ANGULAR_CORE_16_0_0_NEXT_4);
+    myFixture.configureByFile("typedPipe.ts");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
   }
 }

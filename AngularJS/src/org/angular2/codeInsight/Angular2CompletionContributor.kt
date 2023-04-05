@@ -11,10 +11,7 @@ import com.intellij.lang.javascript.completion.JSImportCompletionUtil.IMPORT_PRI
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.ecmascript6.types.OverloadStrictness
-import com.intellij.lang.javascript.psi.JSFunctionType
-import com.intellij.lang.javascript.psi.JSPsiElementBase
-import com.intellij.lang.javascript.psi.JSThisExpression
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
@@ -22,7 +19,6 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CompletionResultSink
 import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl
 import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.patterns.PatternCondition
@@ -96,23 +92,28 @@ class Angular2CompletionContributor : CompletionContributor() {
               else
                 NG_PRIVATE_VARIABLE_PRIORITY).priorityValue.toDouble()))
           }
-          val transformMethods = ArrayList(match.transformMethods)
-          if (!transformMethods.isEmpty() && actualType != null) {
-            transformMethods.sortWith(
-              Comparator.comparingInt<TypeScriptFunction> { if (isNullOrUndefinedType(it.returnType)) 1 else 0 }
-                .thenComparingInt { if (it.isOverloadDeclaration) 0 else 1 })
-            val converted2Original = LinkedHashMap<JSFunctionType, TypeScriptFunction>()
-            transformMethods.forEach { f ->
-              val type = TypeScriptTypeParser.buildFunctionType(f)
-              converted2Original[toTypeWithOneParam(type)] = f
-            }
+          val transformMembers = ArrayList(match.transformMembers)
+          if (!transformMembers.isEmpty() && actualType != null) {
+            transformMembers.sortWith(
+              Comparator
+                .comparingInt<JSElement> { if (it is TypeScriptFunction && isNullOrUndefinedType(it.returnType)) 1 else 0 }
+                .thenComparingInt { if (it is TypeScriptFunction && it.isOverloadDeclaration) 0 else 1 })
+            val transformTypes = transformMembers
+              .asSequence()
+              .mapNotNull { transform ->
+                (transform as? JSTypeOwner)?.jsType?.substitute()
+                  ?.asSafely<JSFunctionType>()?.let { Pair(transform, it) }
+              }
+              .toMap()
+
+            val converted2Original = transformTypes.entries.associateBy({ toTypeWithOneParam(it.value) }, { it.key })
             val resolveResults = JSTypeSignatureChooser(
               parameters.position, listOf(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
             ).chooseOverload(converted2Original.keys, OverloadStrictness.FULL)
             for (resolved in resolveResults) {
               if (resolved.overloadType.isAssignable()) {
                 val f = resolved.jsFunction
-                addResult(builder.withTypeText(renderPipeTypeText(converted2Original[f]!!, key), true))
+                addResult(builder.withTypeText(renderPipeTypeText(transformTypes[converted2Original[f]] ?: continue, key), true))
                 break
               }
             }
@@ -210,7 +211,7 @@ class Angular2CompletionContributor : CompletionContributor() {
       return pipeCall.arguments.firstOrNull()?.let { JSPsiBasedTypeOfType(it, true) }
     }
 
-    private fun renderPipeTypeText(f: TypeScriptFunction, pipeName: String): String {
+    private fun renderPipeTypeText(f: JSFunctionType, pipeName: String): String {
       val result = StringBuilder()
       result.append('[')
       var first = true
