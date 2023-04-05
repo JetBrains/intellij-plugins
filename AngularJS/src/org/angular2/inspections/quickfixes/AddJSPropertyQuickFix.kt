@@ -37,17 +37,22 @@ class AddJSPropertyQuickFix(objectLiteral: JSObjectLiteralExpression,
     else
       JSCodeStyleSettings.getQuote(objectLiteral)
 
-    val value = quote + myValue.substring(0, myCaretOffset) +
-                CARET_MARKER + myValue.substring(myCaretOffset) + quote
+    val documentManager = PsiDocumentManager.getInstance(objectLiteral.project)
+    val document = documentManager.getDocument(objectLiteral.containingFile)
+
+    val value = if (document == null)
+      quote + myValue + quote
+    else
+      quote + myValue.substring(0, myCaretOffset) + CARET_MARKER + myValue.substring(myCaretOffset) + quote
 
     val added = reformatJSObjectLiteralProperty(insertJSObjectLiteralProperty(objectLiteral, myPropertyName, value))
     val valueExpression = added.value!!
 
-    val documentManager = PsiDocumentManager.getInstance(valueExpression.project)
+    if (document == null) return
+
     val caretOffset = valueExpression.textOffset + valueExpression.text.indexOf(CARET_MARKER)
 
     val targetFile = added.containingFile.virtualFile
-    val document = documentManager.getDocument(valueExpression.containingFile)!!
     document.replaceString(caretOffset, caretOffset + CARET_MARKER.length, "")
     PsiDocumentManager.getInstance(project).commitDocument(document)
 
