@@ -23,8 +23,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
-import org.angular2.codeInsight.Angular2DeclarationsScope
-import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.entities.Angular2ComponentLocator.findComponentClass
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
@@ -51,29 +49,16 @@ class Angular2ReferenceType : Angular2BaseType<Angular2HtmlAttrVariableImpl> {
 
   override fun resolveType(context: JSTypeSubstitutionContext): JSType? {
     val reference = referenceDefinitionAttribute ?: return null
-    val tag = reference.parent
-    if (tag != null) {
-      val scope = Angular2DeclarationsScope(reference)
-      val exportName = reference.value
-      val hasExport = !exportName.isNullOrEmpty()
-      return Angular2ApplicableDirectivesProvider(tag).matched
-               .asSequence()
-               .filter { directive ->
-                 if (scope.contains(directive) && hasExport)
-                   directive.exportAsList.contains(exportName)
-                 else
-                   directive.isComponent
-               }
-               .mapNotNull { directive -> directive.typeScriptClass?.jsType }
-               .firstOrNull()
-             ?: when {
-               hasExport -> null
-               isTemplateTag(tag) -> getTemplateRefType(findComponentClass(tag), Angular2TypeUtils.getNgTemplateTagContextType(tag))
-               else -> getHtmlElementClassType(Angular2TypeUtils.createJSTypeSourceForXmlElement(tag), tag.name)
-             }
-
-    }
-    return null
+    val tag = reference.parent ?: return null
+    val exportName = reference.value
+    val hasExport = !exportName.isNullOrEmpty()
+    return BindingsTypeResolver.get(tag)
+             .resolveDirectiveExportAsType(exportName)
+           ?: when {
+             hasExport -> null
+             isTemplateTag(tag) -> getTemplateRefType(findComponentClass(tag), Angular2TypeUtils.getNgTemplateTagContextType(tag))
+             else -> getHtmlElementClassType(Angular2TypeUtils.createJSTypeSourceForXmlElement(tag), tag.name)
+           }
   }
 
   private val referenceDefinitionAttribute: Angular2HtmlReference?

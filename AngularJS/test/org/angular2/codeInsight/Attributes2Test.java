@@ -1201,4 +1201,11 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testGenericDirectiveReference() {
+    configureCopy(myFixture, ANGULAR_MATERIAL_16_0_0_NEXT_6, ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4,
+                  ANGULAR_FORMS_16_0_0_NEXT_4);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFile("genericDirectiveReference.ts");
+    myFixture.checkHighlighting();
+  }
 }

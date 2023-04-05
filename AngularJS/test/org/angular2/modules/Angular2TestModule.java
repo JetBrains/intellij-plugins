@@ -38,6 +38,7 @@ public enum Angular2TestModule {
   ANGULAR_MATERIAL_7_2_1("@angular/material", "7.2.1"),
   ANGULAR_MATERIAL_8_2_3_MIXED("@angular/material", "8.2.3-mixed"),
   ANGULAR_MATERIAL_14_2_5_MIXED("@angular/material", "14.2.5"),
+  ANGULAR_MATERIAL_16_0_0_NEXT_6("@angular/material", "16.0.0-next.6"),
   ANGULAR_PLATFORM_BROWSER_4_0_0("@angular/platform-browser", "4.0.0"),
   ANGULAR_ROUTER_4_0_0("@angular/router", "4.0.0"),
   ANGULAR_ROUTER_16_0_0_NEXT_4("@angular/router", "16.0.0-next.4"),
