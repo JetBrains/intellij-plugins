@@ -68,6 +68,35 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
     return processAndMerge(types)
   }
 
+  fun resolveDirectiveExportAsType(exportName: String?): JSType? {
+    val hasExport = !exportName.isNullOrEmpty()
+    return myMatched
+      .asSequence()
+      .filter { myScope.contains(it) }
+      .filter { directive ->
+        if (hasExport)
+          directive.exportAsList.contains(exportName)
+        else
+          directive.isComponent
+      }
+      .mapNotNull { directive ->
+        val cls = directive.typeScriptClass ?: return@mapNotNull null
+        val clsType = if (cls.typeParameters.isNotEmpty())
+          JSTypeUtils.createNotSubstitutedGenericType(cls, cls.jsType)
+        else
+          cls.jsType
+        processAndMerge(listOf(clsType))
+      }
+      .firstOrNull()
+      // In case of references, it may happen that some generic params are not substituted.
+      // Let's be permissive here and replace each generic param with any type to avoid type checking errors in such situation.
+      ?.transformTypeHierarchy {
+        if (it is JSGenericParameterType)
+          JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+        else it
+      }
+  }
+
   fun resolveTemplateContextType(): JSType? {
     return if (myTypeSubstitutor != null) JSTypeUtils.applyGenericArguments(myRawTemplateContextType, myTypeSubstitutor)
     else myRawTemplateContextType
