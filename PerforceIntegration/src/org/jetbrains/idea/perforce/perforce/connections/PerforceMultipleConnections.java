@@ -1,22 +1,22 @@
 package org.jetbrains.idea.perforce.perforce.connections;
 
-import com.intellij.openapi.diff.impl.patch.formove.FilePathComparator;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vcs.impl.projectlevelman.VirtualFileMapping;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.perforce.ConnectionId;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class PerforceMultipleConnections implements PerforceConnectionMapper {
   @Nullable private final String myP4ConfigValue;
 
-  private final TreeMap<VirtualFile, P4ConnectionParameters> myParametersMap;
+  private final VirtualFileMapping<P4ConnectionParameters> myParametersMap = new VirtualFileMapping<>();
   private final P4ConnectionParameters myDefaultParameters;
   private final Map<VirtualFile, P4ParametersConnection> myConnectionMap = new HashMap<>();
   private final Object myLock = new Object();
@@ -30,8 +30,9 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
     myDefaultParameters = defaultParameters;
     myConfigsMap = configsMap;
 
-    myParametersMap = new TreeMap<>(FilePathComparator.getInstance());
-    myParametersMap.putAll(parametersMap);
+    for (Map.Entry<VirtualFile, P4ConnectionParameters> entry : parametersMap.entrySet()) {
+      myParametersMap.add(entry.getKey(), entry.getValue());
+    }
   }
 
   public P4ConnectionParameters getDefaultParameters() {
@@ -51,12 +52,12 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
       if (cached != null) return cached;
     }
 
-    final Map.Entry<VirtualFile, P4ConnectionParameters> entry = myParametersMap.floorEntry(file);
-    if (entry == null || !VfsUtilCore.isAncestor(entry.getKey(), file, false)) {
+    Pair<@NotNull VirtualFile, @NotNull P4ConnectionParameters> pair = myParametersMap.getMappingAndRootFor(file);
+    if (pair == null) {
       return null;
     }
     synchronized (myLock) {
-      return createOrGetConnectionByParameters(entry.getKey(), entry.getValue());
+      return createOrGetConnectionByParameters(pair.first, pair.second);
     }
   }
 
@@ -75,15 +76,15 @@ public class PerforceMultipleConnections implements PerforceConnectionMapper {
   @Override
   public Map<VirtualFile, P4Connection> getAllConnections() {
     synchronized (myLock) {
-      for (Map.Entry<VirtualFile, P4ConnectionParameters> entry : myParametersMap.entrySet()) {
-        createOrGetConnectionByParameters(entry.getKey(), entry.getValue());
+      for (Pair<VirtualFile, P4ConnectionParameters> entry : myParametersMap.entries()) {
+        createOrGetConnectionByParameters(entry.first, entry.second);
       }
       return Collections.unmodifiableMap(myConnectionMap);
     }
   }
 
-  public TreeMap<VirtualFile, P4ConnectionParameters> getParametersMap() {
-    return myParametersMap;
+  public @NotNull Collection<Pair<VirtualFile, P4ConnectionParameters>> getAllConnectionParameters() {
+    return myParametersMap.entries();
   }
 
   public boolean hasAnyErrors() {

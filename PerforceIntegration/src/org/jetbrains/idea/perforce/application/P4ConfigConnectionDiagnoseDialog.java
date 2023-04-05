@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.VcsException;
@@ -80,7 +81,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
     myChecker = myRefresher.getP4RootsInformation();
 
     final DefaultTreeModel model = (DefaultTreeModel)myTree.getModel();
-    final TreeMap<VirtualFile,P4ConnectionParameters> map = myMultipleConnections.getParametersMap();
+    Collection<Pair<VirtualFile, P4ConnectionParameters>> connectionParameters = myMultipleConnections.getAllConnectionParameters();
     final P4ConnectionParameters defaultParameters = myMultipleConnections.getDefaultParameters();
     final Map<VirtualFile, File> configsMap = myMultipleConnections.getConfigsMap();
 
@@ -88,17 +89,18 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
 
     int i = 0;
     boolean containNoConfigs = false;
-    for (Map.Entry<VirtualFile, P4ConnectionParameters> entry : map.entrySet()) {
-      final VirtualFile root = entry.getKey();
+    for (Pair<VirtualFile, P4ConnectionParameters> entry : connectionParameters) {
+      final VirtualFile root = entry.first;
+      final P4ConnectionParameters parameters = entry.second;
+
       final BaseNode fileNode = new BaseNode(root, NodeType.root);
       model.insertNodeInto(fileNode, myRoot, i);
       /*myRoot.add(fileNode);
       fileNode.setParent(myRoot);*/
 
       final File configDir = configsMap.get(root);
-      putConfigDir(fileNode, configDir, entry.getValue().isNoConfigFound());
+      putConfigDir(fileNode, configDir, parameters.isNoConfigFound());
 
-      final P4ConnectionParameters parameters = entry.getValue();
       containNoConfigs |= parameters.isNoConfigFound();
       ContainerUtil.addIfNotNull(p4ConfigNames, parameters.getConfigFileName());
       if (! putConfigLines(defaultParameters, fileNode, configDir, parameters)) {
