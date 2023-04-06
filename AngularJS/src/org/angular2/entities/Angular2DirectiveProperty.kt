@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
 import org.angular2.entities.impl.Angular2ElementDocumentationTarget
 import org.angular2.lang.types.Angular2TypeUtils
 import org.angular2.web.Angular2PsiSourcedSymbol
@@ -43,8 +44,10 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
       Angular2TypeUtils.extractEventVariableType(rawJsType)
     }
     else {
-      rawJsType
+      jsTypeFromAcceptInputType(owner, name) ?: rawJsType
     }
+
+  val owner: TypeScriptClass?
 
   override val attributeValue: WebSymbolHtmlAttributeValue?
     get() = if (WebTypesTypeScriptSymbolTypeSupport.isBoolean(type)) {

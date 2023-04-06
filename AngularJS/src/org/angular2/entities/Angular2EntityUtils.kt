@@ -2,6 +2,7 @@
 package org.angular2.entities
 
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature
@@ -274,6 +275,13 @@ object Angular2EntityUtils {
       }
     }
   }
+
+  fun jsTypeFromAcceptInputType(clz: TypeScriptClass?, name: String): JSType? =
+    clz
+      ?.staticJSType
+      ?.asRecordType()
+      ?.findPropertySignature(NG_ACCEPT_INPUT_TYPE_PREFIX + name)
+      ?.jsType
 
   private fun Collection<Angular2Entity>.render(): String =
     this.asSequence().map { it.getName() }.sorted().joinToString(", ")

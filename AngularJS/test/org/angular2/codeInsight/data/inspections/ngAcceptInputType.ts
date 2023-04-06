@@ -14,7 +14,12 @@ class SubmitButton {
     this._disabled = (value === '') || value;
   }
 
+  @Input()
+  foo: string
+
   static ngAcceptInputType_disabled: boolean|'';
 
-  static <warning descr="Unused field ngAcceptInputType_foo">ngAcceptInputType_foo</warning>: boolean|'';
+  <warning descr="Unused field ngAcceptInputType_foo">ngAcceptInputType_foo</warning>: boolean|'';
+
+  static <warning descr="Unused field ngAcceptInputType_bar">ngAcceptInputType_bar</warning>: boolean|'';
 }

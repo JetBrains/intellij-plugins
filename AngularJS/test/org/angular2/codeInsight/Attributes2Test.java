@@ -1208,4 +1208,10 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFile("genericDirectiveReference.ts");
     myFixture.checkHighlighting();
   }
+
+  public void testNgAcceptInputTypeOverride() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("ngAcceptInputTypeOverride.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }

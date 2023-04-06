@@ -17,14 +17,14 @@ import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
 import java.util.*
 
-class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
-                                      private val mySignature: JSRecordType.PropertySignature,
+class Angular2SourceDirectiveProperty(override val owner: TypeScriptClass,
+                                      private val signature: JSRecordType.PropertySignature,
                                       override val kind: String,
                                       override val name: String,
                                       override val required: Boolean) : Angular2DirectiveProperty {
 
   override val rawJsType: JSType?
-    get() = mySignature.jsType
+    get() = signature.jsType
 
   override val virtualProperty: Boolean
     get() = false
@@ -34,16 +34,16 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
 
   override val deprecated: Boolean
     get() = sources.any { JSDocumentationUtils.isDeprecated(it) }
-            || mySource.isDeprecated
+            || owner.isDeprecated
 
   val sources: List<PsiElement>
     get() {
-      val sources = getPropertySources(mySignature.memberSource.singleElement)
+      val sources = getPropertySources(signature.memberSource.singleElement)
       val decorated = sources.filter { s -> s.attributeList?.decorators?.isNotEmpty() ?: false }
       return when {
         !decorated.isEmpty() -> decorated
         !sources.isEmpty() -> sources
-        else -> listOf<PsiElement>(mySource)
+        else -> listOf<PsiElement>(owner)
       }
     }
 
@@ -60,8 +60,8 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
     if (this === other) return true
     if (other == null || javaClass != other.javaClass) return false
     val property = other as Angular2SourceDirectiveProperty?
-    return (mySource == property!!.mySource
-            && mySignature.memberName == property.mySignature.memberName
+    return (owner == property!!.owner
+            && signature.memberName == property.signature.memberName
             && name == property.name
             && kind == property.kind
             && required == property.required
@@ -69,12 +69,12 @@ class Angular2SourceDirectiveProperty(private val mySource: TypeScriptClass,
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(mySource, mySignature.memberName, name, kind, required)
+    return Objects.hash(owner, signature.memberName, name, kind, required)
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveProperty> {
-    val sourcePtr = mySource.createSmartPointer()
-    val propertyName = mySignature.memberName
+    val sourcePtr = owner.createSmartPointer()
+    val propertyName = signature.memberName
     val name = this.name
     val kind = this.kind
     val required = this.required
