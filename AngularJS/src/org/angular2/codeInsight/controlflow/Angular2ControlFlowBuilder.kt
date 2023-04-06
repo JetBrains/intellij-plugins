@@ -62,30 +62,18 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
           // the whole subtree was already processed
         }
         else if (findControlFlowSignificantAttribute(element).also { conditionAttribute = it } != null) {
+          @Suppress("NAME_SHADOWING")
+          val conditionAttribute = conditionAttribute!!
 
-          val guard = when (val attribute = conditionAttribute) {
-            is Angular2HtmlTemplateBindings -> { // structural directives micro-syntax
-              val directivesProvider = Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute))
-              val declarationsScope = Angular2DeclarationsScope(attribute)
-              val relevantName = attribute.templateName
-              findCustomGuard(directivesProvider, declarationsScope, relevantName)
-            }
-            is Angular2HtmlPropertyBinding -> { // ng-template tag
-              val directivesProvider = Angular2ApplicableDirectivesProvider(attribute.parent)
-              val declarationsScope = Angular2DeclarationsScope(attribute)
-              val relevantName = attribute.propertyName
-              findCustomGuard(directivesProvider, declarationsScope, relevantName)
-            }
-            else -> {
-              null
-            }
-          }
+          val guard = findGuard(conditionAttribute)
 
           if (guard != null) {
-            val jsType = if (guard is TypeScriptField) guard.jsType else null
+            val conditionExpression = PsiTreeUtil.findChildOfType(conditionAttribute.valueElement, JSExpression::class.java)
+            if (!isUseNativeNarrowing(guard)) {
+              conditionExpression?.putUserData(CUSTOM_GUARD, guard)
+            }
 
-            val useNativeNarrowing = jsType is JSExoticStringLiteralType && jsType.asSimpleLiteralType().literal == BINDING_GUARD
-            processIfBranching(element, conditionAttribute!!, guard.takeIf { !useNativeNarrowing })
+            processIfBranching(element, conditionExpression)
           }
           else {
             super.visitElement(element)
@@ -109,17 +97,42 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     }
   }
 
-  private fun findCustomGuard(directivesProvider: Angular2ApplicableDirectivesProvider,
-                              declarationsScope: Angular2DeclarationsScope,
-                              relevantName: String): JSElement? {
+  private fun findGuard(attribute: XmlAttribute): JSElement? {
+    val declarationsScope = Angular2DeclarationsScope(attribute)
+
+    return when (attribute) {
+      is Angular2HtmlTemplateBindings -> { // structural directives micro-syntax
+        val directivesProvider = Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute))
+        val relevantName = attribute.templateName
+        findTemplateGuardClassMember(directivesProvider, declarationsScope, relevantName)
+      }
+      is Angular2HtmlPropertyBinding -> { // ng-template tag
+        val directivesProvider = Angular2ApplicableDirectivesProvider(attribute.parent)
+        val relevantName = attribute.propertyName
+        findTemplateGuardClassMember(directivesProvider, declarationsScope, relevantName)
+      }
+      else -> {
+        null
+      }
+    }
+  }
+
+  /**
+   * Returns a type-narrowing class member:
+   * * either a user-defined type guard (function that returns type predicate `parameterName is Type`)
+   * * or a 'binding' literal type
+   */
+  private fun findTemplateGuardClassMember(directivesProvider: Angular2ApplicableDirectivesProvider,
+                                           declarationsScope: Angular2DeclarationsScope,
+                                           inputName: String): JSElement? {
     val directives = directivesProvider.matched.filter { d ->
       declarationsScope.contains(d)
     }
 
-    val guardName = "$NG_TEMPLATE_GUARD_PREFIX$relevantName"
+    val templateGuardName = "$NG_TEMPLATE_GUARD_PREFIX$inputName"
     directives.firstOrNull()?.typeScriptClass?.let { cls ->
       for (member in cls.members) {
-        if (member.name == guardName) {
+        if (member.name == templateGuardName) {
           return member
         }
       }
@@ -151,11 +164,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     return currentElement == currentTopConditionExpression
   }
 
-  private fun processIfBranching(element: HtmlTag, conditionAttribute: XmlAttribute, guard: JSElement?) {
-    val conditionExpression = PsiTreeUtil.findChildOfType(conditionAttribute.valueElement, JSExpression::class.java)
-
-    conditionExpression?.putUserData(CUSTOM_GUARD, guard)
-
+  private fun processIfBranching(element: HtmlTag, conditionExpression: JSExpression?) {
     element.visitingMode = HtmlTagVisitingMode.VisitChildren
     myBuilder.startNode(element)
     val elseBranch = null // no support for the else branch narrowing in Angular, see https://github.com/angular/angular/issues/21504
@@ -175,4 +184,9 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
                                      value: Boolean,
                                      state: ConditionState)
     : JSConditionInstruction(element, value, state)
+
+  private fun isUseNativeNarrowing(classMember: JSElement): Boolean {
+    val jsType = if (classMember is TypeScriptField) classMember.jsType else null
+    return jsType is JSExoticStringLiteralType && jsType.asSimpleLiteralType().literal == BINDING_GUARD
+  }
 }
