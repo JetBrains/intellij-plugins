@@ -8,10 +8,8 @@ import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.JavaScriptBundle
-import com.intellij.lang.javascript.ecmascript6.parsing.TypeScriptParser
 import com.intellij.lang.javascript.parsing.JavaScriptParserBase
 import com.intellij.psi.tree.IElementType
-import com.intellij.util.asSafely
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
@@ -20,6 +18,7 @@ class VueJSExtraParser(
   parser: ES6Parser<*, *, *, *>,
   private val parseExpressionOptional: () -> Boolean,
   private val parseArgumentListNoMarker: () -> Unit,
+  private val parseScriptGeneric: () -> Unit,
 ) : JavaScriptParserBase<ES6Parser<*, *, *, *>>(parser) {
   private val statementParser get() = myJavaScriptParser.statementParser
 
@@ -243,36 +242,6 @@ class VueJSExtraParser(
     varStatement.done(JSStubElementTypes.VAR_STATEMENT)
     builder.advanceLexer()
     parenthesis.done(JSElementTypes.PARENTHESIZED_EXPRESSION)
-  }
-
-  private fun parseScriptGeneric() {
-    val tsParser = myJavaScriptParser.asSafely<TypeScriptParser>()
-
-    val typeArgumentList = builder.mark()
-    if (tsParser == null) {
-      while (!builder.eof()) {
-        builder.advanceLexer()
-      }
-      typeArgumentList.error(VueBundle.message("vue.parser.message.generic.component.parameters.only.with.typescript"))
-      return
-    }
-    var first = true
-    while (!builder.eof()) {
-      if (!first) {
-        checkMatches(builder, JSTokenTypes.COMMA, "javascript.parser.message.expected.comma")
-      }
-      if (builder.tokenType === JSTokenTypes.COMMA) {
-        if (first) first = false
-        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.type"))
-        //parse Foo<,,,,>
-        continue
-      }
-      if (!tsParser.typeParser.parseTypeParameter()) {
-        builder.advanceLexer()
-      }
-      first = false
-    }
-    typeArgumentList.done(VueJSStubElementTypes.SCRIPT_SETUP_TYPE_PARAMETER_LIST)
   }
 
   internal var expressionNestingLevel: Int = 0
