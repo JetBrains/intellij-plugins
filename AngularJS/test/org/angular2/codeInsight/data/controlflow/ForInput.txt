@@ -1,0 +1,16 @@
+0(1) element: null
+1(2) element: HtmlTag:div
+2(3) element: JSReferenceExpression Read(isString)
+3(4) element: JSReferenceExpression Read(bar)
+4(5,6) element: JSCallExpression
+5(7) element: JSCallExpression condition: true, reachable
+6(11) element: JSCallExpression condition: false, reachable
+7(8) element: HtmlTag:div IF (branch) true
+8(9) element: JSReferenceExpression Read(bar)
+9(10) element: Angular2TemplateVariable Write(letter)
+10(12) element: JSReferenceExpression Read(letter)
+11(12) element: HtmlTag:div IF (branch) false
+12(13) element: JSReferenceExpression Read(bar)
+13(14) element: Angular2TemplateVariable Write(letter)
+14(15) element: JSReferenceExpression Read(letter)
+15() element: null

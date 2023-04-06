@@ -1,0 +1,19 @@
+0(1) element: null
+1(2) element: HtmlTag:ng-template
+2(3) element: JSReferenceExpression Read(isString)
+3(4) element: JSReferenceExpression Read(bar)
+4(5,6) element: JSCallExpression
+5(7) element: JSCallExpression condition: true, reachable
+6(14) element: JSCallExpression condition: false, reachable
+7(8) element: HtmlTag:ng-template IF (branch) true
+8(9) element: JSReferenceExpression Read(bar)
+9(10) element: Angular2HtmlAttrVariable[LET] Write(letter)
+10(11) element: JSReferenceExpression Read(letter)
+11(12) element: JSReferenceExpression Read(bar)
+12(13) element: Angular2HtmlAttrVariable[LET] Write(letter)
+13(15) element: JSReferenceExpression Read(letter)
+14(15) element: HtmlTag:ng-template IF (branch) false
+15(16) element: JSReferenceExpression Read(bar)
+16(17) element: Angular2HtmlAttrVariable[LET] Write(letter)
+17(18) element: JSReferenceExpression Read(letter)
+18() element: null
