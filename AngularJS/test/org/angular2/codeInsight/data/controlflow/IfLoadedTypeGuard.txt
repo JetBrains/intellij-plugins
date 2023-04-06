@@ -1,20 +1,26 @@
 0(1) element: null
-1(2) element: HtmlTag:p
-2(3,4) element: JSReferenceExpression Read(heroLoadingState)
-3(5) element: JSReferenceExpression condition: true, reachable
-4(9) element: JSReferenceExpression condition: false, reachable
-5(6) element: HtmlTag:p IF (branch) true
-6(7) element: JSReferenceExpression Read(heroLoadingState)
-7(8) element: JSReferenceExpression Read(data)
-8(10) element: JSReferenceExpression Read(name)
-9(10) element: HtmlTag:p IF (branch) false
-10(11) element: HtmlTag:p
-11(12,13) element: JSReferenceExpression Read(heroLoadingState)
-12(14) element: JSReferenceExpression condition: true, reachable
-13(18) element: JSReferenceExpression condition: false, reachable
-14(15) element: HtmlTag:p IF (branch) true
-15(16) element: JSReferenceExpression Read(heroLoadingState)
-16(17) element: JSReferenceExpression Read(data)
-17(19) element: JSReferenceExpression Read(data)
-18(19) element: HtmlTag:p IF (branch) false
-19() element: null
+1(2) element: JSReferenceExpression Read(heroLoadingState)
+2(3) element: JSReferenceExpression Read(data)
+3(4) element: JSReferenceExpression Read(name)
+4(5) element: HtmlTag:p
+5(6,7) element: JSReferenceExpression Read(heroLoadingState)
+6(8) element: JSReferenceExpression condition: true, reachable
+7(12) element: JSReferenceExpression condition: false, reachable
+8(9) element: HtmlTag:p IF (branch) true
+9(10) element: JSReferenceExpression Read(heroLoadingState)
+10(11) element: JSReferenceExpression Read(data)
+11(13) element: JSReferenceExpression Read(name)
+12(13) element: HtmlTag:p IF (branch) false
+13(14) element: HtmlTag:p
+14(15,16) element: JSReferenceExpression Read(heroLoadingState)
+15(17) element: JSReferenceExpression condition: true, reachable
+16(21) element: JSReferenceExpression condition: false, reachable
+17(18) element: HtmlTag:p IF (branch) true
+18(19) element: JSReferenceExpression Read(heroLoadingState)
+19(20) element: JSReferenceExpression Read(data)
+20(22) element: JSReferenceExpression Read(data)
+21(22) element: HtmlTag:p IF (branch) false
+22(23) element: JSReferenceExpression Read(heroLoadingState)
+23(24) element: JSReferenceExpression Read(data)
+24(25) element: JSReferenceExpression Read(name)
+25() element: null
