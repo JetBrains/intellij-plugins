@@ -78,7 +78,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           MavenWorkspaceMap workspaceMap = new MavenWorkspaceMap();
           temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.getProjects());
 
-          embedder.customizeForResolve(workspaceMap, console, indicator);
+          embedder.customizeForResolve(console, indicator, false, workspaceMap, null);
           final String generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
                                             ":generate-config-" + myMavenProject.getPackaging();
           final MavenExplicitProfiles profilesIds = myMavenProject.getActivatedProfilesIds();
