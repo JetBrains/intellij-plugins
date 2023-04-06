@@ -1029,7 +1029,7 @@
         {
           "name": "Vue Composition API local directive",
           "pattern": {
-            "items": "vue-composition-api-local-directives"
+            "items": "vue-script-setup-local-directives"
           }
         }
       ],
