@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -42,7 +43,9 @@ class Angular2ImplicitUsageProvider : ImplicitUsageProvider {
           return cls.hasDirectiveDecorator()
                  && (name == NG_TEMPLATE_CONTEXT_GUARD || cls.hasMember(name.substring(NG_TEMPLATE_GUARD_PREFIX.length)))
         }
-        else if (element is TypeScriptField && name.startsWith(NG_ACCEPT_INPUT_TYPE_PREFIX)) {
+        else if (element is TypeScriptField
+                 && element.attributeList?.hasModifier(JSAttributeList.ModifierType.STATIC) == true
+                 && name.startsWith(NG_ACCEPT_INPUT_TYPE_PREFIX)) {
           // https://angular.io/guide/template-typecheck#input-setter-coercion
           val cls = JSUtils.getMemberContainingClass(element)
           return cls.hasMember(name.substring(NG_ACCEPT_INPUT_TYPE_PREFIX.length)) && cls.hasDirectiveDecorator()

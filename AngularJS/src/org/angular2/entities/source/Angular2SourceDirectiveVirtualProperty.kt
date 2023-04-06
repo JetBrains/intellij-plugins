@@ -10,7 +10,7 @@ import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
 
-class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClass,
+class Angular2SourceDirectiveVirtualProperty(override val owner: TypeScriptClass,
                                              override val name: String,
                                              override val kind: String,
                                              override val required: Boolean) : Angular2DirectiveProperty {
@@ -22,10 +22,10 @@ class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClas
     get() = true
 
   override val sourceElement: JSElement
-    get() = myOwner
+    get() = owner
 
   override val deprecated: Boolean
-    get() = myOwner.isDeprecated
+    get() = owner.isDeprecated
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)
@@ -35,20 +35,20 @@ class Angular2SourceDirectiveVirtualProperty(private val myOwner: TypeScriptClas
     if (this === other) return true
     if (other == null || javaClass != other.javaClass) return false
     val property = other as Angular2SourceDirectiveVirtualProperty?
-    return myOwner == property!!.myOwner
+    return owner == property!!.owner
            && name == property.name
            && kind == property.kind
            && required == property.required
   }
 
   override fun hashCode(): Int {
-    return Objects.hash(myOwner, name, kind, required)
+    return Objects.hash(owner, name, kind, required)
   }
 
   override fun createPointer(): Pointer<Angular2SourceDirectiveVirtualProperty> {
     val name = this.name
     val kind = this.kind
-    val owner = myOwner.createSmartPointer()
+    val owner = owner.createSmartPointer()
     val required = this.required
     return Pointer {
       owner.element?.let { Angular2SourceDirectiveVirtualProperty(it, name, kind, required) }

@@ -4,6 +4,7 @@ package org.angular2.entities.metadata.psi
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
@@ -37,6 +38,9 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
 
   override val required: Boolean
     get() = false
+
+  override val owner: TypeScriptClass?
+    get() = myOwner.typeScriptClass
 
   override fun createPointer(): Pointer<Angular2MetadataDirectiveProperty> {
     val owner = myOwner.createSmartPointer()
