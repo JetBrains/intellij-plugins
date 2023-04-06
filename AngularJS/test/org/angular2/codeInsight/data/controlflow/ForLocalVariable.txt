@@ -1,0 +1,25 @@
+0(1) element: null
+1(2) element: JSReferenceExpression Read(isString)
+2(3) element: JSReferenceExpression Read(item)
+3(4,5) element: JSCallExpression
+4(6) element: JSCallExpression condition: true, reachable
+5(11) element: JSCallExpression condition: false, reachable
+6(7) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+7(8) element: JSReferenceExpression Read(item)
+8(9,10) element: JSReferenceExpression Read(length)
+9(11) element: JSReferenceExpression condition: true, reachable
+10(11) element: JSReferenceExpression condition: false, reachable
+11(12) element: JSBinaryExpression
+12(13) element: JSReferenceExpression Read(isString)
+13(14) element: JSReferenceExpression Read(item)
+14(15,16) element: JSCallExpression
+15(17) element: JSCallExpression condition: true, reachable
+16(23) element: JSCallExpression condition: false, reachable
+17(18) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+18(19) element: JSReferenceExpression Read(item)
+19(20) element: JSReferenceExpression Read(toFixed)
+20(21,22) element: JSCallExpression
+21(23) element: JSCallExpression condition: true, reachable
+22(23) element: JSCallExpression condition: false, reachable
+23(24) element: JSBinaryExpression
+24() element: null

@@ -30,6 +30,10 @@ class Angular2ControlFlowTest : BaseJSControlFlowTest() {
 
   fun testIfLoadedTypeGuard() = doTest("<p <caret>*appIfLoaded")
 
+  fun testForLocalVariable() = doTest("<div <caret>*ngFor")
+
+  fun testNullChecks() = doTest("<div <caret>*ngFor")
+
   override fun createJSControlFlowBuilder(): JSControlFlowBuilder {
     return Angular2ControlFlowBuilder()
   }
