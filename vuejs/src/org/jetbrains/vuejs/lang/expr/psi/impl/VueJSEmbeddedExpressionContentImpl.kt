@@ -147,7 +147,7 @@ class VueJSEmbeddedExpressionContentImpl :
         ?.firstNotNullOfOrNull { it as? VueComponentSymbol }
       component?.typeParameters?.forEach {
         if (!substitutor.containsId(it.genericId)) {
-          substitutor.put(it.genericId, JSUndefinedType(JSTypeSource.EMPTY_TS, false))
+          substitutor.put(it.genericId, JSUnknownType.TS_INSTANCE)
         }
       }
       return substitutor

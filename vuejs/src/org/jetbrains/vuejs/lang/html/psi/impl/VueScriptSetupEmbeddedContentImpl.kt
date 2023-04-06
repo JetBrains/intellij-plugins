@@ -20,6 +20,7 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.GENERIC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.findJSExpression
+import org.jetbrains.vuejs.codeInsight.findVueJSEmbeddedExpressionContent
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
@@ -67,7 +68,8 @@ class VueScriptSetupEmbeddedContentImpl : JSEmbeddedContentImpl, TypeScriptTypeP
           }
           else {
             it.valueElement
-              ?.findJSExpression<TypeScriptTypeParameterList>()
+              ?.findVueJSEmbeddedExpressionContent()
+              ?.firstChild as? TypeScriptTypeParameterList
           }
         }
   }
