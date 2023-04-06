@@ -16,8 +16,8 @@ import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
-import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileElementType
+import org.jetbrains.vuejs.lang.html.psi.impl.VueFileImpl
 
 class VueParserDefinition : HTMLParserDefinition() {
 
@@ -40,7 +40,7 @@ class VueParserDefinition : HTMLParserDefinition() {
   }
 
   override fun createFile(viewProvider: FileViewProvider): PsiFile {
-    return VueFile(viewProvider)
+    return VueFileImpl(viewProvider)
   }
 
   override fun createElement(node: ASTNode?): PsiElement {

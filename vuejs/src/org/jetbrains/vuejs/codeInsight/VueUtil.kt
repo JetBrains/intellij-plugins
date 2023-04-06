@@ -365,7 +365,7 @@ fun getDefaultTypeFromPropOptions(expression: JSExpression?): JSType? =
     ?.jsType
     ?.substitute()
 
-inline fun <reified T : JSElement> XmlAttributeValue.findJSExpression(): T? {
+inline fun <reified T : JSExpression> XmlAttributeValue.findJSExpression(): T? {
   return findVueJSEmbeddedExpressionContent()?.firstChild as? T
 }
 
