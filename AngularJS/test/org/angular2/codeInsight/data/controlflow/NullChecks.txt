@@ -30,25 +30,27 @@
 29(31) element: JSReferenceExpression condition: true, reachable
 30(31) element: JSReferenceExpression condition: false, reachable
 31(32) element: JSBinaryExpression
-32(33) element: JSReferenceExpression Read(isString)
-33(34) element: JSReferenceExpression Read(item)
-34(35,36) element: JSCallExpression
-35(37) element: JSCallExpression condition: true, reachable
-36(42) element: JSCallExpression condition: false, reachable
-37(38) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
-38(39) element: JSReferenceExpression Read(item)
-39(40,41) element: JSReferenceExpression Read(length)
-40(42) element: JSReferenceExpression condition: true, reachable
-41(42) element: JSReferenceExpression condition: false, reachable
-42(43) element: JSBinaryExpression
-43(44) element: HtmlTag:div
-44(45,46) element: JSReferenceExpression Read(item)
-45(47) element: JSReferenceExpression condition: true, reachable
-46(50) element: JSReferenceExpression condition: false, reachable
-47(48) element: HtmlTag:div IF (branch) true
-48(49) element: JSReferenceExpression Read(item)
-49(51) element: JSReferenceExpression Read(length)
-50(51) element: HtmlTag:div IF (branch) false
-51(52) element: JSReferenceExpression Read(bar)
-52(53) element: JSReferenceExpression Read(length)
-53() element: null
+32(33) element: JSReferenceExpression Read(items)
+33(34) element: Angular2TemplateVariable Write(item)
+34(35) element: JSReferenceExpression Read(isString)
+35(36) element: JSReferenceExpression Read(item)
+36(37,38) element: JSCallExpression
+37(39) element: JSCallExpression condition: true, reachable
+38(44) element: JSCallExpression condition: false, reachable
+39(40) element: JSBinaryExpression LOGICAL_EXPRESSION (branch) true
+40(41) element: JSReferenceExpression Read(item)
+41(42,43) element: JSReferenceExpression Read(length)
+42(44) element: JSReferenceExpression condition: true, reachable
+43(44) element: JSReferenceExpression condition: false, reachable
+44(45) element: JSBinaryExpression
+45(46) element: HtmlTag:div
+46(47,48) element: JSReferenceExpression Read(item)
+47(49) element: JSReferenceExpression condition: true, reachable
+48(52) element: JSReferenceExpression condition: false, reachable
+49(50) element: HtmlTag:div IF (branch) true
+50(51) element: JSReferenceExpression Read(item)
+51(53) element: JSReferenceExpression Read(length)
+52(53) element: HtmlTag:div IF (branch) false
+53(54) element: JSReferenceExpression Read(bar)
+54(55) element: JSReferenceExpression Read(length)
+55() element: null

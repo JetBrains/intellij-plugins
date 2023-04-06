@@ -18,6 +18,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.Companion.isTemplateTag
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
+import org.angular2.lang.html.psi.Angular2HtmlLet
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
 
@@ -40,6 +41,7 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
   }
 
   private val visitingModeOverrides = mutableMapOf<PsiElement, HtmlTagVisitingMode>()
+  private val visitedNodes = mutableSetOf<PsiElement>()
 
   private var PsiElement.visitingMode: HtmlTagVisitingMode
     set(value) = Unit.also { visitingModeOverrides[this] = value }
@@ -48,9 +50,15 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
   override fun doBuild(scope: JSControlFlowScope) {
     super.doBuild(scope)
     visitingModeOverrides.clear()
+    visitedNodes.clear()
   }
 
   override fun visitElement(element: PsiElement) {
+    if (visitedNodes.contains(element)) {
+      // handled as part of HtmlTag
+      return
+    }
+
     when (element) {
       is HtmlTag -> {
         var conditionAttribute: XmlAttribute?
@@ -62,18 +70,15 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
           // the whole subtree was already processed
         }
         else if (findControlFlowSignificantAttribute(element).also { conditionAttribute = it } != null) {
-          @Suppress("NAME_SHADOWING")
-          val conditionAttribute = conditionAttribute!!
-
-          val guard = findGuard(conditionAttribute)
+          val guard = processControlFlowSignificantAttribute(conditionAttribute!!)
 
           if (guard != null) {
-            val conditionExpression = PsiTreeUtil.findChildOfType(conditionAttribute.valueElement, JSExpression::class.java)
-            if (!isUseNativeNarrowing(guard)) {
-              conditionExpression?.putUserData(CUSTOM_GUARD, guard)
+            val templateExpression: JSExpression? = guard.templateExpression
+            if (!guard.useNativeNarrowing) {
+              templateExpression?.putUserData(CUSTOM_GUARD, guard.classMember)
             }
 
-            processIfBranching(element, conditionExpression)
+            processIfBranching(element, templateExpression)
           }
           else {
             super.visitElement(element)
@@ -83,38 +88,63 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
           super.visitElement(element)
         }
       }
-      is XmlAttribute -> {
-        if (isControlFlowSignificantAttribute(element)) {
-          // handled as part of HtmlTag
-          return
-        }
-
-        super.visitElement(element)
-      }
       else -> {
         super.visitElement(element)
       }
     }
   }
 
-  private fun findGuard(attribute: XmlAttribute): JSElement? {
-    val declarationsScope = Angular2DeclarationsScope(attribute)
+  private fun processControlFlowSignificantAttribute(initialAttribute: XmlAttribute): Angular2GuardInfo? {
+    val declarationsScope = Angular2DeclarationsScope(initialAttribute)
 
-    return when (attribute) {
-      is Angular2HtmlTemplateBindings -> { // structural directives micro-syntax
-        val directivesProvider = Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute))
-        val relevantName = attribute.templateName
-        findTemplateGuardClassMember(directivesProvider, declarationsScope, relevantName)
+    // todo collect all guards, then "logical and" them
+    var result: Angular2GuardInfo? = null
+
+    if (initialAttribute is Angular2HtmlTemplateBindings) { // structural directives micro-syntax
+      val templateBindings = Angular2TemplateBindings.get(initialAttribute)
+      val directivesProvider = Angular2ApplicableDirectivesProvider(templateBindings)
+
+      templateBindings.bindings.asSequence().filter { !it.keyIsVar() }.forEach { binding ->
+        val guardElement = findTemplateGuardClassMember(directivesProvider, declarationsScope, binding.key)
+        if (result == null && guardElement != null) {
+          result = Angular2GuardInfo(guardElement, binding.expression)
+        }
+        else {
+          binding.expression?.accept(this)
+        }
       }
-      is Angular2HtmlPropertyBinding -> { // ng-template tag
-        val directivesProvider = Angular2ApplicableDirectivesProvider(attribute.parent)
-        val relevantName = attribute.propertyName
-        findTemplateGuardClassMember(directivesProvider, declarationsScope, relevantName)
+
+      templateBindings.bindings.asSequence().filter { it.keyIsVar() }.forEach { binding ->
+        binding.variableDefinition?.accept(this)
       }
-      else -> {
-        null
+
+      visitedNodes.add(initialAttribute)
+    }
+    else { // ng-template tag
+      val templateTag = initialAttribute.parent
+      val directivesProvider = Angular2ApplicableDirectivesProvider(templateTag)
+
+      templateTag.attributes.asSequence().filterIsInstance<Angular2HtmlPropertyBinding>().forEach { attribute ->
+        val guardElement = findTemplateGuardClassMember(directivesProvider, declarationsScope, attribute.propertyName)
+        val templateExpression = PsiTreeUtil.findChildOfType(attribute.valueElement, JSExpression::class.java)
+        if (result == null && guardElement != null) {
+          result = Angular2GuardInfo(guardElement, templateExpression)
+        }
+        else {
+          templateExpression?.accept(this)
+        }
+
+        visitedNodes.add(attribute)
+      }
+
+      templateTag.attributes.asSequence().filterIsInstance<Angular2HtmlLet>().forEach { attribute ->
+        attribute.variable?.accept(this)
+
+        visitedNodes.add(attribute)
       }
     }
+
+    return result
   }
 
   /**
@@ -153,11 +183,6 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
     return null
   }
 
-  private fun isControlFlowSignificantAttribute(attribute: XmlAttribute): Boolean {
-    val templateMode = isTemplateTag(attribute.parent)
-    return (templateMode && attribute is Angular2HtmlPropertyBinding) || attribute.name.startsWith(STAR)
-  }
-
   private var currentTopConditionExpression: JSExpression? = null
 
   override fun isStatementCondition(parent: PsiElement?, currentElement: PsiElement?): Boolean {
@@ -185,8 +210,12 @@ class Angular2ControlFlowBuilder : JSControlFlowBuilder() {
                                      state: ConditionState)
     : JSConditionInstruction(element, value, state)
 
-  private fun isUseNativeNarrowing(classMember: JSElement): Boolean {
-    val jsType = if (classMember is TypeScriptField) classMember.jsType else null
-    return jsType is JSExoticStringLiteralType && jsType.asSimpleLiteralType().literal == BINDING_GUARD
+  private data class Angular2GuardInfo(val classMember: JSElement, val templateExpression: JSExpression?) {
+    val useNativeNarrowing: Boolean
+
+    init {
+      val jsType = if (classMember is TypeScriptField) classMember.jsType else null
+      useNativeNarrowing = jsType is JSExoticStringLiteralType && jsType.asSimpleLiteralType().literal == BINDING_GUARD
+    }
   }
 }
