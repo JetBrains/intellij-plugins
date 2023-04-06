@@ -43,14 +43,16 @@ class AngularMissingRequiredDirectiveInputBindingInspection : AngularHtmlLikeTem
     }
 
     inputsToMatch.filter { !provided.contains(it.first.name) }
-      .forEach {
-        val fixes = mutableListOf<LocalQuickFix>(CreateAttributeQuickFix("[" + it.first.name + "]"))
-        if (OneTimeBindingsProvider.isOneTimeBindingProperty(it.first)) {
-          fixes.add(CreateAttributeQuickFix(it.first.name))
+      .forEach { (property, directive) ->
+        val fixes = mutableListOf<LocalQuickFix>(CreateAttributeQuickFix("[" + property.name + "]"))
+        if (OneTimeBindingsProvider.isOneTimeBindingProperty(property)) {
+          fixes.add(CreateAttributeQuickFix(property.name))
         }
         holder.registerProblem(tag, startTag,
-                               Angular2Bundle.message("angular.inspection.missing-required-directive-input-binding.message",
-                                                      it.first.name, it.second.getName()),
+                               Angular2Bundle.message(
+                                 if (directive.isComponent) "angular.inspection.missing-required-directive-input-binding.message.component"
+                                 else "angular.inspection.missing-required-directive-input-binding.message",
+                                 property.name, directive.getName()),
                                *fixes.toTypedArray())
       }
 
