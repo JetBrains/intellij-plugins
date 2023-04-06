@@ -10,13 +10,14 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 
 class VueJSParser(builder: PsiBuilder)
   : ES6Parser<VueJSParser.VueJSExpressionParser, ES6StatementParser<*>, ES6FunctionParser<*>,
   JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder), VueExprParser {
 
-  private val extraParser = VueJSExtraParser(this, ::parseExpressionOptional, ::parseFilterArgumentList)
+  private val extraParser = VueJSExtraParser(this, ::parseExpressionOptional, ::parseFilterArgumentList, ::parseScriptGeneric)
 
   init {
     myExpressionParser = VueJSExpressionParser(this, extraParser)
@@ -28,6 +29,13 @@ class VueJSParser(builder: PsiBuilder)
 
   private fun parseExpressionOptional() = expressionParser.parseExpressionOptional()
   private fun parseFilterArgumentList() = expressionParser.parseFilterArgumentList()
+  private fun parseScriptGeneric() {
+    val typeArgumentList = builder.mark()
+    while (!builder.eof()) {
+      builder.advanceLexer()
+    }
+    typeArgumentList.error(VueBundle.message("vue.parser.message.generic.component.parameters.only.with.typescript"))
+  }
 
   class VueJSExpressionParser(parser: VueJSParser, private val extraParser: VueJSExtraParser) : ES6ExpressionParser<VueJSParser>(parser) {
 
