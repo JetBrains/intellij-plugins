@@ -35,6 +35,7 @@ import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Consumer
 import java.util.function.Predicate
+import kotlin.collections.HashSet
 
 internal class BindingsTypeResolver private constructor(element: PsiElement,
                                                         provider: Angular2ApplicableDirectivesProvider,
@@ -81,20 +82,23 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
       }
       .mapNotNull { directive ->
         val cls = directive.typeScriptClass ?: return@mapNotNull null
-        val clsType = if (cls.typeParameters.isNotEmpty())
+        val genericParameters = cls.typeParameters.mapTo(HashSet()) { it.genericId }
+        val clsType = if (genericParameters.isNotEmpty())
           JSTypeUtils.createNotSubstitutedGenericType(cls, cls.jsType)
         else
           cls.jsType
         processAndMerge(listOf(clsType))
+          // In case of references, it may happen that some generic params are not substituted.
+          // Let's be permissive here and replace each generic param from directive definition
+          // with `any` type to avoid type checking errors in such situation.
+          ?.transformTypeHierarchy {
+            if (it is JSGenericParameterType && genericParameters.contains(it.genericId))
+              JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
+            else it
+          }
       }
       .firstOrNull()
-      // In case of references, it may happen that some generic params are not substituted.
-      // Let's be permissive here and replace each generic param with any type to avoid type checking errors in such situation.
-      ?.transformTypeHierarchy {
-        if (it is JSGenericParameterType)
-          JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
-        else it
-      }
+
   }
 
   fun resolveTemplateContextType(): JSType? {
