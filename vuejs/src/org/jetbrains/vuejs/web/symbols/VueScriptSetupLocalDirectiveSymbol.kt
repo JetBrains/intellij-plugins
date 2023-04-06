@@ -11,15 +11,15 @@ import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbolsScope
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.VueCompositionApiLocalDirective
+import org.jetbrains.vuejs.model.source.VueScriptSetupLocalDirective
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.web.asWebSymbolPriority
 
-class VueCompositionApiLocalDirectiveSymbol(directive: VueCompositionApiLocalDirective, private val vueProximity: VueModelVisitor.Proximity) :
-  VueScopeElementSymbol<VueCompositionApiLocalDirective>(directive.defaultName, directive) {
+class VueScriptSetupLocalDirectiveSymbol(directive: VueScriptSetupLocalDirective, private val vueProximity: VueModelVisitor.Proximity) :
+  VueScopeElementSymbol<VueScriptSetupLocalDirective>(directive.defaultName, directive) {
 
   override val kind: SymbolKind
-    get() = VueWebSymbolsQueryConfigurator.KIND_VUE_COMPOSITION_API_LOCAL_DIRECTIVES
+    get() = VueWebSymbolsQueryConfigurator.KIND_VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES
 
   override val priority: WebSymbol.Priority
     get() = vueProximity.asWebSymbolPriority()
@@ -42,11 +42,11 @@ class VueCompositionApiLocalDirectiveSymbol(directive: VueCompositionApiLocalDir
     }
     else emptyList()
 
-  override fun createPointer(): Pointer<VueCompositionApiLocalDirectiveSymbol> {
+  override fun createPointer(): Pointer<VueScriptSetupLocalDirectiveSymbol> {
     val directive = item.createPointer()
     val vueProximity = this.vueProximity
     return Pointer {
-      directive.dereference()?.let { VueCompositionApiLocalDirectiveSymbol(it, vueProximity) }
+      directive.dereference()?.let { VueScriptSetupLocalDirectiveSymbol(it, vueProximity) }
     }
   }
 

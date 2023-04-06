@@ -444,5 +444,5 @@ inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
   return host.parentOfType<T>()
 }
 
-fun isCompositionApiLocalDirectiveName(name: String): Boolean =
+fun isScriptSetupLocalDirectiveName(name: String): Boolean =
   name.length > 1 && name[0] == 'v' && name[1].isUpperCase()

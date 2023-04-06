@@ -21,7 +21,7 @@ import com.intellij.webSymbols.query.WebSymbolNameConversionRulesProvider
 import com.intellij.webSymbols.query.WebSymbolNameConverter
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.isCompositionApiLocalDirectiveName
+import org.jetbrains.vuejs.codeInsight.isScriptSetupLocalDirectiveName
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
@@ -39,7 +39,7 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     const val KIND_VUE_COMPONENT_COMPUTED_PROPERTIES = "computed-properties"
     const val KIND_VUE_COMPONENT_DATA_PROPERTIES = "data-properties"
     const val KIND_VUE_DIRECTIVES = "vue-directives"
-    const val KIND_VUE_COMPOSITION_API_LOCAL_DIRECTIVES = "vue-composition-api-local-directives"
+    const val KIND_VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES = "vue-script-setup-local-directives"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
     const val KIND_VUE_MODEL = "vue-model"
     const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
@@ -157,10 +157,10 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
     override fun getModificationCount(): Long = 0
 
     override val canonicalNames: Map<WebSymbolQualifiedKind, WebSymbolNameConverter> =
-      mapOf(WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_COMPOSITION_API_LOCAL_DIRECTIVES) to
+      mapOf(WebSymbolQualifiedKind(NAMESPACE_HTML, KIND_VUE_SCRIPT_SETUP_LOCAL_DIRECTIVES) to
               WebSymbolNameConverter {
                 listOf(
-                  if (isCompositionApiLocalDirectiveName(it))
+                  if (isScriptSetupLocalDirectiveName(it))
                     fromAsset(it.substring(1))
                   else
                     it
