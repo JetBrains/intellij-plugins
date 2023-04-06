@@ -38,13 +38,12 @@ class Hero {
   standalone: true,
   imports: [IfLoadedDirective],
   template: `
+    <p>{{ heroLoadingState.<error descr="Unresolved variable data">data</error>.name }}</p>
     <p *appIfLoaded="heroLoadingState">{{ heroLoadingState.data.name }}</p>
     <p *appIfLoaded="heroLoadingState">{{ heroLoadingState.data.<error descr="Unresolved variable data">data</error> }}</p>
+    <p>{{ heroLoadingState.<error descr="Unresolved variable data">data</error>.name }}</p>
   `,
 })
 export class ExampleComponent {
   heroLoadingState: LoadingState<Hero> = { type: "loading" };
 }
-
-
-
