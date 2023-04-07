@@ -1,4 +1,4 @@
-<script setup="foos" lang="ts">
+<script setup lang="ts">
 // imported components are also directly usable in template
 import Foo from './Foo.vue'
 import fooBar from './fooBar.vue'

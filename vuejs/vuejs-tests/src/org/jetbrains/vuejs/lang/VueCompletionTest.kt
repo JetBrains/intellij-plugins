@@ -1781,14 +1781,6 @@ export default {
                  lookupFilter = nonHtmlLookupFilter) {
       !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
     }
-
-    myFixture.moveToOffsetBySignature("<caret>\n// write")
-    myFixture.type("fo")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "foos")
-    myFixture.type("os.")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "foo")
   }
 
   fun testScriptSetupTs() {
@@ -1804,14 +1796,6 @@ export default {
                  lookupFilter = nonHtmlLookupFilter) {
       !it.startsWith("aria-") && !it.startsWith("on") && !it.startsWith(":aria-")
     }
-
-    myFixture.moveToOffsetBySignature("<caret>\n// write")
-    myFixture.type("fo")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "foos")
-    myFixture.type("os.")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "foo")
   }
 
   fun testExpression() {

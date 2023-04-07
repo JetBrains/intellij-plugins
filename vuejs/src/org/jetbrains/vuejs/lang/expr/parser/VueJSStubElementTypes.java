@@ -8,15 +8,13 @@ import org.jetbrains.vuejs.lang.expr.VueTSLanguage;
 
 public interface VueJSStubElementTypes {
 
-  int STUB_VERSION = 2;
+  int STUB_VERSION = 3;
 
   String EXTERNAL_ID_PREFIX = "VUE-JS:";
 
   JSVariableElementType V_FOR_VARIABLE = new VueJSVForVariableElementType();
 
   JSParameterElementType SLOT_PROPS_PARAMETER = new VueJSSlotPropsParameterElementType();
-
-  JSParameterElementType SCRIPT_SETUP_PARAMETER = new VueJSScriptSetupParameterElementType();
 
   VueJSScriptSetupTypeParameterListElementType SCRIPT_SETUP_TYPE_PARAMETER_LIST =
     new VueJSScriptSetupTypeParameterListElementType();

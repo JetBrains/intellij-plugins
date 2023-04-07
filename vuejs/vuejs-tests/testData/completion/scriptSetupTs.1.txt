@@ -4,7 +4,6 @@ count#number
 emit#null
 foo#string | undefined
 fooBar#null
-foos#null
 inc#() => void
 props#null
 ref#<T extends object>(value: T) => ToRef<T>

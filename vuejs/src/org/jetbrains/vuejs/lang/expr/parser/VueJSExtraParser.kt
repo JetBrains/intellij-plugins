@@ -45,7 +45,6 @@ class VueJSExtraParser(
       }
       VueAttributeNameParser.VueAttributeKind.SLOT_SCOPE -> parseSlotPropsExpression()
       VueAttributeNameParser.VueAttributeKind.SCOPE -> parseSlotPropsExpression()
-      VueAttributeNameParser.VueAttributeKind.SCRIPT_SETUP -> parseScriptSetupExpression()
       VueAttributeNameParser.VueAttributeKind.SCRIPT_GENERIC -> parseScriptGeneric()
       else -> parseRegularExpression()
     }
@@ -113,11 +112,7 @@ class VueJSExtraParser(
     parseParametersExpression(VueJSElementTypes.SLOT_PROPS_EXPRESSION, VueJSStubElementTypes.SLOT_PROPS_PARAMETER)
   }
 
-  private fun parseScriptSetupExpression() {
-    parseParametersExpression(VueJSElementTypes.SCRIPT_SETUP_EXPRESSION, VueJSStubElementTypes.SCRIPT_SETUP_PARAMETER)
-  }
-
-  private fun parseParametersExpression(exprType: IElementType, paramType: IElementType) {
+  private fun parseParametersExpression(exprType: IElementType, @Suppress("SameParameterValue") paramType: IElementType) {
     val parametersList = builder.mark()
     val functionParser = object : ES6FunctionParser<ES6Parser<*, *, *, *>>(myJavaScriptParser) {
       override fun getParameterType(): IElementType = paramType
@@ -186,7 +181,7 @@ class VueJSExtraParser(
     }
   }
 
-  private fun parseVariableStatement(elementType: IElementType): Boolean {
+  private fun parseVariableStatement(@Suppress("SameParameterValue") elementType: IElementType): Boolean {
     val statement = builder.mark()
     if (parseVariable(elementType)) {
       statement.done(JSStubElementTypes.VAR_STATEMENT)

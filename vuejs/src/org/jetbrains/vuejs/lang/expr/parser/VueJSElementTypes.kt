@@ -29,9 +29,6 @@ object VueJSElementTypes {
   val SLOT_PROPS_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SLOT_PROPS_EXPRESSION", ::VueJSSlotPropsExpressionImpl)
 
-  val SCRIPT_SETUP_EXPRESSION: IElementType = VueJSExpressionElementType(
-    "SCRIPT_SETUP_EXPRESSION", ::VueJSScriptSetupExpressionImpl)
-
   private abstract class VueJSElementType(@NonNls debugName: String,
                                           language: Language,
                                           private val myClassConstructor: (VueJSElementType) -> ASTNode)
