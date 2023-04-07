@@ -101,4 +101,12 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.configureByFiles("null-checks-inline.ts");
     myFixture.checkHighlighting();
   }
+
+  public void testNgIfAsContextGuardStrictNullChecks() {
+    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
+    myFixture.configureByFile("tsconfig.json");
+    myFixture.configureByFile("tsconfig.app.json");
+    myFixture.configureByFiles("NgIfAsContextGuardStrictNullChecks.ts");
+    myFixture.checkHighlighting();
+  }
 }
