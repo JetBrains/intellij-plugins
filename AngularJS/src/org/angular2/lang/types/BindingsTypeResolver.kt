@@ -103,6 +103,10 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
 
   fun resolveTemplateContextType(): JSType? {
     return if (myTypeSubstitutor != null) JSTypeUtils.applyGenericArguments(myRawTemplateContextType, myTypeSubstitutor)
+      ?.transformTypeHierarchy {
+        // temporary, to prevent strictNullChecks regressions
+        JSCompositeTypeImpl.optimizeTypeIfComposite(it, OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)
+      }
     else myRawTemplateContextType
   }
 
