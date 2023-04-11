@@ -70,7 +70,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
 
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.getDisplayName()));
 
-    final MavenProjectResolver.EmbedderTask task = new MavenProjectResolver.EmbedderTask() {
+    final MavenEmbeddersManager.EmbedderTask task = new MavenEmbeddersManager.EmbedderTask() {
       @Override
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
         List<VirtualFile> temporaryFiles = null;
@@ -114,7 +114,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       }
     };
 
-    myResolver.executeWithEmbedder(myMavenProject, embeddersManager, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
+    embeddersManager.execute(myMavenProject, myTree, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
   }
 
   /**
