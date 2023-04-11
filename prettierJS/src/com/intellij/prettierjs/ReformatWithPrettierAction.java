@@ -293,7 +293,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
     @SuppressWarnings("UsagesOfObsoleteApi")
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
-       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
+      Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
       List<PsiFile> files = new SmartList<>();
       ReadAction.run(() -> {
@@ -305,8 +305,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       for (PsiFile currentFile : files) {
         indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
         NodePackage nodePackage = configuration.getPackage(currentFile);
-        if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, errorHandler))
+        if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, errorHandler)) {
           return Collections.emptyMap();
+        }
 
         PrettierLanguageService service = PrettierLanguageService.getInstance(project, currentFile.getVirtualFile(), nodePackage);
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
@@ -394,8 +395,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       // PsiFile might be not committed at this point, take text from document
       Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
       if (document == null) return;
-      CharSequence content = document.getImmutableCharSequence();
-      text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
+      text.set(document.getText());
       VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
       if (ignoreVFile != null) {
         ignoreFilePath.set(ignoreVFile.getPath());
@@ -511,7 +511,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, listener);
       }
       else {
-        Notification notification = JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text, NotificationType.ERROR);
+        Notification notification =
+          JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text,
+                                                                NotificationType.ERROR);
         if (onLinkClick != null) {
           notification.setListener(new NotificationListener.Adapter() {
             @Override
