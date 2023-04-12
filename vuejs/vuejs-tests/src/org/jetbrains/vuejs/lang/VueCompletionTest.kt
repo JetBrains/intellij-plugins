@@ -1004,7 +1004,7 @@ $script""")
 </template>
 <script>
 import Vue from "vue";
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
 
 @Component({
@@ -1022,7 +1022,7 @@ export default class ComponentInsertion extends Vue {
 </template>
 <script>
 import Vue from "vue";
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
 
 @Component({
@@ -1043,7 +1043,7 @@ import Vue from "vue";
 </template>
 <script>
 import Vue from "vue";
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
 
 @Component({
@@ -1058,13 +1058,13 @@ export default class ComponentInsertion extends Vue {
   <Sho<caret>
 </template>
 <script>
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 </script>
 """, """<template>
   <ShortComponent
 </template>
 <script>
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 import Vue from "vue";
 import ShortComponent from "./ShortComponent.vue";
 
@@ -1081,7 +1081,7 @@ export default class ComponentInsertion extends Vue {
 </template>
 <script>
 import Vue from "vue";
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 @Component({
   name: "a123"
 })
@@ -1093,7 +1093,7 @@ export default class ComponentInsertion extends Vue {
 </template>
 <script>
 import Vue from "vue";
-import {Component} from "vue-class-component";
+import Component from "vue-class-component";
 import ShortComponent from "./ShortComponent.vue";
 @Component({
   name: "a123",

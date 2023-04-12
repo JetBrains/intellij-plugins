@@ -9,10 +9,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexEx
-import org.jetbrains.vuejs.context.getVueClassComponentDecoratorName
-import org.jetbrains.vuejs.context.getVueClassComponentLibrary
-import org.jetbrains.vuejs.context.hasVueFiles
-import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.context.*
 import org.jetbrains.vuejs.index.VueComponentStylesIndex
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 import java.util.*
@@ -23,7 +20,8 @@ class VueDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
       return
     if (TypeScriptConfigServiceImpl.getNearestParentTsConfigs(directory.virtualFile, false).isNotEmpty()) {
       props["SCRIPT_LANG_ATTR"] = " lang=\"ts\""
-      props["USE_DEFINE_COMPONENT"] = true
+      props["USE_DEFINE_COMPONENT"] = supportsDefineComponent(directory)
+      props["USE_VUE_EXTEND"] = true
     }
     getDefaultVueStyleLang(directory.project)?.let {
       props["STYLE_LANG_ATTR"] = " lang=\"$it\""
