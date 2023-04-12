@@ -1,5 +1,10 @@
 <script${SCRIPT_LANG_ATTR}>
-import { ${CLASS_COMPONENT_DECORATOR}, Vue } from '${CLASS_COMPONENT_LIB}';
+#if($CLASS_COMPONENT_LIB == 'vue-class-component')
+import Vue from 'vue';
+import ${CLASS_COMPONENT_DECORATOR} from 'vue-class-component';
+#else
+import { Vue, ${CLASS_COMPONENT_DECORATOR} } from '${CLASS_COMPONENT_LIB}';
+#end
 
 @${CLASS_COMPONENT_DECORATOR}({})
 export default class ${COMPONENT_NAME} extends Vue {
