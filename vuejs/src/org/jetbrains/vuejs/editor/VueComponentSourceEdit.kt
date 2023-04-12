@@ -29,14 +29,12 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.context.getVueClassComponentDecoratorName
-import org.jetbrains.vuejs.context.getVueClassComponentLibrary
-import org.jetbrains.vuejs.context.isVue3
-import org.jetbrains.vuejs.context.supportsScriptSetup
+import org.jetbrains.vuejs.context.*
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.isScriptSetupTag
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
 import org.jetbrains.vuejs.model.source.NAME_PROP
@@ -171,13 +169,11 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val fileName = FileUtil.getNameWithoutExtension(scriptScope.containingFile.name)
 
     val isTs = DialectDetector.isTypeScript(scriptScope)
-    val isVue3 = isVue3(scriptScope)
 
-    @Suppress("UnnecessaryVariable")
-    val useDefineComponent = isVue3
+    val useDefineComponent = supportsDefineComponent(scriptScope)
     val classComponentLibrary = getVueClassComponentLibrary(scriptScope)
     val componentDecoratorName = getVueClassComponentDecoratorName(scriptScope)
-    val useVueExtend = isTs && !isVue3
+    val useVueExtend = isTs && !useDefineComponent
 
     val componentName = toAsset(StringUtil.capitalize(fileName).replace(Regex("[^0-9a-zA-Z-]+"), "-"))
     val exportText = when {
@@ -198,8 +194,13 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     }
     when {
       classComponentLibrary != null -> {
-        insertImportIfNotThere("Vue", true, VUE_MODULE, scriptScope)
-        insertImportIfNotThere(componentDecoratorName, false, classComponentLibrary, scriptScope)
+        if (classComponentLibrary == VUE_CLASS_COMPONENT) {
+          insertImportIfNotThere("Vue", true, VUE_MODULE, scriptScope)
+          insertImportIfNotThere(componentDecoratorName, true, classComponentLibrary, scriptScope)
+        } else {
+          insertImportIfNotThere("Vue", false, classComponentLibrary, scriptScope)
+          insertImportIfNotThere(componentDecoratorName, false, classComponentLibrary, scriptScope)
+        }
       }
       useDefineComponent -> {
         insertImportIfNotThere("defineComponent", false, VUE_MODULE, scriptScope)

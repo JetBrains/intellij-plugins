@@ -1,8 +1,14 @@
 <script${SCRIPT_LANG_ATTR}>
 #if($USE_DEFINE_COMPONENT)
-import {defineComponent} from 'Vue'
+import {defineComponent} from 'vue'
 
 export default defineComponent({
+name: "${COMPONENT_NAME}"
+})
+#elseif($USE_VUE_EXTEND)
+import Vue from 'vue'
+
+export default Vue.extend({
 name: "${COMPONENT_NAME}"
 })
 #else
