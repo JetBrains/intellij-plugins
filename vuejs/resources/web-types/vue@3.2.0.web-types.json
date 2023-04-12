@@ -443,8 +443,7 @@
               "description": "An HTML tag name, a Component name or Component class reference.",
               "type": [
                 "string",
-                "ComponentDefinition",
-                "ComponentConstructor"
+                "object"
               ]
             }
           ]
