@@ -84,7 +84,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           final MavenExplicitProfiles profilesIds = myMavenProject.getActivatedProfilesIds();
           var request = new MavenEmbedderExecutionRequest(new File(myMavenProject.getPath()), profilesIds);
           var result = embedder.execute(List.of(request), generateConfigGoal).get(0);
-          if (result.projectData == null) {
+          if (!result.success) {
             myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           }
 
