@@ -54,6 +54,11 @@ fun hasPinia(context: PsiElement) =
 fun hasVuex(context: PsiElement) =
   WebSymbolsContext.get(KIND_VUE_STORE, context) == VUE_STORE_VUEX
 
+fun supportsDefineComponent(context: PsiElement): Boolean =
+  detectPkgVersion(context, VUE_MODULE).let {
+    it == null || it >= VERSION_2_7_0
+  }
+
 fun getVueClassComponentLibrary(location: PsiElement): String? =
   WebSymbolsContext.get(KIND_VUE_CLASS_COMPONENT_LIBRARY, location)
 
@@ -80,6 +85,7 @@ fun supportsScriptSetup(context: PsiElement?): Boolean =
     ?.firstOrNull() != null
 
 
+private val VERSION_2_7_0 = SemVer("2.7.0", 2, 7, 0)
 private val VERSION_3_0_0 = SemVer("3.0.0", 3, 0, 0)
 private val VERSION_8_0_0 = SemVer("8.0.0", 8, 0, 0)
 
