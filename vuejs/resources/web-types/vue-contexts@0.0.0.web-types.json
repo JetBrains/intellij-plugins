@@ -38,11 +38,11 @@
         ]
       }
     },
-    "vuex-class": {
+    "vue-facing-decorator": {
       "kind": "vue-class-component-library",
       "enable-when": {
         "node-packages": [
-          "vuex-class"
+          "vue-facing-decorator"
         ]
       }
     }
