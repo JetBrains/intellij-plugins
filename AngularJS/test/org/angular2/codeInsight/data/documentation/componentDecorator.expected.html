@@ -1,0 +1,105 @@
+<div class='definition'><pre><span style="color:#7a7a43;">ComponentDecorator.<anonymous></span><span style="">(<br></span><span style="">&#32;&#32;&#32;&#32;obj:&#32;<a href="psi_element://Component">Component</a>):&#32;<a href="psi_element://TypeDecorator">TypeDecorator</a></span></pre></div><div class='content'><p>Decorator that marks a class as an Angular component and provides configuration
+metadata that determines how the component should be processed,
+instantiated, and used at runtime.
+<p>Components are the most basic UI building block of an Angular app.
+An Angular app contains a tree of Angular components.
+<p>Angular components are a subset of directives, always associated with a template.
+Unlike other directives, only one component can be instantiated for a given element in a
+template.
+<p>A component must belong to an NgModule in order for it to be available
+to another component or application. To make it a member of an NgModule,
+list it in the <code>declarations</code> field of the <code>NgModule</code> metadata.
+<p>Note that, in addition to these options for configuring a directive,
+you can control a component's runtime behavior by implementing
+life-cycle hooks. For more information, see the
+<a href="guide/lifecycle-hooks">Lifecycle Hooks</a> guide.
+<h3>Usage Notes</h3>
+<h3>Setting component inputs</h3>
+<p>The following example creates a component with two data-bound properties,
+specified by the <code>inputs</code> value.
+<p><code-example path="core /ts/metadata/directives.ts" region="component-input"></code-example>
+<h3>Setting component outputs</h3>
+<p>The following example shows two event emitters that emit on an interval. One
+emits an output every second, while the other emits every five seconds.
+<p>{@example core/ts/metadata/directives.ts region='component-output-interval'}
+<h3>Injecting a class with a view provider</h3>
+<p>The following simple example injects a class into a component
+using the view provider specified in component metadata:
+<pre><code class="ts">class Greeter {
+   greet(name:string) {
+     return 'Hello ' + name + '!';
+   }
+}
+
+@Directive({
+  selector: 'needs-greeter'
+})
+class NeedsGreeter {
+  greeter:Greeter;
+
+  constructor(greeter:Greeter) {
+    this.greeter = greeter;
+  }
+}
+
+@Component({
+  selector: 'greet',
+  viewProviders: [
+    Greeter
+  ],
+  template: `&lt;needs-greeter&gt;&lt;/needs-greeter&gt;`
+})
+class HelloWorld {
+}
+</pre>
+<h3>Preserving whitespace</h3>
+<p>Removing whitespace can greatly reduce AOT-generated code size and speed up view creation.
+As of Angular 6, the default for <code>preserveWhitespaces</code> is false (whitespace is removed).
+To change the default setting for all components in your application, set
+the <code>preserveWhitespaces</code> option of the AOT compiler.
+<p>By default, the AOT compiler removes whitespace characters as follows:
+<ul>
+<li>Trims all whitespaces at the beginning and the end of a template.</li>
+<li>Removes whitespace-only text nodes. For example,</li>
+</ul>
+<pre><code class="html">&lt;button&gt;Action 1&lt;/button&gt;  &lt;button&gt;Action 2&lt;/button&gt;
+</pre>
+<p>becomes:
+<pre><code class="html">&lt;button&gt;Action 1&lt;/button&gt;&lt;button&gt;Action 2&lt;/button&gt;
+</pre>
+<ul>
+<li>Replaces a series of whitespace characters in text nodes with a single space.
+For example, <code>&lt;span&gt;\n some text\n&lt;/span&gt;</code> becomes <code>&lt;span&gt; some text &lt;/span&gt;</code>.</li>
+<li>Does NOT alter text nodes inside HTML tags such as `
+<pre><code class="or `<textarea>`,">where whitespace characters are significant.
+
+Note that these transformations can influence DOM nodes layout, although impact
+should be minimal.
+
+You can override the default behavior to preserve whitespace characters
+in certain fragments of a template. For example, you can exclude an entire
+DOM sub-tree by using the `ngPreserveWhitespaces` attribute:
+</pre>
+<div ngPreserveWhitespaces>
+    whitespaces are preserved here
+    <span>    and here </span>
+</div>
+<pre>You can force a single space to be preserved in a text node by using `&amp;ngsp;`,
+which is replaced with a space character by Angular's template
+compiler:
+</pre>
+<p><a>Spaces</a>&amp;ngsp;<a>between</a>&amp;ngsp;<a>links.</a>
+<!-- compiled to be equivalent to:
+ <a>Spaces</a> <a>between</a> <a>links.</a>  -->
+<pre>Note that sequences of `&amp;ngsp;` are still collapsed to just one space character when
+the `preserveWhitespaces` option is set to `false`.
+</pre>
+<p><a>before</a>&amp;ngsp;&amp;ngsp;&amp;ngsp;<a>after</a>
+<!-- compiled to be equivalent to:
+ <a>before</a> <a>after</a> -->
+<pre>To preserve sequences of whitespace characters, use the
+`ngPreserveWhitespaces` attribute.
+
+@Annotation```
+</pre></li>
+</ul></div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;@angular/core</td></table>
