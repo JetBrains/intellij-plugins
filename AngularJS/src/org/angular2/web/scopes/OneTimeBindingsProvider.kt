@@ -2,7 +2,7 @@
 package org.angular2.web.scopes
 
 import com.intellij.javascript.web.js.jsType
-import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
+import com.intellij.javascript.web.webSymbols.js.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
@@ -118,7 +118,7 @@ internal class OneTimeBindingsProvider : WebSymbolsScope {
       get() = false
 
     override val attributeValue: WebSymbolHtmlAttributeValue?
-      get() = if (WebTypesTypeScriptSymbolTypeSupport.isBoolean(jsType)) {
+      get() = if (TypeScriptSymbolTypeSupport.isBoolean(jsType)) {
         WebSymbolHtmlAttributeValue.create(WebSymbolHtmlAttributeValue.Kind.PLAIN,
                                            WebSymbolHtmlAttributeValue.Type.COMPLEX, false,
                                            null,

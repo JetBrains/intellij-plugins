@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities
 
-import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
+import com.intellij.javascript.web.webSymbols.js.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
@@ -50,7 +50,7 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
   val owner: TypeScriptClass?
 
   override val attributeValue: WebSymbolHtmlAttributeValue?
-    get() = if (WebTypesTypeScriptSymbolTypeSupport.isBoolean(type)) {
+    get() = if (TypeScriptSymbolTypeSupport.isBoolean(type)) {
       WebSymbolHtmlAttributeValue.create(null, null, false, null, null)
     }
     else {

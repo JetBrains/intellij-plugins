@@ -5,7 +5,7 @@ import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.javascript.web.js.WebJSTypesUtil
-import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
+import com.intellij.javascript.web.webSymbols.js.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -72,7 +72,7 @@ class StandardPropertyAndEventsScope(private val templateFile: PsiFile) : WebSym
       get() = true
 
     override val origin: WebSymbolOrigin
-      get() = WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = WebTypesTypeScriptSymbolTypeSupport())
+      get() = WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = TypeScriptSymbolTypeSupport())
 
     override val namespace: SymbolNamespace
       get() = NAMESPACE_HTML

@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.web.scopes
 
-import com.intellij.javascript.web.webTypes.js.WebTypesTypeScriptSymbolTypeSupport
+import com.intellij.javascript.web.webSymbols.js.TypeScriptSymbolTypeSupport
 import com.intellij.model.Pointer
 import com.intellij.util.containers.Stack
 import com.intellij.webSymbols.*
@@ -38,7 +38,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
   private object AttributeWithInterpolationsSymbol : WebSymbol {
 
     override val origin: WebSymbolOrigin =
-      WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = WebTypesTypeScriptSymbolTypeSupport())
+      WebSymbolOrigin.create(Angular2Framework.ID, typeSupport = TypeScriptSymbolTypeSupport())
 
     override val namespace: SymbolNamespace
       get() =
