@@ -160,7 +160,7 @@ public class P4ConnectionParameters {
     return myIgnoreFileName;
   }
 
-  public void setIgnoreFileName(@NotNull String ignoreFileName) {
+  public void setIgnoreFileName(@Nullable String ignoreFileName) {
     myIgnoreFileName = ignoreFileName;
   }
 

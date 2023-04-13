@@ -12,42 +12,37 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
-import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParameters;
-import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
-import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
 import java.util.*;
 
 public class P4ConnectionCalculator {
   private final Project myProject;
-  private final P4ParamsCalculator myParamsCalculator;
   private static final Logger LOG = Logger.getInstance(P4ConnectionCalculator.class);
   private PerforceMultipleConnections myMultipleConnections;
 
   public P4ConnectionCalculator(Project project) {
     myProject = project;
-    myParamsCalculator = new P4ParamsCalculator(myProject);
   }
 
   public void execute() {
     final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
-    final PerforceSettings settings = PerforceSettings.getSettings(myProject);
-    final PerforcePhysicalConnectionParameters physicalParameters = settings.getPhysicalSettings(true);
+
+    final P4ConfigHelper p4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
+    p4ConfigHelper.reset();
+
+    final String p4ConfigFileName = p4ConfigHelper.getP4Config();
+    LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
                                                   ? new ArrayList<>(Arrays.asList(vcsManager.getRootsUnderVcs(vcs)))
                                                   : vcsManager.getDetailedVcsMappings(vcs);
 
-    final P4ConfigHelper p4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
-    final String p4ConfigFileName = p4ConfigHelper.getP4Config();
-    LOG.debug("Using p4config file name: " + p4ConfigFileName);
-
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
                                                                        : fillConfigsMap(detailedVcsMappings, p4ConfigFileName);
     final Map<VirtualFile,P4ConnectionParameters> connectionSettings = new HashMap<>();
-    final P4ConnectionParameters defaultParameters = new P4ConnectionParameters();
+    final P4ConnectionParameters defaultParameters = p4ConfigHelper.getDefaultParams();
 
     ApplicationManager.getApplication().runReadAction(() -> {
       // find files
@@ -72,8 +67,6 @@ public class P4ConnectionCalculator {
         LOG.debug("Using " + value + " for " + mapping);
         connectionSettings.put(mapping, value);
       }
-      // todo: default values are already defined in P4ConfigHelper. Use them instead and update inside this call
-      fillDefaultValues(p4ConfigHelper, physicalParameters, detailedVcsMappings, defaultParameters);
     });
 
     // filter what left
@@ -112,47 +105,6 @@ public class P4ConnectionCalculator {
     };
 
     filter.doFilter(detailedVcsMappings);
-  }
-
-  private void fillDefaultValues(P4ConfigHelper p4ConfigHelper, PerforcePhysicalConnectionParametersI physicalParameters,
-                                 List<VirtualFile> detailedVcsMappings, P4ConnectionParameters defaultParameters) {
-    if (p4ConfigHelper.hasP4ConfigSetting()) {
-      for (VirtualFile vcsMapping : detailedVcsMappings) {
-        final P4ConnectionParameters parameters = myParamsCalculator.runSetOnFile(physicalParameters, defaultParameters, vcsMapping.getPath());
-        takeProblemsInfoDefaultParams(parameters, defaultParameters);
-        if (defaultParameters.allFieldsDefined()) break;
-      }
-    } else {
-      //can run once
-      VirtualFile file = myProject.getBaseDir();
-      final String path;
-      if (file == null) {
-        final File[] roots = File.listRoots();
-        if (roots == null || roots.length == 0) {
-          LOG.info("File.listRoots() returned empty array");
-          return;
-        }
-        path = roots[0].getPath();
-      }
-      else {
-        path = file.getPath();
-      }
-      final P4ConnectionParameters params = myParamsCalculator.runSetOnFile(physicalParameters, defaultParameters, path);
-      takeProblemsInfoDefaultParams(params, defaultParameters);
-    }
-  }
-
-  private static void takeProblemsInfoDefaultParams(P4ConnectionParameters params, P4ConnectionParameters defaultParameters) {
-    if (params.hasProblems()) {
-      if (params.getException() != null) {
-        defaultParameters.setException(params.getException());
-      }
-      if (! params.getWarnings().isEmpty()) {
-        for (String warning : params.getWarnings()) {
-          defaultParameters.addWarning(warning);
-        }
-      }
-    }
   }
 
   private static void filterByConfigFiles(final Map<VirtualFile, File> configsMap, List<VirtualFile> detailedVcsMappings) {
