@@ -52,7 +52,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
   private static final boolean PRETTIER_FORMAT_FILES_OUTSIDE_DEPENDENCY_SCOPE_DEFAULT = true;
   private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = false;
-  private static final @NonNls String PRETTIER_FILES_PATTERN_DEFAULT = "**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,vue,astro}";
+  private static final @NonNls String PRETTIER_FILES_PATTERN_DEFAULT = "**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,json,vue,astro}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
   private static final @NotNull NodePackage EMPTY_PACKAGE = PKG_DESC.createPackage("");
