@@ -28,8 +28,8 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.idea.maven.model.MavenExplicitProfiles;
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap;
 import org.jetbrains.idea.maven.project.*;
-import org.jetbrains.idea.maven.server.MavenEmbedderExecutionRequest;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
+import org.jetbrains.idea.maven.server.MavenGoalExecutionRequest;
 import org.jetbrains.idea.maven.utils.MavenLog;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
@@ -82,8 +82,8 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           final String generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
                                             ":generate-config-" + myMavenProject.getPackaging();
           final MavenExplicitProfiles profilesIds = myMavenProject.getActivatedProfilesIds();
-          var request = new MavenEmbedderExecutionRequest(new File(myMavenProject.getPath()), profilesIds);
-          var result = embedder.execute(List.of(request), generateConfigGoal).get(0);
+          var request = new MavenGoalExecutionRequest(new File(myMavenProject.getPath()), profilesIds);
+          var result = embedder.executeGoal(List.of(request), generateConfigGoal).get(0);
           if (!result.success) {
             myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           }
