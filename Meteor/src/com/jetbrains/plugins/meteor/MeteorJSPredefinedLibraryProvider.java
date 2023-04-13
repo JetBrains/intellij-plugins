@@ -4,13 +4,15 @@ import com.intellij.lang.javascript.library.JSPredefinedLibraryProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.reference.SoftReference;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.jetbrains.plugins.meteor.tsStubs.MeteorStubPath;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.SoftReference;
 import java.util.Set;
+
+import static com.intellij.reference.SoftReference.dereference;
 
 /**
  * Provides Meteor typescript stubs library ("Definitely Typed")
@@ -39,7 +41,7 @@ public final class MeteorJSPredefinedLibraryProvider extends JSPredefinedLibrary
 
   @NotNull
   private static Set<VirtualFile> getLibraryFiles() {
-    VirtualFile file = SoftReference.dereference(stubFile);
+    VirtualFile file = dereference(stubFile);
     if (file == null) {
       file = MeteorStubPath.getLastMeteorLib();
       stubFile = new SoftReference<>(file);

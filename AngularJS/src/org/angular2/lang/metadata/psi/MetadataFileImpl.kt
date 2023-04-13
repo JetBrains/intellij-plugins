@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.lang.metadata.psi
 
 import com.intellij.lang.Language
@@ -16,11 +16,11 @@ import com.intellij.psi.impl.source.StubbedSpine
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.stubs.StubTree
 import com.intellij.psi.stubs.StubTreeLoader
-import com.intellij.reference.SoftReference
 import org.angular2.lang.metadata.MetadataJsonFileType
 import org.angular2.lang.metadata.MetadataJsonLanguage
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl
 import org.jetbrains.annotations.NonNls
+import java.lang.ref.SoftReference
 
 class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileType: MetadataJsonFileType) : PsiBinaryFileImpl(
   fileViewProvider.manager as PsiManagerImpl, fileViewProvider), PsiFileWithStubSupport, PsiFileEx {
@@ -46,7 +46,7 @@ class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileTyp
   override fun getStubTree(): StubTree {
     ApplicationManager.getApplication().assertReadAccessAllowed()
 
-    SoftReference.dereference(myStub)?.let { return it }
+    myStub?.get()?.let { return it }
 
     // build newStub out of lock to avoid deadlock
     var newStubTree = StubTreeLoader.getInstance().readOrBuild(project, virtualFile, this) as StubTree?
@@ -58,7 +58,7 @@ class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileTyp
     }
 
     synchronized(myStubLock) {
-      SoftReference.dereference(myStub)?.let { return it }
+      myStub?.get()?.let { return it }
 
       val fileStub = newStubTree.root as PsiFileStubImpl<PsiFile>
       fileStub.setPsi(this)
@@ -80,7 +80,7 @@ class MetadataFileImpl(fileViewProvider: FileViewProvider, private val myFileTyp
     ApplicationManager.getApplication().assertWriteAccessAllowed()
 
     synchronized(myStubLock) {
-      val stubTree = SoftReference.dereference(myStub)
+      val stubTree = myStub?.get()
       myStub = null
       if (stubTree != null) {
 
