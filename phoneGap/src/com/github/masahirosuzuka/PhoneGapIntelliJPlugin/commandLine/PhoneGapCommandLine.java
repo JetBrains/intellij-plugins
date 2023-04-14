@@ -379,7 +379,7 @@ public final class PhoneGapCommandLine {
   private OSProcessHandler createProcessHandler(String... commands) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(commands);
     commandLine.withWorkDirectory(myWorkDir);
-    return new KillableColoredProcessHandler(commandLine, true);
+    return new KillableColoredProcessHandler(commandLine);
   }
 
   private CapturingProcessHandler createCapturingProcessHandler(String... commands) throws ExecutionException {
