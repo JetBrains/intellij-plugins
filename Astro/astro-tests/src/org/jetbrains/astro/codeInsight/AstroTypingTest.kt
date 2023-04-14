@@ -24,6 +24,10 @@ class AstroTypingTest : AstroCodeInsightTestCase() {
 
   fun testNestedHtmlTagElementCompletion() = doTest(">")
 
+  fun testInnerHtmlTagElementCompletion() = doTest(">")
+
+  fun testHtmlEndTagElementCompletion() = doTest(">")
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/typing"
