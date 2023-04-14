@@ -38,6 +38,17 @@ class AstroCompletionTest : AstroCodeInsightTestCase() {
   fun testPropsInterface() =
     doLookupTest(AstroTestModule.ASTRO_1_9_0)
 
+  fun testTemplateLookupRoot() =
+    doLookupTest()
+
+  fun testTemplateLookupNestedHtml() =
+    doLookupTest()
+
+  // WEB-59265 only enabled completion at root level and nested in HTML but not as children of components.
+  // This needs a fix before it can be enabled again.
+  //fun testTemplateLookupNestedComponent() =
+  //  doLookupTest(additionalFiles = listOf("component.astro"))
+
   //region Test configuration and helper methods
   override fun getBasePath(): String {
     return "codeInsight/completion"
