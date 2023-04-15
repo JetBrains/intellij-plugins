@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="intellij.java.jam" />
     <orderEntry type="module" module-name="intellij.microservices" />
     <orderEntry type="module" module-name="intellij.microservices.jvm" />
+    <orderEntry type="module" module-name="intellij.java" />
   </component>
 </module>
