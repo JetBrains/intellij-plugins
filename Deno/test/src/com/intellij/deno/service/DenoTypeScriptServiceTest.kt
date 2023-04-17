@@ -3,9 +3,9 @@ package com.intellij.deno.service
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.deno.DenoSettings
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
+import com.intellij.lsp.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.impl.DocumentImpl
@@ -14,43 +14,24 @@ import com.intellij.openapi.progress.impl.CoreProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.ExpectedHighlightingData
-import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
-import org.junit.Test
-import org.junit.runner.RunWith
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
-  var before = false
-
   override fun setUp() {
     super.setUp()
-    before = DenoSettings.getService(project).isUseDeno()
     DenoSettings.getService(project).setUseDenoAndReload(true)
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 
-  override fun tearDown() {
-    try {
-      DenoSettings.getService(project).setUseDenoAndReload(before)
-    }
-    catch (e: Throwable) {
-      addSuppressedException(e)
-    }
-    finally {
-      super.tearDown()
-    }
-  }
-
-  @Test
   fun testSimpleDeno() {
+    // one error comes from JSReferenceChecker.reportUnresolvedReference, another one - from Deno LSP server
     myFixture.configureByText("foo.ts", "console.log(Deno)\n" +
-                                        "console.log(<error>Deno1</error>)")
-    checkHighlightingByOptions(false)
+                                        "console.log(<error descr=\"Deno: Cannot find name 'Deno1'. Did you mean 'Deno'?\"><error descr=\"Unresolved variable or type Deno1\">Deno1</error></error>)")
+    myFixture.checkLspHighlighting()
   }
 
-  @Test
   fun testDenoOpenCloseFile() {
     val file = myFixture.configureByText("bar.ts", "export class Hello {}\n" +
                                                    "UnknownName")
@@ -67,7 +48,6 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.checkResult(document.text)
   }
 
-  //@Test
   fun testDenoSimpleRename() {
     val foo = myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\n" +
                                                   "const _hi<caret> = new Hello()")
@@ -84,7 +64,6 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     }
   }
 
-  @Test
   fun testDenoFileRename() {
     myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\nconst hi = new Hello()")
     val bar = myFixture.configureByText("bar.ts", "export class Hello {}")
@@ -93,7 +72,6 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     checkHighlightingByOptions(false)
   }
 
-  @Test
   fun testDenoReformat() {
     TypeScriptFormatterTest.setTempSettings(project) {
       it.FORCE_SEMICOLON_STYLE = true
