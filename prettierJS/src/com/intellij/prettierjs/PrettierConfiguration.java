@@ -34,7 +34,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @ApiStatus.Internal
   public static class State {
     @OptionTag("myConfigurationMode")
-    public ConfigurationMode configurationMode = ConfigurationMode.AUTOMATIC;
+    public ConfigurationMode configurationMode = null;
     @OptionTag("myRunOnSave")
     public boolean runOnSave = PRETTIER_ON_SAVE_DEFAULT;
     @OptionTag("myRunOnReformat")
@@ -71,6 +71,12 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
+    if (state.configurationMode == null) {
+      var pkg = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
+      state.configurationMode = pkg != null && !pkg.isBlank()
+                                ? ConfigurationMode.MANUAL
+                                : ConfigurationMode.DISABLED;
+    }
   }
 
   @NotNull
