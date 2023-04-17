@@ -3,7 +3,6 @@ package org.jetbrains.astro.editor
 
 import com.intellij.lang.Commenter
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.editing.JavascriptCommenter
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
@@ -14,6 +13,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.templateLanguages.MultipleLangCommentProvider
 import org.jetbrains.astro.lang.AstroLanguage
 import org.jetbrains.astro.lang.frontmatter.AstroFrontmatterLanguage
+import org.jetbrains.astro.lang.psi.AstroContentRoot
 
 class AstroCommentProvider : MultipleLangCommentProvider {
   override fun getLineCommenter(file: PsiFile, editor: Editor, lineStartLanguage: Language, lineEndLanguage: Language): Commenter {
@@ -21,9 +21,8 @@ class AstroCommentProvider : MultipleLangCommentProvider {
     return if (
       lineStartLanguage == AstroFrontmatterLanguage.INSTANCE ||
       lineStartLanguage.baseLanguage == JavascriptLanguage.INSTANCE ||
-      lineStartLanguage.baseLanguage == JavaScriptSupportLoader.TYPESCRIPT ||
-      (lineStartLanguage.baseLanguage == JavaScriptSupportLoader.TYPESCRIPT_JSX && element?.language == JavascriptLanguage.INSTANCE) ||
-      element?.parent is JSEmbeddedContent ||
+      element?.language == JavascriptLanguage.INSTANCE ||
+      (element?.parent is JSEmbeddedContent && element.parent !is AstroContentRoot) ||
       // Used for block comments because their language suddenly changes to Astro
       element?.parent?.language == AstroFrontmatterLanguage.INSTANCE) JavascriptCommenter()
     else XmlCommenter()
