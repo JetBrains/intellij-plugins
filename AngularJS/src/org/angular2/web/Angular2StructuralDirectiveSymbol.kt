@@ -1,8 +1,9 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.web
 
 import com.intellij.model.Pointer
-import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol

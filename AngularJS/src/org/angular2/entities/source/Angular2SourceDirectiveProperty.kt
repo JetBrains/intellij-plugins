@@ -1,4 +1,4 @@
-// Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils
@@ -7,9 +7,9 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser
 import com.intellij.model.Pointer
-import com.intellij.navigation.NavigationTarget
 import com.intellij.navigation.SymbolNavigationService
 import com.intellij.openapi.project.Project
+import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import org.angular2.entities.Angular2DirectiveProperty
