@@ -7,21 +7,21 @@ export interface Person {
 }
 
 @Component({
-  selector: 'app-flow',
+  selector: 'app-test',
   imports: [CommonModule],
   standalone: true,
   template: `
-    <div *ngIf="personPromise | async as person; let person2">
-      {{ person.familyName }}
+    <div *ngIf="personPromise | async as person1; let person2">
+      {{ person1.familyName }}
       {{ person2.familyName }}
-      {{ expectPerson(person) }}
+      {{ expectPerson(person1) }}
       {{ expectPerson(person2) }}
-      {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person</error>) }}
+      {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person1</error>) }}
       {{ expectNumber(<error descr="Argument type Person is not assignable to parameter type number">person2</error>) }}
     </div>
   `,
 })
-export class FlowComponent {
+export class TestComponent {
   personPromise = Promise.resolve<Person>({
     familyName: 'Doe'
   });

@@ -74,9 +74,9 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
-  public void testQueryList() {
+  public void testNgForOfQueryList() {
     configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14);
-    myFixture.configureByFiles("query-list-test.ts");
+    myFixture.configureByFiles("ngForOfQueryList.ts");
     myFixture.checkHighlighting();
   }
 
@@ -87,26 +87,26 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   }
 
   public void testNullChecks() {
-    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
-    myFixture.configureByFile("tsconfig.json");
-    myFixture.configureByFile("tsconfig.app.json");
-    myFixture.configureByFiles("null-checks.html", "null-checks.ts");
+    configureCommonFiles();
+    myFixture.configureByFiles("NullChecks.html", "NullChecks.ts");
     myFixture.checkHighlighting();
   }
 
   public void testNullChecksInline() {
-    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
-    myFixture.configureByFile("tsconfig.json");
-    myFixture.configureByFile("tsconfig.app.json");
-    myFixture.configureByFiles("null-checks-inline.ts");
+    configureCommonFiles();
+    myFixture.configureByFiles("NullChecksInline.ts");
     myFixture.checkHighlighting();
   }
 
   public void testNgIfAsContextGuardStrictNullChecks() {
+    configureCommonFiles();
+    myFixture.configureByFiles("NgIfAsContextGuardStrictNullChecks.ts");
+    myFixture.checkHighlighting();
+  }
+
+  private void configureCommonFiles() {
     configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
     myFixture.configureByFile("tsconfig.json");
     myFixture.configureByFile("tsconfig.app.json");
-    myFixture.configureByFiles("NgIfAsContextGuardStrictNullChecks.ts");
-    myFixture.checkHighlighting();
   }
 }
