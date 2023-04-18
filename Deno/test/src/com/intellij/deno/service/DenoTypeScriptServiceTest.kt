@@ -8,12 +8,10 @@ import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
 import com.intellij.lsp.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.impl.CoreProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
@@ -33,19 +31,20 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   fun testDenoOpenCloseFile() {
-    val file = myFixture.configureByText("bar.ts", "export class Hello {}\n" +
-                                                   "UnknownName")
+    val file = myFixture.configureByText("bar.ts", "")
+    myFixture.type("export class Hello {}\n" +
+                   "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>")
     close(file)
-    myFixture.configureByText("foo.ts", "import {Hello} from './bar.ts';\n<error>UnknownName</error>")
-    checkHighlightingByOptions(false)
-    close(this.file)
-    myFixture.openFileInEditor(file.virtualFile)
 
-    val document = DocumentImpl("export class Hello {}\n<error>UnknownName</error>")
-    val data = ExpectedHighlightingData(document, false, false, false)
-    data.init()
-    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
-    myFixture.checkResult(document.text)
+    myFixture.configureByText("foo.ts", "import {" +
+                                        "<warning descr=\"Deno: `Hello` is never used\nIf this is intentional, alias it with an underscore like `Hello as _Hello`\">Hello</warning>, " +
+                                        "<error descr=\"Cannot resolve symbol 'Goodbye'\"><error descr=\"Deno: Module '\\\"./bar.ts\\\"' has no exported member 'Goodbye'.\">Goodbye</error></error>} from './bar.ts';\n" +
+                                        "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>")
+    myFixture.checkLspHighlighting()
+    close(this.file)
+
+    myFixture.openFileInEditor(file.virtualFile)
+    myFixture.checkLspHighlighting()
   }
 
   fun testDenoSimpleRename() {
