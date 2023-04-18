@@ -1,7 +1,8 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils
+import com.intellij.javascript.web.js.apiStatus
+import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -12,6 +13,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.utils.coalesceApiStatus
+import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import org.angular2.entities.source.Angular2SourceDirective.Companion.getPropertySources
@@ -32,9 +36,8 @@ class Angular2SourceDirectiveProperty(override val owner: TypeScriptClass,
   override val sourceElement: PsiElement
     get() = sources[0]
 
-  override val deprecated: Boolean
-    get() = sources.any { JSDocumentationUtils.isDeprecated(it) }
-            || owner.isDeprecated
+  override val apiStatus: WebSymbol.ApiStatus?
+    get() = coalesceApiStatus(sources) { (it as? JSElementBase)?.apiStatus }.coalesceWith(owner.apiStatus)
 
   val sources: List<PsiElement>
     get() {

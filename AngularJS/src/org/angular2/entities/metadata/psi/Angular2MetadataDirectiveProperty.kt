@@ -1,7 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils
+import com.intellij.javascript.web.js.apiStatus
+import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -10,6 +11,10 @@ import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.utils.coalesceApiStatus
+import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.codeInsight.Angular2LibrariesHacks
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
@@ -29,9 +34,9 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
   override val virtualProperty: Boolean
     get() = mySignature.value == null
 
-  override val deprecated: Boolean
-    get() = mySignature.value?.memberSource?.allSourceElements?.any { JSDocumentationUtils.isDeprecated(it) } == true
-            || JSDocumentationUtils.isDeprecated(myOwner.sourceElement)
+  override val apiStatus: WebSymbol.ApiStatus?
+    get() = coalesceApiStatus(mySignature.value?.memberSource?.allSourceElements) { (it as? JSElementBase)?.apiStatus }
+      .coalesceWith(myOwner.sourceElement.asSafely<JSElementBase>()?.apiStatus)
 
   override val sourceElement: PsiElement
     get() = mySignature.value?.memberSource?.singleElement ?: myOwner.sourceElement

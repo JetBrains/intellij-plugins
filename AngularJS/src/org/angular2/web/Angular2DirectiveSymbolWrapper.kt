@@ -13,6 +13,7 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2DirectiveSelectorSymbol
 import org.angular2.web.Angular2WebSymbolsQueryConfigurator.Companion.PROP_SYMBOL_DIRECTIVE
@@ -57,8 +58,8 @@ open class Angular2DirectiveSymbolWrapper private constructor(private val direct
   override val properties: Map<String, Any>
     get() = super.properties + Pair(PROP_SYMBOL_DIRECTIVE, directive)
 
-  override val deprecated: Boolean
-    get() = directive.deprecated || delegate.deprecated
+  override val apiStatus: WebSymbol.ApiStatus?
+    get() = directive.apiStatus.coalesceWith(delegate.apiStatus)
 
   override fun isEquivalentTo(symbol: Symbol): Boolean {
     return this == symbol || delegate.isEquivalentTo(symbol)

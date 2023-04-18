@@ -56,7 +56,7 @@ object AttributeWithInterpolationsScope : WebSymbolsScope {
 
     override val pattern: WebSymbolsPattern = WebSymbolsPatternFactory.createComplexPattern(
       ComplexPatternOptions(
-        null, false, true,
+        null, null, true,
         WebSymbol.Priority.HIGHEST, null, false, false,
         PropertiesResolver),
       false,

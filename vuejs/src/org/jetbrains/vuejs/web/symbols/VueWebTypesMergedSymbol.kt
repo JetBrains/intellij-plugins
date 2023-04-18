@@ -17,6 +17,7 @@ import com.intellij.webSymbols.documentation.WebSymbolDocumentationTarget
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.query.WebSymbolsCodeCompletionQueryParams
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
+import com.intellij.webSymbols.utils.coalesceApiStatus
 import com.intellij.webSymbols.utils.merge
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -61,11 +62,8 @@ class VueWebTypesMergedSymbol(override val name: String,
   override val icon: Icon?
     get() = symbols.firstNotNullOfOrNull { it.icon }
 
-  override val deprecated: Boolean
-    get() = symbols.any { it.deprecated }
-
-  override val experimental: Boolean
-    get() = symbols.any { it.experimental }
+  override val apiStatus: WebSymbol.ApiStatus?
+    get() = coalesceApiStatus(symbols) { it.apiStatus }
 
   override val required: Boolean?
     get() = symbols.firstNotNullOfOrNull { it.required }

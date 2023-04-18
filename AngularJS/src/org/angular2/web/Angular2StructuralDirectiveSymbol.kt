@@ -12,6 +12,7 @@ import com.intellij.webSymbols.SymbolKind
 import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
+import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
 
 open class Angular2StructuralDirectiveSymbol private constructor(private val directive: Angular2Directive,
@@ -50,8 +51,8 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
   override val properties: Map<String, Any>
     get() = super.properties + Pair(Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE, directive)
 
-  override val deprecated: Boolean
-    get() = directive.deprecated || delegate.deprecated
+  override val apiStatus: WebSymbol.ApiStatus?
+    get() = directive.apiStatus.coalesceWith(delegate.apiStatus)
 
   override fun createPointer(): Pointer<out Angular2StructuralDirectiveSymbol> =
     createPointer(::Angular2StructuralDirectiveSymbol)

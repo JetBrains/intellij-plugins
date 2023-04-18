@@ -57,7 +57,7 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
       null
     }
 
-  override val deprecated: Boolean
+  override val apiStatus: WebSymbol.ApiStatus?
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty>
 

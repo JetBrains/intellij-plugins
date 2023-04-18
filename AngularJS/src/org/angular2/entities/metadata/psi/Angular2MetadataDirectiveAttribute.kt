@@ -1,7 +1,8 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils
+import com.intellij.javascript.web.js.apiStatus
+import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
@@ -9,6 +10,9 @@ import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.NullableLazyValue.lazyNullable
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
+import com.intellij.util.asSafely
+import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
@@ -25,9 +29,8 @@ class Angular2MetadataDirectiveAttribute internal constructor(private val myOwne
   override val sourceElement: PsiElement
     get() = myParameter.value ?: myOwner.sourceElement
 
-  override val deprecated: Boolean
-    get() = JSDocumentationUtils.isDeprecated(myParameter.value)
-            || JSDocumentationUtils.isDeprecated(myOwner.sourceElement)
+  override val apiStatus: WebSymbol.ApiStatus?
+    get() = myParameter.value?.apiStatus.coalesceWith(myOwner.sourceElement.asSafely<JSElementBase>()?.apiStatus)
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

@@ -9,7 +9,7 @@ import {Component, Directive, Input, OnInit} from '@angular/core';
 export class FooComponent {
   @Input()
   /**
-   * @deprecated don't use!
+   * @deprecated
    */
   fooCmp = '';
 
@@ -93,11 +93,11 @@ export class TestComponent {
  template:`
     <app-foo <weak_warning descr="fooCmp is deprecated, consult docs for better alternative">fooCmp</weak_warning>="" [fooCmp2]=""></app-foo>
     <app-foo [<weak_warning descr="fooCmp is deprecated, consult docs for better alternative">fooCmp</weak_warning>]="" fooCmp2=""></app-foo>
-    <<warning descr="app-bar is deprecated, consult docs for better alternative">app-bar</warning> ></<warning descr="app-bar is deprecated, consult docs for better alternative">app-bar</warning>>
-    <<warning descr="app-bar is deprecated, consult docs for better alternative">app-bar</warning> [<weak_warning descr="bar is deprecated, consult docs for better alternative">bar</weak_warning>]="'12'" <weak_warning descr="barCmp is deprecated, consult docs for better alternative">barCmp</weak_warning>="111"></<warning descr="app-bar is deprecated, consult docs for better alternative">app-bar</warning>>
+    <<warning descr="app-bar is deprecated. Do not use!">app-bar</warning> ></<warning descr="app-bar is deprecated. Do not use!">app-bar</warning>>
+    <<warning descr="app-bar is deprecated. Do not use!">app-bar</warning> [<weak_warning descr="bar is deprecated. Do not use!">bar</weak_warning>]="'12'" <weak_warning descr="barCmp is deprecated. Do not use!">barCmp</weak_warning>="111"></<warning descr="app-bar is deprecated. Do not use!">app-bar</warning>>
 
-    <div <weak_warning descr="bar is deprecated, consult docs for better alternative">bar</weak_warning>="12" [<weak_warning descr="bar2 is deprecated, consult docs for better alternative">bar2</weak_warning>]="'12'" <warning descr="Attribute fff is not allowed here">fff</warning>="12"></div>
-    <div fooBar="12" [<weak_warning descr="fooBar2 is deprecated, consult docs for better alternative">fooBar2</weak_warning>]="'12'"></div>
+    <div <weak_warning descr="bar is deprecated. Do not use!">bar</weak_warning>="12" [<weak_warning descr="bar2 is deprecated. Do not use!">bar2</weak_warning>]="'12'" <warning descr="Attribute fff is not allowed here">fff</warning>="12"></div>
+    <div fooBar="12" [<weak_warning descr="fooBar2 is deprecated. Do not use!">fooBar2</weak_warning>]="'12'"></div>
  `
 })
 export class TestComponentInline {
