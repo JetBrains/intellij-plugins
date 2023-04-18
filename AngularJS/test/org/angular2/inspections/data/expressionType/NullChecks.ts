@@ -4,7 +4,7 @@ import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'null-checks',
-    templateUrl: './null-checks.html'
+    templateUrl: './NullChecks.html'
 })
 export class TestComponent {
   bar: string | undefined = (() => undefined)();
