@@ -29,6 +29,7 @@ import com.intellij.webSymbols.WebTestUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.*;
+import org.angular2.inspections.Angular2ExpressionTypesInspectionTest;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
@@ -727,6 +728,11 @@ public class Angular2AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkResultByFile("ngIfAs.after.ts");
   }
 
+  /**
+   * Tests an older version of library
+   *
+   * @see Angular2ExpressionTypesInspectionTest#testNgrxLetContextGuard()
+   */
   public void testNgrxLetAsContextGuard() {
     configureCopy(myFixture, ANGULAR_COMMON_13_3_5);
     myFixture.configureByFiles("ngrxLetAs.ts", "ngrxLet.ts", "package.json", "tsconfig.json");
