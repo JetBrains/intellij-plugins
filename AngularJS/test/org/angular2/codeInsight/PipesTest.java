@@ -127,6 +127,13 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("{foo: Person|null}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
   }
 
+  public void testMixinPipes() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    configureCopy(myFixture, ANGULAR_CORE_16_0_0_NEXT_4, ANGULAR_COMMON_16_0_0_NEXT_4);
+    myFixture.configureByFiles("mixinPipes.ts");
+    myFixture.checkHighlighting();
+  }
+
   public void testContextAware() {
     configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("context-aware.html", "context-aware.ts");
