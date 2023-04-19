@@ -41,8 +41,11 @@ object Angular2EntityUtils {
       .filter { Angular2EntitiesProvider.TRANSFORM_METHOD == it.memberName }
       .flatMap { it.memberSource.allSourceElements }
       .filterIsInstance<JSElement>()
-      .filter { it !is TypeScriptFunctionSignature }
       .toList()
+      .let { list ->
+        list.filter { it !is TypeScriptFunctionSignature }
+          .ifEmpty { list }
+      }
 
   @JvmStatic
   fun parsePropertyMapping(property: String): Pair<String, String> {
