@@ -19,7 +19,6 @@ import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationError.*
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.lang.javascript.psi.JSFunctionType
-import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.parameterInfo.CreateParameterInfoContext
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
@@ -35,8 +34,6 @@ import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -66,7 +63,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   }
 
   private fun <T> withServer(action: LspServer.() -> T): T? =
-    LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)?.firstOrNull()?.action()
+    LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java).firstOrNull()?.action()
 
   override val name = "Deno LSP"
 
@@ -164,29 +161,12 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   }
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
-    val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java)?.firstOrNull()
+    val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java).firstOrNull()
                  ?: return completedFuture(emptyList())
     val virtualFile = file.virtualFile
-    val changedUnsaved = collectChangedUnsavedFiles()
-    if (changedUnsaved.isNotEmpty()) {
-      JSLanguageService.saveChangedFilesAndRestartHighlighting(file, changedUnsaved)
-      return null
-    }
-
     return completedFuture(server.getDiagnostics(virtualFile)?.map {
       DenoAnnotationError(it, virtualFile.canonicalPath)
     })
-  }
-
-  private fun collectChangedUnsavedFiles(): Collection<VirtualFile> {
-    val manager = FileDocumentManager.getInstance()
-    val openFiles = setOf(*FileEditorManager.getInstance(project).openFiles)
-    val unsavedDocuments = manager.unsavedDocuments
-    if (unsavedDocuments.isEmpty()) return emptyList()
-
-    return unsavedDocuments
-      .mapNotNull { manager.getFile(it) }
-      .filter { vFile -> !openFiles.contains(vFile) && isAcceptable(vFile) }
   }
 
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
