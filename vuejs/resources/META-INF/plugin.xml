@@ -198,9 +198,10 @@
                        order="before JSConfigurationInjector, before WebSymbolsHtmlText, after TemporaryPlacesInjector"
                        id="VueInjector"/>
 
+    <internalFileTemplate name="Vue Composition API Component"/>
     <internalFileTemplate name="Vue Options API Component"/>
     <internalFileTemplate name="Vue Class API Component"/>
-    <internalFileTemplate name="Vue Composition API Component"/>
+
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
     <defaultTemplatePropertiesProvider implementation="org.jetbrains.vuejs.VueDefaultTemplatePropertiesProvider"/>
 
