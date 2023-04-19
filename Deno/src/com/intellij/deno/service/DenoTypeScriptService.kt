@@ -27,6 +27,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionEntry
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.response.TypeScriptQuickInfoResponse
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.api.LspServerManager
@@ -137,15 +138,17 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
-  fun quickInfo(element: PsiElement): String? {
+  fun quickInfo(element: PsiElement): TypeScriptQuickInfoResponse? {
     val server = LspServerManager.getInstance(project).getServersForProvider(DenoLspSupportProvider::class.java).firstOrNull()
                  ?: return null
     val raw = server.invokeSynchronously(HoverMethod.create(server, element)) ?: return null
     LOG.info("Quick info for $element : $raw")
-    return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
+    val response = TypeScriptQuickInfoResponse()
+    response. displayString = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
+    return response
   }
 
-  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<String?> =
+  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<TypeScriptQuickInfoResponse?> =
     completedFuture(quickInfo(element))
 
   override fun restart(recreateToolWindow: Boolean) {
