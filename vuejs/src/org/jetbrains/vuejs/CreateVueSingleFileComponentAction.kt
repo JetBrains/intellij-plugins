@@ -61,6 +61,6 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
   }
 
   override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String =
-    VueBundle.message("vue.create.single.file.component.action.name", name, newName)
+    VueBundle.message("vue.create.single.file.component.action.name", newName)
 
 }
