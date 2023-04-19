@@ -28,7 +28,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.TestApplicationManager;
-import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.io.HttpRequests;
 import org.angular2.cli.AngularCliSchematicsRegistryServiceImpl;
@@ -41,11 +40,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,12 +94,13 @@ public final class GenerateNgAddCompatibleList {
     System.out.println("Current directory: " + new File(".").getCanonicalPath());
     System.out.println("Reading existing list of packages");
 
-    JsonObject root = (JsonObject)new JsonParser().parse(
-      new InputStreamReader(new FileInputStream("contrib/AngularJS/resources/org/angularjs/cli/ng-packages.json"),
-                            StandardCharsets.UTF_8));
-    if (root.get("ng-add") != null) {
-      ((JsonObject)root.get("ng-add")).entrySet()
-        .forEach(e -> addPkg.consume(new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
+    try (Reader reader = Files.newBufferedReader(Path.of("contrib/AngularJS/resources/org/angularjs/cli/ng-packages.json"),
+                                                 StandardCharsets.UTF_8)) {
+      JsonObject root = (JsonObject)JsonParser.parseReader(reader);
+      if (root.get("ng-add") != null) {
+        ((JsonObject)root.get("ng-add")).entrySet()
+          .forEach(e -> addPkg.accept(new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
+      }
     }
     int fromFile = angularPkgs.size();
     System.out.println("Read " + fromFile + " packages.");
