@@ -1,6 +1,5 @@
 package com.intellij.deno.service
 
-import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.deno.DenoSettings
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
@@ -9,12 +8,10 @@ import com.intellij.lsp.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.progress.impl.CoreProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ui.UIUtil
-import junit.framework.TestCase
 
 class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   override fun setUp() {
@@ -48,19 +45,27 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   fun testDenoSimpleRename() {
-    val foo = myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\n" +
-                                                  "const _hi<caret> = new Hello()")
-    myFixture.configureByText("bar.ts", "export class Hell<caret>o {}")
-    checkHighlightingByOptions(false)
-    myFixture.renameElementAtCaret("Fuzzy")
-    checkHighlightingByOptions(false)
-    myFixture.openFileInEditor(foo.virtualFile)
-    val elem = myFixture.elementAtCaret
-    val target = DocumentationManager.getInstance(project).findTargetElement(editor, file, elem)!!
-    val service = DenoTypeScriptService.getInstance(project)
-    CoreProgressManager.getInstance().executeNonCancelableSection {
-      TestCase.assertEquals("const _hi: Fuzzy", service.quickInfo(target))
-    }
+    val errorWithMarkup = "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>"
+
+    val fooFile = myFixture.addFileToProject("foo.ts", "export class Hello {}\n$errorWithMarkup")
+
+    myFixture.configureByText("bar.ts", "import { Hello } from './foo.ts'\nconst _baz = new Hello<caret>()\n$errorWithMarkup")
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("import { Hello } from './foo.ts'\nconst _baz = new Hello<caret>()\nUnknownName")
+
+    myFixture.renameElementAtCaret("Hello1")
+    WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("import { Hello1 } from './foo.ts'\nconst _baz = new Hello<caret>1()\nUnknownName")
+
+    myFixture.renameElementAtCaret("Hello12")
+    WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("import { Hello12 } from './foo.ts'\nconst _baz = new Hello<caret>12()\nUnknownName")
+
+    myFixture.openFileInEditor(fooFile.virtualFile)
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("export class Hello12 {}\nUnknownName")
   }
 
   fun testDenoFileRename() {
