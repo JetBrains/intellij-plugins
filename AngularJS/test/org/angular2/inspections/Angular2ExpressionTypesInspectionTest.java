@@ -94,8 +94,15 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testNgrxLetContextGuard() {
+    configureCommonFiles();
+    myFixture.configureByFile("let.directive.ts");
+    myFixture.configureByFiles("NgrxLetContextGuard.ts");
+    myFixture.checkHighlighting();
+  }
+
   private void configureCommonFiles() {
-    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5);
+    configureCopy(myFixture, ANGULAR_CORE_15_1_5, ANGULAR_COMMON_15_1_5, RXJS_6_4_0);
     myFixture.configureByFile("tsconfig.json");
     myFixture.configureByFile("tsconfig.app.json");
   }
