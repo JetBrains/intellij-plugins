@@ -2,12 +2,11 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
-import com.intellij.javascript.web.js.jsType
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser

@@ -2,7 +2,7 @@
 package org.angular2.entities.impl
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
-import com.intellij.javascript.web.js.jsType
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.documentation.DocumentationMarkup
 import com.intellij.lang.javascript.documentation.*
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter

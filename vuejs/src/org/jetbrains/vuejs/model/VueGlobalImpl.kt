@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.web.webSymbols.nodejs.PackageJsonWebSymbolsRegistryManager
+import com.intellij.javascript.webSymbols.nodejs.PackageJsonWebSymbolsRegistryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES

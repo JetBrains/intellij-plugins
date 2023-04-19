@@ -1,7 +1,7 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.web.symbols
 
-import com.intellij.javascript.web.js.jsType
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.openapi.util.text.StringUtil

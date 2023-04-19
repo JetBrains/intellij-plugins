@@ -1,7 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
-import com.intellij.javascript.web.js.apiStatus
+import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType

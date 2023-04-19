@@ -5,7 +5,7 @@ import com.intellij.documentation.mdn.MdnSymbolDocumentation
 import com.intellij.documentation.mdn.getDomEventDocumentation
 import com.intellij.html.webSymbols.WebSymbolsHtmlQueryConfigurator
 import com.intellij.javascript.web.js.WebJSTypesUtil
-import com.intellij.javascript.web.webSymbols.js.TypeScriptSymbolTypeSupport
+import com.intellij.javascript.webSymbols.types.TypeScriptSymbolTypeSupport
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList

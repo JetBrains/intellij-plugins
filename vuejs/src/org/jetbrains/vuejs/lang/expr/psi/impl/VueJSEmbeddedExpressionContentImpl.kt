@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.lang.expr.psi.impl
 
 import com.intellij.html.webSymbols.attributes.WebSymbolAttributeDescriptor
 import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
-import com.intellij.javascript.web.js.jsType
+import com.intellij.javascript.webSymbols.jsType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.lang.javascript.psi.impl.JSStubElementImpl
 import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
 import com.intellij.lang.javascript.psi.types.*
-import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
