@@ -136,15 +136,15 @@ public class P4ConfigHelper {
       parameters.setIgnoreFileName(myDefaultParams.getIgnoreFileName());
   }
 
-  // todo: use non-static
+  private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
+
   @Nullable
   public static String getP4IgnoreFileNameFromEnv() {
     String testValue = AbstractP4Connection.getTestEnvironment().get(P4ConfigFields.P4IGNORE.getName());
     if (testValue != null) return testValue;
 
-    return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName()); }
-
-  private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
+    return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName());
+  }
 
   @Nullable
   public File findDirWithP4ConfigFile(@NotNull final VirtualFile parent, @NotNull final String p4ConfigFileName) {

@@ -1,10 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.idea.perforce.perforce
 
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vcs.VcsException
@@ -16,35 +14,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.SystemIndependent
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.*
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.attribute.BasicFileAttributes
 
 internal class P4RootChecker : VcsRootChecker() {
-  var project : Project? = null
-
   override fun getSupportedVcs(): VcsKey {
     return PerforceVcs.getKey()
   }
 
   override fun isRoot(file: VirtualFile): Boolean {
-    if (project == null) {
-      project = ProjectUtil.getActiveProject() ?: ProjectUtil.getOpenProjects().firstOrNull()
-      Disposer.register(project!!) { project = null }
-    }
-
-    val configHelper = P4ConfigHelper.getConfigHelper(project)
-    val p4ConfigFileName = configHelper.p4Config ?: return false
-    val path = file.toNioPath()
-    val p4Config = path.resolve(p4ConfigFileName)
-
-    return try {
-      val attributes = Files.readAttributes(p4Config, BasicFileAttributes::class.java)
-      attributes.isRegularFile
-    }
-    catch (ignore: IOException) {
-      false
-    }
+    return false
   }
 
   override fun validateRoot(file: VirtualFile): Boolean {

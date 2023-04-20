@@ -93,7 +93,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     }
     return result;
   }
-  // call from initializeP4SetVariables, from P4ConnectionCalculator.filldefaultvalues, from PerforceClientImpl.getFieldValue <- (PerforceChangeProvider), PerforceUnversionedTracker.dorescan
+
   protected void runP4CommandImpl(PerforcePhysicalConnectionParametersI parameters,
                                   String[] connArgs,
                                   String[] p4args,
