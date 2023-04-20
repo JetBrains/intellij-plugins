@@ -1,12 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.TypeScriptTestUtil;
-import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection;
-import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -21,12 +16,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(AngularUndefinedBindingInspection.class,
-                                HtmlUnknownAttributeInspection.class,
-                                JSValidateTypesInspection.class,
-                                TypeScriptValidateTypesInspection.class,
-                                TypeScriptValidateJSTypesInspection.class,
-                                TypeScriptUnresolvedReferenceInspection.class);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
   }
 
   public void testSimpleTypes() {
@@ -56,7 +46,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
 
   public void testNgForOfAnyType() {
     TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
-    configureLink(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14);
+    configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14);
     myFixture.configureByFiles("ngForOfAnyType.ts");
     myFixture.checkHighlighting();
   }
@@ -69,7 +59,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   }
 
   public void testSlicePipe() {
-    configureLink(myFixture, ANGULAR_COMMON_8_2_14);
+    configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14);
     myFixture.configureByFiles("slice_pipe_test.ts");
     myFixture.checkHighlighting();
   }
