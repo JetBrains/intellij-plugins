@@ -1,7 +1,5 @@
 package org.jetbrains.idea.perforce.util.tracer;
 
-import com.intellij.openapi.util.Timed;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.sql.Time;

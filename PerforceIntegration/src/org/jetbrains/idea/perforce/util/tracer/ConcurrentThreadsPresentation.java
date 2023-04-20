@@ -1,7 +1,5 @@
 package org.jetbrains.idea.perforce.util.tracer;
 
-import com.intellij.openapi.util.Timed;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
