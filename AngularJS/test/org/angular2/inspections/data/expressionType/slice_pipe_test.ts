@@ -5,6 +5,7 @@ interface Foo {
   foo: string
 }
 
+// noinspection JSUnusedLocalSymbols
 interface Bar {
   bar: string
 }

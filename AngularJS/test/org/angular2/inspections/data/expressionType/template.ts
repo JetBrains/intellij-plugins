@@ -63,7 +63,7 @@ export class MyCustomComponent {
 }
 
 @Directive({
-    selector: "[dir]",
+    selector: "[appDir]",
     exportAs: "dir"
 })
 export class MyDirective {
