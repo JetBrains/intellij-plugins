@@ -10,15 +10,16 @@ import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection
+import com.intellij.lang.javascript.modules.TypeScriptCheckImportInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedReferenceInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 
-class Angular2TemplateInspectionsProvider : InspectionToolProvider {
+class Angular2TemplateInspectionsProvider(private val strict: Boolean = false) : InspectionToolProvider {
   override fun getInspectionClasses(): Array<Class<out LocalInspectionTool>> {
-    return arrayOf(
+    val inspections = arrayOf(
       // Angular
       AngularIncorrectTemplateDefinitionInspection::class.java,
       AngularInsecureBindingToEventInspection::class.java,
@@ -52,6 +53,12 @@ class Angular2TemplateInspectionsProvider : InspectionToolProvider {
       RequiredAttributesInspection::class.java,
       // XML
       CheckEmptyTagInspection::class.java
+    )
+
+    if (!strict) return inspections
+
+    return inspections + arrayOf(
+      TypeScriptCheckImportInspection::class.java
     )
   }
 }

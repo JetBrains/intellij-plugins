@@ -16,7 +16,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider(true));
   }
 
   public void testSimpleTypes() {
