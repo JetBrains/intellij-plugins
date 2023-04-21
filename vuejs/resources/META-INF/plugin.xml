@@ -81,6 +81,8 @@
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <useScopeEnlarger implementation="org.jetbrains.vuejs.findUsages.VueUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.vuejs.codeInsight.refs.VueImplicitUsageProvider"/>
+    <lsp.serverSupportProvider implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarSupportProvider"/>
+
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
     <copyPastePostProcessor implementation="org.jetbrains.vuejs.codeInsight.imports.VueTemplateExpressionsCopyPasteProcessor"/>
@@ -114,6 +116,15 @@
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
                                id="vue" order="before html"/>
 
+    <projectConfigurable parentId="Settings.JavaScript"
+                         instance="org.jetbrains.vuejs.options.VueConfigurable"
+                         id="settings.vue"
+                         bundle="messages.VueBundle"
+                         key="vue.configurable.title"
+                         nonDefaultProject="true"
+    />
+
+    <projectService serviceImplementation="org.jetbrains.vuejs.options.VueSettings" />
 
     <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
 
@@ -349,6 +360,10 @@
   </actions>
 
   <extensions defaultExtensionNs="JavaScript">
+    <TypeScriptAnnotatorCheckerProvider
+      order="first"
+      implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptAnnotationProvider"/>
+
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
