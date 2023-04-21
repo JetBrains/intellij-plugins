@@ -104,20 +104,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return !isVueServiceAvailableByContext(context)
   }
 
-  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean {
-    if (context.fileType is VueFileType) return isServiceVersionAcceptable()
-
-    //other files
-    return isVueContext(context, myProject) && isServiceVersionAcceptable()
-  }
-
-  private fun isServiceVersionAcceptable(): Boolean {
-    val path = TypeScriptServiceDirectoryWatcher.getService(myProject).calcServiceDirectoryAndRefresh()
-    val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
-    if (packageJson == null) return true
-    val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
-    return version.major < 5;
-  }
+  private fun isVueServiceAvailableByContext(context: VirtualFile): Boolean = isVueTypeScriptServiceEnabled(myProject, context)
 
   override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
