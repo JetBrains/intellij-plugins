@@ -22,6 +22,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
   public Class<? extends LocalInspectionTool> @NotNull [] getInspectionClasses() {
     //noinspection unchecked
     return new Class[]{
+      // Angular
       AngularIncorrectTemplateDefinitionInspection.class,
       AngularInsecureBindingToEventInspection.class,
       AngularInvalidAnimationTriggerAssignmentInspection.class,
@@ -34,17 +35,17 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularUndefinedTagInspection.class,
       AngularAmbiguousComponentTagInspection.class,
       AngularNgOptimizedImageInspection.class,
-
+      // TS
       TypeScriptUnresolvedReferenceInspection.class,
       TypeScriptValidateTypesInspection.class,
       TypeScriptValidateJSTypesInspection.class,
-
+      // JS
       ThisExpressionReferencesGlobalObjectJSInspection.class,
       JSUnusedGlobalSymbolsInspection.class,
       JSUnusedLocalSymbolsInspection.class,
       JSUnresolvedReferenceInspection.class,
       JSValidateTypesInspection.class,
-
+      // HTML
       HtmlUnknownAttributeInspection.class,
       HtmlUnknownTagInspection.class,
       HtmlUnknownBooleanAttributeInspection.class,
@@ -52,7 +53,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       HtmlDeprecatedAttributeInspection.class,
       HtmlWrongAttributeValueInspection.class,
       RequiredAttributesInspection.class,
-
+      // XML
       CheckEmptyTagInspection.class
     };
   }
