@@ -16,7 +16,8 @@ enum class PrismaPreviewFeature {
   ExtendedWhereUnique,
   ClientExtensions,
   MultiSchema,
-  Views;
+  Views,
+  JsonProtocol;
 
   val presentation: String = StringUtil.decapitalize(name)
 }
