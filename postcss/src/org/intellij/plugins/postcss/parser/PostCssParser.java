@@ -127,13 +127,13 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   protected boolean parseSingleDeclarationInBlock(boolean withPageMarginRules, boolean inlineCss,
-                                                  boolean requirePropertyValue, @NotNull IElementType elementType) {
+                                                  boolean requirePropertyValue, @NotNull IElementType elementType, boolean parseNested) {
     if (withPageMarginRules && getTokenType() == CssElementTypes.CSS_ATKEYWORD) {
       // to parse @page with error elements
-      return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType);
+      return super.parseSingleDeclarationInBlock(true, inlineCss, requirePropertyValue, elementType, false);
     }
     if (elementType == CssElementTypes.CSS_MEDIA_FEATURE) {
-      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+      return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType, false);
     }
     myRulesetSeen = false;
     // Nesting
@@ -156,7 +156,7 @@ public class PostCssParser extends CssParser2 {
       myRulesetSeen = true;
       return true;
     }
-    return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType);
+    return super.parseSingleDeclarationInBlock(withPageMarginRules, inlineCss, requirePropertyValue, elementType, false);
   }
 
   private boolean parseCustomMediaAtRule() {
@@ -234,7 +234,8 @@ public class PostCssParser extends CssParser2 {
     return super.isRulesetStart() || getTokenType() == PostCssTokenTypes.HASH_SIGN;
   }
 
-  private boolean tryToParseRuleset() {
+  @Override
+  protected boolean tryToParseRuleset() {
     if (!isRulesetStart()) {
       return false;
     }
