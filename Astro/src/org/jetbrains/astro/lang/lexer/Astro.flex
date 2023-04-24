@@ -709,7 +709,7 @@ REGEXP_LITERAL="/"([^\*\\/\r\n\[]|{ESCAPE_SEQUENCE}|{GROUP})([^\\/\r\n\[]|{ESCAP
 }
 
 <START_TAG_NAME, END_TAG_NAME> {
-  [^ \n\r\t\f/>]+ {
+  [^ \n\r\t\f/><]+ {
           elementNameStack.push(yytext().toString());
           yybegin(BEFORE_TAG_ATTRIBUTES);
           return XmlTokenType.XML_NAME;
