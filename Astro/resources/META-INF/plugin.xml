@@ -46,7 +46,6 @@
     <colorSettingsPage implementation="org.jetbrains.astro.lang.highlighting.AstroColorsAndFontsPage"/>
     <braceMatcher filetype="Astro" implementationClass="org.jetbrains.astro.lang.AstroBraceMatcher"/>
     <quoteHandler fileType="Astro" className="com.intellij.javascript.JSQuoteHandler"/>
-    <typedHandler implementation="org.jetbrains.astro.editor.AstroTagEndTypedHandler" />
     <lang.commenter language="Astro" implementationClass="com.intellij.lang.xml.XmlCommenter" />
     <multiLangCommenter implementation="org.jetbrains.astro.editor.AstroCommentProvider"/>
 
@@ -71,6 +70,8 @@
     <webSymbols.queryResultsCustomizerFactory implementation="org.jetbrains.astro.webSymbols.AstroWebSymbolsQueryResultsCustomizer$Provider"/>
 
     <html.embeddedContentSupport implementation="org.jetbrains.astro.lang.parser.AstroEmbeddedContentSupport" />
+
+    <lang.fileViewProviderFactory language="Astro" implementationClass="org.jetbrains.astro.lang.AstroFileViewProviderFactory" />
 
     <localInspection language="Astro" groupKey="astro.inspection.group.name" shortName="AstroMissingComponentImportInspection"
                      enabledByDefault="true" level="ERROR"
