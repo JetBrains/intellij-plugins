@@ -178,10 +178,12 @@
     <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
     <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                                  hostLanguage="Angular2Html"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgContentSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <psi.symbolReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
                                  hostLanguage="TypeScript"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <webSymbols.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationProvider"/>

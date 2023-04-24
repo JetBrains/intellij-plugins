@@ -264,7 +264,7 @@
     <psi.symbolReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
                                  hostLanguage="HtmlCompatible"
                                  implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"
-                                 anyReferenceClass="true"
+                                 referenceClass="com.intellij.webSymbols.references.WebSymbolReference"
                                  targetClass="com.intellij.webSymbols.WebSymbol"/>
     <rename.symbolRenameTargetFactory implementation="org.jetbrains.vuejs.web.VueSymbolRenameTargetFactory"/>
     <webSymbols.declarationProvider implementation="org.jetbrains.vuejs.web.VueSymbolDeclarationProvider"/>
