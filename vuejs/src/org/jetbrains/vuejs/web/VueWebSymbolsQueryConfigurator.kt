@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
@@ -92,9 +93,9 @@ class VueWebSymbolsQueryConfigurator : WebSymbolsQueryConfigurator {
       super.getNameConversionRulesProviders(project, element, context)
 
   private fun getScopeForJSElement(element: JSElement, allowResolve: Boolean): List<WebSymbolsScope> {
-    if (element is JSProperty
+    if (element is JSObjectLiteralExpression
         && allowResolve
-        && element.context?.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
+        && element.context?.asSafely<JSProperty>()?.name == WATCH_PROP) {
       val enclosingComponent = VueModelManager.findEnclosingComponent(element) as? VueSourceComponent
                                ?: return emptyList()
       return listOf(VueWatchSymbolsScope(enclosingComponent))
