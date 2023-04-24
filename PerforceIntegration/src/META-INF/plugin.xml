@@ -107,5 +107,8 @@
 
     <registryKey key="p4.new.project.mappings.handling" defaultValue="true" restartRequired="true"
                  description="Use new approach to automatic P4 root detection for &lt;Project&gt; mapping"/>
+
+    <registryKey key="p4.use.p4.sync.for.incoming.files" defaultValue="false"
+                 description="Use p4 sync to get a list of incoming files during the refresh"/>
   </extensions>
 </idea-plugin>
