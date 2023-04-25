@@ -27,7 +27,7 @@ fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
 
 fun getTypeScriptServiceDirectory(project: Project): String {
   val watcher = TypeScriptServiceDirectoryWatcher.getService(project)
-  return watcher.cachedCustomServiceDirectory ?: watcher.calcServiceDirectoryAndRefresh()
+  return watcher.calcServiceDirectoryAndRefresh()
 }
 
 fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boolean {
@@ -35,6 +35,7 @@ fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boole
 
   return when (getVueSettings(project).serviceType) {
     VueServiceSettings.AUTO -> isTypeScriptServiceBefore5Context(project)
+    VueServiceSettings.TS_SERVICE -> isTypeScriptServiceBefore5Context(project)
     else -> false
   }
 }
