@@ -13,6 +13,7 @@ import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
+import com.intellij.lsp.api.LspCompletionSupport
 import com.intellij.lsp.api.LspServerDescriptor
 import com.intellij.lsp.api.LspServerManager
 import com.intellij.lsp.api.LspServerSupportProvider
@@ -62,6 +63,11 @@ class VolarLspServerDescriptor(project: Project, vararg roots: VirtualFile) : Ls
   override fun isSupportedFile(file: VirtualFile): Boolean {
     return isVolarEnabled(project, file)
   }
+
+  override val useGenericNavigation: Boolean
+    get() = false
+
+  override val lspCompletionSupport = null
 
   override fun createCommandLine(): GeneralCommandLine {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
