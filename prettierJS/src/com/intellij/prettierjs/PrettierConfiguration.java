@@ -46,7 +46,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @NonNls private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
 
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
-  private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = true;
+  private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = false;
   @NonNls private static final String PRETTIER_FILES_PATTERN_DEFAULT = "{**/*,*}.{js,ts,jsx,tsx,vue,astro}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
@@ -77,6 +77,11 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
                                 ? ConfigurationMode.MANUAL
                                 : ConfigurationMode.DISABLED;
     }
+  }
+
+  @Override
+  public void noStateLoaded() {
+    loadState(myState);
   }
 
   @NotNull
