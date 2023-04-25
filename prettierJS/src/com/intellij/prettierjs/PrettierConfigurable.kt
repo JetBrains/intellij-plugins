@@ -56,19 +56,20 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
     val prettierState = prettierConfiguration.state
+    val defaultMode = prettierConfiguration.configurationMode
 
     return panel {
       buttonsGroup {
         row {
           disabledConfiguration =
             radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.disabled", displayName))
-              .bindSelected(ConfigurationModeProperty(prettierState, ConfigurationMode.DISABLED))
+              .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.DISABLED))
               .component
         }
         row {
           automaticConfiguration =
             radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.configure.automatically", displayName))
-              .bindSelected(ConfigurationModeProperty(prettierState, ConfigurationMode.AUTOMATIC))
+              .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.AUTOMATIC))
               .component
 
           val detectAutomaticallyHelpText = JavaScriptBundle.message(
@@ -85,7 +86,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         row {
           manualConfiguration =
             radioButton(JavaScriptBundle.message("settings.javascript.linters.autodetect.configure.manually", displayName))
-              .bindSelected(ConfigurationModeProperty(prettierState, ConfigurationMode.MANUAL))
+              .bindSelected(ConfigurationModeProperty(prettierState, defaultMode, ConfigurationMode.MANUAL))
               .component
         }
       }
@@ -176,9 +177,12 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   }
 
   private class ConfigurationModeProperty(private val prettierConfiguration: PrettierConfiguration.State,
+                                          private val defaultMode: ConfigurationMode,
                                           private val mode: ConfigurationMode) : MutableProperty<Boolean> {
     override fun get(): Boolean =
-      prettierConfiguration.configurationMode == mode
+      prettierConfiguration.configurationMode.let {
+        it == mode || (it == null && defaultMode == mode)
+      }
 
     override fun set(value: Boolean) {
       if (value)
