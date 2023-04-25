@@ -9,10 +9,14 @@ var intellijUtil = require('./intellijUtil')
   , IntellijCoverageReporter = require('./intellijCoverageReporter');
 
 function setBasePath(config) {
-  var path = require('path');
-  var basePath = config.basePath || '.';
+  const path = require('path');
+  const basePath = config.basePath || '.';
+  // resolve `basePath` as karma does : https://github.com/karma-runner/karma/blob/63d86befd3431fe8e1500e22f4f115a3762d000a/lib/config.js#L120-L125
   if (originalConfigPath) {
     config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
+  }
+  else {
+    config.basePath = path.resolve(basePath);
   }
 }
 
