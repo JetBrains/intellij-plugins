@@ -34,6 +34,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @ApiStatus.Internal
   public static class State {
     @OptionTag("myConfigurationMode")
+    @Nullable
     public ConfigurationMode configurationMode = null;
     @OptionTag("myRunOnSave")
     public boolean runOnSave = PRETTIER_ON_SAVE_DEFAULT;
@@ -71,17 +72,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
-    if (state.configurationMode == null) {
-      var pkg = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
-      state.configurationMode = pkg != null && !pkg.isBlank()
-                                ? ConfigurationMode.MANUAL
-                                : ConfigurationMode.DISABLED;
-    }
-  }
-
-  @Override
-  public void noStateLoaded() {
-    loadState(myState);
   }
 
   @NotNull
@@ -103,7 +93,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     if (isDisabled()) {
       return PKG_DESC.createPackage("");
     }
-    if (myState.configurationMode == ConfigurationMode.MANUAL) {
+    if (getConfigurationMode() == ConfigurationMode.MANUAL) {
       String value = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
       if (value != null && !value.isBlank()) {
         return PKG_DESC.createPackage(value);
@@ -145,11 +135,22 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return myState.filesPattern;
   }
 
+  public ConfigurationMode getConfigurationMode() {
+    ConfigurationMode mode = myState.configurationMode;
+    if (mode == null) {
+      var pkg = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY);
+      return pkg != null && !pkg.isBlank()
+             ? ConfigurationMode.MANUAL
+             : ConfigurationMode.DISABLED;
+    }
+    return mode;
+  }
+
   private boolean isDisabled() {
-    return myState.configurationMode == ConfigurationMode.DISABLED;
+    return getConfigurationMode() == ConfigurationMode.DISABLED;
   }
 
   private boolean isAutomatic() {
-    return myState.configurationMode == ConfigurationMode.AUTOMATIC;
+    return getConfigurationMode() == ConfigurationMode.AUTOMATIC;
   }
 }
