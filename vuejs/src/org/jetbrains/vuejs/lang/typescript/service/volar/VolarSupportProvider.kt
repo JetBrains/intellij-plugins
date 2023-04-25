@@ -13,7 +13,6 @@ import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
-import com.intellij.lsp.api.LspCompletionSupport
 import com.intellij.lsp.api.LspServerDescriptor
 import com.intellij.lsp.api.LspServerManager
 import com.intellij.lsp.api.LspServerSupportProvider
@@ -33,7 +32,6 @@ import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.typescript.service.getTypeScriptServiceDirectory
 import org.jetbrains.vuejs.lang.typescript.service.isVolarEnabled
-import org.jetbrains.vuejs.lang.typescript.service.isVolarFileTypeAcceptable
 import org.jetbrains.vuejs.options.VueServiceSettings
 import org.jetbrains.vuejs.options.getVueSettings
 import java.io.File
