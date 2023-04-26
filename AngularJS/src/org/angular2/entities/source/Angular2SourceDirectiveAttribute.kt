@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
@@ -24,7 +24,7 @@ class Angular2SourceDirectiveAttribute internal constructor(private val myParame
   override val navigableElement: PsiElement
     get() = myParameter.navigationElement
 
-  override val apiStatus: WebSymbol.ApiStatus?
+  override val apiStatus: WebSymbolApiStatus
     get() = myParameter.apiStatus
 
   override fun toString(): String {

@@ -62,7 +62,7 @@ class VueWebTypesMergedSymbol(override val name: String,
   override val icon: Icon?
     get() = symbols.firstNotNullOfOrNull { it.icon }
 
-  override val apiStatus: WebSymbol.ApiStatus?
+  override val apiStatus: WebSymbolApiStatus
     get() = coalesceApiStatus(symbols) { it.apiStatus }
 
   override val required: Boolean?

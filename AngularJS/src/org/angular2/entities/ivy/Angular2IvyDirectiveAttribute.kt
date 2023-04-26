@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
 import org.angular2.entities.Angular2DirectiveAttribute
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
@@ -22,8 +22,8 @@ class Angular2IvyDirectiveAttribute internal constructor(override val name: Stri
   override val sourceElement: PsiElement
     get() = mySource
 
-  override val apiStatus: WebSymbol.ApiStatus?
-    get() = (mySource as? JSElementBase)?.apiStatus
+  override val apiStatus: WebSymbolApiStatus
+    get() = (mySource as? JSElementBase)?.apiStatus ?: WebSymbolApiStatus.Stable
 
   override fun toString(): String {
     return Angular2EntityUtils.toString(this)

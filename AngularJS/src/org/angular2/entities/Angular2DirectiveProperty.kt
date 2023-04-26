@@ -10,6 +10,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import org.angular2.entities.Angular2EntityUtils.jsTypeFromAcceptInputType
 import org.angular2.entities.impl.Angular2ElementDocumentationTarget
@@ -57,7 +58,7 @@ interface Angular2DirectiveProperty : Angular2PsiSourcedSymbol, Angular2Element 
       null
     }
 
-  override val apiStatus: WebSymbol.ApiStatus?
+  override val apiStatus: WebSymbolApiStatus
 
   override fun createPointer(): Pointer<out Angular2DirectiveProperty>
 

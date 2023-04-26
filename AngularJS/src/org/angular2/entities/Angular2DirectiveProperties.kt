@@ -8,6 +8,7 @@ import com.intellij.platform.backend.documentation.DocumentationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.impl.Angular2ElementDocumentationTarget
 import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
@@ -64,7 +65,7 @@ class Angular2DirectiveProperties(inputs: Collection<Angular2DirectiveProperty>,
       get() = KIND_NG_DIRECTIVE_IN_OUTS
 
 
-    override val apiStatus: WebSymbol.ApiStatus?
+    override val apiStatus: WebSymbolApiStatus
       get() = delegate.apiStatus.coalesceWith(myOutput.apiStatus)
 
     override fun createPointer(): Pointer<out Angular2PsiSourcedSymbolDelegate<Angular2DirectiveProperty>> {

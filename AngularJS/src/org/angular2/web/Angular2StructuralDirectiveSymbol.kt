@@ -7,10 +7,7 @@ import com.intellij.platform.backend.navigation.NavigationTarget
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.api.RenameTarget
 import com.intellij.refactoring.rename.symbol.RenameableSymbol
-import com.intellij.webSymbols.PsiSourcedWebSymbol
-import com.intellij.webSymbols.SymbolKind
-import com.intellij.webSymbols.SymbolNamespace
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.*
 import com.intellij.webSymbols.html.WebSymbolHtmlAttributeValue
 import com.intellij.webSymbols.utils.coalesceWith
 import org.angular2.entities.Angular2Directive
@@ -51,7 +48,7 @@ open class Angular2StructuralDirectiveSymbol private constructor(private val dir
   override val properties: Map<String, Any>
     get() = super.properties + Pair(Angular2WebSymbolsQueryConfigurator.PROP_SYMBOL_DIRECTIVE, directive)
 
-  override val apiStatus: WebSymbol.ApiStatus?
+  override val apiStatus: WebSymbolApiStatus
     get() = directive.apiStatus.coalesceWith(delegate.apiStatus)
 
   override fun createPointer(): Pointer<out Angular2StructuralDirectiveSymbol> =

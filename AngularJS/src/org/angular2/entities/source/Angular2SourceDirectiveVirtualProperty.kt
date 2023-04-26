@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.model.Pointer
 import com.intellij.refactoring.suggested.createSmartPointer
-import com.intellij.webSymbols.WebSymbol
+import com.intellij.webSymbols.WebSymbolApiStatus
 import org.angular2.entities.Angular2DirectiveProperty
 import org.angular2.entities.Angular2EntityUtils
 import java.util.*
@@ -26,7 +26,7 @@ class Angular2SourceDirectiveVirtualProperty(override val owner: TypeScriptClass
   override val sourceElement: JSElement
     get() = owner
 
-  override val apiStatus: WebSymbol.ApiStatus?
+  override val apiStatus: WebSymbolApiStatus
     get() = owner.apiStatus
 
   override fun toString(): String {
