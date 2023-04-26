@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 public class KarmaCoverageRunner extends CoverageRunner {
@@ -21,6 +22,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
   private static final Logger LOG = Logger.getInstance(KarmaCoverageRunner.class);
   private KarmaServer myKarmaServer;
   private NodeTargetRun myTargetRun;
+  private Path myLocalProjectRoot;
 
   @NotNull
   public static KarmaCoverageRunner getInstance() {
@@ -29,11 +31,10 @@ public class KarmaCoverageRunner extends CoverageRunner {
 
   @Override
   public ProjectData loadCoverageData(@NotNull File sessionDataFile, @Nullable CoverageSuite baseCoverageSuite) {
-    KarmaConfig karmaConfig = myKarmaServer != null ? myKarmaServer.getKarmaConfig() : null;
-    File localBasePathDir = karmaConfig != null ? toLocal(karmaConfig.getBasePath()) : null;
-    if (localBasePathDir != null && localBasePathDir.isAbsolute() && localBasePathDir.isDirectory()) {
+    Path localProjectRoot = myLocalProjectRoot;
+    if (localProjectRoot != null) {
       try {
-        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localBasePathDir,
+        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localProjectRoot.toFile(),
                                                          myKarmaServer.getServerSettings().getNodeInterpreter(), myTargetRun);
       }
       catch (Exception e) {
@@ -59,6 +60,10 @@ public class KarmaCoverageRunner extends CoverageRunner {
 
   public void setTargetRun(@NotNull NodeTargetRun targetRun) {
     myTargetRun = targetRun;
+  }
+
+  public void setProjectRoot(@NotNull Path localProjectRoot) {
+    myLocalProjectRoot = localProjectRoot;
   }
 
   @Override

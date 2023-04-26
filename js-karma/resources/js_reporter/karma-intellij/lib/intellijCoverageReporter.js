@@ -114,7 +114,13 @@ function canCoverageBeDisabledSafely(coverageReporter) {
 }
 
 function sendCoverageReportFile(filePath) {
-  intellijUtil.sendIntellijEvent('coverageFinished', filePath || '');
+  intellijUtil.sendIntellijEvent('coverageFinished', {
+    lcovFilePath: filePath || '',
+
+    // report `projectRoot` as it's used to calculate relative paths
+    // https://github.com/istanbuljs/istanbuljs/blob/cdc28f3a1e80e786eaab3b7d3b8b9b558fc2d3c8/packages/istanbul-reports/lib/lcovonly/index.js#L13
+    projectRoot: process.cwd()
+  });
 }
 
 function IntellijCoverageReporter(config) {
