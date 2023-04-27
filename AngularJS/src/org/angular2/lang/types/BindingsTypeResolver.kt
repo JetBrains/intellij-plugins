@@ -39,7 +39,7 @@ import kotlin.collections.HashSet
 
 internal class BindingsTypeResolver private constructor(element: PsiElement,
                                                         provider: Angular2ApplicableDirectivesProvider,
-                                                        inputExpressionsProvider: (PsiElement) -> Sequence<Pair<String, JSExpression>>) {
+                                                        inputExpressionsProvider: () -> Sequence<Pair<String, JSExpression>>) {
   private val myElement: PsiElement
   private val myMatched: List<Angular2Directive>
   private val myScope: Angular2DeclarationsScope
@@ -163,23 +163,17 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
         CachedValueProvider.Result.create(create(bindings), PsiModificationTracker.MODIFICATION_COUNT)
       }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : PsiElement> create(element: T,
-                                        provider: Angular2ApplicableDirectivesProvider,
-                                        inputExpressionsProvider: (T) -> Sequence<Pair<String, JSExpression>>) =
-      BindingsTypeResolver(element, provider, inputExpressionsProvider as (PsiElement) -> Sequence<Pair<String, JSExpression>>)
-
     private fun create(bindings: Angular2TemplateBindings) =
-      create(bindings, Angular2ApplicableDirectivesProvider(bindings)) { b: Angular2TemplateBindings ->
-        b.bindings
+      BindingsTypeResolver(bindings, Angular2ApplicableDirectivesProvider(bindings)) {
+        bindings.bindings
           .asSequence()
           .filter { binding: Angular2TemplateBinding -> !binding.keyIsVar() }
           .mapNotNull { Pair(it.key, it.expression ?: return@mapNotNull null) }
       }
 
     private fun create(tag: XmlTag) =
-      create(tag, Angular2ApplicableDirectivesProvider(tag)) { t: XmlTag ->
-        t.attributes
+      BindingsTypeResolver(tag, Angular2ApplicableDirectivesProvider(tag)) {
+        tag.attributes
           .asSequence()
           .mapNotNull { attr ->
             val name = Angular2AttributeNameParser.parse(attr.name, attr.parent)
@@ -190,10 +184,10 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
           }
       }
 
-    private fun <T : PsiElement> analyze(directives: List<Angular2Directive>,
-                                         element: T,
-                                         inputExpressionsProvider: (T) -> Sequence<Pair<String, JSExpression>>): Pair<JSType?, JSTypeSubstitutor?> {
-      val inputsMap = inputExpressionsProvider(element)
+    private fun analyze(directives: List<Angular2Directive>,
+                        element: PsiElement,
+                        inputExpressionsProvider: () -> Sequence<Pair<String, JSExpression>>): Pair<JSType?, JSTypeSubstitutor?> {
+      val inputsMap = inputExpressionsProvider()
         .distinctBy { it.first }
         .toMap()
       val genericArguments = MultiMap<JSTypeGenericId, JSType?>()
