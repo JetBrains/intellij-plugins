@@ -1,27 +1,23 @@
 package org.jetbrains.idea.perforce.actions
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.ui.ToolbarSettings
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.util.NlsSafe
-import com.intellij.openapi.util.text.HtmlBuilder
-import com.intellij.openapi.util.text.HtmlChunk
-import com.intellij.ui.ColorUtil
-import com.intellij.util.ui.UIUtil
-import org.jetbrains.annotations.Nls
-import org.jetbrains.idea.perforce.PerforceBundle
+import com.intellij.openapi.util.Key
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.perforce.PerforceSettings
-import org.jetbrains.idea.perforce.perforce.connections.P4Connection
 import java.awt.event.ActionEvent
-import javax.swing.Icon
+import javax.swing.JComponent
 
 class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
-  override fun getActionUpdateThread(): ActionUpdateThread {
-    return ActionUpdateThread.BGT
+  companion object {
+    private val multipleWorkspacesKey = Key.create<Boolean>("P4_MULTIPLE_WORKSPACES")
   }
+
+  override fun shouldShowDisabledActions(): Boolean = true
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     val project = e.project
@@ -33,59 +29,27 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     }
 
     val perforceSettings = PerforceSettings.getSettings(e.project)
-    val file = e.getData(PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR)?.file ?: e.getData(PlatformCoreDataKeys.VIRTUAL_FILE) ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY)
+    val connection = PerforceToolbarWidgetHelper.getConnection(e, perforceSettings)
+    val isNoConnections = perforceSettings.allConnections.isEmpty()
+    val workspace = connection?.connectionKey?.client
 
-    val currentFileConnection = if (file != null) {
-      perforceSettings.getConnectionForFile(file)
-    } else {
-      null
+    with (presentation) {
+      isEnabledAndVisible = true
+      icon = PerforceToolbarWidgetHelper.getIcon(perforceSettings, isNoConnections, false)
+      description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections)
+
+      val text = PerforceToolbarWidgetHelper.getText(workspace, isNoConnections, perforceSettings.ENABLED)
+      setText(text, false)
+
+      putClientProperty(multipleWorkspacesKey, perforceSettings.allConnections.count() > 1)
     }
-
-    val allConnections = perforceSettings.allConnections
-    val connection = currentFileConnection ?: allConnections.singleOrNull()
-
-    presentation.isEnabledAndVisible = true
-    presentation.icon = getIcon(perforceSettings, connection)
-    if (connection != null) {
-      val workspace = connection.connectionKey.client
-      with (presentation) {
-        setText(getText(workspace, perforceSettings.ENABLED), false)
-        description = PerforceBundle.message("action.Perforce.Toolbar.WorkspaceAction.description", workspace)
-      }
-
-    }
-    else if (allConnections.isEmpty()) {
-      with (presentation) {
-        text = PerforceBundle.message("connection.no.valid.connections.short")
-        description = PerforceBundle.message("connection.no.valid.connections")
-      }
-    }
-    else {
-      with (presentation) {
-        text = PerforceBundle.message("action.Perforce.Toolbar.multiple.workspaces")
-        description = PerforceBundle.message("action.Perforce.Toolbar.multiple.workspaces.description")
-      }
-    }
-  }
-
-  private fun getIcon(settings: PerforceSettings, connection: P4Connection?): Icon {
-    if (connection == null || !settings.ENABLED)
-      return AllIcons.General.Warning
-    return AllIcons.Vcs.Branch
-  }
-
-  private fun getText(@Nls workspace: String, isOnline: Boolean): @NlsSafe String {
-    if (isOnline)
-      return workspace
-
-    val color = ColorUtil.toHex(UIUtil.getErrorForeground())
-    val builder = HtmlBuilder().append(
-      HtmlChunk.html().addText("$workspace ").child(HtmlChunk.font(color)
-                                                       .addText(PerforceBundle.message("connection.status.offline"))))
-    return builder.toString()
   }
 
   override fun createComboBoxButton(presentation: Presentation): ComboBoxButton {
+    if (presentation.getClientProperty(multipleWorkspacesKey)!!) {
+      return ComboBoxButton(presentation)
+    }
+
     return object : ComboBoxButton(presentation) {
       override fun isArrowVisible(): Boolean = false
 
@@ -93,8 +57,17 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     }
   }
 
-  override fun actionPerformed(e: AnActionEvent) {
-    // Right now we need only to show current workspace and status.
-    // Not sure if multiple workspaces inside a project is a common thing
+  override fun createPopupActionGroup(button: JComponent, dataContext: DataContext): DefaultActionGroup {
+    val project = dataContext.getData(CommonDataKeys.PROJECT)
+    val perforceSettings = PerforceSettings.getSettings(project)
+
+    val actionGroup = DefaultActionGroup()
+
+    for (connection in perforceSettings.allConnections) {
+      val action = PerforceToolbarWidgetHelper.WorkspaceAction(connection.connectionKey.client, connection.workingDir)
+      actionGroup.add(action)
+    }
+
+    return actionGroup
   }
 }

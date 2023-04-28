@@ -49,6 +49,12 @@
       <add-to-group group-id="VcsGlobalGroup" anchor="after" relative-to-action="Vcs.Specific"/>
     </group>
 
+    <group id="Perforce.Toolbar">
+      <reference id="Vcs.UpdateProject"/>
+      <reference id="CheckinProject"/>
+      <reference id="ChangesView.Revert"/>
+    </group>
+
     <action id="SetJobsForChangeList" class="org.jetbrains.idea.perforce.actions.LinkChangeListToJobsAction">
       <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="EditSource" anchor="after"/>
     </action>
