@@ -1,0 +1,5 @@
+prop = MACRO;
+
+prop = MACRO, MACRO;
+
+prop = MACRO();

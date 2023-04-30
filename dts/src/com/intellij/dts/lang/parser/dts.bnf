@@ -1,0 +1,151 @@
+{
+  parserClass="com.intellij.dts.lang.parser.DtsParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  generate=[visitor="no" fqn="yes"]
+
+  psiClassPrefix="Dts"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.dts.lang.psi"
+  psiImplPackage="com.intellij.dts.lang.psi.impl"
+
+  elementTypeHolderClass="com.intellij.dts.lang.psi.DtsTypes"
+  elementTypeClass="com.intellij.dts.lang.DtsElementType"
+
+  tokenTypeClass="com.intellij.dts.lang.DtsTokenType"
+  parserUtilClass="com.intellij.dts.lang.parser.DtsParserUtil"
+
+  implements("rootNode")="com.intellij.dts.lang.psi.DtsNode.Root"
+  implements("subNode")="com.intellij.dts.lang.psi.DtsNode.Sub"
+
+  extends(".*Expr")=expr
+
+  tokens=[
+    COMMENT_EOL="COMMENT_EOL"
+    COMMENT_C="COMMENT_C"
+    PP_STATEMENT="PP_STATEMENT"
+    PP_MACRO_ARG="PP_MACRO_ARG"
+  ]
+}
+
+private dtsFile ::= nodeContent | content
+
+content ::= (
+    <<entry rootNode>> |
+    <<compilerDirectiveEntry V1 ()>> |
+    <<compilerDirectiveEntry PLUGIN ()>> |
+    <<compilerDirectiveEntry (LABEL* MEMRESERVE) (cell cell)>> |
+    <<compilerDirectiveEntry OMIT_NODE pHandle>> |
+    <<compilerDirectiveEntry DELETE_NODE pHandle>> |
+    invalidEntry
+)*
+
+nodeContent ::= (
+    <<compilerDirectiveEntry DELETE_PROP NAME>> |
+    // only pin on delete and valid name
+    <<compilerDirectiveEntry (DELETE_NODE NAME) ()>> |
+    <<entry subNode>> |
+    <<entry property>>
+)+
+
+external invalidEntry ::= parseInvalidEntry
+
+rootNode ::= LABEL* (SLASH | pHandle) LBRACE nodeContent? RBRACE {pin=3 recoverWhile="rootNodeRecover"}
+private rootNodeRecover ::= !(SEMICOLON)
+
+subNode ::= LABEL* OMIT_NODE? LABEL* NAME LBRACE nodeContent? RBRACE {pin=5 recoverWhile="nodeRecover"}
+private nodeRecover ::= !(SEMICOLON | NAME)
+
+property ::= LABEL* NAME propertyAssignment?
+private propertyAssignment ::= ASSIGN LABEL* propertyValue LABEL* (COMMA LABEL* propertyValue LABEL*)* {pin=1 recoverWhile="propertyRecover"}
+private propertyRecover ::= !(SEMICOLON | RBRACE | NAME)
+
+private propertyValue ::= string | pHandle | cellArray | byteArray | ppMacro
+
+cellArray ::= cellArrayBits? LANGL cellArrayContent RANGL {pin=2}
+private cellArrayContent ::= (LABEL* (pHandle | cell) LABEL*)* {recoverWhile="cellArrayRecover"}
+private cellArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RANGL | RPAREN)
+
+cellArrayBits ::= BITS (INT | ppMacro) {pin=1 recoverWhile="cellArrayBitsRecover"}
+private cellArrayBitsRecover ::= !(SEMICOLON | RBRACE | LANGL)
+
+byteArray ::= LBRAC byteArrayContent RBRAC {pin=1}
+private byteArrayContent ::= (LABEL* (BYTE | ppMacro) LABEL*)* {recoverWhile="byteArrayRecover"}
+private byteArrayRecover ::= !(SEMICOLON | RBRACE | COMMA | RBRAC | RPAREN)
+
+string ::= DQUOTE STRING_VALUE? DQUOTE {pin=1}
+char ::= SQUOTE CHAR_VALUE* SQUOTE {pin=1}
+
+pHandle ::= HANDLE (NAME | pHandlePath) {pin=1}
+private pHandlePath ::= LBRACE path RBRACE {pin=1}
+private path ::= PATH {recoverWhile="pathRecover"}
+private pathRecover ::= !(SEMICOLON | RANGL | RBRACE)
+
+ppMacro ::= parserPpMacro
+external parserPpMacro ::= parsePpMacro
+
+meta entry ::= <<arg>> SEMICOLON {pin=1}
+
+private meta compilerDirectiveEntry ::= <<entry <<compilerDirective <<directive>> <<arg>>>>>>
+meta compilerDirective ::= <<directive>> <<arg>> {pin=1 recoverWhile="compilerDirectiveRecover"}
+private compilerDirectiveRecover ::= !(SEMICOLON)
+
+cell ::= INT | char | LPAREN expr RPAREN | ppMacro
+
+expr ::= ppMacroExpr
+    | ternaryExpr
+    | lOrExpr
+    | lAndExpr
+    | bOrExpr
+    | xorExpr
+    | bAndExpr
+    | eqGroup
+    | relaGroup
+    | shiftGroup
+    | addGroup
+    | mulGroup
+    | unaryGroup
+    | primaryGroup
+
+private eqGroup ::= eqExpr | neqExpr
+private relaGroup ::= lesExpr | grtExpr | leqExpr | geqExpr
+private shiftGroup ::= lshExpr | rshExpr
+private addGroup ::= addExpr | subExpr
+private mulGroup ::= mulExpr | divExpr | modExpr
+private unaryGroup ::= lNotExpr | bNotExpr | negExpr
+private primaryGroup ::= intExpr | charExpr | parenExpr
+
+ppMacroExpr ::= ppMacro
+ternaryExpr ::= expr TERNARY expr COLON expr
+
+addExpr ::= expr ADD expr
+subExpr ::= expr SUB expr
+mulExpr ::= expr MUL expr
+divExpr ::= expr DIV expr
+modExpr ::= expr MOD expr
+
+bAndExpr ::= expr AND expr
+lAndExpr ::= expr L_AND expr
+
+bOrExpr ::= expr OR expr
+lOrExpr ::= expr L_OR expr
+
+bNotExpr ::= NOT expr
+lNotExpr ::= L_NOT expr
+negExpr ::= SUB expr
+
+xorExpr ::= expr XOR expr
+lshExpr ::= expr LSH expr
+rshExpr ::= expr RSH expr
+
+lesExpr ::= expr LES expr
+grtExpr ::= expr GRT expr
+leqExpr ::= expr LEQ expr
+geqExpr ::= expr GEQ expr
+eqExpr ::= expr EQ expr
+neqExpr ::= expr NEQ expr
+
+intExpr ::= INT
+charExpr ::= char
+parenExpr ::= LPAREN expr RPAREN

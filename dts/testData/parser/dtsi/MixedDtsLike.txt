@@ -1,0 +1,16 @@
+DTSI file
+  DtsContentImpl(CONTENT)
+    DtsEntryImpl(ENTRY)
+      DtsCompilerDirectiveImpl(COMPILER_DIRECTIVE)
+        PsiElement(DtsTokenType.V1)('/dts-v1/')
+      PsiElement(DtsTokenType.SEMICOLON)(';')
+    PsiWhiteSpace('\n\n')
+    PsiErrorElement:Invalid entry
+      PsiElement(DtsTokenType.NAME)('prop')
+      PsiWhiteSpace(' ')
+      PsiElement(DtsTokenType.ASSIGN)('=')
+      PsiWhiteSpace(' ')
+      PsiElement(DtsTokenType.DQUOTE)('"')
+      PsiElement(DtsTokenType.STRING_VALUE)('value')
+      PsiElement(DtsTokenType.DQUOTE)('"')
+      PsiElement(DtsTokenType.SEMICOLON)(';')

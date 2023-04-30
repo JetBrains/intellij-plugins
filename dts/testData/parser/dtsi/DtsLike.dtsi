@@ -1,0 +1,11 @@
+/dts-v1/;
+
+/memreserve/ 10 10;
+
+/ {
+    prop = "value";
+
+    node {
+        prop = "value";
+    };
+};

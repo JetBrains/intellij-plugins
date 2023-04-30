@@ -1,0 +1,12 @@
+l: l: /memreserve/ 0 0;
+
+/ {
+    l: l: prop = l: l: "" l: l:, l: l: "" l: l:;
+
+    prop = l: l: /bits/ 8 <l: l: 0 l: l: 0 l: l:>;
+    prop = [l: l: 00 l: l: 00 l: l:];
+
+    l: l: /omit-if-no-ref/ l: l: node {};
+};
+
+l: l: &label {};
