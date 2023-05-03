@@ -163,9 +163,14 @@ public final class GaugeUtil {
   }
 
   public static boolean isGaugeElement(PsiElement element) {
-    return StepUtil.isMethod(element)
-           ? StepUtil.getGaugeStepAnnotationValues((PsiMethod)element).size() > 0
-           : (StepUtil.isConcept(element) || StepUtil.isStep(element));
+      if (StepUtil.isMethod(element)) {
+          return StepUtil.getGaugeStepAnnotationValues((PsiMethod) element)
+                         .size() > 0;
+      } else if (KtUtil.isKtFunction(element) || KtUtil.isKtMethod(element)) {
+          return KtUtil.getGaugeStepAnnotationValues(element).size() > 0;
+      } else {
+          return StepUtil.isConcept(element) || StepUtil.isStep(element);
+      }
   }
 
   @Nullable

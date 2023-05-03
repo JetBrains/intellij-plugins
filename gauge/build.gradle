@@ -33,7 +33,7 @@ intellij {
     localPath = ideaPath
   }
 
-  plugins = ['java', 'properties', 'maven', 'gradle']
+  plugins = ['java', 'properties', 'maven', 'gradle', 'Kotlin']
 }
 
 patchPluginXml {

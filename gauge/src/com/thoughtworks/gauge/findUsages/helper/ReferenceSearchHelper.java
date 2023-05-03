@@ -16,6 +16,9 @@
 
 package com.thoughtworks.gauge.findUsages.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiMethodImpl;
@@ -27,11 +30,9 @@ import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
+import com.thoughtworks.gauge.util.KtUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReferenceSearchHelper {
 
@@ -65,6 +66,11 @@ public class ReferenceSearchHelper {
     }
     else if (element instanceof PsiMethodImpl) {
       for (String alias : StepUtil.getGaugeStepAnnotationValues((PsiMethod)element)) {
+        elements.addAll(collector.get(getStepText(alias, element)));
+      }
+    }
+    else if (KtUtil.isKtFunction(element) || KtUtil.isKtMethod(element)) {
+      for (String alias : KtUtil.getGaugeStepAnnotationValues(element)) {
         elements.addAll(collector.get(getStepText(alias, element)));
       }
     }
