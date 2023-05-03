@@ -114,7 +114,7 @@ public final class DartPsiImplUtil {
     final String uri = uriElement.getUriStringAndItsRange().first;
     final VirtualFile file = DartResolveUtil.getRealVirtualFile(partOfStatement.getContainingFile());
     final VirtualFile targetFile = file == null ? null : DartResolveUtil.getImportedFile(partOfStatement.getProject(), file, uri);
-    return targetFile == null ? Collections.emptyList() : Collections.singletonList(targetFile);
+    return ContainerUtil.createMaybeSingletonList(targetFile);
   }
 
   @NotNull

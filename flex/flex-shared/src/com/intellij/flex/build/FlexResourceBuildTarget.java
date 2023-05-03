@@ -7,6 +7,7 @@ import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FileCollectionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +98,7 @@ public final class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDe
   public Collection<File> getOutputRoots(@NotNull CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
       final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
-      return outputDir == null ? Collections.emptyList() : Collections.singletonList(outputDir);
+      return ContainerUtil.createMaybeSingletonList(outputDir);
     }
 
     Set<File> result = FileCollectionFactory.createCanonicalFileSet();
