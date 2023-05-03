@@ -20,7 +20,6 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.encoding.EncodingManager
 import com.intellij.util.EnvironmentUtil
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.intellij.util.getOrCreate
 import org.jdom.Element
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.plugins.terminal.LocalTerminalCustomizer
@@ -54,7 +53,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
 
   override fun writeExternal(element: Element) {
     super.writeExternal(element)
-    val child = element.getOrCreate(MAKEFILE)
+    val child = element.getOrCreateChild(MAKEFILE)
     child.setAttribute(FILENAME, filename)
     child.setAttribute(TARGET, target)
     child.setAttribute(WORKING_DIRECTORY, workingDirectory)
