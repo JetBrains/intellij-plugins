@@ -16,16 +16,24 @@ package com.intellij.flex.maven;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.javascript.flex.maven.Flexmojos4Configurator;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ContentFolder;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.server.MavenServerManager;
 import org.jetbrains.idea.maven.utils.MavenUtil;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.intellij.flex.model.bc.OutputType.Application;
 import static com.intellij.flex.model.bc.OutputType.RuntimeLoadedModule;
@@ -278,6 +286,48 @@ public class Flexmojos4ImporterTest extends FlexmojosImporterTestBase {
 
     // well, current idea maven support impl doesn't add source folder if it is not part of the content root
     assertSources("testAdditionalCompileSourceRoots", "localAnotherSourceRoot", "src");
+  }
+
+  private void assertSources(String moduleName, String... expectedSources) {
+    doAssertContentFolders(moduleName, JavaSourceRootType.SOURCE, expectedSources);
+  }
+
+  private void doAssertContentFolders(String moduleName, @NotNull JpsModuleSourceRootType<?> rootType, String... expected) {
+    ContentEntry contentRoot = getContentRoot(moduleName);
+    doAssertContentFolders(contentRoot, contentRoot.getSourceFolders(rootType), expected);
+  }
+
+  private ContentEntry getContentRoot(String moduleName) {
+    ContentEntry[] ee = getContentRoots(moduleName);
+    List<String> roots = new ArrayList<>();
+    for (ContentEntry e : ee) {
+      roots.add(e.getUrl());
+    }
+
+    String message = "Several content roots found: [" + StringUtil.join(roots, ", ") + "]";
+    assertEquals(message, 1, ee.length);
+
+    return ee[0];
+  }
+
+  private static void doAssertContentFolders(ContentEntry e,
+                                             final List<? extends ContentFolder> folders,
+                                             String... expected) {
+    List<String> actual = new ArrayList<>();
+    for (ContentFolder f : folders) {
+      String rootUrl = e.getUrl();
+      String folderUrl = f.getUrl();
+
+      if (folderUrl.startsWith(rootUrl)) {
+        int length = rootUrl.length() + 1;
+        folderUrl = folderUrl.substring(Math.min(length, folderUrl.length()));
+      }
+
+      actual.add(folderUrl);
+    }
+
+    assertSameElements("Unexpected list of folders in content root " + e.getUrl(),
+                       actual, Arrays.asList(expected));
   }
 
   private static String loadContent(VirtualFile p, String name) throws IOException {
