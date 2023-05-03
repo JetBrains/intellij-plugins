@@ -2,13 +2,13 @@
 package org.angular2.entities
 
 import com.intellij.model.Pointer
-import com.intellij.openapi.util.ClearableLazyValue
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.SmartList
+import com.intellij.util.concurrency.SynchronizedClearableLazy
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector
@@ -19,8 +19,8 @@ import java.util.*
 class Angular2DirectiveSelectorImpl(private val myElement: PsiElement,
                                     private val myText: String?,
                                     private val myRangeOffset: Int?) : Angular2DirectiveSelector {
-  private val myLazyParent: ClearableLazyValue<PsiElement>? = if (myElement is Angular2MetadataDirectiveBase<*>)
-    ClearableLazyValue.createAtomic { myElement.typeScriptClass ?: myElement }
+  private val myLazyParent: SynchronizedClearableLazy<PsiElement>? = if (myElement is Angular2MetadataDirectiveBase<*>)
+    SynchronizedClearableLazy { myElement.typeScriptClass ?: myElement }
   else
     null
   private val mySimpleSelectors: NotNullLazyValue<List<Angular2DirectiveSimpleSelector>> = NotNullLazyValue.lazy {
