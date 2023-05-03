@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
 import com.intellij.lsp.checkLspHighlighting
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -69,11 +70,29 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   }
 
   fun testDenoFileRename() {
-    myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\nconst hi = new Hello()")
-    val bar = myFixture.configureByText("bar.ts", "export class Hello {}")
-    checkHighlightingByOptions(false)
-    myFixture.renameElement(bar, "hello.ts")
-    checkHighlightingByOptions(false)
+    val errorWithMarkup = "<error descr=\"Deno: Cannot find name 'UnknownName'.\"><error descr=\"Unresolved variable or type UnknownName\">UnknownName</error></error>"
+
+    myFixture.configureByText("foo.ts", "import { Hello<caret> } from './subdir/bar.ts'\nconst _hi = new Hello()\n$errorWithMarkup")
+    val bar = myFixture.addFileToProject("subdir/bar.ts", "export class Hello {}")
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("import { Hello<caret> } from './subdir/bar.ts'\nconst _hi = new Hello()\nUnknownName")
+
+    myFixture.renameElementAtCaret("Hello1")
+    myFixture.renameElement(file, "foo1.ts")
+    myFixture.renameElement(bar, "bar1.ts")
+    WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("import { Hello<caret>1 } from './subdir/bar1.ts'\nconst _hi = new Hello1()\nUnknownName")
+
+    myFixture.renameElementAtCaret("Hello2")
+    FileDocumentManager.getInstance().saveAllDocuments()
+    myFixture.moveFile("subdir/bar1.ts", "")
+    FileDocumentManager.getInstance().saveAllDocuments()
+    myFixture.moveFile("foo1.ts", "subdir")
+    myFixture.renameElement(bar.containingDirectory, "subdir1")
+    WriteAction.run<Throwable> { myFixture.editor.document.setText(myFixture.editor.document.text.replace("UnknownName", errorWithMarkup)) }
+    myFixture.checkLspHighlighting()
+    myFixture.checkResult("import { Hello<caret>2 } from '../bar1.ts'\nconst _hi = new Hello2()\nUnknownName")
   }
 
   fun testDenoReformat() {
