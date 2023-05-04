@@ -25,7 +25,7 @@ public class MeteorParsingTest extends ParsingTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    myProject.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
+    project.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
     getApplication().registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
     registerParserDefinition(new SpacebarsParseDefinition());
     registerParserDefinition(new HbParseDefinition());
