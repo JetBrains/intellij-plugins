@@ -17,8 +17,8 @@ package org.jetbrains.osgi.maven
 
 import aQute.bnd.osgi.Constants
 import com.intellij.facet.FacetTypeId
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.maven.testFramework.FacetImporterTestCase
+import com.intellij.openapi.util.io.FileUtil
 import org.junit.Test
 import org.osmorc.facet.OsmorcFacet
 import org.osmorc.facet.OsmorcFacetConfiguration
@@ -87,7 +87,7 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
 
   @Test 
   fun testSpecificOutputPath() {
-    importProject(pomContents("simple", buildConfig = "<finalName>\${artifactId}-special-\${version}</finalName>"))
+    importProject(pomContents("simple", buildConfig = "<finalName>\${project.artifactId}-special-\${project.version}</finalName>"))
     assertModules("simple")
     val configuration = assertConfiguration("simple")
     assertTrue(configuration.isOsmorcControlsManifest)
