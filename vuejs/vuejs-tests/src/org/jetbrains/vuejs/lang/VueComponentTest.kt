@@ -104,6 +104,8 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testScriptSetupGeneric() = doTest(true, addNodeModules = listOf(VueTestModule.VUE_3_3_0_ALPHA5))
 
+  fun testPropsConstructorsAndGenerics() = doTest(true)
+
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
    */

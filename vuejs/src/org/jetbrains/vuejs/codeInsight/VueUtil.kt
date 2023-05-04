@@ -297,14 +297,20 @@ fun JSType.fixPrimitiveTypes(): JSType =
     else it
   }
 
-private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
-  (expression as? TypeScriptAsExpression)
-    ?.type?.jsType?.asSafely<JSGenericTypeImpl>()
-    ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "PropType" }
+private fun getJSTypeFromConstructor(expression: JSExpression): JSType {
+  return getPropTypeFromGenericType((expression as? TypeScriptAsExpression)?.type?.jsType)
+         ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
+                           JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
+}
+
+private val PROPS_CONTAINER_TYPES = setOf("PropType", "PropOptions")
+
+fun getPropTypeFromGenericType(jsType: JSType?): JSType? =
+  jsType
+    ?.asSafely<JSGenericTypeImpl>()
+    ?.takeIf { (it.type as? JSTypeImpl)?.typeText in PROPS_CONTAINER_TYPES }
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
-  ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
-                    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   (expression as? JSObjectLiteralExpression)
