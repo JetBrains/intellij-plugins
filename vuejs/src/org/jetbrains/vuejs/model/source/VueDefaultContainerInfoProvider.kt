@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -219,7 +220,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val jsType: JSType? = createType(sourceElement, !required)
 
     private fun createType(sourceElement: PsiElement, optional: Boolean) =
-      (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(optional)
+      (sourceElement as? PsiNamedElement)?.let { VueSourcePropType(it) }?.optionalIf(optional)
 
     override fun toString(): String {
       return "VueSourceInputProperty(name='$name', required=$required, jsType=$jsType)"

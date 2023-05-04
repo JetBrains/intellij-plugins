@@ -2078,6 +2078,18 @@ export default class UsageComponent extends Vue {
       myFixture.checkGotoDeclaration(signature, offset)
     }
   }
+
+  fun testPropsConstructorsAndGenerics() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_2_2)
+    myFixture.configureByFile("${getTestName(true)}.vue")
+    sequenceOf(
+      "m<caret>sg=\"You did it!\"" to 452,
+      "auto<caret>focus :value" to 283,
+      "autofocus :va<caret>lue" to 147,
+    ).forEach { (signature, offset) ->
+      myFixture.checkGotoDeclaration(signature, offset)
+    }
+  }
 }
 
 fun globalMixinText(): String {
