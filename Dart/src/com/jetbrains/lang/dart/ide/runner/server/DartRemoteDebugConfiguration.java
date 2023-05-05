@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.RunConfigurationBase;
@@ -73,14 +72,7 @@ public class DartRemoteDebugConfiguration extends RunConfigurationBase<Element> 
   @Nullable
   @Override
   public RunProfileState getState(@NotNull final Executor executor,
-                                  @NotNull final ExecutionEnvironment environment) throws ExecutionException {
-    try {
-      checkConfiguration();
-    }
-    catch (RuntimeConfigurationError e) {
-      throw new ExecutionException(e.getMessage());
-    }
-
+                                  @NotNull final ExecutionEnvironment environment) {
     return EmptyRunProfileState.INSTANCE;
   }
 
