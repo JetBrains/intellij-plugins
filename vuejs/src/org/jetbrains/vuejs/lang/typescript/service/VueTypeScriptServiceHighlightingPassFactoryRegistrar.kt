@@ -9,13 +9,14 @@ import com.intellij.lang.typescript.compiler.TypeScriptServiceHighlightingPassFa
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueTypeScriptServiceHighlightingPassFactoryRegistrar : TextEditorHighlightingPassFactoryRegistrar {
   override fun registerHighlightingPassFactory(registrar: TextEditorHighlightingPassRegistrar, project: Project) {
     class MyFactory : JSLanguageServiceHighlightingPassFactory() {
       override fun getService(file: PsiFile): JSLanguageService? {
         val service = TypeScriptServiceHighlightingPassFactory.getService(file.project, file)
-        return if (service is VueTypeScriptService) service else null
+        return if (service is VueTypeScriptService || service is VolarTypeScriptService) service else null
       }
 
       override fun isAcceptablePsiFile(file: PsiFile): Boolean = 

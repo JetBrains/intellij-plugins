@@ -116,7 +116,8 @@
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
                                id="vue" order="before html"/>
 
-    <projectConfigurable parentId="Settings.JavaScript"
+    <!-- we store settings under ts since there is only ts server specific options there -->
+    <projectConfigurable parentId="settings.typescriptcompiler"
                          instance="org.jetbrains.vuejs.options.VueConfigurable"
                          id="settings.vue"
                          bundle="messages.VueBundle"
@@ -360,10 +361,6 @@
   </actions>
 
   <extensions defaultExtensionNs="JavaScript">
-    <TypeScriptAnnotatorCheckerProvider
-      order="first"
-      implementation="org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptAnnotationProvider"/>
-
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 

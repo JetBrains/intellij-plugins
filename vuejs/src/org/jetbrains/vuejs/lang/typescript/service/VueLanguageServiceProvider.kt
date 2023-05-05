@@ -11,14 +11,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
-  private val languageService by lazy(LazyThreadSafetyMode.NONE) { project.service<ServiceWrapper>() }
+  private val tsLanguageService by lazy(LazyThreadSafetyMode.NONE) { project.service<ServiceWrapper>() }
+  private val volarLanguageService by lazy(LazyThreadSafetyMode.NONE) { project.service<VolarServiceWrapper>() }
 
-  override fun getAllServices(): List<JSLanguageService> = listOf(languageService.service)
+  override fun getAllServices(): List<JSLanguageService> = listOf(tsLanguageService.service, volarLanguageService.service)
 
-  override fun getService(file: VirtualFile): JSLanguageService? =
-    languageService.service.takeIf { it.isAcceptable(file) }
+  override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean {
     val type = file.fileType
@@ -29,6 +30,15 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
 @Service
 private class ServiceWrapper(project: Project) : Disposable {
   val service = VueTypeScriptService(project)
+
+  override fun dispose() {
+    Disposer.dispose(service)
+  }
+}
+
+@Service
+private class VolarServiceWrapper(project: Project) : Disposable {
+  val service = VolarTypeScriptService(project)
 
   override fun dispose() {
     Disposer.dispose(service)

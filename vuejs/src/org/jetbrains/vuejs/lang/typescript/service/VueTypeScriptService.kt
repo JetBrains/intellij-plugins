@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.typescript.service
 
-import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
@@ -11,12 +10,10 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
-import com.intellij.lang.typescript.library.TypeScriptServiceDirectoryWatcher
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
@@ -27,7 +24,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
-import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
