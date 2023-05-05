@@ -1,7 +1,6 @@
 // Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.vuejs.lang.typescript.service.volar
 
-import com.google.gson.JsonParser
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.concurrency.SensitiveProgressWrapper
 import com.intellij.execution.ExecutionException
@@ -13,6 +12,7 @@ import com.intellij.javascript.nodejs.interpreter.wsl.WslNodeInterpreter
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry
 import com.intellij.lang.javascript.library.typings.TypeScriptPackageName
+import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lsp.api.LspServerDescriptor
 import com.intellij.lsp.api.LspServerManager
 import com.intellij.lsp.api.LspServerSupportProvider
@@ -46,26 +46,25 @@ private const val volarPackage = "@volar/vue-language-server"
 
 class VolarSupportProvider : LspServerSupportProvider {
   override fun fileOpened(project: Project, file: VirtualFile, serverStarter: LspServerStarter) {
-    getVueLspServerDescriptor(project, file)?.let { serverStarter.ensureServerStarted(it) }
+    getVolarServerDescriptor(project, file)?.let { serverStarter.ensureServerStarted(it) }
   }
 }
 
-fun getVueLspServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? {
+fun getVolarServerDescriptor(project: Project, file: VirtualFile): LspServerDescriptor? {
   if (!isVolarEnabled(project, file)) return null
   val projectDir = project.guessProjectDir() ?: return null
-  return VolarLspServerDescriptor(project, projectDir)
+  return VolarServerDescriptor(project, projectDir)
 }
 
-class VolarLspServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, "Vue", *roots) {
+class VolarServerDescriptor(project: Project, vararg roots: VirtualFile) : LspServerDescriptor(project, "Vue", *roots) {
 
   override fun isSupportedFile(file: VirtualFile): Boolean {
     return isVolarEnabled(project, file)
   }
 
-  override val useGenericNavigation: Boolean
-    get() = false
-
   override val lspCompletionSupport = null
+  override val handlePublishDiagnostics = false
+  override val useGenericNavigation = false
 
   override fun createCommandLine(): GeneralCommandLine {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
@@ -87,9 +86,21 @@ class VolarLspServerDescriptor(project: Project, vararg roots: VirtualFile) : Ls
     }
   }
 
+
   override fun createInitializationOptions(): Any {
+    class TypescriptSdkState(path: String) {
+      @Suppress("unused")
+      @JvmField
+      val tsdk: String = path
+    }
+    class State(path: String) {
+      @Suppress("unused")
+      @JvmField
+      val typescript: TypescriptSdkState = TypescriptSdkState(path)
+    }
+
     val tsPath = runReadAction { getTypeScriptServiceDirectory(project) }
-    return JsonParser.parseString("{'typescript': { 'tsdk': '${tsPath}' }}")
+    return State(tsPath)
   }
 }
 
@@ -116,19 +127,11 @@ fun scheduleVolarDownloading(project: Project) {
       val future = downloadVolar(project, indicator)
       future.handleAsync(BiFunction { volarPath, _ ->
         if (volarPath != null) {
-          runReadAction {
-
-            updateVolarLsp(project, isVolarSettingEnabled(project))
-          }
+          runReadAction { TypeScriptService.restartServices(project) }
         }
       })
     }
   }.queue()
-}
-
-fun isVolarSettingEnabled(project: Project): Boolean {
-  val vueSettings = getVueSettings(project)
-  return vueSettings.serviceType == VueServiceSettings.AUTO || vueSettings.serviceType == VueServiceSettings.VOLAR
 }
 
 fun downloadVolar(project: Project, indicator: ProgressIndicator): CompletableFuture<VirtualFile?> {
@@ -159,7 +162,7 @@ fun downloadVolar(project: Project, indicator: ProgressIndicator): CompletableFu
 fun updateVolarLsp(project: Project, enabled: Boolean) {
   if (enabled) {
     for (openFile in FileEditorManager.getInstance(project).openFiles) {
-      val lspServerDescriptor = getVueLspServerDescriptor(project, openFile)
+      val lspServerDescriptor = getVolarServerDescriptor(project, openFile)
       if (lspServerDescriptor != null) {
         val lspServerManager = LspServerManager.getInstance(project)
         lspServerManager.ensureServerStarted(VolarSupportProvider::class.java, lspServerDescriptor)
@@ -179,7 +182,7 @@ fun updateVolarLsp(project: Project, enabled: Boolean) {
 
 fun updateVolarLspAsync(project: Project) {
   ApplicationManager.getApplication().invokeLater(Runnable {
-    updateVolarLsp(project, isVolarSettingEnabled(project))
+    TypeScriptService.restartServices(project)
   }, project.disposed)
 }
 

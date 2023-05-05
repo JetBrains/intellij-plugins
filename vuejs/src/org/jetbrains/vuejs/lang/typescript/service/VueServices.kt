@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.typescript.service
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerState
+import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lang.typescript.library.TypeScriptServiceDirectoryWatcher
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -22,7 +23,7 @@ fun isTypeScriptServiceBefore5Context(project: Project): Boolean {
   val packageJson = TypeScriptServerState.getPackageJsonFromServicePath(path)
   if (packageJson == null) return true
   val version = PackageJsonData.getOrCreate(packageJson).version ?: return true
-  return version.major < 5;
+  return version.major < 5
 }
 
 fun getTypeScriptServiceDirectory(project: Project): String {
@@ -41,7 +42,9 @@ fun isVueTypeScriptServiceEnabled(project: Project, context: VirtualFile): Boole
 }
 
 fun isVolarEnabled(project: Project, context: VirtualFile): Boolean {
-  return isVolarFileTypeAcceptable(context) && isVolarEnabledByContextAndSettings(project, context) && getVolarExecutableAndRefresh(project) != null
+  return isVolarFileTypeAcceptable(context) &&
+         isVolarEnabledByContextAndSettings(project, context) &&
+         getVolarExecutableAndRefresh(project) != null
 }
 
 fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
@@ -52,6 +55,7 @@ fun isVolarFileTypeAcceptable(file: VirtualFile): Boolean {
 
 fun isVolarEnabledByContextAndSettings(project: Project, context: VirtualFile): Boolean {
   if (!isVueServiceContext(project, context)) return false
+  if (TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, context)) return false
 
   return when (getVueSettings(project).serviceType) {
     VueServiceSettings.VOLAR -> true
