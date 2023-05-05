@@ -9,19 +9,17 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class KarmaBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "messages.KarmaBundle";
-  private static final KarmaBundle INSTANCE = new KarmaBundle();
+public final class KarmaBundle {
+  private static final @NonNls String BUNDLE = "messages.KarmaBundle";
+  private static final DynamicBundle INSTANCE = new DynamicBundle(KarmaBundle.class, BUNDLE);
 
-  private KarmaBundle() { super(BUNDLE); }
+  private KarmaBundle() {}
 
-  @NotNull
-  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 
-  @NotNull
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }
 }

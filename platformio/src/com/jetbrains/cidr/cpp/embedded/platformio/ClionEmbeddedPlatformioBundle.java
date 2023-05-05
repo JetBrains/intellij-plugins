@@ -8,21 +8,18 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class ClionEmbeddedPlatformioBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "messages.ClionEmbeddedPlatformioBundle";
-  private static final ClionEmbeddedPlatformioBundle INSTANCE = new ClionEmbeddedPlatformioBundle();
+public final class ClionEmbeddedPlatformioBundle {
+  private static final @NonNls String BUNDLE = "messages.ClionEmbeddedPlatformioBundle";
+  private static final DynamicBundle INSTANCE = new DynamicBundle(ClionEmbeddedPlatformioBundle.class, BUNDLE);
 
   private ClionEmbeddedPlatformioBundle() {
-    super(BUNDLE);
   }
 
-  @NotNull
-  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 
-  @NotNull
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }
 }

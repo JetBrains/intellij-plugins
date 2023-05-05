@@ -8,19 +8,17 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class MakefileLangBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "messages.MakefileLangBundle";
-  private static final MakefileLangBundle INSTANCE = new MakefileLangBundle();
+public final class MakefileLangBundle {
+  private static final @NonNls String BUNDLE = "messages.MakefileLangBundle";
+  private static final DynamicBundle INSTANCE = new DynamicBundle(MakefileLangBundle.class, BUNDLE);
 
-  private MakefileLangBundle() { super(BUNDLE); }
+  private MakefileLangBundle() {}
 
-  @NotNull
-  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 
-  @NotNull
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+  public static @NotNull Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }
 }

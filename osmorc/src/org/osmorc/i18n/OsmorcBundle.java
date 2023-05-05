@@ -42,19 +42,18 @@ import java.util.function.Supplier;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public final class OsmorcBundle extends DynamicBundle {
-  private static final String PATH_TO_BUNDLE = "messages.OsmorcBundle";
-  private static final AbstractBundle INSTANCE = new OsmorcBundle();
+public final class OsmorcBundle {
+  private static final String BUNDLE = "messages.OsmorcBundle";
+  private static final DynamicBundle INSTANCE = new DynamicBundle(AbstractBundle.class, BUNDLE);
 
   private OsmorcBundle() {
-    super(PATH_TO_BUNDLE);
   }
 
-  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
+  public static @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
   }
 
-  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
+  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getLazyMessage(key, params);
   }
 
