@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.TypeScriptTestUtil;
+import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -651,6 +652,7 @@ public class Angular2AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testExportAs() {
     myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class,
+                                JSUnresolvedReferenceInspection.class,
                                 TypeScriptValidateTypesInspection.class);
     myFixture.configureByFiles("exportAs.ts", "package.json");
     myFixture.checkHighlighting(true, false, true);
