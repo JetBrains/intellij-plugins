@@ -123,7 +123,6 @@ class KarmaCoverageProgramRunner : AsyncProgramRunner<RunnerSettings>() {
       }
       env.runnerSettings?.let {
         val coverageRunner = KarmaCoverageRunner.getInstance()
-        coverageRunner.setKarmaServer(karmaServer)
         coverageRunner.setTargetRun(targetRun)
         coverageRunner.setProjectRoot(coverageResultPaths.localProjectRoot)
         CoverageDataManager.getInstance(env.project).processGatheredCoverage(runConfiguration, it)

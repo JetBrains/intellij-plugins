@@ -4,8 +4,6 @@ package com.intellij.javascript.karma.coverage;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
-import com.intellij.javascript.karma.KarmaConfig;
-import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.testing.CoverageProjectDataLoader;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,7 +18,6 @@ import java.util.Objects;
 public class KarmaCoverageRunner extends CoverageRunner {
 
   private static final Logger LOG = Logger.getInstance(KarmaCoverageRunner.class);
-  private KarmaServer myKarmaServer;
   private NodeTargetRun myTargetRun;
   private Path myLocalProjectRoot;
 
@@ -34,28 +31,13 @@ public class KarmaCoverageRunner extends CoverageRunner {
     Path localProjectRoot = myLocalProjectRoot;
     if (localProjectRoot != null) {
       try {
-        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localProjectRoot.toFile(),
-                                                         myKarmaServer.getServerSettings().getNodeInterpreter(), myTargetRun);
+        return CoverageProjectDataLoader.readProjectData(sessionDataFile, localProjectRoot.toFile(), myTargetRun);
       }
       catch (Exception e) {
         LOG.warn("Can't read coverage data", e);
       }
     }
     return null;
-  }
-
-  private @Nullable File toLocal(@NotNull String targetPath) {
-    try {
-      return new File(myTargetRun.convertTargetPathToLocalPath(targetPath));
-    }
-    catch (IllegalArgumentException e) {
-      LOG.warn("Cannot load coverage");
-      return null;
-    }
-  }
-
-  public void setKarmaServer(@NotNull KarmaServer karmaServer) {
-    myKarmaServer = karmaServer;
   }
 
   public void setTargetRun(@NotNull NodeTargetRun targetRun) {
