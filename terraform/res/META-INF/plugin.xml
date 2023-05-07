@@ -38,6 +38,18 @@
     </ul>
     ]]></description>
 
+  <!--suppress PluginXmlValidity -->
+  <change-notes>
+    <![CDATA[
+    2023.1
+    <ul>
+      <li>New metadata bundled for all official and most popular providers
+          from <a href="https://registry.terraform.io">Terraform Registry</a></li>
+      <li>Terraform intentions and quickfixes now provide intention preview</li>
+    </ul>
+    ]]>
+  </change-notes>
+
   <content>
     <module name="intellij.terraform/watchers"/>
   </content>
