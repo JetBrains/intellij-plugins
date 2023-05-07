@@ -1,1 +1,0 @@
-JSP in 2nd webroot.

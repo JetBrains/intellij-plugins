@@ -1,1 +1,0 @@
-<a href="/${dynamicActionPathCannotBeConverted}.action">Link</a>

@@ -1,6 +1,0 @@
-$ ('$')
-{ ('{')
-WHITE_SPACE (' ')
-} ('}')
-WHITE_SPACE (' ')
-BAD_CHARACTER ('}')

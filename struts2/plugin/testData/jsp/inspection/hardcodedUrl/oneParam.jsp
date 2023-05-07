@@ -1,1 +1,0 @@
-<a href="/t<caret>est.action?param1=value1">Link</a>
