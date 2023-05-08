@@ -408,7 +408,7 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
                                                       PerforceBundle.message("perforce.jobs.search.limit.exceeded.warning", maxCount) : null));
 
     builder.setTitle(PerforceBundle.message("perforce.jobs.select.one")).
-        setItemChoosenCallback(runnable).
+        setItemChosenCallback(runnable).
         setResizable(true).
         setDimensionServiceKey("org.jetbrains.idea.perforce.perforce.jobs.PerforceCheckinComponent.SelectOneJob").
         setMinSize(JBUI.size(300, 300));
