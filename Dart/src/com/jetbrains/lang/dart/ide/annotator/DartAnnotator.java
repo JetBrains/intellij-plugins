@@ -62,6 +62,7 @@ public final class DartAnnotator implements Annotator {
                               DartSyntaxHighlighterColors.DART_DYNAMIC_PARAMETER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ENUM, DartSyntaxHighlighterColors.DART_ENUM);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ENUM_CONSTANT, DartSyntaxHighlighterColors.DART_ENUM_CONSTANT);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.EXTENSION, DartSyntaxHighlighterColors.DART_EXTENSION);
     // HighlightRegionType.FIELD - Only for version 1 of highlight.
     // HighlightRegionType.FIELD_STATIC - Only for version 1 of highlight.
     // HighlightRegionType.FUNCTION - Only for version 1 of highlight.
