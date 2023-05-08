@@ -48,7 +48,10 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     "}\n" +
     "/// documentation for [<DART_ENUM>Enum</DART_ENUM>]\n" +
     "<DART_KEYWORD>enum</DART_KEYWORD> <DART_ENUM>Enum</DART_ENUM> { <DART_ENUM_CONSTANT>EnumConstant</DART_ENUM_CONSTANT> }\n" +
-    "<DART_KEYWORD>typedef</DART_KEYWORD> <DART_CLASS>int</DART_CLASS> <DART_FUNCTION_TYPE_ALIAS>FunctionTypeAlias</DART_FUNCTION_TYPE_ALIAS>(<DART_DYNAMIC_PARAMETER_DECLARATION>x</DART_DYNAMIC_PARAMETER_DECLARATION>, <DART_DYNAMIC_PARAMETER_DECLARATION>y</DART_DYNAMIC_PARAMETER_DECLARATION>); ```";
+    "<DART_KEYWORD>mixin</DART_KEYWORD> <DART_MIXIN>Mixin</DART_MIXIN> {}\n" +
+    "<DART_KEYWORD>typedef</DART_KEYWORD> <DART_CLASS>int</DART_CLASS> <DART_FUNCTION_TYPE_ALIAS>FunctionTypeAlias</DART_FUNCTION_TYPE_ALIAS>(<DART_DYNAMIC_PARAMETER_DECLARATION>x</DART_DYNAMIC_PARAMETER_DECLARATION>, <DART_DYNAMIC_PARAMETER_DECLARATION>y</DART_DYNAMIC_PARAMETER_DECLARATION>);\n" +
+    "<DART_KEYWORD>extension</DART_KEYWORD> <DART_EXTENSION>Ext</DART_EXTENSION> <DART_KEYWORD>on</DART_KEYWORD> <DART_CLASS>int</DART_CLASS> {}\n" +
+    "±±§§``";
 
   static {
     PREVIEW_TAGS.put("ERROR", ERROR);
@@ -67,6 +70,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
 
     PREVIEW_TAGS.put("DART_ENUM", ENUM);
     PREVIEW_TAGS.put("DART_ENUM_CONSTANT", ENUM_CONSTANT);
+    PREVIEW_TAGS.put("DART_EXTENSION", EXTENSION);
     PREVIEW_TAGS.put("DART_FUNCTION_TYPE_ALIAS", FUNCTION_TYPE_ALIAS);
     PREVIEW_TAGS.put("DART_TYPE_ALIAS", TYPE_ALIAS);
 
@@ -180,6 +184,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum"), ENUM),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum.constant"), ENUM_CONSTANT),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.extension"), EXTENSION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.function.type.alias"), FUNCTION_TYPE_ALIAS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.type.alias"), TYPE_ALIAS),
 

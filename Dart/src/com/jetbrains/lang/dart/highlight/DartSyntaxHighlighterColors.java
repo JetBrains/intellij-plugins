@@ -25,6 +25,7 @@ public final class DartSyntaxHighlighterColors {
 
   public static final String DART_ENUM = "DART_ENUM";
   public static final String DART_ENUM_CONSTANT = "DART_ENUM_CONSTANT";
+  public static final String DART_EXTENSION = "DART_EXTENSION";
   public static final String DART_FUNCTION_TYPE_ALIAS = "DART_FUNCTION_TYPE_ALIAS";
   public static final String DART_TYPE_ALIAS = "DART_TYPE_ALIAS";
 
@@ -137,6 +138,7 @@ public final class DartSyntaxHighlighterColors {
   public static final TextAttributesKey ENUM = createTextAttributesKey(DART_ENUM, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey ENUM_CONSTANT =
     createTextAttributesKey(DART_ENUM_CONSTANT, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+  public static final TextAttributesKey EXTENSION = createTextAttributesKey(DART_EXTENSION, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey FUNCTION_TYPE_ALIAS =
     createTextAttributesKey(DART_FUNCTION_TYPE_ALIAS, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey TYPE_ALIAS =
