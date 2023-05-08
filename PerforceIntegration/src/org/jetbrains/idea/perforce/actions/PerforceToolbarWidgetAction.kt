@@ -72,7 +72,7 @@ class PerforceToolbarWidgetAction : ExpandableComboAction() {
     val isNoConnections = perforceSettings.allConnections.isEmpty()
 
     with (e.presentation) {
-      description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections)
+      description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections, perforceSettings.ENABLED)
       isEnabledAndVisible = true
       icon = PerforceToolbarWidgetHelper.getIcon(perforceSettings, isNoConnections, true)
 

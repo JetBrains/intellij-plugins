@@ -36,7 +36,7 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     with (presentation) {
       isEnabledAndVisible = true
       icon = PerforceToolbarWidgetHelper.getIcon(perforceSettings, isNoConnections, false)
-      description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections)
+      description = PerforceToolbarWidgetHelper.getDescription(workspace, isNoConnections, perforceSettings.ENABLED)
 
       val text = PerforceToolbarWidgetHelper.getText(workspace, isNoConnections, perforceSettings.ENABLED)
       setText(text, false)

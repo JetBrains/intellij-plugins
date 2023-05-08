@@ -18,13 +18,13 @@ import javax.swing.Icon
 class PerforceToolbarWidgetHelper {
   companion object {
     fun getConnection(e: AnActionEvent, settings: PerforceSettings): P4Connection? {
+      val allConnections = settings.allConnections
+      if (allConnections.count() == 1)
+        return allConnections.single()
+
       val file = e.getData(PlatformDataKeys.LAST_ACTIVE_FILE_EDITOR)?.file
                  ?: e.getData(PlatformCoreDataKeys.VIRTUAL_FILE)
-                 ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY)
-
-      val defaultConnection = settings.allConnections.firstOrNull()
-      if (file == null)
-        return defaultConnection
+                 ?: e.getData(PlatformCoreDataKeys.PROJECT_FILE_DIRECTORY) ?: return settings.allConnections.firstOrNull()
 
       return settings.getConnectionForFile(file)
     }
@@ -45,7 +45,9 @@ class PerforceToolbarWidgetHelper {
       return builder.toString()
     }
 
-    fun getDescription(@Nls workspace: String?, isNoConnections: Boolean): @NlsSafe String {
+    fun getDescription(@Nls workspace: String?, isNoConnections: Boolean, isOnline: Boolean): @NlsSafe String {
+      if (!isOnline)
+        return PerforceBundle.message("connection.cannot.connect")
       if (isNoConnections)
         return PerforceBundle.message("connection.no.valid.connections")
 
