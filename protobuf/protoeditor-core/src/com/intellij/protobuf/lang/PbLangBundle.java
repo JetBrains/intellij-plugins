@@ -29,7 +29,7 @@ public final class PbLangBundle {
 
   private static final DynamicBundle INSTANCE = new DynamicBundle(PbLangBundle.class, BUNDLE);
 
-  public PbLangBundle() {
+  private PbLangBundle() {
   }
 
   public static @Nls String message(@PropertyKey(resourceBundle = BUNDLE) @NotNull @NonNls String key, Object @NotNull ... params) {
