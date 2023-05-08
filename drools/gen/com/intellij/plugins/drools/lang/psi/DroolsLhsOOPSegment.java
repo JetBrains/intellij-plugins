@@ -7,15 +7,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DroolsAccumulateFunction extends DroolsPsiCompositeElement {
+public interface DroolsLhsOOPSegment extends DroolsPsiCompositeElement {
 
   @NotNull
-  DroolsAccumulateParameters getAccumulateParameters();
+  List<DroolsConstraint> getConstraintList();
 
   @NotNull
-  DroolsFunctionName getFunctionName();
-
-  @Nullable
-  DroolsLabel getLabel();
+  DroolsLhsOOPathSegmentId getLhsOOPathSegmentId();
 
 }

@@ -204,6 +204,10 @@ public class DroolsVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitFunctionName(@NotNull DroolsFunctionName o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitFunctionStatement(@NotNull DroolsFunctionStatement o) {
     visitFunction(o);
   }
@@ -293,6 +297,18 @@ public class DroolsVisitor extends PsiElementVisitor {
   }
 
   public void visitLhsNot(@NotNull DroolsLhsNot o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitLhsOOPSegment(@NotNull DroolsLhsOOPSegment o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitLhsOOPathBind(@NotNull DroolsLhsOOPathBind o) {
+    visitVariable(o);
+  }
+
+  public void visitLhsOOPathSegmentId(@NotNull DroolsLhsOOPathSegmentId o) {
     visitPsiCompositeElement(o);
   }
 

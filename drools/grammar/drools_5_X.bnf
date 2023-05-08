@@ -278,7 +278,8 @@ lhsUnary ::=
 | lhsNamedConsequence
 | "(" lhsOr ")"
 | lhsPatternBind
-)";"?
+| lhsOOPathBind
+)
 {recoverWhile="unary_recover"}
 private unary_recover ::= !('(' | ')' | ',' | ';' | '?' | 'accumulate' | 'and' | 'end' | 'eval' | 'exists' | 'forall' | 'not' | 'or' | 'then' | 'if' | JAVA_IDENTIFIER)
 
@@ -297,6 +298,15 @@ lhsParen ::= "(" lhsOr ")"
 
 lhsPatternBind ::= [nameId ":"] ( ("(" lhsPattern ("or" lhsPattern)* ")") | lhsPattern )   annotation?
 {mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsLhsPatternBindVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
+
+//OOPath
+//OOPExpr = [ID ( ":" | ":=" )] ( "/" | "?/" ) OOPSegment { ( "/" | "?/" | "." ) OOPSegment } ;
+//OOPSegment = ID ["#" ID] ["[" ( Number | Constraints ) "]"]
+lhsOOPathBind ::= [nameId ":"|":="]  ("/" | "?/") lhsOOPSegment ( ( "/" | "?/" | "." ) lhsOOPSegment )*
+{mixin="com.intellij.plugins.drools.lang.psi.impl.DroolsLhsOOPathBindVariableImpl" implements="com.intellij.plugins.drools.lang.psi.DroolsVariable"}
+lhsOOPSegment ::= lhsOOPathSegmentId ("["constraints  "]")?
+lhsOOPathSegmentId ::= JAVA_IDENTIFIER
+
 nameId ::= JAVA_IDENTIFIER
 
 conditionalElement ::=  ("(" lhsPatternBind (("or"|"||"| "and"|"&&") lhsPatternBind)* ")") | lhsPatternBind
@@ -333,10 +343,10 @@ fromCollect ::= "collect" "(" lhsPatternBind ")"
 
 fromAccumulate ::= "accumulate" "(" lhsAnd "," ( "init" chunk "," "action" chunk "," ( "reverse" chunk ",")? "result" chunk | accumulateFunction ) ")"  {pin=1}
 
-accumulateFunctionBinding ::= label accumulateFunction
+accumulateFunctionBinding ::= nameId":" accumulateFunction
 
 accumulateFunction ::= label? functionName accumulateParameters
-private functionName ::="average" | "min"| "max"| "count" | "sum"| "collectList"| "collectSet"
+functionName ::="average" | "min"| "max"| "count" | "sum"| "collectList"| "collectSet"
 
 accumulateParameters ::= "(" (conditionalExpr ("," conditionalExpr)* )? ")"
 parameters ::= "(" ( parameter ( "," parameter )* )? ")"  {pin=2}

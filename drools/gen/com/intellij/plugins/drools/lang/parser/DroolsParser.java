@@ -70,13 +70,14 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // label accumulateFunction
+  // nameId":" accumulateFunction
   public static boolean accumulateFunctionBinding(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "accumulateFunctionBinding")) return false;
     if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = label(b, l + 1);
+    r = nameId(b, l + 1);
+    r = r && consumeToken(b, COLON);
     r = r && accumulateFunction(b, l + 1);
     exit_section_(b, m, ACCUMULATE_FUNCTION_BINDING, r);
     return r;
@@ -1520,9 +1521,10 @@ public class DroolsParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // "average" | "min"| "max"| "count" | "sum"| "collectList"| "collectSet"
-  static boolean functionName(PsiBuilder b, int l) {
+  public static boolean functionName(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionName")) return false;
     boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_NAME, "<function name>");
     r = consumeToken(b, "average");
     if (!r) r = consumeToken(b, "min");
     if (!r) r = consumeToken(b, "max");
@@ -1530,6 +1532,7 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, "sum");
     if (!r) r = consumeToken(b, "collectList");
     if (!r) r = consumeToken(b, "collectSet");
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -1981,8 +1984,6 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   // ("(" and lhsUnary+ ")") | (lhsUnary ("and" lhsUnary)*)
   public static boolean lhsAnd(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "lhsAnd")) return false;
-    if (!nextTokenIs(b, "<lhs and>", ACCUMULATE, EVAL,
-      EXISTS, FORALL, IF, JAVA_IDENTIFIER, LPAREN, NOT, QUEST)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LHS_AND, "<lhs and>");
     r = lhsAnd_0(b, l + 1);
@@ -2197,11 +2198,137 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // lhsOOPathSegmentId ("["constraints  "]")?
+  public static boolean lhsOOPSegment(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPSegment")) return false;
+    if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = lhsOOPathSegmentId(b, l + 1);
+    r = r && lhsOOPSegment_1(b, l + 1);
+    exit_section_(b, m, LHS_OOP_SEGMENT, r);
+    return r;
+  }
+
+  // ("["constraints  "]")?
+  private static boolean lhsOOPSegment_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPSegment_1")) return false;
+    lhsOOPSegment_1_0(b, l + 1);
+    return true;
+  }
+
+  // "["constraints  "]"
+  private static boolean lhsOOPSegment_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPSegment_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LBRACKET);
+    r = r && constraints(b, l + 1);
+    r = r && consumeToken(b, RBRACKET);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // [nameId ":"|":="]  ("/" | "?/") lhsOOPSegment ( ( "/" | "?/" | "." ) lhsOOPSegment )*
+  public static boolean lhsOOPathBind(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, LHS_OO_PATH_BIND, "<lhs oo path bind>");
+    r = lhsOOPathBind_0(b, l + 1);
+    r = r && lhsOOPathBind_1(b, l + 1);
+    r = r && lhsOOPSegment(b, l + 1);
+    r = r && lhsOOPathBind_3(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // [nameId ":"|":="]
+  private static boolean lhsOOPathBind_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_0")) return false;
+    lhsOOPathBind_0_0(b, l + 1);
+    return true;
+  }
+
+  // nameId ":"|":="
+  private static boolean lhsOOPathBind_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = lhsOOPathBind_0_0_0(b, l + 1);
+    if (!r) r = consumeToken(b, ":=");
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // nameId ":"
+  private static boolean lhsOOPathBind_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nameId(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // "/" | "?/"
+  private static boolean lhsOOPathBind_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_1")) return false;
+    boolean r;
+    r = consumeToken(b, OP_DIV);
+    if (!r) r = consumeToken(b, "?/");
+    return r;
+  }
+
+  // ( ( "/" | "?/" | "." ) lhsOOPSegment )*
+  private static boolean lhsOOPathBind_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_3")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!lhsOOPathBind_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "lhsOOPathBind_3", c)) break;
+    }
+    return true;
+  }
+
+  // ( "/" | "?/" | "." ) lhsOOPSegment
+  private static boolean lhsOOPathBind_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = lhsOOPathBind_3_0_0(b, l + 1);
+    r = r && lhsOOPSegment(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // "/" | "?/" | "."
+  private static boolean lhsOOPathBind_3_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathBind_3_0_0")) return false;
+    boolean r;
+    r = consumeToken(b, OP_DIV);
+    if (!r) r = consumeToken(b, "?/");
+    if (!r) r = consumeToken(b, DOT);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // JAVA_IDENTIFIER
+  public static boolean lhsOOPathSegmentId(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsOOPathSegmentId")) return false;
+    if (!nextTokenIs(b, JAVA_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, JAVA_IDENTIFIER);
+    exit_section_(b, m, LHS_OO_PATH_SEGMENT_ID, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // lhsAnd (or lhsAnd)*
   public static boolean lhsOr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "lhsOr")) return false;
-    if (!nextTokenIs(b, "<lhs or>", ACCUMULATE, EVAL,
-      EXISTS, FORALL, IF, JAVA_IDENTIFIER, LPAREN, NOT, QUEST)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LHS_OR, "<lhs or>");
     r = lhsAnd(b, l + 1);
@@ -2418,25 +2545,6 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( lhsExists
-  // | lhsNot
-  // | lhsEval
-  // | lhsForall
-  // | lhsAccumulate
-  // | lhsNamedConsequence
-  // | "(" lhsOr ")"
-  // | lhsPatternBind
-  // )";"?
-  public static boolean lhsUnary(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "lhsUnary")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, LHS_UNARY, "<lhs unary>");
-    r = lhsUnary_0(b, l + 1);
-    r = r && lhsUnary_1(b, l + 1);
-    exit_section_(b, l, m, r, false, DroolsParser::unary_recover);
-    return r;
-  }
-
   // lhsExists
   // | lhsNot
   // | lhsEval
@@ -2445,25 +2553,27 @@ public class DroolsParser implements PsiParser, LightPsiParser {
   // | lhsNamedConsequence
   // | "(" lhsOr ")"
   // | lhsPatternBind
-  private static boolean lhsUnary_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "lhsUnary_0")) return false;
+  // | lhsOOPathBind
+  public static boolean lhsUnary(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsUnary")) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, LHS_UNARY, "<lhs unary>");
     r = lhsExists(b, l + 1);
     if (!r) r = lhsNot(b, l + 1);
     if (!r) r = lhsEval(b, l + 1);
     if (!r) r = lhsForall(b, l + 1);
     if (!r) r = lhsAccumulate(b, l + 1);
     if (!r) r = lhsNamedConsequence(b, l + 1);
-    if (!r) r = lhsUnary_0_6(b, l + 1);
+    if (!r) r = lhsUnary_6(b, l + 1);
     if (!r) r = lhsPatternBind(b, l + 1);
-    exit_section_(b, m, null, r);
+    if (!r) r = lhsOOPathBind(b, l + 1);
+    exit_section_(b, l, m, r, false, DroolsParser::unary_recover);
     return r;
   }
 
   // "(" lhsOr ")"
-  private static boolean lhsUnary_0_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "lhsUnary_0_6")) return false;
+  private static boolean lhsUnary_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "lhsUnary_6")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, LPAREN);
@@ -2471,13 +2581,6 @@ public class DroolsParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, RPAREN);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // ";"?
-  private static boolean lhsUnary_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "lhsUnary_1")) return false;
-    consumeToken(b, SEMICOLON);
-    return true;
   }
 
   /* ********************************************************** */

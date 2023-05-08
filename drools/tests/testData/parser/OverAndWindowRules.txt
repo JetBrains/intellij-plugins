@@ -474,7 +474,8 @@ Drools File
                       PsiElement(,)(',')
                       PsiWhiteSpace('\n            ')
                       ACCUMULATE_FUNCTION
-                        PsiElement(JAVA_IDENTIFIER)('count')
+                        FUNCTION_NAME
+                          PsiElement(JAVA_IDENTIFIER)('count')
                         ACCUMULATE_PARAMETERS
                           PsiElement(()('(')
                           PsiWhiteSpace(' ')

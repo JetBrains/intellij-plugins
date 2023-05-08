@@ -59,6 +59,7 @@ public interface DroolsTokenTypes {
   IElementType FROM_ENTRY_POINT = new DroolsElementType("FROM_ENTRY_POINT");
   IElementType FROM_EXPRESSION = new DroolsElementType("FROM_EXPRESSION");
   IElementType FROM_WINDOW = new DroolsElementType("FROM_WINDOW");
+  IElementType FUNCTION_NAME = new DroolsElementType("FUNCTION_NAME");
   IElementType FUNCTION_STATEMENT = new DroolsElementType("FUNCTION_STATEMENT");
   IElementType GLOBAL_STATEMENT = new DroolsElementType("GLOBAL_STATEMENT");
   IElementType IDENTIFIER = new DroolsElementType("IDENTIFIER");
@@ -82,6 +83,9 @@ public interface DroolsTokenTypes {
   IElementType LHS_FORALL = new DroolsElementType("LHS_FORALL");
   IElementType LHS_NAMED_CONSEQUENCE = new DroolsElementType("LHS_NAMED_CONSEQUENCE");
   IElementType LHS_NOT = new DroolsElementType("LHS_NOT");
+  IElementType LHS_OOP_SEGMENT = new DroolsElementType("LHS_OOP_SEGMENT");
+  IElementType LHS_OO_PATH_BIND = new DroolsElementType("LHS_OO_PATH_BIND");
+  IElementType LHS_OO_PATH_SEGMENT_ID = new DroolsElementType("LHS_OO_PATH_SEGMENT_ID");
   IElementType LHS_OR = new DroolsElementType("LHS_OR");
   IElementType LHS_PAREN = new DroolsElementType("LHS_PAREN");
   IElementType LHS_PATTERN = new DroolsElementType("LHS_PATTERN");
@@ -422,6 +426,9 @@ public interface DroolsTokenTypes {
       else if (type == FROM_WINDOW) {
         return new DroolsFromWindowImpl(node);
       }
+      else if (type == FUNCTION_NAME) {
+        return new DroolsFunctionNameImpl(node);
+      }
       else if (type == FUNCTION_STATEMENT) {
         return new DroolsFunctionStatementImpl(node);
       }
@@ -490,6 +497,15 @@ public interface DroolsTokenTypes {
       }
       else if (type == LHS_NOT) {
         return new DroolsLhsNotImpl(node);
+      }
+      else if (type == LHS_OOP_SEGMENT) {
+        return new DroolsLhsOOPSegmentImpl(node);
+      }
+      else if (type == LHS_OO_PATH_BIND) {
+        return new DroolsLhsOOPathBindImpl(node);
+      }
+      else if (type == LHS_OO_PATH_SEGMENT_ID) {
+        return new DroolsLhsOOPathSegmentIdImpl(node);
       }
       else if (type == LHS_OR) {
         return new DroolsLhsOrImpl(node);

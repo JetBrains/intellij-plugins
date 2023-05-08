@@ -123,6 +123,15 @@ public class DroolsParserTest extends ParsingTestCase {
     doTest(CHECK_RESULT);
   }
 
+  // IDEA-319541
+  public void testOOPath() {
+    doTest(CHECK_RESULT);
+  }
+
+  public void testOOPathAccumulate() {
+    doTest(CHECK_RESULT);
+  }
+
   @Override
   protected boolean checkAllPsiRoots() {
     return false;

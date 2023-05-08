@@ -1,0 +1,8 @@
+package org.kie.kogito.queries;
+unit LoanUnit;
+rule AllAmounts
+when
+    accumulate ( $a : /loanApplications ; $sum : sum($a.amount))
+then
+    allAmounts.add(new AllAmounts($sum));
+end

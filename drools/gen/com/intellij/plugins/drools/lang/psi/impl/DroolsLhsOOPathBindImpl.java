@@ -12,14 +12,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.plugins.drools.lang.lexer.DroolsTokenTypes.*;
 import com.intellij.plugins.drools.lang.psi.*;
 
-public class DroolsAccumulateFunctionBindingImpl extends DroolsPsiCompositeElementImpl implements DroolsAccumulateFunctionBinding {
+public class DroolsLhsOOPathBindImpl extends DroolsLhsOOPathBindVariableImpl implements DroolsLhsOOPathBind {
 
-  public DroolsAccumulateFunctionBindingImpl(@NotNull ASTNode node) {
+  public DroolsLhsOOPathBindImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DroolsVisitor visitor) {
-    visitor.visitAccumulateFunctionBinding(this);
+    visitor.visitLhsOOPathBind(this);
   }
 
   @Override
@@ -30,14 +30,14 @@ public class DroolsAccumulateFunctionBindingImpl extends DroolsPsiCompositeEleme
 
   @Override
   @NotNull
-  public DroolsAccumulateFunction getAccumulateFunction() {
-    return findNotNullChildByClass(DroolsAccumulateFunction.class);
+  public List<DroolsLhsOOPSegment> getLhsOOPSegmentList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DroolsLhsOOPSegment.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DroolsNameId getNameId() {
-    return findNotNullChildByClass(DroolsNameId.class);
+    return findChildByClass(DroolsNameId.class);
   }
 
 }

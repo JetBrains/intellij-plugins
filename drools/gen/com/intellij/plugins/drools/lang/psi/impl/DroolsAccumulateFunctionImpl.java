@@ -35,6 +35,12 @@ public class DroolsAccumulateFunctionImpl extends DroolsPsiCompositeElementImpl 
   }
 
   @Override
+  @NotNull
+  public DroolsFunctionName getFunctionName() {
+    return findNotNullChildByClass(DroolsFunctionName.class);
+  }
+
+  @Override
   @Nullable
   public DroolsLabel getLabel() {
     return findChildByClass(DroolsLabel.class);

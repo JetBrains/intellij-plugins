@@ -66,6 +66,12 @@ public class DroolsLhsUnaryImpl extends DroolsPsiCompositeElementImpl implements
 
   @Override
   @Nullable
+  public DroolsLhsOOPathBind getLhsOOPathBind() {
+    return findChildByClass(DroolsLhsOOPathBind.class);
+  }
+
+  @Override
+  @Nullable
   public DroolsLhsOr getLhsOr() {
     return findChildByClass(DroolsLhsOr.class);
   }

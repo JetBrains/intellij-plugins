@@ -186,7 +186,8 @@ Drools File
                       PsiElement(,)(',')
                       PsiWhiteSpace('\n      ')
                       ACCUMULATE_FUNCTION
-                        PsiElement(JAVA_IDENTIFIER)('average')
+                        FUNCTION_NAME
+                          PsiElement(JAVA_IDENTIFIER)('average')
                         ACCUMULATE_PARAMETERS
                           PsiElement(()('(')
                           PRIMARY_EXPR
