@@ -115,6 +115,16 @@ public final class PerforceVcs extends AbstractVcs {
     return PerforceBundle.message("perforce.name.with.mnemonic");
   }
 
+  @Override
+  public boolean isCommitActionDisabled() {
+    return !PerforceSettings.getSettings(myProject).ENABLED;
+  }
+
+  @Override
+  public boolean isUpdateActionDisabled() {
+    return !PerforceSettings.getSettings(myProject).ENABLED;
+  }
+
   @Nullable
   private <T> T validProvider(T initialValue) {
     return getSettings().ENABLED ? initialValue : null;
