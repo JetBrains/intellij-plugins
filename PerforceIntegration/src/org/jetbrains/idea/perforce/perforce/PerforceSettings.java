@@ -86,7 +86,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public @NlsSafe String pathToIgnore = ".p4ignore";
   public @NlsSafe String PATH_TO_P4VC = "p4vc";
 
-  public boolean myCanGoOffline = true;
+  public boolean myCanGoOffline = false;
 
   public boolean SYNC_FORCE = false;
   public boolean SYNC_RUN_RESOLVE = true;
@@ -114,7 +114,6 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public PerforceSettings(Project project) {
     myProject = project;
     myOfflineNotification = new PerforceOfflineNotification(myProject);
-    myCanGoOffline = true;
   }
 
   public static PerforceSettings getSettings(final Project project) {
