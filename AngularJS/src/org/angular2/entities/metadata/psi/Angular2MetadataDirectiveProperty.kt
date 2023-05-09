@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.metadata.psi
 
+import com.intellij.javascript.web.js.WebJSTypesUtil.wrapWithUndefinedIfOptional
 import com.intellij.javascript.webSymbols.apiStatus
 import com.intellij.lang.javascript.psi.JSElementBase
 import com.intellij.lang.javascript.psi.JSRecordType
@@ -29,7 +30,7 @@ class Angular2MetadataDirectiveProperty internal constructor(private val myOwner
     lazyNullable { myOwner.getPropertySignature(myFieldName) }
 
   override val rawJsType: JSType?
-    get() = mySignature.value?.let { Angular2LibrariesHacks.hackQueryListTypeInNgForOf(it.jsType, this) }
+    get() = mySignature.value?.let { Angular2LibrariesHacks.hackQueryListTypeInNgForOf(it.jsType, this)?.wrapWithUndefinedIfOptional(it) }
 
   override val virtualProperty: Boolean
     get() = mySignature.value == null
