@@ -152,15 +152,8 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     completedFuture(quickInfo(element))
 
   override fun restart(recreateToolWindow: Boolean) {
-    val lspServerManager = LspServerManager.getInstance(project)
-    val lspServers = lspServerManager.getServersForProvider(DenoLspSupportProvider::class.java)
-    lspServers.forEach { lspServerManager.stopServer(it) }
-    if (!lspServers.isEmpty()) {
-      getDenoDescriptor(project)?.let {
-        lspServerManager.ensureServerStarted(DenoLspSupportProvider::class.java, it)
-      }
-      TypeScriptMessageBus.get(project).changed()
-    }
+    LspServerManager.getInstance(project).stopAndRestartIfNeeded(DenoLspSupportProvider::class.java)
+    TypeScriptMessageBus.get(project).changed()
   }
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
