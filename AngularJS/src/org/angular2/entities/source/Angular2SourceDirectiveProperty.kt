@@ -24,7 +24,7 @@ class Angular2SourceDirectiveProperty(override val owner: TypeScriptClass,
                                       override val required: Boolean) : Angular2DirectiveProperty {
 
   override val rawJsType: JSType?
-    get() = signature.jsType
+    get() = signature.jsTypeWithOptionality
 
   override val virtualProperty: Boolean
     get() = false

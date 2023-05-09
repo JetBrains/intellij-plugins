@@ -10,7 +10,7 @@ class Angular2ComponentPropertyResolveResult(element: PsiElement,
                                              private val myPropertySignature: JSRecordType.PropertySignature) : JSResolveResult(element) {
 
   val jsType: JSType?
-    get() = myPropertySignature.jsType
+    get() = myPropertySignature.jsTypeWithOptionality
 
   fun copyWith(element: PsiElement): Angular2ComponentPropertyResolveResult {
     return Angular2ComponentPropertyResolveResult(element, myPropertySignature)

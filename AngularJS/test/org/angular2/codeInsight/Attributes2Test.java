@@ -1215,15 +1215,21 @@ public class Attributes2Test extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testUnknownTagsAttributesInlineTemplate() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("unknownTagsAttributesInlineTemplate.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
   public void testNgAcceptInputTypeOverride() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("ngAcceptInputTypeOverride.ts", "package.json");
     myFixture.checkHighlighting();
   }
 
-  public void testUnknownTagsAttributesInlineTemplate() {
+  public void testTypeMismatchErrorWithOptionalInputs() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.configureByFiles("unknownTagsAttributesInlineTemplate.ts", "package.json");
+    myFixture.configureByFiles("typeMismatchErrorWithOptionalInputs.ts", "package.json", "tsconfig.json");
     myFixture.checkHighlighting();
   }
 }
