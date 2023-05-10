@@ -12,6 +12,7 @@ export class TestComponent {
   @Input() item1? = '';
   @Input() item2 = '';
   @Input() item3: string | undefined = '';
+  @Input() item4?: string;
 }
 
 @Component({
@@ -19,14 +20,36 @@ export class TestComponent {
              standalone: true,
              template: `
                <div>
-                 <app-test [item1]="myItem"></app-test>
-                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem</error>"></app-test>
-                 <app-test [item3]="myItem"></app-test>
+                 <app-test [item1]="myItem1"></app-test>
+                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem1</error>"></app-test>
+                 <app-test [item3]="myItem1"></app-test>
+                 <app-test [item4]="myItem1"></app-test>
+               </div>
+               <div>
+                 <app-test [item1]="myItem2"></app-test>
+                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem2</error>"></app-test>
+                 <app-test [item3]="myItem2"></app-test>
+                 <app-test [item4]="myItem2"></app-test>
+               </div>
+               <div>
+                 <app-test [item1]="myItem3"></app-test>
+                 <app-test [item2]="<error descr="Type string | undefined is not assignable to type string  Type undefined is not assignable to type string">myItem3</error>"></app-test>
+                 <app-test [item3]="myItem3"></app-test>
+                 <app-test [item4]="myItem3"></app-test>
+               </div>
+               <div>
+                 <app-test [item1]="myItem4"></app-test>
+                 <app-test [item2]="myItem4"></app-test>
+                 <app-test [item3]="myItem4"></app-test>
+                 <app-test [item4]="myItem4"></app-test>
                </div>
              `,
              imports: [TestComponent, CommonModule, FormsModule]
            })
 export class AppComponent {
-  myItem: string | undefined;
+  myItem1: string | undefined;
+  myItem2?: string;
+  myItem3? = "infer";
+  myItem4 = "";
 
 }
