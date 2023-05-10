@@ -7,7 +7,7 @@
 
 <script setup>
 
-import {ref} from "vue";
+import {ref} <info descr="null">from</info> "vue";
 
 export const <info descr="exported variable">foo</info> = 12
 

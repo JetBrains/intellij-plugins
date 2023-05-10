@@ -11,13 +11,13 @@
 </template>
 
 <script>
-  import CustomComponentHighlighting_2 <symbolName descr="null">from</symbolName> './CustomComponentHighlighting_2.vue'
-  import Button <symbolName descr="null">from</symbolName> './Button.vue'
+  import <info descr="exported variable">CustomComponentHighlighting_2</info> <info descr="null">from</info> './CustomComponentHighlighting_2.vue'
+  import <info descr="exported variable">Button</info> <info descr="null">from</info> './Button.vue'
   export default {
-    name: 'CustomComponentHighlighting',
-    components: {
-      CustomComponentHighlighting_2,
-      Button
+    <info descr="instance field">name</info>: 'CustomComponentHighlighting',
+    <info descr="instance field">components</info>: {
+      <info descr="exported variable">CustomComponentHighlighting_2</info>,
+      <info descr="exported variable">Button</info>
     }
   }
-</script>  
+</script>
