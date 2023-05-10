@@ -45,7 +45,7 @@ import org.jetbrains.idea.perforce.ServerVersion;
 import org.jetbrains.idea.perforce.application.ConnectionKey;
 import org.jetbrains.idea.perforce.application.PerforceManager;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper;
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
@@ -67,7 +67,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   private final Project myProject;
   private final PerforceOfflineNotification myOfflineNotification;
 
-  private String myEnvIgnore = P4ConfigHelper.getP4IgnoreFileNameFromEnv();
+  private String myEnvIgnore = P4EnvHelper.getP4IgnoreFileNameFromEnv();
 
   // ------------------ persistent state start
 

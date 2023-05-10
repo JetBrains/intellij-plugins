@@ -69,7 +69,7 @@ public class ConfigPanel {
   private JButton myTestConnectionButton;
 
   private final Project myProject;
-  private final P4ConfigHelper myP4ConfigHelper;
+  private final P4EnvHelper myP4EnvHelper;
   private JCheckBox myShowBranchingHistory;
   private JCheckBox myIsEnabled;
   private JCheckBox myUseLogin;
@@ -103,7 +103,7 @@ public class ConfigPanel {
 
   public ConfigPanel(final Project project) {
     myProject  = project;
-    myP4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
+    myP4EnvHelper = P4EnvHelper.getConfigHelper(myProject);
 
     final ButtonGroup bg = new ButtonGroup();
     bg.add(myUseConnectionParametersRadioButton);
@@ -203,7 +203,7 @@ public class ConfigPanel {
     }
 
 
-    String unsetEnv = myP4ConfigHelper.getUnsetP4EnvironmentVars();
+    String unsetEnv = myP4EnvHelper.getUnsetP4EnvironmentVars();
     if (!unsetEnv.isEmpty()) {
       myP4ConfigWarningLabel.setText(PerforceBundle.message("radio.no.p4config.env", unsetEnv));
       myP4ConfigWarningLabel.setVisible(true);
@@ -213,7 +213,7 @@ public class ConfigPanel {
       myP4ConfigWarningLabel.setVisible(false);
     }
 
-    myP4IgnoreWarningLabel.setVisible(!myP4ConfigHelper.hasP4IgnoreSetting());
+    myP4IgnoreWarningLabel.setVisible(!myP4EnvHelper.hasP4IgnoreSetting());
     RelativeFont.SMALL.install(myP4IgnoreWarningLabel);
   }
 
@@ -246,8 +246,8 @@ public class ConfigPanel {
 
   private boolean shouldIgnorePanelBeEnabled() {
     boolean useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
-    @Nullable String configFileName = myP4ConfigHelper.getP4Config();
-    if (useP4CONFIG && myP4ConfigHelper.hasP4ConfigSetting() && !myProject.isDefault()) {
+    @Nullable String configFileName = myP4EnvHelper.getP4Config();
+    if (useP4CONFIG && myP4EnvHelper.hasP4ConfigSetting() && !myProject.isDefault()) {
       String basePath = myProject.getBasePath();
       assert basePath != null;
       assert configFileName != null;
@@ -337,7 +337,7 @@ public class ConfigPanel {
 
   public void applyTo(PerforceSettings settings) {
     applyImpl(settings);
-    myP4ConfigHelper.reset();
+    myP4EnvHelper.reset();
     if (settings.ENABLED != myIsEnabled.isSelected()) {
       if (myIsEnabled.isSelected()) {
         settings.enable();

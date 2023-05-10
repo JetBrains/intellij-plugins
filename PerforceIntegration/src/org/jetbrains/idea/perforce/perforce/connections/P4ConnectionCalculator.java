@@ -29,10 +29,10 @@ public class P4ConnectionCalculator {
     final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
 
-    final P4ConfigHelper p4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
-    p4ConfigHelper.reset();
+    final P4EnvHelper p4EnvHelper = P4EnvHelper.getConfigHelper(myProject);
+    p4EnvHelper.reset();
 
-    final String p4ConfigFileName = p4ConfigHelper.getP4Config();
+    final String p4ConfigFileName = p4EnvHelper.getP4Config();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final List<VirtualFile> detailedVcsMappings = Registry.is("p4.new.project.mappings.handling")
@@ -42,7 +42,7 @@ public class P4ConnectionCalculator {
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
                                                                        : fillConfigsMap(detailedVcsMappings, p4ConfigFileName);
     final Map<VirtualFile,P4ConnectionParameters> connectionSettings = new HashMap<>();
-    final P4ConnectionParameters defaultParameters = p4ConfigHelper.getDefaultParams();
+    final P4ConnectionParameters defaultParameters = p4EnvHelper.getDefaultParams();
 
     ApplicationManager.getApplication().runReadAction(() -> {
       // find files
@@ -62,7 +62,7 @@ public class P4ConnectionCalculator {
           value = P4ParamsCalculator.getParametersFromConfig(configParentDir, p4ConfigFileName);
         }
         value.setConfigFileName(p4ConfigFileName);
-        p4ConfigHelper.fillDefaultValues(value);
+        p4EnvHelper.fillDefaultValues(value);
 
         LOG.debug("Using " + value + " for " + mapping);
         connectionSettings.put(mapping, value);

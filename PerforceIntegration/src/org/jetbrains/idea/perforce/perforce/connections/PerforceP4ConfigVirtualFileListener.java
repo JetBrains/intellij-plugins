@@ -13,12 +13,12 @@ public class PerforceP4ConfigVirtualFileListener implements VirtualFileListener 
   private final PerforceConnectionManagerI myConnectionManager;
   private final Project myProject;
   private final static Logger LOG = Logger.getInstance(PerforceP4ConfigVirtualFileListener.class);
-  private final P4ConfigHelper myP4ConfigHelper;
+  private final P4EnvHelper myP4EnvHelper;
 
   public PerforceP4ConfigVirtualFileListener(PerforceConnectionManagerI connectionManager, Project project) {
     myConnectionManager = connectionManager;
     myProject = project;
-    myP4ConfigHelper = P4ConfigHelper.getConfigHelper(myProject);
+    myP4EnvHelper = P4EnvHelper.getConfigHelper(myProject);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class PerforceP4ConfigVirtualFileListener implements VirtualFileListener 
   }
 
   private boolean isIgnoredFileName(@NotNull String fileName) {
-    if (fileName.equals(myP4ConfigHelper.getP4Ignore())) {
+    if (fileName.equals(myP4EnvHelper.getP4Ignore())) {
       return true;
     }
 

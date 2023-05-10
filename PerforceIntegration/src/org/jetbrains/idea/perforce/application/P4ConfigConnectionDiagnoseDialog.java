@@ -18,7 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper;
+import org.jetbrains.idea.perforce.perforce.connections.P4EnvHelper;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceMultipleConnections;
@@ -38,14 +38,14 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
   private Tree myTree;
   private BaseNode myRoot;
   private final Project myProject;
-  private final P4ConfigHelper myP4ConfigHelper;
+  private final P4EnvHelper myP4EnvHelper;
   private final ConnectionDiagnoseRefresher myRefresher;
   private DialogWrapper.DialogWrapperAction myRefreshAction;
 
   public P4ConfigConnectionDiagnoseDialog(Project project, ConnectionDiagnoseRefresher refresher) {
     super(project, true);
     myProject = project;
-    myP4ConfigHelper = P4ConfigHelper.getConfigHelper(project);
+    myP4EnvHelper = P4EnvHelper.getConfigHelper(project);
     myRefresher = refresher;
     setTitle(PerforceBundle.message("config.dialog.title"));
     setCancelButtonText(CommonBundle.message("close.action.name"));
@@ -119,7 +119,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
       ++i;
     }
 
-    String envP4Config = myP4ConfigHelper.getP4Config();
+    String envP4Config = myP4EnvHelper.getP4Config();
     if (envP4Config != null) {
       addNode(myRoot,
               new BaseNode(PerforceBundle.message("connection.env", envP4Config), NodeType.info));
