@@ -3,6 +3,7 @@ package org.jetbrains.idea.perforce.actions
 import com.intellij.icons.AllIcons
 import com.intellij.icons.ExpUiIcons
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
@@ -76,8 +77,11 @@ class PerforceToolbarWidgetHelper {
     }
   }
 
-  class WorkspaceAction(workspace: String, workspaceDir: String) : AnAction(getWorkspaceLabel(workspace, workspaceDir)) {
+  class WorkspaceAction(workspace: String, workspaceDir: String) : AnAction(), DumbAware {
+    private val workspaceLabel = getWorkspaceLabel(workspace, workspaceDir)
+
     override fun update(e: AnActionEvent) {
+      e.presentation.setText(workspaceLabel, false)
       e.presentation.isEnabled = false
     }
 

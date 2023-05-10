@@ -45,15 +45,22 @@ class PerforceWorkspaceComboBoxAction : ComboBoxAction(), DumbAware {
     }
   }
 
-  override fun createComboBoxButton(presentation: Presentation): ComboBoxButton {
-    if (presentation.getClientProperty(multipleWorkspacesKey)!!) {
-      return ComboBoxButton(presentation)
-    }
+  override fun createComboBoxButton(presentation: Presentation): ComboBoxButton = PerforceWorkspaceComboBox(presentation)
 
-    return object : ComboBoxButton(presentation) {
-      override fun isArrowVisible(): Boolean = false
+  override fun updateCustomComponent(component: JComponent, presentation: Presentation) {
+    val workspaceComboBox = component as? PerforceWorkspaceComboBox ?: return
+    val isMultipleWorkspaces = presentation.getClientProperty(multipleWorkspacesKey) ?: return
+    workspaceComboBox.isMultipleWorkspaces = isMultipleWorkspaces
+  }
 
-      override fun fireActionPerformed(event: ActionEvent?) {}
+  private inner class PerforceWorkspaceComboBox(presentation: Presentation) : ComboBoxButton(presentation) {
+    var isMultipleWorkspaces = false
+
+    override fun isArrowVisible(): Boolean = isMultipleWorkspaces
+
+    override fun fireActionPerformed(event: ActionEvent?) {
+      if (isMultipleWorkspaces)
+        super.fireActionPerformed(event)
     }
   }
 
