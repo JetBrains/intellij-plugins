@@ -177,7 +177,7 @@ class Angular2DirectiveSelectorSymbol(private val myParent: Angular2DirectiveSel
       }
     }
 
-    override fun presentation(): TargetPresentation {
+    override fun computePresentation(): TargetPresentation {
       return mySymbol.presentation
     }
 
