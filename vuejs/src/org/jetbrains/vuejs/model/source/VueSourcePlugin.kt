@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VFileProperty
@@ -42,8 +43,11 @@ class VueSourcePlugin constructor(private val project: Project,
 
   private val componentsWithProximity: Pair<VueModelVisitor.Proximity, Map<String, VueComponent>>
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
-      val dependencies = mutableListOf<Any>(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
-                                            packageJsonFile)
+      val dependencies = mutableListOf<Any>(
+        NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
+        packageJsonFile,
+        DumbService.getInstance(project).modificationTracker,
+      )
       val psiDirectory = source
       val components: Pair<VueModelVisitor.Proximity, Map<String, VueComponent>>
       if (psiDirectory == null) {

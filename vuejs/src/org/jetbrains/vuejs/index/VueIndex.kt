@@ -8,6 +8,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.Processor
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
@@ -28,11 +29,18 @@ const val GLOBAL_BINDING_MARK: String = "*"
 private const val INDEXED_ACCESS_HINT = "[]"
 private const val DELIMITER = ';'
 
+/**
+ * Requires [PsiModificationTracker.MODIFICATION_COUNT] and [DumbService.modificationTracker] as dependencies for caches.
+ */
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Sequence<JSImplicitElement> {
+  if (DumbService.isDumb(scope.project!!)) return emptySequence()
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
   return keys.asSequence().flatMap { resolve(it, scope, key) }
 }
 
+/**
+ * Requires [PsiModificationTracker.MODIFICATION_COUNT] and [DumbService.modificationTracker] as dependencies for caches.
+ */
 fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
   if (DumbService.isDumb(scope.project!!)) return emptyList()
   val normalized = normalizeNameForIndex(name)

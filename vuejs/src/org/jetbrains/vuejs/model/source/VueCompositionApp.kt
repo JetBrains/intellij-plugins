@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.javascript.psi.util.stubSafeCallArguments
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
@@ -86,7 +87,11 @@ class VueCompositionApp(override val source: JSCallExpression) : VueDelegatedCon
 
   private fun getEntitiesAnalysis(): EntitiesAnalysis =
     CachedValuesManager.getCachedValue(source) {
-      CachedValueProvider.Result.create(analyzeCall(source), PsiModificationTracker.MODIFICATION_COUNT)
+      CachedValueProvider.Result.create(
+        analyzeCall(source),
+        DumbService.getInstance(source.project).modificationTracker,
+        PsiModificationTracker.MODIFICATION_COUNT
+      )
     }
 
   companion object {

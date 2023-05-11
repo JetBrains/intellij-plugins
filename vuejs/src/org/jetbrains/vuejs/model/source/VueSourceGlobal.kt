@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.model.Pointer
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
@@ -142,8 +143,12 @@ class VueSourceGlobal(override val project: Project, override val packageJsonUrl
       psiFile ?: project,
       manager.getKeyForClass(provider::class.java),
       {
-        Result.create(provider(searchScope), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                      PsiModificationTracker.MODIFICATION_COUNT)
+        Result.create(
+          provider(searchScope),
+          VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+          PsiModificationTracker.MODIFICATION_COUNT,
+          DumbService.getInstance(project),
+        )
       },
       false)
   }
