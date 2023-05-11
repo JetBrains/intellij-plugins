@@ -10,6 +10,7 @@
     <p>* Reference resolution in Link components and tags</p>
     <p>* Auto-excluding .next directory</p>
     <p>* New project generator</p>
+    <p>* Don't report any exports as unused inside <code>app</code> dir </p>
     ]]>
   </description>
   <vendor>JetBrains</vendor>
@@ -21,5 +22,6 @@
     <directoryProjectGenerator implementation="com.intellij.lang.javascript.frameworks.nextjs.generator.NextJsProjectGenerator"/>
     <implicitUsageProvider implementation="com.intellij.lang.javascript.frameworks.nextjs.inspections.NextJsImplicitUsageProvider" />
     <dependencySupport kind="javascript" coordinate="npm:next" displayName="Next.js"/>
+    <webSymbols.webTypes source="web-types/nextjs.web-types.json" enableByDefault="true"/>
   </extensions>
 </idea-plugin>

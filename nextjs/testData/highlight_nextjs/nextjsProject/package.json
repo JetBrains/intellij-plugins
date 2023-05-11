@@ -1,0 +1,6 @@
+{
+  "name": "nextjs-project",
+  "dependencies": {
+    "next": "*"
+  }
+}
