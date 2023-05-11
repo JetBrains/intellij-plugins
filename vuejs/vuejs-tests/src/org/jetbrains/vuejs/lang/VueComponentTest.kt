@@ -106,6 +106,8 @@ class VueComponentTest : BasePlatformTestCase() {
 
   fun testPropsConstructorsAndGenerics() = doTest(true)
 
+  fun testDecoratedComponentEmitsTS() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_6_10))
+
   /**
    * Runs `doTestInner` twice: once for default TS config, once for strict TS config
    */

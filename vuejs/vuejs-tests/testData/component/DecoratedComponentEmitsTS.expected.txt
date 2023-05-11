@@ -1,0 +1,158 @@
+{
+ class: "VueSourceComponent",
+ computed: [
+  {
+   class: "VueDecoratedComputedProperty",
+   name: "syncedName",
+   jsType: "string",
+  },
+  {
+   class: "VueDecoratedComputedProperty",
+   name: "syncedNameAny",
+   jsType: "any",
+  },
+  {
+   class: "VueDecoratedComputedProperty",
+   name: "syncedNameTypeDecl",
+   jsType: "string",
+  },
+ ],
+ methods: [
+  {
+   class: "VueDecoratedPropertyMethod",
+   name: "click",
+   jsType: "(param1: string, param2: boolean) => "foo"",
+  },
+  {
+   class: "VueDecoratedPropertyMethod",
+   name: "event",
+   jsType: "() => 123",
+  },
+  {
+   class: "VueDecoratedPropertyMethod",
+   name: "eventNoArgs",
+   jsType: "() => void",
+  },
+  {
+   class: "VueDecoratedPropertyMethod",
+   name: "promise",
+   jsType: "() => Promise<number>",
+  },
+ ],
+ props: [
+  {
+   class: "VueDecoratedInputProperty",
+   name: "name",
+   jsType: "string",
+   required: true,
+  },
+  {
+   class: "VueDecoratedInputProperty",
+   name: "name2",
+   jsType: "string",
+   required: true,
+  },
+  {
+   class: "VueDecoratedInputProperty",
+   name: "name3",
+   jsType: "any",
+   required: false,
+  },
+ ],
+ emits: [
+  {
+   class: "VueDecoratedPropertyEmitCall",
+   name: "click",
+   eventJSType: "(arg: "foo", param1: string, param2: boolean) => void",
+   params: [
+    {
+     name: "arg",
+     type: ""foo"",
+    },
+    {
+     name: "param1",
+     type: "string",
+    },
+    {
+     name: "param2",
+     type: "boolean",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "click", arg: "foo", param1: string, param2: boolean) => void",
+  },
+  {
+   class: "VueDecoratedPropertyEmitCall",
+   name: "event",
+   eventJSType: "(arg: 123) => void",
+   params: [
+    {
+     name: "arg",
+     type: "123",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "event", arg: 123) => void",
+  },
+  {
+   class: "VueDecoratedPropertyEmitCall",
+   name: "event-no-args",
+   eventJSType: "() => void",
+   params: [],
+   hasStrictSignature: true,
+   callSignature: "(event: "event-no-args") => void",
+  },
+  {
+   class: "VueDecoratedPropertyEmitCall",
+   name: "promise",
+   eventJSType: "(arg: number) => void",
+   params: [
+    {
+     name: "arg",
+     type: "number",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "promise", arg: number) => void",
+  },
+  {
+   class: "VueDecoratedPropSyncEmitCall",
+   name: "update:name",
+   eventJSType: "(arg: string) => void",
+   params: [
+    {
+     name: "arg",
+     type: "string",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "update:name", arg: string) => void",
+  },
+  {
+   class: "VueDecoratedPropSyncEmitCall",
+   name: "update:name2",
+   eventJSType: "(arg: ("a" | "b")) => void",
+   params: [
+    {
+     name: "arg",
+     type: ""a" | "b"",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "update:name2", arg: ("a" | "b")) => void",
+  },
+  {
+   class: "VueDecoratedPropSyncEmitCall",
+   name: "update:name3",
+   eventJSType: "(arg: any) => void",
+   params: [
+    {
+     name: "arg",
+     type: "any",
+    },
+   ],
+   hasStrictSignature: true,
+   callSignature: "(event: "update:name3", arg: any) => void",
+  },
+ ],
+}

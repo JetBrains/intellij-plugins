@@ -1,17 +1,19 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.componentDecorator
 
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSRecordType.TypeMember
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSParameterTypeDecoratorImpl
+import com.intellij.lang.javascript.psi.types.evaluable.JSUnwrapPromiseType
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType
+import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl
 import com.intellij.psi.PsiElement
+import com.intellij.util.asSafely
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
@@ -72,7 +74,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
               computed.add(VueDecoratedComputedProperty(member.memberName, member, decorator, 1))
               getNameFromDecorator(decorator)?.let { name ->
                 props.add(VueDecoratedInputProperty(name, member, decorator, 1))
-                emits.add(VueDecoratedPropertyEmitCall("update:$name", member))
+                emits.add(VueDecoratedPropSyncEmitCall("update:$name", decorator, member))
               }
             }
             MODEL_DEC -> if (member is PropertySignature && model === null) {
@@ -171,7 +173,32 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
 
     private class VueDecoratedPropertyEmitCall(name: String, member: PropertySignature)
       : VueDecoratedNamedSymbol<PropertySignature>(name, member), VueEmitCall {
-      override val eventJSType: JSType? get() = member.jsType
+
+      override val params: List<JSParameterTypeDecorator> = run {
+        val functionType = member.jsType?.asSafely<JSFunctionType>() ?: return@run super.params
+        val returnType = functionType.returnType
+        if (returnType != null && returnType !is JSVoidType && returnType !is TypeScriptNeverJSTypeImpl) {
+          buildList {
+            add(JSParameterTypeDecoratorImpl("arg", JSUnwrapPromiseType(returnType, returnType.source), false, false, true))
+            addAll(functionType.parameters)
+          }
+        }
+        else {
+          functionType.parameters
+        }
+      }
+
+      override val hasStrictSignature: Boolean = member.jsType is JSFunctionType
+    }
+
+    private class VueDecoratedPropSyncEmitCall(name: String, decorator: ES6Decorator, member: PropertySignature)
+      : VueDecoratedNamedSymbol<PropertySignature>(name, member), VueEmitCall {
+
+      override val params: List<JSParameterTypeDecorator> = listOf(
+        JSParameterTypeDecoratorImpl("arg", member.jsType ?: VueDecoratedComponentPropType(member, decorator, 1), false, false, true)
+      )
+
+      override val hasStrictSignature: Boolean = true
     }
 
     private class VueDecoratedPropertyMethod(name: String, member: PropertySignature)
