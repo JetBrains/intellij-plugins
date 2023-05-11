@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types
 
+import com.intellij.lang.javascript.evaluation.JSExpressionTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
 import com.intellij.lang.javascript.psi.resolve.JSGenericMappings
@@ -11,19 +12,27 @@ import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createInter
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory.createUnionType
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor.JSTypeGenericId
 import com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
-import com.intellij.psi.*
+import com.intellij.lang.javascript.psi.types.primitives.JSStringType
+import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
+import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2LibrariesHacks.hackNgModelChangeType
+import org.angular2.codeInsight.Angular2TypeScriptConfigCustomizer
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
+import org.angular2.codeInsight.controlflow.Angular2ControlFlowBuilder.Companion.NG_TEMPLATE_CONTEXT_GUARD
 import org.angular2.entities.Angular2ComponentLocator.findComponentClass
 import org.angular2.entities.Angular2Directive
 import org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF
@@ -31,11 +40,8 @@ import org.angular2.lang.expr.psi.Angular2Binding
 import org.angular2.lang.expr.psi.Angular2TemplateBinding
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
-import org.jetbrains.annotations.Contract
-import java.util.*
 import java.util.function.BiFunction
 import java.util.function.Predicate
-import kotlin.collections.HashSet
 
 internal class BindingsTypeResolver private constructor(element: PsiElement,
                                                         provider: Angular2ApplicableDirectivesProvider,
@@ -119,12 +125,7 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
   }
 
   fun resolveTemplateContextType(): JSType? {
-    return if (myTypeSubstitutor != null) JSTypeUtils.applyGenericArguments(myRawTemplateContextType, myTypeSubstitutor)
-      ?.transformTypeHierarchy {
-        // temporary, to prevent strictNullChecks regressions
-        JSCompositeTypeImpl.optimizeTypeIfComposite(it, OptimizedKind.OPTIMIZED_REMOVED_NULL_UNDEFINED)
-      }
-    else myRawTemplateContextType
+    return JSTypeUtils.applyGenericArguments(myRawTemplateContextType, myTypeSubstitutor)
   }
 
   private fun processAndMerge(types: List<JSType?>): JSType? {
@@ -190,43 +191,119 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
       val inputsMap = inputExpressionsProvider()
         .distinctBy { it.first }
         .toMap()
+
+      val config = TypeScriptConfigUtil.getConfigForPsiFile(element.containingFile)
+      if (Angular2TypeScriptConfigCustomizer.isStrictTemplates(config)) {
+        return analyzeStrictTemplates(directives, element, inputsMap)
+      }
+      else {
+        return analyzeNonStrict(directives, element, inputsMap)
+      }
+    }
+
+    private fun analyzeStrictTemplates(directives: List<Angular2Directive>,
+                                       element: PsiElement,
+                                       inputsMap: Map<String, JSExpression>): Pair<JSType?, JSTypeSubstitutor?> {
       val genericArguments = MultiMap<JSTypeGenericId, JSType?>()
       val templateContextTypes: MutableList<JSType> = SmartList()
       directives.forEach { directive ->
         val cls = directive.typeScriptClass ?: return@forEach
 
-        getTemplateContextType(cls)?.let { templateContextType ->
+        val directiveInputs = mutableListOf<Pair<JSType, JSExpression?>>()
+        val processingContext = JSTypeComparingContextService.createProcessingContextWithCache(cls)
+        directive.inputs.forEach { property ->
+          val inputExpression = inputsMap[property.name]
+          val propertyType = property.type
+
+          if (propertyType != null) {
+            directiveInputs.add(Pair(propertyType, inputExpression))
+          }
+
+          if (inputExpression != null && propertyType != null) {
+            // todo delete. For now it's only used for input type assignability checks, which should rely on concrete instance type
+            collectGenericArgumentsNonStrict(inputExpression, propertyType, processingContext, genericArguments)
+          }
+        }
+
+        val elementTypeSource = JSTypeSourceFactory.createTypeSource(element, true)
+          .copyWithNewLanguage(JSTypeSource.SourceLanguage.TS) // sometimes we get the <ng-template> element, so we need to force TS
+        val classTypeSource = cls.staticJSType.source
+
+        val directiveInstanceType = calculateDirectiveInstanceType(cls, classTypeSource, directiveInputs, element, elementTypeSource)
+
+        val guardElement = cls.findFunctionByName(NG_TEMPLATE_CONTEXT_GUARD)
+        if (guardElement != null && guardElement.jsContext == JSContext.STATIC) {
+          val guardFunctionType = JSPsiBasedTypeOfType(guardElement, false).substitute() // expected JSFunctionType
+
+          val callType = JSApplyCallType(guardFunctionType, listOf(directiveInstanceType, JSUnknownType.TS_INSTANCE), classTypeSource)
+          val predicateType = callType.substitute()
+
+          var contextType: JSType? = null
+          if (predicateType is TypeScriptTypePredicateTypeImpl) {
+            contextType = predicateType.guardType
+          }
+          if (contextType != null) {
+            templateContextTypes.add(contextType.substitute())
+          }
+        }
+      }
+
+      val typeSource = getTypeSource(element, templateContextTypes, genericArguments) ?: return Pair(null, null)
+      // we merge templateContextTypes but Angular does something more akin to reduce
+      val mergedTemplateContextType = if (templateContextTypes.isEmpty()) null else merge(typeSource, templateContextTypes, true)
+      val typeSubstitutor = if (genericArguments.isEmpty) null else intersectGenerics(genericArguments, typeSource)
+      return Pair(mergedTemplateContextType, typeSubstitutor)
+    }
+
+    private fun calculateDirectiveInstanceType(cls: TypeScriptClass,
+                                               classTypeSource: JSTypeSource,
+                                               directiveInputs: MutableList<Pair<JSType, JSExpression?>>,
+                                               element: PsiElement,
+                                               elementTypeSource: JSTypeSource): JSType? {
+      val genericConstructorReturnType = TypeScriptTypeParser.createConstructorReturnType(cls, classTypeSource)
+
+      // conceptually: const Directive = (...) => {...}, it misses the type arguments <...> part, so we patch that later
+      val directiveFactoryType = JSFunctionTypeImpl(
+        classTypeSource,
+        directiveInputs.map { (paramType, _) -> JSParameterTypeDecoratorImpl(paramType, false, false, true) },
+        genericConstructorReturnType // could pass null because we currently don't use JSApplyCallType anyway
+      )
+
+      val directiveFactoryCall = WebJSSyntheticFunctionCall(element) { typeFactory ->
+        directiveInputs.map { (_, expression) ->
+          when (expression) {
+            null -> JSStringType(true, elementTypeSource, JSTypeContext.INSTANCE)
+            is JSEmptyExpression -> JSUndefinedType(elementTypeSource)
+            else -> typeFactory.evaluate(expression)
+          }
+        }
+      }
+
+      // JSApplyCallType accepting TypeScriptJSFunctionTypeImpl would be the cleanest solution,
+      // but we use base JSFunctionTypeImpl that doesn't contain List<TypeScriptGenericDeclarationTypeImpl>
+      val substitutor = TypeScriptGenericTypesEvaluator.getInstance()
+        .getTypeSubstitutorForCallItem(directiveFactoryType, directiveFactoryCall, null)
+      return JSTypeUtils.applyGenericArguments(genericConstructorReturnType, substitutor)
+    }
+
+    private fun analyzeNonStrict(directives: List<Angular2Directive>,
+                                 element: PsiElement,
+                                 inputsMap: Map<String, JSExpression>): Pair<JSType?, JSTypeSubstitutor?> {
+      val genericArguments = MultiMap<JSTypeGenericId, JSType?>()
+      val templateContextTypes: MutableList<JSType> = SmartList()
+      directives.forEach { directive ->
+        val cls = directive.typeScriptClass ?: return@forEach
+
+        getTemplateContextTypeNonStrict(cls)?.let { templateContextType ->
           templateContextTypes.add(templateContextType)
         }
 
         val processingContext = JSTypeComparingContextService.createProcessingContextWithCache(cls)
         directive.inputs.forEach { property ->
           val inputExpression = inputsMap[property.name]
-          val propertyType= property.type
+          val propertyType = property.type
           if (inputExpression != null && propertyType != null) {
-            val inputType = JSPsiBasedTypeOfType(inputExpression, true)
-            val apparentType = JSTypeUtils.getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType))
-            if (JSTypeUtils.isAnyType(apparentType)) {
-              // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
-              // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
-              // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
-              // with `null`, so we need to check for `null` and `undefined` as well
-              val anyType = JSAnyType.get(inputType.source)
-              TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(propertyType).accept(object : JSRecursiveTypeVisitor(true) {
-                override fun visitJSType(type: JSType) {
-                  if (type is JSGenericParameterType) {
-                    genericArguments.putValue(type.genericId, anyType)
-                  }
-                  super.visitJSType(type)
-                }
-              })
-            }
-            else {
-              JSGenericTypesEvaluatorBase
-                .matchGenericTypes(JSGenericMappings(genericArguments), processingContext, inputType, propertyType)
-              JSGenericTypesEvaluatorBase
-                .widenInferredTypes(genericArguments, listOf(propertyType), null, null, processingContext)
-            }
+            collectGenericArgumentsNonStrict(inputExpression, propertyType, processingContext, genericArguments)
           }
         }
       }
@@ -235,6 +312,36 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
       val mergedTemplateContextType = if (templateContextTypes.isEmpty()) null else merge(typeSource, templateContextTypes, true)
       val typeSubstitutor = if (genericArguments.isEmpty) null else intersectGenerics(genericArguments, typeSource)
       return Pair(mergedTemplateContextType, typeSubstitutor)
+    }
+
+    private fun collectGenericArgumentsNonStrict(inputExpression: JSExpression,
+                                                 propertyType: JSType,
+                                                 processingContext: ProcessingContext,
+                                                 genericArguments: MultiMap<JSTypeGenericId, JSType?>) {
+      val inputType = JSPsiBasedTypeOfType(inputExpression, true)
+      // todo getApparentType is supposed to be used only in JS according to usages in JS plugin
+      val apparentType = JSTypeUtils.getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType))
+      if (JSTypeUtils.isAnyType(apparentType)) {
+        // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
+        // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
+        // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
+        // with `null`, so we need to check for `null` and `undefined` as well
+        val anyType = JSAnyType.get(inputType.source)
+        TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(propertyType).accept(object : JSRecursiveTypeVisitor(true) {
+          override fun visitJSType(type: JSType) {
+            if (type is JSGenericParameterType) {
+              genericArguments.putValue(type.genericId, anyType)
+            }
+            super.visitJSType(type)
+          }
+        })
+      }
+      else {
+        JSGenericTypesEvaluatorBase
+          .matchGenericTypes(JSGenericMappings(genericArguments), processingContext, inputType, propertyType)
+        JSGenericTypesEvaluatorBase
+          .widenInferredTypes(genericArguments, listOf(propertyType), null, null, processingContext)
+      }
     }
 
     private fun intersectGenerics(arguments: MultiMap<JSTypeGenericId, JSType?>,
@@ -268,7 +375,7 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
       else types.firstOrNull()?.source
     }
 
-    private fun getTemplateContextType(cls: TypeScriptClass): JSType? {
+    private fun getTemplateContextTypeNonStrict(cls: TypeScriptClass): JSType? {
       var templateRefType: JSType? = null
       for (ctor in cls.constructors) {
         for (param in ctor.parameterVariables) {
@@ -282,6 +389,18 @@ internal class BindingsTypeResolver private constructor(element: PsiElement,
         null
       }
       else templateRefType.arguments.firstOrNull()
+    }
+  }
+
+  /**
+   * This class doesn't simplify much, but allows to use find usages to find related code for different web frameworks.
+   */
+  class WebJSSyntheticFunctionCall(val place: PsiElement?,
+                                   val argumentListProvider: (typeFactory: JSExpressionTypeFactory) -> List<JSType?>) : JSCallItem {
+    override fun getPsiContext(): PsiElement? = place
+
+    override fun getArgumentTypes(argumentTypeFactory: JSExpressionTypeFactory): List<JSType?> {
+      return argumentListProvider(argumentTypeFactory)
     }
   }
 }

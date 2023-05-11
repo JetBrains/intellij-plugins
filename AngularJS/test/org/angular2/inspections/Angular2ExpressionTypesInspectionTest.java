@@ -44,10 +44,16 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
-  public void testNgForOfAnyType() {
+  public void testNgForOfAnyTypeNonStrictTemplates() {
     TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
     configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14);
     myFixture.configureByFiles("ngForOfAnyType.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgForOfAnyTypeStrict() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngForOfAnyTypeStrict.ts");
     myFixture.checkHighlighting();
   }
 
@@ -94,10 +100,80 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testNgIfAsContextGuardRemovesFalsy() {
+    configureCommonFiles();
+    myFixture.configureByFiles("NgIfAsContextGuardRemovesFalsy.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgForContextGuard() {
+    configureCommonFiles();
+    myFixture.configureByFiles("NgForContextGuard.ts");
+    myFixture.checkHighlighting();
+  }
+
   public void testNgrxLetContextGuard() {
     configureCommonFiles();
     myFixture.configureByFile("let.directive.ts");
     myFixture.configureByFiles("NgrxLetContextGuard.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardNonGeneric() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardNonGeneric.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardDoubleGeneric() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardDoubleGeneric.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardPartialGeneric() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardPartialGeneric.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardOmitted() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardOmitted.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardMalformed() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardMalformed.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardEmptyInputs() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardEmptyInputs.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardTwoDirectivesOneGuard() {
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardTwoDirectivesOneGuard.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardTwoGuards() {
+    // the test documents an edge case, in Angular language-tools results are different, we have false-negative
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardTwoGuards.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgTemplateContextGuardInferenceFromTwoInputs() {
+    // There are 2 things of interest:
+    // * type of person
+    // * type checking for assignment of expressions to directive inputs
+    configureCommonFiles();
+    myFixture.configureByFiles("ngTemplateContextGuardInferenceFromTwoInputs.ts");
     myFixture.checkHighlighting();
   }
 

@@ -3,6 +3,7 @@ package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.inspections.JSUnresolvedReferenceInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
@@ -241,6 +242,7 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testUnionsWithoutTypeGuardSupport() {
+    TypeScriptTestUtil.forceConfig(getProject(), null, getTestRootDisposable());
     myFixture.enableInspections(TypeScriptUnresolvedReferenceInspection.class, JSUnresolvedReferenceInspection.class);
     myFixture.configureByFiles("unions.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
     myFixture.checkHighlighting();
