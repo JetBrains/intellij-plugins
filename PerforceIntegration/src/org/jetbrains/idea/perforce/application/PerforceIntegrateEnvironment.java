@@ -88,6 +88,9 @@ public class PerforceIntegrateEnvironment extends AbstractUpdateEnvironment {
 
     final String integrateChangeListNum = connectionSettings.INTEGRATE_CHANGE_LIST ? connectionSettings.INTEGRATED_CHANGE_LIST_NUMBER : null;
 
+    // reset settings for the next Integrate invocation
+    connectionSettings.INTEGRATE_CHANGE_LIST = false;
+    connectionSettings.INTEGRATED_CHANGE_LIST_NUMBER = "";
     return PerforceRunner.getInstance(myProject).integrate(connectionSettings.INTEGRATE_BRANCH_NAME,
                                                            p4Dir,
                                                            connectionSettings.INTEGRATE_TO_CHANGELIST_NUM,

@@ -59,6 +59,11 @@ public abstract class PerforceUpdateConfigurable implements Configurable{
   }
 
   @Override
+  public void cancel() {
+    myUpdatePanel.cancel(mySettings);
+  }
+
+  @Override
   public void reset() {
     myUpdatePanel.updateFrom(mySettings);
   }

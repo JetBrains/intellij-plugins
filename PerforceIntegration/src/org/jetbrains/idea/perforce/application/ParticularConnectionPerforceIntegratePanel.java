@@ -177,11 +177,21 @@ public class ParticularConnectionPerforceIntegratePanel implements PerforcePanel
       Messages.showErrorDialog(PerforceBundle.message("message.text.cannot.load.changes", e1.getLocalizedMessage()), PerforceBundle.message("message.title.refresh.changes"));
     }
 
-
-    myUsingChangeList.setSelected(false);
     myIsReverse.setSelected(connectionSettings.INTEGRATE_REVERSE);
 
-    myIntegrateWithChangeListLabel.setText("");
+    List<PerforceChangeList> changeLists;
+    try {
+       changeLists = getChangesToIntegrate(getSelectedBranchName(), myIsReverse.isSelected());
+    }
+    catch (VcsException e) {
+      LOG.info(e);
+      changeLists = Collections.emptyList();
+    }
+
+    boolean isChangeExists = connectionSettings.INTEGRATE_CHANGE_LIST && changeLists.stream()
+      .anyMatch(it -> String.valueOf(it.getNumber()).equals(connectionSettings.INTEGRATED_CHANGE_LIST_NUMBER));
+    myUsingChangeList.setSelected(isChangeExists);
+    myIntegrateWithChangeListLabel.setText(isChangeExists ? connectionSettings.INTEGRATED_CHANGE_LIST_NUMBER : "");
   }
 
   @Override
@@ -192,12 +202,25 @@ public class ParticularConnectionPerforceIntegratePanel implements PerforcePanel
     final ParticularConnectionSettings connectionSettings = settings.getSettings(myConnection);
 
     connectionSettings.INTEGRATE_BRANCH_NAME = (String)myBranches.getSelectedItem();
+    saveSettings(connectionSettings);
+  }
+
+  @Override
+  public void cancel(PerforceSettings settings) {
+    final ParticularConnectionSettings connectionSettings = settings.getSettings(myConnection);
+
+    if (myBranches.getSelectedItem() != null) {
+      connectionSettings.INTEGRATE_BRANCH_NAME = (String)myBranches.getSelectedItem();
+    }
+    saveSettings(connectionSettings);
+  }
+
+  private void saveSettings(ParticularConnectionSettings connectionSettings) {
     connectionSettings.INTEGRATE_TO_CHANGELIST_NUM = myChangeListChooser.getChangeListNumber();
 
     connectionSettings.INTEGRATED_CHANGE_LIST_NUMBER = myIntegrateWithChangeListLabel.getText();
     connectionSettings.INTEGRATE_CHANGE_LIST = myUsingChangeList.isSelected();
     connectionSettings.INTEGRATE_REVERSE = myIsReverse.isSelected();
-
   }
 
   @Override
