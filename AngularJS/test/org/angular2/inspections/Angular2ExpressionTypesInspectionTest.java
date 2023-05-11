@@ -3,6 +3,7 @@ package org.angular2.inspections;
 
 import com.intellij.lang.javascript.TypeScriptTestUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.codeInsight.Angular2AttributesTest;
 import org.angularjs.AngularTestUtil;
 
 import static org.angular2.modules.Angular2TestModule.*;
@@ -82,12 +83,18 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  /**
+   * @see Angular2AttributesTest#testTypeMismatchErrorWithOptionalInputs()
+   */
   public void testNullChecks() {
     configureCommonFiles();
     myFixture.configureByFiles("NullChecks.html", "NullChecks.ts");
     myFixture.checkHighlighting();
   }
 
+  /**
+   * @see Angular2AttributesTest#testTypeMismatchErrorWithOptionalInputs()
+   */
   public void testNullChecksInline() {
     configureCommonFiles();
     myFixture.configureByFiles("NullChecksInline.ts");
