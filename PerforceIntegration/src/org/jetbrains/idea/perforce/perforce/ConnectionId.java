@@ -12,9 +12,9 @@ import java.util.Objects;
 
 @Tag("ID")
 public class ConnectionId {
-  public final boolean myUseP4Config;
-  public final String myP4ConfigFileName;
-  public final String myWorkingDir;
+  public boolean myUseP4Config;
+  public String myP4ConfigFileName;
+  public String myWorkingDir;
 
   public ConnectionId(@Nullable final String p4ConfigFileName, @NotNull final String workingDir) {
     myP4ConfigFileName = p4ConfigFileName;
