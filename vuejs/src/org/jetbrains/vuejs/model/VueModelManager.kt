@@ -62,7 +62,7 @@ class VueModelManager {
           Pair({ container.source?.let { VueTypedGlobal(global, it) } ?: global }, container)
         }
 
-      return if (ApplicationManager.getApplication().isDispatchThread)
+      return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode})
         WebJSResolveUtil.disableIndexUpToDateCheckIn(context) {
           find()
         }

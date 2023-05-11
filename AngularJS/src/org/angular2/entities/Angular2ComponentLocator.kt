@@ -29,7 +29,7 @@ object Angular2ComponentLocator {
 
   @JvmStatic
   fun findComponentClass(templateContext: PsiElement): TypeScriptClass? {
-    return if (ApplicationManager.getApplication().isDispatchThread)
+    return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode })
       WebJSResolveUtil.disableIndexUpToDateCheckIn(templateContext) {
         findComponentClasses(templateContext).firstOrNull()
       }
