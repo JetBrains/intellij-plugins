@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.function.BiFunction
 
-private val volarVersion = SemVer.parseFromText("1.4.0")
-private const val volarPackage = "@volar/vue-language-server"
+internal  val volarVersion = SemVer.parseFromText("1.4.0")
+internal const val volarPackage = "@volar/vue-language-server"
 
 
 class VolarSupportProvider : LspServerSupportProvider {
@@ -120,6 +120,7 @@ fun getVolarExecutableAndRefresh(project: Project): String? {
 }
 
 fun scheduleVolarDownloading(project: Project) {
+  //pooled thread to work around service issues.
   object : Task.Backgroundable(project, VueBundle.message("volar.package.download", volarPackage), true,
                                ALWAYS_BACKGROUND) {
     override fun run(indicator: ProgressIndicator) {

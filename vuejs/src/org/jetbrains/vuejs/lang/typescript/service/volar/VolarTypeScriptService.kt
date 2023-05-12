@@ -3,8 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.service.volar
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
-import com.intellij.javascript.nodejs.library.NodeModulesPackageJsonListener
 import com.intellij.lang.javascript.completion.JSInsertHandler
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnnotatorCheckerProvider
 import com.intellij.lang.javascript.integration.JSAnnotationError
@@ -54,7 +52,7 @@ class VolarTypeScriptService(private val project: Project) : TypeScriptService, 
 
   override fun getStatusText() = withServer {
     when {
-      isRunning -> "Volar"
+      isRunning -> "Volar $volarVersion"
       isMalfunctioned -> "Volar ⚠"
       else -> "..."
     }
