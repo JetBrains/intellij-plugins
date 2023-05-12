@@ -8,7 +8,9 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.impl.JSStringTemplateExpressionImpl.isStringTemplateExpressionWithoutArguments
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
+import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl.isQuotedLiteral
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
@@ -30,7 +32,6 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_MAPPERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_NAMESPACE
-import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isVuexContext
 import org.jetbrains.vuejs.libraries.vuex.types.VuexStoreTypeProvider
 
 class VuexFrameworkHandler : FrameworkIndexingHandler() {
@@ -75,14 +76,14 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
-    if (node.firstChildNode?.elementType === JSTokenTypes.TRUE_KEYWORD) {
+    val firstChildNode = node.firstChildNode ?: return false
+    if (firstChildNode.elementType === JSTokenTypes.TRUE_KEYWORD) {
       return node.treeParent?.psi
         ?.asSafely<JSProperty>()
         ?.name
         ?.let { it == PROP_NAMESPACED || it == PROP_ROOT } == true
     }
-    if (node.text.getOrNull(0)
-        ?.let { it == '\'' || it == '"' || it == '`' } == true) {
+    if (isQuotedLiteral(node) || isStringTemplateExpressionWithoutArguments(node)) {
       val parent = node.treeParent
       when (parent?.elementType) {
         JSElementTypes.ARGUMENT_LIST -> {
