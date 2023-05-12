@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
@@ -256,7 +257,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
         return arg.stubSafeChildren.mapNotNull { literal ->
           (literal as? JSLiteralExpression)
             ?.significantValue
-            ?.let { VueScriptSetupLiteralBasedEvent(es6Unquote(it), literal) }
+            ?.let { VueScriptSetupLiteralBasedEvent(unquoteWithoutUnescapingStringLiteralValue(it), literal) }
         }
       }
 
@@ -279,7 +280,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
                    ?.inferredType
                    ?.asSafely<JSStringLiteralTypeImpl>()
                    ?.let {
-                     val name = es6Unquote(it.valueAsString)
+                     val name = unquoteWithoutUnescapingStringLiteralValue(it.valueAsString)
                      val source = eventSources[name] ?: it.sourceElement
                      VueScriptSetupTypedEvent(name, source, callSignature.functionType)
                    }
@@ -291,7 +292,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       val arguments = call.stubSafeCallArguments
       val nameElement = arguments.getOrNull(0).asSafely<JSLiteralExpression>()
       val name = if (nameElement != null) {
-        nameElement.significantValue?.let { es6Unquote(it) }?.takeIf { it.isNotBlank() } ?: return null
+        nameElement.significantValue?.let { unquoteWithoutUnescapingStringLiteralValue(it) }?.takeIf { it.isNotBlank() } ?: return null
       }
       else {
         MODEL_VALUE_PROP

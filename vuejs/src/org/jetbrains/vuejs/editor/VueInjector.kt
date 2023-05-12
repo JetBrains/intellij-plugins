@@ -5,6 +5,7 @@ import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.index.JavaScriptIndex
 import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil
 import com.intellij.lang.javascript.injections.JSInjectionUtil
@@ -25,7 +26,6 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
@@ -34,8 +34,8 @@ import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.parser.VueExprParsing
-import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
+import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
@@ -90,7 +90,7 @@ class VueInjector : MultiHostInjector {
       val list = getStringLiteralsFromInitializerArray(holder)
       if (list.size != 2) return null
       val literal = list[if (JSInjectionBracesUtil.START_SYMBOL_KEY == key) 0 else 1] as? JSLiteralExpression ?: return null
-      return es6Unquote(literal.significantValue!!)
+      return unquoteWithoutUnescapingStringLiteralValue(literal.significantValue!!)
     }
   }
 

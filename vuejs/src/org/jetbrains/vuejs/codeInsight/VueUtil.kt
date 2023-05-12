@@ -132,23 +132,17 @@ fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase =
     ?.firstOrNull()
   ?: this
 
-private val QUOTES = setOf('\'', '"', '`')
-
-fun es6Unquote(s: String): String {
-  if (s.length < 2) return s
-  if (QUOTES.contains(s[0]) && s.endsWith(s[0])) return s.substring(1, s.length - 1)
-  return s
-}
-
 fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExpression> {
   return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(
     holder, TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
                             JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
-    .filter {
-      val context = it.context
-      !it.significantValue.isNullOrBlank() &&
-      QUOTES.contains(it.significantValue!![0]) &&
-      ((context is JSArrayLiteralExpression) && (context.context == holder) || context == holder)
+    .filter { expr ->
+      val context = expr.context
+      expr.significantValue.let {
+        !it.isNullOrBlank()
+        && "'\"`".indexOf(it[0]) >= 0
+      }
+      && ((context is JSArrayLiteralExpression) && (context.context == holder) || context == holder)
     }
 }
 

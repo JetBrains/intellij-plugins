@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
@@ -15,7 +16,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.util.PathUtil
-import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.index.VueUrlIndex
 
 class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
@@ -51,7 +51,7 @@ class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
       .asSequence()
       .filterIsInstance<ES6ImportedBinding>()
       .mapNotNull { (it.parent as? ES6ImportDeclaration)?.fromClause?.referenceText }
-      .map { es6Unquote(it).takeWhile { char -> char != '?' } }
+      .map { unquoteWithoutUnescapingStringLiteralValue(it).takeWhile { char -> char != '?' } }
       .map { PathUtil.getFileName(it) }
       .find { it.isNotBlank() }
       ?.let {

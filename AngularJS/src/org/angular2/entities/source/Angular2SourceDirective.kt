@@ -1,6 +1,7 @@
 // Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.angular2.entities.source
 
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass
@@ -49,7 +50,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
         val stub = (property as JSPropertyImpl).stub
         if (stub != null) {
           initializer = stub.childrenStubs.firstNotNullOfOrNull { it.psi as? JSLiteralExpression }
-          value = initializer?.significantValue?.let { Angular2EntityUtils.unquote(it) }
+          value = initializer?.significantValue
+            ?.let { unquoteWithoutUnescapingStringLiteralValue(it) }
         }
         else {
           initializer = property.value as? JSLiteralExpression
@@ -167,7 +169,8 @@ open class Angular2SourceDirective(decorator: ES6Decorator, implicitElement: JSI
     val seq: Sequence<String>
     if (stub != null) {
       seq = stub.childrenStubs.asSequence().mapNotNull {
-        it.psi.asSafely<JSLiteralExpression>()?.significantValue?.let { str -> Angular2EntityUtils.unquote(str) }
+        it.psi.asSafely<JSLiteralExpression>()?.significantValue
+          ?.let { str -> unquoteWithoutUnescapingStringLiteralValue(str) }
       }
     }
     else {

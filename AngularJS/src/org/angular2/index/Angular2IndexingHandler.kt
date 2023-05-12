@@ -4,6 +4,7 @@ package org.angular2.index
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.psi.*
@@ -89,7 +90,7 @@ class Angular2IndexingHandler : FrameworkIndexingHandler() {
     else parent
     if (property != null && property.elementType === JSStubElementTypes.PROPERTY) {
       val identifier = JSPropertyImpl.findNameIdentifier(property)
-      val propName = if (identifier != null) JSPsiImplUtils.getNameFromIdentifier(identifier) else null
+      val propName = if (identifier != null) JSStringUtil.unquoteWithoutUnescapingStringLiteralValue(identifier.text) else null
       return propName != null && STUBBED_PROPERTIES.contains(propName)
     }
     return false

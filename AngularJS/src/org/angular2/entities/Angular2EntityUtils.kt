@@ -243,14 +243,6 @@ object Angular2EntityUtils {
     return entity is Angular2Module || entity is Angular2Declaration && entity.isStandalone
   }
 
-  @JvmStatic
-  fun unquote(s: String): String {
-    return if (s.length > 1 && "'\"`".indexOf(s[0]) >= 0 && s[0] == s[s.length - 1])
-      s.substring(1, s.length - 1)
-    else
-      s
-  }
-
   /**
    * Calls `moduleConsumer` for each NgModule, ignoring Components, Directives & Pipes.
    *

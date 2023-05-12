@@ -7,6 +7,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfigurationImpl
 import com.intellij.lang.ecmascript6.psi.impl.TypeScriptImportPathBuilder
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -248,7 +249,7 @@ object Angular2FixesFactory {
       unwrapImplicitElement(context), unwrapImplicitElement(declaration), declarationFile, false, "Foo"))
     val isAbsolute = Ref.create(false)
     builder.processDescriptorsWithModuleName { info ->
-      if (!Angular2EntityUtils.unquote(info.moduleName).startsWith(".")) {
+      if (!unquoteWithoutUnescapingStringLiteralValue(info.moduleName).startsWith(".")) {
         isAbsolute.set(true)
       }
       !isAbsolute.get()

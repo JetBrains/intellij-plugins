@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.ES6StubElementTypes
 import com.intellij.lang.ecmascript6.psi.*
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.JSStringUtil.unquoteWithoutUnescapingStringLiteralValue
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
@@ -43,7 +44,10 @@ import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
@@ -349,7 +353,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                 ?.context?.asSafely<ES6ImportExportDeclaration>()
                 ?.fromClause
                 ?.referenceText
-                ?.let { es6Unquote(it) } == "vue-typed-mixins") {
+                ?.let { unquoteWithoutUnescapingStringLiteralValue(it) } == "vue-typed-mixins") {
             for (arg in qualifier.arguments) {
               arg.asSafely<JSReferenceExpression>()
                 ?.takeIf { !it.hasQualifier() }
@@ -430,19 +434,20 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     VueCompositionPropsTypeProvider.useOnlyCompleteMatch(type)
 
   override fun shouldCreateStubForLiteral(node: ASTNode): Boolean {
-    if (node.psi is JSLiteralExpression) {
-      return hasSignificantValue(node.psi as JSLiteralExpression)
-    }
-    return super.shouldCreateStubForLiteral(node)
+    return hasSignificantValue(node)
   }
 
-  override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
-    val treeParent = expression.node.treeParent
+  override fun hasSignificantValue(expression: JSLiteralExpression): Boolean =
+    hasSignificantValue(expression.node)
+
+  private fun hasSignificantValue(literalExpressionNode: ASTNode): Boolean {
+    val treeParent = literalExpressionNode.treeParent
     val parentType = treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
-        || (JSElementTypes.PROPERTY == parentType && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(
-        treeParent)))) {
-      return expression.containingFile.isDotVueFile || insideVueDescriptor(expression)
+        || (JSElementTypes.PROPERTY == parentType
+            && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(treeParent)))) {
+      return TreeUtil.getFileElement(literalExpressionNode)?.psi?.containingFile?.isDotVueFile == true
+             || insideVueDescriptor(literalExpressionNode)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
       return treeParent.treeParent
@@ -469,8 +474,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
   // limit building stub in other file types like js/html to Vue-descriptor-like members
-  private fun insideVueDescriptor(expression: JSLiteralExpression): Boolean {
-    val statement = TreeUtil.findParent(expression.node,
+  private fun insideVueDescriptor(node: ASTNode): Boolean {
+    val statement = TreeUtil.findParent(node,
                                         expectedLiteralOwnerExpressions,
                                         JSExtendedLanguagesTokenSetProvider.STATEMENTS) ?: return false
     if (statement.elementType == ES6StubElementTypes.EXPORT_DEFAULT_ASSIGNMENT) return true
