@@ -2,6 +2,8 @@ package org.jetbrains.idea.perforce
 import com.intellij.testFramework.HeavyPlatformTestCase
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionCalculator
 import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionParameters
+import org.jetbrains.idea.perforce.perforce.connections.P4ParamsCalculator
+
 class PerforceConfigReadingTest extends HeavyPlatformTestCase {
 
   void testSlashInUserName() throws Exception {
@@ -9,7 +11,7 @@ class PerforceConfigReadingTest extends HeavyPlatformTestCase {
 P4USER=foo/bar\\goo
 P4CLIENT= foo=bar
 ''')
-    def params = P4ConnectionCalculator.getParametersFromConfig(file.parentFile, file.name)
+    def params = P4ParamsCalculator.getParametersFromConfig(file.parentFile, file.name)
     assert !params.exception
     assert params.user == 'foo/bar\\goo'
     assert params.client == 'foo=bar'
@@ -27,7 +29,7 @@ P4IGNORE=p4Ignore.txt (set)
 
     def defaultParameters = new P4ConnectionParameters()
     def parameters = new P4ConnectionParameters()
-    P4ConnectionCalculator.parseSetOutput(defaultParameters, parameters, output)
+    P4ParamsCalculator.parseSetOutput(defaultParameters, parameters, output)
 
     assert parameters.configFileName == 'customName'
     assert parameters.client == 'p4test'

@@ -3,18 +3,18 @@ package org.jetbrains.idea.perforce.perforce.connections;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.SystemProperties;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.PerforcePhysicalConnectionParametersI;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
-import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class P4EnvHelper {
@@ -142,5 +142,9 @@ public class P4EnvHelper {
     if (testValue != null) return testValue;
 
     return EnvironmentUtil.getValue(P4ConfigFields.P4IGNORE.getName());
+  }
+
+  public static boolean hasP4ConfigSettingInEnvironment() {
+    return EnvironmentUtil.getValue(P4ConfigFields.P4CONFIG.getName()) != null;
   }
 }
