@@ -13,6 +13,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.remote.RemoteCredentials
 import com.intellij.ssh.RSyncUtil
+import com.intellij.ssh.rsync.RSyncOptions
 import com.intellij.util.PathMapper
 import com.intellij.util.PathMappingSettings
 import com.intellij.util.io.delete
@@ -209,7 +210,7 @@ private fun checkRsyncDownload(remoteHost: HostMachine): Boolean {
     file.write(testString, createParentDirs = false)
 
     RSyncUtil.downloadFolderWithRSync(local.path, remote.toString(), credentials,
-                                      ProgressManager.getInstance().progressIndicator, null, logFile.path)
+                                      ProgressManager.getInstance().progressIndicator, RSyncOptions().withLogfilePath(logFile.path))
 
     val text = FileUtil.loadFile(File(local, "file.txt"))
     return testString == text
