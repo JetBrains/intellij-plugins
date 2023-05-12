@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
-import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
@@ -17,7 +16,6 @@ import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.refactoring.rename.PsiElementRenameHandler.DEFAULT_NAME
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import com.intellij.webSymbols.moveToOffsetBySignature
 import junit.framework.TestCase
@@ -27,6 +25,15 @@ import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.Test
+
+fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
+  val myFixture = this
+  myFixture.configureFromTempProjectFile(filePath)
+  myFixture.checkHighlighting()
+}
+
+const val SERVICE_TEST_PATH = "/ts_ls_highlighting"
+
 
 class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   override fun getService(): JSLanguageServiceBase =
@@ -38,7 +45,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   override fun getBasePath(): String {
-    return vueRelativeTestDataPath() + BASE_PATH
+    return vueRelativeTestDataPath() + SERVICE_TEST_PATH
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -310,15 +317,5 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.file))
     UIUtil.dispatchAllInvocationEvents()
     checkAfterFile("vue")
-  }
-
-  private fun CodeInsightTestFixture.configureFileAndCheckHighlighting(filePath: String) {
-    val myFixture = this
-    myFixture.configureFromTempProjectFile(filePath)
-    myFixture.checkHighlighting()
-  }
-
-  companion object {
-    private const val BASE_PATH = "/ts_ls_highlighting"
   }
 }
