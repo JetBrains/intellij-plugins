@@ -6,19 +6,17 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportResolveContext
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportsResolverProvider
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_DEFAULT_EXTENSIONS_WITH_DOT
-import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun isImplicitTypeScriptFile(project: Project, file: VirtualFile): Boolean {
-    if (!FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)) return false
+    if (!file.isDotVueFile) return false
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
 

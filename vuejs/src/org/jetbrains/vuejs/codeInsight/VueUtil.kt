@@ -27,9 +27,11 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.stubSafeStringValue
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
@@ -44,10 +46,13 @@ import com.intellij.util.text.SemVer
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.WebSymbol.Companion.NAMESPACE_HTML
 import com.intellij.webSymbols.utils.unwrapMatchedSymbols
+import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
+import org.jetbrains.vuejs.lang.html.VueFile
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
@@ -428,3 +433,7 @@ inline fun <reified T : PsiElement> PsiElement.parentOfTypeInAttribute(): T? {
 
 fun isScriptSetupLocalDirectiveName(name: String): Boolean =
   name.length > 1 && name[0] == 'v' && name[1].isUpperCase()
+
+fun createVueFileFromText(project: Project, text: String): VueFile =
+  PsiFileFactory.getInstance(project)
+    .createFileFromText("dummy$VUE_FILE_EXTENSION", VueFileType.INSTANCE, text) as VueFile

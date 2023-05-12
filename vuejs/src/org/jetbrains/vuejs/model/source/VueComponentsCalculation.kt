@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.index.getVueIndexData
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFile
 import java.util.*
 
 class VueComponentsCalculation {
@@ -165,7 +165,7 @@ class VueComponentsCalculation {
     private fun selectComponentDefinition(list: List<Pair<PsiElement, Boolean>>): Pair<PsiElement, Boolean> {
       var selected: Pair<PsiElement, Boolean>? = null
       for (componentData in list) {
-        val isVue = VueFileType.INSTANCE == componentData.first.containingFile.fileType
+        val isVue = componentData.first.containingFile is VueFile
         if (componentData.second) {
           if (isVue) return componentData
           selected = componentData

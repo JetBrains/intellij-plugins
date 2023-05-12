@@ -3,13 +3,11 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.util.PsiTreeUtil.getContextOfType
 import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSSlotPropsExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
-import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueExprLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvider() {
   override fun isNeedToBeTerminated(element: PsiElement): Boolean = false
@@ -22,7 +20,7 @@ class VueExprLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProv
       is VueJSVForExpression -> "<li v-for=\"$destruct in schedules\">"
       else -> null
     }?.let { text ->
-      val file = PsiFileFactory.getInstance(parent.project).createFileFromText("q.vue", VueFileType.INSTANCE, text)
+      val file = createVueFileFromText(parent.project, text)
       SyntaxTraverser.psiTraverser(file).filter(JSInitializerOwner::class.java).first()
     }
   }

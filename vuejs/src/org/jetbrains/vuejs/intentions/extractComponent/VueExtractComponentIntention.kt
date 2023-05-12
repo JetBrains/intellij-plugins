@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 
 class VueExtractComponentIntention : JavaScriptIntention() {
   override fun getFamilyName(): String {
@@ -23,7 +23,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
     editor ?: return false
-    if (VueFileType.INSTANCE != element.containingFile?.fileType) return false
+    if (!element.containingFile.isDotVueFile) return false
     return getContext(editor, element) != null
   }
 

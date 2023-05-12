@@ -44,7 +44,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.asSafely
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.*
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
@@ -400,7 +400,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun isPossiblyVueContainerInitializer(initializer: JSObjectLiteralExpression?): Boolean {
     return initializer != null
-           && (initializer.containingFile.fileType == VueFileType.INSTANCE
+           && (initializer.containingFile.isDotVueFile
                || (initializer.containingFile is JSFile && hasComponentIndicatorProperties(initializer)))
   }
 
@@ -442,7 +442,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
         || (JSElementTypes.PROPERTY == parentType && (isComponentPropertyWithStubbedLiteral(treeParent) || isComponentModelProperty(
         treeParent)))) {
-      return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
+      return expression.containingFile.isDotVueFile || insideVueDescriptor(expression)
     }
     if (parentType == JSElementTypes.ARGUMENT_LIST) {
       return treeParent.treeParent
@@ -628,7 +628,7 @@ fun hasAttribute(tag: XmlTag, attributeName: String): Boolean =
 
 @StubSafe
 fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> Boolean)? = null): XmlTag? {
-  if ((xmlFile.virtualFile?.fileType ?: xmlFile.fileType) == VueFileType.INSTANCE) {
+  if (xmlFile.isDotVueFile) {
     var result: XmlTag? = null
     if (xmlFile is PsiFileImpl) {
       xmlFile.stub?.let { stub ->
@@ -657,7 +657,7 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String, accept: ((XmlTag) -> B
 }
 
 fun findTopLevelVueTags(xmlFile: XmlFile, tagName: String): List<XmlTag> {
-  if (xmlFile.fileType == VueFileType.INSTANCE) {
+  if (xmlFile.isDotVueFile) {
     if (xmlFile is PsiFileImpl) {
       xmlFile.stub?.let { stub ->
         return stub.childrenStubs

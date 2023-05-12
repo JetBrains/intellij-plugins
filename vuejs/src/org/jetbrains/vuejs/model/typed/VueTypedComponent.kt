@@ -60,7 +60,7 @@ class VueTypedComponent(override val source: PsiElement,
       return importType.qualifiedName.name
         .takeIf { it.startsWith(prefix) && it.endsWith(")") }
         ?.let { it.substring(prefix.length + 1, it.length - 2) }
-        ?.takeIf { it.endsWith("." + VueFileType.INSTANCE.defaultExtension) }
+        ?.takeIf { VueFileType.isVueFileName(it) }
         ?.let { contextFile.virtualFile?.parent?.findFileByRelativePath(it) }
         ?.let { contextFile.manager.findFile(it) }
         ?.let { VueModelManager.findEnclosingContainer(it) as? VueRegularComponent }

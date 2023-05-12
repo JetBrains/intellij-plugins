@@ -8,15 +8,14 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions
 import com.intellij.psi.codeStyle.PsiBasedFileIndentOptionsProvider
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.util.asSafely
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueFileIndentOptionsProvider : PsiBasedFileIndentOptionsProvider() {
 
   override fun getIndentOptionsByPsiFile(settings: CodeStyleSettings, file: PsiFile): IndentOptions? {
     if (file.language is VueLanguage) {
-      val fileType = file.originalFile.virtualFile?.fileType
-      if (fileType === null || fileType === VueFileType.INSTANCE) {
+      if (file.isDotVueFile) {
         return if (settings.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT)
           settings.getLanguageIndentOptions(VueLanguage.INSTANCE)
             ?.clone()

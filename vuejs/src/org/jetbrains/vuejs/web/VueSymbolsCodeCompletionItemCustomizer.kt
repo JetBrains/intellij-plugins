@@ -15,8 +15,8 @@ import com.intellij.webSymbols.SymbolNamespace
 import com.intellij.webSymbols.WebSymbol
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItem
 import com.intellij.webSymbols.completion.WebSymbolCodeCompletionItemCustomizer
-import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.isScriptSetupTag
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isVueFileName
 import org.jetbrains.vuejs.web.symbols.VueComponentSymbol
 
 class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
@@ -44,6 +44,6 @@ class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustom
            && (source !is ES6ImportedBinding
                || source.declaration
                  ?.fromClause?.referenceText?.let { JSStringUtil.unquoteStringLiteralValue(it) }
-                 ?.endsWith(VUE_FILE_EXTENSION) != true)
+                 ?.let { isVueFileName(it) } != true)
   }
 }

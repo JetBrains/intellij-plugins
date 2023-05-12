@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 
 class DataFunctionInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -39,7 +39,7 @@ class DataFunctionInspection : LocalInspectionTool() {
 
   fun isComponent(property: JSProperty): Boolean {
     return property.parent is JSObjectLiteralExpression && property.parent.parent is JSExportAssignment &&
-           property.containingFile.fileType == VueFileType.INSTANCE
+           property.containingFile.isDotVueFile
   }
 }
 

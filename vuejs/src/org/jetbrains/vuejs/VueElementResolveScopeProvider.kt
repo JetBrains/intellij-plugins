@@ -9,6 +9,7 @@ import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
@@ -26,7 +27,7 @@ class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
   override fun getElementResolveScope(element: PsiElement): GlobalSearchScope? {
     val project = element.project
     val psiFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(element)
-    if (psiFile?.fileType != VueFileType.INSTANCE) return null
+    if (psiFile !is VueFile) return null
     if (DialectDetector.isTypeScript(element)) {
       return tsProvider.getResolveScope(psiFile.viewProvider.virtualFile, project)
     }

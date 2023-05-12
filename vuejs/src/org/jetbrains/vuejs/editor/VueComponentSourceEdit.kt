@@ -21,19 +21,21 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.asSafely
 import com.intellij.xml.util.XmlTagUtil
+import org.jetbrains.vuejs.codeInsight.createVueFileFromText
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.context.*
+import org.jetbrains.vuejs.context.getVueClassComponentDecoratorName
+import org.jetbrains.vuejs.context.getVueClassComponentLibrary
+import org.jetbrains.vuejs.context.supportsDefineComponent
+import org.jetbrains.vuejs.context.supportsScriptSetup
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.VUE_CLASS_COMPONENT
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
@@ -82,8 +84,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
                     ?.substring(file.text)
                     ?.trimEnd { it == '>' || it == '/' }
                   ?: "<script"
-    val newScriptTag = PsiFileFactory.getInstance(file.project)
-      .createFileFromText("dummy.vue", VueFileType.INSTANCE, "$tagText>\n</script>")
+    val newScriptTag = createVueFileFromText(file.project, "$tagText>\n</script>")
       .let { PsiTreeUtil.findChildOfType(it, XmlTag::class.java)!! }
 
     return scriptTag.replace(newScriptTag)
@@ -142,7 +143,7 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
     val langText = if (hasTypeScript) " lang=\"ts\"" else ""
     val setupText = if (hasScriptSetup) " setup" else ""
     val text = "<script$setupText$langText>\n</script>"
-    val dummyFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.vue", VueFileType.INSTANCE, text)
+    val dummyFile = createVueFileFromText(project, text)
     return PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java)!!
       .also { reformat(it) }
   }
@@ -197,7 +198,8 @@ class VueComponentSourceEdit private constructor(private val component: Pointer<
         if (classComponentLibrary == VUE_CLASS_COMPONENT) {
           insertImportIfNotThere("Vue", true, VUE_MODULE, scriptScope)
           insertImportIfNotThere(componentDecoratorName, true, classComponentLibrary, scriptScope)
-        } else {
+        }
+        else {
           insertImportIfNotThere("Vue", false, classComponentLibrary, scriptScope)
           insertImportIfNotThere(componentDecoratorName, false, classComponentLibrary, scriptScope)
         }

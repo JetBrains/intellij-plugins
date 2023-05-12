@@ -15,7 +15,7 @@ import com.intellij.webSymbols.context.WebSymbolsContext
 import com.intellij.webSymbols.query.WebSymbolsNameMatchQueryParams
 import com.intellij.webSymbols.query.WebSymbolsQueryConfigurator
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsQueryConfigurator
 
@@ -29,7 +29,7 @@ class VueI18NQueryConfigurator : WebSymbolsQueryConfigurator {
         && element is HtmlTag
         && element.name == "i18n"
         && element.parentTag == null
-        && element.containingFile?.virtualFile?.fileType == VueFileType.INSTANCE) {
+        && element.containingFile?.isDotVueFile == true) {
       listOf(I18nTagInjectionKind(element))
     }
     else emptyList()

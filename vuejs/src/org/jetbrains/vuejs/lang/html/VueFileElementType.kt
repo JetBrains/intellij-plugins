@@ -14,10 +14,10 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.psi.xml.HtmlFileElementType
-import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.lang.LangMode
 import org.jetbrains.vuejs.lang.VueScriptLangs
 import org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.lexer.VueParsingLexer
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 import org.jetbrains.vuejs.lang.html.parser.VueParsing
@@ -77,7 +77,7 @@ class VueFileElementType : IStubFileElementType<VueFileStubImpl>("vue", VueLangu
       val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, lexer, languageForParser, chameleon.chars)
       lexer as VueParsingLexer
       builder.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueParsing
-      builder.putUserData(VueParsing.HTML_COMPAT_MODE, !psi.containingFile.name.endsWith(VUE_FILE_EXTENSION))
+      builder.putUserData(VueParsing.HTML_COMPAT_MODE, !psi.containingFile.isDotVueFile)
       psi.putUserData(VueScriptLangs.LANG_MODE, lexer.lexedLangMode) // read in VueElementTypes
       val parser = LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser)!!.createParser(project)
       val node = parser.parse(this, builder)

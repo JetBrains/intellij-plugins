@@ -6,12 +6,11 @@ import com.intellij.html.webSymbols.elements.WebSymbolElementDescriptor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
@@ -63,8 +62,7 @@ class VueXmlExtension : WebSymbolsXmlExtension() {
 
   private fun isVueComponentTemplateContext(tag: XmlTag) =
     tag.containingFile.let {
-      FileTypeRegistry.getInstance().isFileOfType(it.virtualFile, VueFileType.INSTANCE)
-      || VueModelManager.findEnclosingContainer(it) is VueComponent
+      it.isDotVueFile || VueModelManager.findEnclosingContainer(it) is VueComponent
     }
 
 }

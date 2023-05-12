@@ -30,7 +30,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.isScriptSetupTag
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
@@ -99,7 +99,7 @@ class VueReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.Se
       val searchScope = queryParameters.effectiveSearchScope.let { scope ->
         val embeddedContents = (scope as? LocalSearchScope)?.scope
           ?.filterIsInstance<JSEmbeddedContent>()
-          ?.filter { it.containingFile.virtualFile?.fileType == VueFileType.INSTANCE }
+          ?.filter { it.containingFile.isDotVueFile }
         if (!embeddedContents.isNullOrEmpty()) {
           scope.union(LocalSearchScope(embeddedContents.map { it.containingFile }.toTypedArray()))
         }
@@ -223,7 +223,7 @@ private class ScriptSetupImportProcessor(target: PsiElement?, queryParameters: R
 private fun getFullComponentScopeIfInsideScriptSetup(element: PsiElement): LocalSearchScope? {
   val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
 
-  if (scriptTag.isScriptSetupTag() && scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
+  if (scriptTag.isScriptSetupTag() && scriptTag.containingFile.isDotVueFile) {
     return LocalSearchScope(scriptTag.containingFile)
   }
 

@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFile
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
 import org.jetbrains.vuejs.model.source.METHODS_PROP
@@ -37,7 +37,7 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
   override fun findExpectedType(element: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
     if (element is JSObjectLiteralExpression) {
       val language = DialectDetector.languageOfElement(element)
-      if ((VueFileType.INSTANCE == element.containingFile?.fileType
+      if ((element.containingFile is VueFile
            && isInsideScript(element)
            && !VueExprMetaLanguage.matches(language)
            && (VueFrameworkHandler.hasComponentIndicatorProperties(element) || element.context is ES6ExportDefaultAssignment))

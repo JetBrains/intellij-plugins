@@ -18,7 +18,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.F
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -30,20 +29,20 @@ import com.intellij.util.Consumer
 import org.jetbrains.vuejs.index.VUE_FILE_EXTENSION
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpressionContent
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 
 class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
 
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
-    if (!isVueFile(virtualFile)) return false
+    if (!virtualFile.isDotVueFile) return false
 
     return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
   override fun postprocessErrors(file: PsiFile, errors: List<JSAnnotationError>): List<JSAnnotationError> {
-    if (file.virtualFile != null && isVueFile(file.virtualFile)) {
+    if (file.virtualFile?.isDotVueFile == true) {
       return ReadAction.compute<List<JSAnnotationError>, Throwable> {
         val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@compute emptyList()
         val regularModuleRangeFilter = getRangeFilter(file, false, document)
@@ -123,8 +122,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun canHighlight(file: PsiFile): Boolean {
     if (super.canHighlight(file)) return true
 
-    val fileType = file.fileType
-    if (fileType != VueFileType.INSTANCE) return false
+    if (!file.isDotVueFile) return false
 
     val virtualFile = file.virtualFile ?: return false
 
@@ -163,7 +161,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun createFixSet(file: PsiFile,
                             cache: JSLanguageServiceFileCommandCache,
                             typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
-    if (isVueFile(file.virtualFile)) {
+    if (file.isDotVueFile) {
       val textRanges = mutableListOf<TextRange>()
       findModule(file, true)?.let { textRanges.add(it.textRange) }
       findModule(file, false)?.let { textRanges.add(it.textRange) }
@@ -172,7 +170,5 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
     return super.createFixSet(file, cache, typescriptResult)
   }
-
-  private fun isVueFile(virtualFile: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(virtualFile, VueFileType.INSTANCE)
 
 }

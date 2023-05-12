@@ -12,7 +12,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VuejsIcons
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueExtractComponentAction : BaseRefactoringAction() {
@@ -31,7 +31,7 @@ class VueExtractComponentAction : BaseRefactoringAction() {
 
   override fun isAvailableForLanguage(language: Language?): Boolean = VueLanguage.INSTANCE == language
 
-  override fun isAvailableForFile(file: PsiFile?): Boolean = VueFileType.INSTANCE == file?.fileType
+  override fun isAvailableForFile(file: PsiFile?): Boolean = file?.isDotVueFile == true
 
   override fun getHandler(dataContext: DataContext): RefactoringActionHandler {
     return object : RefactoringActionHandler {

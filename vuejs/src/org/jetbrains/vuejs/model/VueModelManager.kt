@@ -38,7 +38,8 @@ import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.*
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFile
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
@@ -62,7 +63,7 @@ class VueModelManager {
           Pair({ container.source?.let { VueTypedGlobal(global, it) } ?: global }, container)
         }
 
-      return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode})
+      return if (ApplicationManager.getApplication().let { it.isDispatchThread && !it.isUnitTestMode })
         WebJSResolveUtil.disableIndexUpToDateCheckIn(context) {
           find()
         }
@@ -270,19 +271,18 @@ class VueModelManager {
     }
 
     private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
-      val file = element.containingFile?.originalFile as? XmlFile
-      if (file != null && file.fileType == VueFileType.INSTANCE) {
-        val scriptModule = findModule(file, false)
-        if (scriptModule != null) {
-          findDefaultExport(scriptModule)
-            ?.let { getComponentDescriptor(it) }
-            ?.asSafely<VueSourceEntityDescriptor>()
-            ?.let { return it }
-        }
-        if (file.virtualFile?.fileType == VueFileType.INSTANCE)
-          return VueSourceEntityDescriptor(source = file)
+      val file = element.containingFile?.originalFile
+                   ?.asSafely<VueFile>()
+                   ?.takeIf { it.isDotVueFile }
+                 ?: return null
+      val scriptModule = findModule(file, false)
+      if (scriptModule != null) {
+        findDefaultExport(scriptModule)
+          ?.let { getComponentDescriptor(it) }
+          ?.asSafely<VueSourceEntityDescriptor>()
+          ?.let { return it }
       }
-      return null
+      return VueSourceEntityDescriptor(source = file)
     }
 
     private fun findVueApp(templateElement: PsiElement, global: VueGlobal): VueApp? {

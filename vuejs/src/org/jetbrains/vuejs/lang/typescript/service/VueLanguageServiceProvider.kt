@@ -10,7 +10,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
@@ -22,8 +22,8 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
   override fun getService(file: VirtualFile): JSLanguageService? = allServices.firstOrNull { it.isAcceptable(file) }
 
   override fun isHighlightingCandidate(file: VirtualFile): Boolean {
-    val type = file.fileType
-    return TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(type) || type == VueFileType.INSTANCE
+    return TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(file.fileType)
+           || file.isDotVueFile
   }
 }
 

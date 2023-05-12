@@ -34,7 +34,6 @@ import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.VueExprMetaLanguage
-import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
@@ -181,7 +180,7 @@ export default {
   }
 
   private fun psiOperationOnText(text: String, operation: (PsiFile) -> Unit): String {
-    val dummyFile = PsiFileFactory.getInstance(containingFile.project).createFileFromText("a.vue", VueFileType.INSTANCE, text)
+    val dummyFile = createVueFileFromText(containingFile.project, text)
     operation(dummyFile)
     return dummyFile.text
   }
@@ -247,8 +246,7 @@ export default {
       "<template lang=\"pug\">\n$newTagName(${generateProps()})\n</template>"
     else "<template><$newTagName ${generateProps()}/></template>"
     val project = leader.project
-    val dummyFile = PsiFileFactory.getInstance(project).createFileFromText("dummy.vue",
-                                                                           VueFileType.INSTANCE, replaceText)
+    val dummyFile = createVueFileFromText(project, replaceText)
     val template = PsiTreeUtil.findChildOfType(dummyFile, XmlTag::class.java)!!
     val newTag = PsiTreeUtil.findChildOfType(template, XmlTag::class.java)!!
 

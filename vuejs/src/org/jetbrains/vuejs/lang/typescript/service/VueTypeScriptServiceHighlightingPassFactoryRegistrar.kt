@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceHighli
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHighlightingPassFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType.Companion.isDotVueFile
 import org.jetbrains.vuejs.lang.typescript.service.volar.VolarTypeScriptService
 
 internal class VueTypeScriptServiceHighlightingPassFactoryRegistrar : TextEditorHighlightingPassFactoryRegistrar {
@@ -19,8 +19,8 @@ internal class VueTypeScriptServiceHighlightingPassFactoryRegistrar : TextEditor
         return if (service is VueTypeScriptService || service is VolarTypeScriptService) service else null
       }
 
-      override fun isAcceptablePsiFile(file: PsiFile): Boolean = 
-        (file.virtualFile?.fileType ?: file.fileType) == VueFileType.INSTANCE
+      override fun isAcceptablePsiFile(file: PsiFile): Boolean =
+        file.isDotVueFile
     }
 
     val factory = MyFactory()
