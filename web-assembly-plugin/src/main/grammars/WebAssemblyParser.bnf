@@ -1,0 +1,381 @@
+{
+  parserClass="org.jetbrains.webstorm.lang.parser.WebAssemblyParser"
+  parserUtilClass="org.jetbrains.webstorm.lang.parser.WebAssemblyParserUtil"
+  psiClassPrefix="WebAssembly"
+  psiImplClassSuffix="Impl"
+  psiPackage="org.jetbrains.webstorm.lang.psi"
+  psiImplPackage="org.jetbrains.webstorm.lang.psi.impl"
+
+  elementTypeHolderClass="org.jetbrains.webstorm.lang.psi.WebAssemblyTypes"
+  elementTypeClass="org.jetbrains.webstorm.lang.psi.WebAssemblyElementType"         // lang.psi.ElementTypes
+  tokenTypeClass="org.jetbrains.webstorm.lang.psi.WebAssemblyTokenType"             // lang.psi.ElementTypes
+}
+
+webAssemblyFile ::= item_*
+private item_         ::= module | modulefield
+private item_recover_ ::= !(RPAR | <<eof>>)
+
+module              ::= LPAR module_aux_ RPAR { pin=2 }
+private module_aux_ ::= MODULEKEY IDENTIFIER? modulefield* { pin=1 recoverWhile='item_recover_' }
+
+modulefield ::= type | import | func | table | mem | global | export | start | elem | data
+
+idx ::= UNSIGNED | IDENTIFIER
+
+
+// TYPES
+valtype ::= NUMTYPE | REFTYPE
+
+functype ::= LPAR FUNCKEY param* result* RPAR { pin=2 }
+
+param ::= LPAR param_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private param_aux_ ::= PARAMKEY (IDENTIFIER valtype | valtype*) { pin=1 recoverWhile='item_recover_' }
+
+result              ::= LPAR result_aux_ RPAR { pin=2 }
+private result_aux_ ::= RESULTKEY valtype* { pin=1 recoverWhile='item_recover_' }
+
+memtype ::= UNSIGNED UNSIGNED?
+
+tabletype ::= memtype REFTYPE
+
+globaltype ::= valtype | globaltype_mut_
+private globaltype_mut_ ::= LPAR MUTKEY valtype RPAR { pin=2 }
+
+blocktype  ::= result | typeuse
+
+typeuse ::= typeuse_typeref param+ result+
+          | typeuse_typeref param+
+          | typeuse_typeref        result+
+          | typeuse_typeref
+          |                 param+ result+
+          |                 param+
+          |                        result+
+typeuse_typeref ::= LPAR TYPEKEY idx RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+
+// INSTRUCTIONS
+instr ::= foldeinstr | plaininstr | blockinstr
+
+// foldeinstr
+foldeinstr ::= foldeinstr_plaininstr_ | foldeinstr_block_ | foldeinstr_loop_ | foldeinstr_if_
+
+private foldeinstr_plaininstr_     ::= LPAR foldeinstr_plaininstr_aux_ RPAR { pin=2 }
+private foldeinstr_plaininstr_aux_ ::= plaininstr foldeinstr* { pin=1 recoverWhile='item_recover_' }
+
+private foldeinstr_block_     ::= LPAR foldeinstr_block_aux_ RPAR IDENTIFIER? { pin=2 }
+private foldeinstr_block_aux_ ::= BLOCKKEY IDENTIFIER? blocktype? instr* { pin=1 recoverWhile='item_recover_' }
+
+private foldeinstr_loop_     ::= LPAR foldeinstr_loop_aux_ RPAR IDENTIFIER? { pin=2 }
+private foldeinstr_loop_aux_ ::= LOOPKEY IDENTIFIER? blocktype? instr* { pin=1 recoverWhile='item_recover_' }
+
+private foldeinstr_if_     ::= LPAR foldeinstr_if_aux_ RPAR { pin=2 }
+private foldeinstr_if_aux_ ::= IFKEY IDENTIFIER? blocktype? foldeinstr* foldeinstr_if_then_ foldeinstr_if_else_
+    { pin=1 recoverWhile='item_recover_' }
+private foldeinstr_if_then_     ::= LPAR foldeinstr_if_then_aux_ RPAR { pin=2 }
+private foldeinstr_if_then_aux_ ::= THENKEY instr* { pin=1 recoverWhile='item_recover_' }
+private foldeinstr_if_else_     ::= LPAR foldeinstr_if_else_aux_ RPAR { pin=2 }
+private foldeinstr_if_else_aux_ ::= ELSEKEY instr* { pin=1 recoverWhile='item_recover_' }
+
+
+// blockinstr
+blockinstr                  ::= blockinstr_block_ | blockinstr_loop_ | blockinstr_if_
+private blockinstr_recover_ ::= !(ENDKEY | <<eof>>)
+
+private blockinstr_block_     ::= BLOCKKEY blockinstr_block_aux_ ENDKEY IDENTIFIER? { pin=1 }
+private blockinstr_block_aux_ ::= IDENTIFIER? blocktype? instr* { recoverWhile='blockinstr_recover_' }
+
+private blockinstr_loop_     ::= LOOPKEY blockinstr_loop_aux_ ENDKEY IDENTIFIER? { pin=1 }
+private blockinstr_loop_aux_ ::= IDENTIFIER? blocktype? instr* { recoverWhile='blockinstr_recover_' }
+
+private blockinstr_if_     ::= foldeinstr* IFKEY blockinstr_if_aux_ ENDKEY IDENTIFIER? { pin=2 }
+private blockinstr_if_aux_ ::= IDENTIFIER? blocktype? instr* (ELSEKEY IDENTIFIER? instr*)? { recoverWhile='blockinstr_recover_' }
+
+// plaininstr
+plaininstr ::=
+             // control
+               CONTROLINSTR | CONTROLINSTR_IDX idx | call_instr | BRTABLEINSTR idx+ | call_indirect_instr
+             // reference
+             | REFISNULLINST | REFNULLINSTR (FUNCKEY | EXTERNKEY) | ref_func_instr
+             // parametric
+             | PARAMETRICINSTR
+             // variable
+             | local_instr | global_instr
+             // table
+             | table_idx_instr | table_copy_instr | table_init_instr | elem_drop_instr
+             // memory
+             | MEMORYINSTR | memory_idx_instr | MEMORYINSTR_MEMARG offseteq? aligneq?
+             // numeric
+             | ICONST (UNSIGNED | SIGNED) | FCONST (FLOAT | UNSIGNED | SIGNED) | NUMERICINSTR
+
+call_instr ::= CALLINSTR idx {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+call_indirect_instr ::= CALLINDIRECTINSTR idx? typeuse? {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+ref_func_instr ::= REFFUNCINSTR idx {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+local_instr ::= LOCALINSTR idx {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+global_instr ::= GLOBALINSTR idx {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+table_idx_instr ::= TABLEINSTR_IDX idx? {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+table_copy_instr ::= TABLECOPYINSTR idx? idx? {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+table_init_instr ::= TABLEINITINSTR idx idx? {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyReferencedTableInitInstrImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+elem_drop_instr ::= ELEMDROPINSTR idx {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+memory_idx_instr ::= MEMORYINSTR_IDX idx {
+    pin=1
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+offseteq                  ::= OFFSETEQKEY UNSIGNED { pin=1 recoverWhile='offseteq_recover_' }
+private offseteq_recover_ ::= !(aligneq | instr | RPAR | <<eof>>)
+
+aligneq                  ::= ALIGNEQKEY UNSIGNED { pin=1 recoverWhile='aligneq_recover_' }
+private aligneq_recover_ ::= !(instr | RPAR | <<eof>>)
+
+
+// MODULEFIELDS
+// types
+type ::= LPAR type_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private type_aux_ ::= TYPEKEY IDENTIFIER? functype { pin=1 recoverWhile='item_recover_' }
+
+
+// imports
+import ::= LPAR import_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedImportImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+
+private import_aux_ ::= IMPORTKEY string_fir_aux_ string_aux_ importdesc { pin=1 recoverWhile='item_recover_' }
+
+private string_fir_aux_     ::= STRING { pin=1 recoverWhile='string_fir_recover_' }
+private string_fir_recover_ ::= !(STRING | LPAR | RPAR | <<eof>>)
+private string_aux_         ::= STRING { pin=1 recoverWhile='string_recover_' }
+private string_recover_     ::= !(LPAR | RPAR | <<eof>>)
+
+importdesc ::= importdesc_func_ | importdesc_table_ | importdesc_memory_ | importdesc_global_
+private importdesc_func_       ::= LPAR importdesc_func_aux_ RPAR { pin=2 }
+private importdesc_func_aux_   ::= FUNCKEY IDENTIFIER? typeuse? { pin=1 recoverWhile='item_recover_' }
+private importdesc_table_      ::= LPAR importdesc_table_aux_ RPAR { pin=2 }
+private importdesc_table_aux_  ::= TABLEKEY IDENTIFIER? tabletype { pin=1 recoverWhile='item_recover_' }
+private importdesc_memory_     ::= LPAR importdesc_memory_aux_ RPAR { pin=2 }
+private importdesc_memory_aux_ ::= MEMORYKEY IDENTIFIER? memtype { pin=1 recoverWhile='item_recover_' }
+private importdesc_global_     ::= LPAR importdesc_global_aux_ RPAR { pin=2 }
+private importdesc_global_aux_ ::= GLOBALKEY IDENTIFIER? globaltype { pin=1 recoverWhile='item_recover_' }
+
+inline_import ::= LPAR IMPORTKEY STRING STRING RPAR
+
+
+// functions
+func ::= LPAR func_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private func_aux_ ::= FUNCKEY func_aux_ident_? (
+                         inline_import typeuse?
+                       | (inline_export (inline_export | inline_import)?)? typeuse? local* instr*
+                      ) { pin=1 recoverWhile='item_recover_' }
+private func_aux_ident_ ::= IDENTIFIER { recoverWhile='func_aux_ident_recover_' }
+private func_aux_ident_recover_ ::= !(LPAR | RPAR | instr_key_ | <<eof>>)
+private instr_key_ ::= BLOCKKEY | LOOPKEY | IFKEY
+                     | CONTROLINSTR | CONTROLINSTR_IDX | CALLINSTR | BRTABLEINSTR | CALLINDIRECTINSTR
+                     | REFISNULLINST | REFNULLINSTR | REFFUNCINSTR
+                     | PARAMETRICINSTR
+                     | LOCALINSTR | GLOBALINSTR
+                     | TABLEINSTR_IDX | TABLECOPYINSTR | TABLEINITINSTR | ELEMDROPINSTR
+                     | MEMORYINSTR | MEMORYINSTR_IDX | MEMORYINSTR_MEMARG
+                     | ICONST | FCONST | NUMERICINSTR
+
+local ::= LPAR local_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private local_aux_ ::= LOCALKEY (IDENTIFIER valtype | valtype*) { pin=1 recoverWhile='item_recover_' }
+
+
+// tables
+table ::= LPAR table_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private table_aux_ ::= TABLEKEY table_aux_ident_? (
+                          inline_elem
+                        | inline_import? tabletype
+                        | inline_export (inline_import | inline_export | inline_elem)?
+                       ) { pin=1 recoverWhile='item_recover_' }
+private table_aux_ident_ ::= IDENTIFIER { recoverWhile='table_aux_ident_recover_' }
+private table_aux_ident_recover_ ::= !(LPAR | RPAR | REFTYPE | memtype | <<eof>>)
+
+
+// memories
+mem ::= LPAR memaux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private memaux_ ::= MEMORYKEY IDENTIFIER? (
+                       inline_data
+                     | inline_import? memtype
+                     | inline_export (inline_import | inline_export | inline_data)* memtype
+                    ) { pin=1 recoverWhile='item_recover_' }
+
+
+// globals
+global ::= LPAR global_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedElement"
+    methods=[setName getNameIdentifier]
+}
+private global_aux_ ::= GLOBALKEY IDENTIFIER? (
+                           inline_import globaltype
+                         | (inline_export (inline_import | inline_export)?)? globaltype instr*
+                        ) { pin=1 recoverWhile='item_recover_' }
+
+
+// exports
+export ::= LPAR export_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+private export_aux_ ::= EXPORTKEY string_aux_ exportdesc { pin=1 recoverWhile='item_recover_' }
+
+exportdesc ::= exportdesc_func_ | exportdesc_table_ | exportdesc_memory_ | exportdesc_global_
+private exportdesc_func_       ::= LPAR exportdesc_func_aux_ RPAR { pin=2 }
+private exportdesc_func_aux_   ::= FUNCKEY idx { pin=1 recoverWhile='item_recover_' }
+private exportdesc_table_      ::= LPAR exportdesc_table_aux_ RPAR { pin=2 }
+private exportdesc_table_aux_  ::= TABLEKEY idx { pin=1 recoverWhile='item_recover_' }
+private exportdesc_memory_     ::= LPAR exportdesc_memory_aux_ RPAR { pin=2 }
+private exportdesc_memory_aux_ ::= MEMORYKEY idx { pin=1 recoverWhile='item_recover_' }
+private exportdesc_global_     ::= LPAR exportdesc_global_aux_ RPAR { pin=2 }
+private exportdesc_global_aux_ ::= GLOBALKEY idx { pin=1 recoverWhile='item_recover_' }
+
+inline_export ::= LPAR EXPORTKEY STRING RPAR { pin=2 }
+
+
+// start function
+start ::= LPAR start_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+private start_aux_ ::= STARTKEY idx { pin=1 recoverWhile='item_recover_' }
+
+
+// element segments
+elem ::= LPAR elem_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedReferencedElement"
+    methods=[setName getNameIdentifier getReference getReferences]
+}
+private elem_aux_ ::= ELEMKEY IDENTIFIER? (
+                         (LPAR TABLEKEY idx RPAR)? (instr | LPAR OFFSETKEY instr* RPAR)
+                       | DECLAREKEY
+                      )? elemlist { pin=1 recoverWhile='item_recover_' }
+
+elemlist ::= REFTYPE (instr | LPAR ITEMKEY instr* RPAR)* | FUNCKEY? idx* {
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyReferencedElement"
+    methods=[getReference getReferences]
+}
+
+inline_elem              ::= REFTYPE LPAR inline_elem_aux_ RPAR { pin=3 }
+private inline_elem_aux_ ::= ELEMKEY (instr+ | elemlist)? { pin=1 recoverWhile='item_recover_' }
+
+
+// data segments
+data ::= LPAR data_aux_ RPAR {
+    pin=2
+    mixin="org.jetbrains.webstorm.lang.psi.impl.WebAssemblyNamedReferencedElementImpl"
+    implements="org.jetbrains.webstorm.lang.psi.WebAssemblyNamedReferencedElement"
+    methods=[setName getNameIdentifier getReference getReferences]
+}
+private data_aux_ ::= DATAKEY IDENTIFIER? (memuse_? (instr | LPAR OFFSETKEY instr* RPAR))? STRING*
+    { pin=1 recoverWhile='item_recover_' }
+private memuse_   ::= LPAR MEMORYKEY idx RPAR { pin=2 }
+
+inline_data              ::= LPAR inline_data_aux_ RPAR { pin=2 }
+private inline_data_aux_ ::= DATAKEY STRING* { pin=1 recoverWhile='item_recover_' }
+
+
+// not important for the parser
+comment      ::= LINE_COMMENT | BLOCK_COMMENT
+lexer_tokens ::= BAD_TOKEN

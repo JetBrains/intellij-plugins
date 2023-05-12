@@ -1,0 +1,7 @@
+WebAssembly File(0,27)
+  PsiComment(WebAssemblyToken.LINE_COMMENT)(';;; TOOL: wat2wasm')(0,18)
+  PsiWhiteSpace('\n')(18,19)
+  WebAssemblyModuleImpl(MODULE)(19,27)
+    PsiElement(WebAssemblyToken.LPAR)('(')(19,20)
+    PsiElement(WebAssemblyToken.MODULEKEY)('module')(20,26)
+    PsiElement(WebAssemblyToken.RPAR)(')')(26,27)
