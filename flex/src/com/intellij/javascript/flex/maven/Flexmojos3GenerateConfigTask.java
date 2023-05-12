@@ -113,7 +113,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       }
     };
 
-    embeddersManager.execute(myMavenProject, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
+    embeddersManager.execute(myMavenProject, MavenEmbeddersManager.FOR_POST_PROCESSING, task);
   }
 
   /**
